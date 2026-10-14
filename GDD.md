@@ -58,7 +58,7 @@ Progression is split across three synergizing upgrade paths using an exponential
 Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
 * **Run-Based Brackets:** Each run is tagged with every paid booster active during that run (e.g., Impact Pass, Patron Pass). A run with no purchases ranks on the unboosted board; boosted runs rank only against runs with the same booster set.
 * **Server-Side Time Validation:** Run times are validated server-side to counteract device-clock manipulation of offline earnings.
-* **Open Question:** Whether free rewarded-ad boosts count as a booster for bracketing (TBD).
+* **Rewarded Ads:** Free rewarded-ad boosts do not count as a paid booster; runs that use them stay on the unboosted board.
 
 ---
 
