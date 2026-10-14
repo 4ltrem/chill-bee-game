@@ -9,7 +9,7 @@ A cozy, casual beekeeping and farming mobile-first game inspired by and the love
 The UI is simple with no player character or avatar. The game acts as a pocket dimension on your device where players can zoom out and pan across the farm as it expands. The core gameplay loop spans three distinct phases with decreasing manual work:
 * **Phase 1 (The Grinding Stage):** High manual labor. Players manually scrape/unframe and refine honeycombs through an uncapping and extraction minigame, plant and water flowers, and manually sell the product. (Players retain access to these manual interaction screens in later phases to manage tool upgrades).
 * **Phase 2 (The Automation Era):** Players obtain their first few upgrades to automate harvesting, uncapping, and logistics, significantly reducing manual tasks.
-* **Phase 3 (The Optimizing Stage):** The main loop comes into full swing. Upon reaching the end of the progression tree, players can choose to reset the pocket dimension (Swarm Splitting / Royal Jelly Harvest). The reset is optional but encouraged, allowing players to retain persistent bonuses while competing for high scores based on completion speed on bracketed leaderboards (see Leaderboards).
+* **Phase 3 (The Optimizing Stage):** The main loop comes into full swing. Buying the final upgrade in the progression tree produces a Royal Crystal, after which players can choose to reset the pocket dimension (Swarm Splitting / Royal Crystal Harvest). The reset is optional but encouraged, allowing players to retain persistent bonuses while competing for high scores based on completion speed on bracketed leaderboards (see Leaderboards).
 
 A core pillar of the project is its **Real-World Impact Integration**, where a portion of proceeds from in-game monetization (Impact Passes, rewarded ads, Adopt-a-hive) funds real-world bee conservation globally (native bee habitat restoration and managed hives), starting with Canadian conservation partners.
 
@@ -26,7 +26,11 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 
 * **Phase 1 (Manual Grinding):** Players actively perform uncapping swipes and centrifuge cranking, manage initial flower planting/watering, and handle sales.
 * **Phase 2 (Automation):** Unlocks automated uncapping hubs, electric centrifuges, and auto-transport trucks. Manual screens remain accessible for upgrading tool efficiency and batch multipliers.
-* **Phase 3 (Prestige Reset / Optimization):** When hive capacity and tech trees peak, players can trigger an optional (but encouraged) dimension reset. This awards Royal Jelly, an end-game reward that boosts the next run with extra starting hives (further prestige effects TBD). Deep genetic research trees for faster run times are purchased with in-game money (unlock conditions TBD).
+* **Phase 3 (Prestige Reset / Optimization):** The very last upgrade in the progression tree produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) dimension reset. Each Royal Crystal earned:
+  * Permanently adds a production boost that stacks with every other Crystal (% TBD).
+  * Can also be applied to any one starting upgrade for future runs (e.g., extra starting hives).
+
+  Royal Crystals carry over between runs. Deep genetic research trees for faster run times are purchased with in-game money and do not carry over between runs (unlock conditions TBD).
 
 ### 2. Phase 1 Uncapping & Extraction Minigame
 When hive storage reaches capacity in Phase 1, players trigger a tactile, two-stage harvesting sequence:
@@ -96,7 +100,7 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
   * *Concept:* The premier monetization tier (highest cost / highest real-world impact). All Patron bonuses are active only while the subscription is active and stop when the player stops paying. A significant portion of proceeds directly funds both managed hives and native bee habitat restoration with conservation partners.
   * *Visual Prestige:* Unlocks an engraved mahogany & brass hive skin with a custom nameplate displaying real-world restoration coordinates, plus a golden "Patron" badge on speed-run leaderboards.
   * *Automation & QoL:* Grants the "Golden Drone" auto-collector (automatically collects wild nectar drops and handles pest events) and extends offline idle earnings up to 24 hours.
-  * *Subscription Boosts:* +25% global honey value multiplier (persists across Phase 3 resets while subscribed) and a daily stipend of premium currency that speeds up progression (currency and values TBD once progression numbers are decided; upgrades and research are purchased with in-game money).
+  * *Subscription Boosts:* +25% global honey value multiplier (persists across Phase 3 resets while subscribed) and a daily stipend of Royal Jelly, the premium currency, which speeds up progression (values TBD once progression numbers are decided; upgrades and research are purchased with in-game money).
 
 ---
 
