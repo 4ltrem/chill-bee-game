@@ -9,7 +9,7 @@ A cozy, casual beekeeping and farming mobile-first game inspired by and the love
 The UI is simple with no player character or avatar. The game acts as a pocket dimension on your device where players can zoom out and pan across the farm as it expands. The core gameplay loop spans three distinct phases with decreasing manual work:
 * **Phase 1 (The Grinding Stage):** High manual labor. Players manually scrape/unframe and refine honeycombs through an uncapping and extraction minigame, plant and water flowers, and manually sell the product. (Players retain access to these manual interaction screens in later phases to manage tool upgrades).
 * **Phase 2 (The Automation Era):** Players obtain their first few upgrades to automate harvesting, uncapping, and logistics, significantly reducing manual tasks.
-* **Phase 3 (The Optimizing Stage):** The main loop comes into full swing. Upon reaching the end of the progression tree, the pocket dimension resets (Swarm Splitting / Royal Jelly Harvest), allowing players to retain persistent bonuses while competing for high scores based on completion speed.
+* **Phase 3 (The Optimizing Stage):** The main loop comes into full swing. Upon reaching the end of the progression tree, the pocket dimension resets (Swarm Splitting / Royal Jelly Harvest), allowing players to retain persistent bonuses while competing for high scores based on completion speed on bracketed leaderboards (see Leaderboards).
 
 A core pillar of the project is its **Real-World Impact Integration**, where a portion of proceeds from in-game monetization (Impact Passes, rewarded ads, Adopt-a-hive) funds real-world native bee habitat restoration globally, starting with Canadian conservation partners.
 
@@ -51,8 +51,14 @@ Progression is split across three synergizing upgrade paths using an exponential
   * *Centrifuge Gearing:* Reduces required extraction taps/spins by -15% per level (base cost $35, 1.20x growth, max level 5).
   * *Expanded Frame Deep:* Increases frame capacity from 10 jars to 25 jars per run (base cost $150, 1.45x growth, max level 3).
 * **Tree C: Environment & Monetization**
-  * *Flora Synergy:* Plant and upgrade flower patches (Clover, Lavender, Buckwheat) to grant production multipliers.
+  * *Habitat Health:* Plant and upgrade native flower patches (Clover, Lavender, Buckwheat) to raise the meadow's habitat health, which grants production multipliers across Trees A and B and attracts visible native bees to the farm (values TBD).
   * *Artisanal Branding:* Increases base sale value per jar by +$2.50 (base cost $60, 1.25x growth, max level 10).
+
+### 4. Leaderboards
+Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
+* **Run-Based Brackets:** Each run is tagged with every paid booster active during that run (e.g., Impact Pass, Patron Pass). A run with no purchases ranks on the unboosted board; boosted runs rank only against runs with the same booster set.
+* **Server-Side Time Validation:** Run times are validated server-side to counteract device-clock manipulation of offline earnings.
+* **Open Question:** Whether free rewarded-ad boosts count as a booster for bracketing (TBD).
 
 ---
 
@@ -85,11 +91,11 @@ Progression is split across three synergizing upgrade paths using an exponential
 ### Monetization Architecture
 * **Non-Predatory Rewarded Ads:** Optional 2x production boosts explicitly tied to native habitat funding.
 * **Impact Pass (Monthly Pass):** Offers mid-tier quality-of-life perks (auto-tap helpers, extended offline production) with 25–50% of proceeds pledged to conservation partners.
-* **Top-Tier Monetization: Adopt-a-Hive ("Patron Pass")**
-  * *Concept:* The premier monetization tier (highest cost / highest real-world impact). A significant portion of proceeds directly funds managed hives and land restoration with conservation partners.
+* **Top-Tier Monetization: Adopt-a-Hive ("Patron Pass", Monthly Subscription)**
+  * *Concept:* The premier monetization tier (highest cost / highest real-world impact). All Patron bonuses are active only while the subscription is active and stop when the player stops paying. A significant portion of proceeds directly funds managed hives and land restoration with conservation partners.
   * *Visual Prestige:* Unlocks an engraved mahogany & brass hive skin with a custom nameplate displaying real-world restoration coordinates, plus a golden "Patron" badge on speed-run leaderboards.
   * *Automation & QoL:* Grants the "Golden Drone" auto-collector (automatically collects wild nectar drops and handles pest events) and extends offline idle earnings up to 24 hours.
-  * *Permanent Boosts:* +25% global honey value multiplier (persists across Phase 3 resets) and a daily stipend of Royal Jelly premium currency.
+  * *Subscription Boosts:* +25% global honey value multiplier (persists across Phase 3 resets while subscribed) and a daily stipend of Royal Jelly premium currency.
 
 ---
 
