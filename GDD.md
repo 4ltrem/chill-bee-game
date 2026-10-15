@@ -107,10 +107,10 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 ## AI Architecture
 
 ### Token Budgets
-Token budget allocation per agent task: $\text{Usage Limit} \div 7$.
+Daily token budget shared across all agents: $\text{Weekly Usage Limit} \div 7$.
 
 ### API Constraints
-API usage is divided into modular execution pipelines, ensuring individual agent calls remain constrained to their designated token windows to prevent context overlap.
+All agents run through Claude Code, using different models depending on the task. API usage is divided into modular execution pipelines, ensuring individual agent calls remain constrained to their designated token windows to prevent context overlap.
 
 ### Actionable Strategy Formalized from Agent Role Definitions
 Each specialized agent functions as a dedicated module in the development workflow, executing discrete tasks triggered by developer inputs and producing structured outputs.
