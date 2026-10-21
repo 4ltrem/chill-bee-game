@@ -115,6 +115,14 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 * **Colour-Blind Support:** Information never relies on colour alone (e.g., capped and uncapped cells also differ in shape or texture).
 * **Text Size & One-Handed Play:** Adjustable text size, and all UI reachable with one thumb.
 
+### 8. UI & Screens
+* **Farm View (Main Screen):** The pannable, zoomable pocket-dimension farm.
+* **Upgrade Shop:** Trees A–C, automation, and the capstone upgrade.
+* **Harvest Minigame:** The uncapping and centrifuge extraction screens.
+* **Impact & Leaderboards:** Impact totals, personal-best run times, and (post-launch) online leaderboards.
+* **Store:** Royal Jelly and passes, behind the parental gate in kid mode.
+* **Settings:** Accessibility options and language.
+
 ---
 
 ## Environmental & Visual Identity
@@ -166,25 +174,28 @@ Each specialized agent functions as a dedicated module in the development workfl
 ### Agent Roles
 
 #### Gerard, the Gameplay Architect
-* **Role:** This agent analyzes the proposed feature against the existing gameplay system when the user proposes a new feature, and the player sees a structured representation of how the feature will affect the others.
+* **Role:** This agent analyzes the proposed feature against the existing gameplay system when the user proposes a new feature, and the developer sees a structured representation of how the feature will affect the others.
 
 #### Bob, the Builder
-* **Role:** This agent builds levels in the editor when the user proposes a level outline or design, and the player sees the finished level, following the specs of the outline.
+* **Role:** This agent assembles biome dioramas and terrain chunks as Godot scene files (`.tscn`) when the user proposes a layout description, and the developer sees the finished scene, following the specs of the layout.
 
 #### Patricia, the Programmer
-* **Role:** This agent creates modular components and code for the game engine when a list of features is given, and the player sees the completed components and/or script.
+* **Role:** This agent creates modular components and code for the game engine when a list of features is given, and the developer sees the completed components and/or script. Also owns backend integration.
 
 #### William, the Writer
-* **Role:** This agent writes the story outline when the user gives an idea for a story point, lesson, or goal, and the player sees a completed outline.
+* **Role:** This agent writes the story outline when the user gives an idea for a story point, lesson, or goal, and the developer sees a completed outline.
 
 #### Andrew, the Audiophile
-* **Role:** This agent searches and curates audio sound effects and music tracks when given a description of a sound, environment, vibe, or place, and the player sees the curated structured list and accompanying folder with the selected audio files.
+* **Role:** This agent searches and curates audio sound effects and music tracks when given a description of a sound, environment, vibe, or place, and the developer sees the curated structured list and accompanying folder with the selected audio files.
 
 #### Terry, the Progression Tree Expert
-* **Role:** This agent analyzes the balance of the progression tree, such as efficiency rating, cost, speed, space requirement, and other metrics available which can be found in the progression file when provided with a suggested upgrade/progression, and the player sees a detailed report/outline comparing the suggestion against existing upgrades/progressions if possible.
+* **Role:** This agent analyzes the balance of the progression tree, such as efficiency rating, cost, speed, space requirement, and other metrics available which can be found in the progression file when provided with a suggested upgrade/progression, and the developer sees a detailed report/outline comparing the suggestion against existing upgrades/progressions if possible.
 
 #### Martin, the Hiring Manager
-* **Role:** This agent creates agent descriptions following the template in the Agent Roles section of `GDD.md` when the lead architect notices there's a skill gap within the team, and the player sees a git diff of the new agent(s) proposed inside the agent roles section.
+* **Role:** This agent creates agent descriptions following the template in the Agent Roles section of `GDD.md` when the lead architect notices there's a skill gap within the team, and the developer sees a git diff of the new agent(s) proposed inside the agent roles section.
+
+#### Quinn, the QA & Build Engineer
+* **Role:** This agent writes and runs tests, produces mobile builds, and profiles performance against the 60 FPS target when a feature or build is ready for testing, and the developer sees a test report, build output, and performance profile.
 
 ---
 
@@ -202,7 +213,7 @@ Dedicated section for defining agent prompt constraints to ensure consistent, re
 * **Integration Strategy:** Selected for its open-source architecture, lightweight footprint, and seamless integration with CLI-based developer workflows (such as Claude Code).
 * **Scripting Language:** GDScript for rapid UI/gameplay iterations, combined with C# for performance-critical grid operations and save-state serialization if required.
 * **Data Structure Architecture (Cell Grid & Uncapping):**
-  * *Honeycomb Grid Data:* Represented as a 2D Array or Bitmask in GDScript tracking individual cell status (`0 = Capped`, `1 = Uncapped`, `2 = Extracted`).
+  * *Honeycomb Grid Data:* Represented as a 2D Array or byte array (2 bits per cell) in GDScript tracking individual cell status (`0 = Capped`, `1 = Uncapped`, `2 = Extracted`).
   * *Input Raycasting:* `PhysicsDirectSpaceState3D` raycasting maps touch/mouse drag vectors onto the 3D frame collision shape to slice open cells.
   * *Haptic Feedback Interface:* Platform-native wrapper calling OS vibration APIs (`Input.vibrate_handheld()`) on cell state transitions.
 
