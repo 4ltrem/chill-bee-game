@@ -25,7 +25,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 
 
 * **Phase 1 (Manual Grinding):** Players actively perform uncapping swipes and centrifuge cranking, manage initial flower planting/watering, and handle sales.
-* **Phase 2 (Automation):** Unlocks automated uncapping hubs, electric centrifuges, and auto-transport trucks. Manual screens remain accessible for upgrading tool efficiency and batch multipliers.
+* **Phase 2 (Automation):** Begins when the player buys their first automation upgrade (see Tree B: Automation), unlocking automated uncapping hubs, electric centrifuges, and auto-transport trucks. Manual screens remain accessible for upgrading tool efficiency and batch multipliers.
 * **Phase 3 (Prestige Reset / Optimization):** The very last upgrade in the progression tree produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) dimension reset. Each Royal Crystal earned:
   * Permanently adds a production boost that stacks with every other Crystal (% TBD).
   * Can also be applied to any one starting upgrade for future runs (e.g., extra starting hives).
@@ -33,7 +33,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
   Royal Crystals carry over between runs. Deep genetic research trees for faster run times are purchased with in-game money and do not carry over between runs (unlock conditions TBD).
 
 ### 2. Phase 1 Uncapping & Extraction Minigame
-When hive storage reaches capacity in Phase 1, players trigger a tactile, two-stage harvesting sequence:
+When hive storage reaches capacity in Phase 1, players trigger a tactile, two-stage harvesting sequence. By default, production pauses at capacity until the player harvests, including while offline; the optional Overflow Storage and Auto-Sell upgrades change this (see Tree B).
 
 * **Stage 1: Uncapping (Tactile Swiping)**
   * Camera zooms to a 3D wooden honeycomb frame tilted at an isometric angle.
@@ -54,6 +54,9 @@ Progression is split across three synergizing upgrade paths using an exponential
   * *Heated Uncapping Fork:* Increases swipe radius by +12% per level and adds up to +5% batch bonus for clean cuts (base cost $40, 1.22x growth, max level 5).
   * *Centrifuge Gearing:* Reduces required extraction taps/spins by -15% per level (base cost $35, 1.20x growth, max level 5).
   * *Expanded Frame Deep:* Increases frame capacity from 10 jars to 25 jars per run (base cost $150, 1.45x growth, max level 3).
+  * *Overflow Storage (optional):* Stores honey produced after the hive is full, so returning players have extra frames waiting to harvest (capacity and costs TBD).
+  * *Auto-Sell (optional):* Automatically sells overflow honey at a discounted price (discount and costs TBD).
+  * *Automation:* Automated uncapping hubs, electric centrifuges, and auto-transport trucks, bought with in-game money. Buying the first automation upgrade moves the player into Phase 2 (costs TBD).
 * **Tree C: Environment & Monetization**
   * *Habitat Health:* Plant and upgrade native flower patches (Clover, Lavender, Buckwheat) to raise the meadow's habitat health, which grants production multipliers across Trees A and B and attracts visible native bees to the farm (values TBD).
   * *Artisanal Branding:* Increases base sale value per jar by +$2.50 (base cost $60, 1.25x growth, max level 10).
@@ -63,8 +66,18 @@ Speed-run leaderboards are bracketed so players only compete against others who 
 * **Run-Based Brackets:** Each run is tagged with every paid booster active during that run (e.g., Impact Pass, Patron Pass). A run with no purchases ranks on the unboosted board; boosted runs rank only against runs with the same booster set.
 * **Server-Side Time Validation:** Run times are validated server-side to counteract device-clock manipulation of offline earnings.
 * **Rewarded Ads:** Free rewarded-ad boosts do not count as a paid booster; runs that use them stay on the unboosted board.
+* **Royal Jelly:** Using purchased Royal Jelly during a run counts as a paid booster; Royal Jelly earned through play does not.
 
-### 5. Onboarding & First Session
+### 5. Currencies & Offline Earnings
+| Currency | Earned From | Spent On | Carries Over Resets |
+|---|---|---|---|
+| In-game money | Selling honey | Upgrades (Trees A–C) and research trees | No |
+| Royal Jelly (premium) | Slowly through play and rewarded ads; purchasable with real money; Patron daily stipend | Time skips and production speed-ups | TBD |
+| Royal Crystal (prestige) | Buying the final upgrade in the progression tree | Stacking permanent production boost + one starting upgrade per Crystal | Yes |
+
+* **Offline Earnings:** Free players earn offline up to a cap (hours TBD once progression numbers are decided). The Impact Pass extends this, and the Patron Pass extends it to 24 hours.
+
+### 6. Onboarding & First Session
 A guide character (e.g., a queen bee; name and personality TBD) walks new players through their first session:
 * Explains why the meadow matters and introduces the farm.
 * Guides the first manual harvest (uncapping and centrifuge extraction).
