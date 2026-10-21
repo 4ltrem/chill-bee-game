@@ -15,6 +15,14 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 
 ---
 
+## Audience & Production Plan
+* **Target Audience:** Families and players of all ages.
+* **Team:** Solo developer directing AI agents in Claude Code (see AI Architecture).
+* **Timeline:** Launch within 6 months (date TBD).
+* **Vertical Slice (First Playable):** Mobile only, Sunny Meadow only, from the Phase 1 manual minigame through the first automation upgrades (Phase 2), with a minimal reset. No monetization, leaderboards, or backend yet.
+
+---
+
 ## Game Mechanics
 
 ### 1. Primary Game Loop & Phase Structure
