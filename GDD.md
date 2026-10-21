@@ -30,7 +30,9 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
   * Permanently adds a production boost that stacks with every other Crystal (% TBD).
   * Can also be applied to any one starting upgrade for future runs (e.g., extra starting hives).
 
-  Royal Crystals carry over between runs. Deep genetic research trees for faster run times are purchased with in-game money and do not carry over between runs (unlock conditions TBD).
+  Royal Crystals carry over between runs. Deep genetic research trees for faster run times are purchased with in-game money and do not carry over between runs (unlock conditions, and how research differs from Trees A–C, TBD).
+
+* **Pests & Wild Nectar Drops:** Appear only during active play and pause while offline. Tapping them gives a small reward (cleared pests or collected nectar); ignoring them costs nothing. The Patron Golden Drone taps them automatically.
 
 ### 2. Phase 1 Uncapping & Extraction Minigame
 When hive storage reaches capacity in Phase 1, players trigger a tactile, two-stage harvesting sequence. By default, production pauses at capacity until the player harvests, including while offline; the optional Overflow Storage and Auto-Sell upgrades change this (see Tree B).
@@ -53,7 +55,7 @@ Progression is split across three synergizing upgrade paths using an exponential
 * **Tree B: Hive & Tool Efficiency**
   * *Heated Uncapping Fork:* Increases swipe radius by +12% per level and adds up to +5% batch bonus for clean cuts (base cost $40, 1.22x growth, max level 5).
   * *Centrifuge Gearing:* Reduces required extraction taps/spins by -15% per level (base cost $35, 1.20x growth, max level 5).
-  * *Expanded Frame Deep:* Increases frame capacity from 10 jars to 25 jars per run (base cost $150, 1.45x growth, max level 3).
+  * *Expanded Frame Deep:* Increases frame capacity from 10 jars to 25 jars per harvest (base cost $150, 1.45x growth, max level 3).
   * *Overflow Storage (optional):* Stores honey produced after the hive is full, so returning players have extra frames waiting to harvest (capacity and costs TBD).
   * *Auto-Sell (optional):* Automatically sells overflow honey at a discounted price (discount and costs TBD).
   * *Automation:* Automated uncapping hubs, electric centrifuges, and auto-transport trucks, bought with in-game money. Buying the first automation upgrade moves the player into Phase 2 (costs TBD).
@@ -76,7 +78,7 @@ Speed-run leaderboards are bracketed so players only compete against others who 
 | Currency | Earned From | Spent On | Carries Over Resets |
 |---|---|---|---|
 | In-game money | Selling honey | Upgrades (Trees A–C) and research trees | No |
-| Royal Jelly (premium) | Slowly through play and rewarded ads; purchasable with real money; Patron daily stipend | Time skips and production speed-ups | TBD |
+| Royal Jelly (premium) | Slowly through play and rewarded ads; purchasable with real money; Patron daily stipend | Time skips and production speed-ups | Yes |
 | Royal Crystal (prestige) | Buying the final upgrade in the progression tree | Stacking permanent production boost + one starting upgrade per Crystal | Yes |
 
 * **Offline Earnings:** Free players earn offline up to a cap (hours TBD once progression numbers are decided). The Impact Pass extends this, and the Patron Pass extends it to 24 hours.
