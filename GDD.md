@@ -20,6 +20,14 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 * **Team:** Solo developer directing AI agents in Claude Code (see AI Architecture).
 * **Timeline:** Launch within 6 months (date TBD).
 * **Vertical Slice (First Playable):** Mobile only, Sunny Meadow only, from the Phase 1 manual minigame through the first automation upgrades (Phase 2), with a minimal reset. No monetization, leaderboards, or backend yet.
+* **Launch Scope:** Mobile only; Sunny Meadow and Alpine Valley; rewarded ads and the Impact Pass; local personal-best run times; periodically updated impact totals.
+* **Post-Launch:** Biomes 3–4 (Enchanted Grove, Cloud Gardens), the Patron Pass, online leaderboards, and the live Impact Dashboard.
+* **Backend:** A managed game-backend service (provider TBD) for purchase receipts, cloud saves, and server time, and later for leaderboards.
+
+### Child Safety
+* **Age Gate:** Players enter their age at first launch.
+* **Kid Mode (under 13):** No personalized ads, a parental gate before any purchase, and no public usernames.
+* Players 13 and over get the full game.
 
 ---
 
@@ -74,7 +82,8 @@ Progression is split across three synergizing upgrade paths using an exponential
   * A dedicated final upgrade that unlocks only after key upgrades are maxed (which ones TBD). Buying it produces a Royal Crystal and completes the run.
 
 ### 4. Leaderboards
-Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
+Online leaderboards are post-launch; at launch, players see local personal-best run times. Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
+* **Player Names:** Players build their display name from preset word lists (no free text). Kid-mode players have no public username.
 * **Run-Based Brackets:** Each run is tagged with every paid booster active during that run (e.g., Impact Pass, Patron Pass). A run with no purchases ranks on the unboosted board; boosted runs rank only against runs with the same booster set.
 * **Royal Crystal Tiers:** Runs are also bracketed by the player's Royal Crystal count (e.g., 0, 1–5, 6–20, 21+; tiers TBD), so players race others at a similar prestige level.
 * **Run Time:** Wall-clock time from the start of a run to buying the capstone upgrade, offline time included.
