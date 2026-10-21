@@ -60,10 +60,14 @@ Progression is split across three synergizing upgrade paths using an exponential
 * **Tree C: Environment & Monetization**
   * *Habitat Health:* Plant and upgrade native flower patches (Clover, Lavender, Buckwheat) to raise the meadow's habitat health, which grants production multipliers across Trees A and B and attracts visible native bees to the farm (values TBD).
   * *Artisanal Branding:* Increases base sale value per jar by +$2.50 (base cost $60, 1.25x growth, max level 10).
+* **Capstone: Final Upgrade** (working name: Royal Crystal Chamber)
+  * A dedicated final upgrade that unlocks only after key upgrades are maxed (which ones TBD). Buying it produces a Royal Crystal and completes the run.
 
 ### 4. Leaderboards
 Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
 * **Run-Based Brackets:** Each run is tagged with every paid booster active during that run (e.g., Impact Pass, Patron Pass). A run with no purchases ranks on the unboosted board; boosted runs rank only against runs with the same booster set.
+* **Royal Crystal Tiers:** Runs are also bracketed by the player's Royal Crystal count (e.g., 0, 1–5, 6–20, 21+; tiers TBD), so players race others at a similar prestige level.
+* **Run Time:** Wall-clock time from the start of a run to buying the capstone upgrade, offline time included.
 * **Server-Side Time Validation:** Run times are validated server-side to counteract device-clock manipulation of offline earnings.
 * **Rewarded Ads:** Free rewarded-ad boosts do not count as a paid booster; runs that use them stay on the unboosted board.
 * **Royal Jelly:** Using purchased Royal Jelly during a run counts as a paid booster; Royal Jelly earned through play does not.
@@ -93,6 +97,8 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 * **Tone & Audio:** Playful, whimsical, and cozy. Relaxed ukulele and acoustic background music paired with tactile popping sound effects for cell uncapping.
 
 ### Progression Tiers & Biomes
+Biomes are stages within a single run, played in order. Reaching a milestone in the current biome unlocks the next (milestones TBD), and a reset returns the player to Sunny Meadow.
+
 1. **Sunny Meadow:** Rolling green hills, wild clover, and classic wooden Langstroth hives (*Wildflower Gold Honey*).
 2. **Alpine Valley:** Pine trees, lavender fields, and Swiss-style chalet hives (*Frosted Lavender Honey*).
 3. **Enchanted Grove:** Oversized glowing mushrooms, night-blooming flora, and lantern-shaped hanging hives (*Moonlight Nectar*).
