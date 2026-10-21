@@ -19,6 +19,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 * **Target Audience:** Families and players of all ages.
 * **Team:** Solo developer directing AI agents in Claude Code (see AI Architecture).
 * **Timeline:** Launch within 6 months (date TBD).
+* **Languages:** English and French at launch.
 * **Vertical Slice (First Playable):** Mobile only, Sunny Meadow only, from the Phase 1 manual minigame through the first automation upgrades (Phase 2), with a minimal reset. No monetization, leaderboards, or backend yet.
 * **Launch Scope:** Mobile only; Sunny Meadow and Alpine Valley; rewarded ads and the Impact Pass; local personal-best run times; periodically updated impact totals.
 * **Post-Launch:** Biomes 3–4 (Enchanted Grove, Cloud Gardens), the Patron Pass, online leaderboards, and the live Impact Dashboard.
@@ -100,11 +101,19 @@ Online leaderboards are post-launch; at launch, players see local personal-best 
 
 * **Offline Earnings:** Free players earn offline up to a cap (hours TBD once progression numbers are decided). The Impact Pass extends this, and the Patron Pass extends it to 24 hours.
 
-### 6. Onboarding & First Session
+### 6. Story Premise & Onboarding
+**Premise:** The player discovers a tiny magical pocket world that needs a beekeeper to restore it.
+
 A guide character (e.g., a queen bee; name and personality TBD) walks new players through their first session:
 * Explains why the meadow matters and introduces the farm.
 * Guides the first manual harvest (uncapping and centrifuge extraction).
 * Guides the first upgrade purchase.
+
+### 7. Accessibility
+* **No-Rapid-Tap Mode:** Replaces speed taps and crank spinning with hold-to-crank or a single tap.
+* **Haptics & Sound Toggles:** Vibration, sound effects, and music can each be turned on or off.
+* **Colour-Blind Support:** Information never relies on colour alone (e.g., capped and uncapped cells also differ in shape or texture).
+* **Text Size & One-Handed Play:** Adjustable text size, and all UI reachable with one thumb.
 
 ---
 
@@ -130,12 +139,13 @@ Biomes are stages within a single run, played in order. Reaching a milestone in 
 ### Conservation Partnerships
 * **In-Game Impact Dashboard:** Tracks live community restoration stats (e.g., total square meters of bee habitat restored).
 * **Canadian Non-Profit Partnerships:** Initial donation routing targets organizations such as Pollinator Partnership Canada, Wildlife Preservation Canada, and local provincial native bee societies.
+* **Donation Commitments:** Each revenue stream donates one fixed, auditable percentage, stated as a single number rather than a range (values TBD before any cause marketing).
 
 ### Monetization Architecture
-* **Non-Predatory Rewarded Ads:** Optional 2x production boosts explicitly tied to native habitat funding.
-* **Impact Pass (Monthly Pass):** Offers mid-tier quality-of-life perks (auto-tap helpers, extended offline production) with 25–50% of proceeds pledged to conservation partners.
+* **Non-Predatory Rewarded Ads:** Optional 2x production boosts explicitly tied to native habitat funding, with a fixed percentage of ad revenue donated (TBD).
+* **Impact Pass (Monthly Pass):** Offers mid-tier quality-of-life perks (auto-tap helpers, extended offline production) with a fixed percentage of proceeds pledged to conservation partners (TBD).
 * **Top-Tier Monetization: Adopt-a-Hive ("Patron Pass", Monthly Subscription)**
-  * *Concept:* The premier monetization tier (highest cost / highest real-world impact). All Patron bonuses are active only while the subscription is active and stop when the player stops paying. A significant portion of proceeds directly funds both managed hives and native bee habitat restoration with conservation partners.
+  * *Concept:* The premier monetization tier (highest cost / highest real-world impact). All Patron bonuses are active only while the subscription is active and stop when the player stops paying. A fixed percentage of proceeds (TBD) directly funds both managed hives and native bee habitat restoration with conservation partners.
   * *Visual Prestige:* Unlocks an engraved mahogany & brass hive skin with a custom nameplate displaying real-world restoration coordinates, plus a golden "Patron" badge on speed-run leaderboards.
   * *Automation & QoL:* Grants the "Golden Drone" auto-collector (automatically collects wild nectar drops and handles pest events) and extends offline idle earnings up to 24 hours.
   * *Subscription Boosts:* +25% global honey value multiplier (persists across Phase 3 resets while subscribed) and a daily stipend of Royal Jelly, the premium currency, which speeds up progression (values TBD once progression numbers are decided; upgrades and research are purchased with in-game money).
