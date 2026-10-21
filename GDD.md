@@ -72,7 +72,7 @@ Progression is split across three synergizing upgrade paths using an exponential
 * **Tree B: Hive & Tool Efficiency**
   * *Heated Uncapping Fork:* Increases swipe radius by +12% per level and adds up to +5% batch bonus for clean cuts (base cost $40, 1.22x growth, max level 5).
   * *Centrifuge Gearing:* Reduces required extraction taps/spins by -15% per level (base cost $35, 1.20x growth, max level 5).
-  * *Expanded Frame Deep:* Increases frame capacity from 10 jars to 25 jars per harvest (base cost $150, 1.45x growth, max level 3).
+  * *Deep Frame:* Increases frame capacity from 10 jars to 25 jars per harvest (base cost $150, 1.45x growth, max level 3).
   * *Overflow Storage (optional):* Stores honey produced after the hive is full, so returning players have extra frames waiting to harvest (capacity and costs TBD).
   * *Auto-Sell (optional):* Automatically sells overflow honey at a discounted price (discount and costs TBD).
   * *Automation:* Automated uncapping hubs, electric centrifuges, and auto-transport trucks, bought with in-game money. Buying the first automation upgrade moves the player into Phase 2 (costs TBD).
