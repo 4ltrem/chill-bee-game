@@ -1,3 +1,9 @@
+---
+author: terry
+type: balance
+status: applied
+description: Royal Crystal boost formula (+10% additive) and extra starting hives
+---
 # Royal Crystal Balance Report
 **Author:** Terry, the Progression Tree Expert
 **Source of truth:** `GDD.md` (Phase 3 / Royal Crystal, Tree C Hive Balance, Capstone, Leaderboards, Patron Pass). No separate progression file exists yet.

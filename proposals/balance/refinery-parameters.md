@@ -1,6 +1,12 @@
+---
+author: terry
+type: balance
+status: applied
+description: Refinery parameters, revision 2; stand-in model, re-derive after the reference sim
+---
 # Royal Honey Refinery Parameters (revision 2)
 **Author:** Terry, the Progression Tree Expert
-**Sources:** `GDD.md` (Capstone, Phase 3, Tree C, Land/Grid/Units, Leaderboards, Currencies, Patron Pass), `design/capstone-machine.md` (Gerard, Option 2 Refinery, §5 parameter list), `balance/royal-crystal-balance.md` (Terry, rush crossover model), and revision 1 of this file (superseded).
+**Sources:** `GDD.md` (Capstone, Phase 3, Tree C, Land/Grid/Units, Leaderboards, Currencies, Patron Pass), `proposals/design/capstone-machine.md` (Gerard, Option 2 Refinery, §5 parameter list), `proposals/balance/royal-crystal-balance.md` (Terry, rush crossover model), and revision 1 of this file (superseded).
 **Kept from approved inputs:** +10% additive per Crystal, M(n) = 1 + 0.1n. Patron +25% as a separate ×1.25 multiplier. Extra starting hives keep the Hive Balance penalty. Starting wildflower plots exist (cap reassessed in §2.3). Run time ends when the Crystal forms. Host-biome-only Synergy minimum. Crystals are account-wide.
 **Status:** Proposal. All hour values come from the stand-in model in §2. They become real numbers only after the reference sim (§6) is run, and the cap must then be re-derived with the §5.1 formula.
 

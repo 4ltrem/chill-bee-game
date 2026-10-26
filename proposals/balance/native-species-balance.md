@@ -1,6 +1,12 @@
+---
+author: terry
+type: balance
+status: applied
+description: Provisional native-species values; launch run length and Alpine affinity 1.92
+---
 # Native Bee Species Balance (provisional values)
 **Author:** Terry, the Progression Tree Expert
-**Sources:** `GDD.md` (Tree C, Native Bee Species table, Capstone, Land/Grid, Glossary), `design/native-species.md` (Gerard, §5 parameter list), `balance/refinery-parameters.md` (revision 2, the run model reused here), `balance/royal-crystal-balance.md`.
+**Sources:** `GDD.md` (Tree C, Native Bee Species table, Capstone, Land/Grid, Glossary), `proposals/design/native-species.md` (Gerard, §5 parameter list), `proposals/balance/refinery-parameters.md` (revision 2, the run model reused here), `proposals/balance/royal-crystal-balance.md`.
 **Settled inputs (not changed here):** no Meadow fill-rate species; Meadow = sweat bees (pollination) + leafcutter bees (sale value) + bumble bees (Journal-only visitor); Alpine = bumble (fill rate), mason (pollination), mining (sale value); Grove/Cloud fictional, and only one Cloud species may raise Refinery yield. Quality = sale value only. One capped native bonus per biome (species + small abundance term), applied only in that biome. No Journal bonus. Rush "equal for veterans". First run ≈ 72 h at launch, ≈ 47 h post-launch. Base S_Alpine < 2× Meadow. Starting plot ≤ Synergy 3. Crystal = +10% additive.
 **Status:** Proposal. Every number comes from the stand-in model in `refinery-parameters.md` §2, extended in §1 below. Re-derive once the reference sims exist.
 

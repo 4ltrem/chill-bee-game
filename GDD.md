@@ -57,7 +57,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 * **Phase 3 (Prestige Reset / Optimization):** Fully charging the capstone Royal Honey Refinery (see Capstone) produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) reset. Each Royal Crystal earned:
   * Permanently adds +10% production, additive (10 Crystals = +100%, 20 = 3x, 100 = 11x). The Patron Pass +25% is applied as a separate multiplier, not added to this percentage.
   * Can also be applied to one starting upgrade for future runs, chosen from a whitelist (e.g., bigger starting frames, faster tools, starting land, starting flower or hive units). Crystals shorten Phase 1 but never skip it: automation and the capstone cannot be pre-bought.
-  * Extra starting hives follow the normal Hive Balance rule and lower starting Habitat Health. A matching "starting wildflower plot" option raises it, capped at the habitat worth of Habitat Synergy level 3 (a higher start would open Alpine Valley at minute zero and mainly help the rush). The Crystal screen shows a live Habitat Health preview, and both options have a max level (TBD). See `balance/royal-crystal-balance.md`.
+  * Extra starting hives follow the normal Hive Balance rule and lower starting Habitat Health. A matching "starting wildflower plot" option raises it, capped at the habitat worth of Habitat Synergy level 3 (a higher start would open Alpine Valley at minute zero and mainly help the rush). The Crystal screen shows a live Habitat Health preview, and both options have a max level (TBD). See `proposals/balance/royal-crystal-balance.md`.
 
   Royal Crystals carry over between runs. Research trees are purchased with in-game money and do not carry over between runs. Research does three things: bee and flower genetics that multiply production, unlocking higher unit tiers (see Land, Grid & Units), and upgrades for the Royal Honey Refinery (values TBD).
 
@@ -103,8 +103,8 @@ Progression is split across three synergizing upgrade paths using an exponential
     * Pollinate flowers, raising Habitat Synergy (no growth timers).
     * Grant a native-bee bonus to production in Trees A and B (the habitat/bee synergy). The bonus is per biome: in each biome, species effects plus a small bonus for the number of native bees form one capped bonus that applies only in that biome. Each biome has a total ceiling and a smaller ceiling for each kind of boost (pollination speed, fill rate, sale value); Sunny Meadow's fill-rate ceiling is 0 and its sale-value ceiling is +15%. The abundance bonus (up to +5%) raises sale value only.
   * *Hive Balance:* Managed honeybees compete with native bees for the same flowers. Placing hives on the grid without enough flowers lowers Habitat Health, so players balance hive count against planting.
-  * *Habitat Synergy Level:* Each biome has a graded Habitat Synergy level, based on whether it has enough flowers for its bees to pollinate and make honey from. Synergy is money-driven: it rises as soon as flowers are placed, with no growth timers. Reaching a biome's unlock threshold opens the next biome, and the Refinery needs its host biome to stay above a minimum level (values in `balance/refinery-parameters.md`).
-  * *Native Bee Species:* Each species arrives when its biome's Habitat Health and flower needs are met, leaves if habitat drops, and returns when it recovers. Its effect applies only in its own biome. Full design: `design/native-species.md`; provisional values in `balance/native-species-balance.md` (Terry).
+  * *Habitat Synergy Level:* Each biome has a graded Habitat Synergy level, based on whether it has enough flowers for its bees to pollinate and make honey from. Synergy is money-driven: it rises as soon as flowers are placed, with no growth timers. Reaching a biome's unlock threshold opens the next biome, and the Refinery needs its host biome to stay above a minimum level (values in `proposals/balance/refinery-parameters.md`).
+  * *Native Bee Species:* Each species arrives when its biome's Habitat Health and flower needs are met, leaves if habitat drops, and returns when it recovers. Its effect applies only in its own biome. Full design: `proposals/design/native-species.md`; provisional values in `proposals/balance/native-species-balance.md` (Terry).
 
     | Biome | Species | Effect | Attracted by |
     |---|---|---|---|
@@ -122,7 +122,7 @@ Progression is split across three synergizing upgrade paths using an exponential
     * Quality effects raise market sale value only, not Refinery charge, except the Stardust bee in Cloud Gardens. Its +10% Refinery yield is already included in Cloud Gardens' planned affinity, so Cloud reaches its full rate only with Stardust bees.
   * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts. The Journal is a permanent collection and gives no production bonus. William drafts the facts (English and French) with cited sources, and a conservation partner reviews them before launch.
   * *On Reset:* The Bee Journal is permanent; Habitat levels reset with the farm each run.
-* **Capstone: Royal Honey Refinery** (full proposal: `design/capstone-machine.md`)
+* **Capstone: Royal Honey Refinery** (full proposal: `proposals/design/capstone-machine.md`)
   * **Build:** A very expensive machine bought with in-game money and placed on the grid in one biome (its host biome).
   * **Charge:** A single slider sends a share of every biome's honey into the Refinery, which refines it into Royal Honey. Each jar adds its sale value × its biome's affinity rate, and later biomes have higher affinity, so the stacked production of all biomes charges it fastest.
   * **Habitat lock:** The Refinery only refines while its host biome stays above a minimum Habitat Synergy level. Below it, refining pauses but nothing drains.
@@ -131,7 +131,7 @@ Progression is split across three synergizing upgrade paths using an exponential
   * **Target run length:** A new player's first run, from start to the first Royal Crystal, takes about 66 hours at launch and about 43–46 hours once biomes 3–4 ship (to be confirmed by Terry). The designer accepted the shorter launch run that native-bee bonuses cause, rather than raising costs to hold 72 hours. The shorter post-launch run is the price of keeping the rush equal for veterans.
   * **Charge phase:** How much of a run is spent charging the Refinery is TBD. Terry's model, before native bees, had about 45 of 72 hours at launch. Stacking production across biomes should speed up charging, and research can buy Refinery upgrades (effects TBD).
   * **Charging-speed cap:** Tolerant. For veterans, the rush and the normal route only need to stay within about 5% of each other in either direction; strict "never faster" equality is not required, because the routes rank on separate leaderboard categories (see Leaderboards). Revisit once the Refinery research upgrades exist.
-  * **Provisional values:** Terry's proposed parameters are in `balance/refinery-parameters.md`. They come from a stand-in model and must be re-derived once the real economy and the per-biome setup time are measured.
+  * **Provisional values:** Terry's proposed parameters are in `proposals/balance/refinery-parameters.md`. They come from a stand-in model and must be re-derived once the real economy and the per-biome setup time are measured.
   * **Content versions:** The charge target is stored per content version, so adding biomes 3–4 never changes stored run times. Each run also records the highest biome that contributed honey.
   * Parameters are set by Terry (build cost, charge target, biome affinities, Habitat Synergy minimum, maximum share sent to the Refinery, footprint).
 
@@ -202,7 +202,7 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 
 ### Progression Tiers & Biomes
 Biomes are stages within a single run, played in order. A biome's Habitat Synergy threshold (enough flowers for its bees to pollinate and make honey from) unlocks the next biome. Earlier biomes keep producing at full rate and can still be expanded and upgraded, so production stacks across biomes. A reset starts a new pocket world in Sunny Meadow. Each biome:
-* Produces its own honey, each more sought after (higher sale value) than the last (values TBD). Alpine Valley honey must sell for less than 1.92× Sunny Meadow honey, or it would charge the Refinery less per jar than Meadow honey (the Alpine affinity was lowered from 2.0 to 1.92 to account for Alpine bumble bees; see `balance/native-species-balance.md`).
+* Produces its own honey, each more sought after (higher sale value) than the last (values TBD). Alpine Valley honey must sell for less than 1.92× Sunny Meadow honey, or it would charge the Refinery less per jar than Meadow honey (the Alpine affinity was lowered from 2.0 to 1.92 to account for Alpine bumble bees; see `proposals/balance/native-species-balance.md`).
 * Attracts its own local native bee species, each with different effects (species and effects TBD), recorded in the Bee Journal.
 
 1. **Sunny Meadow:** Rolling green hills, wild clover, and classic wooden Langstroth hives (*Wildflower Gold Honey*).
@@ -255,7 +255,7 @@ All agents draw from one shared daily pool (no per-agent caps). The developer is
 
 In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 full design reviews (~600k each). The figure is provisional: `/usage` only shows whole percentages, so a 1% change could really be anywhere from about 0.5% to 1.5%, which puts the daily budget between roughly 1.3M and 4M tokens. Refine it by measuring again on larger tasks (e.g., a full design review), which move the weekly bar by several points.
 
-**Per-task estimates** (measured from agent runs; full log in `ai/agent-runs.md`):
+**Per-task estimates** (measured from agent runs; full log in `_meta/agent-runs.md`):
 
 | Agent | Tokens per task | Runtime per task | Basis |
 |---|---|---|---|
@@ -311,7 +311,7 @@ Each specialized agent functions as a dedicated module in the development workfl
 * **Role:** This agent creates agent descriptions following the template in the Agent Roles section of `GDD.md` when the lead architect notices there's a skill gap within the team, and the developer sees a git diff of the new agent(s) proposed inside the agent roles section.
 
 #### Connie, the Compliance Officer
-* **Role:** This agent reviews features for child-safety (kid mode, COPPA, app-store kids and families rules, ad SDK settings), charity and cause-marketing (donation disclosures, partner agreements), privacy and data (PIPEDA, Quebec Law 25, privacy policy), and app-store policy (subscriptions, premium currency, rewarded ads, donations) risks when a feature touches those areas or before store submission, and the developer sees a findings report and checklist in `compliance/`, citing official sources, with items needing lawyer or partner sign-off marked. Defined as a runnable Claude Code agent in `.claude/agents/compliance-officer.md`.
+* **Role:** This agent reviews features for child-safety (kid mode, COPPA, app-store kids and families rules, ad SDK settings), charity and cause-marketing (donation disclosures, partner agreements), privacy and data (PIPEDA, Quebec Law 25, privacy policy), and app-store policy (subscriptions, premium currency, rewarded ads, donations) risks when a feature touches those areas or before store submission, and the developer sees a findings report and checklist in `proposals/compliance/`, citing official sources, with items needing lawyer or partner sign-off marked. Defined as a runnable Claude Code agent in `.claude/agents/compliance-officer.md`.
 
 #### Quinn, the QA & Build Engineer
 * **Role:** This agent writes and runs tests, produces mobile builds, and profiles performance against the 60 FPS target when a feature or build is ready for testing, and the developer sees a test report, build output, and performance profile.
@@ -350,7 +350,7 @@ Dedicated section for defining agent prompt constraints to ensure consistent, re
 
 ## Glossary
 
-Terms used in this document and in the design and balance reports (`design/`, `balance/`).
+Terms used in this document and in the design and balance reports (`proposals/design/`, `proposals/balance/`).
 
 ### Runs & Routes
 | Term | Also called | Meaning |

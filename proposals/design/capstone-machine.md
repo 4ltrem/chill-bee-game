@@ -1,6 +1,12 @@
+---
+author: gerard
+type: design
+status: applied
+description: Royal Honey Refinery capstone concept; adopted into the GDD Capstone section
+---
 # Capstone Concept Proposal: Royal Crystal Chamber
 **Author:** Gerard, the Gameplay Architect
-**Sources:** `GDD.md` (Phase 3, Tree C, Capstone, Land/Grid/Units, Leaderboards, Currencies, Story, Biomes), `balance/royal-crystal-balance.md` (Terry; option A, +10% additive per Crystal, pending approval).
+**Sources:** `GDD.md` (Phase 3, Tree C, Capstone, Land/Grid/Units, Leaderboards, Currencies, Story, Biomes), `proposals/balance/royal-crystal-balance.md` (Terry; option A, +10% additive per Crystal, pending approval).
 **Status:** Proposal. No numbers are final; every tunable is listed in §5 for Terry.
 
 ---

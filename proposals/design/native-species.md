@@ -1,6 +1,12 @@
+---
+author: gerard
+type: design
+status: applied
+description: Native bee species effects per biome; adopted into the GDD Tree C species table
+---
 # Native Bee Species: Biome Effects Proposal
 **Author:** Gerard, the Gameplay Architect
-**Sources:** `GDD.md` (Tree C: Flower Patches, Native Bees, Hive Balance, Habitat Synergy, Native Bee Species, Bee Journal, On Reset; Land, Grid & Units; Capstone; Biomes; Leaderboards; Glossary), `design/capstone-machine.md`, `balance/refinery-parameters.md` (Terry, revision 2).
+**Sources:** `GDD.md` (Tree C: Flower Patches, Native Bees, Hive Balance, Habitat Synergy, Native Bee Species, Bee Journal, On Reset; Land, Grid & Units; Capstone; Biomes; Leaderboards; Glossary), `proposals/design/capstone-machine.md`, `proposals/balance/refinery-parameters.md` (Terry, revision 2).
 **Trigger:** Peer feedback (Jaime): do bees behave differently by biome, e.g. how quickly the fill meter rises?
 **Status:** Proposal. No numbers are final; every tunable is listed in §5 for Terry. Natural-history claims are working assumptions until William and a conservation partner check them (§1.3).
 

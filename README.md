@@ -51,11 +51,13 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 
 | Path | Contents |
 |---|---|
+| [AGENTS.md](AGENTS.md) | Entry file for AI agents: where everything lives and where to go for each task. [CONTEXT.md](CONTEXT.md) describes the design loop (request, proposal, decision, apply). |
 | [GDD.md](GDD.md) | Game design document |
 | [gdd-review/reviews/](gdd-review/reviews/) | A multi-agent design review of the first draft. Six reviewer agents each reviewed it independently, then cross-examined each other, and a moderator wrote a synthesis ([SYNTHESIS.md](gdd-review/reviews/SYNTHESIS.md)). It was run with [gdd-review-kit](https://github.com/GixGosu/gdd-review-kit). |
 | [gdd-review/gdd.txt](gdd-review/gdd.txt) | Snapshot of the GDD as it was reviewed. Many review findings have since been addressed in `GDD.md`. |
-| [design/](design/) | Feature design proposals, e.g. the capstone [Royal Honey Refinery](design/capstone-machine.md) (Gerard). |
-| [balance/](balance/) | Balance reports, e.g. [Royal Crystal balance](balance/royal-crystal-balance.md) (Terry). |
+| [proposals/design/](proposals/design/) | Feature design proposals, e.g. the capstone [Royal Honey Refinery](proposals/design/capstone-machine.md) (Gerard). |
+| [proposals/balance/](proposals/balance/) | Balance reports, e.g. [Royal Crystal balance](proposals/balance/royal-crystal-balance.md) (Terry). |
+| [_meta/agent-runs.md](_meta/agent-runs.md) | Token, tool-call and duration log of every agent run. |
 | [.claude/agents/](.claude/agents/) | Runnable Claude Code agent definitions, starting with Connie, the Compliance Officer. |
 | [gdd-review-v2/](gdd-review-v2/) | Second review, of the GDD at commit `8ddb97a` after the first round of fixes and peer feedback. Its [SYNTHESIS.md](gdd-review-v2/reviews/SYNTHESIS.md) compares the results with the first review. |
 
