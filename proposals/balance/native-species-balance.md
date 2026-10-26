@@ -29,12 +29,14 @@ description: Provisional native-species values; launch run length and Alpine aff
 
 Run model unchanged: **T_k(n) = F_k + B_k / M + X / (min(M · J_k, κ) · Ȳ_k)**, M = 1 + 0.1n.
 
-| Channel | Enters the model as | Fades with Crystals? |
+| Channel | Enters the model as | Non-scaling once κ binds? |
 |---|---|---|
-| Pollination (sweat, mason, glowcap, drift) | Synergy per raw flower × (1 + p). Lowers the habitat money inside B (Meadow to 5 or 7, Alpine to 5 or 6, etc.). | Yes (÷M) |
-| Sale value (leafcutter, mining, Stardust, abundance) | Income × (1 + q) on that biome's share of income after the species arrives. Lowers B. **Never** enters Royal Honey (Royal Honey uses base S × AFFINITY). | Yes (÷M) |
-| Fill rate (bumble, lantern) | That biome's jars × (1 + f): raises income (B), raises J, and shifts the jar mix (Ȳ). | J part does not fade until κ binds |
-| Refinery yield (Stardust only) | Y_Cloud × (1 + y), folded into Y_Cloud | No |
+| Pollination (sweat, mason, glowcap, drift) | Synergy per raw flower × (1 + p). Lowers the habitat money inside B (Meadow to 5 or 7, Alpine to 5 or 6, etc.). | No (÷M, like all of B) |
+| Sale value (leafcutter, mining, Stardust, abundance) | Income × (1 + q) on that biome's share of income after the species arrives. Lowers B. **Never** enters Royal Honey (Royal Honey uses base S × AFFINITY). | No (÷M, like all of B) |
+| Fill rate (bumble, lantern) | That biome's jars × (1 + f): raises income (B), raises J, and shifts the jar mix (Ȳ). | Ȳ shift: yes. J part: no (÷M before κ binds, no effect after) |
+| Refinery yield (Stardust only) | Y_Cloud × (1 + y), folded into Y_Cloud | Yes |
+
+"Scales with Crystals" does not by itself make a channel safe for the rush gap. Before κ binds, B and the charge term both scale ÷M, and routes cross at M\* = ΔW / ΔF (`refinery-parameters.md` §4.1), with the 1/M already inside that ratio. What matters is **how far a channel moves ΔW**. Money channels move only the habitat-bill gap inside ΔB (a few hours). A Meadow fill-rate species would cut the rush's 67.5 h charge term instead: at +20% Meadow fill, ΔW drops 16.5 → ≈ 8.1 and the uncapped crossover moves from n ≈ 155 to n ≈ 70. After κ binds, only the Ȳ shift and Refinery yield survive, which is why the bumble bees are folded into Y_Alpine (§0).
 
 Stand-in assumptions added to `refinery-parameters.md` §2:
 - **Raw Habitat Health (HH) scale:** 10 HH = 1 Synergy level of raw flower habitat, before pollination. Synergy = raw × (1 + pollination). Thresholds use raw HH (Gerard §2.1, no runaway loop).
@@ -202,7 +204,7 @@ Readings:
 2. **Run length now depends on species presence.** Losing bumble bees costs the launch normal route about 6.6 h (72 → 78.6 h). The build-mode "would leave" preview (Gerard §3.1) is a balance requirement, not just UX.
 3. **Higher cap cost for veterans at launch** (0% → 3.8% at n = 150). Small in hours, but the "at capacity" panel appears ~15 Crystals earlier.
 4. **v2 margins are thin.** Grove-stop at 1.004 and Alpine-stop at 1.009 depend on ΔF = 1 h, which is still unmeasured (`refinery-parameters.md` §5.3: ΔF = 1.5 h needs κ ≈ 11).
-5. **Abundance curve favours the rush slightly** (its Meadow sits at raw 56 vs 40). Money-only and fades with M, but do not raise the coefficient above ~0.05 without re-running.
+5. **Abundance curve favours the rush slightly** (its Meadow sits at raw 56 vs 40). Money-only, so it moves ΔB only slightly (§1), but do not raise the coefficient above ~0.05 without re-running.
 6. **Alpine flower list is still TBD**; mason and mining bees depend on the "Alpine wildflower slot". If fireweed is the only Alpine flower at launch, set mason's flower requirement to fireweed.
 7. **Stand-in model.** Habitat costs per level, phase lengths and interleaving are guesses. The species' effect on B (~2 h) is the least certain number; the fill-rate effect on J and Ȳ is structural and reliable.
 

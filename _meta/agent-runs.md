@@ -59,7 +59,8 @@ These are the subagent runs from the design-review sessions (2026-10-14 to 2026-
 | Terry: Refinery parameters | pre-ICM | 135,513 | 13 | 655 s |
 | Terry: Refinery rebalance (4 designer decisions) | pre-ICM | 174,042 | 25 | 2,585 s |
 | Terry: native species balance | pre-ICM | 138,229 | 13 | 448 s |
-| **Average (4 runs)** | | **125,578** | | **961 s** |
+| Terry: species check + progression levers | pre-ICM | 130,520 | 16 | 357 s |
+| **Average (5 runs)** | | **126,566** | | **840 s** |
 
 A full design review (Round 1 + Round 2, 12 agent runs) used about 586k subagent tokens the first time and 634k the second. The orchestrator's synthesis is not included.
 
@@ -85,14 +86,14 @@ All agents draw from one shared daily pool (no per-agent caps). The developer is
 | **Daily budget** | **~2.0M tokens/day** (14.3 × 138k) |
 | Tokens per 1% of the 5-hour session | ~28,000 (so one session ≈ 2.8M tokens) |
 
-In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 full design reviews (~600k each). The figure is provisional: `/usage` only shows whole percentages, so a 1% change could really be anywhere from about 0.5% to 1.5%, which puts the daily budget between roughly 1.3M and 4M tokens. Refine it by measuring again on larger tasks (e.g., a full design review), which move the weekly bar by several points.
+In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 full design reviews (~600k each). The figure is provisional: `/usage` only shows whole percentages, so a 1% change could really be anywhere from about 0.5% to 1.5%, which puts the daily budget between roughly 1.3M and 4M tokens. A second reading (Terry's progression-levers run, 130,520 tokens) was taken mid-run and overlapped other sessions, so it only confirms the range: weekly went 12% → 14% (mid-run) → 15%, and the session window rose 3% for the tail of the run (~28k tokens per 1%, matching the first calibration). Refine it by measuring again on larger tasks (e.g., a full design review), which move the weekly bar by several points.
 
 ## Per-Task Estimates for the Agents
 
 | Agent | Basis | Tokens per task | Runtime per task |
 |---|---|---|---|
 | Gerard, the Gameplay Architect | Measured, pre-ICM (average of 2 runs; 59.8k–83.5k) | 71,674 | ~3 min |
-| Terry, the Progression Tree Expert | Measured, pre-ICM (average of 4 runs; range 54.5k–174k) | 125,578 | ~16 min |
+| Terry, the Progression Tree Expert | Measured, pre-ICM (average of 5 runs; range 54.5k–174k) | 126,566 | ~14 min |
 | Connie, the Compliance Officer | Not yet run. Estimated from the document-review average (similar task: read the GDD, write findings) | ~42,000 | ~1 min |
 | William, the Writer | Not yet run. Estimated from Gerard's feature-design runs (similar task: write a design document from the GDD) | ~72,000 | ~3 min |
 | Bob, the Builder | No similar run | TBD | TBD |
