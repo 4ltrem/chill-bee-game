@@ -6,6 +6,12 @@
 ## Executive Summary
 A cozy, casual beekeeping and farming mobile-first game inspired by and the love child of *Egg, Inc.* and *Factorio* featuring wacky, satisfying progression and upgrades for your beehive. The primary gameplay objective is to make more honey and money. In the game, players can upgrade the beehive, the bees, and the native habitat—three distinct progression trees that feature synergizing effects with each other. The habitat tree measures success in biodiversity rather than honey, teaching the difference between managed honeybees and native wild bees. 
 
+**Design Pillars.** Every balance and feature decision is checked against these:
+| Pillar | Inspired by | In this game |
+|---|---|---|
+| **Optimization pays off** | *Factorio* | Better layouts, denser unit tiers, and smarter upgrade choices visibly produce more honey. A player who optimizes should always see the result. |
+| **The thrill of the next unlock** | *Egg, Inc.* | New upgrades, unit tiers, biomes, honeys, and native bee species arrive often, and each one changes what the farm does. Prestige makes the early game fast so players reach new things sooner. |
+
 The UI is simple with no player character or avatar. The game acts as a pocket dimension on your device where players can zoom out and pan across the farm as it expands. The core gameplay loop spans three distinct phases with decreasing manual work:
 * **Phase 1 (The Grinding Stage):** High manual labor. Players manually scrape/unframe and refine honeycombs through an uncapping and extraction minigame, plant and water flowers, and manually sell the product. (Players retain access to these manual interaction screens in later phases to manage tool upgrades).
 * **Phase 2 (The Automation Era):** Players obtain their first few upgrades to automate harvesting, uncapping, and logistics, significantly reducing manual tasks.
