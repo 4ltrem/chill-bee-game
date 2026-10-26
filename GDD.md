@@ -1,5 +1,5 @@
 # Chill Bee Game Design Document
-**Working Titles:** Digibees, My Bee Hotel, Pocket Hive
+**Working Titles:** Digibees, My Bee Hotel, Pocket Hive, Beehaven
 
 ---
 
@@ -253,14 +253,14 @@ All agents draw from one shared daily pool (no per-agent caps). The developer is
 | **Daily budget** | **~2.0M tokens/day** (14.3 × 138k) |
 | Tokens per 1% of the 5-hour session | ~28,000 (so one session ≈ 2.8M tokens) |
 
-In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 full design reviews (~600k each). The figure is provisional: `/usage` only shows whole percentages, so a 1% change could really be anywhere from about 0.5% to 1.5%, which puts the daily budget between roughly 1.3M and 4M tokens. Refine it by measuring again on larger tasks (e.g., a full design review), which move the weekly bar by several points.
+In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 full design reviews (~600k each). The figure is provisional: `/usage` only shows whole percentages, so a 1% change could really be anywhere from about 0.5% to 1.5%, which puts the daily budget between roughly 1.3M and 4M tokens. A second reading (Terry's progression-levers run, 130,520 tokens) was taken mid-run and overlapped other sessions, so it only confirms the range: weekly went 12% → 14% (mid-run) → 15%, and the session window rose 3% for the tail of the run (~28k tokens per 1%, matching the first calibration). Refine it by measuring again on larger tasks (e.g., a full design review), which move the weekly bar by several points.
 
 **Per-task estimates** (measured from agent runs; full log in `ai/agent-runs.md`):
 
 | Agent | Tokens per task | Runtime per task | Basis |
 |---|---|---|---|
 | Gerard | 71,674 | ~3 min | Measured (average of 2 runs; 59.8k–83.5k) |
-| Terry | 125,578 | ~16 min | Measured (average of 4 runs; 54.5k–174k) |
+| Terry | 126,566 | ~14 min | Measured (average of 5 runs; 54.5k–174k) |
 | Connie | ~42,000 | ~1 min | Estimated from document-review runs (not yet run) |
 | William | ~72,000 | ~3 min | Estimated from Gerard's design-writing runs (not yet run) |
 | Bob, Patricia, Andrew, Martin, Quinn | TBD | TBD | No similar runs yet |
