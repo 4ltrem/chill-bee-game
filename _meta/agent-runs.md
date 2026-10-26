@@ -1,6 +1,6 @@
 # Agent Run Log & Token Estimates
 
-These are the subagent runs from the design-review sessions (2026-10-14 to 2026-10-26). For each run, the harness reported tokens, tool calls and duration. Tokens are what the subagent itself processed, including any cached context. They exclude the orchestrating main session, and they may not map one-to-one onto Claude Pro plan usage (see the calibration step in `GDD.md`, Token Budgets).
+These are the subagent runs from the design-review sessions (2026-10-14 to 2026-10-26). For each run, the harness reported tokens, tool calls and duration. Tokens are what the subagent itself processed, including any cached context. They exclude the orchestrating main session, and they may not map one-to-one onto Claude Pro plan usage (see the calibration under Daily Budget below).
 
 ## Runs by Task Type
 
@@ -61,7 +61,31 @@ These are the subagent runs from the design-review sessions (2026-10-14 to 2026-
 
 A full design review (Round 1 + Round 2, 12 agent runs) used about 586k subagent tokens the first time and 634k the second. The orchestrator's synthesis is not included.
 
-## Per-Task Estimates for the GDD Agents
+## Daily Budget
+
+All agents draw from one shared daily pool (no per-agent caps). The developer is on the Claude Pro plan, which has a rolling 5-hour limit and a weekly limit shared across Claude and Claude Code, including subagents. Anthropic does not publish a token count for these limits, so the absolute budget is calibrated:
+1. Run a known task (e.g., one design-review round, about 250k tokens) and note the weekly usage percentage in `/usage` before and after.
+2. Tokens per 1% of the weekly limit = tokens used ÷ percentage change.
+3. **Daily budget** = 14.3% of the weekly limit (1/7) × tokens per 1%.
+
+**First calibration (2026-10-26, Terry's native-species run):**
+
+| Measure | Before | After | Change |
+|---|---|---|---|
+| Weekly usage | 11% | 12% | 1% |
+| Session (5 h) usage | 65% | 70% | 5% |
+| Subagent tokens | | | 138,229 |
+
+| Result | Value |
+|---|---|
+| Tokens per 1% of the weekly limit | ~138,000 |
+| Weekly limit (estimate) | ~13.8M tokens |
+| **Daily budget** | **~2.0M tokens/day** (14.3 × 138k) |
+| Tokens per 1% of the 5-hour session | ~28,000 (so one session ≈ 2.8M tokens) |
+
+In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 full design reviews (~600k each). The figure is provisional: `/usage` only shows whole percentages, so a 1% change could really be anywhere from about 0.5% to 1.5%, which puts the daily budget between roughly 1.3M and 4M tokens. Refine it by measuring again on larger tasks (e.g., a full design review), which move the weekly bar by several points.
+
+## Per-Task Estimates for the Agents
 
 | Agent | Basis | Tokens per task | Runtime per task |
 |---|---|---|---|
@@ -75,6 +99,6 @@ A full design review (Round 1 + Round 2, 12 agent runs) used about 586k subagent
 | Martin, the Hiring Manager | No similar run (Connie's definition was written by the main session, not by an agent run) | TBD | TBD |
 | Quinn, the QA & Build Engineer | No similar run | TBD | TBD |
 
-All runs above used Opus. The GDD (AI Architecture, Suggested model per agent) assigns smaller models to lighter agents, so re-measure those agents' costs once they run on Sonnet or Haiku.
+All runs above used Opus. The roster in [team.md](team.md) assigns smaller models to lighter agents, so re-measure those agents' costs once they run on Sonnet or Haiku.
 
 Connie also checks official sources on the web. The documentation-research run (about 47k tokens) suggests a compliance review with web checks may need closer to 90k tokens. Update Connie's row after her first run.

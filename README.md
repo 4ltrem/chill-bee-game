@@ -38,7 +38,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 
 ### Audience & Scope
 - **Audience:** adults and teens who play cozy games, with family-friendly content. An age gate turns on a kid mode for under-13s: no personalized ads, a parental gate on purchases, and no public username.
-- **Team:** a solo developer directing AI agents in Claude Code. The agent roles are in the GDD.
+- **Team:** a solo developer directing AI agents in Claude Code. The agent roles are in [_meta/team.md](_meta/team.md).
 - **Engine:** Godot (GDScript). Art comes from purchased low-poly asset packs.
 - **Launch platforms:** iOS and Android, in English and French.
 - **Timeline:** milestone-based, with no fixed date. The first playable is one full rough run in Sunny Meadow.
@@ -100,6 +100,6 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 
 ### Production
 - [ ] Milestone dates
-- [ ] Daily token budget: first calibration gives ~2.0M tokens/day (provisional; refine with a larger task, see GDD)
+- [ ] Daily token budget: first calibration gives ~2.0M tokens/day (provisional; refine with a larger task, see [_meta/agent-runs.md](_meta/agent-runs.md))
 - [ ] Test device models and visual bee cap
 - [ ] Backend provider (managed game-backend service)

@@ -4,7 +4,7 @@ The flow in one line: the designer asks, an agent proposes, the designer decides
 
 | Step | Who | Job |
 |---|---|---|
-| 1. Request | designer | name the question and the agent role (Gerard: design, Terry: balance, Connie: compliance) |
+| 1. Request | designer | name the question and the agent (`gameplay-architect`, `progression-tree-expert`, `compliance-officer`; roster in `_meta/team.md`) |
 | 2. Propose | agent | copy `_templates/proposal.md` into `proposals/<type>/`, `status: proposed` |
 | 3. Decide | designer | read the proposal; accept, change or reject. This is the check |
 | 4. Apply | designer + agent | edit the accepted decisions into `GDD.md`, update the README TBD list, set `status: applied` (or `rejected`) |
@@ -13,7 +13,7 @@ The flow in one line: the designer asks, an agent proposes, the designer decides
 
 Each shelf's own `CONTEXT.md` holds its inputs, outputs and check.
 
-Factory (stable, every run): `GDD.md`, `_templates/proposal.md`, `.claude/agents/`
+Factory (stable, every run): `GDD.md`, `_templates/`, `.claude/agents/`, `_meta/team.md`
 Product (new each run): one file per proposal under `proposals/`
 
 Status is on disk: each proposal's `status:` line (`proposed`, `applied`, `rejected`, `superseded`), rolled up in the generated `proposals/*/_index.md`. Open game questions live only in the README's Outstanding TBDs list.

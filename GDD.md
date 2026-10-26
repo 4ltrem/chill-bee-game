@@ -23,7 +23,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 
 ## Audience & Production Plan
 * **Target Audience:** Adults and teens who play cozy games. Content is family-friendly, but the game is not marketed to children; kid mode still protects under-13 players (see Child Safety).
-* **Team:** Solo developer directing AI agents in Claude Code (see AI Architecture).
+* **Team:** Solo developer directing AI agents in Claude Code (roster in `_meta/team.md`).
 * **Art Source:** Purchased low-poly asset packs, adapted and edited by the developer.
 * **Timeline:** Milestone-based, with no fixed launch date. Proposed milestones:
   1. First playable (vertical slice below).
@@ -231,98 +231,7 @@ Biomes are stages within a single run, played in order. A biome's Habitat Synerg
 ---
 
 ## AI Architecture
-
-### Token Budgets
-All agents draw from one shared daily pool (no per-agent caps). The developer is on the Claude Pro plan, which has a rolling 5-hour limit and a weekly limit shared across Claude and Claude Code, including subagents. Anthropic does not publish a token count for these limits, so the absolute budget is calibrated:
-1. Run a known task (e.g., one design-review round, about 250k tokens) and note the weekly usage percentage in `/usage` before and after.
-2. Tokens per 1% of the weekly limit = tokens used ÷ percentage change.
-3. **Daily budget** = 14.3% of the weekly limit (1/7) × tokens per 1%.
-
-**First calibration (2026-10-26, Terry's native-species run):**
-
-| Measure | Before | After | Change |
-|---|---|---|---|
-| Weekly usage | 11% | 12% | 1% |
-| Session (5 h) usage | 65% | 70% | 5% |
-| Subagent tokens | | | 138,229 |
-
-| Result | Value |
-|---|---|
-| Tokens per 1% of the weekly limit | ~138,000 |
-| Weekly limit (estimate) | ~13.8M tokens |
-| **Daily budget** | **~2.0M tokens/day** (14.3 × 138k) |
-| Tokens per 1% of the 5-hour session | ~28,000 (so one session ≈ 2.8M tokens) |
-
-In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 full design reviews (~600k each). The figure is provisional: `/usage` only shows whole percentages, so a 1% change could really be anywhere from about 0.5% to 1.5%, which puts the daily budget between roughly 1.3M and 4M tokens. Refine it by measuring again on larger tasks (e.g., a full design review), which move the weekly bar by several points.
-
-**Per-task estimates** (measured from agent runs; full log in `_meta/agent-runs.md`):
-
-| Agent | Tokens per task | Runtime per task | Basis |
-|---|---|---|---|
-| Gerard | 71,674 | ~3 min | Measured (average of 2 runs; 59.8k–83.5k) |
-| Terry | 125,578 | ~16 min | Measured (average of 4 runs; 54.5k–174k) |
-| Connie | ~42,000 | ~1 min | Estimated from document-review runs (not yet run) |
-| William | ~72,000 | ~3 min | Estimated from Gerard's design-writing runs (not yet run) |
-| Bob, Patricia, Andrew, Martin, Quinn | TBD | TBD | No similar runs yet |
-
-### API Constraints
-All agents run through Claude Code, using different models depending on the task. API usage is divided into modular execution pipelines, ensuring individual agent calls remain constrained to their designated token windows to prevent context overlap.
-
-**Suggested model per agent.** Larger models use up the shared Pro limits faster, so each agent gets the smallest model that fits its task type. Set it with the `model:` field of the agent's file in `.claude/agents/`.
-
-| Agent | Task type | Suggested model | Why |
-|---|---|---|---|
-| Gerard | Feature design: reasons across all systems | Opus | Must catch contradictions between systems (e.g., the "nothing transfers between worlds" conflict) |
-| Terry | Balance analysis: multi-step progression math | Opus | Long, numeric, iterative modelling; errors compound across runs |
-| Patricia | Code generation (GDScript, backend) | Sonnet | Strong at routine code; escalate to Opus for architecture or backend design |
-| Quinn | Tests, builds, profiling | Sonnet | Writes tests and reads build and profiler output |
-| Connie | Compliance review with web checks | Sonnet | Rule lookup and checklists; a human signs off anyway. Use Opus for the pre-submission review |
-| William | Story outlines, EN/FR Journal facts | Sonnet | Good writing and French; facts are reviewed by a partner |
-| Bob | Godot scenes (`.tscn`) from a layout spec | Sonnet | Structured file output that follows a spec |
-| Andrew | Search and curate audio | Haiku | Search and list-making; little reasoning needed |
-| Martin | Agent descriptions from a template | Haiku | Fills a fixed template; the developer reviews the diff |
-
-Measured token costs above came from runs on Opus (the main session's model). Re-measure after switching an agent to a smaller model.
-
-### Actionable Strategy Formalized from Agent Role Definitions
-Each specialized agent functions as a dedicated module in the development workflow, executing discrete tasks triggered by developer inputs and producing structured outputs.
-
-### Agent Roles
-
-#### Gerard, the Gameplay Architect
-* **Role:** This agent analyzes the proposed feature against the existing gameplay system when the user proposes a new feature, and the developer sees a structured representation of how the feature will affect the others.
-
-#### Bob, the Builder
-* **Role:** This agent assembles biome dioramas and terrain chunks as Godot scene files (`.tscn`) when the user proposes a layout description, and the developer sees the finished scene, following the specs of the layout.
-
-#### Patricia, the Programmer
-* **Role:** This agent creates modular components and code for the game engine when a list of features is given, and the developer sees the completed components and/or script. Also owns backend integration.
-
-#### William, the Writer
-* **Role:** This agent writes the story outline when the user gives an idea for a story point, lesson, or goal, and the developer sees a completed outline. Also drafts the Bee Journal's real-world facts in English and French, with cited sources, for review by a conservation partner.
-
-#### Andrew, the Audiophile
-* **Role:** This agent searches and curates audio sound effects and music tracks when given a description of a sound, environment, vibe, or place, and the developer sees the curated structured list and accompanying folder with the selected audio files.
-
-#### Terry, the Progression Tree Expert
-* **Role:** This agent analyzes the balance of the progression tree, such as efficiency rating, cost, speed, space requirement, and other metrics available which can be found in the progression file when provided with a suggested upgrade/progression, and the developer sees a detailed report/outline comparing the suggestion against existing upgrades/progressions if possible.
-
-#### Martin, the Hiring Manager
-* **Role:** This agent creates agent descriptions following the template in the Agent Roles section of `GDD.md` when the lead architect notices there's a skill gap within the team, and the developer sees a git diff of the new agent(s) proposed inside the agent roles section.
-
-#### Connie, the Compliance Officer
-* **Role:** This agent reviews features for child-safety (kid mode, COPPA, app-store kids and families rules, ad SDK settings), charity and cause-marketing (donation disclosures, partner agreements), privacy and data (PIPEDA, Quebec Law 25, privacy policy), and app-store policy (subscriptions, premium currency, rewarded ads, donations) risks when a feature touches those areas or before store submission, and the developer sees a findings report and checklist in `proposals/compliance/`, citing official sources, with items needing lawyer or partner sign-off marked. Defined as a runnable Claude Code agent in `.claude/agents/compliance-officer.md`.
-
-#### Quinn, the QA & Build Engineer
-* **Role:** This agent writes and runs tests, produces mobile builds, and profiles performance against the 60 FPS target when a feature or build is ready for testing, and the developer sees a test report, build output, and performance profile.
-
----
-
-## Prompt Constraints
-Dedicated section for defining agent prompt constraints to ensure consistent, repeatable outputs from every model in the pipeline:
-1. **Scope Boundary:** Agents must only output deliverables strictly within their role domain (e.g., Patricia handles GDScript/C#, Terry handles numeric balance matrices).
-2. **Deterministic Formatting:** Output formats must follow predefined Markdown schemas or JSON data structures for seamless agent-to-agent communication.
-3. **No Hallucinated Systems:** All suggestions must ground themselves within the existing 3-phase progression model and low-poly 3D constraint set.
+The agent roster (roles, models and the rules every agent follows) is in `_meta/team.md`. Token costs and the daily budget are in `_meta/agent-runs.md`.
 
 ---
 
@@ -420,16 +329,3 @@ Terms used in this document and in the design and balance reports (`proposals/de
 | Time-skipped tag | Marks runs that spent Royal Jelly on time skips, earned or bought. They rank separately. |
 | Crystal tier | Groups by Royal Crystal count (e.g., 0, 1–5, 6–20, 21–50, 51–100, 101+). |
 | Run time | Wall-clock time from the start of a run until the Crystal forms, offline time included. |
-
-### Agents
-| Agent | Role | Suggested model | Agent file |
-|---|---|---|---|
-| Gerard | Gameplay Architect | Opus | — |
-| Bob | Builder | Sonnet | — |
-| Patricia | Programmer | Sonnet | — |
-| William | Writer | Sonnet | — |
-| Andrew | Audiophile | Haiku | — |
-| Terry | Progression Tree Expert | Opus | — |
-| Martin | Hiring Manager | Haiku | — |
-| Connie | Compliance Officer | Sonnet | `.claude/agents/compliance-officer.md` |
-| Quinn | QA & Build Engineer | Sonnet | — |
