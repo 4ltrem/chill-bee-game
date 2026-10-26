@@ -86,13 +86,20 @@ Progression is split across three synergizing upgrade paths using an exponential
   * *Artisanal Branding:* Increases base sale value per jar by +$2.50 (base cost $60, 1.25x growth, max level 10).
 * **Tree C: Native Habitat**
   Its own progression track, measured in biodiversity (Habitat Health and native bee species attracted) rather than honey. Upgrades are bought with in-game money (values TBD).
-  * *Flower Patches:* Plant and upgrade flower patches (e.g., Clover, Lavender, Buckwheat) to raise the meadow's Habitat Health.
+  * *Flower Patches:* Plant and upgrade patches of real Canadian native wildflowers to raise the biome's Habitat Health. Initial list (to be fact-checked):
+
+    | Biome | Native wildflowers |
+    |---|---|
+    | Sunny Meadow | Goldenrod, wild bergamot, New England aster, black-eyed Susan |
+    | Alpine Valley | Fireweed and other alpine wildflowers (TBD) |
+    | Enchanted Grove, Cloud Gardens | Fictional flowers, labelled as fictional in the Bee Journal |
   * *Native Bees:* Habitat Health attracts native wild bees to the farm, separate from the managed honeybees. Native bees:
     * Pollinate flowers, speeding flower growth and Habitat Health.
     * Grant production multipliers across Trees A and B (the habitat/bee synergy); more native bees means a bigger multiplier.
   * *Hive Balance:* Managed honeybees compete with native bees for the same flowers. Placing hives on the grid without enough flowers lowers Habitat Health, so players balance hive count against planting.
   * *Habitat Synergy Level:* Each biome has a graded Habitat Synergy level, based on whether it has enough flowers for its bees to pollinate and make honey from. Synergy is money-driven: it rises as soon as flowers are placed, with no growth timers. Reaching a biome's unlock threshold opens the next biome, and the Refinery needs its host biome to stay above a minimum level (values in `balance/refinery-parameters.md`).
-  * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts.
+  * *Native Bee Species:* Launch biomes attract real Canadian native bee groups (e.g., bumble bees, mason bees, leafcutter bees, sweat bees, mining bees; per-biome assignment TBD). Biomes 3–4 attract fictional species, clearly labelled as fictional in the Bee Journal. Each species has a mechanical effect in its biome: faster hive fill rate, faster pollination (Habitat Synergy rises faster), or better honey quality (higher sale value or Refinery yield). Effects are designed by Gerard and balanced by Terry (values TBD).
+  * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts. William drafts the facts (English and French) with cited sources, and a conservation partner reviews them before launch.
   * *On Reset:* The Bee Journal is permanent; Habitat levels reset with the farm each run.
 * **Capstone: Royal Honey Refinery** (full proposal: `design/capstone-machine.md`)
   * **Build:** A very expensive machine bought with in-game money and placed on the grid in one biome (its host biome).
@@ -237,7 +244,7 @@ Each specialized agent functions as a dedicated module in the development workfl
 * **Role:** This agent creates modular components and code for the game engine when a list of features is given, and the developer sees the completed components and/or script. Also owns backend integration.
 
 #### William, the Writer
-* **Role:** This agent writes the story outline when the user gives an idea for a story point, lesson, or goal, and the developer sees a completed outline.
+* **Role:** This agent writes the story outline when the user gives an idea for a story point, lesson, or goal, and the developer sees a completed outline. Also drafts the Bee Journal's real-world facts in English and French, with cited sources, for review by a conservation partner.
 
 #### Andrew, the Audiophile
 * **Role:** This agent searches and curates audio sound effects and music tracks when given a description of a sound, environment, vibe, or place, and the developer sees the curated structured list and accompanying folder with the selected audio files.
