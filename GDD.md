@@ -124,7 +124,7 @@ Progression is split across three synergizing upgrade paths using an exponential
   * **Speedrun route:** A player can stay in Sunny Meadow, rush the top unit tiers, keep just enough flowers for the habitat minimum, and send everything into the Refinery. This route is intentionally left open. It is clearly slower than the normal route for new and low-Crystal players, and about equal (within ~5%) for veteran players with many Crystals, so they can choose either route. A maximum Refinery charging speed keeps it from ever being clearly better.
   * **Target run length:** A new player's first run, from start to the first Royal Crystal, takes about 66 hours at launch and about 43–46 hours once biomes 3–4 ship (to be confirmed by Terry). The designer accepted the shorter launch run that native-bee bonuses cause, rather than raising costs to hold 72 hours. The shorter post-launch run is the price of keeping the rush equal for veterans.
   * **Charge phase:** How much of a run is spent charging the Refinery is TBD. Terry's model, before native bees, had about 45 of 72 hours at launch. Stacking production across biomes should speed up charging, and research can buy Refinery upgrades (effects TBD).
-  * **Charging-speed cap:** Whether the cap is strict (the rush is never faster) or tolerant (up to 2% faster) is TBD, to revisit once the Refinery research upgrades exist.
+  * **Charging-speed cap:** Tolerant. For veterans, the rush and the normal route only need to stay within about 5% of each other in either direction; strict "never faster" equality is not required, because the routes rank on separate leaderboard categories (see Leaderboards). Revisit once the Refinery research upgrades exist.
   * **Provisional values:** Terry's proposed parameters are in `balance/refinery-parameters.md`. They come from a stand-in model and must be re-derived once the real economy and the per-biome setup time are measured.
   * **Content versions:** The charge target is stored per content version, so adding biomes 3–4 never changes stored run times. Each run also records the highest biome that contributed honey.
   * Parameters are set by Terry (build cost, charge target, biome affinities, Habitat Synergy minimum, maximum share sent to the Refinery, footprint).
@@ -141,6 +141,7 @@ Leaderboards are opt-in: the game is cozy by default, and only players who choos
 * **Player Names:** Players build their display name from preset word lists (no free text). Kid-mode players have no public username.
 * **Run-Based Brackets:** Each run is tagged with every paid booster active during that run (e.g., Impact Pass, Patron Pass). A run with no purchases ranks on the unboosted board; boosted runs rank only against runs with the same booster set.
 * **Royal Crystal Tiers:** Runs are also bracketed by the player's Royal Crystal count (e.g., 0, 1–5, 6–20, 21–50, 51–100, 101+; the high tiers are split because production spans about 10x above 21 Crystals; exact tiers TBD), so players race others at a similar prestige level.
+* **Route Categories:** Like speedrun "any%" and "100%" categories, runs are split by the highest biome that contributed honey to the Refinery (e.g., Meadow-only vs full route), so the rush and the normal route never compete directly.
 * **Run Time:** Wall-clock time from the start of a run until the Royal Crystal forms in the Refinery, offline time included.
 * **Server-Side Time Validation:** Run times are validated server-side to counteract device-clock manipulation of offline earnings.
 * **Rewarded Ads:** Free rewarded-ad boosts do not count as a paid booster; runs that use them stay on the unboosted board.
@@ -359,8 +360,8 @@ Terms used in this document and in the design and balance reports (`design/`, `b
 | Term | Meaning | Example |
 |---|---|---|
 | Rush gap | Rush run time ÷ normal-route run time. Above 1.00 means the rush is slower. | 1.20 = the rush takes 20% longer. |
-| Equal for veterans | Design goal: the rush gap shrinks to about 1.00–1.05 for players with many Crystals, but never drops below 1.00. | 1.03 at 100 Crystals. |
-| Crossover | The Crystal count at which the rush would become faster than the normal route. Balance keeps this from happening. | — |
+| Equal for veterans | Loose design goal: for players with many Crystals, the rush gap stays within about 0.95–1.05 (within 5% either way). The routes rank on separate leaderboard categories, so exact equality isn't required. | 1.03 at 100 Crystals. |
+| Crossover | The Crystal count at which the rush would become faster than the normal route. Balance keeps the rush from becoming more than about 5% faster. | — |
 | M | A player's total production multiplier. | +10% per Crystal: M = 1 + 0.10 × Crystals. |
 | M(n) | M at n Crystals. | M(60) = 7.0. |
 | M\* | The multiplier at which the crossover would happen. "M\* ≥ M(60)" means the rush can't win before 60 Crystals. | — |
