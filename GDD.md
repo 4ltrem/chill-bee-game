@@ -9,7 +9,7 @@ A cozy, casual beekeeping and farming mobile-first game inspired by and the love
 The UI is simple with no player character or avatar. The game acts as a pocket dimension on your device where players can zoom out and pan across the farm as it expands. The core gameplay loop spans three distinct phases with decreasing manual work:
 * **Phase 1 (The Grinding Stage):** High manual labor. Players manually scrape/unframe and refine honeycombs through an uncapping and extraction minigame, plant and water flowers, and manually sell the product. (Players retain access to these manual interaction screens in later phases to manage tool upgrades).
 * **Phase 2 (The Automation Era):** Players obtain their first few upgrades to automate harvesting, uncapping, and logistics, significantly reducing manual tasks.
-* **Phase 3 (The Optimizing Stage):** The main loop comes into full swing. Players expand their biomes indefinitely on a grid, packing in denser hive and flower units. Building the capstone refining machine produces a Royal Crystal, after which players can choose to reset (Swarm Splitting / Royal Crystal Harvest): the swarm splits and leaves to restore a new pocket world. The reset is optional but encouraged, allowing players to retain persistent bonuses; players who want to compete can opt into bracketed speed-run leaderboards (see Leaderboards).
+* **Phase 3 (The Optimizing Stage):** The main loop comes into full swing. Players expand their biomes indefinitely on a grid, packing in denser hive and flower units. Building and charging the capstone, the Royal Honey Refinery, produces a Royal Crystal, after which players can choose to reset (Swarm Splitting / Royal Crystal Harvest): the swarm splits and leaves to restore a new pocket world. The reset is optional but encouraged, allowing players to retain persistent bonuses; players who want to compete can opt into bracketed speed-run leaderboards (see Leaderboards).
 
 A core pillar of the project is its **Real-World Impact Integration**, where a portion of proceeds from in-game monetization (Impact Passes, rewarded ads, Adopt-a-hive) funds real-world bee conservation globally (native bee habitat restoration and managed hives), starting with Canadian conservation partners.
 
@@ -48,17 +48,17 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 
 * **Phase 1 (Manual Grinding):** Players actively perform uncapping swipes and centrifuge cranking, manage initial flower planting/watering, and handle sales.
 * **Phase 2 (Automation):** Begins when the player buys their first automation upgrade (see Tree B: Automation), unlocking automated uncapping hubs, electric centrifuges, and auto-transport trucks. Manual screens remain accessible for upgrading tool efficiency and batch multipliers; once harvesting is automated, tool upgrades apply as flat bonuses (see Tree B).
-* **Phase 3 (Prestige Reset / Optimization):** Building the capstone refining machine (see Capstone) produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) reset. Each Royal Crystal earned:
-  * Permanently adds a production boost that stacks with every other Crystal (% TBD).
+* **Phase 3 (Prestige Reset / Optimization):** Fully charging the capstone Royal Honey Refinery (see Capstone) produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) reset. Each Royal Crystal earned:
+  * Permanently adds +10% production, additive (10 Crystals = +100%, 20 = 3x, 100 = 11x). The Patron Pass +25% is applied as a separate multiplier, not added to this percentage.
   * Can also be applied to one starting upgrade for future runs, chosen from a whitelist (e.g., bigger starting frames, faster tools, starting land, starting flower or hive units). Crystals shorten Phase 1 but never skip it: automation and the capstone cannot be pre-bought.
-  * Whether "extra starting hives" should lower starting Habitat Health (Hive Balance) or stay neutral is TBD; both versions will be compared for balance and speedrun potential.
+  * Extra starting hives follow the normal Hive Balance rule and lower starting Habitat Health. A matching "starting wildflower plot" option raises it. The Crystal screen shows a live Habitat Health preview, and both options have a max level (TBD). See `balance/royal-crystal-balance.md`.
 
   Royal Crystals carry over between runs. Research trees are purchased with in-game money and do not carry over between runs. Research does two things: bee and flower genetics that multiply production, and unlocking higher unit tiers (see Land, Grid & Units) (values TBD).
 
 * **Pests & Wild Nectar Drops:** Appear only during active play and pause while offline. Tapping them gives a small reward (cleared pests or collected nectar); ignoring them costs nothing. The Patron Golden Drone taps them automatically.
 
 ### 2. Phase 1 Uncapping & Extraction Minigame
-When hive storage reaches capacity in Phase 1, players trigger a tactile, two-stage harvesting sequence. Every player has a small free overflow buffer from the start, so production continues past capacity (including while offline) until the buffer is full (size TBD). Overflow Storage enlarges the buffer, Auto-Sell sells overflow honey, and buying automation removes the capacity pause entirely (see Tree B).
+When hive storage reaches capacity in Phase 1, players trigger a tactile, two-stage harvesting sequence. Every player has a small free overflow buffer from the start, so production continues past capacity (including while offline) until the buffer is full. The free buffer holds one extra full frame (10 jars at base, growing with Deep Frame). Overflow Storage enlarges the buffer, Auto-Sell sells overflow honey, and buying automation removes the capacity pause entirely (see Tree B).
 
 * **Stage 1: Uncapping (Tactile Swiping)**
   * Camera zooms to a 3D wooden honeycomb frame tilted at an isometric angle.
@@ -91,12 +91,17 @@ Progression is split across three synergizing upgrade paths using an exponential
     * Pollinate flowers, speeding flower growth and Habitat Health.
     * Grant production multipliers across Trees A and B (the habitat/bee synergy); more native bees means a bigger multiplier.
   * *Hive Balance:* Managed honeybees compete with native bees for the same flowers. Placing hives on the grid without enough flowers lowers Habitat Health, so players balance hive count against planting.
-  * *Habitat Synergy Threshold:* When a biome has enough flowers for its bees to pollinate and make honey from, it reaches its Habitat Synergy threshold, which unlocks the next biome (threshold TBD).
+  * *Habitat Synergy Level:* Each biome has a graded Habitat Synergy level, based on whether it has enough flowers for its bees to pollinate and make honey from. Reaching a biome's unlock threshold opens the next biome, and the Refinery needs its host biome to stay above a minimum level (values TBD).
   * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts.
   * *On Reset:* The Bee Journal is permanent; Habitat levels reset with the farm each run.
-* **Capstone: Refining Machine** (working name: Royal Crystal Chamber; concept TBD with another agent)
-  * A very advanced machine that refines honey (or a "royal honey"; TBD). It is gated by a very high resource cost and a minimum Habitat Synergy level (threshold TBD), so every run includes restoration. Building it produces a Royal Crystal and completes the run.
-  * It is normally only affordable in the last biome, because it needs the stacked production of every earlier biome. A skilled player can still speedrun it from the first biome; this route is intentionally left open.
+* **Capstone: Royal Honey Refinery** (full proposal: `design/capstone-machine.md`)
+  * **Build:** A very expensive machine bought with in-game money and placed on the grid in one biome (its host biome).
+  * **Charge:** A single slider sends a share of every biome's honey into the Refinery, which refines it into Royal Honey. Each jar adds its sale value × its biome's affinity rate, and later biomes have higher affinity, so the stacked production of all biomes charges it fastest.
+  * **Habitat lock:** The Refinery only refines while its host biome stays above a minimum Habitat Synergy level. Below it, refining pauses but nothing drains.
+  * **Royal Crystal:** When the charge meter is full, a Royal Crystal forms and the run is complete. The player can then choose to reset.
+  * **Speedrun route:** A player can stay in Sunny Meadow, rush the top unit tiers, keep just enough flowers for the habitat minimum, and send everything into the Refinery. This route is intentionally left open. It should be clearly slower than the normal route for low-Crystal players and close to equal for high-Crystal players, but never the best choice.
+  * **Content versions:** The charge target is stored per content version, so adding biomes 3–4 never changes stored run times. Each run also records the highest biome that contributed honey.
+  * Parameters are set by Terry (build cost, charge target, biome affinities, Habitat Synergy minimum, maximum share sent to the Refinery, footprint).
 
 ### 4. Land, Grid & Units
 * **Indefinite Expansion:** Each biome can be expanded indefinitely by buying more land with in-game money (cost growth TBD).
@@ -109,8 +114,8 @@ Progression is split across three synergizing upgrade paths using an exponential
 Leaderboards are opt-in: the game is cozy by default, and only players who choose to compete enter ranked runs. Online leaderboards are post-launch; at launch, players see local personal-best run times. Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
 * **Player Names:** Players build their display name from preset word lists (no free text). Kid-mode players have no public username.
 * **Run-Based Brackets:** Each run is tagged with every paid booster active during that run (e.g., Impact Pass, Patron Pass). A run with no purchases ranks on the unboosted board; boosted runs rank only against runs with the same booster set.
-* **Royal Crystal Tiers:** Runs are also bracketed by the player's Royal Crystal count (e.g., 0, 1–5, 6–20, 21+; tiers TBD), so players race others at a similar prestige level.
-* **Run Time:** Wall-clock time from the start of a run to buying the capstone upgrade, offline time included.
+* **Royal Crystal Tiers:** Runs are also bracketed by the player's Royal Crystal count (e.g., 0, 1–5, 6–20, 21–50, 51–100, 101+; the high tiers are split because production spans about 10x above 21 Crystals; exact tiers TBD), so players race others at a similar prestige level.
+* **Run Time:** Wall-clock time from the start of a run until the Royal Crystal forms in the Refinery, offline time included.
 * **Server-Side Time Validation:** Run times are validated server-side to counteract device-clock manipulation of offline earnings.
 * **Rewarded Ads:** Free rewarded-ad boosts do not count as a paid booster; runs that use them stay on the unboosted board.
 * **Royal Jelly:** Using purchased Royal Jelly during a run counts as a paid booster. Any run that spends Royal Jelly on time skips (earned or purchased) is also tagged "time-skipped" and ranks separately, so saved-up earned Jelly can't produce record times on the unboosted board.
@@ -124,14 +129,14 @@ Leaderboards are opt-in: the game is cozy by default, and only players who choos
 |---|---|---|---|
 | In-game money | Selling honey | Land, hive and flower units, upgrades (Trees A–C), and research trees | No |
 | Royal Jelly (premium) | Slowly through play and rewarded ads; purchasable with real money; Patron daily stipend | Time skips and production speed-ups | Yes |
-| Royal Crystal (prestige) | Building the capstone refining machine | Stacking permanent production boost + one whitelisted starting upgrade per Crystal | Yes |
+| Royal Crystal (prestige) | Fully charging the Royal Honey Refinery (capstone) | Stacking permanent production boost + one whitelisted starting upgrade per Crystal | Yes |
 
-* **Offline Earnings:** Free players earn offline up to a cap (hours TBD once progression numbers are decided). The Impact Pass extends this, and the Patron Pass extends it to 24 hours.
+* **Offline Earnings:** Players earn offline up to a cap: 4 hours for free players, 12 hours with the Impact Pass, and 24 hours with the Patron Pass.
 
 ### 7. Story Premise & Onboarding
 **Premise:** The player discovers a tiny magical pocket world that needs a beekeeper to restore it.
 
-**Reset Story:** When the player resets, the swarm splits and leaves to restore a new pocket world; the restored world is not destroyed. Each finished world is kept as its own save, which players can load and keep playing separately. Nothing (money, Royal Jelly, Royal Crystals) transfers between worlds.
+**Reset Story:** When the player resets, the swarm splits and leaves to restore a new pocket world; the restored world is not destroyed. Each finished world is kept as its own save, which players can load and keep playing separately. Royal Crystals and Royal Jelly belong to the player and carry into each new world. In-game money stays in the world where it was earned. In kept worlds, the Refinery becomes a dormant monument, so old worlds cannot produce more Crystals.
 
 A guide character (e.g., a queen bee; name and personality TBD) walks new players through their first session:
 * Explains why the meadow matters and introduces the farm.
@@ -195,7 +200,10 @@ Biomes are stages within a single run, played in order. A biome's Habitat Synerg
 ## AI Architecture
 
 ### Token Budgets
-Daily token budget shared across all agents: $\text{Weekly Usage Limit} \div 7$.
+All agents draw from one shared daily pool (no per-agent caps). The developer is on the Claude Pro plan, which has a rolling 5-hour limit and a weekly limit shared across Claude and Claude Code, including subagents. Anthropic does not publish a token count for these limits, so the absolute budget is calibrated:
+1. Run a known task (e.g., one design-review round, about 250k tokens) and note the weekly usage percentage in `/usage` before and after.
+2. Tokens per 1% of the weekly limit = tokens used ÷ percentage change.
+3. **Daily budget** = 14.3% of the weekly limit (1/7) × tokens per 1% = **TBD tokens/day** (filled in after calibration).
 
 ### API Constraints
 All agents run through Claude Code, using different models depending on the task. API usage is divided into modular execution pipelines, ensuring individual agent calls remain constrained to their designated token windows to prevent context overlap.
@@ -225,6 +233,9 @@ Each specialized agent functions as a dedicated module in the development workfl
 
 #### Martin, the Hiring Manager
 * **Role:** This agent creates agent descriptions following the template in the Agent Roles section of `GDD.md` when the lead architect notices there's a skill gap within the team, and the developer sees a git diff of the new agent(s) proposed inside the agent roles section.
+
+#### Connie, the Compliance Officer
+* **Role:** This agent reviews features for child-safety (kid mode, COPPA, app-store kids and families rules, ad SDK settings), charity and cause-marketing (donation disclosures, partner agreements), privacy and data (PIPEDA, Quebec Law 25, privacy policy), and app-store policy (subscriptions, premium currency, rewarded ads, donations) risks when a feature touches those areas or before store submission, and the developer sees a findings report and checklist in `compliance/`, citing official sources, with items needing lawyer or partner sign-off marked. Defined as a runnable Claude Code agent in `.claude/agents/compliance-officer.md`.
 
 #### Quinn, the QA & Build Engineer
 * **Role:** This agent writes and runs tests, produces mobile builds, and profiles performance against the 60 FPS target when a feature or build is ready for testing, and the developer sees a test report, build output, and performance profile.
@@ -256,3 +267,5 @@ Dedicated section for defining agent prompt constraints to ensure consistent, re
 * **Target Platforms:** Mobile devices (iOS & Android, including tablets) at launch. Nintendo Switch and Desktop (PC/Mac) are post-launch options, each requiring its own business model and input scheme.
 * **Art Style Constraints:** Low-poly 3D art style utilizing flat-color palette texture atlases and low vertex counts to ensure optimal performance across low-end mobile hardware.
 * **Performance Targets:** Must maintain a stable 60 FPS performance target with hundreds of low-poly bees and floating diorama elements rendered simultaneously on screen.
+* **Bee Rendering Plan:** Production is calculated from a bee count, which can grow without limit. Only a capped crowd of bees is drawn, using instanced rendering (Godot `MultiMeshInstance3D`), with simpler visuals when zoomed out. Swarm size is shown with a counter and denser flight trails, so upgrades still look like they did something (visual cap TBD after profiling).
+* **Test Devices:** Quinn profiles on one low-end, one mid-range and one high-end phone each for Android and iOS, plus one tablet (exact models TBD).
