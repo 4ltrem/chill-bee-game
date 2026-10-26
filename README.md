@@ -18,29 +18,30 @@ The game is a cross between *Egg, Inc.* and *Factorio*. The player discovers a t
 
 | Phase | What the player does |
 |---|---|
-| **1. Manual** | Harvest by hand in a tactile two-stage minigame: swipe to uncap the comb, then crank the centrifuge. Production pauses when the hive is full. |
+| **1. Manual** | Harvest by hand in a tactile two-stage minigame: swipe to uncap the comb, then crank the centrifuge. A small free overflow buffer keeps production going while the hive is full. |
 | **2. Automation** | Buy automation upgrades (uncapping hubs, electric centrifuges, transport trucks) to take over the manual work. |
-| **3. Optimization** | Buy the capstone upgrade to earn a **Royal Crystal**, then optionally reset the farm. Crystals carry over, and each one gives a stacking production boost plus one starting upgrade for future runs. |
+| **Expansion** | Buy land and place hive and flower units on each biome's grid. Biomes can grow indefinitely, and higher-tier units cost more but fit more honey production into less space. |
+| **3. Optimization** | Build the capstone, a very expensive honey-refining machine, to earn a **Royal Crystal**. Then optionally reset: the swarm splits and leaves to restore a new pocket world. Crystals carry over, and each one gives a stacking production boost plus one starting upgrade for future runs. |
 
-Within a run, the player moves through four biomes in order: Sunny Meadow → Alpine Valley → Enchanted Grove → Cloud Gardens. A reset returns them to Sunny Meadow.
+Within a run, the player moves through four biomes in order: Sunny Meadow → Alpine Valley → Enchanted Grove → Cloud Gardens. Reaching a biome's Habitat Synergy threshold (enough flowers for its bees) unlocks the next one, and earlier biomes keep producing. The capstone is normally reached in the last biome, but can be speedrun from the first. Each finished world is kept as its own save that can be loaded and played.
 
 ### Currencies
-- **In-game money:** earned by selling honey; spent on upgrades and research; resets each run.
+- **In-game money:** earned by selling honey; spent on land, units, upgrades and research; resets each run.
 - **Royal Jelly (premium):** earned slowly through play and ads, or bought; spent on time skips; kept across resets.
 - **Royal Crystal (prestige):** earned from the capstone upgrade; gives permanent stacking boosts.
 
-### Leaderboards (post-launch)
-These are speed-run boards that measure wall-clock time from the start of a run to the capstone, validated on the server. Players only race others with the same set of paid boosters and a similar Royal Crystal count. Watching free rewarded ads keeps a player on the unboosted board.
+### Leaderboards (post-launch, opt-in)
+The game is cozy by default; players who want to compete opt into speed-run boards. These that measure wall-clock time from the start of a run to the capstone, validated on the server. Players only race others with the same set of paid boosters and a similar Royal Crystal count. Watching free rewarded ads keeps a player on the unboosted board, but spending Royal Jelly on time skips puts the run in its own bracket.
 
 ### Real-World Impact
 A fixed percentage of each revenue stream funds bee conservation (native bee habitat and managed hives), starting with Canadian partners. The revenue streams are rewarded ads, the Impact Pass and the Patron Pass.
 
 ### Audience & Scope
-- **Audience:** families and all ages. An age gate turns on a kid mode for under-13s: no personalized ads, a parental gate on purchases, and no public username.
+- **Audience:** adults and teens who play cozy games, with family-friendly content. An age gate turns on a kid mode for under-13s: no personalized ads, a parental gate on purchases, and no public username.
 - **Team:** a solo developer directing AI agents in Claude Code. The agent roles are in the GDD.
-- **Engine:** Godot (GDScript).
+- **Engine:** Godot (GDScript). Art comes from purchased low-poly asset packs.
 - **Launch platforms:** iOS and Android, in English and French.
-- **Timeline:** launch within 6 months.
+- **Timeline:** milestone-based, with no fixed date. The first playable is one full rough run in Sunny Meadow.
 - **Launch scope:** Sunny Meadow and Alpine Valley, rewarded ads and the Impact Pass, local personal-best times.
 - **Post-launch:** biomes 3–4, the Patron Pass, online leaderboards, the live Impact Dashboard, and possibly Switch and PC/Mac.
 
@@ -65,19 +66,23 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Habitat Health values (multipliers, costs, levels) and how much hive count lowers it
 - [ ] Honey sale value for each biome
 - [ ] Automation upgrade costs
-- [ ] Overflow Storage capacity and costs
+- [ ] Free overflow buffer size, and Overflow Storage capacity and costs
+- [ ] Land expansion costs
+- [ ] Hive and flower unit tiers: costs, production and space per tier
+- [ ] Research values (genetics multipliers and unit-tier unlocks)
+- [ ] Tool-upgrade flat bonuses after automation
 - [ ] Auto-Sell discount and costs
 - [ ] Free-player offline earnings cap (hours)
 - [ ] Royal Jelly prices, time-skip costs, and Patron daily stipend amount
 - [ ] Impact Pass and Patron Pass prices
 
 ### Progression
-- [ ] Which upgrades must be maxed, and the Habitat Health or native-species threshold, before the capstone unlocks
-- [ ] Capstone's final name (working name: Royal Crystal Chamber)
-- [ ] Biome unlock milestones
+- [ ] Capstone machine concept (refined honey or "royal honey"), name, resource cost and Habitat Synergy minimum
+- [ ] Habitat Synergy threshold for each biome
+- [ ] Royal Crystal starting-upgrade whitelist
+- [ ] Whether "extra starting hives" lowers Habitat Health or stays neutral (compare both for balance and speedruns)
 - [ ] Native bee species for each biome and their effects
 - [ ] Flower list for the habitat tree
-- [ ] Research trees: unlock conditions and how they differ from Trees A–C
 
 ### Leaderboards
 - [ ] Royal Crystal tier ranges (e.g. 0, 1–5, 6–20, 21+)
@@ -91,5 +96,5 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Guide character's name and personality
 
 ### Production
-- [ ] Launch date
+- [ ] Milestone dates
 - [ ] Backend provider (managed game-backend service)

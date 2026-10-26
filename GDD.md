@@ -9,18 +9,23 @@ A cozy, casual beekeeping and farming mobile-first game inspired by and the love
 The UI is simple with no player character or avatar. The game acts as a pocket dimension on your device where players can zoom out and pan across the farm as it expands. The core gameplay loop spans three distinct phases with decreasing manual work:
 * **Phase 1 (The Grinding Stage):** High manual labor. Players manually scrape/unframe and refine honeycombs through an uncapping and extraction minigame, plant and water flowers, and manually sell the product. (Players retain access to these manual interaction screens in later phases to manage tool upgrades).
 * **Phase 2 (The Automation Era):** Players obtain their first few upgrades to automate harvesting, uncapping, and logistics, significantly reducing manual tasks.
-* **Phase 3 (The Optimizing Stage):** The main loop comes into full swing. Buying the final upgrade in the progression tree produces a Royal Crystal, after which players can choose to reset the pocket dimension (Swarm Splitting / Royal Crystal Harvest). The reset is optional but encouraged, allowing players to retain persistent bonuses while competing for high scores based on completion speed on bracketed leaderboards (see Leaderboards).
+* **Phase 3 (The Optimizing Stage):** The main loop comes into full swing. Players expand their biomes indefinitely on a grid, packing in denser hive and flower units. Building the capstone refining machine produces a Royal Crystal, after which players can choose to reset (Swarm Splitting / Royal Crystal Harvest): the swarm splits and leaves to restore a new pocket world. The reset is optional but encouraged, allowing players to retain persistent bonuses; players who want to compete can opt into bracketed speed-run leaderboards (see Leaderboards).
 
 A core pillar of the project is its **Real-World Impact Integration**, where a portion of proceeds from in-game monetization (Impact Passes, rewarded ads, Adopt-a-hive) funds real-world bee conservation globally (native bee habitat restoration and managed hives), starting with Canadian conservation partners.
 
 ---
 
 ## Audience & Production Plan
-* **Target Audience:** Families and players of all ages.
+* **Target Audience:** Adults and teens who play cozy games. Content is family-friendly, but the game is not marketed to children; kid mode still protects under-13 players (see Child Safety).
 * **Team:** Solo developer directing AI agents in Claude Code (see AI Architecture).
-* **Timeline:** Launch within 6 months (date TBD).
+* **Art Source:** Purchased low-poly asset packs, adapted and edited by the developer.
+* **Timeline:** Milestone-based, with no fixed launch date. Proposed milestones:
+  1. First playable (vertical slice below).
+  2. Launch content complete: Sunny Meadow and Alpine Valley, grid expansion and unit tiers, Trees A–C, research, capstone, reset.
+  3. Monetization, backend, kid mode, and French localization.
+  4. Launch.
 * **Languages:** English and French at launch.
-* **Vertical Slice (First Playable):** Mobile only, Sunny Meadow only, from the Phase 1 manual minigame through the first automation upgrades (Phase 2), with a minimal reset. No monetization, leaderboards, or backend yet.
+* **Vertical Slice (First Playable):** One full rough run with placeholder art, mobile only, Sunny Meadow only: manual harvest → automation → grid expansion → capstone → reset. No monetization, leaderboards, or backend yet.
 * **Launch Scope:** Mobile only; Sunny Meadow and Alpine Valley; rewarded ads and the Impact Pass; local personal-best run times; periodically updated impact totals.
 * **Post-Launch:** Biomes 3–4 (Enchanted Grove, Cloud Gardens), the Patron Pass, online leaderboards, and the live Impact Dashboard.
 * **Backend:** A managed game-backend service (provider TBD) for purchase receipts, cloud saves, and server time, and later for leaderboards.
@@ -42,17 +47,18 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 
 
 * **Phase 1 (Manual Grinding):** Players actively perform uncapping swipes and centrifuge cranking, manage initial flower planting/watering, and handle sales.
-* **Phase 2 (Automation):** Begins when the player buys their first automation upgrade (see Tree B: Automation), unlocking automated uncapping hubs, electric centrifuges, and auto-transport trucks. Manual screens remain accessible for upgrading tool efficiency and batch multipliers.
-* **Phase 3 (Prestige Reset / Optimization):** The very last upgrade in the progression tree produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) dimension reset. Each Royal Crystal earned:
+* **Phase 2 (Automation):** Begins when the player buys their first automation upgrade (see Tree B: Automation), unlocking automated uncapping hubs, electric centrifuges, and auto-transport trucks. Manual screens remain accessible for upgrading tool efficiency and batch multipliers; once harvesting is automated, tool upgrades apply as flat bonuses (see Tree B).
+* **Phase 3 (Prestige Reset / Optimization):** Building the capstone refining machine (see Capstone) produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) reset. Each Royal Crystal earned:
   * Permanently adds a production boost that stacks with every other Crystal (% TBD).
-  * Can also be applied to any one starting upgrade for future runs (e.g., extra starting hives).
+  * Can also be applied to one starting upgrade for future runs, chosen from a whitelist (e.g., bigger starting frames, faster tools, starting land, starting flower or hive units). Crystals shorten Phase 1 but never skip it: automation and the capstone cannot be pre-bought.
+  * Whether "extra starting hives" should lower starting Habitat Health (Hive Balance) or stay neutral is TBD; both versions will be compared for balance and speedrun potential.
 
-  Royal Crystals carry over between runs. Deep genetic research trees for faster run times are purchased with in-game money and do not carry over between runs (unlock conditions, and how research differs from Trees A–C, TBD).
+  Royal Crystals carry over between runs. Research trees are purchased with in-game money and do not carry over between runs. Research does two things: bee and flower genetics that multiply production, and unlocking higher unit tiers (see Land, Grid & Units) (values TBD).
 
 * **Pests & Wild Nectar Drops:** Appear only during active play and pause while offline. Tapping them gives a small reward (cleared pests or collected nectar); ignoring them costs nothing. The Patron Golden Drone taps them automatically.
 
 ### 2. Phase 1 Uncapping & Extraction Minigame
-When hive storage reaches capacity in Phase 1, players trigger a tactile, two-stage harvesting sequence. By default, production pauses at capacity until the player harvests, including while offline; the optional Overflow Storage and Auto-Sell upgrades change this (see Tree B).
+When hive storage reaches capacity in Phase 1, players trigger a tactile, two-stage harvesting sequence. Every player has a small free overflow buffer from the start, so production continues past capacity (including while offline) until the buffer is full (size TBD). Overflow Storage enlarges the buffer, Auto-Sell sells overflow honey, and buying automation removes the capacity pause entirely (see Tree B).
 
 * **Stage 1: Uncapping (Tactile Swiping)**
   * Camera zooms to a 3D wooden honeycomb frame tilted at an isometric angle.
@@ -73,9 +79,10 @@ Progression is split across three synergizing upgrade paths using an exponential
   * *Heated Uncapping Fork:* Increases swipe radius by +12% per level and adds up to +5% batch bonus for clean cuts (base cost $40, 1.22x growth, max level 5).
   * *Centrifuge Gearing:* Reduces required extraction taps/spins by -15% per level (base cost $35, 1.20x growth, max level 5).
   * *Deep Frame:* Increases frame capacity from 10 jars to 25 jars per harvest (base cost $150, 1.45x growth, max level 3).
-  * *Overflow Storage (optional):* Stores honey produced after the hive is full, so returning players have extra frames waiting to harvest (capacity and costs TBD).
+  * *Tool Upgrades After Automation:* Once harvesting is automated, or in No-Rapid-Tap Mode, the Heated Uncapping Fork applies as a flat +% yield bonus and Centrifuge Gearing as a flat −% extraction time (values TBD), so these upgrades keep their value.
+  * *Overflow Storage (optional):* Enlarges the free overflow buffer, so returning players have extra frames waiting to harvest (capacity and costs TBD).
   * *Auto-Sell (optional):* Automatically sells overflow honey at a discounted price (discount and costs TBD).
-  * *Automation:* Automated uncapping hubs, electric centrifuges, and auto-transport trucks, bought with in-game money. Buying the first automation upgrade moves the player into Phase 2 (costs TBD).
+  * *Automation:* Automated uncapping hubs, electric centrifuges, and auto-transport trucks, bought with in-game money. Buying the first automation upgrade moves the player into Phase 2 and removes the capacity pause (costs TBD).
   * *Artisanal Branding:* Increases base sale value per jar by +$2.50 (base cost $60, 1.25x growth, max level 10).
 * **Tree C: Native Habitat**
   Its own progression track, measured in biodiversity (Habitat Health and native bee species attracted) rather than honey. Upgrades are bought with in-game money (values TBD).
@@ -83,48 +90,64 @@ Progression is split across three synergizing upgrade paths using an exponential
   * *Native Bees:* Habitat Health attracts native wild bees to the farm, separate from the managed honeybees. Native bees:
     * Pollinate flowers, speeding flower growth and Habitat Health.
     * Grant production multipliers across Trees A and B (the habitat/bee synergy); more native bees means a bigger multiplier.
-  * *Hive Balance:* Managed honeybees compete with native bees for the same flowers. Adding hives without enough habitat lowers Habitat Health, so players balance hive count against planting.
+  * *Hive Balance:* Managed honeybees compete with native bees for the same flowers. Placing hives on the grid without enough flowers lowers Habitat Health, so players balance hive count against planting.
+  * *Habitat Synergy Threshold:* When a biome has enough flowers for its bees to pollinate and make honey from, it reaches its Habitat Synergy threshold, which unlocks the next biome (threshold TBD).
   * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts.
   * *On Reset:* The Bee Journal is permanent; Habitat levels reset with the farm each run.
-* **Capstone: Final Upgrade** (working name: Royal Crystal Chamber)
-  * A dedicated final upgrade that unlocks only after key upgrades are maxed (which ones TBD) and a minimum Habitat Health or number of native species is reached (threshold TBD), so every run includes restoration. Buying it produces a Royal Crystal and completes the run.
+* **Capstone: Refining Machine** (working name: Royal Crystal Chamber; concept TBD with another agent)
+  * A very advanced machine that refines honey (or a "royal honey"; TBD). It is gated by a very high resource cost and a minimum Habitat Synergy level (threshold TBD), so every run includes restoration. Building it produces a Royal Crystal and completes the run.
+  * It is normally only affordable in the last biome, because it needs the stacked production of every earlier biome. A skilled player can still speedrun it from the first biome; this route is intentionally left open.
 
-### 4. Leaderboards
-Online leaderboards are post-launch; at launch, players see local personal-best run times. Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
+### 4. Land, Grid & Units
+* **Indefinite Expansion:** Each biome can be expanded indefinitely by buying more land with in-game money (cost growth TBD).
+* **Grid Placement:** Players place each hive and flower unit on the biome's grid themselves. Space is limited, so the goal is the most honey production per tile.
+* **Hive & Flower Units:** Hives and flower patches are bought and placed as units. Each unit type has tiers (e.g., Langstroth hive → stacked hive → hive tower; wild patch → raised bed → vertical garden). Higher tiers cost much more in-game money but produce more in less space. Units can be upgraded in place.
+* **Biome Units:** Each biome adds new top-tier units in its own style (e.g., chalet hives in Alpine Valley, lantern hives in Enchanted Grove).
+* **Unlocking Tiers:** Higher unit tiers are unlocked through research (see Phase 3).
+
+### 5. Leaderboards
+Leaderboards are opt-in: the game is cozy by default, and only players who choose to compete enter ranked runs. Online leaderboards are post-launch; at launch, players see local personal-best run times. Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
 * **Player Names:** Players build their display name from preset word lists (no free text). Kid-mode players have no public username.
 * **Run-Based Brackets:** Each run is tagged with every paid booster active during that run (e.g., Impact Pass, Patron Pass). A run with no purchases ranks on the unboosted board; boosted runs rank only against runs with the same booster set.
 * **Royal Crystal Tiers:** Runs are also bracketed by the player's Royal Crystal count (e.g., 0, 1–5, 6–20, 21+; tiers TBD), so players race others at a similar prestige level.
 * **Run Time:** Wall-clock time from the start of a run to buying the capstone upgrade, offline time included.
 * **Server-Side Time Validation:** Run times are validated server-side to counteract device-clock manipulation of offline earnings.
 * **Rewarded Ads:** Free rewarded-ad boosts do not count as a paid booster; runs that use them stay on the unboosted board.
-* **Royal Jelly:** Using purchased Royal Jelly during a run counts as a paid booster; Royal Jelly earned through play does not.
+* **Royal Jelly:** Using purchased Royal Jelly during a run counts as a paid booster. Any run that spends Royal Jelly on time skips (earned or purchased) is also tagged "time-skipped" and ranks separately, so saved-up earned Jelly can't produce record times on the unboosted board.
+* **Run Tracking (from launch):** Even though online leaderboards are post-launch, the launch save format records:
+  * The source of every unit of Royal Jelly (play, rewarded ad, purchase, Patron stipend).
+  * Every booster active during each run, with start and end times.
+  * A content version on every stored run, so times from runs with different biome content are never compared.
 
-### 5. Currencies & Offline Earnings
+### 6. Currencies & Offline Earnings
 | Currency | Earned From | Spent On | Carries Over Resets |
 |---|---|---|---|
-| In-game money | Selling honey | Upgrades (Trees A–C) and research trees | No |
+| In-game money | Selling honey | Land, hive and flower units, upgrades (Trees A–C), and research trees | No |
 | Royal Jelly (premium) | Slowly through play and rewarded ads; purchasable with real money; Patron daily stipend | Time skips and production speed-ups | Yes |
-| Royal Crystal (prestige) | Buying the final upgrade in the progression tree | Stacking permanent production boost + one starting upgrade per Crystal | Yes |
+| Royal Crystal (prestige) | Building the capstone refining machine | Stacking permanent production boost + one whitelisted starting upgrade per Crystal | Yes |
 
 * **Offline Earnings:** Free players earn offline up to a cap (hours TBD once progression numbers are decided). The Impact Pass extends this, and the Patron Pass extends it to 24 hours.
 
-### 6. Story Premise & Onboarding
+### 7. Story Premise & Onboarding
 **Premise:** The player discovers a tiny magical pocket world that needs a beekeeper to restore it.
+
+**Reset Story:** When the player resets, the swarm splits and leaves to restore a new pocket world; the restored world is not destroyed. Each finished world is kept as its own save, which players can load and keep playing separately. Nothing (money, Royal Jelly, Royal Crystals) transfers between worlds.
 
 A guide character (e.g., a queen bee; name and personality TBD) walks new players through their first session:
 * Explains why the meadow matters and introduces the farm.
 * Guides the first manual harvest (uncapping and centrifuge extraction).
 * Guides the first upgrade purchase.
 
-### 7. Accessibility
+### 8. Accessibility
 * **No-Rapid-Tap Mode:** Replaces speed taps and crank spinning with hold-to-crank or a single tap.
 * **Haptics & Sound Toggles:** Vibration, sound effects, and music can each be turned on or off.
 * **Colour-Blind Support:** Information never relies on colour alone (e.g., capped and uncapped cells also differ in shape or texture).
 * **Text Size & One-Handed Play:** Adjustable text size, and all UI reachable with one thumb.
 
-### 8. UI & Screens
-* **Farm View (Main Screen):** The pannable, zoomable pocket-dimension farm.
-* **Upgrade Shop:** Trees A–C, automation, and the capstone upgrade.
+### 9. UI & Screens
+* **Farm View (Main Screen):** The pannable, zoomable pocket-dimension farm, including a build mode for buying land and placing hive and flower units on the grid.
+* **Upgrade Shop:** Trees A–C, automation, research, and the capstone.
+* **Worlds:** Load and switch between saved pocket worlds.
 * **Harvest Minigame:** The uncapping and centrifuge extraction screens.
 * **Impact & Leaderboards:** Impact totals, personal-best run times, and (post-launch) online leaderboards.
 * **Store:** Royal Jelly and passes, behind the parental gate in kid mode.
@@ -140,7 +163,7 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 * **Tone & Audio:** Playful, whimsical, and cozy. Relaxed ukulele and acoustic background music paired with tactile popping sound effects for cell uncapping.
 
 ### Progression Tiers & Biomes
-Biomes are stages within a single run, played in order. Reaching a milestone in the current biome unlocks the next (milestones TBD), and a reset returns the player to Sunny Meadow. Each biome:
+Biomes are stages within a single run, played in order. A biome's Habitat Synergy threshold (enough flowers for its bees to pollinate and make honey from) unlocks the next biome. Earlier biomes keep producing at full rate and can still be expanded and upgraded, so production stacks across biomes. A reset starts a new pocket world in Sunny Meadow. Each biome:
 * Produces its own honey, each more sought after (higher sale value) than the last (values TBD).
 * Attracts its own local native bee species, each with different effects (species and effects TBD), recorded in the Bee Journal.
 
