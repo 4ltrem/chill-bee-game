@@ -280,3 +280,88 @@ Dedicated section for defining agent prompt constraints to ensure consistent, re
 * **Performance Targets:** Must maintain a stable 60 FPS performance target with hundreds of low-poly bees and floating diorama elements rendered simultaneously on screen.
 * **Bee Rendering Plan:** Production is calculated from a bee count, which can grow without limit. Only a capped crowd of bees is drawn, using instanced rendering (Godot `MultiMeshInstance3D`), with simpler visuals when zoomed out. Swarm size is shown with a counter and denser flight trails, so upgrades still look like they did something (visual cap TBD after profiling).
 * **Test Devices:** Quinn profiles on one low-end, one mid-range and one high-end phone each for Android and iOS, plus one tablet (exact models TBD).
+
+---
+
+## Glossary
+
+Terms used in this document and in the design and balance reports (`design/`, `balance/`).
+
+### Runs & Routes
+| Term | Also called | Meaning |
+|---|---|---|
+| Run | Playthrough | One playthrough from a fresh pocket world until a Royal Crystal forms in the Refinery. |
+| Reset | Swarm Splitting, Royal Crystal Harvest | Optional action after a Crystal forms: the swarm leaves to restore a new pocket world, and the old world is kept as its own save. |
+| Normal route | Full route | Unlock and play through every biome in order, then charge the Refinery with their combined honey. |
+| Rush | Meadow rush, first-biome rush, speedrun route, shortcut | Stay in Sunny Meadow, never unlock later biomes, and build and charge the Refinery there. Intentionally allowed. |
+| Alpine stop / Grove stop | Partial shortcut | Unlock some biomes but stop at Alpine Valley or Enchanted Grove instead of reaching the last biome. |
+| Content version | — | How many biomes existed when a run was played (launch = 2, post-launch = 4). Run times from different versions are never compared. |
+
+### Comparing Routes
+| Term | Meaning | Example |
+|---|---|---|
+| Rush gap | Rush run time ÷ normal-route run time. Above 1.00 means the rush is slower. | 1.20 = the rush takes 20% longer. |
+| Equal for veterans | Design goal: the rush gap shrinks to about 1.00–1.05 for players with many Crystals, but never drops below 1.00. | 1.03 at 100 Crystals. |
+| Crossover | The Crystal count at which the rush would become faster than the normal route. Balance keeps this from happening. | — |
+| M | A player's total production multiplier. | +10% per Crystal: M = 1 + 0.10 × Crystals. |
+| M(n) | M at n Crystals. | M(60) = 7.0. |
+| M\* | The multiplier at which the crossover would happen. "M\* ≥ M(60)" means the rush can't win before 60 Crystals. | — |
+
+### Royal Honey Refinery (Capstone)
+| Term | Parameter | Meaning |
+|---|---|---|
+| Host biome | — | The biome where the Refinery is placed. Only its Habitat Synergy must stay above the minimum. |
+| Build cost | `CAP_BUILD_COST` | In-game money needed to build the Refinery. |
+| Footprint | `CAP_FOOTPRINT` | Grid tiles the Refinery occupies. |
+| Charge | — | How full the Refinery is with Royal Honey. |
+| Charge target | `CAP_CHARGE_TARGET[content_version]` | Royal Honey needed for the Crystal to form, stored per content version. |
+| Divert | — | The slider share of each biome's honey sent to the Refinery instead of being sold. |
+| Divert max | `CAP_DIVERT_MAX` | The highest divert share allowed. |
+| Affinity | `AFFINITY[biome]` | Charge one jar of a biome's honey gives. Later biomes have higher affinity. |
+| Throughput cap | `CAP_THROUGHPUT_MAX` | Maximum charging speed. Keeps the rush from ever beating the normal route. |
+| Synergy minimum | `CAP_SYNERGY_MIN[biome]` | Habitat Synergy level the host biome must stay above for refining to continue. |
+| Unlock condition | `CAP_UNLOCK_CONDITION` | What must happen before the Refinery can be built. |
+| Rush gap target | `RUSH_GAP_TARGET` | The rush gap values balance aims for at each Crystal count. |
+| Frontier bonus | — | **Rejected.** Extra affinity for whichever biome is currently last. |
+
+### Habitat
+| Term | Meaning |
+|---|---|
+| Habitat Health | Tree C's measure of a biome's habitat. It is raised by flowers and lowered by hives that lack enough flowers. |
+| Hive Balance | The rule that managed honeybees compete with native bees: hives without enough flowers lower Habitat Health. |
+| Habitat Synergy level | A biome's graded habitat score: whether it has enough flowers for its bees. It is money-driven and rises as soon as flowers are placed. |
+| Unlock threshold | The Habitat Synergy level that opens the next biome. |
+| Native bees | Wild bees attracted by habitat. They pollinate, multiply honey production, and are recorded in the Bee Journal. |
+
+### Currencies & Prestige
+| Term | Meaning |
+|---|---|
+| In-game money | Earned by selling honey. Spent on land, units, upgrades and research. Stays in its world. |
+| Royal Jelly | Premium currency, earned or bought, spent on time skips. Account-wide. |
+| Royal Crystal | Prestige reward from the Refinery: +10% production (additive), plus one whitelisted starting upgrade. Account-wide. |
+| Starting upgrade | A head start for future runs bought with a Crystal, such as starting land, faster tools, extra starting hives or a starting wildflower plot. |
+| Free overflow buffer | Extra storage of one full frame, so production continues while the hive is full. |
+| Offline cap | Hours of offline earnings: 4 h free, 12 h Impact Pass, 24 h Patron Pass. |
+
+### Leaderboards (opt-in)
+| Term | Meaning |
+|---|---|
+| Booster | A paid advantage active during a run, such as the Impact Pass, the Patron Pass or purchased Royal Jelly. |
+| Booster set | All boosters active during a run. Runs only compete against runs with the same set. |
+| Unboosted board | Runs with no purchases. Free rewarded ads are allowed. |
+| Time-skipped tag | Marks runs that spent Royal Jelly on time skips, earned or bought. They rank separately. |
+| Crystal tier | Groups by Royal Crystal count (e.g., 0, 1–5, 6–20, 21–50, 51–100, 101+). |
+| Run time | Wall-clock time from the start of a run until the Crystal forms, offline time included. |
+
+### Agents
+| Agent | Role | Agent file |
+|---|---|---|
+| Gerard | Gameplay Architect | — |
+| Bob | Builder | — |
+| Patricia | Programmer | — |
+| William | Writer | — |
+| Andrew | Audiophile | — |
+| Terry | Progression Tree Expert | — |
+| Martin | Hiring Manager | — |
+| Connie | Compliance Officer | `.claude/agents/compliance-officer.md` |
+| Quinn | QA & Build Engineer | — |
