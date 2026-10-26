@@ -4,7 +4,7 @@
 ---
 
 ## Executive Summary
-A cozy, casual beekeeping and farming mobile-first game inspired by and the love child of *Egg, Inc.* and *Factorio* featuring wacky, satisfying progression and upgrades for your beehive. The primary gameplay objective is to make more honey and money. In the game, players can upgrade the beehive, the bees, and the vegetation/environment—three distinct progression trees that feature synergizing effects with each other. 
+A cozy, casual beekeeping and farming mobile-first game inspired by and the love child of *Egg, Inc.* and *Factorio* featuring wacky, satisfying progression and upgrades for your beehive. The primary gameplay objective is to make more honey and money. In the game, players can upgrade the beehive, the bees, and the native habitat—three distinct progression trees that feature synergizing effects with each other. The habitat tree measures success in biodiversity rather than honey, teaching the difference between managed honeybees and native wild bees. 
 
 The UI is simple with no player character or avatar. The game acts as a pocket dimension on your device where players can zoom out and pan across the farm as it expands. The core gameplay loop spans three distinct phases with decreasing manual work:
 * **Phase 1 (The Grinding Stage):** High manual labor. Players manually scrape/unframe and refine honeycombs through an uncapping and extraction minigame, plant and water flowers, and manually sell the product. (Players retain access to these manual interaction screens in later phases to manage tool upgrades).
@@ -76,11 +76,18 @@ Progression is split across three synergizing upgrade paths using an exponential
   * *Overflow Storage (optional):* Stores honey produced after the hive is full, so returning players have extra frames waiting to harvest (capacity and costs TBD).
   * *Auto-Sell (optional):* Automatically sells overflow honey at a discounted price (discount and costs TBD).
   * *Automation:* Automated uncapping hubs, electric centrifuges, and auto-transport trucks, bought with in-game money. Buying the first automation upgrade moves the player into Phase 2 (costs TBD).
-* **Tree C: Environment & Monetization**
-  * *Habitat Health:* Plant and upgrade native flower patches (Clover, Lavender, Buckwheat) to raise the meadow's habitat health, which grants production multipliers across Trees A and B and attracts visible native bees to the farm (values TBD).
   * *Artisanal Branding:* Increases base sale value per jar by +$2.50 (base cost $60, 1.25x growth, max level 10).
+* **Tree C: Native Habitat**
+  Its own progression track, measured in biodiversity (Habitat Health and native bee species attracted) rather than honey. Upgrades are bought with in-game money (values TBD).
+  * *Flower Patches:* Plant and upgrade flower patches (e.g., Clover, Lavender, Buckwheat) to raise the meadow's Habitat Health.
+  * *Native Bees:* Habitat Health attracts native wild bees to the farm, separate from the managed honeybees. Native bees:
+    * Pollinate flowers, speeding flower growth and Habitat Health.
+    * Grant production multipliers across Trees A and B (the habitat/bee synergy); more native bees means a bigger multiplier.
+  * *Hive Balance:* Managed honeybees compete with native bees for the same flowers. Adding hives without enough habitat lowers Habitat Health, so players balance hive count against planting.
+  * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts.
+  * *On Reset:* The Bee Journal is permanent; Habitat levels reset with the farm each run.
 * **Capstone: Final Upgrade** (working name: Royal Crystal Chamber)
-  * A dedicated final upgrade that unlocks only after key upgrades are maxed (which ones TBD). Buying it produces a Royal Crystal and completes the run.
+  * A dedicated final upgrade that unlocks only after key upgrades are maxed (which ones TBD) and a minimum Habitat Health or number of native species is reached (threshold TBD), so every run includes restoration. Buying it produces a Royal Crystal and completes the run.
 
 ### 4. Leaderboards
 Online leaderboards are post-launch; at launch, players see local personal-best run times. Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
@@ -133,7 +140,9 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 * **Tone & Audio:** Playful, whimsical, and cozy. Relaxed ukulele and acoustic background music paired with tactile popping sound effects for cell uncapping.
 
 ### Progression Tiers & Biomes
-Biomes are stages within a single run, played in order. Reaching a milestone in the current biome unlocks the next (milestones TBD), and a reset returns the player to Sunny Meadow.
+Biomes are stages within a single run, played in order. Reaching a milestone in the current biome unlocks the next (milestones TBD), and a reset returns the player to Sunny Meadow. Each biome:
+* Produces its own honey, each more sought after (higher sale value) than the last (values TBD).
+* Attracts its own local native bee species, each with different effects (species and effects TBD), recorded in the Bee Journal.
 
 1. **Sunny Meadow:** Rolling green hills, wild clover, and classic wooden Langstroth hives (*Wildflower Gold Honey*).
 2. **Alpine Valley:** Pine trees, lavender fields, and Swiss-style chalet hives (*Frosted Lavender Honey*).

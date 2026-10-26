@@ -11,7 +11,7 @@ The full design is in [GDD.md](GDD.md). The document is a **first draft**: the s
 ## Game Overview
 
 ### Pitch
-The game is a cross between *Egg, Inc.* and *Factorio*. The player discovers a tiny magical pocket world that needs a beekeeper to restore it. You pan and zoom around a low-poly diorama farm as it grows, and upgrade three things: the bees, the hive and tools, and the environment.
+The game is a cross between *Egg, Inc.* and *Factorio*. The player discovers a tiny magical pocket world that needs a beekeeper to restore it. You pan and zoom around a low-poly diorama farm as it grows, and upgrade three things: the bees, the hive and tools, and the native habitat. The habitat tree is measured in biodiversity rather than honey: native wild bees pollinate, boost production, and fill a Bee Journal, while too many managed hives without enough habitat lowers Habitat Health.
 
 ### Core Loop
 **Bees forage → hive fills → uncap & extract → sell honey → reinvest**
@@ -61,7 +61,8 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 ### Economy & Numbers
 - [ ] Income side of the economy: base jar price, bee fill rate, harvest cycle time
 - [ ] Royal Crystal production boost (%)
-- [ ] Habitat Health values (multipliers, costs, levels)
+- [ ] Habitat Health values (multipliers, costs, levels) and how much hive count lowers it
+- [ ] Honey sale value for each biome
 - [ ] Automation upgrade costs
 - [ ] Overflow Storage capacity and costs
 - [ ] Auto-Sell discount and costs
@@ -70,9 +71,11 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Impact Pass and Patron Pass prices
 
 ### Progression
-- [ ] Which upgrades must be maxed before the capstone unlocks
+- [ ] Which upgrades must be maxed, and the Habitat Health or native-species threshold, before the capstone unlocks
 - [ ] Capstone's final name (working name: Royal Crystal Chamber)
 - [ ] Biome unlock milestones
+- [ ] Native bee species for each biome and their effects
+- [ ] Flower list for the habitat tree
 - [ ] Research trees: unlock conditions and how they differ from Trees A–C
 
 ### Leaderboards
