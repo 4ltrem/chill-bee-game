@@ -8,7 +8,7 @@ The flow in one line: the designer asks, an agent proposes, the designer decides
 | 2. Propose | agent | copy `_templates/proposal.md` into `proposals/<type>/`, `status: proposed` |
 | 3. Decide | designer | read the proposal; accept, change or reject. This is the check |
 | 4. Apply | designer + agent | edit the accepted decisions into `GDD.md`, update the README TBD list, set `status: applied` (or `rejected`) |
-| 5. Log | agent | add the run's tokens, tool calls and duration to `_meta/agent-runs.md` |
+| 5. Log | agent | add the run's tokens, tool calls and duration to `_meta/agent-runs.md`, phase `post-ICM` |
 | 6. Verify | script | `python -I _tools/index.py proposals/design proposals/balance` then `python -I _tools/links.py` |
 
 Each shelf's own `CONTEXT.md` holds its inputs, outputs and check.
