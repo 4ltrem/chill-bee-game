@@ -28,7 +28,7 @@ Within a run, the player moves through four biomes in order: Sunny Meadow → Al
 ### Currencies
 - **In-game money:** earned by selling honey; spent on land, units, upgrades and research; resets each run.
 - **Royal Jelly (premium):** earned slowly through play and ads, or bought; spent on time skips; kept across resets.
-- **Royal Crystal (prestige):** earned by charging the Refinery; each gives +10% production (additive) and one starting upgrade; account-wide.
+- **Royal Crystal (prestige):** earned by charging the Refinery; each gives +15% production (additive) and one starting upgrade; account-wide.
 
 ### Leaderboards (post-launch, opt-in)
 The game is cozy by default; players who want to compete opt into speed-run boards. These boards measure wall-clock time from the start of a run until the Royal Crystal forms, validated on the server. Players only race others with the same set of paid boosters and a similar Royal Crystal count. Watching free rewarded ads keeps a player on the unboosted board, but spending Royal Jelly on time skips puts the run in its own bracket.
@@ -82,11 +82,12 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Habitat Synergy threshold for each biome
 - [ ] Royal Crystal starting-upgrade whitelist
 - [ ] Max levels for the starting-hives and starting-wildflower-plot Crystal options
-- [ ] Native bee species: provisional effects set (Terry); Glowcap digger effect, real values and run length with native bees still to confirm
+- [ ] Native bee species: provisional effects set (Terry); Glowcap digger pollination value, real values and run length with native bees still to confirm
 - [ ] Flower list for the habitat tree
 
 ### Leaderboards
-- [ ] Royal Crystal tier ranges (e.g. 0, 1–5, 6–20, 21–50, 51–100, 101+)
+- [ ] Royal Crystal tier ranges: move the high split down to where the rush enters the 5% window (~92 Crystals at +15%)
+- [ ] Re-check the Refinery research ladder for +15% Crystals (Terry)
 
 ### Real-World Impact
 - [ ] Fixed donation percentage for each revenue stream (ads, Impact Pass, Patron Pass)

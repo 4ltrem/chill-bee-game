@@ -55,7 +55,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 * **Phase 1 (Manual Grinding):** Players actively perform uncapping swipes and centrifuge cranking, manage initial flower planting/watering, and handle sales.
 * **Phase 2 (Automation):** Begins when the player buys their first automation upgrade (see Tree B: Automation), unlocking automated uncapping hubs, electric centrifuges, and auto-transport trucks. Manual screens remain accessible for upgrading tool efficiency and batch multipliers; once harvesting is automated, tool upgrades apply as flat bonuses (see Tree B).
 * **Phase 3 (Prestige Reset / Optimization):** Fully charging the capstone Royal Honey Refinery (see Capstone) produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) reset. Each Royal Crystal earned:
-  * Permanently adds +10% production, additive (10 Crystals = +100%, 20 = 3x, 100 = 11x). The Patron Pass +25% is applied as a separate multiplier, not added to this percentage.
+  * Permanently adds +15% production, additive (10 Crystals = +150%, 20 = 4x, 100 = 16x). The Patron Pass +25% is applied as a separate multiplier, not added to this percentage.
   * Can also be applied to one starting upgrade for future runs, chosen from a whitelist (e.g., bigger starting frames, faster tools, starting land, starting flower or hive units). Crystals shorten Phase 1 but never skip it: automation and the capstone cannot be pre-bought.
   * Extra starting hives follow the normal Hive Balance rule and lower starting Habitat Health. A matching "starting wildflower plot" option raises it, capped at the habitat worth of Habitat Synergy level 3 (a higher start would open Alpine Valley at minute zero and mainly help the rush). The Crystal screen shows a live Habitat Health preview, and both options have a max level (TBD). See `balance/royal-crystal-balance.md`.
 
@@ -114,7 +114,7 @@ Progression is split across three synergizing upgrade paths using an exponential
     | Alpine Valley | Bumble bees | Faster hive fill rate (+20%) | Fireweed, alpine wildflowers (TBD) |
     | Alpine Valley | Mason bees | Faster pollination (+25%) | Fireweed, alpine wildflowers (TBD) |
     | Alpine Valley | Mining bees | Better honey quality (+10% sale value) | Fireweed, alpine wildflowers (TBD) |
-    | Enchanted Grove | Lantern bee, Glowcap digger (fictional) | Lantern bee: faster fill rate (+20%); Glowcap digger TBD | TBD |
+    | Enchanted Grove | Lantern bee, Glowcap digger (fictional) | Lantern bee: faster fill rate (+20%); Glowcap digger: faster pollination (value TBD, Terry) | TBD |
     | Cloud Gardens | Drift bee, Stardust bee (fictional) | Drift bee: faster pollination (+25%); Stardust bee: +10% sale value and +10% Refinery yield | TBD |
 
     * Real-species assignments must be fact-checked by William and a conservation partner.
@@ -128,9 +128,9 @@ Progression is split across three synergizing upgrade paths using an exponential
   * **Habitat lock:** The Refinery only refines while its host biome stays above a minimum Habitat Synergy level. Below it, refining pauses but nothing drains.
   * **Royal Crystal:** When the charge meter is full, a Royal Crystal forms and the run is complete. The player can then choose to reset.
   * **Speedrun route:** A player can stay in Sunny Meadow, rush the top unit tiers, keep just enough flowers for the habitat minimum, and send everything into the Refinery. This route is intentionally left open. It is clearly slower than the normal route for new and low-Crystal players, and about equal (within ~5%) for veteran players with many Crystals, so they can choose either route. A maximum Refinery charging speed keeps it from ever being clearly better.
-  * **Target run length:** A new player's first run, from start to the first Royal Crystal, takes about 66 hours at launch and about 43–46 hours once biomes 3–4 ship (to be confirmed by Terry). The designer accepted the shorter launch run that native-bee bonuses cause, rather than raising costs to hold 72 hours. The shorter post-launch run is the price of keeping the rush equal for veterans.
-  * **Charge phase:** How much of a run is spent charging the Refinery is TBD. Terry's model, before native bees, had about 45 of 72 hours at launch. Stacking production across biomes should speed up charging, and research can buy Refinery upgrades (effects TBD).
-  * **Charging-speed cap:** Tolerant. For veterans, the rush and the normal route only need to stay within about 5% of each other in either direction; strict "never faster" equality is not required, because the routes rank on separate leaderboard categories (see Leaderboards). Revisit once the Refinery research upgrades exist.
+  * **Target run length:** A new player's first run, from start to the first Royal Crystal, takes about 66 hours at launch and about 43 hours once biomes 3–4 ship (post-launch charge target lowered from 83 to 78 so all routes stay within the 5% goal). The designer accepted the shorter launch run that native-bee bonuses cause, rather than raising costs to hold 72 hours. The shorter post-launch run is the price of keeping the rush equal for veterans.
+  * **Charge phase:** How much of a run is spent charging the Refinery is TBD. Terry's model, before native bees, had about 45 of 72 hours at launch. Stacking production across biomes should speed up charging, and research can buy Refinery upgrades (see the charging-speed cap).
+  * **Charging-speed cap:** Tolerant. For veterans, the rush and the normal route only need to stay within about 5% of each other in either direction; strict "never faster" equality is not required, because the routes rank on separate leaderboard categories (see Leaderboards). The cap starts low and Refinery research raises it in steps (launch: 7 → 10 → 13 → 16 → 20 × J_ref jars/h; post-launch: 10 → 13 → 16 → 17.5). Players who buy the research lose under 2% to the cap; veterans who skip it are 29–49% slower, so optimizing the Refinery pays off. Research costs are placeholders (0.5 / 1 / 1.5 / 2 base-hours, cheaper with more Crystals). The ladder was sized for +12% Crystals and must be re-checked for +15% (`balance/progression-levers.md`).
   * **Provisional values:** Terry's proposed parameters are in `balance/refinery-parameters.md`. They come from a stand-in model and must be re-derived once the real economy and the per-biome setup time are measured.
   * **Content versions:** The charge target is stored per content version, so adding biomes 3–4 never changes stored run times. Each run also records the highest biome that contributed honey.
   * Parameters are set by Terry (build cost, charge target, biome affinities, Habitat Synergy minimum, maximum share sent to the Refinery, footprint).
@@ -146,7 +146,7 @@ Progression is split across three synergizing upgrade paths using an exponential
 Leaderboards are opt-in: the game is cozy by default, and only players who choose to compete enter ranked runs. Online leaderboards are post-launch; at launch, players see local personal-best run times. Speed-run leaderboards are bracketed so players only compete against others who used the same boosters within a given run:
 * **Player Names:** Players build their display name from preset word lists (no free text). Kid-mode players have no public username.
 * **Run-Based Brackets:** Each run is tagged with every paid booster active during that run (e.g., Impact Pass, Patron Pass). A run with no purchases ranks on the unboosted board; boosted runs rank only against runs with the same booster set.
-* **Royal Crystal Tiers:** Runs are also bracketed by the player's Royal Crystal count (e.g., 0, 1–5, 6–20, 21–50, 51–100, 101+; the high tiers are split because production spans about 10x above 21 Crystals; exact tiers TBD), so players race others at a similar prestige level.
+* **Royal Crystal Tiers:** Runs are also bracketed by the player's Royal Crystal count (e.g., 0, 1–5, 6–20, 21–50, 51–100, 101+; the high tiers are split because production spans about 10x above 21 Crystals; exact tiers TBD, with the high split moved near ~92 Crystals, where the rush comes within 5% of the normal route at +15% per Crystal), so players race others at a similar prestige level.
 * **Route Categories:** Like speedrun "any%" and "100%" categories, runs are split by the highest biome that contributed honey to the Refinery (e.g., Meadow-only vs full route), so the rush and the normal route never compete directly.
 * **Run Time:** Wall-clock time from the start of a run until the Royal Crystal forms in the Refinery, offline time included.
 * **Server-Side Time Validation:** Run times are validated server-side to counteract device-clock manipulation of offline earnings.
@@ -368,8 +368,8 @@ Terms used in this document and in the design and balance reports (`design/`, `b
 | Rush gap | Rush run time ÷ normal-route run time. Above 1.00 means the rush is slower. | 1.20 = the rush takes 20% longer. |
 | Equal for veterans | Loose design goal: for players with many Crystals, the rush gap stays within about 0.95–1.05 (within 5% either way). The routes rank on separate leaderboard categories, so exact equality isn't required. | 1.03 at 100 Crystals. |
 | Crossover | The Crystal count at which the rush would become faster than the normal route. Balance keeps the rush from becoming more than about 5% faster. | — |
-| M | A player's total production multiplier. | +10% per Crystal: M = 1 + 0.10 × Crystals. |
-| M(n) | M at n Crystals. | M(60) = 7.0. |
+| M | A player's total production multiplier. | +15% per Crystal: M = 1 + 0.15 × Crystals. |
+| M(n) | M at n Crystals. | M(60) = 10.0. |
 | M\* | The multiplier at which the crossover would happen. "M\* ≥ M(60)" means the rush can't win before 60 Crystals. | — |
 | Fixed setup time | F (route), ΔF (per biome). The part of a run that more production can't speed up, such as unlocking and setting up each biome. The rush skips biomes, so it has less fixed time. | Terry assumes ΔF = 1 h per biome. |
 | Stacking | Earlier biomes keep producing while you build later ones, so total production adds up across biomes. | — |
@@ -406,7 +406,7 @@ Terms used in this document and in the design and balance reports (`design/`, `b
 |---|---|
 | In-game money | Earned by selling honey. Spent on land, units, upgrades and research. Stays in its world. |
 | Royal Jelly | Premium currency, earned or bought, spent on time skips. Account-wide. |
-| Royal Crystal | Prestige reward from the Refinery: +10% production (additive), plus one whitelisted starting upgrade. Account-wide. |
+| Royal Crystal | Prestige reward from the Refinery: +15% production (additive), plus one whitelisted starting upgrade. Account-wide. |
 | Starting upgrade | A head start for future runs bought with a Crystal, such as starting land, faster tools, extra starting hives or a starting wildflower plot. |
 | Free overflow buffer | Extra storage of one full frame, so production continues while the hive is full. |
 | Offline cap | Hours of offline earnings: 4 h free, 12 h Impact Pass, 24 h Patron Pass. |
