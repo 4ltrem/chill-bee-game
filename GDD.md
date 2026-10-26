@@ -51,7 +51,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 * **Phase 3 (Prestige Reset / Optimization):** Fully charging the capstone Royal Honey Refinery (see Capstone) produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) reset. Each Royal Crystal earned:
   * Permanently adds +10% production, additive (10 Crystals = +100%, 20 = 3x, 100 = 11x). The Patron Pass +25% is applied as a separate multiplier, not added to this percentage.
   * Can also be applied to one starting upgrade for future runs, chosen from a whitelist (e.g., bigger starting frames, faster tools, starting land, starting flower or hive units). Crystals shorten Phase 1 but never skip it: automation and the capstone cannot be pre-bought.
-  * Extra starting hives follow the normal Hive Balance rule and lower starting Habitat Health. A matching "starting wildflower plot" option raises it. The Crystal screen shows a live Habitat Health preview, and both options have a max level (TBD). See `balance/royal-crystal-balance.md`.
+  * Extra starting hives follow the normal Hive Balance rule and lower starting Habitat Health. A matching "starting wildflower plot" option raises it, capped at the habitat worth of Habitat Synergy level 3 (a higher start would open Alpine Valley at minute zero and mainly help the rush). The Crystal screen shows a live Habitat Health preview, and both options have a max level (TBD). See `balance/royal-crystal-balance.md`.
 
   Royal Crystals carry over between runs. Research trees are purchased with in-game money and do not carry over between runs. Research does three things: bee and flower genetics that multiply production, unlocking higher unit tiers (see Land, Grid & Units), and upgrades for the Royal Honey Refinery (values TBD).
 
@@ -173,7 +173,7 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 
 ### Progression Tiers & Biomes
 Biomes are stages within a single run, played in order. A biome's Habitat Synergy threshold (enough flowers for its bees to pollinate and make honey from) unlocks the next biome. Earlier biomes keep producing at full rate and can still be expanded and upgraded, so production stacks across biomes. A reset starts a new pocket world in Sunny Meadow. Each biome:
-* Produces its own honey, each more sought after (higher sale value) than the last (values TBD).
+* Produces its own honey, each more sought after (higher sale value) than the last (values TBD). Alpine Valley honey must sell for less than 2× Sunny Meadow honey, or it would charge the Refinery less per jar than Meadow honey (see `balance/refinery-parameters.md`).
 * Attracts its own local native bee species, each with different effects (species and effects TBD), recorded in the Bee Journal.
 
 1. **Sunny Meadow:** Rolling green hills, wild clover, and classic wooden Langstroth hives (*Wildflower Gold Honey*).
