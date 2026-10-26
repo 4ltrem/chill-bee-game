@@ -110,13 +110,13 @@ The GDD already says native bees grant production multipliers across Trees A and
 
 | Species | Helps rush? | Helps normal route? | Direction on G | Terry's check |
 |---|---|---|---|---|
-| Sweat bees (Meadow pollination) | Yes: cheaper Meadow Synergy 7 | Yes: cheaper Meadow Synergy 5 | Slightly lowers G (rush's habitat bill is larger); fades as 1/M because Synergy is money | Include in B_R/B_N |
-| Leafcutter bees (Meadow sale value) | Yes: more money before charging | Yes, on Meadow jars only | Slightly lowers G; fades as 1/M; no charge effect | Include in B_R/B_N and I_ref |
+| Sweat bees (Meadow pollination) | Yes: cheaper Meadow Synergy 7 | Yes: cheaper Meadow Synergy 5 | Slightly lowers G (rush's habitat bill is larger); small because it only trims the habitat-bill gap inside ΔB | Include in B_R/B_N |
+| Leafcutter bees (Meadow sale value) | Yes: more money before charging | Yes, on Meadow jars only | Slightly lowers G; money only, so it barely moves ΔW; no charge effect | Include in B_R/B_N and I_ref |
 | Bumble bees (Alpine fill rate) | No | Yes: higher jar intake J | Raises G at low n; normal route reaches κ earlier | Re-check where κ binds; v2 Alpine-stop gains more than the full route (0.50 vs 0.29 Alpine share) |
 | Mason bees (Alpine pollination) | No | Yes | Raises G slightly | v2 Alpine-stop check |
 | Mining bees (Alpine sale value) | No | Yes | Raises G slightly | v2 Alpine-stop check |
 
-- **Net:** the two Meadow species shrink the rush's disadvantage only through money (B), which fades with Crystals. The rush-gap-critical region (n ≈ 100–150) is governed by jar intake and κ, which no Meadow species touches. The rush therefore cannot become clearly better through species, provided the Meadow channel caps stay small and Terry's reference sims run with species present.
+- **Net:** the two Meadow species shrink the rush's disadvantage only through money (B). That is safe because of size, not because money scales with Crystals (the charge term scales ÷M too until κ binds): they trim only the habitat-bill gap inside ΔB, while a Meadow fill-rate species would cut the rush's large charge term and roughly halve ΔW (Terry, `native-species-balance.md` §1). The rush-gap-critical region (n ≈ 100–150) is governed by jar intake and κ, which no Meadow species touches. The rush therefore cannot become clearly better through species, provided the Meadow channel caps stay small and Terry's reference sims run with species present.
 - **v2 risk:** Alpine-stop already ties the full route at n ≈ 150 (Terry §4.2, G = 1.000). Any Alpine species effect helps Alpine-stop more than the full route. Terry must re-run the v2 search with Alpine species active; if Alpine-stop drops below 1.00, lower Alpine channel caps or add the Grove/Cloud fill-rate and pollination species to restore the margin.
 - **Cloud Gardens yield (optional, Q3):** a Refinery-yield bonus on the last biome only helps the full route (no shortcut reaches it), so it can only raise G. It still shifts Terry's v2 parity window (G at n = 150) and must be folded into Y_Cloud, not added on top.
 
@@ -160,7 +160,7 @@ The GDD already says native bees grant production multipliers across Trees A and
 | Tree A (fill rate) | Bumble bees and lantern bees add to the fill-rate channel | Stacks with Worker Swarm Count; channel cap needed |
 | Tree B (sale value) | Quality species add to the sale-value channel alongside Artisanal Branding | If applied to the Refinery's per-jar value, it breaks Terry's yields |
 | Refinery / affinity | Royal Honey uses base sale value; no launch yield effects | Optional Cloud yield effect shifts the v2 parity window |
-| Rush gap (v1) | Meadow species help the rush only through money, which fades with Crystals | A Meadow fill-rate species would raise J_R and could make the rush clearly better (Terry §5.3) |
+| Rush gap (v1) | Meadow species help the rush only through money, which barely moves the rush's handicap ΔW | A Meadow fill-rate species would raise J_R and could make the rush clearly better (Terry §5.3) |
 | Rush gap (v2) | Alpine species help Alpine-stop more than the full route | Alpine-stop already ties at n ≈ 150; needs a re-run |
 | Biome unlocks | Cheaper Synergy (pollination) unlocks the next biome sooner | Shortens runs slightly; must be in the reference sims |
 | Starting upgrades | No starting species; plots stay below species thresholds | A future "starting species" whitelist item would favour the rush |
