@@ -94,12 +94,27 @@ Progression is split across three synergizing upgrade paths using an exponential
     | Alpine Valley | Fireweed and other alpine wildflowers (TBD) |
     | Enchanted Grove, Cloud Gardens | Fictional flowers, labelled as fictional in the Bee Journal |
   * *Native Bees:* Habitat Health attracts native wild bees to the farm, separate from the managed honeybees. Native bees:
-    * Pollinate flowers, speeding flower growth and Habitat Health.
-    * Grant production multipliers across Trees A and B (the habitat/bee synergy); more native bees means a bigger multiplier.
+    * Pollinate flowers, raising Habitat Synergy (no growth timers).
+    * Grant a native-bee bonus to production in Trees A and B (the habitat/bee synergy). The bonus is per biome: in each biome, species effects plus a small bonus for the number of native bees form one capped bonus that applies only in that biome.
   * *Hive Balance:* Managed honeybees compete with native bees for the same flowers. Placing hives on the grid without enough flowers lowers Habitat Health, so players balance hive count against planting.
   * *Habitat Synergy Level:* Each biome has a graded Habitat Synergy level, based on whether it has enough flowers for its bees to pollinate and make honey from. Synergy is money-driven: it rises as soon as flowers are placed, with no growth timers. Reaching a biome's unlock threshold opens the next biome, and the Refinery needs its host biome to stay above a minimum level (values in `balance/refinery-parameters.md`).
-  * *Native Bee Species:* Launch biomes attract real Canadian native bee groups (e.g., bumble bees, mason bees, leafcutter bees, sweat bees, mining bees; per-biome assignment TBD). Biomes 3–4 attract fictional species, clearly labelled as fictional in the Bee Journal. Each species has a mechanical effect in its biome: faster hive fill rate, faster pollination (Habitat Synergy rises faster), or better honey quality (higher sale value or Refinery yield). Effects are designed by Gerard and balanced by Terry (values TBD).
-  * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts. William drafts the facts (English and French) with cited sources, and a conservation partner reviews them before launch.
+  * *Native Bee Species:* Each species arrives when its biome's Habitat Health and flower needs are met, leaves if habitat drops, and returns when it recovers. Its effect applies only in its own biome. Full design: `design/native-species.md`; values set by Terry (TBD).
+
+    | Biome | Species | Effect | Attracted by |
+    |---|---|---|---|
+    | Sunny Meadow | Sweat bees | Faster pollination | Black-eyed Susan, goldenrod |
+    | Sunny Meadow | Leafcutter bees | Better honey quality (sale value) | Wild bergamot, New England aster |
+    | Sunny Meadow | Bumble bees (visitor) | None; Bee Journal entry only | — |
+    | Alpine Valley | Bumble bees | Faster hive fill rate | Fireweed, alpine wildflowers (TBD) |
+    | Alpine Valley | Mason bees | Faster pollination | Fireweed, alpine wildflowers (TBD) |
+    | Alpine Valley | Mining bees | Better honey quality (sale value) | Fireweed, alpine wildflowers (TBD) |
+    | Enchanted Grove | Lantern bee, Glowcap digger (fictional) | TBD | TBD |
+    | Cloud Gardens | Drift bee, Stardust bee (fictional) | TBD; one may raise Refinery yield | TBD |
+
+    * Real-species assignments must be fact-checked by William and a conservation partner.
+    * Sunny Meadow has no fill-rate species, so the Meadow rush can't become clearly better.
+    * Quality effects raise market sale value only, not Refinery charge, except the one Cloud Gardens species allowed to raise Refinery yield.
+  * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts. The Journal is a permanent collection and gives no production bonus. William drafts the facts (English and French) with cited sources, and a conservation partner reviews them before launch.
   * *On Reset:* The Bee Journal is permanent; Habitat levels reset with the farm each run.
 * **Capstone: Royal Honey Refinery** (full proposal: `design/capstone-machine.md`)
   * **Build:** A very expensive machine bought with in-game money and placed on the grid in one biome (its host biome).
@@ -220,10 +235,10 @@ All agents draw from one shared daily pool (no per-agent caps). The developer is
 
 | Agent | Tokens per task | Runtime per task | Basis |
 |---|---|---|---|
-| Gerard | 59,822 | ~2 min | Measured (1 run) |
+| Gerard | 71,674 | ~3 min | Measured (average of 2 runs; 59.8k–83.5k) |
 | Terry | 121,361 | ~19 min | Measured (average of 3 runs; 54.5k–174k) |
 | Connie | ~42,000 | ~1 min | Estimated from document-review runs (not yet run) |
-| William | ~60,000 | ~2 min | Estimated from Gerard's design-writing run (not yet run) |
+| William | ~72,000 | ~3 min | Estimated from Gerard's design-writing runs (not yet run) |
 | Bob, Patricia, Andrew, Martin, Quinn | TBD | TBD | No similar runs yet |
 
 ### API Constraints

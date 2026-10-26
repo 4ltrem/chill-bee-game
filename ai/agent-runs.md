@@ -47,6 +47,8 @@ These are the subagent runs from the design-review sessions (2026-10-14 to 2026-
 | Run | Tokens | Tool calls | Duration |
 |---|---|---|---|
 | Gerard: capstone Refinery concept | 59,822 | 5 | 130 s |
+| Gerard: native species effects | 83,525 | 6 | 195 s |
+| **Average (2 runs)** | **71,674** | | **163 s** |
 
 ### Balance analysis: model progression math, write a report
 | Run | Tokens | Tool calls | Duration |
@@ -62,10 +64,10 @@ A full design review (Round 1 + Round 2, 12 agent runs) used about 586k subagent
 
 | Agent | Basis | Tokens per task | Runtime per task |
 |---|---|---|---|
-| Gerard, the Gameplay Architect | Measured (1 run) | 59,822 | ~2 min |
+| Gerard, the Gameplay Architect | Measured (average of 2 runs; 59.8k–83.5k) | 71,674 | ~3 min |
 | Terry, the Progression Tree Expert | Measured (average of 3 runs; range 54.5k–174k) | 121,361 | ~19 min |
 | Connie, the Compliance Officer | Not yet run. Estimated from the document-review average (similar task: read the GDD, write findings) | ~42,000 | ~1 min |
-| William, the Writer | Not yet run. Estimated from Gerard's feature-design run (similar task: write a design document from the GDD) | ~60,000 | ~2 min |
+| William, the Writer | Not yet run. Estimated from Gerard's feature-design runs (similar task: write a design document from the GDD) | ~72,000 | ~3 min |
 | Bob, the Builder | No similar run | TBD | TBD |
 | Patricia, the Programmer | No similar run | TBD | TBD |
 | Andrew, the Audiophile | No similar run | TBD | TBD |
