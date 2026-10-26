@@ -53,7 +53,8 @@ These are the subagent runs from the design-review sessions (2026-10-14 to 2026-
 |---|---|---|---|
 | Terry: Royal Crystal boost + starting hives | 54,527 | 6 | 157 s |
 | Terry: Refinery parameters | 135,513 | 13 | 655 s |
-| **Average (2 runs)** | **95,020** | | **406 s** |
+| Terry: Refinery rebalance (4 designer decisions) | 174,042 | 25 | 2,585 s |
+| **Average (3 runs)** | **121,361** | | **1,132 s** |
 
 A full design review (Round 1 + Round 2, 12 agent runs) used about 586k subagent tokens the first time and 634k the second. The orchestrator's synthesis is not included.
 
@@ -62,7 +63,7 @@ A full design review (Round 1 + Round 2, 12 agent runs) used about 586k subagent
 | Agent | Basis | Tokens per task | Runtime per task |
 |---|---|---|---|
 | Gerard, the Gameplay Architect | Measured (1 run) | 59,822 | ~2 min |
-| Terry, the Progression Tree Expert | Measured (average of 2 runs; range 54.5k–135.5k) | 95,020 | ~7 min |
+| Terry, the Progression Tree Expert | Measured (average of 3 runs; range 54.5k–174k) | 121,361 | ~19 min |
 | Connie, the Compliance Officer | Not yet run. Estimated from the document-review average (similar task: read the GDD, write findings) | ~42,000 | ~1 min |
 | William, the Writer | Not yet run. Estimated from Gerard's feature-design run (similar task: write a design document from the GDD) | ~60,000 | ~2 min |
 | Bob, the Builder | No similar run | TBD | TBD |

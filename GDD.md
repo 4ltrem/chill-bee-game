@@ -53,7 +53,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
   * Can also be applied to one starting upgrade for future runs, chosen from a whitelist (e.g., bigger starting frames, faster tools, starting land, starting flower or hive units). Crystals shorten Phase 1 but never skip it: automation and the capstone cannot be pre-bought.
   * Extra starting hives follow the normal Hive Balance rule and lower starting Habitat Health. A matching "starting wildflower plot" option raises it. The Crystal screen shows a live Habitat Health preview, and both options have a max level (TBD). See `balance/royal-crystal-balance.md`.
 
-  Royal Crystals carry over between runs. Research trees are purchased with in-game money and do not carry over between runs. Research does two things: bee and flower genetics that multiply production, and unlocking higher unit tiers (see Land, Grid & Units) (values TBD).
+  Royal Crystals carry over between runs. Research trees are purchased with in-game money and do not carry over between runs. Research does three things: bee and flower genetics that multiply production, unlocking higher unit tiers (see Land, Grid & Units), and upgrades for the Royal Honey Refinery (values TBD).
 
 * **Pests & Wild Nectar Drops:** Appear only during active play and pause while offline. Tapping them gives a small reward (cleared pests or collected nectar); ignoring them costs nothing. The Patron Golden Drone taps them automatically.
 
@@ -100,7 +100,10 @@ Progression is split across three synergizing upgrade paths using an exponential
   * **Habitat lock:** The Refinery only refines while its host biome stays above a minimum Habitat Synergy level. Below it, refining pauses but nothing drains.
   * **Royal Crystal:** When the charge meter is full, a Royal Crystal forms and the run is complete. The player can then choose to reset.
   * **Speedrun route:** A player can stay in Sunny Meadow, rush the top unit tiers, keep just enough flowers for the habitat minimum, and send everything into the Refinery. This route is intentionally left open. It is clearly slower than the normal route for new and low-Crystal players, and about equal (within ~5%) for veteran players with many Crystals, so they can choose either route. A maximum Refinery charging speed keeps it from ever being clearly better.
-  * **Target run length:** A new player's first run, from start to the first Royal Crystal, takes about 3 days.
+  * **Target run length:** A new player's first run, from start to the first Royal Crystal, takes about 3 days (72 hours) at launch and about 47 hours once biomes 3–4 ship. The shorter post-launch run is the price of keeping the rush equal for veterans.
+  * **Charge phase:** How much of a run is spent charging the Refinery is TBD. Terry's model has about 45 of 72 hours at launch. Stacking production across biomes should speed up charging, and research can buy Refinery upgrades (effects TBD).
+  * **Charging-speed cap:** Whether the cap is strict (the rush is never faster) or tolerant (up to 2% faster) is TBD, to revisit once the Refinery research upgrades exist.
+  * **Provisional values:** Terry's proposed parameters are in `balance/refinery-parameters.md`. They come from a stand-in model and must be re-derived once the real economy and the per-biome setup time are measured.
   * **Content versions:** The charge target is stored per content version, so adding biomes 3–4 never changes stored run times. Each run also records the highest biome that contributed honey.
   * Parameters are set by Terry (build cost, charge target, biome affinities, Habitat Synergy minimum, maximum share sent to the Refinery, footprint).
 
@@ -211,7 +214,7 @@ All agents draw from one shared daily pool (no per-agent caps). The developer is
 | Agent | Tokens per task | Runtime per task | Basis |
 |---|---|---|---|
 | Gerard | 59,822 | ~2 min | Measured (1 run) |
-| Terry | 95,020 | ~7 min | Measured (average of 2 runs; 54.5k–135.5k) |
+| Terry | 121,361 | ~19 min | Measured (average of 3 runs; 54.5k–174k) |
 | Connie | ~42,000 | ~1 min | Estimated from document-review runs (not yet run) |
 | William | ~60,000 | ~2 min | Estimated from Gerard's design-writing run (not yet run) |
 | Bob, Patricia, Andrew, Martin, Quinn | TBD | TBD | No similar runs yet |
@@ -306,6 +309,8 @@ Terms used in this document and in the design and balance reports (`design/`, `b
 | M | A player's total production multiplier. | +10% per Crystal: M = 1 + 0.10 × Crystals. |
 | M(n) | M at n Crystals. | M(60) = 7.0. |
 | M\* | The multiplier at which the crossover would happen. "M\* ≥ M(60)" means the rush can't win before 60 Crystals. | — |
+| Fixed setup time | F (route), ΔF (per biome). The part of a run that more production can't speed up, such as unlocking and setting up each biome. The rush skips biomes, so it has less fixed time. | Terry assumes ΔF = 1 h per biome. |
+| Stacking | Earlier biomes keep producing while you build later ones, so total production adds up across biomes. | — |
 
 ### Royal Honey Refinery (Capstone)
 | Term | Parameter | Meaning |
@@ -318,7 +323,8 @@ Terms used in this document and in the design and balance reports (`design/`, `b
 | Divert | — | The slider share of each biome's honey sent to the Refinery instead of being sold. |
 | Divert max | `CAP_DIVERT_MAX` | The highest divert share allowed. |
 | Affinity | `AFFINITY[biome]` | Charge one jar of a biome's honey gives. Later biomes have higher affinity. |
-| Throughput cap | `CAP_THROUGHPUT_MAX` | Maximum charging speed. Keeps the rush from ever beating the normal route. |
+| Throughput cap | `CAP_THROUGHPUT_MAX` (κ, "kappa", in Terry's math) | Maximum charging speed: the most honey jars per hour the Refinery accepts. Keeps the rush from ever beating the normal route. |
+| Yield | Y | Royal Honey per jar from a biome, relative to Sunny Meadow (Meadow = 1). |
 | Synergy minimum | `CAP_SYNERGY_MIN[biome]` | Habitat Synergy level the host biome must stay above for refining to continue. |
 | Unlock condition | `CAP_UNLOCK_CONDITION` | What must happen before the Refinery can be built. |
 | Rush gap target | `RUSH_GAP_TARGET` | The rush gap values balance aims for at each Crystal count. |
