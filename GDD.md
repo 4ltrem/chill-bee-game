@@ -91,7 +91,7 @@ Progression is split across three synergizing upgrade paths using an exponential
     * Pollinate flowers, speeding flower growth and Habitat Health.
     * Grant production multipliers across Trees A and B (the habitat/bee synergy); more native bees means a bigger multiplier.
   * *Hive Balance:* Managed honeybees compete with native bees for the same flowers. Placing hives on the grid without enough flowers lowers Habitat Health, so players balance hive count against planting.
-  * *Habitat Synergy Level:* Each biome has a graded Habitat Synergy level, based on whether it has enough flowers for its bees to pollinate and make honey from. Reaching a biome's unlock threshold opens the next biome, and the Refinery needs its host biome to stay above a minimum level (values TBD).
+  * *Habitat Synergy Level:* Each biome has a graded Habitat Synergy level, based on whether it has enough flowers for its bees to pollinate and make honey from. Synergy is money-driven: it rises as soon as flowers are placed, with no growth timers. Reaching a biome's unlock threshold opens the next biome, and the Refinery needs its host biome to stay above a minimum level (values in `balance/refinery-parameters.md`).
   * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts.
   * *On Reset:* The Bee Journal is permanent; Habitat levels reset with the farm each run.
 * **Capstone: Royal Honey Refinery** (full proposal: `design/capstone-machine.md`)
@@ -99,7 +99,8 @@ Progression is split across three synergizing upgrade paths using an exponential
   * **Charge:** A single slider sends a share of every biome's honey into the Refinery, which refines it into Royal Honey. Each jar adds its sale value × its biome's affinity rate, and later biomes have higher affinity, so the stacked production of all biomes charges it fastest.
   * **Habitat lock:** The Refinery only refines while its host biome stays above a minimum Habitat Synergy level. Below it, refining pauses but nothing drains.
   * **Royal Crystal:** When the charge meter is full, a Royal Crystal forms and the run is complete. The player can then choose to reset.
-  * **Speedrun route:** A player can stay in Sunny Meadow, rush the top unit tiers, keep just enough flowers for the habitat minimum, and send everything into the Refinery. This route is intentionally left open. It should be clearly slower than the normal route for low-Crystal players and close to equal for high-Crystal players, but never the best choice.
+  * **Speedrun route:** A player can stay in Sunny Meadow, rush the top unit tiers, keep just enough flowers for the habitat minimum, and send everything into the Refinery. This route is intentionally left open. It is clearly slower than the normal route for new and low-Crystal players, and about equal (within ~5%) for veteran players with many Crystals, so they can choose either route. A maximum Refinery charging speed keeps it from ever being clearly better.
+  * **Target run length:** A new player's first run, from start to the first Royal Crystal, takes about 3 days.
   * **Content versions:** The charge target is stored per content version, so adding biomes 3–4 never changes stored run times. Each run also records the highest biome that contributed honey.
   * Parameters are set by Terry (build cost, charge target, biome affinities, Habitat Synergy minimum, maximum share sent to the Refinery, footprint).
 
@@ -204,6 +205,16 @@ All agents draw from one shared daily pool (no per-agent caps). The developer is
 1. Run a known task (e.g., one design-review round, about 250k tokens) and note the weekly usage percentage in `/usage` before and after.
 2. Tokens per 1% of the weekly limit = tokens used ÷ percentage change.
 3. **Daily budget** = 14.3% of the weekly limit (1/7) × tokens per 1% = **TBD tokens/day** (filled in after calibration).
+
+**Per-task estimates** (measured from agent runs; full log in `ai/agent-runs.md`):
+
+| Agent | Tokens per task | Runtime per task | Basis |
+|---|---|---|---|
+| Gerard | 59,822 | ~2 min | Measured (1 run) |
+| Terry | 95,020 | ~7 min | Measured (average of 2 runs; 54.5k–135.5k) |
+| Connie | ~42,000 | ~1 min | Estimated from document-review runs (not yet run) |
+| William | ~60,000 | ~2 min | Estimated from Gerard's design-writing run (not yet run) |
+| Bob, Patricia, Andrew, Martin, Quinn | TBD | TBD | No similar runs yet |
 
 ### API Constraints
 All agents run through Claude Code, using different models depending on the task. API usage is divided into modular execution pipelines, ensuring individual agent calls remain constrained to their designated token windows to prevent context overlap.
