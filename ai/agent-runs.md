@@ -74,4 +74,6 @@ A full design review (Round 1 + Round 2, 12 agent runs) used about 586k subagent
 | Martin, the Hiring Manager | No similar run (Connie's definition was written by the main session, not by an agent run) | TBD | TBD |
 | Quinn, the QA & Build Engineer | No similar run | TBD | TBD |
 
+All runs above used Opus. The GDD (AI Architecture, Suggested model per agent) assigns smaller models to lighter agents, so re-measure those agents' costs once they run on Sonnet or Haiku.
+
 Connie also checks official sources on the web. The documentation-research run (about 47k tokens) suggests a compliance review with web checks may need closer to 90k tokens. Update Connie's row after her first run.

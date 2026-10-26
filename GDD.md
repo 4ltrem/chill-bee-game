@@ -244,6 +244,22 @@ All agents draw from one shared daily pool (no per-agent caps). The developer is
 ### API Constraints
 All agents run through Claude Code, using different models depending on the task. API usage is divided into modular execution pipelines, ensuring individual agent calls remain constrained to their designated token windows to prevent context overlap.
 
+**Suggested model per agent.** Larger models use up the shared Pro limits faster, so each agent gets the smallest model that fits its task type. Set it with the `model:` field of the agent's file in `.claude/agents/`.
+
+| Agent | Task type | Suggested model | Why |
+|---|---|---|---|
+| Gerard | Feature design: reasons across all systems | Opus | Must catch contradictions between systems (e.g., the "nothing transfers between worlds" conflict) |
+| Terry | Balance analysis: multi-step progression math | Opus | Long, numeric, iterative modelling; errors compound across runs |
+| Patricia | Code generation (GDScript, backend) | Sonnet | Strong at routine code; escalate to Opus for architecture or backend design |
+| Quinn | Tests, builds, profiling | Sonnet | Writes tests and reads build and profiler output |
+| Connie | Compliance review with web checks | Sonnet | Rule lookup and checklists; a human signs off anyway. Use Opus for the pre-submission review |
+| William | Story outlines, EN/FR Journal facts | Sonnet | Good writing and French; facts are reviewed by a partner |
+| Bob | Godot scenes (`.tscn`) from a layout spec | Sonnet | Structured file output that follows a spec |
+| Andrew | Search and curate audio | Haiku | Search and list-making; little reasoning needed |
+| Martin | Agent descriptions from a template | Haiku | Fills a fixed template; the developer reviews the diff |
+
+Measured token costs above came from runs on Opus (the main session's model). Re-measure after switching an agent to a smaller model.
+
 ### Actionable Strategy Formalized from Agent Role Definitions
 Each specialized agent functions as a dedicated module in the development workflow, executing discrete tasks triggered by developer inputs and producing structured outputs.
 
@@ -382,14 +398,14 @@ Terms used in this document and in the design and balance reports (`design/`, `b
 | Run time | Wall-clock time from the start of a run until the Crystal forms, offline time included. |
 
 ### Agents
-| Agent | Role | Agent file |
-|---|---|---|
-| Gerard | Gameplay Architect | — |
-| Bob | Builder | — |
-| Patricia | Programmer | — |
-| William | Writer | — |
-| Andrew | Audiophile | — |
-| Terry | Progression Tree Expert | — |
-| Martin | Hiring Manager | — |
-| Connie | Compliance Officer | `.claude/agents/compliance-officer.md` |
-| Quinn | QA & Build Engineer | — |
+| Agent | Role | Suggested model | Agent file |
+|---|---|---|---|
+| Gerard | Gameplay Architect | Opus | — |
+| Bob | Builder | Sonnet | — |
+| Patricia | Programmer | Sonnet | — |
+| William | Writer | Sonnet | — |
+| Andrew | Audiophile | Haiku | — |
+| Terry | Progression Tree Expert | Opus | — |
+| Martin | Hiring Manager | Haiku | — |
+| Connie | Compliance Officer | Sonnet | `.claude/agents/compliance-officer.md` |
+| Quinn | QA & Build Engineer | Sonnet | — |
