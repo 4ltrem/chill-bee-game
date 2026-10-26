@@ -95,25 +95,25 @@ Progression is split across three synergizing upgrade paths using an exponential
     | Enchanted Grove, Cloud Gardens | Fictional flowers, labelled as fictional in the Bee Journal |
   * *Native Bees:* Habitat Health attracts native wild bees to the farm, separate from the managed honeybees. Native bees:
     * Pollinate flowers, raising Habitat Synergy (no growth timers).
-    * Grant a native-bee bonus to production in Trees A and B (the habitat/bee synergy). The bonus is per biome: in each biome, species effects plus a small bonus for the number of native bees form one capped bonus that applies only in that biome.
+    * Grant a native-bee bonus to production in Trees A and B (the habitat/bee synergy). The bonus is per biome: in each biome, species effects plus a small bonus for the number of native bees form one capped bonus that applies only in that biome. Each biome has a total ceiling and a smaller ceiling for each kind of boost (pollination speed, fill rate, sale value); Sunny Meadow's fill-rate ceiling is 0 and its sale-value ceiling is +15%. The abundance bonus (up to +5%) raises sale value only.
   * *Hive Balance:* Managed honeybees compete with native bees for the same flowers. Placing hives on the grid without enough flowers lowers Habitat Health, so players balance hive count against planting.
   * *Habitat Synergy Level:* Each biome has a graded Habitat Synergy level, based on whether it has enough flowers for its bees to pollinate and make honey from. Synergy is money-driven: it rises as soon as flowers are placed, with no growth timers. Reaching a biome's unlock threshold opens the next biome, and the Refinery needs its host biome to stay above a minimum level (values in `balance/refinery-parameters.md`).
-  * *Native Bee Species:* Each species arrives when its biome's Habitat Health and flower needs are met, leaves if habitat drops, and returns when it recovers. Its effect applies only in its own biome. Full design: `design/native-species.md`; values set by Terry (TBD).
+  * *Native Bee Species:* Each species arrives when its biome's Habitat Health and flower needs are met, leaves if habitat drops, and returns when it recovers. Its effect applies only in its own biome. Full design: `design/native-species.md`; provisional values in `balance/native-species-balance.md` (Terry).
 
     | Biome | Species | Effect | Attracted by |
     |---|---|---|---|
-    | Sunny Meadow | Sweat bees | Faster pollination | Black-eyed Susan, goldenrod |
-    | Sunny Meadow | Leafcutter bees | Better honey quality (sale value) | Wild bergamot, New England aster |
+    | Sunny Meadow | Sweat bees | Faster pollination (+25%) | Black-eyed Susan, goldenrod |
+    | Sunny Meadow | Leafcutter bees | Better honey quality (+10% sale value) | Wild bergamot, New England aster |
     | Sunny Meadow | Bumble bees (visitor) | None; Bee Journal entry only | — |
-    | Alpine Valley | Bumble bees | Faster hive fill rate | Fireweed, alpine wildflowers (TBD) |
-    | Alpine Valley | Mason bees | Faster pollination | Fireweed, alpine wildflowers (TBD) |
-    | Alpine Valley | Mining bees | Better honey quality (sale value) | Fireweed, alpine wildflowers (TBD) |
-    | Enchanted Grove | Lantern bee, Glowcap digger (fictional) | TBD | TBD |
-    | Cloud Gardens | Drift bee, Stardust bee (fictional) | TBD; one may raise Refinery yield | TBD |
+    | Alpine Valley | Bumble bees | Faster hive fill rate (+20%) | Fireweed, alpine wildflowers (TBD) |
+    | Alpine Valley | Mason bees | Faster pollination (+25%) | Fireweed, alpine wildflowers (TBD) |
+    | Alpine Valley | Mining bees | Better honey quality (+10% sale value) | Fireweed, alpine wildflowers (TBD) |
+    | Enchanted Grove | Lantern bee, Glowcap digger (fictional) | Lantern bee: faster fill rate (+20%); Glowcap digger TBD | TBD |
+    | Cloud Gardens | Drift bee, Stardust bee (fictional) | Drift bee: faster pollination (+25%); Stardust bee: +10% sale value and +10% Refinery yield | TBD |
 
     * Real-species assignments must be fact-checked by William and a conservation partner.
     * Sunny Meadow has no fill-rate species, so the Meadow rush can't become clearly better.
-    * Quality effects raise market sale value only, not Refinery charge, except the one Cloud Gardens species allowed to raise Refinery yield.
+    * Quality effects raise market sale value only, not Refinery charge, except the Stardust bee in Cloud Gardens. Its +10% Refinery yield is already included in Cloud Gardens' planned affinity, so Cloud reaches its full rate only with Stardust bees.
   * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts. The Journal is a permanent collection and gives no production bonus. William drafts the facts (English and French) with cited sources, and a conservation partner reviews them before launch.
   * *On Reset:* The Bee Journal is permanent; Habitat levels reset with the farm each run.
 * **Capstone: Royal Honey Refinery** (full proposal: `design/capstone-machine.md`)
@@ -122,8 +122,8 @@ Progression is split across three synergizing upgrade paths using an exponential
   * **Habitat lock:** The Refinery only refines while its host biome stays above a minimum Habitat Synergy level. Below it, refining pauses but nothing drains.
   * **Royal Crystal:** When the charge meter is full, a Royal Crystal forms and the run is complete. The player can then choose to reset.
   * **Speedrun route:** A player can stay in Sunny Meadow, rush the top unit tiers, keep just enough flowers for the habitat minimum, and send everything into the Refinery. This route is intentionally left open. It is clearly slower than the normal route for new and low-Crystal players, and about equal (within ~5%) for veteran players with many Crystals, so they can choose either route. A maximum Refinery charging speed keeps it from ever being clearly better.
-  * **Target run length:** A new player's first run, from start to the first Royal Crystal, takes about 3 days (72 hours) at launch and about 47 hours once biomes 3–4 ship. The shorter post-launch run is the price of keeping the rush equal for veterans.
-  * **Charge phase:** How much of a run is spent charging the Refinery is TBD. Terry's model has about 45 of 72 hours at launch. Stacking production across biomes should speed up charging, and research can buy Refinery upgrades (effects TBD).
+  * **Target run length:** A new player's first run, from start to the first Royal Crystal, takes about 66 hours at launch and about 43–46 hours once biomes 3–4 ship (to be confirmed by Terry). The designer accepted the shorter launch run that native-bee bonuses cause, rather than raising costs to hold 72 hours. The shorter post-launch run is the price of keeping the rush equal for veterans.
+  * **Charge phase:** How much of a run is spent charging the Refinery is TBD. Terry's model, before native bees, had about 45 of 72 hours at launch. Stacking production across biomes should speed up charging, and research can buy Refinery upgrades (effects TBD).
   * **Charging-speed cap:** Whether the cap is strict (the rush is never faster) or tolerant (up to 2% faster) is TBD, to revisit once the Refinery research upgrades exist.
   * **Provisional values:** Terry's proposed parameters are in `balance/refinery-parameters.md`. They come from a stand-in model and must be re-derived once the real economy and the per-biome setup time are measured.
   * **Content versions:** The charge target is stored per content version, so adding biomes 3–4 never changes stored run times. Each run also records the highest biome that contributed honey.
@@ -195,7 +195,7 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 
 ### Progression Tiers & Biomes
 Biomes are stages within a single run, played in order. A biome's Habitat Synergy threshold (enough flowers for its bees to pollinate and make honey from) unlocks the next biome. Earlier biomes keep producing at full rate and can still be expanded and upgraded, so production stacks across biomes. A reset starts a new pocket world in Sunny Meadow. Each biome:
-* Produces its own honey, each more sought after (higher sale value) than the last (values TBD). Alpine Valley honey must sell for less than 2× Sunny Meadow honey, or it would charge the Refinery less per jar than Meadow honey (see `balance/refinery-parameters.md`).
+* Produces its own honey, each more sought after (higher sale value) than the last (values TBD). Alpine Valley honey must sell for less than 1.92× Sunny Meadow honey, or it would charge the Refinery less per jar than Meadow honey (the Alpine affinity was lowered from 2.0 to 1.92 to account for Alpine bumble bees; see `balance/native-species-balance.md`).
 * Attracts its own local native bee species, each with different effects (species and effects TBD), recorded in the Bee Journal.
 
 1. **Sunny Meadow:** Rolling green hills, wild clover, and classic wooden Langstroth hives (*Wildflower Gold Honey*).

@@ -82,7 +82,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Habitat Synergy threshold for each biome
 - [ ] Royal Crystal starting-upgrade whitelist
 - [ ] Max levels for the starting-hives and starting-wildflower-plot Crystal options
-- [ ] Native bee species for each biome and their effects
+- [ ] Native bee species: provisional effects set (Terry); Glowcap digger effect, real values and run length with native bees still to confirm
 - [ ] Flower list for the habitat tree
 
 ### Leaderboards
