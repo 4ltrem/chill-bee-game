@@ -184,7 +184,7 @@ Biomes are stages within a single run, played in order. A biome's Habitat Synerg
 * Attracts its own local native bee species, each with different effects (species and effects TBD), recorded in the Bee Journal.
 
 1. **Sunny Meadow:** Rolling green hills, wild clover, and classic wooden Langstroth hives (*Wildflower Gold Honey*).
-2. **Alpine Valley:** Pine trees, lavender fields, and Swiss-style chalet hives (*Frosted Lavender Honey*).
+2. **Alpine Valley:** Pine trees, fireweed meadows, and Swiss-style chalet hives (*Frosted Fireweed Honey*).
 3. **Enchanted Grove:** Oversized glowing mushrooms, night-blooming flora, and lantern-shaped hanging hives (*Moonlight Nectar*).
 4. **Cloud Gardens:** Floating low-poly sky islands, rainbow blossoms, and brass solar-powered hives (*Stardust Honey*).
 
