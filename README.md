@@ -98,6 +98,6 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 
 ### Production
 - [ ] Milestone dates
-- [ ] Daily token budget (calibrate with `/usage`, see GDD)
+- [ ] Daily token budget: first calibration gives ~2.0M tokens/day (provisional; refine with a larger task, see GDD)
 - [ ] Test device models and visual bee cap
 - [ ] Backend provider (managed game-backend service)

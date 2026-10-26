@@ -229,14 +229,31 @@ Biomes are stages within a single run, played in order. A biome's Habitat Synerg
 All agents draw from one shared daily pool (no per-agent caps). The developer is on the Claude Pro plan, which has a rolling 5-hour limit and a weekly limit shared across Claude and Claude Code, including subagents. Anthropic does not publish a token count for these limits, so the absolute budget is calibrated:
 1. Run a known task (e.g., one design-review round, about 250k tokens) and note the weekly usage percentage in `/usage` before and after.
 2. Tokens per 1% of the weekly limit = tokens used ÷ percentage change.
-3. **Daily budget** = 14.3% of the weekly limit (1/7) × tokens per 1% = **TBD tokens/day** (filled in after calibration).
+3. **Daily budget** = 14.3% of the weekly limit (1/7) × tokens per 1%.
+
+**First calibration (2026-10-26, Terry's native-species run):**
+
+| Measure | Before | After | Change |
+|---|---|---|---|
+| Weekly usage | 11% | 12% | 1% |
+| Session (5 h) usage | 65% | 70% | 5% |
+| Subagent tokens | | | 138,229 |
+
+| Result | Value |
+|---|---|
+| Tokens per 1% of the weekly limit | ~138,000 |
+| Weekly limit (estimate) | ~13.8M tokens |
+| **Daily budget** | **~2.0M tokens/day** (14.3 × 138k) |
+| Tokens per 1% of the 5-hour session | ~28,000 (so one session ≈ 2.8M tokens) |
+
+In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 full design reviews (~600k each). The figure is provisional: `/usage` only shows whole percentages, so a 1% change could really be anywhere from about 0.5% to 1.5%, which puts the daily budget between roughly 1.3M and 4M tokens. Refine it by measuring again on larger tasks (e.g., a full design review), which move the weekly bar by several points.
 
 **Per-task estimates** (measured from agent runs; full log in `ai/agent-runs.md`):
 
 | Agent | Tokens per task | Runtime per task | Basis |
 |---|---|---|---|
 | Gerard | 71,674 | ~3 min | Measured (average of 2 runs; 59.8k–83.5k) |
-| Terry | 121,361 | ~19 min | Measured (average of 3 runs; 54.5k–174k) |
+| Terry | 125,578 | ~16 min | Measured (average of 4 runs; 54.5k–174k) |
 | Connie | ~42,000 | ~1 min | Estimated from document-review runs (not yet run) |
 | William | ~72,000 | ~3 min | Estimated from Gerard's design-writing runs (not yet run) |
 | Bob, Patricia, Andrew, Martin, Quinn | TBD | TBD | No similar runs yet |
