@@ -2,5 +2,6 @@
 # Balance
 
 - [Native Bee Species Balance (provisional values)](native-species-balance.md) - Provisional native-species values; launch run length and Alpine affinity 1.92 (applied)
+- [Progression Levers: Run Length, Stronger Crystals, Researchable Charging Cap](progression-levers.md) - Run length under option B, stronger Crystals, researchable charging cap, Glowcap effect (designer chose +15% Crystals and Glowcap pollination) (applied)
 - [Royal Honey Refinery Parameters (revision 2)](refinery-parameters.md) - Refinery parameters, revision 2; stand-in model, re-derive after the reference sim (applied)
 - [Royal Crystal Balance Report](royal-crystal-balance.md) - Royal Crystal boost formula (+10% additive) and extra starting hives (applied)
