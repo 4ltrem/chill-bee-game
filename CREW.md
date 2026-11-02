@@ -10,10 +10,10 @@ Three agents coordinated by a Python orchestrator. Each agent is a Claude Code s
 
 | Agent | Role | Model | Tools | Produces |
 |---|---|---|---|---|
-| **Ruth**, Research Assistant ([definition](.claude/agents/research-assistant.md)) | finds and verifies real-world sources | Haiku | WebSearch, WebFetch, Write | `research/<slug>.md`: each claim narrowed to a verbatim quote, with URL and date |
-| **William**, Writer ([definition](.claude/agents/writer.md)) | writes and revises the text | Sonnet | Read, Write, Edit (no web) | `content/<slug>.md`: English, then Canadian French |
-| **Clara**, Content Critic ([definition](.claude/agents/content-critic.md)) | checks each draft against the GDD | Sonnet | Read, WebFetch (read-only) | a PASS/FAIL verdict with evidence and findings |
-| `generate.py` (orchestrator) | controls the loop and the shared blackboard | — | — | the blackboard, statuses, token log |
+| **Ruth**, Research Assistant ([definition](.claude/agents/research-assistant.md)) | finds and verifies real-world sources | Sonnet | Read, Grep, Glob, Write, WebSearch, WebFetch | `research/<slug>.md`: each claim narrowed to a verbatim quote, with URL and date |
+| **William**, Writer ([definition](.claude/agents/writer.md)) | writes and revises the text | Sonnet | Read, Grep, Glob, Write, Edit (no web) | `content/<slug>.md`: English, then Canadian French |
+| **Clara**, Content Critic ([definition](.claude/agents/content-critic.md)) | checks each draft against the GDD | Sonnet | Read, Grep, Glob, WebFetch (read-only: no Write or Edit) | a PASS/FAIL verdict with evidence and findings |
+| `generate.py` (orchestrator) | controls the loop and the shared blackboard | — | — | the blackboard, statuses, token log, kept transcripts |
 
 Clara and Ruth were themselves written by a fourth agent, **Martin**, the Hiring Manager ([definition](.claude/agents/hiring-manager.md)), from the workspace's agent template.
 
@@ -23,7 +23,7 @@ Clara and Ruth were themselves written by a fourth agent, **Martin**, the Hiring
 flowchart TD
     D([Designer]) -->|request or revision notes| G[generate.py<br/>orchestrator]
     GDD[(GDD.md<br/>source of truth)]
-    G -->|journal runs: facts to source| R[Ruth<br/>Research Assistant<br/>Haiku]
+    G -->|journal runs without a brief:<br/>facts to source or verify| R[Ruth<br/>Research Assistant<br/>Sonnet]
     R -->|WebSearch, WebFetch| WEB((Web))
     R -->|claim + verbatim quote + URL| RB[(research brief)]
     G -->|task + open FAIL rows + brief paths| W[William<br/>Writer<br/>Sonnet]
@@ -39,22 +39,25 @@ flowchart TD
     G -->|other FAIL rows| W
     G -->|appends every round| B[(blackboard<br/>content/_runs/slug)]
     G -->|token row per call| L[(agent-runs log)]
-    G -->|PASS: status draft<br/>3 FAILs or token cap: needs-review| D
+    G -->|each agent's transcript| T[(run transcripts<br/>_meta/sessions/runs)]
+    G -->|PASS: status draft<br/>still FAIL after 3 rounds or the cap: needs-review| D
 ```
 
 One run, step by step:
 
-1. **Ruth** (Journal runs only) researches the request and writes a brief: every claim as narrow as its quote ("some", not "all"), at most 6 searches and 12 fetches.
+1. **Ruth** (Journal runs with no brief yet; `--no-research` skips her, e.g. for fictional species) writes a brief: every claim as narrow as its quote ("some", not "all"), at most 6 searches and 12 fetches. On a new run she researches the request; on `--revise` she verifies the claims the draft already makes.
 2. **William** writes the draft from the GDD and the brief. He does no research of his own: a fact no brief supports stays out of the text.
 3. The orchestrator copies the draft onto the run's **blackboard**: the full draft in round 1, only a diff after that.
 4. **Clara** gets the request and the draft (or her last verdict and the diff) in her prompt and runs five checks: lore against the GDD, tone and Glossary terms, child safety and spending pressure, facts and French, and cited sources. She fetches every cited URL herself rather than trusting the brief. She replies with `VERDICT: PASS` or `FAIL`, a "Checked" list showing her evidence, and a findings table citing the GDD.
-5. **FAIL** goes back round the loop: rows asking for a better source go to Ruth first, the rest to William, who edits only the flagged lines. **PASS** ends the run with `status: draft` for the designer to approve. After 3 rounds, or past a 500,000-token cap, the draft is kept as `needs-review`.
+5. **FAIL** goes back round the loop: rows asking for a better source go to Ruth first, the rest to William, who edits only the flagged lines. **PASS** ends the run with `status: draft` for the designer to approve. After 3 rounds the draft is kept as `needs-review`, and so is a run that has spent its token cap (500,000 by default, `--max-tokens`). The cap is checked after each FAIL, before a new round starts, so a run can finish above it: one round can cost more than the cap's remainder.
 
 **The blackboard.** `content/_runs/<slug>/blackboard.md` is the shared record of one run: the request, research used, each round's draft or diff, every verdict, and a token table. The orchestrator is its controller: it hands each agent only the slice it needs in the prompt, so no agent re-reads the whole history every turn.
 
 **Provenance and decisions.** Each output's frontmatter records its author, type, status and the blackboard it came from. The designer's decision is two more fields, `decided:` and `decision:`, which agents never read; `python -I _tools/index.py --decisions content` lists them.
 
 **Not crashing.** A failed agent call marks the blackboard `result: failed` and logs what was spent; a fresh run can replace it. A finished run is never overwritten.
+
+**Records.** Every agent call is logged to `_meta/agent-runs.md` with two token measures: *total processed* (summed over the call's turns) and *final context* (the conversation's size at its last turn). Each call's own transcript is moved into `_meta/sessions/runs/<date>-<slug>-<run>/`, kept on the machine and out of git, and the blackboard links to it.
 
 ## Run it
 
@@ -71,7 +74,7 @@ python -I _tools/generate.py onboarding-script --revise --request "Scrap the 'ho
 # check the critic still catches known errors (exit 0 = all caught)
 python -I _tools/critic_check.py
 
-# test the orchestrator with fake agents: no Claude account, no tokens (20 tests)
+# test the orchestrator, critic check, run logger and decision page with fake agents: no Claude account, no tokens (26 tests)
 python -I _tools/test_generate.py
 ```
 
@@ -82,9 +85,9 @@ python -I _tools/test_generate.py
 | [Onboarding script](content/onboarding-script.md): the guide's first-session script, three guide personalities offered since the GDD leaves the guide TBD | PASS, then revised for the designer's note ("honey money" line replaced; only 3 lines changed) | 221k + 195k |
 | [Biome intros](content/biome-intros.md): title card and guide lines for Sunny Meadow, Alpine Valley, Enchanted Grove, Cloud Gardens | PASS in round 1 | 301k |
 | [Bee Journal, fictional species](content/bee-journal-magic.md): Lantern bee, Glowcap digger, Drift bee, Stardust bee | FAIL, fixed, PASS in round 2 | 352k |
-| [Bee Journal, real species](content/bee-journal-real.md): sweat, leafcutter, bumble, mason and mining bees | First run (William researching alone) stopped at the token cap. Then Ruth briefed it ([brief 1](research/bee-journal-real.md), [brief 2](research/bee-journal-real-2.md)); William trimmed every fact to its quote; Clara failed 5 rows, Ruth sourced them, William fixed them, PASS in round 2 | 879k, then 503k + 1,170k |
+| [Bee Journal, real species](content/bee-journal-real.md): sweat, leafcutter, bumble, mason and mining bees | Run 1 (William researching alone): FAIL, stopped at the token cap. Run 2: Ruth, on Haiku, verified the draft's claims ([brief 1](research/bee-journal-real.md)); Clara failed 5 rows; stopped at the cap. Run 3, with the designer's notes: William trimmed every fact to its brief quote; Clara failed 5 rows; Ruth, back on Sonnet, sourced them ([brief 2](research/bee-journal-real-2.md)); William fixed them; PASS in round 2 | 879k, 503k, 1,170k |
 
-Every run's full record is in `content/_runs/`; every agent call is in [_meta/agent-runs.md](_meta/agent-runs.md).
+Token figures are *total processed*. Every run's full record is in `content/_runs/`; every agent call is in [_meta/agent-runs.md](_meta/agent-runs.md).
 
 ## What the critic caught
 
@@ -99,5 +102,6 @@ Every run's full record is in `content/_runs/`; every agent call is in [_meta/ag
 - Ruth ran for real on the real-species Journal, end to end: brief, William writing from it, Clara verifying every quote, Clara's source FAILs sent back to Ruth for a second brief, then PASS. Research is expensive: William's two calls in that run took 706k tokens, mostly re-reading both briefs every turn.
 - Ruth briefly ran on Haiku to save tokens. Her Haiku brief called eight claims "all supported" while its own notes said otherwise, and ignored the brief template; she is back on Sonnet, and the second (Sonnet) brief followed the template exactly.
 - Clara's latest critic check missed one of three known errors (see above). LLM verdicts vary run to run, so one miss does not yet show whether the rule changes caused it; the team's model-review rule ([_meta/team.md](_meta/team.md), Model reviews) treats repeated misses as the signal to revisit her rules or model.
-- Token counts include cached re-reads, which the CLI reports alongside fresh tokens; a single turn costs about 12,000 tokens before any work.
+- *Total processed* tokens include cached re-reads: each turn re-sends the whole conversation, and a single turn costs about 12,000 tokens before any work. The same run measured by *final context* is several times smaller (Martin's run hiring Clara: 234,632 total processed, 39,232 final context). Which measure counts against the Claude plan's limits is not published.
+- Transcripts were kept only from the evening of 2026-11-01; earlier runs have their blackboards and log rows but not the agents' own turns.
 - Every draft still needs the designer's approval, and real-world Journal facts need a conservation partner's review before launch.
