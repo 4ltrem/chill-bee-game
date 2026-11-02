@@ -203,6 +203,11 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 ### D43 · 2026-11-01 · Records & deliverables · Push once, after the accuracy work
 - Decided: the CREW.md corrections and the three accuracy layers are pushed together at the end of the day, not in two pushes.
 
+### D44 · 2026-11-01 · Records & deliverables · Doc audits get their own log table
+- Decided: `_tools/doc_audit.py` logs to a new "Doc audits" table in `_meta/agent-runs.md`; Doris's first run moved there from the Content generation table, and her Per-Task estimate now holds the measured figures. `_tools/consistency.py` now fails when an estimate says "Not yet run" for an agent whose runs are logged.
+- Why: the designer found Doris's run misfiled (the shared logger always wrote to Content generation) and her estimate still saying "Not yet run".
+- Files: `_tools/generate.py`, `_tools/doc_audit.py`, `_tools/consistency.py`, `_meta/agent-runs.md`
+
 ## Still open
 
 - Approve or reject, briefs first: `research/bee-journal-real.md` (the Haiku brief: wrong frontmatter, overclaiming summary; rejecting it is reasonable), `research/bee-journal-real-2.md`, then `content/bee-journal-real.md`, `content/bee-journal-magic.md`, `content/biome-intros.md`, `content/onboarding-script.md`.

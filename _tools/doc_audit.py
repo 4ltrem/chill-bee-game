@@ -9,7 +9,7 @@ out history that records what was true at the time (blackboards, research briefs
 session logs, fixtures, the run log), writes it to _meta/sessions/runs/<date>-doc-audit/ and runs
 Doris headless (`claude -p --agent doc-auditor`), so she works the same in any session, including
 one that has not loaded her agent type yet. Her transcript is kept beside the diff and her call is
-logged to _meta/agent-runs.md like generate.py's. Prints her `DOC AUDIT:` block; exit 0 if CLEAN,
+logged to the Doc audits table in _meta/agent-runs.md. Prints her `DOC AUDIT:` block; exit 0 if CLEAN,
 1 if she has findings or could not finish. Standard library only.
 """
 import argparse
@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script
 import generate as g  # noqa: E402
 
 AUDITOR = "doc-auditor"
+LOG_TABLE = "### Doc audits"
 HISTORY = ["content/_runs", "_meta/sessions", "research", "content/*.md", "_tools/fixtures", "_meta/agent-runs.md"]
 
 
@@ -59,7 +60,7 @@ def main():
         sys.exit(f"doc audit failed: {e}")
     g.keep_transcript(usage, folder, "doris")
     g.NAMES[AUDITOR] = "Doris"
-    g.log_runs(f"doc audit since {a.since}", [(AUDITOR, 1, usage)])
+    g.log_runs(f"doc audit since {a.since}", [(AUDITOR, 1, usage)], table=LOG_TABLE)
     m = re.search(r"DOC AUDIT:.*", reply, re.S)
     block = "\n".join(l for l in (m.group(0) if m else reply).splitlines() if not l.strip().startswith("```"))
     (folder / "audit.md").write_text(block + "\n", encoding="utf-8")

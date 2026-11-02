@@ -97,7 +97,6 @@ Measures: **total processed**, and from 2026-11-01 evening also **final context*
 | Ruth: bee-journal-real, round 2 (Sonnet) | post-ICM | 193,098 | — | 11 | 109 s |
 | William: bee-journal-real, round 2 (Sonnet) | post-ICM | 372,765 | — | 16 | 144 s |
 | Critic: bee-journal-real, round 2 (Sonnet) | post-ICM | 64,572 | — | 7 | 84 s |
-| Doris: doc audit since 902ca88, round 1 (Sonnet) | post-ICM | 493,700 | 102,299 | 10 | 284 s |
 
 Notes on the rows above:
 - **Rows before `biome-intros`** were logged by hand; from `biome-intros` on, `generate.py` and `critic_check.py` append them.
@@ -105,6 +104,12 @@ Notes on the rows above:
 - **Ruth's Haiku brief** (339,442 tokens) overclaimed and ignored the template; she is back on Sonnet (see [team.md](team.md), Model reviews).
 - **Critic checks** (`_tools/critic_check.py` on `_tools/fixtures/onboarding-bad.md`, 3 known errors): the first (153,734) missed the false bloom fact; the second (72,423) missed the "cheapest" upgrade. Each caught 2 of 3; Clara's Lore check was then extended to game facts in tables and notes.
 - **Before 2026-11-01** (rows down to the regression run), Clara read the whole blackboard herself and later rounds copied the full draft; afterwards she gets only her slice, and later rounds a diff.
+
+### Doc audits: check the day's changes against the docs (`_tools/doc_audit.py`)
+Measures: **total processed** and **final context** (see Measures above). One row per run of Doris.
+| Run | Phase | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|---|
+| Doris: doc audit since 902ca88 (both working days, 58 files), 1 finding (Sonnet) | post-ICM | 493,700 | 102,299 | 10 | 284 s |
 
 ### Probes: fixed costs
 | Run | Phase | Tokens | Turns | What it measured |
@@ -170,7 +175,7 @@ In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 ful
 | Andrew, the Audiophile | No similar run | TBD | TBD |
 | Martin, the Hiring Manager | Measured, post-ICM, Haiku: average of 2 runs (39k, 47k) | ~43,000 | ~1.5 min |
 | Quinn, the QA & Build Engineer | No similar run | TBD | TBD |
-| Doris, the Doc Auditor | Not yet run. Nearest guide: the document-review average (41,611 final context), but she also Greps the repository for every changed name, so expect more. Re-measure after her first end-of-day run | TBD | TBD |
+| Doris, the Doc Auditor | Measured once, post-ICM, Sonnet: 493,700 total processed, 102,299 final context, 10 turns, auditing two days of changes (58 files, 3,138 diff lines). A single day's diff should cost less | ~490,000 total | ~5 min |
 
 Measures differ by row: Gerard, Terry, Connie and Martin are *final context*; William, Clara and Ruth are *total processed* (see Measures). Do not compare across the two. All estimates above come from pre-ICM runs; replace them with post-ICM averages once each agent has run under its contract. All runs above used Opus. The roster in [team.md](team.md) assigns smaller models to lighter agents, so re-measure those agents' costs once they run on Sonnet or Haiku.
 

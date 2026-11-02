@@ -13,6 +13,7 @@ defaults (_tools/generate.py) and Ruth's budget (her definition). Checked:
   - models named in Model reviews rows and in Mermaid diagram nodes match the agent's frontmatter
   - the token cap, round limit and Ruth's search/fetch budget quoted in docs match the code
   - a stated agent count ("the nine agents") matches the number of agent definitions
+  - no Per-Task Estimates row says "Not yet run" for an agent whose runs are already logged
 History is not checked: dated logs, blackboards, decision logs, proposals and review folders
 record what was true when written. Standard library only.
 """
@@ -139,11 +140,30 @@ def check_agent_count(root, ags):
     return problems
 
 
+def check_estimates(root):
+    """A Per-Task Estimates row saying 'Not yet run' while the log already holds that agent's runs."""
+    log = root / "_meta" / "agent-runs.md"
+    if not log.is_file():
+        return []
+    text = lines(log)
+    problems = []
+    for n, line in enumerate(text, 1):
+        m = re.match(r"\| ([A-Z]\w+), the [^|]+ \| Not yet run", line)
+        if not m:
+            continue
+        name = m.group(1)
+        runs = [k for k, l in enumerate(text, 1) if re.match(rf"\| {name}(:| \()", l)]
+        if runs:
+            problems.append(f"_meta/agent-runs.md:{n}: {name}'s estimate says 'Not yet run', but line {runs[0]} logs a run")
+    return problems
+
+
 def check(root=None):
     root = root or ROOT
     ags = agents(root)
     return (sync_docs.sync(check=True, root=root) + check_roster(root, ags)
-            + check_model_mentions(root, ags) + check_numbers(root) + check_agent_count(root, ags))
+            + check_model_mentions(root, ags) + check_numbers(root) + check_agent_count(root, ags)
+            + check_estimates(root))
 
 
 def main():

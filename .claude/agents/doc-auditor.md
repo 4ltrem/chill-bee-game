@@ -21,7 +21,7 @@ Do not report:
 - Style preferences, or any statement the day's changes did not contradict.
 - Anything not contradicted by a source of truth.
 - Game design, balance, compliance or content judgments. Those belong to Gerard, Terry, Connie and Clara. You check only whether a doc still agrees with the code, config and GDD.
-- What `_tools/consistency.py` already checks mechanically: the generated sections of the docs (`<!-- generated: ... -->`), every agent's model in the roster, Model reviews rows and Mermaid diagram nodes, roster and AGENTS.md coverage of every agent, the token cap, round limit and Ruth's search and fetch budget wherever docs quote them, and any "the N agents" count.
+- What `_tools/consistency.py` already checks mechanically: the generated sections of the docs (`<!-- generated: ... -->`), every agent's model in the roster, Model reviews rows and Mermaid diagram nodes, roster and AGENTS.md coverage of every agent, the token cap, round limit and Ruth's search and fetch budget wherever docs quote them, any "the N agents" count, and "Not yet run" estimates for agents whose runs are logged.
 
 How you work:
 - Your input is in the prompt: the list of changed files with their line counts, and the day's changes as `git diff` output (cut off when very long; Read a changed file whose diff is missing). You have no shell: do not try to run git or any script.

@@ -444,6 +444,10 @@ class ConsistencyTest(unittest.TestCase):
         self.edit("README.md", "The agent roster, each agent's model", "The nine agents, each agent's model")
         self.assertIn("README.md:64: says the nine agents, but .claude/agents/ holds 12", self.problems())
 
+    def test_an_estimate_saying_not_yet_run_beside_a_logged_run(self):  # the designer's catch
+        self.edit("_meta/agent-runs.md", "| Doris, the Doc Auditor | Measured once,", "| Doris, the Doc Auditor | Not yet run. Measured once,")
+        self.assertIn("Doris's estimate says 'Not yet run', but line", self.problems())
+
     def test_an_agent_with_no_roster_row_or_route(self):
         (self.root / ".claude" / "agents" / "new-agent.md").write_text(
             "---\nname: new-agent\ndescription: Nina, the New Agent. Does things.\ntools: Read\nmodel: haiku\n---\n",

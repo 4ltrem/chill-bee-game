@@ -197,13 +197,13 @@ def research(slug, n, task, usage, run_folder):
     return brief
 
 
-def log_runs(slug, usage):
-    """Append one row per agent call to the Content generation table in _meta/agent-runs.md."""
+def log_runs(slug, usage, table=LOG_TABLE):
+    """Append one row per agent call to a table in _meta/agent-runs.md (default: Content generation)."""
     log = ROOT / "_meta" / "agent-runs.md"
     lines = log.read_text(encoding="utf-8").splitlines() if log.is_file() else []
-    i = next((k + 1 for k, line in enumerate(lines) if line.startswith(LOG_TABLE)), None)
+    i = next((k + 1 for k, line in enumerate(lines) if line.startswith(table)), None)
     if i is None:
-        print(f"warning: no '{LOG_TABLE}' table in _meta/agent-runs.md; run not logged")
+        print(f"warning: no '{table}' table in _meta/agent-runs.md; run not logged")
         return
     while i < len(lines) and not lines[i].startswith("|"):
         i += 1
