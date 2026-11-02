@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3 uid="uid://ub4nv2k6wxgl"]
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 1
+background_color = Color(0.79, 0.91, 0.96, 1)
+ambient_light_source = 2
+ambient_light_color = Color(1, 0.97, 0.9, 1)
+ambient_light_energy = 0.6
+
+[sub_resource type="StandardMaterial3D" id="Material_meadow"]
+albedo_color = Color(0.62, 0.84, 0.52, 1)
+
+[sub_resource type="PlaneMesh" id="Mesh_ground"]
+material = SubResource("Material_meadow")
+size = Vector2(10, 10)
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, -0.25, 0.433, 0, 0.866, 0.5, -0.5, -0.433, 0.75, 0, 10, 0)
+light_color = Color(1, 0.96, 0.86, 1)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(0.7071, -0.4082, 0.5774, 0, 0.8165, 0.5773, -0.7071, -0.4082, 0.5774, 11.547, 11.547, 11.547)
+projection = 1
+size = 14.0
+
+[node name="PlaceholderMeadow" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_ground")

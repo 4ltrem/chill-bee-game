@@ -1,0 +1,12 @@
+# Claude Code transcripts hold the account email and everything read in a session: keep them local.
+# The decision logs (_meta/sessions/*/decisions.md) and the decision page are committed.
+_meta/sessions/runs/
+_meta/sessions/*/session.jsonl
+_meta/sessions/*/subagents/
+_meta/sessions/*/manifest.json
+
+# Machine-specific Claude Code settings (e.g. autoMemoryDirectory, an absolute path)
+.claude/settings.local.json
+
+# Python bytecode cache
+__pycache__/

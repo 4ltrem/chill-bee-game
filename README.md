@@ -57,6 +57,11 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 | [gdd-review/gdd.txt](gdd-review/gdd.txt) | Snapshot of the GDD as it was reviewed. Many review findings have since been addressed in `GDD.md`. |
 | [proposals/design/](proposals/design/) | Feature design proposals, e.g. the capstone [Royal Honey Refinery](proposals/design/capstone-machine.md) (Gerard). |
 | [proposals/balance/](proposals/balance/) | Balance reports, e.g. [Royal Crystal balance](proposals/balance/royal-crystal-balance.md) (Terry). |
+| [CREW.md](CREW.md) | The content crew: three agents (Ruth, William, Clara) and the orchestrator that produce the game's player text, with a diagram and results. |
+| [content/](content/) | Story outlines and Bee Journal text in English and French (William). |
+| [audio/](audio/) | Licence-checked sound and music shortlists (Andrew). |
+| [game/](game/) | The Godot project: scripts (Patricia), scenes (Bob), tests and reports (Quinn). |
+| [_meta/team.md](_meta/team.md) | The nine agents, their models, and the rules they follow; each has a definition in `.claude/agents/`. |
 | [_meta/agent-runs.md](_meta/agent-runs.md) | Token, tool-call and duration log of every agent run. |
 | [.claude/agents/](.claude/agents/) | Runnable Claude Code agent definitions, starting with Connie, the Compliance Officer. |
 | [gdd-review-v2/](gdd-review-v2/) | Second review, of the GDD at commit `8ddb97a` after the first round of fixes and peer feedback. Its [SYNTHESIS.md](gdd-review-v2/reviews/SYNTHESIS.md) compares the results with the first review. |

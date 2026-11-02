@@ -120,7 +120,9 @@ Progression is split across three synergizing upgrade paths using an exponential
     * Real-species assignments must be fact-checked by William and a conservation partner.
     * Sunny Meadow has no fill-rate species, so the Meadow rush can't become clearly better.
     * Quality effects raise market sale value only, not Refinery charge, except the Stardust bee in Cloud Gardens. Its +10% Refinery yield is already included in Cloud Gardens' planned affinity, so Cloud reaches its full rate only with Stardust bees.
-  * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short real-world facts. The Journal is a permanent collection and gives no production bonus. William drafts the facts (English and French) with cited sources, and a conservation partner reviews them before launch.
+  * *Bee Journal:* Each native species attracted is recorded in the Bee Journal with short facts. The Journal is a permanent collection and gives no production bonus.
+    * *Real species* (Sunny Meadow, Alpine Valley): real-world facts only. William drafts them (English and French) with cited sources, and a conservation partner reviews them before launch.
+    * *Fictional species* (Enchanted Grove, Cloud Gardens): invented, whimsical facts that sound plausible in the magical pocket world. They need no sources, are labelled as fictional, must match the species' effects in this table, and make no claims about real bees.
   * *On Reset:* The Bee Journal is permanent; Habitat levels reset with the farm each run.
 * **Capstone: Royal Honey Refinery** (full proposal: `proposals/design/capstone-machine.md`)
   * **Build:** A very expensive machine bought with in-game money and placed on the grid in one biome (its host biome).

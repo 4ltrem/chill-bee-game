@@ -10,15 +10,17 @@ All agents run through Claude Code. Larger models use up the shared Pro limits f
 |---|---|---|---|---|---|
 | Gerard | Gameplay Architect | Feature design: reasons across all systems | Opus | Must catch contradictions between systems (e.g., the "nothing transfers between worlds" conflict) | [gameplay-architect.md](../.claude/agents/gameplay-architect.md) |
 | Terry | Progression Tree Expert | Balance analysis: multi-step progression math | Opus | Long, numeric, iterative modelling; errors compound across runs | [progression-tree-expert.md](../.claude/agents/progression-tree-expert.md) |
-| Connie | Compliance Officer | Compliance review with web checks | Sonnet | Rule lookup and checklists; a human signs off anyway. Use Opus for the pre-submission review | [compliance-officer.md](../.claude/agents/compliance-officer.md) |
-| Patricia | Programmer | Code generation (GDScript, backend) | Sonnet | Strong at routine code; escalate to Opus for architecture or backend design | not yet |
-| Quinn | QA & Build Engineer | Tests, builds, profiling | Sonnet | Writes tests and reads build and profiler output | not yet |
-| William | Writer | Story outlines, EN/FR Journal facts | Sonnet | Good writing and French; facts are reviewed by a partner | not yet |
-| Bob | Builder | Godot scenes (`.tscn`) from a layout spec | Sonnet | Structured file output that follows a spec | not yet |
-| Andrew | Audiophile | Search and curate audio | Haiku | Search and list-making; little reasoning needed | not yet |
-| Martin | Hiring Manager | Agent definitions from a template | Haiku | Fills a fixed template; the developer reviews the diff | not yet |
+| Connie | Compliance Officer | Compliance review from Ruth's research briefs | Sonnet | Rule lookup and checklists; a human signs off anyway. Use Opus for the pre-submission review | [compliance-officer.md](../.claude/agents/compliance-officer.md) |
+| Patricia | Programmer | Code generation (GDScript, backend) | Sonnet | Strong at routine code; escalate to Opus for architecture or backend design | [programmer.md](../.claude/agents/programmer.md) |
+| Quinn | QA & Build Engineer | Tests, builds, profiling | Sonnet | Writes tests and reads build and profiler output | [qa-build-engineer.md](../.claude/agents/qa-build-engineer.md) |
+| William | Writer | Story outlines, EN/FR Journal facts | Sonnet | Good writing and French; facts are reviewed by a partner | [writer.md](../.claude/agents/writer.md) |
+| Clara | Content Critic | Checks drafts against the GDD (lore, tone, child safety, facts and French); PASS or FAIL verdict | Sonnet | Close reading across several GDD sections and EN/FR parity, with no multi-step math. Runs up to 3 times per output, so Opus would multiply cost. Haiku is cheaper, but a missed lore or child-safety FAIL ships to players | [content-critic.md](../.claude/agents/content-critic.md) |
+| Ruth | Research Assistant | Finds and verifies sources: each claim with a verbatim quote, URL and date, or reported as not supported | Sonnet | Back on Sonnet after one Haiku brief (2026-11-01): it summarised 8 claims as "all supported" while its own notes called two only "predominately" or "plausible", Clara failed four of them, and it ignored the brief template (wrong frontmatter, set its own status, no findings table). Originally tried on Haiku: Search and quote-extraction within a fixed fetch budget. Haiku may misjudge whether a quote exactly supports a claim, but Clara (Sonnet) independently fetches every cited URL and FAILs any quote that does not, so a miss costs a round rather than shipping. Review after 5 briefs: back to Sonnet if 2 or more caused a source FAIL (a `## Research, round N` section on the blackboard), if 2 of the first 3 did, or at once if a wrong fact from Ruth gets past Clara | [research-assistant.md](../.claude/agents/research-assistant.md) |
+| Bob | Builder | Godot scenes (`.tscn`) from a layout spec | Sonnet | Structured file output that follows a spec | [builder.md](../.claude/agents/builder.md) |
+| Andrew | Audiophile | Search and curate audio | Haiku | Search and list-making; little reasoning needed | [audiophile.md](../.claude/agents/audiophile.md) |
+| Martin | Hiring Manager | Agent definitions from a template | Haiku | Fills a fixed template; the developer reviews the diff | [hiring-manager.md](../.claude/agents/hiring-manager.md) |
 
-A role gets its definition on its first real task, not before.
+Every role has a definition. New roles come from Martin, copied from the template.
 
 ## Roles
 
@@ -28,6 +30,8 @@ Each agent is a module in the development workflow: a developer input triggers i
 - **Bob, the Builder:** assembles biome dioramas and terrain chunks as Godot scene files (`.tscn`) from a layout description, and the developer sees the finished scene, following the layout's specs.
 - **Patricia, the Programmer:** creates modular components and code for the game engine from a list of features, and the developer sees the completed components or scripts. Also owns backend integration.
 - **William, the Writer:** writes the story outline from an idea for a story point, lesson or goal, and the developer sees a completed outline. Also drafts the Bee Journal's real-world facts in English and French, with cited sources, for review by a conservation partner.
+- **Ruth, the Research Assistant:** finds and verifies sources for real-world claims when William needs Bee Journal facts checked, or Connie needs a rule or policy sourced, or a Clara FAIL row asks for a better source; the developer sees a brief in `research/` with each claim, its verbatim quote, URL, source kind and date checked, and the claims it could not source.
+- **Clara, the Content Critic:** checks William's content drafts against `GDD.md` for lore, tone and glossary, child safety and spending, and facts and French, and appends a PASS or FAIL verdict with findings to the run's blackboard; William revises the draft, and the developer sees the verdict.
 - **Andrew, the Audiophile:** searches and curates sound effects and music from a description of a sound, environment, vibe or place, and the developer sees a curated, structured list and a folder with the selected audio files.
 - **Terry, the Progression Tree Expert:** analyzes the balance of the progression tree (efficiency, cost, speed, space and other metrics) for a suggested upgrade or progression, and the developer sees a detailed report comparing it against the existing upgrades and progressions.
 - **Martin, the Hiring Manager:** when the lead architect notices a skill gap, writes a new agent definition by copying [`_templates/agent.md`](../_templates/agent.md) into `.claude/agents/` and adds the role to the roster above; the developer reviews the git diff.
@@ -40,3 +44,23 @@ Each agent is a module in the development workflow: a developer input triggers i
 2. **Deterministic formatting:** follow the predefined Markdown templates in `_templates/` or agreed JSON structures, so one agent's output is the next one's input.
 3. **No invented systems:** ground every suggestion in `GDD.md`: the existing 3-phase progression model and the low-poly 3D constraints.
 4. **Agents propose; the designer decides.** No agent edits `GDD.md` (see [AGENTS.md](../AGENTS.md)).
+
+## Model reviews
+
+Every model choice is a bet that the agent's mistakes are caught downstream. A cheaper model is safe when a stronger check follows it; the price of its mistakes is rework, which can be counted.
+
+- **Review** an agent's model after 5 runs of its kind, counting its signal in the table below. Switch up (or back) when the rework costs more than the cheaper model saves: as a rule of thumb, when 2 or more of 5 runs (or 2 of the first 3) needed rework. Switch at once if a mistake gets past every agent and the designer catches it.
+- **Switch down** only an agent that has a stronger check after it.
+- **Critics have no check after them.** Before and after any change to Clara's model or rules, run `python -I _tools/critic_check.py`: she must FAIL each known-bad draft in `_tools/fixtures/` with every expected finding (for `onboarding-bad.md`: the false bloom fact, the "cheapest" upgrade, the wrong §9 citation). Exit code 0 means she caught them all. Add a fixture whenever she misses something real.
+
+| Agent | Checked by | Signal (rework) | Recorded in |
+|---|---|---|---|
+| Ruth (Haiku) | Clara | briefs that caused a source FAIL | `## Research, round N` sections on blackboards |
+| William (Sonnet) | Clara | rounds per run (1 is clean) | each blackboard's Result |
+| Clara (Sonnet) | the designer only | known errors missed | `_tools/critic_check.py` |
+| Andrew (Haiku) | Connie, the designer | picks with a wrong or unclear licence | audio list reviews |
+| Martin (Haiku) | the designer's diff review | definitions fixed after he wrote them | git history |
+| Patricia, Bob (Sonnet) | Quinn | failing tests per feature | `game/reports/` |
+| Quinn (Sonnet) | the designer playing the build | bugs found after a passing report | `game/reports/` |
+| Gerard, Terry (Opus) | the designer's decision | proposals rejected or revised | `status:` and the ledger |
+| Connie (Sonnet) | lawyer or partner sign-off | findings overturned | her reports |

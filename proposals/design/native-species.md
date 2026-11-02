@@ -2,7 +2,9 @@
 author: gerard
 type: design
 status: applied
-description: Native bee species effects per biome; adopted into the GDD Tree C species table
+decided: 2026-10-26
+decision: adopted into the GDD Tree C species table and per-biome native-bee bonus
+description: Native bee species effects per biome
 ---
 # Native Bee Species: Biome Effects Proposal
 **Author:** Gerard, the Gameplay Architect

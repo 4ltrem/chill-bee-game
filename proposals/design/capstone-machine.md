@@ -2,7 +2,9 @@
 author: gerard
 type: design
 status: applied
-description: Royal Honey Refinery capstone concept; adopted into the GDD Capstone section
+decided: 2026-10-26
+decision: adopted as the capstone in the GDD Capstone section
+description: Royal Honey Refinery capstone concept
 ---
 # Capstone Concept Proposal: Royal Crystal Chamber
 **Author:** Gerard, the Gameplay Architect

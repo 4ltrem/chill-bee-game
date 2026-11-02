@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -I \"$CLAUDE_PROJECT_DIR/_tools/log_subagent.py\"",
+            "timeout": 30,
+            "statusMessage": "Logging subagent run"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -7,7 +7,12 @@ FOLDER is relative to the current folder or to the workspace root (the folder th
 a folder that does not exist is skipped. A note is a .md file in the folder, or a subfolder with a
 CONTEXT.md (a record). Each line is  - [title](file) - description (status) . The title falls back
 to the first heading, then the file name; description and status appear when the frontmatter has
-them. Rerun after adding or changing notes; never edit _index.md by hand. Standard library only.
+them, and a decision as  (status; decided DATE: why)  when the frontmatter has decided: and
+decision:. Rerun after adding or changing notes; never edit _index.md by hand. Standard library only.
+
+    python -I _tools/index.py --decisions FOLDER [FOLDER ...]
+
+prints every decided note in those folders, oldest first, and writes nothing (the decision ledger).
 """
 import json
 import re
@@ -46,10 +51,25 @@ def field(front, name):
     return v[1:-1] if len(v) > 1 and v[0] == v[-1] == "'" else v
 
 
+def decisions(root, folders):
+    rows = []
+    for arg in folders:
+        folder = (Path(arg) if Path(arg).is_dir() else root / arg).resolve()
+        for f in folder.glob("*.md") if folder.is_dir() else []:
+            front, _ = split(f.read_text(encoding="utf-8-sig", errors="replace"))
+            if field(front, "decided"):
+                rows.append((field(front, "decided"), f.relative_to(root).as_posix(),
+                             field(front, "status"), field(front, "decision")))
+    for row in sorted(rows):
+        print("{} | {} | {} | {}".format(*row))
+
+
 def main():
     if len(sys.argv) < 2:
         sys.exit(__doc__)
     root = Path(__file__).resolve().parent.parent
+    if sys.argv[1] == "--decisions":
+        return decisions(root, sys.argv[2:])
     for arg in sys.argv[1:]:
         folder = Path(arg) if Path(arg).is_dir() else root / arg
         if not folder.is_dir():
@@ -66,7 +86,10 @@ def main():
             if field(front, "description"):
                 line += f" - {field(front, 'description')}"
             if field(front, "status"):
-                line += f" ({field(front, 'status')})"
+                status = field(front, "status")
+                if field(front, "decided"):
+                    status += f"; decided {field(front, 'decided')}: {field(front, 'decision')}"
+                line += f" ({status})"
             lines.append(line)
         (folder / "_index.md").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
         print(f"wrote {folder.as_posix()}/_index.md: {len(lines) - 3} notes")

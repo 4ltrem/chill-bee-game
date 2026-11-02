@@ -2,7 +2,9 @@
 author: terry
 type: balance
 status: applied
-description: Run length under option B, stronger Crystals, researchable charging cap, Glowcap effect (designer chose +15% Crystals and Glowcap pollination)
+decided: 2026-10-26
+decision: +15% Crystals, Refinery cap research ladder, Glowcap pollination
+description: Run length under option B, stronger Crystals, researchable charging cap, Glowcap effect
 ---
 # Progression Levers: Run Length, Stronger Crystals, Researchable Charging Cap
 **Author:** Terry, the Progression Tree Expert

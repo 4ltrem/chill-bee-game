@@ -1,0 +1,3 @@
+- [Pending approvals](pending-approvals.md) — six files deferred to next working day; briefs first
+- [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day project skill; never early
+- [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, syncing transcripts between machines

@@ -2,6 +2,8 @@
 author: terry
 type: balance
 status: applied
+decided: 2026-10-26
+decision: shorter launch run, Alpine affinity 1.92, per-kind caps, Stardust folded in
 description: Provisional native-species values; launch run length and Alpine affinity 1.92
 ---
 # Native Bee Species Balance (provisional values)

@@ -2,6 +2,8 @@
 author: terry
 type: balance
 status: applied
+decided: 2026-10-26
+decision: boost adopted (later raised to +15% by progression-levers); extra starting hives adopted
 description: Royal Crystal boost formula (+10% additive) and extra starting hives
 ---
 # Royal Crystal Balance Report

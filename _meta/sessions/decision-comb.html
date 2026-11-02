@@ -1,0 +1,241 @@
+<title>Chill Bee Decision Comb</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<!-- Built by _tools/decision_page.py from _meta/sessions/*/decisions.md. Edit the template, not the output. -->
+<style>
+/* Layout: filter rail of topic cells on the left, the decision timeline by day on the right; stacks on phones. */
+:root {
+  --bg: #eef2ec;
+  --surface: #fbfcfa;
+  --ink: #1d2820;
+  --muted: #586659;
+  --line: #d3dbd1;
+  --honey: #b8790a;
+  --honey-soft: #f6e7c4;
+  --honey-ink: #4a3104;
+  --open: #8a5a00;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121814; --surface: #1a221d; --ink: #e3eae1; --muted: #98a79a; --line: #2c3830;
+    --honey: #e6ab45; --honey-soft: #3a2c10; --honey-ink: #f8e2b4; --open: #f0c069;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121814; --surface: #1a221d; --ink: #e3eae1; --muted: #98a79a; --line: #2c3830;
+  --honey: #e6ab45; --honey-soft: #3a2c10; --honey-ink: #f8e2b4; --open: #f0c069;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.55 var(--font-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 56px;
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 28px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font: 500 12px/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 700 clamp(28px, 4.2vw, 42px)/1.05 var(--font-display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+.lede { margin: 0; color: var(--muted); max-width: 65ch; }
+
+.layout { display: grid; grid-template-columns: 260px 1fr; gap: 32px; align-items: start; }
+@media (max-width: 820px) { .layout { grid-template-columns: 1fr; } }
+
+aside { display: grid; gap: 18px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+@media (max-width: 820px) { aside { position: static; } }
+.search { display: grid; gap: 6px; }
+label.small { font: 500 12px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+input[type="search"] {
+  width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--surface); color: var(--ink); font: 14px var(--font-body);
+}
+input[type="search"]:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--honey); outline-offset: 2px; }
+
+.topics { display: grid; gap: 4px; }
+.topic {
+  display: grid; grid-template-columns: 26px 1fr auto; gap: 10px; align-items: center;
+  width: 100%; padding: 7px 8px; border: 0; border-radius: 6px; background: transparent;
+  color: var(--ink); font: 14px var(--font-body); text-align: left; cursor: pointer;
+}
+.topic:hover { background: var(--surface); }
+.topic[aria-pressed="true"] { background: var(--honey-soft); color: var(--honey-ink); }
+.topic .n { font: 12px var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.topic[aria-pressed="true"] .n { color: var(--honey-ink); }
+
+.cell {
+  width: 24px; height: 27px; display: grid; place-items: center; flex: none;
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+  background: var(--line); color: var(--ink); font: 600 11px/1 var(--font-mono);
+}
+.topic[aria-pressed="true"] .cell, .decision .cell { background: var(--honey); color: var(--surface); }
+
+.tools { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+  padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface);
+  color: var(--ink); font: 13px var(--font-body); cursor: pointer;
+}
+.btn:hover { border-color: var(--honey); }
+
+main { display: grid; gap: 34px; min-width: 0; }
+#days { display: grid; gap: 34px; }
+.day { display: grid; gap: 12px; }
+.day h2 {
+  margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  font: 700 22px/1.2 var(--font-display); text-wrap: balance;
+}
+.day h2 span { font: 13px var(--font-mono); color: var(--muted); font-weight: 400; }
+.list { display: grid; border-top: 1px solid var(--line); }
+
+.decision { border-bottom: 1px solid var(--line); }
+.decision summary {
+  list-style: none; cursor: pointer; display: grid; gap: 4px 14px; padding: 12px 4px;
+  grid-template-columns: 24px 44px 1fr; align-items: start;
+}
+.decision summary::-webkit-details-marker { display: none; }
+.decision summary:hover .title { color: var(--honey); }
+.decision .cell { margin-top: 1px; }
+.id { font: 500 13px/1.6 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.title { font-weight: 600; line-height: 1.4; }
+.what { grid-column: 3; color: var(--muted); font-size: 14px; }
+.body { display: grid; gap: 10px; padding: 0 4px 16px 82px; max-width: calc(65ch + 82px); }
+@media (max-width: 520px) { .body { padding-left: 4px; } }
+.field { display: grid; gap: 2px; }
+.field b { font: 500 11px/1.4 var(--font-mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.field p { margin: 0; }
+code {
+  font: 12px var(--font-mono); padding: 1px 5px; border-radius: 4px;
+  background: var(--surface); border: 1px solid var(--line); overflow-wrap: anywhere;
+}
+.files { display: flex; flex-wrap: wrap; gap: 6px; }
+.empty { color: var(--muted); padding: 16px 4px; margin: 0; }
+
+.open { display: grid; gap: 10px; padding: 18px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.open h2 { margin: 0; font: 700 20px/1.2 var(--font-display); }
+.open ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+.open li::marker { color: var(--open); }
+footer { color: var(--muted); font-size: 13px; }
+@media (prefers-reduced-motion: no-preference) { .decision[open] .body { animation: in .18s ease-out; } }
+@keyframes in { from { transform: translateY(-3px); } to { transform: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow">Chill Bee Game</div>
+    <h1>Decisions behind Chill Bee Game</h1>
+    <p class="lede">Every process and architecture decision from the working sessions, newest day first. Filter by topic, search, and open a decision to see why it was made, what was rejected and which files changed.</p>
+  </header>
+
+  <div class="layout">
+    <aside aria-label="Filters">
+      <div class="search">
+        <label class="small" for="q">Search</label>
+        <input id="q" type="search" placeholder="e.g. Haiku, blackboard, French" autocomplete="off">
+      </div>
+      <div class="topics" id="topics" role="group" aria-label="Topics"></div>
+      <div class="tools">
+        <button class="btn" id="expand" type="button">Open all</button>
+        <button class="btn" id="collapse" type="button">Close all</button>
+      </div>
+    </aside>
+
+    <main>
+      <div id="days"></div>
+      <section class="open" aria-labelledby="open-h">
+        <h2 id="open-h">Still yours to decide</h2>
+        <ul id="open-list"></ul>
+      </section>
+      <footer>Built from <code>_meta/sessions/*/decisions.md</code> by <code>_tools/decision_page.py</code>. Decisions about a single draft or proposal live in its <code>decided:</code> and <code>decision:</code> fields.</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+const DATA = {"decisions": [{"id": "D01", "date": "2026-10-31", "topic": "Workspace & agents", "title": "Add every roster agent the GDD names", "fields": [["Decided", "definitions for Patricia, Quinn, William, Bob, Andrew and Martin in `.claude/agents/`, with new shelves `content/`, `audio/`, `game/` (each with a `CONTEXT.md`)."], ["Why", "designer asked to include all agents from the GDD. Content and audio use `draft` → `approved` (they never change the GDD), not `proposed` → `applied`."], ["Rejected", "waiting for each role's \"first real task\" (the old roster rule)."], ["Files", "`.claude/agents/*.md`, `content/CONTEXT.md`, `audio/CONTEXT.md`, `game/CONTEXT.md`, `_templates/content.md`, `_templates/audio-list.md`, `_meta/team.md`, `AGENTS.md`, `README.md`."]], "session": "2026-10-31-fa5df4be"}, {"id": "D02", "date": "2026-10-31", "topic": "Workspace & agents", "title": "Create the Godot project in `game/`", "fields": [["Decided", "Godot 4.2.1 standard build, GDScript, Compatibility renderer, portrait 720×1280, placeholder isometric main scene."], ["Why", "the GDD targets low-end phones (Compatibility avoids Vulkan problems) and one-handed play (portrait)."], ["Rejected", "Mobile renderer; C# (needs the .NET build, experimental on mobile in 4.2)."], ["Files", "`game/project.godot`, `game/scenes/main.tscn`, `game/.gitignore`, `game/export_presets.cfg`."]], "session": "2026-10-31-fa5df4be"}, {"id": "D03", "date": "2026-10-31", "topic": "Workspace & agents", "title": "Bench Android and iOS builds", "fields": [["Decided", "keep the Android and Windows presets; stop before the Android SDK and keystore. iOS needs a Mac."], ["Open", "package name `com.chillbeegame.app` is a placeholder; it cannot change after the first store upload."]], "session": "2026-10-31-fa5df4be"}, {"id": "D04", "date": "2026-10-31", "topic": "Pipeline design", "title": "No overlap: reuse what already does the job", "fields": [["Note", "Provenance = the frontmatter every output already has (author, type, status, Sources line), per file, not per line item."], ["Note", "Decision ledger = two new frontmatter fields, `decided:` and `decision:`, written only by the designer and never read by agents; `python -I _tools/index.py --decisions ...` lists them. Six applied proposals backfilled as decided 2026-10-26."], ["Note", "Blackboard = the only new piece: one per run, kept as history."], ["Rejected", "a separate `_meta/decisions.md` (would duplicate the status line); per-line-item provenance."]], "session": "2026-10-31-fa5df4be"}, {"id": "D05", "date": "2026-10-31", "topic": "Pipeline design", "title": "Orchestrate with a Python script calling `claude -p`", "fields": [["Why", "no API key; runnable code meets the assignment's \"code that runs\" bar."], ["Rejected", "orchestrating from the Claude Code session (nothing to submit as code)."], ["Files", "`_tools/generate.py`."]], "session": "2026-10-31-fa5df4be"}, {"id": "D06", "date": "2026-10-31", "topic": "Pipeline design", "title": "The critic is a new roster agent, created by Martin", "fields": [["Decided", "Clara, the Content Critic, on Sonnet. Checks: lore, tone and Glossary, child safety and spending, facts and French. 3 rounds max; still failing → `needs-review`."], ["Rejected", "Claude writing it directly; reusing Connie (compliance only)."]], "session": "2026-10-31-fa5df4be"}, {"id": "D07", "date": "2026-10-31", "topic": "Pipeline design", "title": "Three outputs: onboarding script, Bee Journal entries, biome intros", "fields": [["Why", "all three are real gaps in the GDD."]], "session": "2026-10-31-fa5df4be"}, {"id": "D08", "date": "2026-10-31", "topic": "Critic quality", "title": "Tighten Clara, not William, after her empty PASS", "fields": [["What happened", "run 1's draft had a false bee fact (\"Without bees, the flowers can't bloom\") and a wrong GDD section number; Clara passed it with an empty table."], ["Causes", "facts check only covered cited facts; she trusted the draft's \"no real-world facts\" label; a PASS needed no evidence; no check covered citations."], ["Decided", "check every line for real-world claims, ignore the draft's self-assessment, a required \"Checked\" list on every verdict, a fifth check for GDD citations."], ["Why only Clara", "fixing William too would hide whether the critic works."]], "session": "2026-10-31-fa5df4be"}, {"id": "D09", "date": "2026-10-31", "topic": "Critic quality", "title": "William edits flagged lines only; `--revise` mode", "fields": [["Decided", "William gains Edit and never rewrites a file in revision rounds; `generate.py --revise` reopens an existing draft in a new run (`blackboard-2.md`, ...), with or without designer notes."]], "session": "2026-10-31-fa5df4be"}, {"id": "D10", "date": "2026-10-31", "topic": "Critic quality", "title": "Prove the loop on a known-bad draft (regression fixture)", "fields": [["Result", "Clara failed it with three findings (bloom fact, \"cheapest\" upgrade, §9 citation); William fixed exactly those lines; PASS in round 2."]], "session": "2026-10-31-fa5df4be"}, {"id": "D11", "date": "2026-10-31", "topic": "Critic quality", "title": "\"Honey money\" line scrapped", "fields": [["Decided", "replace with a first-sale line (\"Your very first sale!\"); no \"honey money\" / \"argent de miel\" anywhere. Applied via `--revise` with designer notes; 3 lines changed."]], "session": "2026-10-31-fa5df4be"}, {"id": "D12", "date": "2026-11-01", "topic": "Cost & structure", "title": "Diff-only blackboard rounds", "fields": [["Decided", "round 1 copies the full draft; later rounds copy only a diff. Round 2 cost fell ~60% on the next real run."]], "session": "2026-10-31-fa5df4be"}, {"id": "D13", "date": "2026-11-01", "topic": "Cost & structure", "title": "Frontmatter stays; data in frontmatter, prose in body, never both", "fields": [["Decided", "removed body lines that repeated frontmatter (`**Author:**`, `**Status:**`, `**Request:**`) and the unread `rounds:` field; section 3 of content became \"Real-world facts\" (URLs only). Same cleanup in the proposal and audio templates; `**Trigger:**` and Andrew's `**Request:**` stay (no blackboard behind them)."], ["Why", "index.py, links.py and generate.py read the frontmatter; the ICM tooling depends on it."]], "session": "2026-10-31-fa5df4be"}, {"id": "D14", "date": "2026-11-01", "topic": "Cost & structure", "title": "Five pipeline modules before the next runs", "fields": [["Note", "GDD-conflict escalation (a wrong GDD fact is a \"(minor) Refer to Gerard\" row, not a FAIL loop); test suite in the repo (`_tools/test_generate.py`); token cap (`--max-tokens`, default 500,000); automatic run logging to `_meta/agent-runs.md`; crash recovery (`result: failed`, replaceable)."], ["Note", "The real-heading test exposed a logging bug the scratchpad test had hidden."]], "session": "2026-10-31-fa5df4be"}, {"id": "D15", "date": "2026-11-01", "topic": "Bee Journal rules", "title": "Real species get real facts; fictional species get invented whimsy", "fields": [["Decided", "real species (Sunny Meadow, Alpine Valley): real-world facts only, sourced. Fictional species (Enchanted Grove, Cloud Gardens): invented, magical, plausible facts; labelled fictional; match the GDD effects; no claims about real bees."], ["Note", "Applied to `GDD.md` (Bee Journal bullet) and the William and Clara definitions."], ["Ledger", "record it on `content/bee-journal-magic.md` when approved (`decision: approved; fictional species use invented facts (GDD Bee Journal updated 2026-11-01)`); rejected: a commit-message-only record."]], "session": "2026-10-31-fa5df4be"}, {"id": "D16", "date": "2026-11-01", "topic": "Bee Journal rules", "title": "Split the Journal into real and fictional runs", "fields": [["Why", "the real run is URL-heavy; a FAIL in one should not re-check the other."]], "session": "2026-10-31-fa5df4be"}, {"id": "D17", "date": "2026-11-01", "topic": "Research & blackboard", "title": "Research moves to a dedicated agent: Ruth", "fields": [["What happened", "William researching alone took 34 turns and 720k tokens and still overclaimed four facts."], ["Decided", "Martin created Ruth, the Research Assistant (`research/` shelf, briefs with verbatim quotes, 6 searches / 12 fetches per brief). William and Connie lose web tools and cite briefs; Clara keeps WebFetch (verifying a quote is not research)."]], "session": "2026-10-31-fa5df4be"}, {"id": "D18", "date": "2026-11-01", "topic": "Research & blackboard", "title": "The script hands out blackboard slices", "fields": [["Decided", "no agent reads the blackboard. William gets the open FAIL rows in his prompt; Clara gets the draft or the diff plus her last verdict and replies with her verdict, which the script appends (she lost Edit and is read-only). Prompts go in on stdin (Windows' 32,767-character command-line limit)."], ["Why", "a turn costs ~12,000 tokens before any work, and everything read early is re-counted every turn; the turn count is the real multiplier."]], "session": "2026-10-31-fa5df4be"}, {"id": "D19", "date": "2026-11-01", "topic": "Research & blackboard", "title": "Draft briefs may be cited during a run; approval is gated", "fields": [["Decided", "a content draft cannot be approved until every brief it cites is approved."]], "session": "2026-10-31-fa5df4be"}, {"id": "D20", "date": "2026-11-01", "topic": "Research & blackboard", "title": "Journal runs research first; source FAILs go to Ruth", "fields": [["Decided", "`--type journal` runs Ruth before William (skip with `--no-research`); FAIL rows asking for a better source go to Ruth before William edits."]], "session": "2026-10-31-fa5df4be"}, {"id": "D21", "date": "2026-11-01", "topic": "Models", "title": "Try Ruth on Haiku, with a review rule", "fields": [["Rule", "review after 5 briefs; back to Sonnet if 2 or more caused a source FAIL, or 2 of the first 3, or at once if a wrong fact gets past Clara."], ["Break-even reasoning", "one source-FAIL round (~170k) costs about three briefs' worth of Haiku savings (~60k each)."]], "session": "2026-10-31-fa5df4be"}, {"id": "D22", "date": "2026-11-01", "topic": "Models", "title": "Generalise it: Model reviews for every agent", "fields": [["Decided", "every model choice is a bet on the check after it; a per-agent table of who catches its mistakes, the rework signal, and where it is recorded. Critics have no check after them, so `_tools/critic_check.py` re-runs Clara on known-bad drafts in `_tools/fixtures/`."], ["Files", "`_meta/team.md` (Model reviews), `_tools/critic_check.py`, `_tools/fixtures/onboarding-bad.md`."]], "session": "2026-10-31-fa5df4be"}, {"id": "D23", "date": "2026-11-01", "topic": "Models", "title": "Ruth back to Sonnet after one Haiku brief", "fields": [["What happened", "the brief summarised 8 claims as \"all supported\" while its own notes called two only \"predominately\" and \"plausible\"; Clara failed four; it ignored the template (wrong frontmatter, set its own status, no findings table)."], ["Why early", "the rule's threshold (2 of 3) was not reached, but template failures are a second kind of miss and the assignment was due that night."]], "session": "2026-10-31-fa5df4be"}, {"id": "D24", "date": "2026-11-01", "topic": "Critic quality", "title": "Clara checks game facts everywhere, including tables", "fields": [["What happened", "two critic checks each caught 2 of 3 known errors, missing a different one each time; \"cheapest upgrade\" (a price claim in a table) was the weak spot."], ["Decided", "an explicit Lore rule to check every statement about the game's own facts in dialogue, tables, Sources rows and notes. In reserve: two Clara passes per round, or Opus."]], "session": "2026-10-31-fa5df4be"}, {"id": "D25", "date": "2026-11-01", "topic": "Records & deliverables", "title": "Borrow tomorrow's tokens", "fields": [["Decided", "keep running while still inside the 5-hour usage window, borrowing the next day's tokens."], ["Why", "the crew assignment was due that night."]], "session": "2026-10-31-fa5df4be"}, {"id": "D26", "date": "2026-11-01", "topic": "Records & deliverables", "title": "Crew assignment = the content pipeline, written up in `CREW.md`", "fields": [["Decided", "Ruth, William and Clara plus `generate.py` as the crew; Mermaid diagram and ReadMe in `CREW.md`, linked from `README.md`. Report the critic's miss honestly rather than claim a perfect critic."]], "session": "2026-10-31-fa5df4be"}, {"id": "D27", "date": "2026-11-01", "topic": "Records & deliverables", "title": "Session export and decision record", "fields": [["Decided", "raw JSONL copy (session + subagents) via `_tools/export_session.py` into `_meta/sessions/<date>-<id>/`, gitignored (holds the account email and everything read); this decision log beside it; a private visual timeline page."], ["Note", "the agents run by `generate.py` use `--no-session-persistence`, so their own turns are not saved; their record is the blackboards and `_meta/agent-runs.md`."]], "session": "2026-10-31-fa5df4be"}, {"id": "D28", "date": "2026-11-01", "topic": "Critic quality", "title": "The critic check saves Clara's full reply", "fields": [["Decided", "`_tools/critic_check.py` writes every verdict to `_tools/fixtures/<fixture>.last-verdict.md` and prints its path."], ["Why", "the first check missed the bloom fact but kept no reply, so the cause could not be diagnosed. The second check, with the reply saved, showed she caught each error at least once across runs (2 of 3 per run, a different miss each time)."], ["Files", "`_tools/critic_check.py`"]], "session": "2026-10-31-fa5df4be"}, {"id": "D29", "date": "2026-11-01", "topic": "Research & blackboard", "title": "Close the research gap with a designer-notes revision", "fields": [["Decided", "revise `content/bee-journal-real.md` with notes to trim every fact to its brief quote, with `--max-tokens 700000`."], ["Result", "Ruth → William → Clara FAIL (5 rows) → Ruth's second brief → William → Clara PASS. The first end-to-end run of the research path with real agents; 1.17M tokens total processed, 706k of them William re-reading both briefs."], ["Files", "`content/bee-journal-real.md`, `research/bee-journal-real.md`, `research/bee-journal-real-2.md`, `CREW.md`"]], "session": "2026-10-31-fa5df4be"}, {"id": "D30", "date": "2026-11-01", "topic": "Records & deliverables", "title": "A hook logs Agent-tool runs; scripts log their own", "fields": [["Decided", "a `SubagentStop` hook in `.claude/settings.json` runs `_tools/log_subagent.py`, which reads the subagent's own transcript and appends a row to `_meta/agent-runs.md`. `generate.py` and `critic_check.py` keep logging their own calls."], ["Why", "Martin's runs went unlogged because the Agent tool bypasses the scripts. A project hook on every `claude -p` call would have double-logged the scripts' runs."], ["Rejected", "a hook for everything; leaving the notes and analysis to a hook (rows can be automatic, interpretation cannot)."], ["Files", "`.claude/settings.json`, `_tools/log_subagent.py`, `_meta/agent-runs.md`"]], "session": "2026-10-31-fa5df4be"}, {"id": "D31", "date": "2026-11-01", "topic": "Cost & structure", "title": "Log two token measures and never compare across them", "fields": [["Decided", "every row says which measure it uses. *Final context* (the conversation's size at the last call; the Agent tool's figure and all pre-ICM rows) and *total processed* (summed over every call; what the CLI reports). Usage by day is read as an upper bound."], ["Why", "Martin's run hiring Clara was 39,232 final context but 234,632 total processed. The log had been comparing William's total-processed runs with Gerard's final-context runs, and the day looked over budget only because the budget was calibrated in the other measure."], ["Files", "`_meta/agent-runs.md`"]], "session": "2026-10-31-fa5df4be"}, {"id": "D32", "date": "2026-11-01", "topic": "Records & deliverables", "title": "Keep every generate.py agent's transcript", "fields": [["Decided", "`generate.py` no longer runs agents with `--no-session-persistence`; it moves each call's transcript into `_meta/sessions/runs/<date>-<slug>-<run>/` and reads its final context from it. The blackboard links the folder."], ["Why", "the agents' own reasoning was lost, and their rows had only one token measure."], ["Rejected", "copying (transcripts would pile up in `~/.claude/projects/`)."], ["Files", "`_tools/generate.py`, `_tools/critic_check.py`, `_tools/test_generate.py`"]], "session": "2026-10-31-fa5df4be"}, {"id": "D33", "date": "2026-11-01", "topic": "Records & deliverables", "title": "\"End of work day\" runs one portable routine", "fields": [["Decided", "the `end-of-day` project skill exports the session, logs the day's decisions here, rebuilds and republishes one cumulative decision page (same link on every machine), runs the checks and commits. Decision logs follow one strict format so `_tools/decision_page.py` can rebuild the page from every session's log."], ["Why", "the designer works on a desktop PC and a laptop; memories and local files do not travel, the repository does."], ["Rejected", "one timeline page per session."], ["Files", "`.claude/skills/end-of-day/SKILL.md`, `_tools/decision_page.py`, `_templates/decision-page.html`, `_templates/decisions.md`, `_meta/sessions/decision-comb.html`, `AGENTS.md`"]], "session": "2026-10-31-fa5df4be"}, {"id": "D34", "date": "2026-11-01", "topic": "Records & deliverables", "title": "Transcripts stay local; decision logs are committed", "fields": [["Decided", "`.gitignore` keeps `session.jsonl`, `subagents/`, `manifest.json` and `_meta/sessions/runs/` out of git; `decisions.md` and the decision page are committed."], ["Why", "a transcript holds far more than the visible conversation (hidden reasoning, every file and page read, file snapshots, the account email) and adds 2-4 MB per session to git history forever. The designer revisited this and chose to keep transcripts local."], ["Rejected", "committing transcripts as-is; committing them with the email scrubbed."], ["Files", "`.gitignore`"]], "session": "2026-10-31-fa5df4be"}, {"id": "D35", "date": "2026-11-01", "topic": "Records & deliverables", "title": "Project memories live in the repo", "fields": [["Decided", "memories moved from `~/.claude/projects/<workspace>/memory/` to `_meta/memory/`; each machine's gitignored `.claude/settings.local.json` points `autoMemoryDirectory` there. The end-of-day skill sets it up on a machine that lacks it."], ["Why", "memories are project facts, nothing private, and both machines should share them."], ["Files", "`_meta/memory/`, `.claude/settings.local.json` (local), `.gitignore`"]], "session": "2026-10-31-fa5df4be"}, {"id": "D36", "date": "2026-11-01", "topic": "Records & deliverables", "title": "Defer approvals to the next working day", "fields": [["Decided", "approving the research briefs and the four content drafts waits until the next working day; briefs first."], ["Files", "`_meta/memory/pending-approvals.md`"]], "session": "2026-10-31-fa5df4be"}, {"id": "D37", "date": "2026-11-01", "topic": "Records & deliverables", "title": "Backlog for the workspace's own tooling", "fields": [["Decided", "record, not start, three items: an episodic memory upgrade, a dream skill that consolidates memories (check the built-in `autoDreamEnabled` first), and a way to sync transcripts between machines."], ["Files", "`_meta/memory/future-tbd.md`"]], "session": "2026-10-31-fa5df4be"}], "open": ["Approve or reject, briefs first: `research/bee-journal-real.md` (the Haiku brief: wrong frontmatter, overclaiming summary; rejecting it is reasonable), `research/bee-journal-real-2.md`, then `content/bee-journal-real.md`, `content/bee-journal-magic.md`, `content/biome-intros.md`, `content/onboarding-script.md`.", "Guide character: Melli, Pip, Lady Aura or Miel (TBD in the GDD).", "First upgrade to recommend in onboarding (Worker Swarm Count vs Flight Endurance).", "Gendered French (\"petit apiculteur\"); emoji in dialogue bubbles.", "Sunny Meadow intro overlaps onboarding: skip it, or show it only after a reset.", "French honey names (*Miel d'Or Sauvage*, ...) as canon in the GDD.", "Android package name (placeholder `com.chillbeegame.app`).", "Finish the backlog note \"sync transcripts f...\" (the message was cut off).", "On the laptop: `git pull`, then the first \"end of work day\" there sets up its memory folder."], "sessions": 1, "letters": {"Workspace & agents": "W", "Pipeline design": "P", "Critic quality": "C", "Cost & structure": "O", "Bee Journal rules": "B", "Research & blackboard": "R", "Models": "M", "Records & deliverables": "E"}};
+const D = DATA.decisions, L = DATA.letters;
+const TOPICS = Object.keys(L);
+const state = { topic: null, q: "" };
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+
+/* Text with `backticks` rendered as code, built from nodes (no HTML parsing). */
+function rich(tag, text) {
+  const n = el(tag);
+  String(text).split("`").forEach((part, i) => { if (part) n.append(i % 2 ? el("code", null, part) : document.createTextNode(part)); });
+  return n;
+}
+const dayName = iso => new Date(iso + "T12:00:00").toLocaleDateString("en-CA", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+const decided = d => (d.fields.find(f => f[0] === "Decided") || d.fields[0] || ["", ""])[1];
+
+function renderTopics() {
+  const box = document.getElementById("topics");
+  box.replaceChildren();
+  const make = (key, letter, name, count) => {
+    const b = el("button", "topic"); b.type = "button"; b.id = "topic-" + (key ? name.replace(/\W+/g, "-").toLowerCase() : "all");
+    b.setAttribute("aria-pressed", String(state.topic === key));
+    b.append(el("span", "cell", letter), el("span", null, name), el("span", "n", String(count)));
+    b.onclick = () => { state.topic = state.topic === key && key ? null : key; render(); };
+    box.append(b);
+  };
+  make(null, "·", "All topics", D.length);
+  for (const t of TOPICS) make(t, L[t], t, D.filter(d => d.topic === t).length);
+}
+
+function renderDays() {
+  const root = document.getElementById("days");
+  root.replaceChildren();
+  const q = state.q.trim().toLowerCase();
+  const shown = D.filter(d => (!state.topic || d.topic === state.topic) &&
+    (!q || JSON.stringify(d).toLowerCase().includes(q)));
+  const days = [...new Set(D.map(d => d.date))].sort().reverse();
+  for (const day of days) {
+    const items = shown.filter(d => d.date === day);
+    const sec = el("section", "day");
+    const h = el("h2", null, dayName(day));
+    h.append(el("span", null, items.length + (items.length === 1 ? " decision" : " decisions")));
+    const list = el("div", "list");
+    if (!items.length) list.append(el("p", "empty", "No decisions match on this day."));
+    for (const d of items) {
+      const det = el("details", "decision"); det.id = d.id.toLowerCase();
+      const s = el("summary");
+      const cell = el("span", "cell", L[d.topic]); cell.title = d.topic;
+      s.append(cell, el("span", "id", d.id), rich("span", d.title), rich("span", decided(d)));
+      s.children[2].className = "title"; s.children[3].className = "what";
+      det.append(s);
+      const body = el("div", "body");
+      for (const [label, text] of d.fields) {
+        if (label === "Decided") continue;
+        const f = el("div", "field"); f.append(el("b", null, label));
+        if (label === "Files") {
+          const row = el("div", "files");
+          (text.match(/`[^`]+`/g) || [text]).forEach(p => row.append(el("code", null, p.replace(/`/g, ""))));
+          f.append(row);
+        } else f.append(rich("p", text));
+        body.append(f);
+      }
+      if (body.childElementCount) det.append(body);
+      list.append(det);
+    }
+    sec.append(h, list);
+    root.append(sec);
+  }
+}
+
+function render() { renderTopics(); renderDays(); }
+const dates = D.map(d => d.date).sort();
+document.getElementById("eyebrow").textContent =
+  `Chill Bee Game · ${D.length} decisions · ${DATA.sessions} session${DATA.sessions === 1 ? "" : "s"} · ${dates[0]} to ${dates[dates.length - 1]}`;
+const ol = document.getElementById("open-list");
+DATA.open.forEach(item => ol.append(rich("li", item)));
+if (!DATA.open.length) ol.append(el("li", null, "Nothing open."));
+document.getElementById("q").addEventListener("input", e => { state.q = e.target.value; renderDays(); });
+document.getElementById("expand").onclick = () => document.querySelectorAll(".decision").forEach(d => d.open = true);
+document.getElementById("collapse").onclick = () => document.querySelectorAll(".decision").forEach(d => d.open = false);
+render();
+</script>

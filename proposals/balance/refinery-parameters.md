@@ -2,6 +2,8 @@
 author: terry
 type: balance
 status: applied
+decided: 2026-10-26
+decision: rebalance decisions and research Refinery upgrades adopted; values provisional until the reference sim
 description: Refinery parameters, revision 2; stand-in model, re-derive after the reference sim
 ---
 # Royal Honey Refinery Parameters (revision 2)
