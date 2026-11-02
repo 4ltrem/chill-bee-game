@@ -19,6 +19,7 @@ All agents run through Claude Code. Larger models use up the shared Pro limits f
 | Bob | Builder | Godot scenes (`.tscn`) from a layout spec | Sonnet | Structured file output that follows a spec | [builder.md](../.claude/agents/builder.md) |
 | Andrew | Audiophile | Search and curate audio | Haiku | Search and list-making; little reasoning needed | [audiophile.md](../.claude/agents/audiophile.md) |
 | Martin | Hiring Manager | Agent definitions from a template | Haiku | Fills a fixed template; the developer reviews the diff | [hiring-manager.md](../.claude/agents/hiring-manager.md) |
+| Doris | Doc Auditor | End-of-day check of docs against the day's changes: finds statements the changes made untrue; read-only | Sonnet | Close reading of prose against code and config, across many files, like Clara's check; no multi-step math. Runs once a day and nothing checks it after, so Haiku's misses would stay in the docs | [doc-auditor.md](../.claude/agents/doc-auditor.md) |
 
 Every role has a definition. New roles come from Martin, copied from the template.
 
@@ -37,6 +38,7 @@ Each agent is a module in the development workflow: a developer input triggers i
 - **Martin, the Hiring Manager:** when the lead architect notices a skill gap, writes a new agent definition by copying [`_templates/agent.md`](../_templates/agent.md) into `.claude/agents/` and adds the role to the roster above; the developer reviews the git diff.
 - **Connie, the Compliance Officer:** reviews features for child safety (kid mode, COPPA, app-store kids and families rules, ad SDK settings), charity and cause marketing (donation disclosures, partner agreements), privacy and data (PIPEDA, Quebec Law 25, privacy policy) and store policy (subscriptions, premium currency, rewarded ads, donations) when a feature touches those areas or before store submission. The developer sees a findings report and checklist in `proposals/compliance/`, citing official sources, with items needing lawyer or partner sign-off marked.
 - **Quinn, the QA & Build Engineer:** writes and runs tests, produces mobile builds, and profiles performance against the 60 FPS target when a feature or build is ready for testing, and the developer sees a test report, build output and performance profile.
+- **Doris, the Doc Auditor:** at the end of the working day, the `end-of-day` skill gives her the day's `git diff` and changed-file list, and she finds every doc statement those changes made untrue, citing the code, config or GDD line that contradicts it; the main session or the developer sees her findings table, and she edits nothing.
 
 ## Rules for every agent
 
@@ -64,3 +66,4 @@ Every model choice is a bet that the agent's mistakes are caught downstream. A c
 | Quinn (Sonnet) | the designer playing the build | bugs found after a passing report | `game/reports/` |
 | Gerard, Terry (Opus) | the designer's decision | proposals rejected or revised | `status:` and the ledger |
 | Connie (Sonnet) | lawyer or partner sign-off | findings overturned | her reports |
+| Doris (Sonnet) | the designer | findings later found wrong or missed | end-of-day reports |

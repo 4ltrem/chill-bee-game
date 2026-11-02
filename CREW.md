@@ -8,12 +8,14 @@
 
 Three agents coordinated by a Python orchestrator. Each agent is a Claude Code subagent definition in `.claude/agents/`, run headless with `claude -p --agent <name>` (no API key needed). The orchestrator is raw Python, standard library only: [_tools/generate.py](_tools/generate.py).
 
-| Agent | Role | Model | Tools | Produces |
-|---|---|---|---|---|
-| **Ruth**, Research Assistant ([definition](.claude/agents/research-assistant.md)) | finds and verifies real-world sources | Sonnet | Read, Grep, Glob, Write, WebSearch, WebFetch | `research/<slug>.md`: each claim narrowed to a verbatim quote, with URL and date |
-| **William**, Writer ([definition](.claude/agents/writer.md)) | writes and revises the text | Sonnet | Read, Grep, Glob, Write, Edit (no web) | `content/<slug>.md`: English, then Canadian French |
-| **Clara**, Content Critic ([definition](.claude/agents/content-critic.md)) | checks each draft against the GDD | Sonnet | Read, Grep, Glob, WebFetch (read-only: no Write or Edit) | a PASS/FAIL verdict with evidence and findings |
-| `generate.py` (orchestrator) | controls the loop and the shared blackboard | — | — | the blackboard, statuses, token log, kept transcripts |
+<!-- generated: crew-agents (python -I _tools/sync_docs.py; do not edit by hand) -->
+| Agent | Model | Tools | What it does |
+|---|---|---|---|
+| **Ruth**, Research Assistant ([definition](.claude/agents/research-assistant.md)) | Sonnet | Read, Grep, Glob, Write, WebSearch, WebFetch | Finds and verifies real-world sources for Chill Bee Game, returning each claim as narrowly as its verbatim quote supports, with the URL, source kind and date checked, and a list of what could not be sourced. |
+| **William**, Writer ([definition](.claude/agents/writer.md)) | Sonnet | Read, Grep, Glob, Write, Edit | Writes Chill Bee Game story outlines from an idea for a story point, lesson or goal, and drafts the Bee Journal's real-world facts in English and French from Ruth's research briefs. |
+| **Clara**, Content Critic ([definition](.claude/agents/content-critic.md)) | Sonnet | Read, Grep, Glob, WebFetch | Checks William's Chill Bee Game drafts against GDD.md for lore, tone and glossary, child safety and spending, facts and French, and cited sources, and replies with a PASS or FAIL verdict block that the script appends to the run's blackboard. |
+| `generate.py` (orchestrator) | — | — | Runs the loop, controls the blackboard, logs every call and keeps each call's transcript. |
+<!-- /generated: crew-agents -->
 
 Clara and Ruth were themselves written by a fourth agent, **Martin**, the Hiring Manager ([definition](.claude/agents/hiring-manager.md)), from the workspace's agent template.
 
@@ -74,7 +76,7 @@ python -I _tools/generate.py onboarding-script --revise --request "Scrap the 'ho
 # check the critic still catches known errors (exit 0 = all caught)
 python -I _tools/critic_check.py
 
-# test the orchestrator, critic check, run logger and decision page with fake agents: no Claude account, no tokens (26 tests)
+# test the orchestrator, critic check, run logger, decision page and doc checks with fake agents: no Claude account, no tokens
 python -I _tools/test_generate.py
 ```
 

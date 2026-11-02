@@ -97,6 +97,7 @@ Measures: **total processed**, and from 2026-11-01 evening also **final context*
 | Ruth: bee-journal-real, round 2 (Sonnet) | post-ICM | 193,098 | — | 11 | 109 s |
 | William: bee-journal-real, round 2 (Sonnet) | post-ICM | 372,765 | — | 16 | 144 s |
 | Critic: bee-journal-real, round 2 (Sonnet) | post-ICM | 64,572 | — | 7 | 84 s |
+| Doris: doc audit since 902ca88, round 1 (Sonnet) | post-ICM | 493,700 | 102,299 | 10 | 284 s |
 
 Notes on the rows above:
 - **Rows before `biome-intros`** were logged by hand; from `biome-intros` on, `generate.py` and `critic_check.py` append them.
@@ -121,6 +122,7 @@ Logged automatically when a subagent launched with the Agent tool finishes. *Fin
 | Martin (hiring-manager): Martin hires the content critic | post-ICM | 39,232 | 234,632 | 18 | 63 s | claude-haiku-5-5 |
 | Martin (hiring-manager): Martin hires the research assistant | post-ICM | 47,200 | 345,056 | 26 | 93 s | claude-haiku-5-5 |
 | claude-code-guide: Check SubagentStop hook input fields | post-ICM | 29,603 | 73,389 | 5 | 39 s | claude-haiku-5-5 |
+| Martin (hiring-manager): Martin hires the doc auditor | post-ICM | 47,180 | 272,581 | 22 | 63 s | claude-haiku-5-5 |
 
 ## Daily Budget
 
@@ -168,6 +170,7 @@ In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 ful
 | Andrew, the Audiophile | No similar run | TBD | TBD |
 | Martin, the Hiring Manager | Measured, post-ICM, Haiku: average of 2 runs (39k, 47k) | ~43,000 | ~1.5 min |
 | Quinn, the QA & Build Engineer | No similar run | TBD | TBD |
+| Doris, the Doc Auditor | Not yet run. Nearest guide: the document-review average (41,611 final context), but she also Greps the repository for every changed name, so expect more. Re-measure after her first end-of-day run | TBD | TBD |
 
 Measures differ by row: Gerard, Terry, Connie and Martin are *final context*; William, Clara and Ruth are *total processed* (see Measures). Do not compare across the two. All estimates above come from pre-ICM runs; replace them with post-ICM averages once each agent has run under its contract. All runs above used Opus. The roster in [team.md](team.md) assigns smaller models to lighter agents, so re-measure those agents' costs once they run on Sonnet or Haiku.
 

@@ -389,5 +389,69 @@ class DecisionPageTest(unittest.TestCase):
                 self.assertTrue(d["fields"], f"{d['id']} in {log} has no '- Label: text' bullets")
 
 
+class ConsistencyTest(unittest.TestCase):
+    """consistency.py and sync_docs.py on a copy of the real docs: clean passes, each kind of drift fails."""
+
+    SKIP = {".git", "game", "gdd-review", "gdd-review-v2", "_runs", "sessions", "__pycache__", "research", "proposals"}
+
+    def setUp(self):
+        import consistency, sync_docs
+        self.cc, self.sd = consistency, sync_docs
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        shutil.copytree(TOOLS.parent, self.root, dirs_exist_ok=True,
+                        ignore=lambda d, names: [n for n in names if n in self.SKIP])
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def edit(self, rel, old, new):
+        p = self.root / rel
+        text = p.read_text(encoding="utf-8")
+        self.assertIn(old, text, f"test setup: '{old}' not in {rel}")
+        p.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+    def problems(self):
+        return "\n".join(self.cc.check(self.root))
+
+    def test_the_real_docs_are_consistent(self):
+        self.assertEqual(self.problems(), "")
+
+    def test_todays_bug_a_model_change_not_carried_to_the_docs(self):
+        self.edit(".claude/agents/research-assistant.md", "model: sonnet", "model: haiku")
+        found = self.problems()
+        self.assertIn("CREW.md: generated section 'crew-agents' is out of date", found)
+        self.assertIn("Ruth listed as Sonnet, but research-assistant.md has model: haiku", found)
+        self.assertIn("Ruth shown as Sonnet, but the agent runs on Haiku", found)  # Model reviews row
+        self.assertIn("diagram shows Ruth on Sonnet, but the agent runs on Haiku", found)
+
+    def test_sync_docs_repairs_the_generated_section(self):
+        self.edit(".claude/agents/writer.md", "model: sonnet", "model: opus")
+        self.sd.sync(root=self.root)
+        self.assertIn("| **William**, Writer ([definition](.claude/agents/writer.md)) | Opus |",
+                      (self.root / "CREW.md").read_text(encoding="utf-8"))
+        self.assertNotIn("generated section", self.problems())
+
+    def test_a_quoted_default_that_no_longer_matches_the_code(self):
+        self.edit("_tools/generate.py", 'default=500_000', 'default=400_000')
+        self.assertIn("token cap quoted as 500,000, but generate.py defaults to 400,000", self.problems())
+
+    def test_a_quoted_budget_that_no_longer_matches_ruth(self):
+        self.edit(".claude/agents/research-assistant.md", "at most 6 WebSearch", "at most 4 WebSearch")
+        self.assertIn("Ruth's search budget quoted as 6, but her definition says 4", self.problems())
+
+    def test_a_stated_agent_count_that_is_wrong(self):  # Doris's first real finding
+        self.edit("README.md", "The agent roster, each agent's model", "The nine agents, each agent's model")
+        self.assertIn("README.md:64: says the nine agents, but .claude/agents/ holds 12", self.problems())
+
+    def test_an_agent_with_no_roster_row_or_route(self):
+        (self.root / ".claude" / "agents" / "new-agent.md").write_text(
+            "---\nname: new-agent\ndescription: Nina, the New Agent. Does things.\ntools: Read\nmodel: haiku\n---\n",
+            encoding="utf-8")
+        found = self.problems()
+        self.assertIn("no roster row links .claude/agents/new-agent.md (Nina)", found)
+        self.assertIn("AGENTS.md: no route mentions .claude/agents/new-agent.md (Nina)", found)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

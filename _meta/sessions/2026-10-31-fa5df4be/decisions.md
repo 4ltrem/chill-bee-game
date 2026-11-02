@@ -174,6 +174,35 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 - Decided: record, not start, three items: an episodic memory upgrade, a dream skill that consolidates memories (check the built-in `autoDreamEnabled` first), and a way to sync transcripts between machines.
 - Files: `_meta/memory/future-tbd.md`
 
+### D38 · 2026-11-01 · Records & deliverables · Push to GitHub on main
+- Decided: the repository's remote is `origin` (https://github.com/4ltrem/chill-bee-game); the local branch was renamed from `master` to `main` to match GitHub and the laptop, and pushed as a fast-forward.
+- Why: the laptop pulls from GitHub, and the assignment is read there.
+- Files: git config only
+
+### D39 · 2026-11-01 · Records & deliverables · CREW.md corrected against the code
+- Decided: CREW.md and `_meta/team.md` were corrected in eleven places after the designer found the diagram still showing Ruth on Haiku: models, full tool lists, Ruth's real trigger, the token cap's behaviour, the run history, the test count, both token measures, and Clara's and William's role lines.
+- Why: each error restated a fact defined elsewhere (an agent file, a script default) that had changed underneath it.
+- Files: `CREW.md`, `_meta/team.md`
+
+### D40 · 2026-11-01 · Records & deliverables · Generate facts into docs instead of copying them
+- Decided: `_tools/sync_docs.py` writes marked sections of the docs from their source of truth; the first is CREW.md's agent table (model, tools, summary) from the agent files. Counts that change often, such as the number of tests, are no longer stated in docs at all.
+- Why: a generated copy cannot go stale. The designer does not want to check docs by hand.
+- Files: `_tools/sync_docs.py`, `CREW.md`
+
+### D41 · 2026-11-01 · Records & deliverables · A drift check gates every commit
+- Decided: `_tools/consistency.py` checks the facts a script can verify (generated sections current; every agent in the roster with the right model and routed in AGENTS.md; models in Model reviews rows and Mermaid nodes; the token cap, round limit and Ruth's budget wherever quoted; stated agent counts). `.githooks/pre-commit` runs it and the link check, and refuses the commit on any mismatch. Each machine enables it with `git config core.hooksPath .githooks`; the end-of-day skill sets that up.
+- Why: proven on the real repository: with Ruth's model changed, the commit was refused and all four stale places were named.
+- Files: `_tools/consistency.py`, `.githooks/pre-commit`, `_tools/test_generate.py`
+
+### D42 · 2026-11-01 · Models · Doris, the Doc Auditor, checks meaning at end of day
+- Decided: Martin hired Doris (Sonnet, read-only). `_tools/doc_audit.py` runs her headless on the day's staged diff minus history, keeps her transcript and logs her call; the end-of-day skill fixes plain corrections and lists anything needing a decision for the designer.
+- Why: some drift is in meaning ("Clara appends her verdict" after she lost Edit), which no script can check. Run headless because a session cannot call an agent type created during it.
+- Result: her first audit, over both days' changes, found one error: README.md said "the nine agents" when there are twelve. That check was then added to `consistency.py`, so it is caught at commit time from now on.
+- Files: `.claude/agents/doc-auditor.md`, `_tools/doc_audit.py`, `.claude/skills/end-of-day/SKILL.md`, `README.md`
+
+### D43 · 2026-11-01 · Records & deliverables · Push once, after the accuracy work
+- Decided: the CREW.md corrections and the three accuracy layers are pushed together at the end of the day, not in two pushes.
+
 ## Still open
 
 - Approve or reject, briefs first: `research/bee-journal-real.md` (the Haiku brief: wrong frontmatter, overclaiming summary; rejecting it is reasonable), `research/bee-journal-real-2.md`, then `content/bee-journal-real.md`, `content/bee-journal-magic.md`, `content/biome-intros.md`, `content/onboarding-script.md`.
@@ -184,4 +213,4 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 - French honey names (*Miel d'Or Sauvage*, ...) as canon in the GDD.
 - Android package name (placeholder `com.chillbeegame.app`).
 - Finish the backlog note "sync transcripts f..." (the message was cut off).
-- On the laptop: `git pull`, then the first "end of work day" there sets up its memory folder.
+- On the laptop: `git pull`, then the first "end of work day" there sets up its memory folder and the commit gate.

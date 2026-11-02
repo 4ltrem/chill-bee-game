@@ -20,7 +20,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | [_meta/memory/](_meta/memory/MEMORY.md) | Claude Code's project memories, shared across machines through git (each machine's `.claude/settings.local.json` points `autoMemoryDirectory` here) |
 | `_meta/sessions/` | one folder per working session: `decisions.md` and the decision page are committed; transcripts stay local (gitignored) |
 | `_templates/` | blank starters: `proposal.md`, `content.md`, `research-brief.md`, `audio-list.md`, and `agent.md` for a new agent |
-| `_tools/` | `links.py` checks every link and input path; `index.py` rebuilds `_index.md` (`--decisions` prints the ledger); `generate.py` runs the content loop; `critic_check.py` checks Clara against the known-bad drafts in `fixtures/`; `test_generate.py` tests them with fake agents; `log_subagent.py` is the SubagentStop hook that logs Agent-tool runs; `export_session.py` and `decision_page.py` serve the end-of-day routine |
+| `_tools/` | `links.py` checks every link and input path; `index.py` rebuilds `_index.md` (`--decisions` prints the ledger); `generate.py` runs the content loop; `critic_check.py` checks Clara against the known-bad drafts in `fixtures/`; `test_generate.py` tests them with fake agents; `log_subagent.py` is the SubagentStop hook that logs Agent-tool runs; `export_session.py` and `decision_page.py` serve the end-of-day routine; `sync_docs.py` writes the docs' generated sections, `consistency.py` checks docs against code (run by the `.githooks/pre-commit` gate), and `doc_audit.py` runs Doris on the day's changes |
 | `.claude/agents/` | runnable agent definitions, one per roster role in [_meta/team.md](_meta/team.md) |
 
 ## Route by task
@@ -40,6 +40,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | a proposal was accepted | [CONTEXT.md](CONTEXT.md), step 4 (apply) | `python -I _tools/links.py` passes |
 | asked for status | `proposals/*/_index.md` and the README TBD list | report what exists |
 | a skill gap no agent covers | Martin: `.claude/agents/hiring-manager.md` | the designer reviews the diff |
+| at end of day, docs need checking against the day's changes | the `end-of-day` skill runs Doris: `.claude/agents/doc-auditor.md` | her findings: plain corrections fixed in the routine, anything needing a decision listed for the designer |
 | asked about agent cost | [_meta/agent-runs.md](_meta/agent-runs.md) | - |
 | the designer says "end of work day" | the `end-of-day` skill: `.claude/skills/end-of-day/SKILL.md` (export, decisions, page, checks, commit) | the commit, reported |
 

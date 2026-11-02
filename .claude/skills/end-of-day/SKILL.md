@@ -9,7 +9,11 @@ The designer keeps a record of every working session for analysis and a future e
 
 Run the steps in order. Stop and report if a step fails; never commit over a failing check.
 
-## 0. Check this machine keeps memories in the repo
+## 0. Check this machine is set up
+
+**Doc gate.** `git config --get core.hooksPath` must print `.githooks`. If not, run `git config core.hooksPath .githooks`: it enables `.githooks/pre-commit`, which refuses any commit whose docs contradict the code (`_tools/consistency.py`) or whose links break.
+
+**Memories.**
 
 Project memories live in `_meta/memory/` and travel with git. Each machine points Claude Code there with one line in its own `.claude/settings.local.json` (gitignored, because the path is absolute): `"autoMemoryDirectory": "<absolute path to this repo>/_meta/memory"` (forward slashes). If the file or the line is missing, add it, merging with anything already there, and tell the designer it takes effect from the next session. If this machine still has memories in its old folder (`~/.claude/projects/<workspace>/memory/`), copy any that `_meta/memory/` lacks into it and add them to `_meta/memory/MEMORY.md` before going on.
 
@@ -42,22 +46,32 @@ It rebuilds `_meta/sessions/decision-comb.html` from every session's log. Publis
 - url: https://claude.ai/code/artifact/d62b3ba8-566a-4d33-8b73-d8e7c8b71f57
 - In a session that has not published or read it yet, first call the Artifact tool with `action: "read"` on that url, then publish `_meta/sessions/decision-comb.html` with the same `url`. No `icon`.
 
-## 4. Run the checks
+## 4. Audit the docs against the day's changes
+
+Docs must stay true without the designer checking them. Three layers do that; this step runs the third.
+
+1. `python -I _tools/sync_docs.py` rewrites the generated sections (facts copied from code and config).
+2. Stage everything (`git add -A`), then run **Doris** (`.claude/agents/doc-auditor.md`): `python -I _tools/doc_audit.py`. It gives her the staged diff since the last commit, minus history, runs her headless (so it works even in a session that has not loaded her agent type), keeps her transcript and audit in `_meta/sessions/runs/<date>-doc-audit/`, logs her call, and prints `DOC AUDIT: CLEAN` or a table of statements the day made untrue. If the day already has commits, add `--since <the first commit of the day's parent>` so the audit covers the whole day.
+3. Fix every finding whose fix is a plain correction to match the source of truth. If a finding needs a decision (the doc may be right and the code wrong), do not guess: list it for the designer under `## Still open` in the decision log and in the report.
+4. Fixed findings go in the report.
+
+## 5. Run the checks
 
 ```
+python -I _tools/consistency.py
 python -I _tools/test_generate.py
 python -I _tools/index.py content research proposals/design proposals/balance
 python -I _tools/links.py
 ```
 
-All must pass. `test_generate.py` includes a test that every real `decisions.md` parses.
+All must pass. `consistency.py` checks that docs agree with code and config (the pre-commit hook runs it too); `test_generate.py` includes tests that every real `decisions.md` parses and that the real docs are consistent.
 
-## 5. Commit
+## 6. Commit
 
 - `git status`, and confirm nothing gitignored is staged: `git check-ignore` any `_meta/sessions/` path you are unsure of. Never stage `session.jsonl`, `subagents/`, `manifest.json` or `_meta/sessions/runs/`.
 - Stage the day's work, including `_meta/memory/` and the session's `decisions.md`, and commit on the current branch with a message that summarises the day in a short subject line and a body listing the main changes and the decision IDs added. End the message with any attribution lines the session's instructions give.
 - Do not push unless the designer asks.
 
-## 6. Report
+## 7. Report
 
-Tell the designer, briefly: the export folder, the decision IDs added, the page link, the commit hash, and anything still open that needs them at the start of the next working day.
+Tell the designer, briefly: the export folder, the decision IDs added, what Doris found and what was fixed, the page link, the commit hash, and anything still open that needs them at the start of the next working day.
