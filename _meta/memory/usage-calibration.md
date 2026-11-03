@@ -1,31 +1,30 @@
 ---
 name: usage-calibration
-description: "Before the Prototype 0 revision 3 agent run, take /usage readings before and after to recalibrate the daily token budget"
+description: "Every agent run logs plan usage before and after, plus the orchestrator's own tokens; calibrate the daily budget from those readings"
 metadata:
   node_type: memory
-  type: project
+  type: feedback
   originSessionId: fa5df4be-6365-415d-bd06-9f0be0bb573b
-  modified: 2026-11-03T23:19:47.359Z
+  modified: 2026-11-03T23:23:09.168Z
 ---
 
-The designer asked (2026-11-03) to calibrate the usage metrics before the next agent run, which is Prototype 0
-revision 3 (Patricia, Bob, Quinn). The ~2.0M/day budget in `_meta/agent-runs.md` (Daily Budget) rests on a single 1%
-weekly reading, so it could be anywhere from about 1.3M to 4M. It was also taken in *final context*, while the daily
-usage table mostly sums *total processed*.
+Rule (designer, 2026-11-03): every agent run, of any agent or kind (Agent tool, `generate.py`, headless `claude -p`),
+records plan usage before and after it. The orchestrator's (main session's) tokens are logged too, never left out.
 
-Procedure:
-1. Before launching, ask the designer for `/usage` weekly % and 5-hour session %. Claude cannot read `/usage` itself.
-   Ask them to keep other Claude sessions closed during the run.
-2. Run the three agents back to back. The SubagentStop hook logs each run's final context and total processed.
-3. After the run, ask for `/usage` again. Compute tokens per 1% both ways (final context and total processed) and note
-   which one matches the first calibration. Record that in Daily Budget as the second calibration.
-4. The main session's own tokens also move the bar, and the hook doesn't log them; say so with the result.
+Each run's record holds:
+- the 5-hour % and weekly % before and after (`/usage`; the status line JSON exposes them as
+  `rate_limits.five_hour.used_percentage` and `rate_limits.seven_day.used_percentage`);
+- the subagent's final context and total processed (already logged by the SubagentStop hook);
+- the orchestrator's tokens over the same span, summed from the main session transcript's per-call `usage`
+  (input, cache write, cache read and output kept separate).
 
-Revision 2 (Patricia, Bob, Quinn) processed about 2.66M tokens in total, so revision 3 should move the weekly bar by
-several points, enough for a useful reading.
+Tokens per 1% then come from the usage change ÷ (subagent + orchestrator tokens). Record each reading in
+`_meta/agent-runs.md` (Daily Budget) and refine the ~2.0M/day budget from them.
 
-**Why:** the provisional budget's whole-percent resolution leaves a 3x range, and the day's usage is compared against it
-in mismatched units.
+**Why:** the budget rests on a single 1% reading (3x uncertainty), and the logs omit the orchestrator. On 2026-11-03 the
+main session had processed ~153.5M tokens over 400 calls (151.5M of them cache reads), against under 8M for all its
+subagents. The orchestrator is the main cost, so a calibration that leaves it out is wrong.
 
-**How to apply:** do step 1 before the first Agent call of revision 3. Don't launch until the designer has given the
-readings, or has said to skip them.
+**How to apply:** until hooks capture this automatically, ask the designer for the `/usage` figures before the first
+agent call and after the last one in a batch, rather than every single call. Don't launch until they have given the
+readings, or have said to skip them.
