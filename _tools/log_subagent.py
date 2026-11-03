@@ -12,6 +12,8 @@ Two token measures, because they differ several-fold:
                     tool reports, and the measure of every pre-ICM row in the log
   total processed - the sum over all its calls (each call re-sends the conversation, mostly as
                     cache reads); the measure generate.py logs
+A subagent that stops more than once (it handed back while its own background work was still running)
+updates its row instead of adding one: each row carries its transcript id in a hidden comment.
 Runs from generate.py are logged by generate.py itself; they launch no subagents, so this hook
 never sees them. Internal agents (empty agent_type) are skipped. A hook must never break the
 session, so any failure prints a warning to stderr and exits 0.
@@ -84,9 +86,15 @@ def describe(transcript):
         return ""
 
 
-def append_row(row, log):
+def append_row(row, log, key=None):
+    """Insert row at the end of the table, or replace the row tagged with the same key."""
     text = log.read_text(encoding="utf-8") if log.is_file() else ""
     lines = text.splitlines()
+    tag = f"<!-- {key} -->" if key else None
+    if tag and any(tag in l for l in lines):  # the same subagent stopped again: update its row
+        lines = [row if tag in l else l for l in lines]
+        log.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+        return
     if TABLE not in lines:  # create the table just before the Daily Budget section (or at the end)
         block = ["", TABLE, INTRO, HEADER]
         at = next((i for i, l in enumerate(lines) if l.startswith("## Daily Budget")), len(lines))
@@ -104,9 +112,10 @@ def log_run(agent_type, transcript, log=None):
     m = measure(transcript)
     what = describe(transcript)
     name = roster_name(agent_type) + (f": {what}" if what else "")
-    row = (f"| {name} | post-ICM | {m['final']:,} | {m['total']:,} | {m['tools']} | {m['seconds']} s | "
-           f"{m['model']} |")
-    append_row(row, log or ROOT / "_meta" / "agent-runs.md")
+    key = transcript.stem  # e.g. agent-a0f6be1b5fea20964: one row per subagent, however often it stops
+    row = (f"| {name} <!-- {key} --> | post-ICM | {m['final']:,} | {m['total']:,} | {m['tools']} | "
+           f"{m['seconds']} s | {m['model']} |")
+    append_row(row, log or ROOT / "_meta" / "agent-runs.md", key)
     return row
 
 

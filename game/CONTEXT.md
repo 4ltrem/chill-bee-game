@@ -22,6 +22,7 @@ Do NOT load: the review folders, `_meta/agent-runs.md`, proposals still `propose
 1. Build only what the GDD or an applied proposal specifies. If the spec is ambiguous, stop and list the questions.
 2. Patricia writes scripts, Bob writes scenes that attach those scripts by path, Quinn tests both. No agent edits another agent's folder.
 3. TBD balance values stay as marked placeholders in exported variables or config resources.
+4. **Fixes.** The owner of the folder fixes its bugs: Patricia `scripts/`, Bob `scenes/`, Quinn `tests/`. The orchestrator (the main session) may fix a bug itself only when the diagnosis is certain and the fix is a few lines; anything larger goes back to the owner with Quinn's report. Whoever fixes it, every fix is recorded: a **Fixes** section in the report names the bug, its owner and who fixed it, the bug is counted in the Rework tally in `../_meta/team.md`, and Quinn's tests are re-run before any build is exported.
 
 ## Outputs
 - scripts, scenes and tests -> their folders above

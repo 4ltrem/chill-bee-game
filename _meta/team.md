@@ -62,8 +62,18 @@ Every model choice is a bet that the agent's mistakes are caught downstream. A c
 | Clara (Sonnet) | the designer only | known errors missed | `_tools/critic_check.py` |
 | Andrew (Haiku) | Connie, the designer | picks with a wrong or unclear licence | audio list reviews |
 | Martin (Haiku) | the designer's diff review | definitions fixed after he wrote them | git history |
-| Patricia, Bob (Sonnet) | Quinn | failing tests per feature | `game/reports/` |
-| Quinn (Sonnet) | the designer playing the build | bugs found after a passing report | `game/reports/` |
+| Patricia, Bob (Sonnet) | Quinn | failing tests per feature, whoever fixed them | `game/reports/`, Rework tally |
+| Quinn (Sonnet) | the designer playing the build | bugs found after a passing report; defects in Quinn's own tests found by anyone else | `game/reports/`, Rework tally |
 | Gerard, Terry (Opus) | the designer's decision | proposals rejected or revised | `status:` and the ledger |
 | Connie (Sonnet) | lawyer or partner sign-off | findings overturned | her reports |
 | Doris (Sonnet) | the designer | findings later found wrong or missed | end-of-day reports |
+
+### Rework tally
+
+Every bug in an agent's work, counted against that agent whoever fixed it (`game/CONTEXT.md`, Fixes). It is the evidence for the Model reviews above. **Revisit a dedicated fixer agent** if cross-domain bugs (diagnosis spanning several owners) appear in 3 of the next 5 features, or Quinn's diagnosis names the wrong owner in 2 of 5 runs (Martin, 2026-11-03).
+
+| Date | Feature | Agent | Rework | Fixed by | Recorded in |
+|---|---|---|---|---|---|
+| 2026-11-03 | Prototype 0 | Patricia | 1 blocking bug: `get_camera_3D()` for `get_camera_3d()` in `honeycomb.gd`; dragging could not uncap cells. Her checks never exercised input | orchestrator | `game/reports/2026-11-03-prototype-0.md` |
+| 2026-11-03 | Prototype 0 | Quinn | 1 test defect: `play_loop.gd` sent drag coordinates in viewport pixels where `push_input` expects window pixels | orchestrator | `game/reports/2026-11-03-prototype-0.md` |
+| 2026-11-03 | Prototype 0 | Bob | 0 failing tests; 4 cosmetic issues (fill bar, No-Rapid-Tap label contrast, backdrop bands, shop overlap), open | — | `game/reports/2026-11-03-prototype-0.md` |

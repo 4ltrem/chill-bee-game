@@ -338,13 +338,31 @@ class LogSubagentTest(unittest.TestCase):
         self.assertEqual(m["seconds"], 67)
         self.assertEqual(m["model"], "claude-haiku-5-5")
 
-    def test_creates_the_table_before_daily_budget_and_appends(self):
-        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
+    def test_creates_the_table_before_daily_budget(self):
         self.ls.log_run("hiring-manager", self.transcript, log=self.log)
         text = self.log.read_text(encoding="utf-8")
         self.assertLess(text.index(self.ls.TABLE), text.index("## Daily Budget"))
         self.assertEqual(text.count(self.ls.TABLE), 1)
-        self.assertEqual(text.count("| Martin (hiring-manager): hire Ruth | post-ICM | 508 | 944 | 3 | 67 s |"), 2)
+        self.assertIn("| Martin (hiring-manager): hire Ruth <!-- agent-x --> | post-ICM | 508 | 944 | 3 | 67 s |", text)
+
+    def test_a_subagent_that_stops_twice_keeps_one_row(self):  # Patricia's double row
+        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
+        with self.transcript.open("a", encoding="utf-8") as f:  # it carried on, then stopped again
+            f.write(json.dumps({"type": "assistant", "timestamp": "2026-11-01T10:05:00Z", "message": {
+                "id": "m4", "model": "claude-haiku-5-5", "content": [],
+                "usage": {"cache_read_input_tokens": 900}}}) + "\n")
+        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
+        text = self.log.read_text(encoding="utf-8")
+        self.assertEqual(text.count("<!-- agent-x -->"), 1)
+        self.assertIn("| post-ICM | 900 | 1,844 |", text)  # the updated, complete figures
+
+    def test_a_different_subagent_gets_its_own_row(self):
+        other = self.transcript.with_name("agent-y.jsonl")
+        shutil.copy(self.transcript, other)
+        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
+        self.ls.log_run("hiring-manager", other, log=self.log)
+        text = self.log.read_text(encoding="utf-8")
+        self.assertEqual((text.count("<!-- agent-x -->"), text.count("<!-- agent-y -->")), (1, 1))
 
     def run_hook(self, payload):
         import subprocess
