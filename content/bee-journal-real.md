@@ -1,9 +1,11 @@
 ---
 author: william
 type: journal
-status: draft
+status: approved
 run: content/_runs/bee-journal-real/blackboard-3.md
 description: Bee Journal entries for five real native bee species (sweat bees, leafcutter bees, bumble bees, mason bees, mining bees) from GDD Tree C Native Bee Species table; appears in the Bee Journal in-game.
+decided: 2026-11-03
+decision: approved with the designer's corrections ('sweat name'); follow-up: the bumble bee visitor appears in Sunny Meadow, so the GDD needs a Meadow flower for it, then Entry 3 revised
 ---
 # Bee Journal — Real Native Bee Species
 **Sources:** `GDD.md` (Tree C: Native Habitat — Native Bee Species table; Story Premise & Onboarding; Aesthetic & Tone; Child Safety; Glossary), `content/CONTEXT.md`, `_templates/content.md`.
@@ -16,7 +18,7 @@ description: Bee Journal entries for five real native bee species (sweat bees, l
 **Biome:** Sunny Meadow
 **Attracted by:** Black-eyed Susan, goldenrod
 
-Many sweat bees shimmer with brilliant metallic green.¹ Canada is home to around 170 sweat bee species, most of them nesting underground.² Some sweat bees gently land on people to sip the salt from their perspiration — that is exactly how they got their sweet name!²
+Many sweat bees shimmer with brilliant metallic green.¹ Canada is home to around 170 sweat bee species, most of them nesting underground.² Some sweat bees gently land on people to sip the salt from their perspiration — that is exactly how they got their sweat name!²
 
 *Keep your wildflower patches blooming and these tiny glittering bees will always find their way back to the meadow.*
 
@@ -137,4 +139,4 @@ Les abeilles minières creusent leurs propres galeries douillettes dans des sols
 ## Decisions needed from the designer
 
 1. **Alpine wildflowers (TBD):** All three Alpine Valley species (bumble bees, mason bees, mining bees) currently list "alpine wildflowers (TBD)" as a second attractant alongside fireweed. Once the designer chooses specific alpine wildflower species, William will add them to Entries 3, 4, and 5 (English and French) and update the real-world facts table.
-2. **Bumble bee visitor in Sunny Meadow — which flowers?** The GDD table lists "—" (no flowers) for the Sunny Meadow bumble bee visitor, since that appearance is Journal-only with no gameplay effect. The in-game note in Entry 3 handles this by treating the meadow stop as a passing visit. If the designer wants a Sunny Meadow flower to name in the bumble bee entry text, that flower needs to be added to the GDD table first.
+2. **Bumble bee visitor in Sunny Meadow — which flowers?** The GDD table lists "—" (no flowers) for the Sunny Meadow bumble bee visitor, since that appearance is Journal-only with no gameplay effect. The in-game note in Entry 3 handles this by treating the meadow stop as a passing visit. If the designer wants a Sunny Meadow flower to name in the bumble bee entry text, that flower needs to be added to the GDD table first. <<< the bumble bee is a visitor so it does appear in the world

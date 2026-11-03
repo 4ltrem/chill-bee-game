@@ -98,7 +98,7 @@ Progression is split across three synergizing upgrade paths using an exponential
     |---|---|
     | Sunny Meadow | Goldenrod, wild bergamot, New England aster, black-eyed Susan |
     | Alpine Valley | Fireweed and other alpine wildflowers (TBD) |
-    | Enchanted Grove, Cloud Gardens | Fictional flowers, labelled as fictional in the Bee Journal |
+    | Enchanted Grove, Cloud Gardens | Fictional flowers, labelled as fictional in the Bee Journal: Glowbell (Enchanted Grove, night-blooming) and Skybloom (Cloud Gardens, rainbow blossoms) |
   * *Native Bees:* Habitat Health attracts native wild bees to the farm, separate from the managed honeybees. Native bees:
     * Pollinate flowers, raising Habitat Synergy (no growth timers).
     * Grant a native-bee bonus to production in Trees A and B (the habitat/bee synergy). The bonus is per biome: in each biome, species effects plus a small bonus for the number of native bees form one capped bonus that applies only in that biome. Each biome has a total ceiling and a smaller ceiling for each kind of boost (pollination speed, fill rate, sale value); Sunny Meadow's fill-rate ceiling is 0 and its sale-value ceiling is +15%. The abundance bonus (up to +5%) raises sale value only.

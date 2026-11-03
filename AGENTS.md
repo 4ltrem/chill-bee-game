@@ -31,7 +31,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | numbers need modelling | Terry: `.claude/agents/progression-tree-expert.md`, writing to [proposals/balance/](proposals/balance/CONTEXT.md) | the designer's decision |
 | a feature touches kids, ads, purchases, donations or data (Connie) | `.claude/agents/compliance-officer.md` | its findings report |
 | story, onboarding or Bee Journal text is needed | William: `.claude/agents/writer.md`, writing to [content/](content/CONTEXT.md) | the designer's approval |
-| a content draft needs checking against the GDD | Clara: `.claude/agents/content-critic.md`, appending her verdict to the run's blackboard in [content/](content/CONTEXT.md) | a PASS verdict, or a FAIL for William to revise |
+| a content draft needs checking against the GDD | Clara: `.claude/agents/content-critic.md`, replying with a verdict that `generate.py` appends to the run's blackboard in [content/](content/CONTEXT.md) | a PASS verdict, or a FAIL for William to revise |
 | a sound or music track is needed | Andrew: `.claude/agents/audiophile.md`, writing to [audio/](audio/CONTEXT.md) | the designer's approval |
 | real-world facts or sources are needed | Ruth: `.claude/agents/research-assistant.md`, writing to [research/](research/CONTEXT.md) | the designer's review of the brief |
 | an applied design needs code | Patricia: `.claude/agents/programmer.md`, writing to [game/](game/CONTEXT.md) `scripts/` | Quinn's report |

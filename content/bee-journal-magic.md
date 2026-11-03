@@ -1,9 +1,11 @@
 ---
 author: william
 type: journal
-status: draft
+status: approved
 description: Bee Journal entries for the four fictional native bee species — Lantern bee and Glowcap digger (Enchanted Grove), Drift bee and Stardust bee (Cloud Gardens).
 run: content/_runs/bee-journal-magic/blackboard.md
+decided: 2026-11-03
+decision: approved; fictional species use invented facts (GDD Bee Journal updated 2026-11-01)
 ---
 # Bee Journal — Fictional Native Species
 **Sources:** `GDD.md` (Story Premise & Onboarding, Aesthetic & Tone, Child Safety, Glossary, Tree C: Native Habitat — Native Bee Species table, Progression Tiers & Biomes).

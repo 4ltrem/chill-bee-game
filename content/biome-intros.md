@@ -1,9 +1,11 @@
 ---
 author: william
 type: story
-status: draft
+status: approved
 description: Title-card line and 2–3 guide introduction lines shown when the player unlocks each of the four biomes (Sunny Meadow, Alpine Valley, Enchanted Grove, Cloud Gardens).
 run: content/_runs/biome-intros/blackboard.md
+decided: 2026-11-03
+decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Skybloom (Cloud Gardens) added to the GDD; revise the intros to name them
 ---
 # Biome Unlock Intros
 **Sources:** `GDD.md` (Story Premise & Onboarding, Aesthetic & Tone, Child Safety, Glossary, Progression Tiers & Biomes, Land Grid & Units, Tree C Native Habitat).
@@ -125,4 +127,4 @@ None. The biome intro cards are story and onboarding text set inside the game's 
 
 2. **Biome names in French.** The English biome names are taken directly from the GDD; the French names above are proposed equivalents (*Prairie Ensoleillée*, *Vallée Alpine*, *Bosquet Enchanté*, *Jardins Célestes*). The designer or the conservation partner should confirm or replace these before localisation.
 
-3. **Enchanted Grove and Cloud Gardens flora naming.** The GDD lists no specific flower names for post-launch biomes — only "night-blooming flora" and "rainbow blossoms." The intros describe these in those terms (in-world labelled as fictional). If the designer wants named fictional species used in the intros (e.g., *Glowbell*, *Skybloom*), those names need to be added to the GDD first.
+3. **Enchanted Grove and Cloud Gardens flora naming.** The GDD lists no specific flower names for post-launch biomes — only "night-blooming flora" and "rainbow blossoms." The intros describe these in those terms (in-world labelled as fictional). If the designer wants named fictional species used in the intros (e.g., *Glowbell*, *Skybloom*), those names need to be added to the GDD first. << yes add them

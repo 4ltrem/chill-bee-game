@@ -1,8 +1,10 @@
 ---
 author: ruth
 type: research
-status: draft
+status: approved
 description: Clara FAIL rows for bee-journal-real content draft — Row 1 (sweat bee ranking claim) and Row 2 (leafcutter nesting-location claim)
+decided: 2026-11-03
+decision: approved; the source for content/bee-journal-real.md
 ---
 # Research Brief: Bee Journal Real Species — FAIL Row Follow-up
 **Sources:** `GDD.md` (Tree C: Native Bee Species — Real species; Bee Journal bullet), Clara FAIL rows from `content/bee-journal-real.md`.

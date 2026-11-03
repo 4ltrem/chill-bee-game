@@ -1,3 +1,4 @@
-- [Pending approvals](pending-approvals.md) — six files deferred to next working day; briefs first
+- [Pending approvals](pending-approvals.md) — only onboarding-script left (after the guide-playtest revision); three content follow-ups
 - [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day project skill; never early
 - [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, syncing transcripts between machines
+- [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first

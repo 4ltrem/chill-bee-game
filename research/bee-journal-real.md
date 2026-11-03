@@ -1,8 +1,10 @@
 ---
-researcher: ruth
-source: content/bee-journal-real.md
-date: 2026-11-01
-status: reviewed
+author: ruth
+type: research
+status: rejected
+description: Haiku brief verifying the eight claims in content/bee-journal-real.md; superseded by bee-journal-real-2.md
+decided: 2026-11-03
+decision: rejected; the Haiku brief called its claims all supported while its own notes disagreed, and ignored the brief template; Clara re-verified every quote the draft uses
 ---
 
 # Research Brief: Bee Journal — Real Native Bee Species
