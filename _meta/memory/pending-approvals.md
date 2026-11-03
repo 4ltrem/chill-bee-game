@@ -14,7 +14,7 @@ research/bee-journal-real-2.md approved, content/bee-journal-real.md, bee-journa
 Still waiting: `content/onboarding-script.md`. Approve it only after the signature-lines revision for the guide
 playtest ([[guide-playtest]]), since that revision returns it to `draft` anyway. That revision must also follow the
 2026-11-03 harvest flow in GDD §2 (commit 400dc1e): its crank button, No-Rapid-Tap branch and Market Stand beats are
-now wrong (fork icon, tap/hold the centrifuge, Continue, sales truck instead).
+now wrong (fork icon, tap/hold the centrifuge's physical crank or the screen around it, Continue, sales truck instead).
 
 Follow-ups recorded in the approvals' `decision:` lines, not started:
 - The Sunny Meadow bumble bee visitor appears in the world, so the GDD species table needs a Meadow flower for it

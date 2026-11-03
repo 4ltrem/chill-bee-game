@@ -82,7 +82,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Tool-upgrade flat bonuses after automation
 - [ ] Auto-Sell discount and costs
 - [ ] Harvest logistics: centrifuge capacity (frames), truck capacity (jars) and truck trip time
-- [ ] Quick Uncapping: unlock condition, cost, and how it leads into automated uncapping
+- [ ] Long Fork: unlock condition, cost, and how it leads into automated uncapping
 - [ ] Royal Jelly prices, time-skip costs, and Patron daily stipend amount
 - [ ] Impact Pass and Patron Pass prices
 

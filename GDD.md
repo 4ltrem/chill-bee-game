@@ -74,10 +74,10 @@ The farm holds the hive, a centrifuge with a spigot, a jar crate and a pickup tr
   * Every player starts with the basic uncapping fork: dragging across the matte yellow capped wax cells scrapes them off, revealing glowing golden honey underneath. Each scraped cell pops and flies into the empty centrifuge.
   * When a frame is fully uncapped it drops away and the next full frame slides up. Frames come from the hive and the free overflow buffer, until there are none left or the centrifuge is full.
   * Supported by particle pop effects, popping audio cues, and native mobile haptic feedback.
-  * With Quick Uncapping (Tree B), tapping the fork icon hands the player the fork and one swipe uncaps the whole frame.
+  * With the Long Fork (Tree B), tapping the fork icon hands the player the Long Fork, which uncaps the entire frame in one sweep.
 * **Stage 2: Centrifuge Extraction (Speed Taps or Hold)**
   * The centrifuge holds several frames (capacity TBD) and closes when full. An icon then floats above it; tapping it continues the harvest.
-  * The player taps or holds the centrifuge itself to spin it, spraying honey streams against its glass walls. Holding ramps the spin up to the fastest tap rate, so holding is never slower than tapping; there is no separate crank button.
+  * The centrifuge has a physical crank on its cylinder. The player taps or holds the crank, or anywhere on screen around it (but not on buttons such as Back), to spin it, spraying honey streams against its glass walls. Holding ramps the spin up to the fastest tap rate, so holding is never slower than tapping. There is no on-screen crank button.
   * When extraction is done, a Continue button appears.
 * **Stage 3: Bottling & Selling**
   * Continue opens the spigot and glass jars fill one at a time. Each full jar is loaded onto the truck.
@@ -93,7 +93,7 @@ Progression is split across three synergizing upgrade paths using an exponential
 * **Tree B: Hive & Tool Efficiency**
   * *Heated Uncapping Fork:* Increases swipe radius by +12% per level and adds up to +5% batch bonus for clean cuts (base cost $40, 1.22x growth, max level 5).
   * *Centrifuge Gearing:* Reduces required extraction taps or hold time by -15% per level (base cost $35, 1.20x growth, max level 5).
-  * *Quick Uncapping:* A step past the Heated Uncapping Fork: tap the fork icon to take the fork, and one swipe uncaps the whole frame. It leads into the automated uncapping hubs (unlock condition, cost and link to automation TBD).
+  * *Long Fork:* Makes uncapping quicker: uncap the entire frame in one sweep (tap the fork icon to take it). A step past the Heated Uncapping Fork, it leads into the automated uncapping hubs (unlock condition, cost and link to automation TBD).
   * *Deep Frame:* Increases frame capacity from 10 jars to 25 jars per harvest (base cost $150, 1.45x growth, max level 3).
   * *Tool Upgrades After Automation:* Once harvesting is automated, the Heated Uncapping Fork applies as a flat +% yield bonus and Centrifuge Gearing as a flat −% extraction time (values TBD), so these upgrades keep their value.
   * *Overflow Storage (optional):* Enlarges the free overflow buffer, so returning players have extra frames waiting to harvest (capacity and costs TBD).
@@ -189,7 +189,7 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 * Guides the first upgrade purchase.
 
 ### 8. Accessibility
-* **Hold Instead of Tapping:** Holding the centrifuge ramps it up to the fastest tap rate, so no harvest step needs rapid tapping. It is built in for every player, so there is no separate toggle.
+* **Hold Instead of Tapping:** Holding the centrifuge crank (or the screen around it) ramps it up to the fastest tap rate, so no harvest step needs rapid tapping. It is built in for every player, so there is no separate toggle.
 * **Haptics & Sound Toggles:** Vibration, sound effects, and music can each be turned on or off.
 * **Colour-Blind Support:** Information never relies on colour alone (e.g., capped and uncapped cells also differ in shape or texture).
 * **Text Size & One-Handed Play:** Adjustable text size, and all UI reachable with one thumb.
