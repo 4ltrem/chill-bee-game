@@ -49,11 +49,11 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 [1. Bees Forage] ──► [2. Hive Fills] ──► [3. Uncap & Extract Minigame]
 ▲                                                │
 │                                                ▼
-[5. Reinvest Profits] ◄── [4. Sell Honey at Market Stand]
+[5. Reinvest Profits] ◄── [4. Sell Honey by Truck]
 
 
-* **Phase 1 (Manual Grinding):** Players actively perform uncapping swipes and centrifuge cranking, manage initial flower planting/watering, and handle sales.
-* **Phase 2 (Automation):** Begins when the player buys their first automation upgrade (see Tree B: Automation), unlocking automated uncapping hubs, electric centrifuges, and auto-transport trucks. Manual screens remain accessible for upgrading tool efficiency and batch multipliers; once harvesting is automated, tool upgrades apply as flat bonuses (see Tree B).
+* **Phase 1 (Manual Grinding):** Players actively perform uncapping swipes and centrifuge spinning, manage initial flower planting/watering, and handle sales.
+* **Phase 2 (Automation):** Begins when the player buys their first automation upgrade (see Tree B: Automation), unlocking automated uncapping hubs, electric centrifuges, and a truck that leaves to sell by itself when full. Manual screens remain accessible for upgrading tool efficiency and batch multipliers; once harvesting is automated, tool upgrades apply as flat bonuses (see Tree B).
 * **Phase 3 (Prestige Reset / Optimization):** Fully charging the capstone Royal Honey Refinery (see Capstone) produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) reset. Each Royal Crystal earned:
   * Permanently adds +15% production, additive (10 Crystals = +150%, 20 = 4x, 100 = 16x). The Patron Pass +25% is applied as a separate multiplier, not added to this percentage.
   * Can also be applied to one starting upgrade for future runs, chosen from a whitelist (e.g., bigger starting frames, faster tools, starting land, starting flower or hive units). Crystals shorten Phase 1 but never skip it: automation and the capstone cannot be pre-bought.
@@ -64,16 +64,25 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 * **Pests & Wild Nectar Drops:** Appear only during active play and pause while offline. Tapping them gives a small reward (cleared pests or collected nectar); ignoring them costs nothing. The Patron Golden Drone taps them automatically.
 
 ### 2. Phase 1 Uncapping & Extraction Minigame
-When hive storage reaches capacity in Phase 1, players trigger a tactile, two-stage harvesting sequence. Every player has a small free overflow buffer from the start, so production continues past capacity (including while offline) until the buffer is full. The free buffer holds one extra full frame (10 jars at base, growing with Deep Frame). Overflow Storage enlarges the buffer, Auto-Sell sells overflow honey, and buying automation removes the capacity pause entirely (see Tree B).
+When hive storage reaches capacity in Phase 1, players trigger a tactile, three-stage harvesting sequence. Every player has a small free overflow buffer from the start, so production continues past capacity (including while offline) until the buffer is full. The free buffer holds one extra full frame (10 jars at base, growing with Deep Frame). Overflow Storage enlarges the buffer, Auto-Sell sells overflow honey, and buying automation removes the capacity pause entirely (see Tree B).
 
+The farm holds the hive, a centrifuge with a spigot, a jar crate and a pickup truck (a vintage truck). Only uncapping has its own close-up screen; extraction, bottling and selling play on the farm.
+
+* **Start:** When the hive is full, a fork icon floats above it. Tapping it starts the harvest.
 * **Stage 1: Uncapping (Tactile Swiping)**
-  * Camera zooms to a 3D wooden honeycomb frame tilted at an isometric angle.
-  * Player swipes a low-poly uncapping tool (fork or heated blade) across matte yellow capped wax cells to reveal glowing golden honey underneath.
+  * The camera zooms close to the hive and a 3D wooden honeycomb frame slides out of the top, tilted at an isometric angle.
+  * Every player starts with the basic uncapping fork: dragging across the matte yellow capped wax cells scrapes them off, revealing glowing golden honey underneath. Each scraped cell pops and flies into the empty centrifuge.
+  * When a frame is fully uncapped it drops away and the next full frame slides up. Frames come from the hive and the free overflow buffer, until there are none left or the centrifuge is full.
   * Supported by particle pop effects, popping audio cues, and native mobile haptic feedback.
-* **Stage 2: Centrifuge Extraction (Speed Taps)**
-  * The uncapped frame drops into a low-poly wooden barrel centrifuge.
-  * Player taps a primary crank button or spins an on-screen handle to accelerate rotation, spraying honey streams against glass walls and filling glass jars at an open spigot.
+  * With Quick Uncapping (Tree B), tapping the fork icon hands the player the fork and one swipe uncaps the whole frame.
+* **Stage 2: Centrifuge Extraction (Speed Taps or Hold)**
+  * The centrifuge holds several frames (capacity TBD) and closes when full. An icon then floats above it; tapping it continues the harvest.
+  * The player taps or holds the centrifuge itself to spin it, spraying honey streams against its glass walls. Holding ramps the spin up to the fastest tap rate, so holding is never slower than tapping; there is no separate crank button.
+  * When extraction is done, a Continue button appears.
+* **Stage 3: Bottling & Selling**
+  * Continue opens the spigot and glass jars fill one at a time. Each full jar is loaded onto the truck.
   * Completing the batch displays a summary modal showing base honey value, tool precision bonuses, and artisanal quality multipliers.
+  * When the truck is full (capacity TBD), a Sell ($X) icon floats above it, showing what the load will earn. Tapping it sells the load: the truck speeds off and comes back (trip time TBD). Jars bottled while it is away wait in the crate and load when it returns.
 
 ### 3. Progression Trees & Economy Balance
 Progression is split across three synergizing upgrade paths using an exponential cost model ($\text{Cost} = \text{Base} \times \text{Growth}^{\text{Level}}$):
@@ -83,12 +92,13 @@ Progression is split across three synergizing upgrade paths using an exponential
   * *Flight Endurance:* Increases bee movement speed between flowers and hive (+10% speed per level, base cost $15, 1.15x growth).
 * **Tree B: Hive & Tool Efficiency**
   * *Heated Uncapping Fork:* Increases swipe radius by +12% per level and adds up to +5% batch bonus for clean cuts (base cost $40, 1.22x growth, max level 5).
-  * *Centrifuge Gearing:* Reduces required extraction taps/spins by -15% per level (base cost $35, 1.20x growth, max level 5).
+  * *Centrifuge Gearing:* Reduces required extraction taps or hold time by -15% per level (base cost $35, 1.20x growth, max level 5).
+  * *Quick Uncapping:* A step past the Heated Uncapping Fork: tap the fork icon to take the fork, and one swipe uncaps the whole frame. It leads into the automated uncapping hubs (unlock condition, cost and link to automation TBD).
   * *Deep Frame:* Increases frame capacity from 10 jars to 25 jars per harvest (base cost $150, 1.45x growth, max level 3).
-  * *Tool Upgrades After Automation:* Once harvesting is automated, or in No-Rapid-Tap Mode, the Heated Uncapping Fork applies as a flat +% yield bonus and Centrifuge Gearing as a flat −% extraction time (values TBD), so these upgrades keep their value.
+  * *Tool Upgrades After Automation:* Once harvesting is automated, the Heated Uncapping Fork applies as a flat +% yield bonus and Centrifuge Gearing as a flat −% extraction time (values TBD), so these upgrades keep their value.
   * *Overflow Storage (optional):* Enlarges the free overflow buffer, so returning players have extra frames waiting to harvest (capacity and costs TBD).
   * *Auto-Sell (optional):* Automatically sells overflow honey at a discounted price (discount and costs TBD).
-  * *Automation:* Automated uncapping hubs, electric centrifuges, and auto-transport trucks, bought with in-game money. Buying the first automation upgrade moves the player into Phase 2 and removes the capacity pause (costs TBD).
+  * *Automation:* Automated uncapping hubs, electric centrifuges, and a self-driving sales truck that leaves when full, bought with in-game money. Buying the first automation upgrade moves the player into Phase 2 and removes the capacity pause (costs TBD).
   * *Artisanal Branding:* Increases base sale value per jar by +$2.50 (base cost $60, 1.25x growth, max level 10).
 * **Tree C: Native Habitat**
   Its own progression track, measured in biodiversity (Habitat Health and native bee species attracted) rather than honey. Upgrades are bought with in-game money (values TBD).
@@ -179,7 +189,7 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 * Guides the first upgrade purchase.
 
 ### 8. Accessibility
-* **No-Rapid-Tap Mode:** Replaces speed taps and crank spinning with hold-to-crank or a single tap.
+* **Hold Instead of Tapping:** Holding the centrifuge ramps it up to the fastest tap rate, so no harvest step needs rapid tapping. It is built in for every player, so there is no separate toggle.
 * **Haptics & Sound Toggles:** Vibration, sound effects, and music can each be turned on or off.
 * **Colour-Blind Support:** Information never relies on colour alone (e.g., capped and uncapped cells also differ in shape or texture).
 * **Text Size & One-Handed Play:** Adjustable text size, and all UI reachable with one thumb.
@@ -188,7 +198,7 @@ A guide character (e.g., a queen bee; name and personality TBD) walks new player
 * **Farm View (Main Screen):** The pannable, zoomable pocket-dimension farm, including a build mode for buying land and placing hive and flower units on the grid.
 * **Upgrade Shop:** Trees A–C, automation, research, and the capstone.
 * **Worlds:** Load and switch between saved pocket worlds.
-* **Harvest Minigame:** The uncapping and centrifuge extraction screens.
+* **Harvest Minigame:** The uncapping close-up screen. Extraction, bottling and the sales truck play on the Farm View.
 * **Impact & Leaderboards:** Impact totals, personal-best run times, and (post-launch) online leaderboards.
 * **Store:** Royal Jelly and passes, behind the parental gate in kid mode.
 * **Settings:** Accessibility options and language.

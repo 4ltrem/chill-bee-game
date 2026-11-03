@@ -18,7 +18,7 @@ The game is a cross between *Egg, Inc.* and *Factorio*. The player discovers a t
 
 | Phase | What the player does |
 |---|---|
-| **1. Manual** | Harvest by hand in a tactile two-stage minigame: swipe to uncap the comb, then crank the centrifuge. A small free overflow buffer keeps production going while the hive is full. |
+| **1. Manual** | Harvest by hand in a tactile three-stage minigame: swipe to uncap the comb, spin the centrifuge, then bottle the honey and send the truck to sell it. A small free overflow buffer keeps production going while the hive is full. |
 | **2. Automation** | Buy automation upgrades (uncapping hubs, electric centrifuges, transport trucks) to take over the manual work. |
 | **Expansion** | Buy land and place hive and flower units on each biome's grid. Biomes can grow indefinitely, and higher-tier units cost more but fit more honey production into less space. |
 | **3. Optimization** | Build the capstone Royal Honey Refinery and charge it with honey from every biome to earn a **Royal Crystal**. Then optionally reset: the swarm splits and leaves to restore a new pocket world. Crystals carry over, and each one gives a stacking production boost plus one starting upgrade for future runs. |
@@ -81,6 +81,8 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Research values (genetics multipliers and unit-tier unlocks)
 - [ ] Tool-upgrade flat bonuses after automation
 - [ ] Auto-Sell discount and costs
+- [ ] Harvest logistics: centrifuge capacity (frames), truck capacity (jars) and truck trip time
+- [ ] Quick Uncapping: unlock condition, cost, and how it leads into automated uncapping
 - [ ] Royal Jelly prices, time-skip costs, and Patron daily stipend amount
 - [ ] Impact Pass and Patron Pass prices
 
