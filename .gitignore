@@ -10,3 +10,6 @@ _meta/sessions/*/manifest.json
 
 # Python bytecode cache
 __pycache__/
+
+# Plan-usage readings saved by the status line (local; times and percentages only)
+_meta/usage/

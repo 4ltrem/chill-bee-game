@@ -37,6 +37,7 @@ import argparse
 import datetime
 import difflib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -45,6 +46,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script's folder off sys.path
 from log_subagent import measure  # noqa: E402
+import runlog  # noqa: E402
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -55,7 +57,7 @@ ROOT = Path(__file__).resolve().parent.parent
 WRITER, CRITIC, RESEARCHER = "writer", "content-critic", "research-assistant"
 NAMES = {WRITER: "William", CRITIC: "Critic", RESEARCHER: "Ruth"}
 TYPES = ("story", "onboarding", "journal", "ui-text")
-LOG_TABLE = "### Content generation"
+LOG_TABLE = "Content generation"
 RUNS = Path("_meta") / "sessions" / "runs"
 ASKS_FOR_SOURCE = re.compile(r"\bsource|\bcite|citation|\bURL", re.I)
 
@@ -71,7 +73,10 @@ def run_agent(agent, prompt):
         raise AgentError("claude CLI not found on PATH")
     cmd = [claude, "-p", "--agent", agent, "--output-format", "json",
            "--permission-mode", "acceptEdits", "--allowedTools", "WebFetch,WebSearch"]
-    proc = subprocess.run(cmd, cwd=ROOT, input=prompt, capture_output=True, text=True, encoding="utf-8")
+    started = now_iso()
+    proc = subprocess.run(cmd, cwd=ROOT, input=prompt, capture_output=True, text=True, encoding="utf-8",
+                          env={**os.environ, "CHILLBEE_HEADLESS": "1"})  # log_session.py skips these
+    ended = now_iso()
     try:
         out = json.loads(proc.stdout)
     except ValueError:
@@ -83,7 +88,8 @@ def run_agent(agent, prompt):
                                        "cache_creation_input_tokens", "cache_read_input_tokens"))
     return out.get("result", ""), {"tokens": tokens, "turns": out.get("num_turns", 0),
                                    "seconds": round(out.get("duration_ms", 0) / 1000),
-                                   "session_id": out.get("session_id")}
+                                   "session_id": out.get("session_id"), "start": started, "end": ended,
+                                   "model": out.get("modelUsage") and " ".join(out["modelUsage"]) or ""}
 
 
 def projects_dir():
@@ -197,21 +203,22 @@ def research(slug, n, task, usage, run_folder):
     return brief
 
 
+def now_iso():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
 def log_runs(slug, usage, table=LOG_TABLE):
-    """Append one row per agent call to a table in _meta/agent-runs.md (default: Content generation)."""
-    log = ROOT / "_meta" / "agent-runs.md"
-    lines = log.read_text(encoding="utf-8").splitlines() if log.is_file() else []
-    i = next((k + 1 for k, line in enumerate(lines) if line.startswith(table)), None)
-    if i is None:
-        print(f"warning: no '{table}' table in _meta/agent-runs.md; run not logged")
-        return
-    while i < len(lines) and not lines[i].startswith("|"):
-        i += 1
-    while i < len(lines) and lines[i].startswith("|"):
-        i += 1
-    rows = [f"| {NAMES[agent]}: {slug}, round {n} ({model_of(agent)}) | post-ICM | {u['tokens']:,} | "
-            f"{fmt(u.get('final'))} | {u['turns']} | {u['seconds']} s |" for agent, n, u in usage]
-    log.write_text("\n".join(lines[:i] + rows + lines[i:]) + "\n", encoding="utf-8", newline="\n")
+    """Add one row per agent call to the run log, _meta/agent-runs.csv (default table: Content generation)."""
+    for agent, n, u in usage:
+        start, end = runlog.parse_ts(u.get("start")), runlog.parse_ts(u.get("end"))
+        f0, w0 = runlog.usage_at(start, ROOT)
+        f1, w1 = runlog.usage_at(end, ROOT, after=True)
+        runlog.upsert({"start": u.get("start"), "end": u.get("end"), "table": table,
+                       "run": f"{slug}, round {n}", "agent": NAMES[agent], "phase": "post-ICM",
+                       "model": u.get("model") or model_of(agent), "final_context": u.get("final"),
+                       "total_processed": u["tokens"], "turns": u["turns"], "duration_s": u["seconds"],
+                       "five_hour_before": f0, "five_hour_after": f1, "seven_day_before": w0,
+                       "seven_day_after": w1}, ROOT)
 
 
 def fmt(n):

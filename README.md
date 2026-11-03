@@ -62,7 +62,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 | [audio/](audio/) | Licence-checked sound and music shortlists (Andrew). |
 | [game/](game/) | The Godot project: scripts (Patricia), scenes (Bob), tests and reports (Quinn). |
 | [_meta/team.md](_meta/team.md) | The agent roster, each agent's model, and the rules they follow; each has a definition in `.claude/agents/`. |
-| [_meta/agent-runs.md](_meta/agent-runs.md) | Token, tool-call and duration log of every agent run. |
+| [_meta/agent-runs.md](_meta/agent-runs.md) | Token, tool-call and duration summary of every agent run; the rows are in `agent-runs.csv`. |
 | [.claude/agents/](.claude/agents/) | Runnable Claude Code agent definitions, starting with Connie, the Compliance Officer. |
 | [gdd-review-v2/](gdd-review-v2/) | Second review, of the GDD at commit `8ddb97a` after the first round of fixes and peer feedback. Its [SYNTHESIS.md](gdd-review-v2/reviews/SYNTHESIS.md) compares the results with the first review. |
 

@@ -22,6 +22,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script's folder off sys.path
+import runlog  # noqa: E402
 import sync_docs  # noqa: E402
 
 try:
@@ -152,9 +153,10 @@ def check_estimates(root):
         if not m:
             continue
         name = m.group(1)
-        runs = [k for k, l in enumerate(text, 1) if re.match(rf"\| {name}(:| \()", l)]
+        runs = [k for k, r in enumerate(runlog.read(root), 2) if re.match(rf"{name}($| \()", r.get("agent", ""))]
         if runs:
-            problems.append(f"_meta/agent-runs.md:{n}: {name}'s estimate says 'Not yet run', but line {runs[0]} logs a run")
+            problems.append(f"_meta/agent-runs.md:{n}: {name}'s estimate says 'Not yet run', but "
+                            f"_meta/agent-runs.csv line {runs[0]} logs a run")
     return problems
 
 

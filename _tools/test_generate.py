@@ -3,7 +3,7 @@
 
     python -I _tools/test_generate.py
 
-Each test builds a throwaway workspace (content/, research/, _meta/agent-runs.md, agent definitions
+Each test builds a throwaway workspace (content/, research/, the run log, agent definitions
 and index.py), points generate.py at it, and replaces run_agent, the one function that calls
 `claude -p`, with a fake. The fake William edits the draft the way the real one should, the fake
 critic replies with a scripted verdict block, and the fake Ruth writes a brief. What this proves
@@ -26,9 +26,6 @@ sys.path.insert(0, str(TOOLS))  # -I leaves the script's folder off sys.path
 import generate as g  # noqa: E402
 
 BAD, GOOD = "Flowers can't bloom without bees.", "Bees help the meadow's flowers make seeds."
-LOG = ("# Runs\n\n### Content generation: write or check player-facing text (`_tools/generate.py`)\n"
-       "Turns are the CLI's `num_turns`, not tool calls.\n"
-       "| Run | Phase | Total processed | Final context | Turns | Duration |\n|---|---|---|---|---|---|\n\n## Next\n")
 ROWS = {  # the finding a scripted FAIL carries
     "FAIL": "| 1 | Lore | \"x\" | Story Premise | reword |",
     "FAIL:source": f"| 1 | Facts & French | \"{BAD}\" | Bee Journal | Find a source that supports it |",
@@ -85,7 +82,6 @@ class Workspace(unittest.TestCase):
         for folder in ("content", "research", "_tools", "_meta", ".claude/agents"):
             (self.root / folder).mkdir(parents=True)
         shutil.copy(TOOLS / "index.py", self.root / "_tools" / "index.py")
-        (self.root / "_meta" / "agent-runs.md").write_text(LOG, encoding="utf-8")
         for name in (g.WRITER, g.CRITIC, g.RESEARCHER):
             (self.root / ".claude" / "agents" / f"{name}.md").write_text(
                 f"---\nname: {name}\nmodel: sonnet\n---\n", encoding="utf-8")
@@ -228,11 +224,14 @@ class GenerateTest(Workspace):
 
     def test_calls_are_logged_with_agent_names(self):
         self.new(Fake(self.root, ["FAIL:source", "PASS"]), kind="journal")
-        log = (self.root / "_meta" / "agent-runs.md").read_text(encoding="utf-8")
-        table = log[log.index("### Content generation"):log.index("## Next")]
-        self.assertEqual(table.count("| post-ICM |"), 6)
-        self.assertIn("| Ruth: x, round 2 (Sonnet) | post-ICM | 1 | — | 1 | 1 s |", table)
-        self.assertIn("| Critic: x, round 1 (Sonnet) |", table)
+        import runlog
+        rows = runlog.read(self.root)
+        self.assertEqual(len(rows), 6)
+        self.assertTrue(all(r["table"] == "Content generation" and r["phase"] == "post-ICM" for r in rows))
+        ruth = next(r for r in rows if r["agent"] == "Ruth" and r["run"] == "x, round 2")
+        self.assertEqual((ruth["model"], ruth["total_processed"], ruth["final_context"], ruth["turns"],
+                          ruth["duration_s"]), ("Sonnet", "1", "", "1", "1"))
+        self.assertIn(("Critic", "x, round 1"), [(r["agent"], r["run"]) for r in rows])
 
     def test_transcripts_move_into_the_run_folder_and_give_final_context(self):
         projects = self.root / "projects"
@@ -252,8 +251,9 @@ class GenerateTest(Workspace):
                                 "william-round-1.jsonl", "william-round-2.jsonl"])
         self.assertEqual(list(projects.iterdir()), [])  # nothing left behind
         self.assertIn(f"Transcripts: `_meta/sessions/runs/{runs[0].name}/`", self.board())
-        log = (self.root / "_meta" / "agent-runs.md").read_text(encoding="utf-8")
-        self.assertIn("| William: x, round 1 (Sonnet) | post-ICM | 1 | 701 | 1 | 1 s |", log)
+        import runlog
+        william = next(r for r in runlog.read(self.root) if r["agent"] == "William" and r["run"] == "x, round 1")
+        self.assertEqual((william["total_processed"], william["final_context"]), ("1", "701"))
 
 
 class CriticCheckTest(Workspace):
@@ -308,8 +308,6 @@ class LogSubagentTest(unittest.TestCase):
         (self.root / ".claude" / "agents").mkdir(parents=True)
         (self.root / ".claude" / "agents" / "hiring-manager.md").write_text(
             "---\nname: hiring-manager\ndescription: Martin, the Hiring Manager. Writes agents.\n---\n", encoding="utf-8")
-        self.log = self.root / "agent-runs.md"
-        self.log.write_text("# Runs\n\n### Probes\n| a |\n|---|\n\n## Daily Budget\nx\n", encoding="utf-8")
         self.saved = self.ls.ROOT
         self.ls.ROOT = self.root
         # three API calls; the second is split over two entries with the same id
@@ -338,31 +336,95 @@ class LogSubagentTest(unittest.TestCase):
         self.assertEqual(m["seconds"], 67)
         self.assertEqual(m["model"], "claude-haiku-5-5")
 
-    def test_creates_the_table_before_daily_budget(self):
-        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
-        text = self.log.read_text(encoding="utf-8")
-        self.assertLess(text.index(self.ls.TABLE), text.index("## Daily Budget"))
-        self.assertEqual(text.count(self.ls.TABLE), 1)
-        self.assertIn("| Martin (hiring-manager): hire Ruth <!-- agent-x --> | post-ICM | 508 | 944 | 3 | 67 s |", text)
+    def rows(self):
+        import runlog
+        return runlog.read(self.root)
+
+    def test_logs_one_csv_row(self):
+        self.ls.log_run("hiring-manager", self.transcript)
+        (row,) = self.rows()
+        self.assertEqual((row["table"], row["agent"], row["run"], row["final_context"], row["total_processed"],
+                          row["tool_calls"], row["duration_s"], row["key"]),
+                         ("Subagent runs", "Martin (hiring-manager)", "hire Ruth", "508", "944", "3", "67", "agent-x"))
+        self.assertEqual((row["start"], row["end"]), ("2026-11-01T09:59:58Z", "2026-11-01T10:01:05Z"))
 
     def test_a_subagent_that_stops_twice_keeps_one_row(self):  # Patricia's double row
-        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
+        self.ls.log_run("hiring-manager", self.transcript)
         with self.transcript.open("a", encoding="utf-8") as f:  # it carried on, then stopped again
             f.write(json.dumps({"type": "assistant", "timestamp": "2026-11-01T10:05:00Z", "message": {
                 "id": "m4", "model": "claude-haiku-5-5", "content": [],
                 "usage": {"cache_read_input_tokens": 900}}}) + "\n")
-        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
-        text = self.log.read_text(encoding="utf-8")
-        self.assertEqual(text.count("<!-- agent-x -->"), 1)
-        self.assertIn("| post-ICM | 900 | 1,844 |", text)  # the updated, complete figures
+        self.ls.log_run("hiring-manager", self.transcript)
+        (row,) = self.rows()
+        self.assertEqual((row["final_context"], row["total_processed"]), ("900", "1844"))  # updated, complete
 
     def test_a_different_subagent_gets_its_own_row(self):
         other = self.transcript.with_name("agent-y.jsonl")
         shutil.copy(self.transcript, other)
-        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
-        self.ls.log_run("hiring-manager", other, log=self.log)
-        text = self.log.read_text(encoding="utf-8")
-        self.assertEqual((text.count("<!-- agent-x -->"), text.count("<!-- agent-y -->")), (1, 1))
+        self.ls.log_run("hiring-manager", self.transcript)
+        self.ls.log_run("hiring-manager", other)
+        self.assertEqual(sorted(r["key"] for r in self.rows()), ["agent-x", "agent-y"])
+
+    def write_main_session(self):
+        """A main session (session-1.jsonl) with this subagent under session-1/subagents/, and two readings."""
+        session = self.root / "session-1"
+        (session / "subagents").mkdir(parents=True)
+        sub = session / "subagents" / "agent-z.jsonl"
+        shutil.copy(self.transcript, sub)
+        main = [("o1", "2026-11-01T09:59:00Z", 7), ("o2", "2026-11-01T10:00:10Z", 40),  # before; inside
+                ("o3", "2026-11-01T10:00:50Z", 60), ("o4", "2026-11-01T10:02:00Z", 9)]   # inside; after
+        session.with_suffix(".jsonl").write_text("".join(json.dumps({"type": "assistant", "timestamp": ts,
+            "message": {"id": i, "model": "claude-opus-5-5", "usage": {
+                "input_tokens": 1, "cache_read_input_tokens": n, "output_tokens": 2}}}) + "\n"
+            for i, ts, n in main), encoding="utf-8")
+        readings = self.root / "_meta" / "usage" / "readings.jsonl"
+        readings.parent.mkdir(parents=True)
+        readings.write_text("".join(json.dumps(r) + "\n" for r in [
+            {"ts": "2026-11-01T09:00:00Z", "five_hour": 10, "seven_day": 30},
+            {"ts": "2026-11-01T10:03:00Z", "five_hour": 14, "seven_day": 31}]), encoding="utf-8")
+        return sub, session.with_suffix(".jsonl")
+
+    def test_orchestrator_tokens_and_usage_over_the_span(self):
+        sub, _ = self.write_main_session()
+        self.ls.log_run("hiring-manager", sub)
+        (row,) = self.rows()
+        self.assertEqual((row["orch_input"], row["orch_cache_read"], row["orch_output"]), ("2", "100", "4"))
+        self.assertEqual((row["five_hour_before"], row["five_hour_after"], row["seven_day_before"],
+                          row["seven_day_after"]), ("10", "14", "30", "31"))
+
+    def test_session_hook_logs_the_whole_main_session_once(self):
+        import log_session
+        saved = log_session.ROOT
+        log_session.ROOT = self.root
+        try:
+            _, main = self.write_main_session()
+            log_session.log_session(main)
+            log_session.log_session(main)  # every turn ends with a Stop: still one row
+        finally:
+            log_session.ROOT = saved
+        (row,) = self.rows()
+        self.assertEqual((row["table"], row["key"], row["turns"], row["orch_cache_read"], row["total_processed"],
+                          row["model"]), ("Orchestrator", "session-1", "4", "116", "128", "claude-opus-5-5"))
+
+    def test_session_hook_skips_headless_runs_and_never_fails(self):
+        import subprocess
+        env = {**__import__("os").environ, "CHILLBEE_HEADLESS": "1"}
+        for payload, e in (("not json", None), ('{"transcript_path": "/nope"}', None), ("{}", env)):
+            done = subprocess.run([sys.executable, "-I", str(TOOLS / "log_session.py")], input=payload, env=e,
+                                  capture_output=True, text=True, encoding="utf-8")
+            self.assertEqual(done.returncode, 0, payload)
+
+    def test_status_line_saves_new_readings_only(self):
+        import statusline
+        status = lambda five: json.dumps({"session_id": "s", "model": {"display_name": "Opus"},
+                                          "rate_limits": {"five_hour": {"used_percentage": five},
+                                                          "seven_day": {"used_percentage": 20.5}}})
+        self.assertEqual(statusline.main(status(12), self.root), "Opus · 5h 12% · week 20.5%")
+        statusline.main(status(12), self.root)  # unchanged: not saved again
+        statusline.main(status(13), self.root)
+        saved = (self.root / "_meta" / "usage" / "readings.jsonl").read_text(encoding="utf-8").splitlines()
+        self.assertEqual([json.loads(l)["five_hour"] for l in saved], [12, 13])
+        self.assertEqual(statusline.main("{}", self.root), "usage: no reading yet")
 
     def run_hook(self, payload):
         import subprocess
@@ -464,7 +526,7 @@ class ConsistencyTest(unittest.TestCase):
 
     def test_an_estimate_saying_not_yet_run_beside_a_logged_run(self):  # the designer's catch
         self.edit("_meta/agent-runs.md", "| Doris, the Doc Auditor | Measured once,", "| Doris, the Doc Auditor | Not yet run. Measured once,")
-        self.assertIn("Doris's estimate says 'Not yet run', but line", self.problems())
+        self.assertIn("Doris's estimate says 'Not yet run', but _meta/agent-runs.csv line", self.problems())
 
     def test_an_agent_with_no_roster_row_or_route(self):
         (self.root / ".claude" / "agents" / "new-agent.md").write_text(

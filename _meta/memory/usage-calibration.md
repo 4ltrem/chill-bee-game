@@ -22,9 +22,11 @@ Tokens per 1% then come from the usage change ÷ (subagent + orchestrator tokens
 `_meta/agent-runs.md` (Daily Budget) and refine the ~2.0M/day budget from them.
 
 **Why:** the budget rests on a single 1% reading (3x uncertainty), and the logs omit the orchestrator. On 2026-11-03 the
-main session had processed ~153.5M tokens over 400 calls (151.5M of them cache reads), against under 8M for all its
-subagents. The orchestrator is the main cost, so a calibration that leaves it out is wrong.
+main session had processed ~156.5M tokens over 421 calls (154.4M of them cache reads), against ~11.1M for every
+post-ICM agent run in the log. The orchestrator is the main cost, so a calibration that leaves it out is wrong.
 
-**How to apply:** until hooks capture this automatically, ask the designer for the `/usage` figures before the first
-agent call and after the last one in a batch, rather than every single call. Don't launch until they have given the
-readings, or have said to skip them.
+**How to apply:** since 2026-11-03 the hooks do this automatically (`_tools/runlog.py`, `log_subagent.py`,
+`log_session.py`, `statusline.py`; rows in `_meta/agent-runs.csv`). Before a batch of agent runs, check that
+`_meta/usage/readings.jsonl` is getting fresh readings. If it isn't (the status line may not run in the VS Code
+extension), ask the designer for the `/usage` figures before the first agent call and after the last one in the batch.
+Calibrate with `python -I _tools/runlog.py --calibrate SINCE [UNTIL]`.

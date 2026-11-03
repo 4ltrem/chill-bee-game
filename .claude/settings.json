@@ -1,4 +1,8 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "python -I \"${CLAUDE_PROJECT_DIR:-.}/_tools/statusline.py\""
+  },
   "hooks": {
     "SubagentStop": [
       {
@@ -8,6 +12,17 @@
             "command": "python -I \"$CLAUDE_PROJECT_DIR/_tools/log_subagent.py\"",
             "timeout": 30,
             "statusMessage": "Logging subagent run"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -I \"$CLAUDE_PROJECT_DIR/_tools/log_session.py\"",
+            "timeout": 30
           }
         ]
       }

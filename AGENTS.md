@@ -16,11 +16,11 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | [game/](game/CONTEXT.md) | the Godot project: Patricia's scripts, Bob's scenes, Quinn's tests and reports |
 | `gdd-review/`, `gdd-review-v2/` | multi-agent review rounds of past GDD snapshots (read-only history) |
 | [_meta/team.md](_meta/team.md) | the agent roster: roles, models, and the rules every agent follows |
-| [_meta/agent-runs.md](_meta/agent-runs.md) | token, tool-call and duration log of every agent run, and the daily budget |
+| [_meta/agent-runs.md](_meta/agent-runs.md) | summary of every agent run (rows in `agent-runs.csv`), the calibration and the daily budget |
 | [_meta/memory/](_meta/memory/MEMORY.md) | Claude Code's project memories, shared across machines through git (each machine's `.claude/settings.local.json` points `autoMemoryDirectory` here) |
 | `_meta/sessions/` | one folder per working session: `decisions.md` and the decision page are committed; transcripts stay local (gitignored) |
 | `_templates/` | blank starters: `proposal.md`, `content.md`, `research-brief.md`, `audio-list.md`, and `agent.md` for a new agent |
-| `_tools/` | `links.py` checks every link and input path; `index.py` rebuilds `_index.md` (`--decisions` prints the ledger); `generate.py` runs the content loop; `critic_check.py` checks Clara against the known-bad drafts in `fixtures/`; `test_generate.py` tests them with fake agents; `log_subagent.py` is the SubagentStop hook that logs Agent-tool runs; `export_session.py` and `decision_page.py` serve the end-of-day routine; `sync_docs.py` writes the docs' generated sections, `consistency.py` checks docs against code (run by the `.githooks/pre-commit` gate), and `doc_audit.py` runs Doris on the day's changes |
+| `_tools/` | `links.py` checks every link and input path; `index.py` rebuilds `_index.md` (`--decisions` prints the ledger); `generate.py` runs the content loop; `critic_check.py` checks Clara against the known-bad drafts in `fixtures/`; `test_generate.py` tests them with fake agents; `runlog.py` keeps the run log (`_meta/agent-runs.csv`) and calibrates usage; `log_subagent.py` (SubagentStop) and `log_session.py` (Stop) are the hooks that log subagents and the orchestrator; `statusline.py` saves plan-usage readings; `export_session.py` and `decision_page.py` serve the end-of-day routine; `sync_docs.py` writes the docs' generated sections, `consistency.py` checks docs against code (run by the `.githooks/pre-commit` gate), and `doc_audit.py` runs Doris on the day's changes |
 | `.claude/agents/` | runnable agent definitions, one per roster role in [_meta/team.md](_meta/team.md) |
 
 ## Route by task
