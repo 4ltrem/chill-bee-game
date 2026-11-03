@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="GameConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/game_config.gd" id="1_cfg"]
+
+[resource]
+script = ExtResource("1_cfg")
+frame_jars = 10
+overflow_frames = 1
+swarm_fill_bonus_per_level = 0.15
+swarm_base_cost = 25.0
+swarm_cost_growth = 1.18
+swarm_max_level = 10
+base_seconds_per_jar = 6.0
+sale_value_per_jar = 3
+taps_per_frame = 20
+hold_taps_per_second = 4.0
+grid_cols = 7
+grid_rows = 5

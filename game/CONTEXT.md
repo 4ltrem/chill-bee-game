@@ -4,6 +4,7 @@ One job: turn applied designs into a running Godot game. Godot 4.2.1 (standard b
 
 | Folder | Agent | Holds |
 |---|---|---|
+| `specs/` | the designer (with Claude) | work orders: scope, the script/scene contract, placeholder values |
 | `scripts/` | Patricia, the Programmer | GDScript (and C# where the GDD calls for it) components and backend integration |
 | `scenes/` | Bob, the Builder | `.tscn` biome dioramas and terrain chunks, one folder per biome |
 | `assets/` | developer | purchased low-poly packs and selected audio; agents read, never add |
@@ -11,7 +12,7 @@ One job: turn applied designs into a running Godot game. Godot 4.2.1 (standard b
 | `reports/` | Quinn, the QA & Build Engineer | `<date>-<slug>.md` test, build and performance reports |
 
 ## Inputs
-- Working (this run): the feature list, layout spec or build request
+- Working (this run): the work order in `specs/` (e.g. `specs/prototype-0.md`), or the feature list, layout spec or build request
 - Reference (every run): `../GDD.md` (Engine Integration, Technical Constraints, plus the sections the task touches)
 - Reference (when cited): `../proposals/design/_index.md` and `../proposals/balance/_index.md`, then only the applied proposals they name
 

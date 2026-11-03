@@ -128,6 +128,10 @@ Logged automatically when a subagent launched with the Agent tool finishes. *Fin
 | Martin (hiring-manager): Martin hires the research assistant | post-ICM | 47,200 | 345,056 | 26 | 93 s | claude-haiku-5-5 |
 | claude-code-guide: Check SubagentStop hook input fields | post-ICM | 29,603 | 73,389 | 5 | 39 s | claude-haiku-5-5 |
 | Martin (hiring-manager): Martin hires the doc auditor | post-ICM | 47,180 | 272,581 | 22 | 63 s | claude-haiku-5-5 |
+| Patricia (programmer): Patricia writes Prototype 0 scripts | post-ICM | 58,600 | 656,482 | 24 | 396 s | claude-sonnet-5-5 |
+| Bob (builder): Bob builds Prototype 0 scenes | post-ICM | 36,067 | 175,542 | 11 | 94 s | claude-sonnet-5-5 |
+| Patricia (programmer): Patricia writes Prototype 0 scripts | post-ICM | 59,815 | 716,297 | 24 | 858 s | claude-sonnet-5-5 |
+| Quinn (qa-build-engineer): Quinn tests and builds Prototype 0 | post-ICM | 74,194 | 1,158,136 | 27 | 529 s | claude-sonnet-5-5 |
 
 ## Daily Budget
 

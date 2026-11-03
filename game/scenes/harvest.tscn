@@ -1,0 +1,161 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/honeycomb.gd" id="1_honeycomb"]
+[ext_resource type="Script" path="res://scripts/centrifuge.gd" id="2_centrifuge"]
+[ext_resource type="Script" path="res://scripts/harvest_ui.gd" id="3_harvestui"]
+
+[sub_resource type="StandardMaterial3D" id="Material_backdrop"]
+albedo_color = Color(0.93, 0.88, 0.97, 1)
+
+[sub_resource type="PlaneMesh" id="Mesh_backdrop"]
+material = SubResource("Material_backdrop")
+size = Vector2(14, 14)
+
+[node name="Harvest" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5, 0.866, 0, -0.866, 0.5, 0, 13, 7.5)
+projection = 1
+size = 15.0
+
+[node name="Backdrop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+mesh = SubResource("Mesh_backdrop")
+
+[node name="Honeycomb" type="Node3D" parent="."]
+script = ExtResource("1_honeycomb")
+
+[node name="Centrifuge" type="Node3D" parent="."]
+script = ExtResource("2_centrifuge")
+
+[node name="HarvestUIRoot" type="CanvasLayer" parent="."]
+
+[node name="HarvestUI" type="Control" parent="HarvestUIRoot"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_harvestui")
+
+[node name="Stage1Panel" type="MarginContainer" parent="HarvestUIRoot/HarvestUI"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 180.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 24
+
+[node name="HintLabel" type="Label" parent="HarvestUIRoot/HarvestUI/Stage1Panel"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 34
+text = "Drag across the cells to uncap them"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Stage2Panel" type="MarginContainer" parent="HarvestUIRoot/HarvestUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 32
+
+[node name="Stage2Column" type="VBoxContainer" parent="HarvestUIRoot/HarvestUI/Stage2Panel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="JarCounterLabel" type="Label" parent="HarvestUIRoot/HarvestUI/Stage2Panel/Stage2Column"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 40
+text = "Jars: 0 / 10"
+horizontal_alignment = 1
+
+[node name="TapProgressBar" type="ProgressBar" parent="HarvestUIRoot/HarvestUI/Stage2Panel/Stage2Column"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+mouse_filter = 2
+show_percentage = false
+
+[node name="Spacer" type="Control" parent="HarvestUIRoot/HarvestUI/Stage2Panel/Stage2Column"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="NoRapidTapCheck" type="CheckButton" parent="HarvestUIRoot/HarvestUI/Stage2Panel/Stage2Column"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "No-Rapid-Tap Mode"
+
+[node name="CrankButton" type="Button" parent="HarvestUIRoot/HarvestUI/Stage2Panel/Stage2Column"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Crank"
+
+[node name="SummaryModal" type="PanelContainer" parent="HarvestUIRoot/HarvestUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -230.0
+offset_right = 300.0
+offset_bottom = 230.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SummaryMargin" type="MarginContainer" parent="HarvestUIRoot/HarvestUI/SummaryModal"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="SummaryColumn" type="VBoxContainer" parent="HarvestUIRoot/HarvestUI/SummaryModal/SummaryMargin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="SummaryJarsLabel" type="Label" parent="HarvestUIRoot/HarvestUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Jars: 10"
+horizontal_alignment = 1
+
+[node name="SummaryValueLabel" type="Label" parent="HarvestUIRoot/HarvestUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Value per jar: $3"
+horizontal_alignment = 1
+
+[node name="SummaryTotalLabel" type="Label" parent="HarvestUIRoot/HarvestUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Batch total: $30"
+horizontal_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="HarvestUIRoot/HarvestUI/SummaryModal/SummaryMargin/SummaryColumn"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Continue"
