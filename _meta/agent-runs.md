@@ -95,7 +95,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 1 | — | 156,517,949 | 259,517 s |
+| Orchestrator (main session) | post-ICM | 1 | — | 160,887,869 | 259,772 s |
 <!-- /generated: run-summary -->
 
 Notes on the Content generation runs:
@@ -142,21 +142,24 @@ In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 ful
 
 ## Per-Task Estimates for the Agents
 
+Figures from [agent-runs.csv](agent-runs.csv), updated 2026-11-03. *Final* is final context, *total* is total processed (see Measures); where a run logged both, both are given.
+
 | Agent | Basis | Tokens per task | Runtime per task |
 |---|---|---|---|
-| Gerard, the Gameplay Architect | Measured, pre-ICM (average of 2 runs; 59.8k–83.5k) | 71,674 | ~3 min |
-| Terry, the Progression Tree Expert | Measured, pre-ICM (average of 5 runs; range 54.5k–174k) | 126,566 | ~14 min |
-| Connie, the Compliance Officer | Not yet run. Estimated from the document-review average (similar task: read the GDD, write findings) | ~42,000 | ~1 min |
-| William, the Writer | Measured, post-ICM, Sonnet: first drafts average 125,847 (4 runs, 90k–178k); edit rounds 115,075 (3 runs, 67k–170k; 67k with diff-only rounds). Excludes his 720k research call | ~120,000 | ~2 min |
-| Clara, the Content Critic | Measured, post-ICM, Sonnet: 12 checks averaging 118,401 (71k–170k), including the two critic checks | ~118,000 | ~3 min |
-| Ruth, the Research Assistant | Measured once, post-ICM, on Haiku: 339,442 tokens, 18 turns (her full 6 + 12 call budget, each turn re-reading the fetched pages). Now on Sonnet; re-measure | ~340,000 | ~2 min |
-| Bob, the Builder | No similar run | TBD | TBD |
-| Patricia, the Programmer | No similar run | TBD | TBD |
-| Andrew, the Audiophile | No similar run | TBD | TBD |
-| Martin, the Hiring Manager | Measured, post-ICM, Haiku: average of 2 runs (39k, 47k) | ~43,000 | ~1.5 min |
-| Quinn, the QA & Build Engineer | No similar run | TBD | TBD |
-| Doris, the Doc Auditor | Measured once, post-ICM, Sonnet: 493,700 total processed, 102,299 final context, 10 turns, auditing two days of changes (58 files, 3,138 diff lines). A single day's diff should cost less | ~490,000 total | ~5 min |
+| Gerard, the Gameplay Architect | Measured, pre-ICM, Opus: average of 2 runs (59.8k–83.5k final). No post-ICM run yet | ~72,000 final | ~3 min |
+| Terry, the Progression Tree Expert | Measured, pre-ICM, Opus: average of 5 runs (54.5k–174k final). No post-ICM run yet | ~127,000 final | ~14 min |
+| Connie, the Compliance Officer | Not yet run. Estimated from the document-review average (similar task: read the GDD, write findings) | ~42,000 final | ~1 min |
+| William, the Writer | Measured, post-ICM, Sonnet. Story and intro first drafts: 125,847 average (4 runs, 90k–178k). Edit rounds: 115,075 (3 runs, 67k–170k; 67k with diff-only rounds). The real Bee Journal from Ruth's brief costs about 3x: 333,097 for the draft, 372,765 for its revision. Excludes his 720k research call | ~125,000 total; ~350,000 for a real Bee Journal | ~2–3 min |
+| Clara, the Content Critic | Measured, post-ICM, Sonnet: 14 checks averaging 120,815 total (64.6k–206k), including the two critic checks; the log names her "Critic" from `biome-intros` on | ~121,000 total | ~3 min |
+| Ruth, the Research Assistant | Measured, post-ICM: once on Sonnet, 193,098 total in 109 s (round 2 of `bee-journal-real`); once on Haiku, 339,442 total, 18 turns, the brief that was rejected | ~195,000 total | ~2 min |
+| Bob, the Builder | Measured, post-ICM, Sonnet: 2 runs (Prototype 0 scenes; revision 2 fixes), 33,148 final / 186,456 total on average (175k–197k). Each now includes rendering and reading a screenshot | ~33,000 final / ~190,000 total | ~1–1.5 min |
+| Patricia, the Programmer | Measured, post-ICM, Sonnet: 2 runs, 55,456 final / 596,738 total on average. The full Prototype 0 build was 716,297 total in 14 min; the revision 2 changes 477,179 total in 2 min | ~55,000 final / ~600,000 total | ~2 min (changes) to ~14 min (a new build) |
+| Andrew, the Audiophile | No run yet | TBD | TBD |
+| Martin, the Hiring Manager | Measured, post-ICM, Haiku: 4 runs (3 hires, 1 gap assessment), 40,258 final / 222,278 total on average; a hire is 235k–345k total, an assessment 37k | ~40,000 final / ~280,000 total per hire | ~1–1.5 min |
+| Quinn, the QA & Build Engineer | Measured, post-ICM, Sonnet: 2 runs (test, build and report; revision 2 re-test and re-export), 77,778 final / 1,570,326 total on average (1.16M–1.98M). The costliest agent per task: long Godot runs and many turns | ~78,000 final / ~1,600,000 total | ~9–13 min |
+| Doris, the Doc Auditor | Measured once, post-ICM, Sonnet: 493,700 total, 102,299 final, 10 turns, auditing two days of changes (58 files, 3,138 diff lines). A single day's diff should cost less | ~490,000 total | ~5 min |
+| Orchestrator (main session) | Measured from 2026-11-03 (backfilled for 10 subagent runs): the main session's own tokens while a subagent runs, 340k–8.9M total, median ~763k, almost all cache reads. Each orchestrator call re-reads its whole context (100k+), so the turns around a run often cost more than the run. Highest when the orchestrator keeps working during a long run (8.9M during Patricia's 14-minute build) | ~760,000 total per agent run (median) | — |
 
-Measures differ by row: Gerard, Terry, Connie and Martin are *final context*; William, Clara and Ruth are *total processed* (see Measures). Do not compare across the two. All estimates above come from pre-ICM runs; replace them with post-ICM averages once each agent has run under its contract. All runs above used Opus. The roster in [team.md](team.md) assigns smaller models to lighter agents, so re-measure those agents' costs once they run on Sonnet or Haiku.
+Measures differ by row: Gerard, Terry and Connie are *final context* only, and William, Clara and Ruth *total processed* only. Bob, Patricia, Martin, Quinn and the orchestrator have both. Compare only within one measure. Gerard's and Terry's figures are still pre-ICM and on Opus; replace them with post-ICM averages after their next runs.
 
 Connie also checks official sources on the web. The documentation-research run (about 47k tokens) suggests a compliance review with web checks may need closer to 90k tokens. Update Connie's row after her first run.
