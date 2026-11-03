@@ -72,4 +72,6 @@ start,end,table,run,agent,phase,model,final_context,total_processed,tool_calls,t
 2026-11-02T02:20:18.867Z,2026-11-02T02:21:21.862Z,Subagent runs,Martin hires the doc auditor,Martin (hiring-manager),post-ICM,claude-haiku-5-5,47180,272581,22,,63,4,8787,1172889,7436,,,,,agent-ae8abf53246c5ecb4,
 2026-10-31T23:58:01.360Z,2026-10-31T23:59:04.724Z,Subagent runs,Martin hires the content critic,Martin (hiring-manager),post-ICM,claude-haiku-5-5,39232,234632,18,,63,6,8304,324540,6883,,,,,agent-aeb8d537fc56ca8b1,
 2026-11-03T21:41:36.532Z,2026-11-03T21:43:11.057Z,Subagent runs,Bob builds Prototype 0 scenes,Bob (builder),post-ICM,claude-sonnet-5-5,36067,175542,11,,95,2,1743,680869,592,,,,,agent-af0fe8503cffe47ce,
-2026-10-31T23:24:48Z,2026-11-03T23:34:20Z,Orchestrator,main session from 2026-10-31,Orchestrator (main session),post-ICM,claude-opus-5-5,,160887869,,445,259772,1020,1680715,158723501,482633,,,,,fa5df4be-6365-415d-bd06-9f0be0bb573b,
+2026-10-31T23:24:48Z,2026-11-03T23:45:05Z,Orchestrator,main session from 2026-10-31,Orchestrator (main session),post-ICM,claude-opus-5-5,,163957149,,459,260417,1054,1705958,161757842,492295,,55,,26,fa5df4be-6365-415d-bd06-9f0be0bb573b,
+2026-11-03T23:44:12Z,2026-11-03T23:44:12Z,Orchestrator,main session from 2026-11-03,Orchestrator (main session),post-ICM,claude-opus-5-5,,50315,,1,0,2,16930,33199,184,55,55,26,26,89a1bbb7-3856-4be4-9dd4-7701dc98b02f,
+2026-11-03T23:51:43Z,2026-11-03T23:52:11Z,Doc audits,"doc audit since 88c0bac^, round 1",Doris,post-ICM,claude-haiku-5-5 claude-sonnet-5-5,62327,315357,,13,27,,,,,55,55,26,26,,

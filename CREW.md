@@ -59,7 +59,7 @@ One run, step by step:
 
 **Not crashing.** A failed agent call marks the blackboard `result: failed` and logs what was spent; a fresh run can replace it. A finished run is never overwritten.
 
-**Records.** Every agent call is logged to `_meta/agent-runs.md` with two token measures: *total processed* (summed over the call's turns) and *final context* (the conversation's size at its last turn). Each call's own transcript is moved into `_meta/sessions/runs/<date>-<slug>-<run>/`, kept on the machine and out of git, and the blackboard links to it.
+**Records.** Every agent call is logged as a row of `_meta/agent-runs.csv` (summarised in `_meta/agent-runs.md`) with two token measures: *total processed* (summed over the call's turns) and *final context* (the conversation's size at its last turn). Each call's own transcript is moved into `_meta/sessions/runs/<date>-<slug>-<run>/`, kept on the machine and out of git, and the blackboard links to it.
 
 ## Run it
 
@@ -89,7 +89,7 @@ python -I _tools/test_generate.py
 | [Bee Journal, fictional species](content/bee-journal-magic.md): Lantern bee, Glowcap digger, Drift bee, Stardust bee | FAIL, fixed, PASS in round 2 | 352k |
 | [Bee Journal, real species](content/bee-journal-real.md): sweat, leafcutter, bumble, mason and mining bees | Run 1 (William researching alone): FAIL, stopped at the token cap. Run 2: Ruth, on Haiku, verified the draft's claims ([brief 1](research/bee-journal-real.md)); Clara failed 5 rows; stopped at the cap. Run 3, with the designer's notes: William trimmed every fact to its brief quote; Clara failed 5 rows; Ruth, back on Sonnet, sourced them ([brief 2](research/bee-journal-real-2.md)); William fixed them; PASS in round 2 | 879k, 503k, 1,170k |
 
-Token figures are *total processed*. Every run's full record is in `content/_runs/`; every agent call is in [_meta/agent-runs.md](_meta/agent-runs.md).
+Token figures are *total processed*. Every run's full record is in `content/_runs/`; every agent call is a row of [_meta/agent-runs.csv](_meta/agent-runs.csv), summarised in [_meta/agent-runs.md](_meta/agent-runs.md).
 
 ## What the critic caught
 

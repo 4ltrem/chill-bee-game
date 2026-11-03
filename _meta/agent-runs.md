@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-74 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+76 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -66,11 +66,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Ruth | post-ICM | 2 | — | 266,270 | 116 s |
 | **All** | | **26** | **—** | **173,021** | 168 s |
 
-**Doc audits** (1 run)
+**Doc audits** (2 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Doris | post-ICM | 1 | 102,299 | 493,700 | 284 s |
+| Doris | post-ICM | 2 | 82,313 | 404,528 | 156 s |
 
 **Probes** (2 runs)
 
@@ -91,11 +91,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Martin (hiring-manager) | post-ICM | 4 | 40,258 | 222,278 | 61 s |
 | **All** | | **12** | **49,187** | **508,879** | 234 s |
 
-**Orchestrator** (1 run)
+**Orchestrator** (2 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 1 | — | 160,887,869 | 259,772 s |
+| Orchestrator (main session) | post-ICM | 2 | — | 82,003,732 | 130,208 s |
 <!-- /generated: run-summary -->
 
 Notes on the Content generation runs:
@@ -111,7 +111,7 @@ The Orchestrator row is the main session's whole cost. On 2026-11-03 it stood at
 
 ## Daily Budget
 
-All agents draw from one shared daily pool (no per-agent caps). The developer is on the Claude Pro plan, which has a rolling 5-hour limit and a weekly limit shared across Claude and Claude Code, including subagents. Anthropic does not publish a token count for these limits, so the absolute budget is calibrated:
+All agents draw from one shared daily pool (no per-agent caps). The developer is on the Claude Team plan for the duration of a course (this doc said Pro until 2026-11-03), which has a rolling 5-hour limit and a weekly limit shared across Claude and Claude Code, including subagents. Anthropic does not publish a token count for these limits, so the absolute budget is calibrated:
 1. Run a known task (e.g., one design-review round, about 250k tokens). The status line saves the weekly and 5-hour usage percentage before and after it (or note them from `/usage` where the status line does not run).
 2. Tokens per 1% of the weekly limit = tokens used (subagents and orchestrator) ÷ percentage change. `python -I _tools/runlog.py --calibrate SINCE [UNTIL]` works it out from the log, with and without the orchestrator's cache reads.
 3. **Daily budget** = 14.3% of the weekly limit (1/7) × tokens per 1%.
@@ -123,7 +123,7 @@ All agents draw from one shared daily pool (no per-agent caps). The developer is
 | 2026-10-31 | ~1,108,000 | within | onboarding runs v1 and v2, "honey money" revision, regression fixture, Martin hiring Clara |
 | 2026-11-01 | ~3,550,000 total processed, including the second `bee-journal-real` revision (1.17M) | over on paper; likely within the budget in its own measure | biome intros, both Journals, the Haiku research brief, two critic checks, Martin hiring Ruth, probes. The designer approved borrowing the next day's tokens while inside the 5-hour window, to meet a deadline |
 
-**First calibration (2026-10-26, Terry's native-species run):**
+**First calibration (2026-10-26, Terry's native-species run, Team plan):**
 
 | Measure | Before | After | Change |
 |---|---|---|---|

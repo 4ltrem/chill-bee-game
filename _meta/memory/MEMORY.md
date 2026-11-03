@@ -3,3 +3,4 @@
 - [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, syncing transcripts between machines
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
+- [Session handoff](session-handoff.md) — read first: moved to the terminal CLI; next is the revision 3 spec, then a calibrated agent batch

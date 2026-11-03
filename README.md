@@ -19,7 +19,7 @@ The game is a cross between *Egg, Inc.* and *Factorio*. The player discovers a t
 | Phase | What the player does |
 |---|---|
 | **1. Manual** | Harvest by hand in a tactile three-stage minigame: swipe to uncap the comb, spin the centrifuge, then bottle the honey and send the truck to sell it. A small free overflow buffer keeps production going while the hive is full. |
-| **2. Automation** | Buy automation upgrades (uncapping hubs, electric centrifuges, transport trucks) to take over the manual work. |
+| **2. Automation** | Buy automation upgrades (uncapping hubs, electric centrifuges, a self-driving sales truck) to take over the manual work. |
 | **Expansion** | Buy land and place hive and flower units on each biome's grid. Biomes can grow indefinitely, and higher-tier units cost more but fit more honey production into less space. |
 | **3. Optimization** | Build the capstone Royal Honey Refinery and charge it with honey from every biome to earn a **Royal Crystal**. Then optionally reset: the swarm splits and leaves to restore a new pocket world. Crystals carry over, and each one gives a stacking production boost plus one starting upgrade for future runs. |
 
