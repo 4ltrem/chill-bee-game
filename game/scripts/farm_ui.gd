@@ -13,6 +13,7 @@ var _fill_label: Label
 var _paused_label: Label
 var _harvest_button: Button
 var _sell_button: Button
+var _bee_label: Label
 
 
 func _ready() -> void:
@@ -27,6 +28,9 @@ func _ready() -> void:
 		_harvest_button.pressed.connect(func() -> void: harvest_requested.emit())
 	if _sell_button != null:
 		_sell_button.pressed.connect(func() -> void: Economy.sell_jars())
+	_bee_label = find_child("BeeCountLabel", true, false) as Label
+	Economy.swarm_level_changed.connect(func(_l: int) -> void: _refresh_bees())
+	_refresh_bees()
 	Economy.money_changed.connect(func(_m: int) -> void: _refresh_money())
 	Economy.jars_changed.connect(func(_j: int) -> void: _refresh_money())
 	_refresh_money()
@@ -49,6 +53,11 @@ func _refresh_money() -> void:
 	if _sell_button != null:
 		_sell_button.disabled = Economy.jars <= 0
 		_sell_button.text = "Sell %d jars ($%d)" % [Economy.jars, Economy.jars * Economy.jar_value()]
+
+
+func _refresh_bees() -> void:
+	if _bee_label != null:
+		_bee_label.text = "Bees: %d" % Economy.bee_count()
 
 
 func _refresh_hive() -> void:

@@ -21,13 +21,13 @@ The first playable piece of Chill Bee Game: one hive in Sunny Meadow, harvested 
 
 ## The loop
 
-1. **Bees forage, hive fills.** Hive storage rises over time toward capacity (one frame: 10 jars, GDD). The farm view shows a fill bar.
+1. **Bees forage, hive fills.** Hive storage rises over time toward capacity (one frame: 10 jars, GDD). The farm view shows a fill bar, and a **bee counter** ("Bees: 20"): the GDD's Bee Rendering Plan shows swarm size with a counter. The swarm has a size: the fill rate scales with the bee count, and the farm shows one flying bee per bee in the count, up to a visual cap (above the cap, the counter keeps rising while the flock stays at the cap; GDD: "Only a capped crowd of bees is drawn").
 2. **Hive full → harvest.** A "Harvest" button appears. Production continues into a free overflow buffer of one extra frame (GDD); when that is full too, production pauses.
-3. **Stage 1, uncapping.** The camera (or a sub-view) shows one frame of hex cells. Dragging the mouse or a finger across cells uncaps them (state 0 → 1), using `PhysicsDirectSpaceState3D` raycasts from the drag onto the cells' collision shapes (GDD Engine Integration). Uncapped cells show the visual change and a simple scale "pop" (no particles, no sound). When every cell is uncapped, stage 2 opens.
+3. **Stage 1, uncapping.** The camera (or a sub-view) shows one frame of hex cells. Dragging the mouse or a finger across cells uncaps them (state 0 → 1), using `PhysicsDirectSpaceState3D` raycasts from the drag onto the cells' collision shapes (GDD Engine Integration). Uncapped cells show the visual change and a simple scale "pop" (no particles, no sound). When every cell is uncapped, uncapping stops and a large **"Extract honey"** button appears (with the hint "All cells uncapped!"); stage 2 opens only when the player presses it, never automatically. *(Revised 2026-11-03 after the designer played it: the jump straight to the centrifuge felt abrupt.)*
 4. **Stage 2, centrifuge.** A cylinder (the barrel) spins faster with each tap of a "Crank" button; each required tap moves honey into jars, shown as a jar counter. With **No-Rapid-Tap Mode** on (GDD Accessibility), holding the button cranks at a steady rate instead.
 5. **Batch summary.** A modal lists jars, base value per jar, and the batch total (tool and quality bonuses are 0 in this prototype). Cells become Extracted (state 2).
 6. **Sell.** A "Sell" button at the market stand converts jars to money.
-7. **Upgrade.** An Upgrade Shop panel with one item, **Worker Swarm Count**: +15% fill rate per level, cost `25 × 1.18^level`, max level 10 (GDD Tree A). The button shows the next cost and is disabled when unaffordable or at max.
+7. **Upgrade.** An Upgrade Shop panel with one item, **Worker Swarm Count**: it **adds bees** (GDD Tree A: "Adds active foraging bees"), and the extra bees give the +15% fill rate per level. Cost `25 × 1.18^level`, max level 10. On purchase the bee counter rises and the new bees visibly join the flock; the bees' flying speed does not change (that is Flight Endurance, out of scope). The button shows the next cost and is disabled when unaffordable or at max. *(Revised 2026-11-03: the first build kept 12 bees whatever the level, so the upgrade read as "faster" rather than "more bees".)*
 8. Round again. The next harvest resets the frame's cells to Capped.
 
 Out of scope: other upgrades, automation, grid expansion, biomes, Habitat, pests and nectar drops, offline earnings, the guide character and dialogue, saving, localisation, monetisation.
@@ -45,6 +45,9 @@ Placeholders (TBD in the GDD; keep them as exported variables in one config reso
 | taps per frame in the centrifuge | 20 (2 per jar) | a short, tactile stage |
 | No-Rapid-Tap hold rate | 4 taps' worth per second | about 5 s per frame |
 | honeycomb frame size | 7 × 5 cells | readable at portrait size |
+| base swarm | 20 bees | a flock that reads as busy at portrait size |
+| bees per Worker Swarm Count level | +3 (15% of 20) | so the count and the +15% fill rate agree: fill multiplier = bees ÷ base swarm |
+| visual bee cap | 60 drawn bees | well inside the 60 FPS budget; GDD: visual cap TBD after profiling |
 
 ## Contract between scripts and scenes
 
@@ -53,11 +56,11 @@ Patricia writes the scripts; Bob writes the scenes that use them; Quinn tests bo
 | Script (`game/scripts/`) | Responsibility | Public API |
 |---|---|---|
 | `game_config.gd` | `Resource` with every value above as `@export` vars | — |
-| `economy.gd` | autoload `Economy`: money, jars, Worker Swarm Count level, cost formula | `money`, `jars`, `swarm_level`, `fill_multiplier()`, `swarm_cost()`, `can_buy_swarm()`, `buy_swarm()`, `sell_jars()`; signals `money_changed`, `jars_changed`, `swarm_level_changed` |
+| `economy.gd` | autoload `Economy`: money, jars, Worker Swarm Count level, cost formula | `money`, `jars`, `swarm_level`, `bee_count()`, `fill_multiplier()`, `swarm_cost()`, `can_buy_swarm()`, `buy_swarm()`, `sell_jars()`; signals `money_changed`, `jars_changed`, `swarm_level_changed` |
 | `hive.gd` | storage, overflow, fill over time | `storage`, `overflow`, `capacity`, `is_full()`, `take_frame() -> int`; signals `storage_changed`, `became_full` |
 | `honeycomb.gd` | the cell grid as a byte array (`0 = Capped`, `1 = Uncapped`, `2 = Extracted`), builds the cell meshes, handles drag raycasts | `reset()`, `uncap_at(cell)`, `all_uncapped()`, `extract_all()`; signal `all_cells_uncapped` |
 | `centrifuge.gd` | taps, hold mode, spin speed, jar output | `start(jars)`, `crank()`, `hold_mode`; signals `jar_filled`, `batch_done(jars)` |
-| `farm_ui.gd`, `harvest_ui.gd`, `shop_ui.gd` | the UI panels, wired to the signals above | — |
+| `farm_ui.gd`, `harvest_ui.gd`, `shop_ui.gd` | the UI panels, wired to the signals above | `harvest_ui.gd`: `show_stage1_done()`, signals `extract_pressed`, `continue_pressed` |
 | `main.gd` | switches between farm view and harvest, owns the flow 1 → 8 | — |
 
 Scenes (`game/scenes/`): `main.tscn` (replace the placeholder; Farm view with hive, bees, flowers, UI), `harvest.tscn` (honeycomb frame + centrifuge + harvest UI). Scenes attach scripts by path and hold no logic (Bob's rule).
@@ -91,6 +94,7 @@ Main                      Node3D                 script: res://scripts/main.gd
       JarsLabel           Label                  "Jars: n"
       FillBar             ProgressBar            show_percentage off; max/value set by script
       FillLabel           Label                  "Hive: n / 10"
+      BeeCountLabel       Label                  "Bees: 20"; text set by script (Economy.bee_count()); in the farm's top info. Revised 2026-11-03
       PausedLabel         Label                  your text, e.g. "Hive full, production paused"; hidden by default
       HarvestButton       Button                 text "Harvest"; hidden by default (script shows it when the hive is full)
       SellButton          Button                 text set by script; this is the market stand's sell action
@@ -116,7 +120,8 @@ Harvest                   Node3D                 no script
   Centrifuge              Node3D                 script: res://scripts/centrifuge.gd; place so the camera sees it (the script builds the barrel around its origin, radius 1.4, height 1.8; main.gd hides it until stage 2 and hides Honeycomb then)
   HarvestUIRoot           CanvasLayer
     HarvestUI             Control (full rect)    script: res://scripts/harvest_ui.gd
-      Stage1Panel         Control                a hint, e.g. a Label "Drag across the cells to uncap them"; visible at start
+      Stage1Panel         Control                a hint Label (e.g. "Drag across the cells to uncap them"; the script swaps its text to "All cells uncapped!" when done) plus ExtractButton; visible at start
+        ExtractButton     Button                 text "Extract honey"; large, thumb-sized (min height about 120 px, anchored low on the screen); hidden by default; script shows it when all cells are uncapped and emits extract_pressed. Revised 2026-11-03
       Stage2Panel         Control                hidden by default
         JarCounterLabel   Label                  set by script ("Jars: 3 / 10")
         TapProgressBar    ProgressBar            optional, set by script (jars filled)
@@ -131,6 +136,7 @@ Harvest                   Node3D                 no script
 
 Notes for Bob:
 - The honeycomb's cells are raycast from the camera returned by `get_viewport().get_camera_3d()`, so `Harvest/Camera3D` must see all cells and nothing with a collider may sit between it and the frame.
+- `ExtractButton` is the one control in Stage1Panel that must receive clicks: keep `mouse_filter = Stop` on the button itself (the default) and `Ignore` on Stage1Panel, its containers and the hint Label; the button is hidden during the drag, so it never blocks uncapping. The script takes the first Label under Stage1Panel as the hint, so put no other Label there.
 - `HarvestUI` must not cover the frame with a mouse-blocking control during stage 1 (drags are read in `_unhandled_input`): keep Stage1Panel and its parents at `mouse_filter = Ignore`.
 - No @export vars need setting in `harvest.tscn`.
 - The farm and harvest scenes both need an environment/light; the harvest scene shares the Main `WorldEnvironment` because it is instanced under Main.

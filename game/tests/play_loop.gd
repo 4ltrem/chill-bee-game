@@ -51,6 +51,8 @@ func _measure(label: String, seconds: float) -> Dictionary:
 	var start: int = Time.get_ticks_msec()
 	var frames_start: int = Engine.get_process_frames()
 	await _frames(90)   # warm up (first samples after a scene load are not representative)
+	while Time.get_ticks_msec() - start < 2000:   # Engine.get_frames_per_second() averages over the last full second
+		await _frames(5)
 	var t0: int = Time.get_ticks_msec()
 	var f0: int = Engine.get_process_frames()
 	while Time.get_ticks_msec() - t0 < int(seconds * 1000.0):
@@ -59,6 +61,7 @@ func _measure(label: String, seconds: float) -> Dictionary:
 	var dt: float = float(Time.get_ticks_msec() - t0) / 1000.0
 	var avg: float = float(Engine.get_process_frames() - f0) / dt
 	var mn: float = samples.min()
+	print("FPS samples ", label, ": ", samples)
 	var res := {"avg": avg, "min_sample": mn, "seconds": dt}
 	print("FPS ", label, " avg=%.1f min_sample=%.1f over %.1fs" % [avg, mn, dt])
 	return res
@@ -104,6 +107,30 @@ func _drag_row(hc: Honeycomb, cam: Camera3D, row: int) -> void:
 	await process_frame
 
 
+func _drawn(b: Node) -> int:
+	# Bees.drawn_count() through call(): a missing method reads as -1 (a failed check) instead of stopping the test.
+	return int(b.call("drawn_count")) if b.has_method("drawn_count") else -1
+
+
+func _click(ctl: Control) -> void:
+	# Real mouse click at the control's centre: viewport pixels scaled to window pixels, like a real mouse.
+	var to_window: Vector2 = Vector2(root.size) / root.get_visible_rect().size
+	var pos: Vector2 = (ctl.get_global_rect().get_center()) * to_window
+	var down := InputEventMouseButton.new()
+	down.button_index = MOUSE_BUTTON_LEFT
+	down.pressed = true
+	down.position = pos
+	down.button_mask = MOUSE_BUTTON_MASK_LEFT
+	root.push_input(down)
+	await process_frame
+	var up := InputEventMouseButton.new()
+	up.button_index = MOUSE_BUTTON_LEFT
+	up.pressed = false
+	up.position = pos
+	root.push_input(up)
+	await process_frame
+
+
 func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SHOT_DIR))
 	var eco: Node = root.get_node("Economy")
@@ -134,6 +161,12 @@ func _run() -> void:
 	ck(sell_btn.disabled, "SellButton disabled with 0 jars")
 	ck(upgrade_btn.disabled, "UpgradeButton disabled with $0")
 	eq(money_label.text, "$0", "MoneyLabel at start")
+	var bee_label: Label = _n("BeeCountLabel") as Label
+	ck(bee_label != null, "BeeCountLabel exists")
+	if bee_label != null:
+		eq(bee_label.text, "Bees: 20", "BeeCountLabel at level 0")
+	eq(_drawn(bees), 20, "20 bees drawn at level 0")
+	eq(bees.multimesh.instance_count, 20, "multimesh.instance_count 20 at level 0")
 	eq(fill_label.text.begins_with("Hive: "), true, "FillLabel format: " + fill_label.text)
 
 	# ---- farm FPS (fresh farm, bees flying, hive filling in real time)
@@ -149,8 +182,8 @@ func _run() -> void:
 	ck(hive.is_full(), "round 1: hive full")
 	ck(harvest_btn.visible, "round 1: HarvestButton visible when full")
 	eq(fill_label.text, "Hive: 10 / 10", "round 1: FillLabel")
-	await _shot("1-farm-hive-full")
-	harvest_btn.pressed.emit()
+	await _shot("v2-1-farm-hive-full")
+	await _click(harvest_btn)   # real mouse click on HarvestButton
 	await _frames(5)
 	var hc: Honeycomb = _n("Honeycomb") as Honeycomb
 	var cen: Centrifuge = _n("Centrifuge") as Centrifuge
@@ -183,14 +216,48 @@ func _run() -> void:
 	ck(not _vis(_n("Stage2Panel")), "round 1: stage 2 not open until all uncapped")
 	# FPS in stage 1 with part-uncapped frame
 	fps_stage1 = await _measure("harvest stage 1", 3.0)
-	await _shot("2-stage1-uncapping")
-	# uncap the rest
-	for i in 35:
+	await _shot("v2-2-stage1-uncapping")
+	# uncap the rest but the last cell: ExtractButton must still be hidden
+	var extract_btn: Button = _n("ExtractButton") as Button
+	ck(extract_btn != null, "round 1: ExtractButton exists")
+	ck(not _vis(extract_btn), "round 1: ExtractButton hidden while cells are still capped")
+	for i in 34:
 		hc.uncap_at(i)
+	await _frames(3)
+	ck(not hc.all_uncapped(), "round 1: 34 of 35 uncapped is not done")
+	ck(not _vis(extract_btn), "round 1: ExtractButton still hidden at 34 of 35")
+	hc.uncap_at(34)
 	await _frames(5)
 	ck(hc.all_uncapped(), "round 1: all cells Uncapped")
-	ck(_vis(_n("Stage2Panel")), "round 1: Stage2Panel opens")
+	ck(not _vis(_n("Stage2Panel")), "round 1: stage 2 does NOT open by itself")
+	ck(not hc.active, "round 1: honeycomb inactive after the last cell")
+	ck(_vis(hc) and not _vis(cen), "round 1: honeycomb still shown, centrifuge hidden")
+	var hint: Label = null
+	for l in _n("Stage1Panel").find_children("*", "Label", true, false):
+		hint = l as Label
+		break
+	ck(hint != null and hint.text == "All cells uncapped!", "round 1: hint reads 'All cells uncapped!' (got '%s')" % (hint.text if hint != null else "null"))
+	ck(_vis(extract_btn), "round 1: ExtractButton visible when all cells are uncapped")
+	if extract_btn != null:
+		ck(extract_btn.size.y >= 100.0, "round 1: ExtractButton is thumb-sized (height %.0f)" % extract_btn.size.y)
+	await _shot("v2-3-stage1-done-extract")
+	# a further real drag changes nothing: reset one cell? No: states must stay as they are and stage 2 stays closed
+	var before: Array[int] = []
+	for i in 35:
+		before.append(hc.get_state(i))
+	await _drag_row(hc, cam, 2)
+	var same: bool = true
+	for i in 35:
+		if hc.get_state(i) != before[i]:
+			same = false
+	ck(same, "round 1: a further drag changes no cell")
+	ck(not _vis(_n("Stage2Panel")) and _vis(extract_btn), "round 1: still waiting for the button after a further drag")
+	# real mouse click on ExtractButton
+	await _click(extract_btn)
+	await _frames(3)
+	ck(_vis(_n("Stage2Panel")), "round 1: Stage2Panel opens after clicking ExtractButton (real input)")
 	ck(_vis(cen) and not _vis(hc), "round 1: centrifuge shown, honeycomb hidden")
+	ck(not _vis(extract_btn), "round 1: ExtractButton hidden once stage 2 is open")
 	eq((_n("JarCounterLabel") as Label).text, "Jars: 0 / 10", "round 1: jar counter")
 	var crank: Button = _n("CrankButton") as Button
 	_batch_signal = -1
@@ -203,7 +270,7 @@ func _run() -> void:
 	eq((_n("JarCounterLabel") as Label).text, "Jars: 5 / 10", "round 1: jar counter mid-crank")
 	ck(cen.spin_speed > 0.0, "round 1: barrel spinning after taps")
 	fps_stage2 = await _measure("harvest stage 2 (idle after taps)", 2.0)
-	await _shot("3-stage2-centrifuge")
+	await _shot("v2-4-stage2-centrifuge")
 	for i in 10:
 		crank.button_down.emit()
 		crank.button_up.emit()
@@ -221,7 +288,7 @@ func _run() -> void:
 	eq((_n("SummaryValueLabel") as Label).text, "Value per jar: $3", "round 1: summary value")
 	eq((_n("SummaryTotalLabel") as Label).text, "Batch total: $30", "round 1: summary total")
 	fps_summary = await _measure("harvest summary", 2.0)
-	await _shot("4-summary")
+	await _shot("v2-5-summary")
 	(_n("ContinueButton") as Button).pressed.emit()
 	await _frames(5)
 	ck(farm_world.visible, "round 1: farm visible after Continue")
@@ -241,9 +308,13 @@ func _run() -> void:
 	ck(sell_btn.disabled, "round 1: SellButton disabled after sell")
 	ck(not upgrade_btn.disabled, "round 1: UpgradeButton enabled at $30")
 	print("upgrade button text: ", upgrade_btn.text, " | level label: ", level_label.text)
-	upgrade_btn.pressed.emit()
+	await _click(upgrade_btn)   # real mouse click on UpgradeButton
 	await _frames(2)
 	eq(eco.swarm_level, 1, "round 1: Worker Swarm Count level 1")
+	eq(bee_label.text, "Bees: 23", "round 1: BeeCountLabel after purchase")
+	eq(_drawn(bees), 23, "round 1: 23 bees drawn after purchase")
+	eq(bees.multimesh.instance_count, 23, "round 1: multimesh.instance_count 23 after purchase")
+	near_eq(eco.fill_multiplier(), 1.15, "round 1: fill multiplier 1.15 after purchase")
 	eq(eco.money, 5, "round 1: money $5 after $25 upgrade")
 	eq(money_label.text, "$5", "round 1: MoneyLabel after purchase")
 	ck(level_label.text.contains("1"), "round 1: LevelLabel shows level 1: " + level_label.text)
@@ -271,7 +342,7 @@ func _run() -> void:
 	await _frames(3)
 	ck(hive.is_paused(), "round 2: paused with overflow full")
 	ck(paused_label.visible, "round 2: PausedLabel visible when paused")
-	await _shot("5-farm-paused")
+	await _shot("v2-6-farm-paused")
 	harvest_btn.pressed.emit()
 	await _frames(5)
 	hc = _n("Honeycomb") as Honeycomb
@@ -287,7 +358,10 @@ func _run() -> void:
 	for i in 35:
 		hc.uncap_at(i)
 	await _frames(5)
-	ck(_vis(_n("Stage2Panel")), "round 2: Stage2Panel opens")
+	ck(not _vis(_n("Stage2Panel")), "round 2: stage 2 waits for ExtractButton")
+	await _click(_n("ExtractButton") as Button)
+	await _frames(3)
+	ck(_vis(_n("Stage2Panel")), "round 2: Stage2Panel opens after ExtractButton click")
 	var check: CheckButton = _n("NoRapidTapCheck") as CheckButton
 	check.button_pressed = true
 	await _frames(2)
@@ -320,6 +394,8 @@ func _run() -> void:
 	await _frames(2)
 	eq(eco.swarm_level, 2, "round 2: level 2")
 	eq(eco.money, 5, "round 2: $35 - $30 = $5")
+	eq(bee_label.text, "Bees: 26", "round 2: BeeCountLabel at level 2")
+	eq(bees.multimesh.instance_count, 26, "round 2: 26 bees drawn at level 2")
 	print("upgrade button text after 2nd buy: ", upgrade_btn.text)
 
 	# ---- results
@@ -333,6 +409,10 @@ func _run() -> void:
 	f.close()
 	print("---- %d checks, %d failed" % [checks, fails])
 	quit(1 if fails > 0 else 0)
+
+
+func near_eq(a: float, b: float, what: String) -> void:
+	ck(absf(a - b) < 0.0001, "%s (expected %s, got %s)" % [what, str(b), str(a)])
 
 
 func near_fill(eco: Node) -> void:

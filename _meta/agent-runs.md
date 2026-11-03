@@ -132,6 +132,9 @@ Logged automatically when a subagent launched with the Agent tool finishes. *Fin
 | Patricia (programmer): Patricia writes Prototype 0 scripts | post-ICM | 59,815 | 716,297 | 24 | 858 s | claude-sonnet-5-5 |
 | Quinn (qa-build-engineer): Quinn tests and builds Prototype 0 | post-ICM | 74,194 | 1,158,136 | 27 | 529 s | claude-sonnet-5-5 |
 | Martin (hiring-manager): Martin assesses an integration-fixer gap | post-ICM | 27,420 | 36,843 | 7 | 26 s | claude-haiku-5-5 |
+| Patricia (programmer): Patricia: extract button and bee count <!-- agent-a2efc7430dfa7c1b8 --> | post-ICM | 51,097 | 477,179 | 35 | 116 s | claude-sonnet-5-5 |
+| Bob (builder): Bob: new nodes and cosmetic fixes <!-- agent-a9ce5696ca5615f3b --> | post-ICM | 30,230 | 197,370 | 12 | 47 s | claude-sonnet-5-5 |
+| Quinn (qa-build-engineer): Quinn: update tests, verify, re-export <!-- agent-a6641ccf03a7681e2 --> | post-ICM | 81,361 | 1,982,517 | 48 | 807 s | claude-sonnet-5-5 |
 
 ## Daily Budget
 

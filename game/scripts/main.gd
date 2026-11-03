@@ -57,10 +57,19 @@ func _start_harvest() -> void:
 	_honeycomb.all_cells_uncapped.connect(_on_all_uncapped)
 	_centrifuge.batch_done.connect(_on_batch_done)
 	_harvest_ui.continue_pressed.connect(_end_harvest)
+	_harvest_ui.extract_pressed.connect(_on_extract_pressed)
 
 
+## Stage 1 ends here: stop uncapping and wait for the Extract honey button.
 func _on_all_uncapped() -> void:
 	_honeycomb.active = false
+	_harvest_ui.show_stage1_done()
+
+
+## The player pressed "Extract honey": open stage 2.
+func _on_extract_pressed() -> void:
+	if _centrifuge == null or _centrifuge.visible:
+		return
 	_honeycomb.visible = false
 	_centrifuge.visible = true
 	_harvest_ui.show_stage2(_batch_jars)

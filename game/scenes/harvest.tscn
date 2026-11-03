@@ -9,7 +9,7 @@ albedo_color = Color(0.93, 0.88, 0.97, 1)
 
 [sub_resource type="PlaneMesh" id="Mesh_backdrop"]
 material = SubResource("Material_backdrop")
-size = Vector2(14, 14)
+size = Vector2(60, 60)
 
 [node name="Harvest" type="Node3D"]
 
@@ -17,6 +17,10 @@ size = Vector2(14, 14)
 transform = Transform3D(1, 0, 0, 0, 0.5, 0.866, 0, -0.866, 0.5, 0, 13, 7.5)
 projection = 1
 size = 15.0
+
+[node name="Light" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.7071, 0.7071, 0, -0.7071, 0.7071, 0, 10, 0)
+light_energy = 0.6
 
 [node name="Backdrop" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
@@ -42,23 +46,42 @@ script = ExtResource("3_harvestui")
 
 [node name="Stage1Panel" type="MarginContainer" parent="HarvestUIRoot/HarvestUI"]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 15
 anchor_right = 1.0
-offset_bottom = 180.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 48
 theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 32
 
-[node name="HintLabel" type="Label" parent="HarvestUIRoot/HarvestUI/Stage1Panel"]
+[node name="Stage1Column" type="VBoxContainer" parent="HarvestUIRoot/HarvestUI/Stage1Panel"]
 layout_mode = 2
+mouse_filter = 2
+
+[node name="HintLabel" type="Label" parent="HarvestUIRoot/HarvestUI/Stage1Panel/Stage1Column"]
+layout_mode = 2
+mouse_filter = 2
 theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 34
 text = "Drag across the cells to uncap them"
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="Stage1Spacer" type="Control" parent="HarvestUIRoot/HarvestUI/Stage1Panel/Stage1Column"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ExtractButton" type="Button" parent="HarvestUIRoot/HarvestUI/Stage1Panel/Stage1Column"]
+visible = false
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Extract honey"
 
 [node name="Stage2Panel" type="MarginContainer" parent="HarvestUIRoot/HarvestUI"]
 visible = false
@@ -101,6 +124,11 @@ mouse_filter = 2
 [node name="NoRapidTapCheck" type="CheckButton" parent="HarvestUIRoot/HarvestUI/Stage2Panel/Stage2Column"]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.14, 0.05, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.14, 0.05, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.14, 0.05, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.14, 0.05, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.14, 0.05, 1)
 theme_override_font_sizes/font_size = 30
 text = "No-Rapid-Tap Mode"
 

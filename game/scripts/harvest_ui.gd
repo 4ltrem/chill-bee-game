@@ -4,6 +4,11 @@ class_name HarvestUI
 extends Control
 
 signal continue_pressed
+signal extract_pressed
+
+var _extract_button: Button
+var _stage1_hint: Label
+var _stage1_hint_text: String = ""
 
 var _centrifuge: Centrifuge
 var _stage1: Control
@@ -39,6 +44,18 @@ func _ready() -> void:
 		_hold_check.toggled.connect(_on_hold_toggled)
 	if _continue_button != null:
 		_continue_button.pressed.connect(func() -> void: continue_pressed.emit())
+	_extract_button = find_child("ExtractButton", true, false) as Button
+	if _extract_button != null:
+		_extract_button.pressed.connect(func() -> void: extract_pressed.emit())
+	# The hint is the first Label directly or indirectly under Stage1Panel.
+	if _stage1 is Label:
+		_stage1_hint = _stage1 as Label
+		_stage1_hint_text = _stage1_hint.text
+	elif _stage1 != null:
+		for child in _stage1.find_children("*", "Label", true, false):
+			_stage1_hint = child as Label
+			_stage1_hint_text = _stage1_hint.text
+			break
 	show_stage1()
 
 
@@ -51,6 +68,17 @@ func setup(centrifuge: Centrifuge) -> void:
 
 func show_stage1() -> void:
 	_set_panels(true, false, false)
+	if _stage1_hint != null:
+		_stage1_hint.text = _stage1_hint_text
+
+
+## Every cell is uncapped: hint "All cells uncapped!" and the large ExtractButton; stage 2 waits for extract_pressed.
+func show_stage1_done() -> void:
+	_set_panels(true, false, false)
+	if _stage1_hint != null:
+		_stage1_hint.text = "All cells uncapped!"
+	if _extract_button != null:
+		_extract_button.visible = true
 
 
 func show_stage2(jars: int) -> void:
@@ -71,6 +99,8 @@ func show_summary(jars: int, per_jar: int, total: int) -> void:
 func _set_panels(one: bool, two: bool, three: bool) -> void:
 	if _stage1 != null:
 		_stage1.visible = one
+	if _extract_button != null:
+		_extract_button.visible = false
 	if _stage2 != null:
 		_stage2.visible = two
 	if _summary != null:

@@ -1,18 +1,19 @@
-# Implements the Prototype 0 spec "Look: colorbox": small yellow spheres orbiting between the hive and the flowers.
+# Implements the Prototype 0 spec "Look: colorbox" and loop step 1: small yellow spheres orbiting between the hive
+# and the flowers, one per bee in the swarm up to the visual cap (GDD Bee Rendering Plan: a capped crowd is drawn).
 # Added beyond the contract table (visual only). One MultiMeshInstance3D; no per-frame allocations beyond Transform3D values.
 # Finds the hive via group "bee_home" and the flower patches via group "flower_patch".
 class_name Bees
 extends MultiMeshInstance3D
 
-@export var bee_count: int = 12
 @export var bee_radius: float = 0.09
-@export var speed: float = 0.6        # trips per second, visual only
+@export var speed: float = 0.6        # trips per second, visual only; constant whatever the bee count
 @export var bob_height: float = 0.6   # visual only
 
 var _home: Vector3 = Vector3.ZERO
 var _targets: Array[Vector3] = []
 var _phases: PackedFloat32Array = PackedFloat32Array()
 var _time: float = 0.0
+var _drawn: int = 0
 
 
 func _ready() -> void:
@@ -25,7 +26,6 @@ func _ready() -> void:
 	var mm := MultiMesh.new()
 	mm.transform_format = MultiMesh.TRANSFORM_3D
 	mm.mesh = sphere
-	mm.instance_count = bee_count
 	multimesh = mm
 	for node in get_tree().get_nodes_in_group("bee_home"):
 		_home = to_local((node as Node3D).global_position)
@@ -34,15 +34,34 @@ func _ready() -> void:
 		_targets.append(to_local((node as Node3D).global_position))
 	if _targets.is_empty():
 		_targets.append(_home + Vector3(2.0, 0.0, 2.0))
-	_phases.resize(bee_count)
-	for i in bee_count:
-		_phases[i] = float(i) / float(bee_count) * TAU
+	_resize_flock()
+	Economy.swarm_level_changed.connect(func(_l: int) -> void: _resize_flock())
+
+
+## Number of bees currently drawn: the swarm size, capped.
+func drawn_count() -> int:
+	return _drawn
+
+
+## Sets the MultiMesh instance count to min(bee_count, visual_bee_cap) and extends the phases.
+## Existing bees keep flying; the instance count only changes on a swarm level change, not per frame.
+func _resize_flock() -> void:
+	var n: int = mini(Economy.bee_count(), Economy.config.visual_bee_cap)
+	if n == _drawn:
+		return
+	var old: int = _drawn
+	_drawn = n
+	multimesh.instance_count = n
+	_phases.resize(n)
+	# Golden-ratio spacing: existing bees keep their phase when the flock grows, so nothing jumps.
+	for i in range(old, n):
+		_phases[i] = fposmod(float(i) * 0.61803398875, 1.0) * TAU
 
 
 func _process(delta: float) -> void:
 	_time += delta * speed * TAU
 	var mm: MultiMesh = multimesh
-	for i in bee_count:
+	for i in _drawn:
 		var target: Vector3 = _targets[i % _targets.size()]
 		var t: float = 0.5 + 0.5 * sin(_time + _phases[i])
 		var pos: Vector3 = _home.lerp(target, t)

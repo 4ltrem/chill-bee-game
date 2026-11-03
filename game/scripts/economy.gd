@@ -14,9 +14,14 @@ var swarm_level: int = 0
 var no_rapid_tap_mode: bool = false
 
 
-## Multiplier on the hive fill rate: 1 + 15% per level (additive).
+## Bees in the swarm: base + per-level * level (Worker Swarm Count adds bees, GDD Tree A).
+func bee_count() -> int:
+	return config.base_bee_count + config.bees_per_swarm_level * swarm_level
+
+
+## Multiplier on the hive fill rate: bee_count / base_bee_count (= 1 + 15% per level with the placeholders).
 func fill_multiplier() -> float:
-	return 1.0 + config.swarm_fill_bonus_per_level * float(swarm_level)
+	return float(bee_count()) / float(config.base_bee_count)
 
 
 ## Cost of the next level: base * growth^level, rounded to whole dollars.

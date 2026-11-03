@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://ub4nv2k6wxgl"]
+[gd_scene load_steps=19 format=3 uid="uid://ub4nv2k6wxgl"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/hive.gd" id="2_hive"]
@@ -19,6 +19,20 @@ albedo_color = Color(0.62, 0.84, 0.52, 1)
 [sub_resource type="PlaneMesh" id="Mesh_ground"]
 material = SubResource("Material_meadow")
 size = Vector2(10, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_barbg"]
+bg_color = Color(0.3, 0.22, 0.1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_barfill"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StandardMaterial3D" id="Material_hive"]
 albedo_color = Color(0.85, 0.72, 0.5, 1)
@@ -166,7 +180,16 @@ text = "Hive: 0 / 10"
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBox_barbg")
+theme_override_styles/fill = SubResource("StyleBox_barfill")
 show_percentage = false
+
+[node name="BeeCountLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 32
+text = "Bees: 20"
 
 [node name="PausedLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 visible = false

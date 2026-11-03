@@ -76,4 +76,6 @@ Every bug in an agent's work, counted against that agent whoever fixed it (`game
 |---|---|---|---|---|---|
 | 2026-11-03 | Prototype 0 | Patricia | 1 blocking bug: `get_camera_3D()` for `get_camera_3d()` in `honeycomb.gd`; dragging could not uncap cells. Her checks never exercised input | orchestrator | `game/reports/2026-11-03-prototype-0.md` |
 | 2026-11-03 | Prototype 0 | Quinn | 1 test defect: `play_loop.gd` sent drag coordinates in viewport pixels where `push_input` expects window pixels | orchestrator | `game/reports/2026-11-03-prototype-0.md` |
-| 2026-11-03 | Prototype 0 | Bob | 0 failing tests; 4 cosmetic issues (fill bar, No-Rapid-Tap label contrast, backdrop bands, shop overlap), open | — | `game/reports/2026-11-03-prototype-0.md` |
+| 2026-11-03 | Prototype 0 | Bob | 0 failing tests; 4 cosmetic issues (fill bar, No-Rapid-Tap label contrast, backdrop bands, shop overlap), 3 fixed by Bob in revision 2 | Bob | `game/reports/2026-11-03-prototype-0.md` |
+| 2026-11-03 | Prototype 0 rev 2 | Bob | 1 cosmetic issue left as fixed but still present: the shop panel covers the meadow's tip when the hive is full; his render showed only the starting state, where it doesn't. Open | — | `game/reports/2026-11-03-prototype-0.md`, Revision 2 |
+| 2026-11-03 | Prototype 0 rev 2 | Quinn | 3 test defects, all found and fixed by Quinn before reporting (not counted: found by the owner) | Quinn | `game/reports/2026-11-03-prototype-0.md`, Revision 2 |

@@ -14,7 +14,7 @@ func _initialize() -> void:
 	var eco: Node = root.get_node("Economy")
 	var tests: Array[String] = [
 		"t_cost_formula", "t_cost_max_level", "t_buy_deducts_and_levels", "t_buy_blocked_unaffordable",
-		"t_fill_multiplier", "t_fill_time_level0", "t_fill_time_with_levels",
+		"t_fill_multiplier", "t_bee_count", "t_fill_multiplier_is_bees_over_base", "t_drawn_count_capped", "t_fill_time_level0", "t_fill_time_with_levels",
 		"t_overflow_and_pause", "t_take_frame_not_full", "t_take_frame_with_overflow",
 		"t_became_full_count_full_overflow", "t_became_full_once_while_filling",
 		"t_cell_transitions", "t_cell_reset_on_next_harvest", "t_uncap_only_from_capped", "t_all_uncapped_signal",
@@ -26,7 +26,7 @@ func _initialize() -> void:
 		eco.no_rapid_tap_mode = false
 		_cur_ok = true
 		_cur_msgs.clear()
-		call(t, eco)
+		await call(t, eco)
 		if _cur_ok:
 			_passed += 1
 			print("PASS  ", t)
@@ -156,6 +156,57 @@ func t_config_values(_eco: Node) -> void:
 
 
 # --- hive ---
+
+func t_bee_count(eco: Node) -> void:
+	eq(eco.bee_count(), 20, "level 0 = 20 bees")
+	eco.swarm_level = 1
+	eq(eco.bee_count(), 23, "level 1 = 23 bees")
+	eco.swarm_level = 10
+	eq(eco.bee_count(), 50, "level 10 = 50 bees")
+	eco.swarm_level = 0
+	eco.money = 100
+	eco.buy_swarm()
+	eq(eco.bee_count(), 23, "a purchase adds 3 bees")
+
+
+func t_fill_multiplier_is_bees_over_base(eco: Node) -> void:
+	for lvl in 11:
+		eco.swarm_level = lvl
+		near(eco.fill_multiplier(), float(eco.bee_count()) / 20.0, "multiplier = bees / 20 at level %d" % lvl)
+	eco.swarm_level = 1
+	near(eco.fill_multiplier(), 1.15, "level 1 = 1.15")
+
+
+## A lowered visual_bee_cap caps the drawn flock while the counter keeps rising.
+func t_drawn_count_capped(eco: Node) -> void:
+	var saved: GameConfig = eco.config
+	var cfg: GameConfig = GameConfig.load_default().duplicate() as GameConfig
+	cfg.visual_bee_cap = 25
+	eco.config = cfg
+	# Loaded at run time: bees.gd names the Economy autoload, which does not compile before the autoloads exist.
+	var b: MultiMeshInstance3D = (load("res://scripts/bees.gd") as GDScript).new()
+	ck(b != null, "Bees script instantiates")
+	if b == null:
+		eco.config = saved
+		return
+	root.add_child.call_deferred(b)   # root is still setting up its children inside _initialize
+	await process_frame
+	await process_frame   # _ready builds the MultiMesh and sizes the flock
+	eq(b.drawn_count(), 20, "level 0: 20 drawn (under the cap of 25)")
+	eq(b.multimesh.instance_count, 20, "level 0: instance_count 20")
+	eco.swarm_level = 3   # 29 bees > cap 25
+	eco.swarm_level_changed.emit(3)
+	eq(eco.bee_count(), 29, "counter keeps rising: 29")
+	eq(b.drawn_count(), 25, "drawn capped at 25")
+	eq(b.multimesh.instance_count, 25, "instance_count capped at 25")
+	eco.swarm_level = 10
+	eco.swarm_level_changed.emit(10)
+	eq(eco.bee_count(), 50, "counter 50")
+	eq(b.drawn_count(), 25, "still 25 drawn at 50 bees")
+	root.remove_child(b)
+	b.free()
+	eco.config = saved
+
 
 func t_fill_time_level0(_eco: Node) -> void:
 	var h := _hive()

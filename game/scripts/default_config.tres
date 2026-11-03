@@ -16,3 +16,6 @@ taps_per_frame = 20
 hold_taps_per_second = 4.0
 grid_cols = 7
 grid_rows = 5
+base_bee_count = 20
+bees_per_swarm_level = 3
+visual_bee_cap = 60
