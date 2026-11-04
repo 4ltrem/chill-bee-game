@@ -17,6 +17,7 @@ var _rows: Dictionary = {}          # value name -> SpinBox or CheckBox
 var _touches: Dictionary = {}       # screen-touch index -> true while down
 var _defaults: GameConfig
 var _building: bool = false
+var _bounds: UiBoundsOverlay
 
 
 func _init() -> void:
@@ -115,6 +116,20 @@ func _economy_call(method: String, arg: Variant = null) -> void:
 		economy.call(method, arg)
 
 
+## "Show UI bounds": outlines every visible Control, the icons' touch rects and anchor points (0.1 Harvest, Dev mode).
+func set_ui_bounds(on: bool) -> void:
+	if on and _bounds == null:
+		_bounds = UiBoundsOverlay.new()
+		var host: Node = get_parent() if get_parent() != null else self
+		host.add_child(_bounds)
+	if _bounds != null:
+		_bounds.visible = on
+
+
+func ui_bounds_shown() -> bool:
+	return _bounds != null and _bounds.visible
+
+
 func _set_speed(scale: float) -> void:
 	Engine.time_scale = scale
 
@@ -183,6 +198,10 @@ func _actions_row() -> Control:
 	flow.add_child(_button("+$100", func() -> void: _economy_call("earn", 100)))
 	flow.add_child(_button("Truck home", _empty_truck))
 	flow.add_child(_button("Reset progress", func() -> void: _economy_call("reset")))
+	var bounds_button := Button.new()
+	bounds_button.text = "Show UI bounds"
+	bounds_button.pressed.connect(func() -> void: set_ui_bounds(not ui_bounds_shown()))
+	flow.add_child(bounds_button)
 	flow.add_child(_button("×1", func() -> void: _set_speed(1.0)))
 	flow.add_child(_button("×2", func() -> void: _set_speed(2.0)))
 	flow.add_child(_button("×5", func() -> void: _set_speed(5.0)))

@@ -1,55 +1,29 @@
-# Quinn: Prototype 0 revision 3 integration test, WINDOWED, written from game/specs/prototype-0.md before the code.
+# Quinn: milestone 0.1 (Harvest) integration test, WINDOWED, written from game/specs/0.1-harvest.md before the code.
 #   Godot --path game --script res://tests/play_loop.gd
-# Drives the loop 1 -> 9 twice through REAL input (events pushed into the viewport in window pixels, like a real
-# mouse): the fork icon, a drag to uncap, Back in round 1, the full uncap, the centrifuge icon, real taps, one real
-# hold, a click on UpgradeButton during CRANKING (must not crank), Continue, bottling, the summary's OK, the Sell icon
-# (money credited at the tap), the truck away with the crate filling, and one Worker Swarm Count purchase mid-harvest.
-# Exit code 0 only if no check failed AND the final "COMPLETED" line printed. No COMPLETED line = FAILURE (a script
-# error mid-flow stops the run silently otherwise).
-# Cheats, all marked "CHEAT" below, are the Dev-mode actions: filling the hive (hive.advance) and doubling
-# truck_trip_seconds so the truck is still away while round 2 bottles. The config is restored at the end.
-# Spec line numbers in the comments refer to game/specs/prototype-0.md.
+# Plays the harvest twice through REAL input (events pushed into the viewport in window pixels, as a real mouse sends them;
+# tests/farm_input.gd): the projected fork icon, drags on the upright risen frame through the farm camera, Back after one
+# frame and a half (the half frame is kept), the return, cells piling while the centrifuge cranks, Spin and spaced real clicks
+# (one real hold in round 2), Continue, bottling (floor(jars) with the carried leftover), the pile loading into the empty bucket,
+# a Worker Swarm Count purchase mid-harvest, Sell. Screenshots: every centrifuge state on the farm, the zoom with a risen
+# frame, a cell in flight, a pile, Show UI bounds. Exit code 0 only if no check failed AND the final "COMPLETED" line printed.
+# CHEATS (Dev mode actions, all marked "CHEAT" below, config restored at the end): the hive is filled with fill_now and its
+# fill frozen (base_seconds_per_jar huge) so nothing arrives behind the test; bottling is 1 s per jar; truck_trip_seconds is
+# doubled so the truck is still away while round 2 bottles.
 extends SceneTree
 
-# ---- Node names from the spec's "Node paths for Bob" (L136-L203). Change them here only.
+const FarmInput := preload("res://tests/farm_input.gd")
 const MAIN_SCENE := "res://scenes/main.tscn"
-const N_HIVE := "Hive"
-const N_CENTRIFUGE := "Centrifuge"
-const N_TRUCK := "Truck"
-const N_FARM_WORLD := "FarmWorld"
-const N_BEES := "Bees"
-const N_FORK_ICON := "ForkIcon"
-const N_CENTRIFUGE_ICON := "CentrifugeIcon"
-const N_SELL_ICON := "SellIcon"
-const N_CONTINUE := "ContinueButton"
-const N_SUMMARY := "SummaryModal"
-const N_SUMMARY_JARS := "SummaryJarsLabel"
-const N_SUMMARY_VALUE := "SummaryValueLabel"
-const N_SUMMARY_BONUS := "SummaryBonusLabel"
-const N_SUMMARY_TOTAL := "SummaryTotalLabel"
-const N_SUMMARY_OK := "SummaryOkButton"
-const N_UPGRADE := "UpgradeButton"
-const N_SHOP_PANEL := "ShopPanel"
-const N_LEVEL_LABEL := "LevelLabel"
-const N_MONEY := "MoneyLabel"
-const N_FILL_LABEL := "FillLabel"
-const N_BEE_LABEL := "BeeCountLabel"
-const N_CRANK_LABEL := "CentrifugeLabel"
-const N_HONEYCOMB := "Honeycomb"
-const N_BACK := "BackButton"
-const N_HINT := "HintLabel"
-const N_FARM_UI := "FarmUI"
-const N_JARS_LABEL_REMOVED := "JarsLabel"          # must NOT exist (L30)
-const N_OLD_NODES_REMOVED := ["HarvestButton", "SellButton", "ExtractButton", "CrankButton", "NoRapidTapCheck", "Stage1Panel", "Stage2Panel"]
-const HARVEST_ROOT := "Harvest"
-const CAMERA_PARENT_FARM := "Main"                 # the farm camera is a direct child of Main (L147)
+const SHOT_DIR := "res://reports/2026-11-04-0.1-harvest/"
+# r3 numbers for the disabled UpgradeButton at $0 (reports/2026-11-04-prototype-0-r3.md): background (97, 87, 76)
+const DISABLED_BG := Color8(97, 87, 76)
 
-const SHOT_DIR := "res://reports/2026-11-04-prototype-0-r3/"
-
+var fi: RefCounted
 var main: Node
 var fails: int = 0
 var checks: int = 0
 var _cfg_saved: Dictionary = {}
+var tr: Dictionary = {"risen": -1, "raised": [], "lowered": [], "lid": []}
+var P: Dictionary = {}
 
 
 func _initialize() -> void:
@@ -92,7 +66,6 @@ func _wait(sec: float) -> void:
 		await process_frame
 
 
-## Poll until cond.call() is true or timeout (s); returns whether it became true.
 func _until(cond: Callable, timeout: float) -> bool:
 	var t0: int = Time.get_ticks_msec()
 	while float(Time.get_ticks_msec() - t0) < timeout * 1000.0:
@@ -100,20 +73,6 @@ func _until(cond: Callable, timeout: float) -> bool:
 			return true
 		await process_frame
 	return cond.call()
-
-
-func _n(name: String) -> Node:
-	var n: Node = main.find_child(name, true, false)
-	if n == null:
-		print("FAIL  node missing (spec: Node paths for Bob): ", name)
-		fails += 1
-		checks += 1
-	return n
-
-
-func _gone(name: String) -> bool:
-	var n: Node = main.find_child(name, true, false)
-	return n == null or n.is_queued_for_deletion()
 
 
 func _vis(n: Node) -> bool:
@@ -136,609 +95,67 @@ func _set_cfg(name: String, value: Variant) -> void:
 	cfg.set(name, value)
 
 
-func _shot(name: String) -> void:
+func _cpf() -> int:
+	return int(_cv("grid_cols")) * int(_cv("grid_rows"))
+
+
+func _jars_of(cells: int) -> float:
+	return float(cells * int(_cv("frame_jars"))) / float(_cpf())
+
+
+@warning_ignore("integer_division")
+func _turns_for(cells: int) -> int:
+	var num: int = cells * int(_cv("frame_jars")) * int(_cv("taps_per_jar"))
+	return (num + _cpf() - 1) / _cpf()
+
+
+func _shot(name: String) -> Image:
 	await _frames(3)
 	await RenderingServer.frame_post_draw
 	var img: Image = root.get_texture().get_image()
 	var err: int = img.save_png(ProjectSettings.globalize_path(SHOT_DIR + name + ".png"))
 	print("screenshot ", name, " ", img.get_size(), " err=", err)
+	return img
 
 
-# ---------------------------------------------------------------- real input
-
-## Viewport pixels (720 x 1280) to window pixels: the window is smaller (canvas_items stretch), and push_input takes
-## window pixels, like a real mouse. Revision 2 fixed this; do not remove it.
-func _to_window() -> Vector2:
-	return Vector2(root.size) / root.get_visible_rect().size
+## Viewport (720 x 1280) point to a pixel of a screenshot (the image has the window's size under canvas_items stretch).
+func _px(img: Image, vp: Vector2) -> Vector2i:
+	var k: Vector2 = Vector2(img.get_size()) / root.get_visible_rect().size
+	return Vector2i(int(vp.x * k.x), int(vp.y * k.y))
 
 
-func _mouse_button(vp_pos: Vector2, pressed: bool) -> void:
-	var ev := InputEventMouseButton.new()
-	ev.button_index = MOUSE_BUTTON_LEFT
-	ev.pressed = pressed
-	ev.position = vp_pos * _to_window()
-	ev.global_position = ev.position
-	ev.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
-	root.push_input(ev)
+## The most common pixel inside a rect of the viewport: the button's background.
+func _dominant(img: Image, rect: Rect2) -> Color:
+	var counts: Dictionary = {}
+	var a: Vector2i = _px(img, rect.position)
+	var b: Vector2i = _px(img, rect.end)
+	for y in range(maxi(a.y, 0), mini(b.y, img.get_height()), 2):
+		for x in range(maxi(a.x, 0), mini(b.x, img.get_width()), 2):
+			var c: Color = img.get_pixel(x, y)
+			var key: int = c.to_rgba32()
+			counts[key] = int(counts.get(key, 0)) + 1
+	var best_key: int = 0
+	var best_n: int = -1
+	for k in counts:
+		if int(counts[k]) > best_n:
+			best_n = int(counts[k])
+			best_key = int(k)
+	return Color.hex(best_key)
 
 
-## A mouse button through Input.parse_input_event, like the OS sends it: it also updates the Input singleton's button
-## state (Input.is_mouse_button_pressed) and runs the engine's touch emulation. root.push_input does neither, and
-## centrifuge.gd polls Input.is_mouse_button_pressed in _process to end a mouse hold, so a hold pushed with
-## push_input was released on the next frame (harness bug, fixed 2026-11-04 in the r3 run).
+## A mouse button through Input.parse_input_event, like the OS sends it (also updates Input.is_mouse_button_pressed, which
+## centrifuge.gd polls to end a hold; root.push_input does not).
 func _mouse_button_os(vp_pos: Vector2, pressed: bool) -> void:
 	var ev := InputEventMouseButton.new()
 	ev.button_index = MOUSE_BUTTON_LEFT
 	ev.pressed = pressed
-	ev.position = vp_pos * _to_window()
+	ev.position = vp_pos * fi.to_window()
 	ev.global_position = ev.position
 	ev.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
 	Input.parse_input_event(ev)
 	Input.flush_buffered_events()
 
 
-func _mouse_move(vp_pos: Vector2) -> void:
-	var ev := InputEventMouseMotion.new()
-	ev.position = vp_pos * _to_window()
-	ev.global_position = ev.position
-	ev.button_mask = MOUSE_BUTTON_MASK_LEFT
-	root.push_input(ev)
-
-
-func _click_at(vp_pos: Vector2) -> void:
-	_mouse_button(vp_pos, true)
-	await process_frame
-	_mouse_button(vp_pos, false)
-	await process_frame
-
-
-func _click_ctl(ctl: Control) -> void:
-	await _click_at(ctl.get_global_rect().get_center())
-
-
-## Click a floating icon at the screen position its anchor projects to (L127: unproject_position(anchor) +
-## screen_offset). The spec does not say whether that point is the icon's corner or centre, so the click goes to the
-## projected point clamped 6 px inside the icon's rect, and the projected point must lie within 6 px of the rect.
-func _click_icon(icon: Control) -> void:
-	var anchor: Node3D = icon.get_node_or_null(icon.get("anchor_path")) as Node3D
-	var cam: Camera3D = root.get_viewport().get_camera_3d()
-	if anchor == null or cam == null:
-		ck(false, "icon %s: anchor or camera not found for the projected click" % icon.name)
-		await _click_ctl(icon)
-		return
-	var projected: Vector2 = cam.unproject_position(anchor.global_position) + (icon.get("screen_offset") as Vector2)
-	var rect: Rect2 = icon.get_global_rect()
-	ck(rect.grow(6.0).has_point(projected), "icon %s sits at its anchor's projected position %s (rect %s)" % [icon.name, str(projected), str(rect)])
-	var inside := Vector2(clampf(projected.x, rect.position.x + 6.0, rect.end.x - 6.0), clampf(projected.y, rect.position.y + 6.0, rect.end.y - 6.0))
-	await _click_at(inside)
-
-
-## Tree rects of everything that takes presses on the farm: a tap spot must be outside all of them.
-func _blocked(p: Vector2) -> bool:
-	for c in main.find_children("*", "Control", true, false):
-		var ctl: Control = c as Control
-		if ctl.is_visible_in_tree() and ctl.mouse_filter == Control.MOUSE_FILTER_STOP and ctl.get_global_rect().has_point(p):
-			return true
-	return false
-
-
-## A spot on the farm where a tap reaches _unhandled_input: the centrifuge on screen, else any free spot.
-func _crank_spot() -> Vector2:
-	var cam: Camera3D = root.get_viewport().get_camera_3d()
-	var cen: Node3D = _n(N_CENTRIFUGE) as Node3D
-	var candidates: Array[Vector2] = []
-	if cam != null and cen != null:
-		candidates.append(cam.unproject_position(cen.global_position))
-	candidates.append_array([Vector2(360.0, 640.0), Vector2(360.0, 520.0), Vector2(200.0, 480.0), Vector2(520.0, 480.0), Vector2(360.0, 760.0)])
-	for p in candidates:
-		if p.x > 0.0 and p.y > 0.0 and p.x < 720.0 and p.y < 1280.0 and not _blocked(p):
-			return p
-	ck(false, "no free spot on screen for a crank tap")
-	return Vector2(360.0, 640.0)
-
-
-# ---------------------------------------------------------------- the close-up (cells found without internal names)
-
-## The cells of the close-up: collision objects under Honeycomb, else its mesh instances. The spec names no cell nodes.
-func _cells(hc: Node) -> Array[Node3D]:
-	var out: Array[Node3D] = []
-	for n in hc.find_children("*", "CollisionObject3D", true, false):
-		out.append(n as Node3D)
-	if out.size() == 0:
-		for n in hc.find_children("*", "MeshInstance3D", true, false):
-			out.append(n as Node3D)
-	return out
-
-
-## Cell centres on screen, grouped into rows (top to bottom), each row sorted left to right.
-func _rows(hc: Node, cam: Camera3D) -> Array:
-	var pts: Array[Vector2] = []
-	for c in _cells(hc):
-		pts.append(cam.unproject_position(c.global_position))
-	var rows_n: int = int(_cv("grid_rows"))
-	var n: int = int(_cv("grid_cols")) * rows_n
-	if pts.size() != n:
-		ck(false, "found %d cells under Honeycomb, expected %d (the spec names no cell nodes; this test needs one collider or mesh per cell)" % [pts.size(), n])
-		return []
-	pts.sort_custom(func(a: Vector2, b: Vector2) -> bool: return a.y < b.y)
-	var pitch: float = (pts[n - 1].y - pts[0].y) / float(maxi(rows_n - 1, 1))
-	var rows: Array = []
-	var cur: Array[Vector2] = []
-	var row_y: float = pts[0].y
-	for p in pts:
-		if absf(p.y - row_y) > pitch * 0.5 and cur.size() > 0:
-			rows.append(cur)
-			cur = []
-			row_y = p.y
-		cur.append(p)
-	rows.append(cur)
-	for r in rows:
-		(r as Array).sort_custom(func(a: Vector2, b: Vector2) -> bool: return a.x < b.x)
-	return rows
-
-
-## Real mouse drag along one row of cells: press on the first cell, one motion event per frame, release at the last.
-func _drag_row(row: Array) -> void:
-	var first: Vector2 = row[0]
-	var last: Vector2 = row[row.size() - 1]
-	_mouse_button(first, true)
-	await process_frame
-	var steps: int = row.size() * 4
-	for s in range(1, steps + 1):
-		_mouse_move(first.lerp(last, float(s) / float(steps)))
-		await process_frame
-	_mouse_button(last, false)
-	await process_frame
-
-
-## The same drag with touch events (a finger): ScreenTouch down, ScreenDrag per frame, ScreenTouch up, through Input
-## so the engine's own touch handling runs. Honeycomb must react to a finger as well as to a mouse (L55).
-func _drag_row_touch(row: Array) -> void:
-	var first: Vector2 = row[0] * _to_window()
-	var last: Vector2 = row[row.size() - 1] * _to_window()
-	var down := InputEventScreenTouch.new()
-	down.index = 0
-	down.pressed = true
-	down.position = first
-	Input.parse_input_event(down)
-	Input.flush_buffered_events()
-	await process_frame
-	var steps: int = row.size() * 4
-	var prev: Vector2 = first
-	for s in range(1, steps + 1):
-		var p: Vector2 = first.lerp(last, float(s) / float(steps))
-		var mv := InputEventScreenDrag.new()
-		mv.index = 0
-		mv.position = p
-		mv.relative = p - prev
-		prev = p
-		Input.parse_input_event(mv)
-		Input.flush_buffered_events()
-		await process_frame
-	var up := InputEventScreenTouch.new()
-	up.index = 0
-	up.pressed = false
-	up.position = last
-	Input.parse_input_event(up)
-	Input.flush_buffered_events()
-	await process_frame
-
-
-func _cell_state(hc: Node, i: int) -> int:
-	return int(hc.call("get_state", i)) if hc.has_method("get_state") else -1
-
-
-func _count_state(hc: Node, state: int) -> int:
-	var n: int = int(_cv("grid_cols")) * int(_cv("grid_rows"))
-	var k: int = 0
-	for i in n:
-		if _cell_state(hc, i) == state:
-			k += 1
-	return k
-
-
-## Open the close-up through the fork icon and wait for it (slide-in up to 0.4 s camera + 0.3 s frame).
-func _open_closeup() -> Node:
-	var fork: Control = _n(N_FORK_ICON) as Control
-	await _click_icon(fork)
-	var opened: bool = await _until(func() -> bool: return main.find_child(N_HONEYCOMB, true, false) != null, 3.0)
-	ck(opened, "tapping the fork icon opened the close-up (Honeycomb appeared)")
-	await _wait(0.9)
-	return main.find_child(N_HONEYCOMB, true, false)
-
-
-func _centroid(n: Node3D) -> Vector3:
-	var sum := Vector3.ZERO
-	var k: int = 0
-	for m in n.find_children("*", "MeshInstance3D", true, false):
-		sum += (m as Node3D).global_position
-		k += 1
-	return sum / float(maxi(k, 1))
-
-
-# ---------------------------------------------------------------- the run
-
-func _run() -> void:
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SHOT_DIR))
-	var eco: Node = root.get_node("Economy")
-	if eco.has_method("reset"):
-		eco.call("reset")
-	var ps: Variant = load(MAIN_SCENE)
-	if ps == null:
-		_abort("%s failed to load" % MAIN_SCENE)
-		return
-	main = (ps as PackedScene).instantiate()
-	if main == null:
-		_abort("main.tscn failed to instantiate")
-		return
-	root.add_child(main)
-	await _frames(10)
-	print("window size ", DisplayServer.window_get_size(), " viewport ", root.get_visible_rect().size)
-
-	var hive: Node = _n(N_HIVE)
-	var cen: Node = _n(N_CENTRIFUGE)
-	var truck: Node = _n(N_TRUCK)
-	var farm: Node3D = _n(N_FARM_WORLD) as Node3D
-	var bees: Node = _n(N_BEES)
-	var fork: Control = _n(N_FORK_ICON) as Control
-	var cicon: Control = _n(N_CENTRIFUGE_ICON) as Control
-	var sell: Control = _n(N_SELL_ICON) as Control
-	var cont: Control = _n(N_CONTINUE) as Control
-	var summary: Control = _n(N_SUMMARY) as Control
-	var upgrade: Button = _n(N_UPGRADE) as Button
-	var crank_label: Label = _n(N_CRANK_LABEL) as Label
-	var money_label: Label = _n(N_MONEY) as Label
-	var bee_label: Label = _n(N_BEE_LABEL) as Label
-	var fill_label: Label = _n(N_FILL_LABEL) as Label
-	for n in [hive, cen, truck, farm, bees, fork, cicon, sell, cont, summary, upgrade, crank_label, money_label, bee_label, fill_label]:
-		if n == null:
-			_abort("a required node is missing; see the lines above")
-			return
-
-	var J: int = int(_cv("frame_jars"))
-	var TAPS: int = int(_cv("taps_per_frame"))
-	var RATE: float = float(_cv("max_tap_rate"))
-	var SPJ: float = float(_cv("bottling_seconds_per_jar"))
-	var CAP: int = int(_cv("truck_capacity_jars"))
-	var PER: int = int(eco.call("jar_value"))
-	var GAP: float = 1.0 / RATE + 0.03   # one counted tap per GAP: clear of the cap
-	var CRANKING_S: int = -1
-	var bees_base: int = int(eco.call("bee_count"))
-
-	# ---- start state (L53, L30, L26)
-	ck(main.find_child(N_JARS_LABEL_REMOVED, true, false) == null, "JarsLabel removed (L30)")
-	for old in N_OLD_NODES_REMOVED:
-		ck(main.find_child(old, true, false) == null, "%s removed in revision 3 (L19-L27)" % old)
-	ck(not _vis(fork) and not _vis(cicon) and not _vis(cont) and not _vis(sell) and not _vis(summary), "no icon, Continue or summary at start")
-	eq(money_label.text, "$0", "MoneyLabel at start")
-	eq(bee_label.text, "Bees: %d" % bees_base, "BeeCountLabel at start")
-	ck(upgrade.disabled, "UpgradeButton disabled with $0")
-	await _wait(2.0)
-	ck(float(hive.get("storage")) > 0.0, "the hive filled in real time (storage %.2f)" % float(hive.get("storage")))
-	ck(fill_label.text.begins_with("Hive: "), "FillLabel format: " + fill_label.text)
-
-	# =============================================================== ROUND 1
-	print("=== round 1 ===")
-	# CHEAT (Dev action): exactly one frame in the hive, overflow empty, so Back's "storage unchanged" can fail.
-	hive.call("advance", float(J) * float(_cv("base_seconds_per_jar")), 1.0)
-	await _frames(4)
-	ck(hive.call("is_full"), "round 1: hive full")
-	ck(float(hive.get("overflow")) < float(J) * 0.5, "round 1: overflow well under a frame (%s)" % str(hive.get("overflow")))
-	eq(cen.get("state"), _st(cen, "EMPTY"), "round 1: centrifuge EMPTY")
-	ck(_vis(fork), "round 1: fork icon floats above the full hive (L54)")
-	ck(fork.size.x >= 120.0 and fork.size.y >= 120.0, "round 1: fork icon touch area >= 120 x 120 (%s)" % str(fork.size))
-	ck(not _vis(cicon) and not _vis(cont), "round 1: centrifuge icon and Continue hidden")
-	var storage_before: float = float(hive.get("storage"))
-	await _shot("r3-1-farm-fork")
-
-	# ---- fork -> close-up (L55)
-	var hc: Node = await _open_closeup()
-	if hc == null:
-		_abort("no Honeycomb after tapping the fork icon")
-		return
-	var cam: Camera3D = root.get_viewport().get_camera_3d()
-	ck(not farm.visible, "round 1: FarmWorld hidden in the close-up")
-	ck(not _vis(fork) and not _vis(upgrade), "round 1: farm UI hidden in the close-up")
-	ck(cam != null and cam.get_parent() != null and cam.get_parent().name == HARVEST_ROOT, "round 1: the close-up camera is current")
-	var back: Control = _n(N_BACK) as Control
-	if back == null:
-		_abort("no BackButton in the close-up")
-		return
-	ck(back.size.y >= 120.0, "round 1: BackButton at least 120 px high (%s)" % str(back.size.y))
-	eq(_count_state(hc, 0), int(_cv("grid_cols")) * int(_cv("grid_rows")), "round 1: all cells start Capped (35)")
-	var rows: Array = _rows(hc, cam)
-	if rows.size() == 0:
-		_abort("cannot locate the cells for the drag")
-		return
-	eq(rows.size(), int(_cv("grid_rows")), "round 1: the cells form grid_rows screen rows")
-
-	# ---- a real drag uncaps (L55); positive control: nothing was uncapped before it
-	eq(_count_state(hc, 1), 0, "round 1: nothing uncapped before the drag")
-	await _drag_row(rows[0])
-	var uncapped: int = _count_state(hc, 1)
-	ck(uncapped >= int(_cv("grid_cols")), "round 1: a real mouse drag along one row uncaps at least that row (%d cells)" % uncapped)
-	ck(uncapped < int(_cv("grid_cols")) * int(_cv("grid_rows")), "round 1: a one-row drag does not uncap the whole frame (%d)" % uncapped)
-	await _shot("r3-2-closeup-partial")
-
-	# ---- Back (L56, L227)
-	await _click_ctl(back)
-	await _wait(0.9)
-	ck(_gone(N_HONEYCOMB), "round 1: Back freed the close-up")
-	ck(farm.visible, "round 1: back on the farm")
-	ck(float(hive.get("storage")) >= storage_before - 0.0001, "round 1: hive storage unchanged after Back (before %s, now %s): the frame is still in the hive" % [str(storage_before), str(hive.get("storage"))])
-	ck(hive.call("is_full"), "round 1: hive still full after Back")
-	eq(cen.get("state"), _st(cen, "EMPTY"), "round 1: centrifuge still EMPTY after Back")
-	ck(_vis(fork), "round 1: the fork icon shows again after Back")
-
-	# ---- reopen: the cells reset to Capped (L56)
-	hc = await _open_closeup()
-	if hc == null:
-		_abort("no Honeycomb on the second open")
-		return
-	cam = root.get_viewport().get_camera_3d()
-	eq(_count_state(hc, 0), int(_cv("grid_cols")) * int(_cv("grid_rows")), "round 1: the next open shows every cell Capped again")
-	rows = _rows(hc, cam)
-	if rows.size() == 0:
-		_abort("cannot locate the cells for the second drag")
-		return
-
-	# ---- the full uncap by real drags, row by row (L57)
-	var hint: Label = _n(N_HINT) as Label
-	for r in rows.size() - 1:
-		await _drag_row(rows[r])
-	var n_cells: int = int(_cv("grid_cols")) * int(_cv("grid_rows"))
-	ck(_count_state(hc, 1) < n_cells, "round 1: one row short, the frame is not done")
-	ck(hint != null and hint.text != "All cells uncapped!", "round 1: hint not final yet")
-	await _drag_row(rows[rows.size() - 1])
-	ck(hc.call("all_uncapped"), "round 1: every cell uncapped by real drags (%d of %d)" % [_count_state(hc, 1), n_cells])
-	ck(hint != null and hint.text == "All cells uncapped!", "round 1: hint reads 'All cells uncapped!' (got '%s')" % (hint.text if hint != null else "null"))
-	var closed: bool = await _until(func() -> bool: return _gone(N_HONEYCOMB), 4.0)
-	ck(closed, "round 1: the close-up closed by itself after the last cell (about 0.5 s plus the slide)")
-	await _frames(3)
-	ck(farm.visible, "round 1: the farm returned")
-	ck(float(hive.get("storage")) < float(J) - 0.5, "round 1: take_frame() ran, the hive gave up the frame (storage %s)" % str(hive.get("storage")))
-	eq(cen.get("state"), _st(cen, "FULL"), "round 1: centrifuge FULL")
-	eq(cen.get("jars_total"), J, "round 1: centrifuge holds the frame's jars")
-
-	# ---- FULL (L59, state table): centrifuge icon shown, nothing spins until tapped
-	hive.call("advance", 100000.0, 1.0)   # CHEAT (Dev: fill the hive now): a full hive, to prove the fork stays hidden
-	await _frames(4)
-	ck(hive.call("is_full"), "round 1: hive full again")
-	ck(not _vis(fork), "round 1: fork hidden while the centrifuge holds a frame, although the hive is full (L54)")
-	ck(_vis(cicon), "round 1: centrifuge icon floats above the full centrifuge")
-	ck(cicon.size.x >= 120.0 and cicon.size.y >= 120.0, "round 1: centrifuge icon touch area >= 120 x 120 (%s)" % str(cicon.size))
-	ck(not _vis(cont), "round 1: Continue hidden")
-	eq(cen.get("state"), _st(cen, "FULL"), "round 1: nothing spins before the tap (still FULL)")
-	await _shot("r3-3-farm-centrifuge-icon")
-
-	# ---- centrifuge icon starts cranking (L60)
-	await _click_icon(cicon)
-	await _frames(3)
-	CRANKING_S = _st(cen, "CRANKING")
-	eq(cen.get("state"), CRANKING_S, "round 1: tapping the centrifuge icon starts CRANKING")
-	ck(not _vis(cicon), "round 1: the centrifuge icon hides")
-	ck(not _vis(fork), "round 1: fork hidden while cranking")
-	ck(_vis(crank_label), "round 1: the centrifuge label shows while cranking")
-	ck(crank_label.text.to_lower().contains("tap or hold"), "round 1: hint 'Tap or hold to spin' while waiting for the first tap (got '%s')" % crank_label.text)
-	await _shot("r3-4-farm-cranking")
-
-	# ---- real taps (L61)
-	var spot: Vector2 = _crank_spot()
-	var k_taps: int = TAPS / 4
-	for i in k_taps:
-		await _click_at(spot)
-		await _wait(GAP)
-	var lo: int = int(floorf(float(k_taps) * float(J) / float(TAPS)))
-	var hi: int = int(ceilf(float(k_taps) * float(J) / float(TAPS)))
-	var got: int = int(cen.get("jars_extracted"))
-	ck(got >= lo and got <= hi, "round 1: %d real clicks spaced past the cap extract %d to %d jars (got %d)" % [k_taps, lo, hi, got])
-	ck(crank_label.text.contains(str(got)) and crank_label.text.to_lower().contains("honey"), "round 1: label shows the progress 'Honey: n / %d' (got '%s')" % [J, crank_label.text])
-
-	# ---- a click on UpgradeButton during CRANKING is not a crank (L61, Done-when)
-	# Positive control first: clicks on a free spot, spaced past the cap, DO advance the extraction.
-	var per_jar_turns: int = int(ceilf(float(TAPS) / float(J)))
-	var before_ctrl: int = int(cen.get("jars_extracted"))
-	for i in per_jar_turns * 2:
-		await _click_at(spot)
-		await _wait(GAP)
-	var after_ctrl: int = int(cen.get("jars_extracted"))
-	ck(after_ctrl > before_ctrl, "round 1: positive control, %d free-spot clicks advanced the extraction (%d -> %d)" % [per_jar_turns * 2, before_ctrl, after_ctrl])
-	ck(upgrade.is_visible_in_tree() and upgrade.disabled and int(eco.get("money")) < int(eco.call("swarm_cost")), "round 1: UpgradeButton visible and disabled with $0")
-	var before_btn: int = int(cen.get("jars_extracted"))
-	for i in per_jar_turns * 2:
-		await _click_ctl(upgrade)
-		await _wait(GAP)
-	eq(cen.get("jars_extracted"), before_btn, "round 1: %d clicks on UpgradeButton during CRANKING did not crank" % (per_jar_turns * 2))
-	eq(cen.get("state"), CRANKING_S, "round 1: still CRANKING")
-	eq(eco.get("swarm_level"), 0, "round 1: a disabled UpgradeButton bought nothing")
-
-	# ---- one real hold finishes the frame (L62)
-	var turns_done: int = k_taps + per_jar_turns * 2   # every spaced click counted exactly one turn
-	var expected_hold: float = float(TAPS - turns_done - 1) / RATE   # the press counts one turn, then RATE per second
-	var t0: int = Time.get_ticks_msec()
-	_mouse_button_os(spot, true)
-	var finished: bool = await _until(func() -> bool: return int(cen.get("state")) != CRANKING_S, expected_hold * 3.0 + 10.0)
-	var held: float = float(Time.get_ticks_msec() - t0) / 1000.0
-	_mouse_button_os(spot, false)
-	ck(finished, "round 1: the hold finished the frame")
-	near(held, expected_hold, "round 1: real hold finish time ((taps - counted - 1) / max_tap_rate)", 0.4)
-	eq(cen.get("state"), _st(cen, "DONE"), "round 1: DONE after the hold")
-	eq(cen.get("jars_extracted"), J, "round 1: all jars extracted")
-
-	# ---- DONE: Continue (L64)
-	await _frames(4)
-	ck(_vis(cont), "round 1: Continue shown when extraction is done")
-	ck(cont.size.y >= 120.0, "round 1: Continue at least 120 px high (%s)" % str(cont.size.y))
-	ck(cont.get_global_rect().get_center().y >= 640.0, "round 1: Continue in the lower half of the screen")
-	ck(not _vis(fork) and not _vis(cicon), "round 1: fork and centrifuge icon hidden in DONE")
-	await _shot("r3-5-farm-done-continue")
-
-	# ---- Continue -> bottling (L65)
-	await _click_ctl(cont)
-	await _frames(3)
-	eq(cen.get("state"), _st(cen, "BOTTLING"), "round 1: Continue opens the spigot (BOTTLING)")
-	ck(not _vis(cont), "round 1: Continue hides itself")
-	var t_bottle: int = Time.get_ticks_msec()
-	var jar_times: Array = []
-	var seen_loaded: int = int(truck.get("loaded_jars"))
-	while int(cen.get("state")) == _st(cen, "BOTTLING") and float(Time.get_ticks_msec() - t_bottle) < (SPJ * J + 15.0) * 1000.0:
-		await process_frame
-		var l: int = int(truck.get("loaded_jars"))
-		if l > seen_loaded:
-			jar_times.append(float(Time.get_ticks_msec() - t_bottle) / 1000.0)
-			seen_loaded = l
-		if jar_times.size() == 1:
-			ck(not _vis(fork), "round 1: fork hidden while bottling although the hive is full")
-			ck(not _vis(summary), "round 1: summary not shown before the last jar")
-	var bottle_total: float = float(Time.get_ticks_msec() - t_bottle) / 1000.0
-	near(bottle_total, SPJ * float(J), "round 1: bottling takes jars x bottling_seconds_per_jar", 0.6)
-	eq(jar_times.size(), J, "round 1: each jar loaded onto the truck one at a time")
-	for k in jar_times.size():
-		near(float(jar_times[k]), SPJ * float(k + 1), "round 1: jar %d loaded at k x bottling_seconds_per_jar" % (k + 1), 0.6)
-	eq(truck.get("loaded_jars"), J, "round 1: the truck holds the batch")
-	eq(truck.get("crate_jars"), 0, "round 1: the crate stayed empty while the truck was home")
-	eq(cen.get("state"), _st(cen, "EMPTY"), "round 1: the centrifuge is empty again")
-	await _frames(3)
-
-	# ---- summary and OK (L65)
-	ck(_vis(summary), "round 1: the batch summary shows on the farm")
-	ck((_n(N_SUMMARY_JARS) as Label).text.contains(str(J)), "round 1: summary jars: " + (_n(N_SUMMARY_JARS) as Label).text)
-	ck((_n(N_SUMMARY_VALUE) as Label).text.contains("$%d" % PER), "round 1: summary value per jar: " + (_n(N_SUMMARY_VALUE) as Label).text)
-	var bonus_txt: String = (_n(N_SUMMARY_BONUS) as Label).text
-	ck(bonus_txt.contains("Tool bonus: $0") and bonus_txt.contains("Quality bonus: $0"), "round 1: bonuses are $0: " + bonus_txt)
-	eq((_n(N_SUMMARY_TOTAL) as Label).text, "Batch total: $%d" % (J * PER), "round 1: batch total")
-	eq(eco.get("money"), 0, "round 1: no money before the Sell tap (L66)")
-	var ok_btn: Control = _n(N_SUMMARY_OK) as Control
-	ck(ok_btn.size.y >= 120.0, "round 1: OK at least 120 px high (%s)" % str(ok_btn.size.y))
-	ck(ok_btn.get_global_rect().get_center().y >= 640.0, "round 1: OK in the lower half of the screen")
-	await _shot("r3-6-farm-summary")
-	await _click_ctl(ok_btn)
-	await _frames(3)
-	ck(not _vis(summary), "round 1: OK closes the summary")
-
-	# ---- Sell icon (L66)
-	ck(_vis(sell), "round 1: the Sell icon floats above the full truck at home")
-	ck(sell.size.y >= 120.0, "round 1: Sell icon at least 120 px high (%s)" % str(sell.size.y))
-	var sell_text: String = (sell as Button).text
-	ck(sell_text.contains("Sell") and sell_text.contains("$%d" % (CAP * PER)), "round 1: Sell icon reads 'Sell $%d' (got '%s')" % [CAP * PER, sell_text])
-	var home_pos: Vector3 = _centroid(truck as Node3D)
-	_set_cfg("truck_trip_seconds", float(_cv("truck_trip_seconds")) * 2.0)   # CHEAT: the truck stays away through round 2's bottling
-	var trip: float = float(_cv("truck_trip_seconds"))
-	await _click_icon(sell)
-	await _frames(2)
-	eq(eco.get("money"), CAP * PER, "round 1: money credited at the tap, not at the truck's return")
-	ck(truck.get("away"), "round 1: the truck is away")
-	eq(truck.get("loaded_jars"), 0, "round 1: the truck is empty")
-	ck(not _vis(sell), "round 1: the Sell icon is hidden while the truck is away")
-	eq(money_label.text, "$%d" % (CAP * PER), "round 1: MoneyLabel")
-	await _wait(5.0)
-	ck(_centroid(truck as Node3D).distance_to(home_pos) > 0.5, "round 1: the truck slid away from home (moved %.2f)" % _centroid(truck as Node3D).distance_to(home_pos))
-	await _shot("r3-7-farm-truck-away")
-
-	# =============================================================== ROUND 2
-	print("=== round 2 ===")
-	# the hive is full (cheat above); the truck is away
-	await _frames(2)
-	ck(hive.call("is_full"), "round 2: hive full")
-	ck(_vis(fork), "round 2: fork icon shows again (centrifuge EMPTY)")
-	hc = await _open_closeup()
-	if hc == null:
-		_abort("round 2: no Honeycomb")
-		return
-	cam = root.get_viewport().get_camera_3d()
-	eq(_count_state(hc, 0), n_cells, "round 2: the frame starts all Capped (L68)")
-	rows = _rows(hc, cam)
-	if rows.size() == 0:
-		_abort("round 2: cannot locate cells")
-		return
-	await _drag_row_touch(rows[0])   # a finger, not a mouse
-	ck(_count_state(hc, 1) >= int(_cv("grid_cols")), "round 2: a touch drag uncaps a row (%d cells)" % _count_state(hc, 1))
-	for r in range(1, rows.size()):
-		await _drag_row(rows[r])
-	if not hc.call("all_uncapped"):
-		await _drag_row(rows[0])   # the touch drag may have missed cells on a device without touch emulation; finish with the mouse
-	ck(hc.call("all_uncapped"), "round 2: every cell uncapped")
-	closed = await _until(func() -> bool: return _gone(N_HONEYCOMB), 4.0)
-	ck(closed, "round 2: the close-up closed by itself")
-	await _frames(3)
-	hive.call("advance", 100000.0, 1.0)   # CHEAT (Dev: fill the hive now)
-	await _frames(3)
-	eq(cen.get("state"), _st(cen, "FULL"), "round 2: centrifuge FULL")
-	ck(_vis(cicon), "round 2: centrifuge icon shown")
-	await _click_icon(cicon)
-	await _frames(3)
-	eq(cen.get("state"), CRANKING_S, "round 2: CRANKING")
-	spot = _crank_spot()
-	# a hold from the first press: (taps_per_frame - 1) / max_tap_rate
-	var exp2: float = float(TAPS - 1) / RATE
-	t0 = Time.get_ticks_msec()
-	_mouse_button_os(spot, true)
-	finished = await _until(func() -> bool: return int(cen.get("state")) != CRANKING_S, exp2 * 3.0 + 10.0)
-	held = float(Time.get_ticks_msec() - t0) / 1000.0
-	_mouse_button_os(spot, false)
-	ck(finished, "round 2: the hold finished the frame")
-	near(held, exp2, "round 2: real hold from the first press, (taps_per_frame - 1) / max_tap_rate", 0.4)
-	await _frames(4)
-	ck(_vis(cont), "round 2: Continue shown")
-	await _click_ctl(cont)
-	await _frames(3)
-	eq(cen.get("state"), _st(cen, "BOTTLING"), "round 2: BOTTLING")
-
-	# ---- the truck is away: bottled jars fill the crate (L65)
-	ck(truck.get("away"), "round 2: the truck is still away while bottling starts")
-	var crate_ok: bool = await _until(func() -> bool: return int(truck.get("crate_jars")) >= 2, SPJ * 4.0 + 5.0)
-	ck(crate_ok, "round 2: jars bottled while the truck is away fill the crate (crate %s)" % str(truck.get("crate_jars")))
-	eq(truck.get("loaded_jars"), 0, "round 2: nothing loaded on the away truck")
-	await _shot("r3-8-farm-crate-filling")
-
-	# ---- one purchase mid-harvest, while bottling (L67)
-	var cost: int = int(eco.call("swarm_cost"))
-	ck(int(eco.get("money")) >= cost, "round 2: money %s covers the Worker Swarm Count cost %d" % [str(eco.get("money")), cost])
-	ck(not upgrade.disabled, "round 2: UpgradeButton enabled while bottling (the shop works at every stage)")
-	var money_before: int = int(eco.get("money"))
-	await _click_ctl(upgrade)
-	await _frames(3)
-	eq(eco.get("swarm_level"), 1, "round 2: Worker Swarm Count level 1 bought mid-harvest")
-	eq(eco.get("money"), money_before - cost, "round 2: money after the purchase")
-	eq(bee_label.text, "Bees: %d" % (bees_base + int(_cv("bees_per_swarm_level"))), "round 2: BeeCountLabel after the purchase")
-	eq(int(bees.call("drawn_count")), bees_base + int(_cv("bees_per_swarm_level")), "round 2: drawn bees after the purchase")
-	ck(upgrade.disabled, "round 2: UpgradeButton disabled again (cannot afford the next level)")
-	eq(cen.get("state"), _st(cen, "BOTTLING"), "round 2: the purchase did not disturb bottling")
-
-	# ---- finish bottling: every jar in the crate, none lost
-	var bottled: bool = await _until(func() -> bool: return int(cen.get("state")) == _st(cen, "EMPTY"), SPJ * float(J) + 10.0)
-	ck(bottled, "round 2: bottling finished")
-	await _frames(3)
-	if truck.get("away"):
-		eq(int(truck.get("crate_jars")) + int(truck.get("loaded_jars")), J, "round 2: jars conserved: crate + truck = the batch")
-		eq(truck.get("loaded_jars"), 0, "round 2: all the batch is in the crate while the truck is away")
-	ck(_vis(summary), "round 2: summary shown")
-	await _click_ctl(_n(N_SUMMARY_OK) as Control)
-	await _frames(3)
-	ck(not _vis(summary), "round 2: OK closes the summary")
-
-	# ---- the truck returns and loads the crate (L66)
-	var back_home: bool = await _until(func() -> bool: return not truck.get("away"), trip + 15.0)
-	ck(back_home, "round 2: the truck came back")
-	await _frames(4)
-	eq(truck.get("loaded_jars"), mini(CAP, J), "round 2: the crate loaded onto the returned truck up to its capacity")
-	eq(int(truck.get("crate_jars")), maxi(J - CAP, 0), "round 2: the rest stays in the crate")
-	ck(_vis(sell), "round 2: the Sell icon shows on the full truck")
-	var m2: int = int(eco.get("money"))
-	await _click_icon(sell)
-	await _frames(2)
-	eq(eco.get("money"), m2 + CAP * PER, "round 2: Sell credited at the tap")
-	ck(truck.get("away"), "round 2: the truck is away again")
-
-	# ---- done
-	for k in _cfg_saved:
-		root.get_node("Economy").get("config").set(k, _cfg_saved[k])
-	print("---- %d checks, %d failed" % [checks, fails])
-	print("COMPLETED")
-	quit(1 if fails > 0 else 0)
-
-
-## Enum member of the centrifuge's state, wherever the enum lives (the spec names the states, not the enum).
 func _st(o: Object, state_name: String) -> int:
 	var map: Dictionary = (o.get_script() as GDScript).get_script_constant_map()
 	for k in map:
@@ -747,3 +164,388 @@ func _st(o: Object, state_name: String) -> int:
 			return int((v as Dictionary)[state_name])
 	ck(false, "no enum member %s in the centrifuge script" % state_name)
 	return -999
+
+
+func _n(name: String) -> Node:
+	var n: Node = main.find_child(name, true, false)
+	if n == null:
+		print("FAIL  node missing (spec: Node paths for Bob): ", name)
+		fails += 1
+		checks += 1
+	return n
+
+
+# ---------------------------------------------------------------- the zoom, through real input
+
+func _zoom_settle() -> float:
+	return float(_cv("zoom_seconds")) + float(_cv("lid_drop_seconds")) + float(_cv("slide_seconds")) + 0.5
+
+
+func _open_zoom(tag: String) -> bool:
+	var fork: Control = P["ForkIcon"]
+	ck(_vis(fork), "%s: the fork icon floats above the hive" % tag)
+	var on: bool = await fi.click_icon(fork)
+	ck(on, "%s: the fork icon sits at its anchor's projected position" % tag)
+	var raised: bool = await _until(func() -> bool: return int(tr["risen"]) >= 0, 3.0)
+	await _wait(_zoom_settle())
+	ck(raised, "%s: tapping the fork raised a frame" % tag)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	near(cam.size, float(_cv("zoom_size")), "%s: the camera is at zoom_size" % tag, 0.05)
+	ck(not _vis(fork) and not _vis(P["UpgradeButton"]) and not _vis(P["CentrifugeIcon"]), "%s: the farm UI is hidden in the zoom" % tag)
+	ck(_vis(P["BackButton"]), "%s: BackButton shows" % tag)
+	return raised
+
+
+func _risen_cells_capped() -> int:
+	return fi.capped(P["Hive"], int(tr["risen"])) if int(tr["risen"]) >= 0 else 0
+
+
+## Real drags, row by row, over the risen frame until no Capped cell is left on it or the zoom moved on.
+func _scrape_risen(touch_first: bool = false) -> int:
+	var f: int = int(tr["risen"])
+	var hc: Node = main.find_child("Honeycomb", true, false)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	var first: bool = touch_first
+	for pass_i in 5:
+		if int(tr["risen"]) != f or fi.capped(P["Hive"], f) == 0:
+			break
+		for r in fi.rows(hc, cam):
+			if int(tr["risen"]) != f or fi.capped(P["Hive"], f) == 0:
+				break
+			if first:
+				await fi.drag_row_touch(r)   # a finger, not a mouse
+				first = false
+			else:
+				await fi.drag_row(r)
+	return f
+
+
+func _next_frame(was: int) -> bool:
+	var moved: bool = await _until(func() -> bool: return int(tr["risen"]) >= 0 and int(tr["risen"]) != was, 4.0)
+	await _wait(float(_cv("slide_seconds")) + 0.45)
+	return moved
+
+
+func _zoom_out_wait() -> void:
+	await _wait(_zoom_settle() + float(_cv("zoom_seconds")) + float(_cv("lid_drop_seconds")) + float(_cv("close_delay_seconds")))
+
+
+## Spin icon, then spaced real clicks until DONE (or one real hold). Returns the number of counted turns by this call.
+func _crank(tag: String, use_hold: bool) -> void:
+	var cen: Node = P["Centrifuge"]
+	var cicon: Control = P["CentrifugeIcon"]
+	ck(_vis(cicon), "%s: Spin shows" % tag)
+	ck(cicon.size.x >= 120.0 and cicon.size.y >= 120.0, "%s: Spin touch area at least 120 x 120 (%s)" % [tag, str(cicon.size)])
+	var cells: int = int(cen.get("cells"))
+	await fi.click_icon(cicon)
+	await _frames(3)
+	var cranking: int = _st(cen, "CRANKING")
+	eq(cen.get("state"), cranking, "%s: tapping Spin starts CRANKING" % tag)
+	ck(not _vis(cicon), "%s: Spin hides while cranking" % tag)
+	var spot: Vector2 = fi.free_spot(main)
+	var rate: float = float(_cv("max_tap_rate"))
+	var gap: float = 1.0 / rate + 0.03
+	var need: int = _turns_for(cells)
+	var done_turns: int = int(cen.get("turns_counted"))
+	if use_hold:
+		var expected: float = float(need - done_turns - 1) / rate   # the press counts one turn, then max_tap_rate per second
+		var t0: int = Time.get_ticks_msec()
+		_mouse_button_os(spot, true)
+		var finished: bool = await _until(func() -> bool: return int(cen.get("state")) != cranking, expected * 3.0 + 10.0)
+		var held: float = float(Time.get_ticks_msec() - t0) / 1000.0
+		_mouse_button_os(spot, false)
+		ck(finished, "%s: the hold finished the cranking" % tag)
+		near(held, expected, "%s: real hold time (turns - counted - 1) / max_tap_rate" % tag, 0.4)
+	else:
+		var sent: int = 0
+		while int(cen.get("state")) == cranking and sent < need + 6:
+			await fi.click_at(spot)
+			await _wait(gap)
+			sent += 1
+		eq(sent, need - done_turns, "%s: ceil(jars x taps_per_jar) real clicks in all (%d turns for %d cells)" % [tag, need, cells])
+	eq(cen.get("state"), _st(cen, "DONE"), "%s: DONE" % tag)
+	await _frames(4)
+
+
+## Continue, bottling (the jars go to the truck or the crate), the summary and its OK. Returns the jars bottled.
+func _bottle(tag: String, mid: Callable = Callable()) -> int:
+	var cen: Node = P["Centrifuge"]
+	var truck: Node = P["Truck"]
+	var cont: Control = P["ContinueButton"]
+	ck(_vis(cont), "%s: Continue shows" % tag)
+	ck(cont.size.y >= 120.0, "%s: Continue at least 120 px high" % tag)
+	var cells: int = int(cen.get("cells"))
+	var lo: Variant = cen.get("leftover_jars")
+	ck(lo != null, "%s: centrifuge.gd has leftover_jars" % tag)
+	var leftover0: float = float(lo) if lo != null else 0.0
+	var want: int = int(floorf(_jars_of(cells) + leftover0 + 0.000001))
+	var before: int = int(truck.get("loaded_jars")) + int(truck.get("crate_jars"))
+	await fi.click_ctl(cont)
+	await _frames(3)
+	eq(cen.get("state"), _st(cen, "BOTTLING"), "%s: Continue opens the spigot" % tag)
+	if mid.is_valid():
+		await _wait(float(_cv("bottling_seconds_per_jar")) * 1.5)
+		await mid.call()
+	var shown: bool = await _until(func() -> bool: return _vis(P["SummaryModal"]), 20.0)
+	ck(shown, "%s: the summary shows after bottling" % tag)
+	var after: int = int(truck.get("loaded_jars")) + int(truck.get("crate_jars"))
+	eq(after - before, want, "%s: floor(jars + carried leftover) = %d jars bottled" % [tag, want])
+	await fi.click_ctl(P["SummaryOkButton"] as Control)
+	await _frames(3)
+	return want
+
+
+# ---------------------------------------------------------------- the run
+
+func _run() -> void:
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SHOT_DIR))
+	fi = FarmInput.new(self)
+	var eco: Node = root.get_node("Economy")
+	if eco.has_method("reset"):
+		eco.call("reset")
+	var ps: Variant = load(MAIN_SCENE)
+	if ps == null:
+		_abort("%s failed to load" % MAIN_SCENE)
+		return
+	main = (ps as PackedScene).instantiate()
+	root.add_child(main)
+	await _frames(10)
+	for nm in ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon", "ContinueButton", "UpgradeButton",
+			"BackButton", "HintLabel", "SummaryModal", "SummaryOkButton", "CentrifugeLabel", "MoneyLabel", "FillLabel", "BeeCountLabel", "Bees"]:
+		P[nm] = _n(nm)
+		if P[nm] == null:
+			_abort("a required node is missing; see the lines above")
+			return
+	var hive: Node = P["Hive"]
+	var cen: Node = P["Centrifuge"]
+	var pile: Node = P["Pile"]
+	var truck: Node = P["Truck"]
+	var upgrade: Button = P["UpgradeButton"]
+	hive.connect("frame_raised", func(i: Variant) -> void:
+		tr["risen"] = int(i)
+		(tr["raised"] as Array).append(int(i)))
+	hive.connect("frame_lowered", func(i: Variant) -> void:
+		(tr["lowered"] as Array).append(int(i))
+		if int(tr["risen"]) == int(i):
+			tr["risen"] = -1)
+	hive.connect("lid_moved", func(o: Variant) -> void: (tr["lid"] as Array).append(bool(o)))
+	var NF: int = int(_cv("frames_per_hive"))
+	var CPF: int = _cpf()
+	var CAP_CELLS: int = int(_cv("centrifuge_capacity_frames")) * CPF
+	var TOTAL: int = NF * CPF
+	var JARS: int = NF * int(_cv("frame_jars"))
+	var TRUCK_CAP: int = int(_cv("truck_capacity_jars"))
+	var PER: int = int(eco.call("jar_value"))
+	var bees_base: int = int(eco.call("bee_count"))
+
+	# ---- start state; focus item 7: the disabled UpgradeButton renders its disabled style even when told to take focus
+	ck(main.find_child("Harvest", true, false) == null, "no Harvest close-up root (harvest.tscn retired)")
+	ck(not _vis(P["ForkIcon"]) and not _vis(P["CentrifugeIcon"]) and not _vis(P["ContinueButton"]) and not _vis(P["SellIcon"]) and not _vis(P["SummaryModal"]), "no icon, Continue or summary at start")
+	eq((P["MoneyLabel"] as Label).text, "$0", "MoneyLabel at start")
+	eq((P["BeeCountLabel"] as Label).text, "Bees: %d" % bees_base, "BeeCountLabel at start")
+	ck(upgrade.disabled, "UpgradeButton disabled with $0")
+	upgrade.grab_focus()
+	await _frames(3)
+	ck(not upgrade.has_focus(), "item 7: grab_focus() did not focus the disabled UpgradeButton (focus_mode None)")
+	var img0: Image = await _shot("r4-0-farm-start")
+	var bg: Color = _dominant(img0, upgrade.get_global_rect())
+	ck(absf(bg.r8 - DISABLED_BG.r8) <= 2 and absf(bg.g8 - DISABLED_BG.g8) <= 2 and absf(bg.b8 - DISABLED_BG.b8) <= 2, "item 7: the disabled UpgradeButton renders the disabled style (97, 87, 76) +-2 (got %d, %d, %d)" % [bg.r8, bg.g8, bg.b8])
+	_set_cfg("bottling_seconds_per_jar", 1.0)   # CHEAT: quicker bottling
+	var spj: float = float(_cv("bottling_seconds_per_jar"))
+
+	for rnd in [1, 2]:
+		var T: String = "round %d" % rnd
+		print("=== ", T, " ===")
+		# CHEAT (Dev action Fill hive now), then freeze the fill so nothing arrives behind the test
+		hive.call("fill_now")
+		_set_cfg("base_seconds_per_jar", 1.0e9)
+		tr["raised"] = []
+		tr["lid"] = []
+		await _frames(4)
+		eq(fi.capped_total(hive, NF), TOTAL, "%s: 5 full frames" % T)
+		eq(cen.get("state"), _st(cen, "EMPTY"), "%s: the bucket is EMPTY" % T)
+		ck(_vis(P["ForkIcon"]), "%s: fork shows at a full hive" % T)
+		ck((P["ForkIcon"] as Control).size.x >= 120.0 and (P["ForkIcon"] as Control).size.y >= 120.0, "%s: fork touch area at least 120 x 120" % T)
+		if rnd == 1:
+			await _shot("r4-1-farm-fork-empty")
+
+		# ---- zoom in, frame 0 scraped by real drags (round 2: the first row by touch), frame 1 half scraped
+		ck(await _open_zoom(T), "%s: zoom open" % T)
+		eq(tr["risen"], 0, "%s: the first frame rises first" % T)
+		if rnd == 1:
+			await _shot("r4-2-zoom-risen-frame")
+		var f0: int = await _scrape_risen(rnd == 2)
+		ck(await _next_frame(f0), "%s: frame %d done, frame %d rose" % [T, f0, f0 + 1])
+		var hc: Node = main.find_child("Honeycomb", true, false)
+		var cam: Camera3D = root.get_viewport().get_camera_3d()
+		var rws: Array = fi.rows(hc, cam)
+		ck(rws.size() >= 2, "%s: the second frame shows its rows" % T)
+		await fi.drag_row(rws[0])
+		if rnd == 1:
+			await _shot("r4-3-zoom-cell-in-flight")
+		await fi.drag_row(rws[1])
+		await _wait(float(_cv("cell_fly_seconds")) + 0.4)
+		var left: int = fi.capped(hive, 1)
+		ck(left > 0 and left < CPF, "%s: half of frame 1 scraped (%d of %d Capped left)" % [T, left, CPF])
+		var snap: PackedByteArray = hive.call("frame_cells", 1)
+		eq(int(tr["risen"]), 1, "%s: frame 1 is still up" % T)
+		var in_bucket: int = CPF + (CPF - left)
+		eq(cen.get("cells"), in_bucket, "%s: %d cells in the bucket" % [T, in_bucket])
+		ck(in_bucket < CAP_CELLS, "%s: the bucket still has room" % T)
+
+		# ---- Back: half frame kept, lid on, Spin and the fork show
+		await fi.click_ctl(P["BackButton"] as Control)
+		await _zoom_out_wait()
+		eq(hive.call("frame_cells", 1), snap, "%s: Back kept the half frame's cells" % T)
+		eq(cen.get("lid_open"), false, "%s: Back with cells in the bucket: lid on" % T)
+		eq(cen.get("state"), _st(cen, "FULL"), "%s: FULL (waiting for Spin)" % T)
+		ck(_vis(P["CentrifugeIcon"]), "%s: Spin shows after Back" % T)
+		ck(_vis(P["ForkIcon"]), "%s: the fork stays while Capped cells remain" % T)
+		eq(hive.call("next_frame_to_harvest"), 1, "%s: the half frame is next" % T)
+		if rnd == 1:
+			await _shot("r4-4-farm-full-spin-and-fork")
+
+		# ---- Spin (CRANKING), then the fork again: cells pile up while cranking, crank clicks do not count in the zoom
+		await fi.click_icon(P["CentrifugeIcon"] as Control)
+		await _frames(3)
+		eq(cen.get("state"), _st(cen, "CRANKING"), "%s: CRANKING" % T)
+		if rnd == 1:
+			await _shot("r4-5-farm-cranking-with-fork")
+		var spot: Vector2 = fi.free_spot(main)
+		await fi.click_at(spot)
+		var turns1: int = int(cen.get("turns_counted"))
+		eq(turns1, 1, "%s: one real click on the farm counted one turn" % T)
+		await _wait(1.0 / float(_cv("max_tap_rate")) + 0.05)
+		tr["raised"] = []
+		ck(await _open_zoom(T + " (return, CRANKING)"), "%s: the fork opened the zoom while CRANKING" % T)
+		eq(tr["risen"], 1, "%s: the half frame rises first on the return" % T)
+		for i in 4:
+			await fi.click_at(fi.free_spot(main))
+			await _wait(float(1.0 / float(_cv("max_tap_rate"))) + 0.05)
+		eq(cen.get("turns_counted"), turns1, "%s: clicks in the zoom counted no turn" % T)
+		var n_frames_left: int = NF - 1
+		for k in n_frames_left:
+			var f: int = await _scrape_risen()
+			if k == 0:
+				eq(cen.get("turns_counted"), turns1, "%s: dragging on the frame was never a crank turn" % T)
+			if k < n_frames_left - 1:
+				ck(await _next_frame(f), "%s: frame %d done, the next rose" % [T, f])
+		await _wait(float(_cv("close_delay_seconds")) + _zoom_settle() + float(_cv("cell_fly_seconds")) + float(_cv("zoom_seconds")))
+		eq(fi.capped_total(hive, NF), 0, "%s: no Capped cell left" % T)
+		eq(pile.get("cells"), TOTAL - in_bucket, "%s: every later cell piled up (%d)" % [T, TOTAL - in_bucket])
+		eq(cen.get("cells"), in_bucket, "%s: the cranking bucket took no cell" % T)
+		ck(_vis(P["MoneyLabel"]) and not _vis(P["ForkIcon"]), "%s: the zoom ended on its own: farm UI back, fork gone" % T)
+		if rnd == 1:
+			await _shot("r4-6-farm-pile-while-cranking")
+		eq(cen.get("state"), _st(cen, "CRANKING"), "%s: still CRANKING after the zoom" % T)
+		eq(cen.get("crank_enabled"), true, "%s: cranking counts again on the farm" % T)
+
+		# ---- finish this batch, bottle it; the pile loads in; repeat until everything is bottled
+		var batch: int = 0
+		var bottled_total: int = 0
+		while true:
+			batch += 1
+			var TB: String = "%s batch %d" % [T, batch]
+			var cells: int = int(cen.get("cells"))
+			if int(cen.get("state")) == _st(cen, "CRANKING"):
+				# the rest of the turns by real clicks (round 2 batch 1: one real hold)
+				var spot2: Vector2 = fi.free_spot(main)
+				var gap: float = 1.0 / float(_cv("max_tap_rate")) + 0.03
+				var need: int = _turns_for(cells)
+				var cranking: int = _st(cen, "CRANKING")
+				if rnd == 2 and batch == 1:
+					var expected: float = float(need - int(cen.get("turns_counted")) - 1) / float(_cv("max_tap_rate"))
+					var t0: int = Time.get_ticks_msec()
+					_mouse_button_os(spot2, true)
+					var fin: bool = await _until(func() -> bool: return int(cen.get("state")) != cranking, expected * 3.0 + 10.0)
+					var held: float = float(Time.get_ticks_msec() - t0) / 1000.0
+					_mouse_button_os(spot2, false)
+					ck(fin, "%s: the hold finished the cranking" % TB)
+					near(held, expected, "%s: real hold time" % TB, 0.4)
+				else:
+					var sent: int = 0
+					while int(cen.get("state")) == cranking and sent < need + 6:
+						await fi.click_at(spot2)
+						await _wait(gap)
+						sent += 1
+					eq(sent + int(turns1 if batch == 1 else 0), need, "%s: ceil(jars x taps_per_jar) = %d turns in all" % [TB, need])
+				eq(cen.get("state"), _st(cen, "DONE"), "%s: DONE" % TB)
+				await _frames(4)
+			else:
+				await _crank(TB, false)
+			if rnd == 1 and batch == 1:
+				await _shot("r4-7-farm-done-continue")
+			var mid: Callable = Callable()
+			if rnd == 2 and batch == 1:
+				mid = func() -> void:
+					# the shop works whenever the farm UI shows, mid-harvest, while bottling
+					var cost: int = int(eco.call("swarm_cost"))
+					ck(int(eco.get("money")) >= cost, "%s: money %s covers the swarm cost %d" % [TB, str(eco.get("money")), cost])
+					ck(not upgrade.disabled, "%s: UpgradeButton enabled while bottling" % TB)
+					var before: int = int(eco.get("money"))
+					await fi.click_ctl(upgrade)
+					await _frames(3)
+					eq(eco.get("swarm_level"), 1, "%s: Worker Swarm Count level 1 bought mid-harvest" % TB)
+					eq(eco.get("money"), before - cost, "%s: money after the purchase" % TB)
+					eq((P["BeeCountLabel"] as Label).text, "Bees: %d" % (bees_base + int(_cv("bees_per_swarm_level"))), "%s: BeeCountLabel after the purchase" % TB)
+					eq(cen.get("state"), _st(cen, "BOTTLING"), "%s: the purchase did not disturb bottling" % TB)
+			if rnd == 1 and batch == 1:
+				await _shot("r4-8-farm-bottling")
+			bottled_total += await _bottle(TB, mid)
+			await _wait(float(_cv("cell_fly_seconds")) + float(_cv("lid_drop_seconds")) + 0.8)
+			if int(pile.get("cells")) > 0 or int(cen.get("cells")) > 0:
+				# the pile loaded into the empty bucket by itself
+				ck(int(cen.get("cells")) > 0, "%s: the pile loaded into the empty bucket" % TB)
+				eq(cen.get("lid_open"), false, "%s: the bucket closed after the load (full, or no zoom open)" % TB)
+				eq(cen.get("state"), _st(cen, "FULL"), "%s: FULL, Spin shows" % TB)
+				if rnd == 1 and batch == 1:
+					ck(int(cen.get("cells")) == mini(CAP_CELLS, TOTAL - in_bucket), "%s: the pile loaded up to the bucket's capacity" % TB)
+					await _shot("r4-9-farm-pile-loaded")
+			else:
+				break
+			if batch > 6:
+				ck(false, "%s: more than 6 batches, the pile does not drain" % TB)
+				break
+		eq(bottled_total, JARS, "%s: all %d jars bottled over %d batches (the leftover fractions were carried, none lost)" % [T, JARS, batch])
+		eq(cen.get("state"), _st(cen, "EMPTY"), "%s: bucket EMPTY at the end" % T)
+		eq(cen.get("lid_open"), true, "%s: bucket open at the end" % T)
+		eq(pile.get("cells"), 0, "%s: pile empty at the end" % T)
+
+		# ---- Sell (round 1) / the truck is away (round 2)
+		if rnd == 1:
+			ck(_vis(P["SellIcon"]), "round 1: the Sell icon floats above the full truck")
+			eq(truck.get("loaded_jars"), TRUCK_CAP, "round 1: the truck holds 10 jars")
+			_set_cfg("truck_trip_seconds", float(_cv("truck_trip_seconds")) * 2.0)   # CHEAT: still away during round 2
+			var m0: int = int(eco.get("money"))
+			await fi.click_icon(P["SellIcon"] as Control)
+			await _frames(2)
+			eq(eco.get("money"), m0 + TRUCK_CAP * PER, "round 1: money credited at the tap")
+			ck(truck.get("away"), "round 1: the truck is away")
+			await _shot("r4-10-farm-truck-away")
+		else:
+			var back_home: bool = await _until(func() -> bool: return not truck.get("away"), float(_cv("truck_trip_seconds")) + 15.0)
+			ck(back_home, "round 2: the truck came back")
+			await _frames(4)
+			eq(int(truck.get("loaded_jars")) + int(truck.get("crate_jars")), JARS, "round 2: jars conserved: truck + crate = the batch")
+			if _vis(P["SellIcon"]):
+				var m2: int = int(eco.get("money"))
+				await fi.click_icon(P["SellIcon"] as Control)
+				await _frames(2)
+				ck(int(eco.get("money")) > m2, "round 2: Sell credited money at the tap")
+
+	# ---- Show UI bounds (Dev action): screenshot with the outlines on, then off
+	var bounds: Button = null
+	for b in main.get_tree().root.find_children("*", "Button", true, false):
+		if (b as Button).text.to_lower().contains("bounds"):
+			bounds = b as Button
+	ck(bounds != null, "the dev panel has a Show UI bounds button")
+	if bounds != null:
+		bounds.pressed.emit()
+		await _shot("r4-11-show-ui-bounds")
+		bounds.pressed.emit()
+
+	for k in _cfg_saved:
+		root.get_node("Economy").get("config").set(k, _cfg_saved[k])
+	print("---- %d checks, %d failed" % [checks, fails])
+	print("COMPLETED")
+	quit(1 if fails > 0 else 0)

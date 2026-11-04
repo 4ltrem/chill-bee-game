@@ -1,0 +1,111 @@
+[gd_scene load_steps=30 format=3]
+
+[ext_resource type="Script" path="res://scripts/centrifuge.gd" id="1_c"]
+[ext_resource type="PackedScene" path="res://scenes/props/jar.tscn" id="2_jar"]
+[ext_resource type="Material" path="res://materials/steel.tres" id="m_steel"]
+[ext_resource type="Material" path="res://materials/steel_dark.tres" id="m_dark"]
+[ext_resource type="Material" path="res://materials/glass.tres" id="m_glass"]
+[ext_resource type="Material" path="res://materials/honey_level.tres" id="m_honey"]
+[ext_resource type="Material" path="res://materials/crank_arm.tres" id="m_arm"]
+[ext_resource type="Material" path="res://materials/crank_handle.tres" id="m_handle"]
+[ext_resource type="Material" path="res://materials/spigot.tres" id="m_spigot"]
+
+[sub_resource type="CylinderMesh" id="Mesh_base"]
+material = ExtResource("m_steel")
+top_radius = 1.1
+bottom_radius = 1.1
+height = 0.12
+
+[sub_resource type="CylinderMesh" id="Mesh_bucket"]
+material = ExtResource("m_glass")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 1.4
+cap_top = false
+
+[sub_resource type="CylinderMesh" id="Mesh_honey"]
+material = ExtResource("m_honey")
+top_radius = 0.9
+bottom_radius = 0.9
+height = 1.0
+
+[sub_resource type="CylinderMesh" id="Mesh_lid"]
+material = ExtResource("m_dark")
+top_radius = 1.05
+bottom_radius = 1.05
+height = 0.15
+
+[sub_resource type="CylinderMesh" id="Mesh_spigot"]
+material = ExtResource("m_spigot")
+top_radius = 0.12
+bottom_radius = 0.12
+height = 0.5
+
+[sub_resource type="BoxMesh" id="Mesh_arm"]
+material = ExtResource("m_arm")
+size = Vector3(1, 0.12, 0.14)
+
+[sub_resource type="BoxMesh" id="Mesh_handle"]
+material = ExtResource("m_handle")
+size = Vector3(0.18, 0.4, 0.18)
+
+[node name="Centrifuge" type="Node3D"]
+script = ExtResource("1_c")
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("Mesh_base")
+
+[node name="Spinner" type="Node3D" parent="."]
+
+[node name="Bucket" type="MeshInstance3D" parent="Spinner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("Mesh_bucket")
+
+[node name="HoneyBottom" type="Marker3D" parent="Spinner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0)
+
+[node name="HoneyTop" type="Marker3D" parent="Spinner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.45, 0)
+
+[node name="HoneyLevel" type="MeshInstance3D" parent="Spinner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.67, 0)
+mesh = SubResource("Mesh_honey")
+visible = false
+
+[node name="HeapRoot" type="Marker3D" parent="Spinner"]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0.17, 0)
+
+[node name="Lid" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.625, 0)
+
+[node name="LidDisc" type="MeshInstance3D" parent="Lid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Mesh_lid")
+
+[node name="Crank" type="Node3D" parent="Lid"]
+
+[node name="CrankArm" type="MeshInstance3D" parent="Lid/Crank"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.14, 0)
+mesh = SubResource("Mesh_arm")
+
+[node name="CrankHandle" type="MeshInstance3D" parent="Lid/Crank"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 0.32, 0)
+mesh = SubResource("Mesh_handle")
+
+[node name="Spigot" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.3, 1.15)
+mesh = SubResource("Mesh_spigot")
+
+[node name="SpigotJar" parent="." instance=ExtResource("2_jar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 1.5)
+visible = false
+
+[node name="CentrifugeAnchor" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="CentrifugeLidSpot" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.273, 0.075, 1.273)
+
+[node name="BucketMouth" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)

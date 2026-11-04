@@ -1,4 +1,5 @@
-# Quinn: Prototype 0 revision 3 unit tests, written from game/specs/prototype-0.md (approved 2026-11-04) BEFORE the code.
+# Quinn: milestone 0.1 (Harvest) unit and scene tests, written from game/specs/0.1-harvest.md (approved 2026-11-04)
+# BEFORE the code exists, on top of the revision 3 suite (tests whose rule is unchanged are kept).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # Exit code 0 only if every test passed AND the final "RAN n of n" line printed with n == the number of tests.
 # If that line is missing the run is a FAILURE (a compile error in this file or a hang prints nothing).
@@ -9,15 +10,22 @@
 #    res://scripts/default_config.tres (not user://dev_config.tres).
 #  * Nothing outside the spec's Contract table is called directly: it goes through has_method / call / get so a
 #    rename fails ONE test with a clear message and the file still parses.
-#  * Patricia's scripts are loaded at run time with load() (no class_name references), and each load is asserted:
-#    can_instantiate(), a non-null instance, instance.get_script() == the loaded script.
+#  * The hive, centrifuge, pile and truck under test are the nodes of an instance of res://scenes/main.tscn (the spec
+#    moves the models into scenes, so a bare script .new() has no body to build). Each test makes its own instance and
+#    frees it.
+#  * Expected jar counts are computed from INTEGER cell counts as one division (cells * frame_jars / cells_per_frame),
+#    never by summing floats: the code under test must get 2 jars out of 35 cells of 2/35 each.
+#  * Input tests push events into the viewport in window pixels (tests/farm_input.gd), as a real mouse sends them.
 #  * Silent-PASS guards: every test must reach its final _fin() line and make at least one check, else it FAILS;
 #    a harness self-check proves eq() can fail; the run ends with "RAN n of n".
-#  * CB_SCRIPTS=res://tests/broken/ (env var) points the loads at a broken copy of the scripts folder, to show a
-#    test fails for the right reason (Done when, last bullet of the unit-test list).
-# Spec line numbers in the comments above each test refer to game/specs/prototype-0.md.
+#  * CB_SCRIPTS=res://tests/broken/ (env var) points _make() at a broken copy of the scripts folder; scene tests need a
+#    broken copy of the project instead (main.tscn names its scripts by path), see the report.
+# Spec line numbers in the comments are not used: comments name the spec section ("Done when", "The loop step n").
 extends SceneTree
 
+const FarmInput := preload("res://tests/farm_input.gd")
+
+var fi: RefCounted
 var _failed: int = 0
 var _passed: int = 0
 var _cur_ok: bool = true
@@ -43,33 +51,39 @@ func _initialize() -> void:
 
 func _run() -> void:
 	await process_frame   # root has finished setting up its children; add_child is safe from here
+	fi = FarmInput.new(self)
 	var tests: Array[String] = [
-		# economy (L67, L122)
+		# economy (unchanged)
 		"t_cost_formula", "t_cost_max_level", "t_buy_deducts_and_levels", "t_buy_blocked_unaffordable",
 		"t_fill_multiplier", "t_bee_count", "t_fill_multiplier_is_bees_over_base", "t_economy_removed_jars",
 		"t_earn_and_jar_value", "t_drawn_count_capped",
-		# hive (L53, L123)
-		"t_fill_time_level0", "t_fill_time_with_levels", "t_hive_rate_is_live", "t_overflow_and_pause",
-		"t_take_frame_not_full", "t_take_frame_with_overflow", "t_became_full_count_full_overflow",
-		"t_became_full_once_while_filling",
-		# honeycomb (L124)
-		"t_cell_transitions", "t_cell_reset_on_next_harvest", "t_uncap_only_from_capped", "t_all_uncapped_signal",
-		# centrifuge (L61-L65, L125, L222-L226)
-		"t_centrifuge_state_flow", "t_has_room", "t_taps_per_frame", "t_tap_cap", "t_tap_cap_is_live",
+		# contract and config (new values, retired values, retired scene)
+		"t_node_contract", "t_config_values", "t_config_placeholders_marked", "t_retired_api_gone",
+		# hive: fill by frames and slots, risen frame, overflow of one hive, scrape
+		"t_fill_time_level0", "t_fill_time_with_levels", "t_hive_rate_is_live", "t_fill_in_order_slot_by_slot",
+		"t_risen_frame_never_fills", "t_overflow_one_hive_then_pause", "t_became_full_once_while_filling",
+		"t_became_full_count_full_overflow", "t_scrape_value", "t_scrape_rules", "t_next_frame_to_harvest",
+		# centrifuge: bucket, lid, turns, floor bottling
+		"t_bucket_capacity_and_states", "t_lid_close_and_signal", "t_turns_per_jar", "t_crank_enabled_flag",
 		"t_hold_at_cap", "t_hold_ramp_is_visual_only", "t_hold_never_slower", "t_hold_release_stops",
-		"t_crank_ignored_outside_cranking", "t_real_mouse_taps_crank", "t_real_mouse_hold_cranks",
+		"t_tap_cap", "t_tap_cap_is_live", "t_crank_ignored_outside_cranking", "t_real_mouse_taps_crank",
 		"t_real_touch_taps_crank", "t_button_press_is_not_a_crank",
-		# bottling and truck (L65-L66, L229-L230)
-		"t_bottling_timing", "t_bottling_time_is_live", "t_truck_full_and_can_sell", "t_truck_sell_credits_at_once",
-		"t_truck_crate_while_away", "t_truck_return_loads_crate", "t_truck_trip_time_is_live",
-		# scene-level flow (L55-L56, L72-L78, L227-L228)
-		"t_back_keeps_frame", "t_fork_hidden_unless_empty", "t_state_table_icons",
-		# floating icons (L127)
-		"t_icon_follows_anchor", "t_icon_hidden_behind_camera",
-		# config and dev mode (L95-L113, L205-L215, L231)
-		"t_config_values", "t_config_placeholders_marked", "t_dev_mode_setting", "t_dev_no_panel_when_off",
+		"t_bottling_timing", "t_bottling_time_is_live", "t_bottling_floor_and_leftover_carry",
+		"t_bottling_35_single_cells_is_2_jars", "t_pile_unit",
+		# truck (unchanged) and the wheels
+		"t_truck_full_and_can_sell", "t_truck_sell_credits_at_once", "t_truck_crate_while_away",
+		"t_truck_return_loads_crate", "t_truck_trip_time_is_live", "t_truck_wheels_roll_with_travel",
+		# the zoom, through real input
+		"t_zoom_ui_and_camera", "t_zoom_bucket_lid_pile_flow", "t_back_after_one_frame", "t_back_keeps_half_frame",
+		"t_fork_rules", "t_fork_shows_while_cranking_and_state_table", "t_no_crank_during_zoom",
+		"t_zoom_fill_and_bottling_keep_running", "t_pop_tween_unchanged", "t_focus_styles",
+		# floating icons (unchanged) and icon sizes
+		"t_icon_follows_anchor", "t_icon_hidden_behind_camera", "t_icon_touch_area_in_scene",
+		# dev mode
+		"t_dev_mode_setting", "t_dev_no_panel_when_off",
 		"t_dev_panel_when_on", "t_dev_max_tap_rate", "t_dev_bottling_seconds", "t_dev_save_reset_roundtrip",
 		"t_dev_user_file_ignored_when_off", "t_dev_backquote_opens", "t_dev_three_finger_opens", "t_dev_actions",
+		"t_dev_show_ui_bounds",
 	]
 	_selfcheck()
 	_backup_user_cfg()
@@ -117,7 +131,10 @@ func eq(actual: Variant, expected: Variant, what: String) -> void:
 		_cur_msgs.append("%s: expected %s got %s" % [what, str(expected), str(actual)])
 
 
-func near(actual: float, expected: float, what: String, tol: float = 0.001) -> void:
+## near(actual, expected, what, tol) or near(actual, expected, tol, what): both argument orders are accepted.
+func near(actual: float, expected: float, a3: Variant, a4: Variant = 0.001) -> void:
+	var what: String = str(a3) if a3 is String else str(a4)
+	var tol: float = float(a4) if a3 is String else float(a3)
 	_checks += 1
 	if absf(actual - expected) > tol:
 		_cur_ok = false
@@ -264,7 +281,7 @@ func _st(o: Object, state_name: String) -> int:
 		var v: Variant = map[k]
 		if v is Dictionary and (v as Dictionary).has(state_name):
 			return int((v as Dictionary)[state_name])
-	ck(false, "no enum member %s in %s (spec: state machine EMPTY, FULL, CRANKING, DONE, BOTTLING)" % [state_name, o.get_script().resource_path])
+	ck(false, "no enum member %s in %s (spec: states EMPTY, LOADING, FULL, CRANKING, DONE, BOTTLING)" % [state_name, o.get_script().resource_path])
 	return -999
 
 
@@ -276,49 +293,6 @@ func _add_root(n: Node) -> void:
 	n.set_physics_process(false)
 
 
-func _mk_hive() -> Object:
-	var h: Object = _make("hive.gd")
-	if h != null:
-		_give_config(h)
-	return h
-
-
-func _mk_cen() -> Object:
-	var c: Object = _make("centrifuge.gd")
-	if c == null:
-		return null
-	_give_config(c)
-	_add_root(c as Node)
-	await process_frame
-	(c as Node).set_process(false)
-	(c as Node).set_physics_process(false)
-	return c
-
-
-func _mk_truck() -> Object:
-	var t: Object = _make("truck.gd")
-	if t == null:
-		return null
-	_give_config(t)
-	_add_root(t as Node)
-	await process_frame
-	(t as Node).set_process(false)
-	(t as Node).set_physics_process(false)
-	return t
-
-
-func _mk_honeycomb() -> Object:
-	var h: Object = _make("honeycomb.gd")
-	if h == null:
-		return null
-	_give_config(h)
-	root.add_child(h as Node)   # the spec builds the cells in _ready
-	await process_frame
-	if "active" in h:
-		h.set("active", true)
-	return h
-
-
 func _wait(sec: float) -> void:
 	await create_timer(sec).timeout
 
@@ -328,13 +302,152 @@ func _frames(n: int) -> void:
 		await process_frame
 
 
+## Poll until cond.call() is true or timeout (s).
+func _until(cond: Callable, timeout: float) -> bool:
+	var t0: int = Time.get_ticks_msec()
+	while float(Time.get_ticks_msec() - t0) < timeout * 1000.0:
+		if cond.call():
+			return true
+		await process_frame
+	return cond.call()
+
+
 func _bump() -> void:
 	_counter += 1
 
 
-## Fill a centrifuge and start cranking (EMPTY -> FULL -> CRANKING).
-func _to_cranking(c: Object) -> void:
-	c.call("fill", int(cv("frame_jars")))
+func _to_window() -> Vector2:
+	return Vector2(root.size) / root.get_visible_rect().size
+
+
+func _push_mouse(vp_pos: Vector2, pressed: bool) -> void:
+	fi.mouse_button(vp_pos, pressed)
+
+
+## An empty point of the screen: no Control there, so the press reaches _unhandled_input like a real tap.
+const EMPTY_SPOT := Vector2(360.0, 640.0)
+
+
+## Mouse press and release at a spot, through the real viewport input path.
+func _real_click(pos: Vector2) -> void:
+	_push_mouse(pos, true)
+	_push_mouse(pos, false)
+
+
+# ---------------------------------------------------------------- config-derived numbers (integers first, one division)
+
+func _cpf() -> int:
+	return int(cv("grid_cols")) * int(cv("grid_rows"))
+
+
+func _frames_n() -> int:
+	return int(cv("frames_per_hive"))
+
+
+## cell value in jars: frame_jars / cells_per_frame (2 / 35 at the defaults)
+func _cell_value() -> float:
+	return float(int(cv("frame_jars"))) / float(_cpf())
+
+
+## jars in n cells as ONE division from integers
+func _jars_of(cells: int) -> float:
+	return float(cells * int(cv("frame_jars"))) / float(_cpf())
+
+
+## hive capacity in jars (5 frames x 2 jars = 10)
+func _hive_jars() -> float:
+	return float(_frames_n() * int(cv("frame_jars")))
+
+
+## the bucket's capacity in cells: centrifuge_capacity_frames x cells_per_frame (70)
+func _bucket_cells() -> int:
+	return int(cv("centrifuge_capacity_frames")) * _cpf()
+
+
+## crank turns for n cells: ceil(jars x taps_per_jar), done in integers so float noise cannot move it
+@warning_ignore("integer_division")
+func _turns_for(cells: int) -> int:
+	var num: int = cells * int(cv("frame_jars")) * int(cv("taps_per_jar"))
+	var den: int = _cpf()
+	return (num + den - 1) / den
+
+
+func _tap_gap() -> float:
+	return 1.0 / float(cv("max_tap_rate")) + 0.01
+
+
+# ---------------------------------------------------------------- scene-backed parts
+
+func _mk_main(quiet: bool = false) -> Node:
+	var ps: Variant = load("res://scenes/main.tscn")
+	ck(ps != null, "res://scenes/main.tscn failed to load")
+	if ps == null:
+		return null
+	var m: Node = (ps as PackedScene).instantiate()
+	ck(m != null, "main.tscn failed to instantiate")
+	if m == null:
+		return null
+	if quiet:
+		m.process_mode = Node.PROCESS_MODE_DISABLED   # nothing ticks: the hive does not fill behind the test's back
+	root.add_child(m)
+	_to_free.append(m)
+	await _frames(5)
+	return m
+
+
+func _nn(m: Node, name: String) -> Node:
+	var n: Node = m.find_child(name, true, false)
+	ck(n != null, "node '%s' missing in the scene (spec: Node paths for Bob)" % name)
+	return n
+
+
+func _shown(n: Node) -> bool:
+	return n != null and (n as CanvasItem).is_visible_in_tree()
+
+
+## Stop a main instance's own ticking so the test drives advance() itself (input handlers keep working).
+func _quiet(m: Node) -> void:
+	m.set_process(false)
+	for nm in ["Hive", "Centrifuge", "Truck", "Pile"]:
+		var n: Node = m.find_child(nm, true, false)
+		if n != null:
+			n.set_process(false)
+			n.set_physics_process(false)
+
+
+func _mk_hive() -> Object:
+	var m: Node = await _mk_main(true)
+	if m == null:
+		return null
+	return _nn(m, "Hive")
+
+
+func _mk_cen() -> Object:
+	var m: Node = await _mk_main()
+	if m == null:
+		return null
+	_quiet(m)
+	return _nn(m, "Centrifuge")
+
+
+func _mk_truck() -> Object:
+	var m: Node = await _mk_main()
+	if m == null:
+		return null
+	_quiet(m)
+	return _nn(m, "Truck")
+
+
+## Fill a centrifuge's bucket with `cells` cells (default: full), lid on. EMPTY/LOADING -> FULL.
+func _load_bucket(c: Object, cells: int = -1) -> void:
+	var n: int = _bucket_cells() if cells < 0 else cells
+	c.call("add_cells", n, _jars_of(n))
+	c.call("close_lid")
+
+
+## Full bucket, lid on, then FULL -> CRANKING.
+func _to_cranking(c: Object, cells: int = -1) -> void:
+	_load_bucket(c, cells)
 	c.call("begin_crank")
 
 
@@ -361,39 +474,30 @@ func _hold_to_done(c: Object, dt: float, limit: float) -> float:
 	return t
 
 
-func _to_window() -> Vector2:
-	return Vector2(root.size) / root.get_visible_rect().size
+## One frame's worth of hive time that fills `jars` jars at multiplier 1
+func _secs_for_jars(jars: float) -> float:
+	return jars * float(cv("base_seconds_per_jar"))
 
 
-func _push_mouse(vp_pos: Vector2, pressed: bool) -> void:
-	var ev := InputEventMouseButton.new()
-	ev.button_index = MOUSE_BUTTON_LEFT
-	ev.pressed = pressed
-	ev.position = vp_pos * _to_window()
-	ev.global_position = ev.position
-	ev.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
-	root.push_input(ev)
+## Time for one more cell to arrive at multiplier 1
+func _cell_secs() -> float:
+	return float(cv("base_seconds_per_jar")) * _cell_value()
 
 
-## An empty point of the screen: no Control there, so the press reaches _unhandled_input like a real tap.
-const EMPTY_SPOT := Vector2(360.0, 640.0)
+## Capped cells per frame, read through hive.frame_cells(i)
+func _profile(h: Object) -> Array:
+	var out: Array = []
+	for i in _frames_n():
+		out.append(fi.capped(h as Node, i))
+	return out
 
 
-func _cell_state(hc: Object, i: int) -> int:
-	if not hc.has_method("get_state"):
-		ck(false, "honeycomb has no get_state(i): the contract names no cell-state getter, so I cannot read cells")
-		return -1
-	return int(hc.call("get_state", i))
+func _hive_filled(h: Object) -> void:
+	# exactly the hive's capacity, overflow empty: base time x capacity
+	h.call("advance", _secs_for_jars(_hive_jars()) + _cell_secs() * 0.5, 1.0)
 
 
-func _fill_hive_to_capacity(h: Object) -> void:
-	# exactly one frame in storage, overflow empty (a long advance would also fill the overflow)
-	var jars: float = float(cv("frame_jars"))
-	var secs: float = float(cv("base_seconds_per_jar"))
-	h.call("advance", jars * secs, 1.0)
-
-
-# ---------------------------------------------------------------- economy
+# ---------------------------------------------------------------- economy (unchanged)
 
 # L67: cost = 25 x 1.18^level, rounded; max level 10.
 func t_cost_formula() -> void:
@@ -546,32 +650,154 @@ func t_drawn_count_capped() -> void:
 	_fin()
 
 
-# ---------------------------------------------------------------- hive
+# ---------------------------------------------------------------- contract and config
 
-# L53, L101: one frame fills in frame_jars x base_seconds_per_jar.
-func t_fill_time_level0() -> void:
-	var h: Object = _mk_hive()
-	var jars: float = float(cv("frame_jars"))
-	var secs: float = float(cv("base_seconds_per_jar"))
-	var full_t: float = jars * secs
-	var steps: int = int((full_t - 1.0) / 0.1)
-	for i in steps:
-		h.call("advance", 0.1, 1.0)
-	ck(not h.call("is_full"), "not full 1 s before the full time")
-	near(float(h.get("storage")), steps * 0.1 / secs, "storage before full", 0.01)
-	h.call("advance", 2.0, 1.0)
-	ck(h.call("is_full"), "full 1 s after the full time")
-	eq(h.get("capacity"), int(jars), "capacity = frame_jars")
+# "Node paths for Bob", "Models as reusable scenes", "Changes": the scene has the named nodes, harvest.tscn is gone.
+func t_node_contract() -> void:
+	ck(not FileAccess.file_exists("res://scenes/harvest.tscn"), "harvest.tscn must be deleted (spec: retired)")
+	for scene in ["truck", "jar", "jar_crate", "flower_patch", "hive", "centrifuge", "honey_cell"]:
+		ck(FileAccess.file_exists("res://scenes/props/%s.tscn" % scene), "scenes/props/%s.tscn missing (spec: Models as reusable scenes)" % scene)
+	var mats: int = 0
+	var d := DirAccess.open("res://materials")
+	ck(d != null, "game/materials/ missing (spec: materials as .tres)")
+	if d != null:
+		for f in d.get_files():
+			if f.ends_with(".tres"):
+				mats += 1
+	ck(mats >= 7, "game/materials/ holds %d .tres, spec lists 7 (capped, uncapped, extracted, jar amber, glass, steel, wood)" % mats)
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	for nm in ["Hive", "ForkAnchor", "HiveLidSpot", "FrameSlots", "Honeycomb", "Centrifuge", "CentrifugeAnchor",
+			"CentrifugeLidSpot", "BucketMouth", "Pile", "ZoomFraming", "HarvestUIRoot", "HarvestUI", "HintLabel", "BackButton",
+			"FarmWorld", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon", "ContinueButton", "UpgradeButton"]:
+		_nn(m, nm)
+	for i in _frames_n():
+		_nn(m, "Slot%d" % (i + 1))
+	ck(m.find_child("Harvest", true, false) == null, "no 'Harvest' close-up root any more")
+	var hive: Node = m.find_child("Hive", true, false)
+	if hive != null:
+		ck(hive.is_in_group("bee_home"), "Hive is in the group bee_home")
+	var ui: Node = m.find_child("HarvestUI", true, false)
+	if ui != null and ui is Control:
+		eq((ui as Control).mouse_filter, Control.MOUSE_FILTER_IGNORE, "HarvestUI ignores the mouse (full rect, never in the way)")
+	var back: Node = m.find_child("BackButton", true, false)
+	if back != null and back is Control:
+		ck((back as Control).size.y >= 120.0, "BackButton at least 120 px high (%s)" % str((back as Control).size.y))
 	_fin()
 
 
-# L53, L67: the fill rate scales with the bee count.
+# "Values" table: every new value, checked on the defaults file itself.
+func t_config_values() -> void:
+	var c: Variant = load(DEFAULT_CFG)
+	ck(c != null, "default_config.tres failed to load")
+	if c == null:
+		_fin()
+		return
+	var table: Dictionary = {
+		"frames_per_hive": 5, "frame_jars": 2, "overflow_hives": 1, "centrifuge_capacity_frames": 2, "taps_per_jar": 4,
+		"zoom_seconds": 0.6, "lid_drop_seconds": 0.4, "slide_seconds": 0.3, "frame_rise": 1.2, "cell_fly_seconds": 0.5,
+		"pile_visual_cap": 40, "bucket_visual_cap": 40, "icon_visual_px": 88, "min_cell_px": 44,
+		# unchanged from revision 3
+		"sale_value_per_jar": 3, "truck_capacity_jars": 10, "truck_trip_seconds": 30.0,
+		"bottling_seconds_per_jar": 3.0, "max_tap_rate": 5.0, "hold_ramp_seconds": 1.5,
+		"base_seconds_per_jar": 6.0, "swarm_fill_bonus_per_level": 0.15, "swarm_base_cost": 25.0,
+		"swarm_cost_growth": 1.18, "swarm_max_level": 10, "grid_cols": 7, "grid_rows": 5,
+		"bees_per_swarm_level": 3, "visual_bee_cap": 60,
+	}
+	for k in table:
+		var v: Variant = c.get(k)
+		ck(v != null, "default_config.tres has no value '%s' (Values table)" % k)
+		if v != null:
+			near(float(v), float(table[k]), "default '%s'" % k)
+	var zs: Variant = c.get("zoom_size")
+	ck(zs != null, "default_config.tres has no value 'zoom_size' (Values table: Bob sets it)")
+	if zs != null:
+		ck(float(zs) > 0.0, "zoom_size is a positive ortho size (got %s)" % str(zs))
+	for gone in ["taps_per_frame", "overflow_frames", "hold_taps_per_second", "hold_mode", "no_rapid_tap_mode"]:
+		ck(c.get(gone) == null, "'%s' must be gone from the config (replaced or removed)" % gone)
+	var e: Node = _eco()
+	eq(e.call("bee_count"), 20, "base swarm of 20 bees at level 0 (assumes no user dev_config override)")
+	# derived numbers the Done-when list quotes, from the config
+	eq(int(c.get("frames_per_hive")) * int(c.get("frame_jars")), 10, "a full hive is 10 jars")
+	eq(int(c.get("grid_cols")) * int(c.get("grid_rows")), 35, "35 cells per frame")
+	_fin()
+
+
+# "Values": placeholders are marked `# PLACEHOLDER (GDD TBD)` in game_config.gd.
+func t_config_placeholders_marked() -> void:
+	var f := FileAccess.open(_script_path("game_config.gd"), FileAccess.READ)
+	ck(f != null, "game_config.gd unreadable")
+	if f == null:
+		_fin()
+		return
+	var lines: PackedStringArray = f.get_as_text().split("\n")
+	f.close()
+	for name in ["taps_per_jar", "centrifuge_capacity_frames", "truck_capacity_jars", "truck_trip_seconds",
+			"bottling_seconds_per_jar", "max_tap_rate", "hold_ramp_seconds"]:
+		var found: bool = false
+		var marked: bool = false
+		for i in lines.size():
+			if lines[i].contains("var %s" % name):
+				found = true
+				if lines[i].contains("PLACEHOLDER (GDD TBD)") or (i > 0 and lines[i - 1].contains("PLACEHOLDER (GDD TBD)")):
+					marked = true
+		ck(found, "game_config.gd declares no 'var %s'" % name)
+		ck(not found or marked, "'%s' is not marked # PLACEHOLDER (GDD TBD) on its line or the line above" % name)
+	# every value of the Values table is an @export var (adjustable in Dev mode)
+	var text: String = "\n".join(lines)
+	for name in ["frames_per_hive", "frame_jars", "overflow_hives", "zoom_seconds", "lid_drop_seconds", "frame_rise",
+			"cell_fly_seconds", "pile_visual_cap", "bucket_visual_cap", "icon_visual_px", "min_cell_px", "zoom_size"]:
+		ck(text.contains("@export var %s" % name), "game_config.gd has no '@export var %s' (Dev mode lists exported values)" % name)
+	_fin()
+
+
+# "Contract": take_frame() goes; the hive owns the frames.
+func t_retired_api_gone() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	ck(not h.has_method("take_frame"), "hive.take_frame() goes (spec: Contract, hive.gd)")
+	for meth in ["is_full", "is_paused", "has_capped_cells", "next_frame_to_harvest", "frame_cells", "scrape", "raise_frame",
+			"lower_frame", "open_lid", "close_lid", "fill_now", "advance", "cell_value"]:
+		ck(h.has_method(meth), "hive.gd has no %s() (spec: Contract)" % meth)
+	for sig in ["storage_changed", "became_full", "lid_moved", "frame_raised", "frame_lowered"]:
+		ck(h.has_signal(sig), "hive.gd has no signal %s (spec: Contract)" % sig)
+	_fin()
+
+
+# ---------------------------------------------------------------- hive
+
+# Loop step 1: a full hive (5 frames x 2 jars) takes 10 jars x base seconds per jar = 60 s.
+func t_fill_time_level0() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	var cap: float = _hive_jars()
+	var full_t: float = _secs_for_jars(cap)
+	near(float(h.get("storage")), 0.0, "new hive starts empty", _cell_value() * 0.5)
+	h.call("advance", full_t - 1.0, 1.0)
+	ck(not h.call("is_full"), "not full 1 s before the full time")
+	h.call("advance", 2.0, 1.0)
+	ck(h.call("is_full"), "full 1 s after the full time")
+	near(float(h.get("capacity")), cap, "capacity = frames_per_hive x frame_jars")
+	near(float(h.get("storage")), cap, "storage at capacity", _cell_value() * 0.01)
+	_fin()
+
+
+# Loop step 1 and Tree A: the fill rate scales with the bee count.
 func t_fill_time_with_levels() -> void:
 	var e: Node = _eco()
 	e.set("swarm_level", 1)
 	var m: float = float(e.call("fill_multiplier"))
-	var h: Object = _mk_hive()
-	var full_t: float = float(cv("frame_jars")) * float(cv("base_seconds_per_jar")) / m
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	var full_t: float = _secs_for_jars(_hive_jars()) / m
 	h.call("advance", full_t - 1.0, m)
 	ck(not h.call("is_full"), "level 1 not full 1 s early")
 	h.call("advance", 2.0, m)
@@ -579,297 +805,336 @@ func t_fill_time_with_levels() -> void:
 	_fin()
 
 
-# L97: no cached config; Dev mode edits apply at once.
+# Dev mode: no cached config; edits apply to the next advance.
 func t_hive_rate_is_live() -> void:
-	var h: Object = _mk_hive()
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
 	var secs: float = float(cv("base_seconds_per_jar"))
+	var tol: float = _cell_value() * 1.05   # storage moves in steps of one cell
 	h.call("advance", secs * 2.0, 1.0)
-	near(float(h.get("storage")), 2.0, "2 jars after 2 x base seconds", 0.01)
+	near(float(h.get("storage")), 2.0, "2 jars after 2 x base seconds", tol)
 	_set_cfg("base_seconds_per_jar", secs / 2.0)
 	var before: float = float(h.get("storage"))
 	h.call("advance", secs, 1.0)   # at the halved time per jar this is 2 more jars
-	near(float(h.get("storage")) - before, 2.0, "rate change applies to the next advance", 0.01)
+	near(float(h.get("storage")) - before, 2.0, "rate change applies to the next advance", tol * 2.0)
 	_fin()
 
 
-# L53: past capacity into the overflow buffer of overflow_frames frames; then paused.
-func t_overflow_and_pause() -> void:
-	var h: Object = _mk_hive()
-	var jars: float = float(cv("frame_jars"))
-	var secs: float = float(cv("base_seconds_per_jar"))
-	var ocap: float = jars * float(cv("overflow_frames"))
-	h.call("advance", jars * secs, 1.0)
-	ck(h.call("is_full"), "full after one frame of time")
-	near(float(h.get("overflow")), 0.0, "overflow starts empty")
+# Done when, fill: "60 s fills all 5 frames (10 jars) in order, slot by slot". Frame k gets no cell before frame k-1 is full.
+func t_fill_in_order_slot_by_slot() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	var cpf: int = _cpf()
+	var nf: int = _frames_n()
+	var cs: float = _cell_secs()
+	eq(_profile(h), [0, 0, 0, 0, 0].slice(0, nf), "a new hive holds no Capped cell")
+	for i in nf:
+		var arr: PackedByteArray = h.call("frame_cells", i)
+		eq(arr.size(), cpf, "frame %d has cells_per_frame slots" % i)
+		var empties: int = 0
+		for b in arr:
+			if b == 2:
+				empties += 1
+		eq(empties, cpf, "frame %d starts as empty slots (state 2)" % i)
+	h.call("advance", cs * 0.5, 1.0)   # half a cell of margin, so float noise cannot move a cell
+	var bad: String = ""
+	for j in range(1, nf * cpf + 1):
+		h.call("advance", cs, 1.0)
+		var want: Array = []
+		var left: int = j
+		for f in nf:
+			var take: int = mini(left, cpf)
+			want.append(take)
+			left -= take
+		var got: Array = _profile(h)
+		if got != want and bad == "":
+			bad = "after %d cells: Capped per frame %s, expected %s (frames fill in order)" % [j, str(got), str(want)]
+		if bad != "":
+			break
+	ck(bad == "", bad)
+	ck(h.call("is_full"), "full after nf x cpf cells")
+	near(float(h.get("storage")), _hive_jars(), "storage = 10 jars", _cell_value() * 0.01)
+	near(float(h.get("overflow")), 0.0, "overflow still empty at the moment of full", _cell_value() * 1.05)
+	_fin()
+
+
+# Loop step 1: "A frame that is risen (on display) never fills; honey goes to the other frames or the overflow."
+# Spec ambiguity noted in the report: raise_frame(i) on a frame with no Capped cell is not described; the test raises an empty frame.
+func t_risen_frame_never_fills() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	var cpf: int = _cpf()
+	var nf: int = _frames_n()
+	var risen: int = 2
+	var seen: Array = []
+	h.connect("frame_raised", func(i: Variant) -> void: seen.append(["raised", int(i)]))
+	h.connect("frame_lowered", func(i: Variant) -> void: seen.append(["lowered", int(i)]))
+	h.call("raise_frame", risen)
+	eq(seen, [["raised", risen]], "raise_frame(i) emits frame_raised(i)")
+	h.call("advance", _secs_for_jars(_hive_jars()) + _cell_secs() * 0.5, 1.0)   # 60 s: ten jars arrive
+	var want: Array = []
+	for f in nf:
+		want.append(0 if f == risen else cpf)
+	eq(_profile(h), want, "the risen frame took no cell, the other frames filled")
+	var ov: float = _hive_jars() - float(cpf * (nf - 1)) * _cell_value()
+	near(float(h.get("overflow")), ov, "the honey the risen frame would have taken went to the overflow", _cell_value() * 1.5)
+	ck(not h.call("is_full"), "not full while a slot cannot fill (a frame is risen)")
+	h.call("lower_frame")
+	eq(seen.size(), 2, "lower_frame() emits frame_lowered")
+	if seen.size() == 2:
+		eq(seen[1], ["lowered", risen], "frame_lowered(i) names the frame")
+	h.call("advance", _secs_for_jars(_hive_jars()), 1.0)
+	eq(_profile(h), [cpf, cpf, cpf, cpf, cpf].slice(0, nf), "once lowered the frame fills again")
+	ck(h.call("is_full"), "full again")
+	_fin()
+
+
+# Done when, fill: "overflow takes the next 10 jars, then the hive pauses". Overflow buffer = overflow_hives x capacity.
+func t_overflow_one_hive_then_pause() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	var tol: float = _cell_value() * 1.5
+	var cap: float = _hive_jars()
+	var ocap: float = cap * float(cv("overflow_hives"))
+	_hive_filled(h)
+	ck(h.call("is_full"), "full after 60 s")
+	near(float(h.get("overflow")), 0.0, "overflow starts empty", tol)
 	ck(not h.call("is_paused"), "not paused yet")
-	h.call("advance", ocap * secs / 2.0, 1.0)
-	near(float(h.get("overflow")), ocap / 2.0, "overflow half full", 0.01)
-	near(float(h.get("storage")), jars, "storage stays at capacity")
+	h.call("advance", _secs_for_jars(ocap) / 2.0, 1.0)
+	near(float(h.get("overflow")), ocap / 2.0, "overflow half full", tol)
+	near(float(h.get("storage")), cap, "storage stays at capacity", _cell_value() * 0.01)
 	ck(not h.call("is_paused"), "not paused at half overflow")
-	h.call("advance", ocap * secs / 2.0 + 1.0, 1.0)
-	near(float(h.get("overflow")), ocap, "overflow full", 0.01)
+	h.call("advance", _secs_for_jars(ocap) / 2.0 + 1.0, 1.0)
+	near(float(h.get("overflow")), ocap, "overflow full after the next 10 jars", tol)
 	ck(h.call("is_paused"), "paused when both are full")
 	h.call("advance", 1000.0, 1.0)
-	near(float(h.get("overflow")), ocap, "overflow capped", 0.01)
-	near(float(h.get("storage")), jars, "storage capped")
-	_fin()
-
-
-# L123
-func t_take_frame_not_full() -> void:
-	var h: Object = _mk_hive()
-	var jars: float = float(cv("frame_jars"))
-	var secs: float = float(cv("base_seconds_per_jar"))
-	h.call("advance", jars * secs / 2.0, 1.0)
-	eq(h.call("take_frame"), 0, "take_frame when not full returns 0")
-	near(float(h.get("storage")), jars / 2.0, "storage untouched", 0.01)
-	_fin()
-
-
-# L123: take_frame() returns a frame and the overflow moves into storage.
-func t_take_frame_with_overflow() -> void:
-	var h: Object = _mk_hive()
-	var jars: float = float(cv("frame_jars"))
-	var secs: float = float(cv("base_seconds_per_jar"))
-	h.call("advance", jars * secs + jars * secs / 2.0, 1.0)   # full + half a frame of overflow
-	eq(h.call("take_frame"), int(jars), "take_frame returns one frame")
-	near(float(h.get("storage")), jars / 2.0, "overflow moved into storage", 0.01)
-	near(float(h.get("overflow")), 0.0, "overflow emptied", 0.01)
-	ck(not h.call("is_full"), "not full after taking")
-	h.call("advance", jars * secs, 1.0)
-	ck(h.call("is_full"), "refills")
-	var h2: Object = _mk_hive()
-	h2.call("advance", 100000.0, 1.0)
-	eq(h2.call("take_frame"), int(jars), "take from a paused hive")
-	near(float(h2.get("storage")), minf(jars, jars * float(cv("overflow_frames"))), "a full overflow refills storage", 0.01)
-	ck(not h2.call("is_paused"), "unpaused after take_frame")
-	_fin()
-
-
-func t_became_full_count_full_overflow() -> void:
-	var h: Object = _mk_hive()
-	var jars: float = float(cv("frame_jars"))
-	var secs: float = float(cv("base_seconds_per_jar"))
-	_counter = 0
-	h.connect("became_full", _bump)
-	h.call("advance", jars * secs, 1.0)
-	eq(_counter, 1, "became_full on first fill")
-	h.call("advance", jars * secs, 1.0)
-	eq(_counter, 1, "no repeat while full or overflowing")
-	h.call("advance", 100000.0, 1.0)
-	h.call("take_frame")
-	eq(_counter, 2, "became_full emitted exactly once by take_frame with a full overflow")
-	h.call("advance", 5.0, 1.0)
-	eq(_counter, 2, "no extra emit afterwards")
+	near(float(h.get("overflow")), ocap, "overflow capped", tol)
+	near(float(h.get("storage")), cap, "storage capped", _cell_value() * 0.01)
 	_fin()
 
 
 func t_became_full_once_while_filling() -> void:
-	var h: Object = _mk_hive()
-	var total: float = (float(cv("frame_jars")) * float(cv("base_seconds_per_jar"))) + 10.0
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
 	_counter = 0
 	h.connect("became_full", _bump)
+	var total: float = _secs_for_jars(_hive_jars()) + 10.0
 	var steps: int = int(total / 0.1)
 	for i in steps:
 		h.call("advance", 0.1, 1.0)
-	eq(_counter, 1, "one emit across the fill")
+	eq(_counter, 1, "one became_full across the fill")
 	_fin()
 
 
-# ---------------------------------------------------------------- honeycomb
-
-# L124: 0 = Capped, 1 = Uncapped, 2 = Extracted; frame of grid_cols x grid_rows cells (7 x 5 = 35).
-func t_cell_transitions() -> void:
-	var hc: Object = await _mk_honeycomb()
-	if hc == null:
+func t_became_full_count_full_overflow() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
 		_fin()
 		return
-	var n: int = int(cv("grid_cols")) * int(cv("grid_rows"))
-	for i in n:
-		eq(_cell_state(hc, i), 0, "initial state of cell %d" % i)
-	ck(not hc.call("all_uncapped"), "not all uncapped at start")
-	ck(hc.call("uncap_at", 3), "uncap_at(3) returns true")
-	eq(_cell_state(hc, 3), 1, "cell 3 Uncapped")
-	for i in n:
-		hc.call("uncap_at", i)
-	ck(hc.call("all_uncapped"), "all uncapped")
-	for i in n:
-		eq(_cell_state(hc, i), 1, "state %d" % i)
-	hc.call("extract_all")
-	for i in n:
-		eq(_cell_state(hc, i), 2, "extracted %d" % i)
-	_fin()
-
-
-# L68, L227 (new open shows all Capped)
-func t_cell_reset_on_next_harvest() -> void:
-	var hc: Object = await _mk_honeycomb()
-	if hc == null:
-		_fin()
-		return
-	var n: int = int(cv("grid_cols")) * int(cv("grid_rows"))
-	for i in n:
-		hc.call("uncap_at", i)
-	hc.call("extract_all")
-	hc.call("reset")
-	for i in n:
-		eq(_cell_state(hc, i), 0, "Capped after reset %d" % i)
-	ck(not hc.call("all_uncapped"), "not all uncapped after reset")
-	for i in n:
-		hc.call("uncap_at", i)
-	ck(hc.call("all_uncapped"), "second round uncaps")
-	_fin()
-
-
-# L55: uncapping is state 0 -> 1 only.
-func t_uncap_only_from_capped() -> void:
-	var hc: Object = await _mk_honeycomb()
-	if hc == null:
-		_fin()
-		return
-	var n: int = int(cv("grid_cols")) * int(cv("grid_rows"))
-	ck(hc.call("uncap_at", 0), "first uncap")
-	ck(not hc.call("uncap_at", 0), "second uncap of the same cell is a no-op")
-	ck(not hc.call("uncap_at", -1), "negative index")
-	ck(not hc.call("uncap_at", n), "out of range")
-	hc.call("extract_all")
-	ck(not hc.call("uncap_at", 0), "an Extracted cell cannot be uncapped")
-	eq(_cell_state(hc, 0), 2, "still Extracted")
-	_fin()
-
-
-# L124
-func t_all_uncapped_signal() -> void:
-	var hc: Object = await _mk_honeycomb()
-	if hc == null:
-		_fin()
-		return
-	var n: int = int(cv("grid_cols")) * int(cv("grid_rows"))
 	_counter = 0
-	hc.connect("all_cells_uncapped", _bump)
-	for i in n - 1:
-		hc.call("uncap_at", i)
-	eq(_counter, 0, "not emitted one cell short")
-	hc.call("uncap_at", n - 1)
-	eq(_counter, 1, "emitted once at the last cell")
+	h.connect("became_full", _bump)
+	_hive_filled(h)
+	eq(_counter, 1, "became_full on the first fill")
+	h.call("advance", _secs_for_jars(_hive_jars()), 1.0)
+	eq(_counter, 1, "no repeat while full or overflowing")
+	h.call("advance", 100000.0, 1.0)
+	eq(_counter, 1, "no repeat once paused")
 	_fin()
 
 
-# ---------------------------------------------------------------- centrifuge
+# Done when, scrape: "one cell moves 2 / 35 jars from the hive; a full frame scraped moves 2 jars".
+func t_scrape_value() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	_hive_filled(h)
+	near(float(h.call("cell_value")), _cell_value(), 1e-9, "hive.cell_value() = frame_jars / cells_per_frame")
+	var before: float = float(h.get("storage"))
+	var got: float = float(h.call("scrape", 0, 0))
+	near(got, _jars_of(1), 1e-9, "scrape returns the jar value of one cell (2 / 35)")
+	near(before - float(h.get("storage")), _jars_of(1), 1e-9, "one cell moved 2 / 35 jars out of the hive's storage")
+	var sum: float = got
+	for c in range(1, _cpf()):
+		sum += float(h.call("scrape", 0, c))
+	near(sum, float(cv("frame_jars")), 1e-6, "a full frame scraped returns frame_jars (2) jars")
+	near(before - float(h.get("storage")), float(cv("frame_jars")), 1e-6, "a full frame scraped moved frame_jars jars out of storage")
+	eq(fi.capped(h as Node, 0), 0, "no Capped cell left in the scraped frame")
+	eq(fi.capped(h as Node, 1), _cpf(), "the next frame is untouched")
+	_fin()
 
-# L125, L59-L65: EMPTY -> FULL -> CRANKING -> DONE -> BOTTLING -> EMPTY, with state_changed(state).
-func t_centrifuge_state_flow() -> void:
+
+# Loop step 3: a scrape is Capped -> Uncapped (state 1); a cell scraped once cannot be scraped again; an empty slot yields nothing.
+# Ambiguity in the report: whether state 2 is written by the hive at the scrape or by the flight; this test accepts 1 or 2.
+func t_scrape_rules() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	h.call("advance", _cell_secs() * 3.5, 1.0)   # three cells in frame 0
+	eq(_profile(h)[0], 3, "three cells arrived")
+	var arr0: PackedByteArray = h.call("frame_cells", 0)
+	eq(arr0[0], 0, "a filled slot is Capped (0)")
+	var s0: float = float(h.get("storage"))
+	near(float(h.call("scrape", 0, 1)), _cell_value(), 1e-9, "first scrape of cell 1 returns its value")
+	var arr1: PackedByteArray = h.call("frame_cells", 0)
+	ck(arr1[1] == 1 or arr1[1] == 2, "a scraped cell is no longer Capped (state %d)" % arr1[1])
+	eq(arr1[0], 0, "its neighbours keep their state")
+	near(float(h.call("scrape", 0, 1)), 0.0, "scraping the same cell twice returns 0", 1e-9)
+	near(float(h.get("storage")), s0 - _cell_value(), 1e-9, "the second scrape moved nothing")
+	near(float(h.call("scrape", 3, 0)), 0.0, "scraping an empty slot returns 0", 1e-9)
+	var arr3: PackedByteArray = h.call("frame_cells", 3)
+	eq(arr3[0], 2, "an empty slot stays Extracted (2)")
+	_fin()
+
+
+# Loop step 3 and Contract: next_frame_to_harvest() is the first frame with Capped cells (-1 if none); has_capped_cells().
+func t_next_frame_to_harvest() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	eq(h.call("next_frame_to_harvest"), -1, "empty hive: no frame to harvest")
+	ck(not h.call("has_capped_cells"), "empty hive: no Capped cell")
+	_hive_filled(h)
+	eq(h.call("next_frame_to_harvest"), 0, "full hive: frame 0 first")
+	ck(h.call("has_capped_cells"), "full hive has Capped cells")
+	for c in _cpf():
+		h.call("scrape", 0, c)
+	eq(h.call("next_frame_to_harvest"), 1, "frame 0 scraped out: frame 1 next")
+	for f in range(1, _frames_n()):
+		for c in _cpf():
+			h.call("scrape", f, c)
+	eq(h.call("next_frame_to_harvest"), -1, "everything scraped: -1")
+	ck(not h.call("has_capped_cells"), "no Capped cell left")
+	_fin()
+
+
+# ---------------------------------------------------------------- centrifuge: bucket, lid, turns, floor bottling
+
+# Done when, bucket: "cells go to the bucket until 2 x 35"; states EMPTY -> LOADING; capacity read live.
+func t_bucket_capacity_and_states() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
 		_fin()
 		return
-	var jars: int = int(cv("frame_jars"))
-	var rate: float = float(cv("max_tap_rate"))
-	var seen: Array = []
-	c.connect("state_changed", func(s: Variant) -> void: seen.append(int(s)))
+	var cap: int = _bucket_cells()
 	eq(c.get("state"), _st(c, "EMPTY"), "starts EMPTY")
-	c.call("fill", jars)
-	eq(c.get("state"), _st(c, "FULL"), "fill() -> FULL")
-	eq(c.get("jars_total"), jars, "jars_total after fill")
-	c.call("begin_crank")
-	eq(c.get("state"), _st(c, "CRANKING"), "begin_crank() -> CRANKING")
-	_tap_spaced(c, int(cv("taps_per_frame")), 1.0 / rate + 0.01)
-	eq(c.get("state"), _st(c, "DONE"), "all turns counted -> DONE")
-	c.call("open_spigot")
-	eq(c.get("state"), _st(c, "BOTTLING"), "open_spigot() -> BOTTLING")
-	c.call("advance", float(cv("bottling_seconds_per_jar")) * jars + 1.0)
-	eq(c.get("state"), _st(c, "EMPTY"), "last jar bottled -> EMPTY")
-	eq(seen, [_st(c, "FULL"), _st(c, "CRANKING"), _st(c, "DONE"), _st(c, "BOTTLING"), _st(c, "EMPTY")], "state_changed order")
-	_fin()
-
-
-# L58, L106: capacity of 1 frame, so there is never room while it holds a frame.
-func t_has_room() -> void:
-	var c: Object = await _mk_cen()
-	if c == null:
-		_fin()
-		return
-	eq(int(cv("centrifuge_capacity_frames")), 1, "prototype capacity is 1 frame (L106)")
 	ck(c.call("has_room"), "EMPTY has room")
-	c.call("fill", int(cv("frame_jars")))
-	ck(not c.call("has_room"), "FULL has no room with capacity 1")
-	c.call("begin_crank")
-	ck(not c.call("has_room"), "CRANKING has no room")
-	_fin()
-
-
-# L222: taps_per_frame counted turns extract frame_jars jars and give extraction_done.
-func t_taps_per_frame() -> void:
-	var c: Object = await _mk_cen()
-	if c == null:
-		_fin()
-		return
-	var n: int = int(cv("taps_per_frame"))
-	var jars: int = int(cv("frame_jars"))
-	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.01   # every tap clears the cap
-	var done: Array = [0]
-	var progress: Array = []
-	c.connect("extraction_done", func() -> void: done[0] += 1)
-	c.connect("extraction_progress", func(d: Variant, t: Variant) -> void: progress.append([d, t]))
-	_to_cranking(c)
-	var counted: int = _tap_spaced(c, n - 1, gap)
-	eq(counted, n - 1, "every spaced tap counts (n-1)")
-	eq(done[0], 0, "not done one turn short")
-	ck(int(c.get("jars_extracted")) < jars, "jars_extracted below the total one turn short (%s)" % str(c.get("jars_extracted")))
-	ck(c.call("tap"), "the last tap counts")
-	eq(done[0], 1, "extraction_done emitted once at taps_per_frame turns")
-	eq(c.get("jars_extracted"), jars, "frame_jars jars extracted")
-	eq(c.get("state"), _st(c, "DONE"), "state DONE")
-	ck(progress.size() > 0, "extraction_progress emitted")
-	if progress.size() > 0:
-		eq(progress[progress.size() - 1], [jars, jars], "last extraction_progress(done, total) in jars")
-	c.call("advance", gap)
-	ck(not c.call("tap"), "a turn after DONE is not counted")
-	eq(done[0], 1, "extraction_done not repeated")
-	_fin()
-
-
-# L223: taps closer than 1/max_tap_rate to the last counted turn are ignored.
-# 30 taps evenly spaced over 1 s (6 per 1/max_tap_rate) count as max_tap_rate.
-func t_tap_cap() -> void:
-	var c: Object = await _mk_cen()
-	if c == null:
-		_fin()
-		return
-	var rate: float = float(cv("max_tap_rate"))
-	var per_interval: int = 6
-	var n: int = int(roundf(rate * per_interval))   # 30 at the default 5/s
-	_to_cranking(c)
-	var counted: int = _tap_spaced(c, n, 1.0 / (rate * per_interval))
-	eq(counted, int(roundf(rate)), "%d taps over 1 s count as max_tap_rate (%s/s)" % [n, str(rate)])
-	# and a burst with no time between taps counts at most one
+	eq(c.call("room_cells"), cap, "room_cells = centrifuge_capacity_frames x cells_per_frame (70)")
+	eq(c.get("lid_open"), true, "EMPTY: lid off")
+	eq(c.get("cells"), 0, "no cells yet")
+	c.call("add_cells", 1, _jars_of(1))
+	eq(c.get("state"), _st(c, "LOADING"), "one cell in, room left: LOADING")
+	eq(c.call("room_cells"), cap - 1, "room_cells counts down")
+	eq(c.get("lid_open"), true, "LOADING: lid still off")
+	ck(c.call("has_room"), "LOADING has room")
+	c.call("add_cells", cap - 1, _jars_of(cap - 1))
+	eq(c.get("cells"), cap, "bucket holds cap cells")
+	eq(c.call("room_cells"), 0, "no room left")
+	ck(not c.call("has_room"), "full bucket has no room")
+	near(float(c.get("jars")), _jars_of(cap), 1e-6, "jars = 4 for 70 cells")
+	# the capacity is read live (Dev mode)
 	var c2: Object = await _mk_cen()
-	_to_cranking(c2)
-	var burst: int = 0
-	for i in 20:
-		if c2.call("tap"):
-			burst += 1
-	eq(burst, 1, "20 taps in zero time count 1")
+	_set_cfg("centrifuge_capacity_frames", 1)
+	eq(c2.call("room_cells"), _cpf(), "room_cells follows centrifuge_capacity_frames live")
 	_fin()
 
 
-# L61, L97: the cap is read live (Dev mode edits apply at once).
-func t_tap_cap_is_live() -> void:
+# Done when, lid: close_lid() -> FULL, lid_open false, lid_moved(false); then begin_crank -> CRANKING.
+func t_lid_close_and_signal() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
 		_fin()
 		return
-	var rate: float = float(cv("max_tap_rate"))
-	_set_cfg("max_tap_rate", rate * 2.0)
-	_to_cranking(c)
-	ck(c.call("tap"), "first tap counts")
-	c.call("advance", 1.2 / (rate * 2.0))   # past the new interval, inside the old one
-	ck(c.call("tap"), "a tap after 1.2 / new rate counts (the old cap would have ignored it)")
+	var seen: Array = []
+	c.connect("lid_moved", func(o: Variant) -> void: seen.append(bool(o)))
+	c.call("add_cells", _cpf(), _jars_of(_cpf()))
+	c.call("close_lid")
+	eq(c.get("lid_open"), false, "lid on after close_lid()")
+	eq(c.get("state"), _st(c, "FULL"), "a part-full bucket with its lid on waits as FULL (Spin shows)")
+	ck(seen.size() > 0 and seen[seen.size() - 1] == false, "lid_moved(false) emitted (got %s)" % str(seen))
+	eq(c.get("cells"), _cpf(), "closing the lid keeps the cells")
+	c.call("begin_crank")
+	eq(c.get("state"), _st(c, "CRANKING"), "begin_crank -> CRANKING")
 	_fin()
 
 
-# L62, L224: a hold counts one turn on press, then max_tap_rate turns per second:
-# a frame finishes in (taps_per_frame - 1) / max_tap_rate seconds, +- one frame.
+# Done when, crank: ceil(jars x taps_per_jar) turns; 16 turns for 4 jars. Uses the integer cell count.
+func t_turns_per_jar() -> void:
+	var per_jar: int = int(cv("taps_per_jar"))
+	var cases: Array = [_bucket_cells(), _cpf(), _cpf() + 1, 1]   # 4 jars, 2 jars, 2.057 jars, 2/35 jar
+	for cells in cases:
+		var c: Object = await _mk_cen()
+		if c == null:
+			_fin()
+			return
+		var want: int = _turns_for(cells)
+		var done: Array = [0]
+		c.connect("extraction_done", func() -> void: done[0] += 1)
+		_to_cranking(c, cells)
+		var cranking: int = _st(c, "CRANKING")
+		var sent: int = 0
+		while int(c.get("state")) == cranking and sent < want + 6:
+			if not c.call("tap"):
+				ck(false, "%d cells: a spaced tap was not counted" % cells)
+			c.call("advance", _tap_gap())
+			sent += 1
+		eq(sent, want, "%d cells (%s jars): ceil(jars x taps_per_jar) turns" % [cells, str(_jars_of(cells))])
+		eq(c.get("state"), _st(c, "DONE"), "%d cells: DONE after the last turn" % cells)
+		eq(done[0], 1, "%d cells: extraction_done once" % cells)
+	var c4: Object = await _mk_cen()
+	_to_cranking(c4)
+	var n4: int = 0
+	var cranking4: int = _st(c4, "CRANKING")
+	while int(c4.get("state")) == cranking4 and n4 < 200:
+		c4.call("tap")
+		c4.call("advance", _tap_gap())
+		n4 += 1
+	eq(n4, int(roundf(_jars_of(_bucket_cells()))) * per_jar, "4 jars take 4 x taps_per_jar turns (16 at the defaults)")
+	_fin()
+
+
+# Contract: crank_enabled false (the zoom) stops every turn; true again counts.
+func t_crank_enabled_flag() -> void:
+	var c: Object = await _mk_cen()
+	if c == null:
+		_fin()
+		return
+	ck("crank_enabled" in c, "centrifuge.gd has crank_enabled (spec: Contract)")
+	if not ("crank_enabled" in c):
+		_fin()
+		return
+	eq(c.get("crank_enabled"), true, "crank_enabled defaults to true on the farm")
+	_to_cranking(c)
+	c.set("crank_enabled", false)
+	ck(not c.call("tap"), "tap() ignored while crank_enabled is false")
+	c.call("advance", 1.0)
+	ck(not c.call("tap"), "still ignored a second later")
+	c.call("set_holding", true)
+	for i in 120:
+		c.call("advance", 1.0 / 60.0)
+	c.call("set_holding", false)
+	eq(c.get("turns_counted"), 0, "no turn counted: not by tap, not by hold, while disabled")
+	eq(c.get("state"), _st(c, "CRANKING"), "still CRANKING (cranking just stopped counting)")
+	c.set("crank_enabled", true)
+	c.call("advance", 1.0)
+	ck(c.call("tap"), "tap() counts again once enabled")
+	eq(c.get("turns_counted"), 1, "one turn counted")
+	_fin()
+
+
+# Step 5: a hold counts one turn on press, then max_tap_rate/s: (turns - 1) / max_tap_rate seconds, +- one frame.
 func t_hold_at_cap() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
@@ -877,14 +1142,13 @@ func t_hold_at_cap() -> void:
 		return
 	_to_cranking(c)
 	var dt: float = 1.0 / 60.0
-	var expected: float = (float(cv("taps_per_frame")) - 1.0) / float(cv("max_tap_rate"))
+	var expected: float = (float(_turns_for(_bucket_cells())) - 1.0) / float(cv("max_tap_rate"))
 	var t: float = _hold_to_done(c, dt, expected * 3.0 + 5.0)
 	eq(c.get("state"), _st(c, "DONE"), "hold reached DONE")
-	near(t, expected, "hold finish time (taps_per_frame - 1) / max_tap_rate", dt + 0.002)
+	near(t, expected, "hold finish time (turns - 1) / max_tap_rate", dt + 0.002)
 	_fin()
 
 
-# L62: hold_ramp_seconds is visual only; it must not change when turns are counted.
 func t_hold_ramp_is_visual_only() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
@@ -893,16 +1157,15 @@ func t_hold_ramp_is_visual_only() -> void:
 	_set_cfg("hold_ramp_seconds", float(cv("hold_ramp_seconds")) * 4.0 + 5.0)
 	_to_cranking(c)
 	var dt: float = 1.0 / 60.0
-	var expected: float = (float(cv("taps_per_frame")) - 1.0) / float(cv("max_tap_rate"))
+	var expected: float = (float(_turns_for(_bucket_cells())) - 1.0) / float(cv("max_tap_rate"))
 	var t: float = _hold_to_done(c, dt, expected * 3.0 + 5.0)
 	near(t, expected, "hold finish time with a long ramp", dt + 0.002)
 	_fin()
 
 
-# L62, L225: holding is never slower than tapping at exactly max_tap_rate.
+# Holding is never slower than tapping at exactly max_tap_rate.
 func t_hold_never_slower() -> void:
 	var rate: float = float(cv("max_tap_rate"))
-	var n: int = int(cv("taps_per_frame"))
 	var dt: float = 1.0 / 60.0
 	var tapper: Object = await _mk_cen()
 	var holder: Object = await _mk_cen()
@@ -917,16 +1180,14 @@ func t_hold_never_slower() -> void:
 		tapper.call("tap")
 		tapper.call("advance", step)
 		t_tap += step
-	# the last tap that finished the frame happened at (n - 1) steps, before its advance
 	var tap_finish: float = t_tap - step
-	eq(tapper.get("state"), _st(tapper, "DONE"), "tapped frame reached DONE")
+	eq(tapper.get("state"), _st(tapper, "DONE"), "tapped bucket reached DONE")
 	_to_cranking(holder)
 	var t_hold: float = _hold_to_done(holder, dt, 1000.0)
-	ck(t_hold <= tap_finish + dt + 0.002, "held frame (%.3f s) finishes no later than the same frame tapped at max_tap_rate (%.3f s, %d taps)" % [t_hold, tap_finish, n])
+	ck(t_hold <= tap_finish + dt + 0.002, "held (%.3f s) finishes no later than tapped at max_tap_rate (%.3f s)" % [t_hold, tap_finish])
 	_fin()
 
 
-# L62: releasing stops the counting.
 func t_hold_release_stops() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
@@ -935,150 +1196,142 @@ func t_hold_release_stops() -> void:
 	_to_cranking(c)
 	c.call("tap")
 	c.call("set_holding", true)
-	var rate: float = float(cv("max_tap_rate"))
 	for i in 60:
 		c.call("advance", 1.0 / 60.0)
 	c.call("set_holding", false)
-	var before: int = int(c.get("jars_extracted"))
+	var before: Variant = c.get("turns_counted")
+	ck(before != null and int(before) > 1, "the hold counted turns before release (turns_counted = %s)" % str(before))
 	for i in 600:
 		c.call("advance", 1.0 / 60.0)
-	eq(c.get("jars_extracted"), before, "no progress after release (10 s idle)")
+	eq(c.get("turns_counted"), before, "no turn after release (10 s idle)")
 	eq(c.get("state"), _st(c, "CRANKING"), "still CRANKING after release")
-	ck(rate > 0.0, "max_tap_rate positive")
 	_fin()
 
 
-## Mouse press event at an empty screen spot, through the real viewport input path.
-func _real_click(pos: Vector2) -> void:
-	_push_mouse(pos, true)
-	_push_mouse(pos, false)
+# Step 5: taps closer than 1 / max_tap_rate to the last counted turn are ignored.
+func t_tap_cap() -> void:
+	var c: Object = await _mk_cen()
+	if c == null:
+		_fin()
+		return
+	var rate: float = float(cv("max_tap_rate"))
+	var per_interval: int = 6
+	var n: int = int(roundf(rate * per_interval))
+	_to_cranking(c)
+	var counted: int = _tap_spaced(c, n, 1.0 / (rate * per_interval))
+	eq(counted, int(roundf(rate)), "%d taps over 1 s count as max_tap_rate (%s/s)" % [n, str(rate)])
+	var c2: Object = await _mk_cen()
+	_to_cranking(c2)
+	var burst: int = 0
+	for i in 20:
+		if c2.call("tap"):
+			burst += 1
+	eq(burst, 1, "20 taps in zero time count 1")
+	_fin()
 
 
-# L61, L226: crank input counts only in CRANKING. tap() returns false in every other state, and a real
-# input event in those states changes nothing; in CRANKING the same events count (positive control).
+func t_tap_cap_is_live() -> void:
+	var c: Object = await _mk_cen()
+	if c == null:
+		_fin()
+		return
+	var rate: float = float(cv("max_tap_rate"))
+	_set_cfg("max_tap_rate", rate * 2.0)
+	_to_cranking(c)
+	ck(c.call("tap"), "first tap counts")
+	c.call("advance", 1.2 / (rate * 2.0))
+	ck(c.call("tap"), "a tap after 1.2 / new rate counts (the old cap would have ignored it)")
+	_fin()
+
+
+# Table of states: crank input counts only in CRANKING (and then only unless zoomed). Real input in every state.
 func t_crank_ignored_outside_cranking() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
 		_fin()
 		return
-	var jars: int = int(cv("frame_jars"))
-	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.01
-	var n: int = int(cv("taps_per_frame"))
+	var gap: float = _tap_gap()
+	var n: int = _turns_for(_bucket_cells())
 	var burst: int = n * 3
-	# EMPTY
-	for i in burst:
+	for i in burst:   # EMPTY
 		c.call("tap")
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
-	eq(c.get("jars_extracted"), 0, "EMPTY: input extracted nothing")
+	eq(c.get("turns_counted"), 0, "EMPTY: input counted nothing")
 	eq(c.get("state"), _st(c, "EMPTY"), "EMPTY unchanged by input")
-	# FULL
-	c.call("fill", jars)
+	c.call("add_cells", _cpf(), _jars_of(_cpf()))   # LOADING
 	for i in burst:
 		c.call("tap")
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
-	eq(c.get("jars_extracted"), 0, "FULL: input extracted nothing")
+	eq(c.get("turns_counted"), 0, "LOADING: input counted nothing")
+	eq(c.get("state"), _st(c, "LOADING"), "LOADING unchanged by input")
+	c.call("add_cells", _bucket_cells() - _cpf(), _jars_of(_bucket_cells() - _cpf()))
+	c.call("close_lid")   # FULL
+	for i in burst:
+		c.call("tap")
+		_real_click(EMPTY_SPOT)
+		c.call("advance", gap)
+	eq(c.get("turns_counted"), 0, "FULL: input counted nothing")
 	eq(c.get("state"), _st(c, "FULL"), "FULL unchanged by input (begin_crank starts cranking, not a tap)")
-	# CRANKING: positive control, the same real events now count and finish the frame
-	c.call("begin_crank")
+	c.call("begin_crank")   # CRANKING: positive control
 	var cranking: int = _st(c, "CRANKING")
 	for i in n + 5:
 		if int(c.get("state")) != cranking:
 			break
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
-	eq(c.get("state"), _st(c, "DONE"), "CRANKING: real clicks counted and finished the frame (positive control)")
-	# DONE
-	var extracted: int = int(c.get("jars_extracted"))
-	for i in burst:
+	eq(c.get("state"), _st(c, "DONE"), "CRANKING: real clicks counted and finished the bucket (positive control)")
+	var turns: Variant = c.get("turns_counted")
+	for i in burst:   # DONE
 		c.call("tap")
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
 	eq(c.get("state"), _st(c, "DONE"), "DONE unchanged by input")
-	eq(c.get("jars_extracted"), extracted, "DONE: no extra extraction")
-	# BOTTLING
-	c.call("open_spigot")
+	eq(c.get("turns_counted"), turns, "DONE: no extra turn")
+	c.call("open_spigot")   # BOTTLING
 	var bottling: int = _st(c, "BOTTLING")
 	for i in 3:
 		c.call("tap")
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
-	eq(c.get("state"), bottling, "BOTTLING unchanged by input (3 turns of bottling time may have passed)")
-	eq(c.get("jars_extracted"), extracted, "BOTTLING: no extra extraction")
+	eq(c.get("state"), bottling, "BOTTLING unchanged by input")
+	eq(c.get("turns_counted"), turns, "BOTTLING: no extra turn")
 	_fin()
 
 
-# L61: a real mouse click anywhere that is not a button counts as one turn (spaced clicks finish a frame).
 func t_real_mouse_taps_crank() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
 		_fin()
 		return
 	_to_cranking(c)
-	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.01
-	var n: int = int(cv("taps_per_frame"))
+	var gap: float = _tap_gap()
+	var n: int = _turns_for(_bucket_cells())
 	var cranking: int = _st(c, "CRANKING")
 	var sent: int = 0
 	while int(c.get("state")) == cranking and sent < n * 2:
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
 		sent += 1
-	eq(sent, n, "exactly taps_per_frame real clicks finish the frame")
+	eq(sent, n, "exactly ceil(jars x taps_per_jar) real clicks finish the bucket")
 	eq(c.get("state"), _st(c, "DONE"), "DONE")
-	# a click burst inside one cap interval counts once
 	var c2: Object = await _mk_cen()
 	_to_cranking(c2)
 	for i in 15:
 		_real_click(EMPTY_SPOT)
-	var counted_after_burst: bool = c2.call("tap")
-	ck(not counted_after_burst, "15 real clicks in zero time were already counted once, so a 16th tap is capped")
+	ck(not c2.call("tap"), "15 real clicks in zero time were already counted once, so a 16th tap is capped")
 	_fin()
 
 
-# L62: a real mouse press-and-hold cranks continuously; release stops it.
-func t_real_mouse_hold_cranks() -> void:
-	var c: Object = await _mk_cen()
-	if c == null:
-		_fin()
-		return
-	_to_cranking(c)
-	var dt: float = 1.0 / 60.0
-	var expected: float = (float(cv("taps_per_frame")) - 1.0) / float(cv("max_tap_rate"))
-	var cranking: int = _st(c, "CRANKING")
-	_push_mouse(EMPTY_SPOT, true)
-	var t: float = 0.0
-	while int(c.get("state")) == cranking and t < expected * 3.0 + 5.0:
-		c.call("advance", dt)
-		t += dt
-	_push_mouse(EMPTY_SPOT, false)
-	eq(c.get("state"), _st(c, "DONE"), "a real press-and-hold finished the frame")
-	near(t, expected, "real hold finish time", dt + 0.002)
-	# release stops: press, hold 1 s, release, 5 idle seconds -> no more progress
-	var c2: Object = await _mk_cen()
-	_to_cranking(c2)
-	_push_mouse(EMPTY_SPOT, true)
-	for i in 60:
-		c2.call("advance", dt)
-	_push_mouse(EMPTY_SPOT, false)
-	var at_release: int = int(c2.get("jars_extracted"))
-	for i in 300:
-		c2.call("advance", dt)
-	eq(c2.get("jars_extracted"), at_release, "no progress after the real release")
-	ck(at_release > 0, "the real hold made progress before release (%d jars)" % at_release)
-	_fin()
-
-
-# L61 (tap or hold on a phone): a touch counts like a click. Sent with root.push_input: headless, Input.parse_input_event
-# dispatches nothing (mouse included), so the windowed tests/touch_windowed.gd covers the Input.parse_input_event path.
 func t_real_touch_taps_crank() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
 		_fin()
 		return
 	_to_cranking(c)
-	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.01
-	var n: int = int(cv("taps_per_frame"))
+	var gap: float = _tap_gap()
+	var n: int = _turns_for(_bucket_cells())
 	var cranking: int = _st(c, "CRANKING")
 	var sent: int = 0
 	while int(c.get("state")) == cranking and sent < n * 2:
@@ -1086,7 +1339,7 @@ func t_real_touch_taps_crank() -> void:
 		down.index = 0
 		down.pressed = true
 		down.position = EMPTY_SPOT * _to_window()
-		root.push_input(down)   # headless: Input.parse_input_event dispatches nothing (mouse included); play_loop covers it windowed
+		root.push_input(down)
 		var up := InputEventScreenTouch.new()
 		up.index = 0
 		up.pressed = false
@@ -1094,17 +1347,17 @@ func t_real_touch_taps_crank() -> void:
 		root.push_input(up)
 		c.call("advance", gap)
 		sent += 1
-	eq(c.get("state"), _st(c, "DONE"), "touch taps finished the frame (%d sent)" % sent)
+	eq(c.get("state"), _st(c, "DONE"), "touch taps finished the bucket (%d sent)" % sent)
 	_fin()
 
 
-# L61: presses on buttons never count as cranks (taps arrive through _unhandled_input).
 func t_button_press_is_not_a_crank() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
 		_fin()
 		return
 	var layer := CanvasLayer.new()
+	layer.layer = 100
 	var btn := Button.new()
 	btn.position = Vector2(100.0, 900.0)
 	btn.size = Vector2(300.0, 150.0)
@@ -1114,39 +1367,65 @@ func t_button_press_is_not_a_crank() -> void:
 	_to_free.append(layer)
 	await process_frame
 	_to_cranking(c)
-	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.01
-	var n: int = int(cv("taps_per_frame"))
+	var gap: float = _tap_gap()
+	var n: int = _turns_for(_bucket_cells())
 	var on_button: Vector2 = btn.get_global_rect().get_center()
 	for i in n * 2:
 		_real_click(on_button)
 		c.call("advance", gap)
 	eq(c.get("state"), _st(c, "CRANKING"), "clicks on a button did not crank")
-	eq(c.get("jars_extracted"), 0, "no jars from button clicks")
-	# positive control: the same number of clicks off the button finishes the frame
+	eq(c.get("turns_counted"), 0, "no turns from button clicks")
 	var cranking: int = _st(c, "CRANKING")
 	for i in n * 2:
 		if int(c.get("state")) != cranking:
 			break
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
-	eq(c.get("state"), _st(c, "DONE"), "clicks off the button finish the frame (positive control)")
+	eq(c.get("state"), _st(c, "DONE"), "clicks off the button finish the bucket (positive control)")
 	_fin()
 
 
-# ---------------------------------------------------------------- bottling and truck
+# ---------------------------------------------------------------- bottling
 
-# L65, L229: one jar every bottling_seconds_per_jar, each to the truck; bottling_done(jars) at the end.
+## Crank a loaded bucket to DONE by spaced taps.
+func _crank_done(c: Object) -> int:
+	var cranking: int = _st(c, "CRANKING")
+	var sent: int = 0
+	while int(c.get("state")) == cranking and sent < 400:
+		c.call("tap")
+		c.call("advance", _tap_gap())
+		sent += 1
+	return sent
+
+
+## Bottle until EMPTY (advance in steps); returns the jar_bottled count and the bottling_done arguments.
+func _bottle_out(c: Object, step: float = 0.05) -> Dictionary:
+	var bottled: Array = []
+	var done_args: Array = []
+	c.connect("jar_bottled", func(n: Variant) -> void: bottled.append(int(n)))
+	c.connect("bottling_done", func(j: Variant) -> void: done_args.append(int(j)))
+	c.call("open_spigot")
+	var limit: float = float(cv("bottling_seconds_per_jar")) * (float(c.get("jars")) + 4.0) + 5.0
+	var t: float = 0.0
+	var empty: int = _st(c, "EMPTY")
+	while int(c.get("state")) != empty and t < limit:
+		c.call("advance", step)
+		t += step
+	return {"bottled": bottled, "done": done_args}
+
+
+# Step 6: one jar every bottling_seconds_per_jar; the jars are floor(jars) of the bucket; the lid lifts off afterwards.
 func t_bottling_timing() -> void:
 	var c: Object = await _mk_cen()
 	var t: Object = await _mk_truck()
 	if c == null or t == null:
 		_fin()
 		return
-	var jars: int = int(cv("frame_jars"))
+	var cells: int = _bucket_cells()
+	var jars: int = int(floorf(_jars_of(cells) + 0.000001))
 	var spj: float = float(cv("bottling_seconds_per_jar"))
-	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.01
-	_to_cranking(c)
-	_tap_spaced(c, int(cv("taps_per_frame")), gap)
+	_to_cranking(c, cells)
+	_crank_done(c)
 	eq(c.get("state"), _st(c, "DONE"), "extracted before bottling")
 	var times: Array = []
 	var clock: Array = [0.0]
@@ -1163,30 +1442,26 @@ func t_bottling_timing() -> void:
 	for i in steps:
 		clock[0] += dt
 		c.call("advance", dt)
-		t.call("advance", dt)
-	eq(times.size(), jars, "one jar_bottled per jar")
+	eq(times.size(), jars, "one jar_bottled per whole jar")
 	for k in times.size():
 		near(float(times[k]), (k + 1) * spj, "jar %d bottled at (k x bottling_seconds_per_jar)" % (k + 1), dt * 2.0 + 0.01)
 	eq(counts, range(1, jars + 1), "jar_bottled(count) counts 1..n")
-	eq(done_args, [jars], "bottling_done(jars) emitted once")
-	eq(c.get("jars_bottled"), jars, "jars_bottled")
+	eq(done_args, [jars], "bottling_done(jars) emitted once with floor(jars)")
 	eq(c.get("state"), _st(c, "EMPTY"), "centrifuge EMPTY again")
-	eq(t.get("loaded_jars"), jars, "every jar went to the truck (loaded_jars)")
-	eq(t.get("crate_jars"), 0, "nothing in the crate while the truck was home")
+	eq(c.get("lid_open"), true, "the lid lifts off after bottling: the bucket is empty and open")
+	eq(c.get("cells"), 0, "no cells left")
+	eq(t.get("loaded_jars"), jars, "every jar went to the truck")
 	_fin()
 
 
-# L97: bottling_seconds_per_jar is read live: an edit applies to the next jar.
 func t_bottling_time_is_live() -> void:
 	var c: Object = await _mk_cen()
 	if c == null:
 		_fin()
 		return
-	var jars: int = int(cv("frame_jars"))
 	var spj: float = float(cv("bottling_seconds_per_jar"))
-	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.01
 	_to_cranking(c)
-	_tap_spaced(c, int(cv("taps_per_frame")), gap)
+	_crank_done(c)
 	var times: Array = []
 	var clock: Array = [0.0]
 	c.connect("jar_bottled", func(_n: Variant) -> void: times.append(clock[0]))
@@ -1204,9 +1479,84 @@ func t_bottling_time_is_live() -> void:
 	eq(times.size(), 2, "second jar bottled")
 	if times.size() == 2:
 		near(float(times[1]) - float(times[0]), spj * 2.0, "the next jar takes the edited time", dt * 3.0)
-	ck(jars > 1, "frame has more than one jar")
 	_fin()
 
+
+# Done when: "bottling a fractional bucket gives floor(jars) jars and carries the rest" (never lost).
+# 36 cells = 2 jars + 2/35. Batch 2 of 34 cells (1.943 jars) plus the carried 2/35 is exactly 2 jars.
+func t_bottling_floor_and_leftover_carry() -> void:
+	var c: Object = await _mk_cen()
+	if c == null:
+		_fin()
+		return
+	var n1: int = _cpf() + 1
+	_to_cranking(c, n1)
+	_crank_done(c)
+	var r1: Dictionary = _bottle_out(c)
+	eq(r1["done"], [2], "36 cells (2.057 jars) bottle floor = 2 jars")
+	eq((r1["bottled"] as Array).size(), 2, "two jar_bottled signals")
+	var left: Variant = c.get("leftover_jars")
+	ck(left != null, "centrifuge.gd has leftover_jars (spec: Contract)")
+	if left != null:
+		near(float(left), _jars_of(n1) - 2.0, 1e-6, "the leftover fraction (2/35) is kept in leftover_jars")
+	eq(c.get("state"), _st(c, "EMPTY"), "EMPTY after batch 1")
+	var n2: int = _cpf() - 1
+	_to_cranking(c, n2)
+	_crank_done(c)
+	var r2: Dictionary = _bottle_out(c)
+	eq(r2["done"], [2], "34 cells (1.943 jars) plus the carried 2/35 bottle 2 jars: the leftover was never lost")
+	var left2: Variant = c.get("leftover_jars")
+	if left2 != null:
+		near(float(left2), 0.0, "nothing left after the second batch", 1e-6)
+	_fin()
+
+
+# Float guard (found by reasoning, not by the spec text): 35 cells fed one at a time, each worth 2/35, are exactly 2 jars.
+# Summing 2/35 thirty-five times in float can land on 1.9999999999999998; floor() of that would lose a jar and ceil(x * 4)
+# could add a turn. The spec says a full frame is 2 jars and turns are ceil(jars x taps_per_jar) = 8.
+func t_bottling_35_single_cells_is_2_jars() -> void:
+	var c: Object = await _mk_cen()
+	if c == null:
+		_fin()
+		return
+	for i in _cpf():
+		c.call("add_cells", 1, _cell_value())
+	c.call("close_lid")
+	c.call("begin_crank")
+	var sent: int = _crank_done(c)
+	eq(sent, _turns_for(_cpf()), "35 single cells need ceil(2 x taps_per_jar) = 8 turns (float noise must not add one)")
+	var r: Dictionary = _bottle_out(c)
+	eq(r["done"], [int(cv("frame_jars"))], "35 cells fed one by one bottle frame_jars (2) jars, not 1")
+	_fin()
+
+
+# Contract pile.gd: cells, jars, add(n, jars), take(n) -> jars of those cells.
+func t_pile_unit() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Node = _nn(m, "Pile")
+	if p == null:
+		_fin()
+		return
+	eq(p.get("cells"), 0, "a new pile is empty")
+	near(float(p.get("jars")), 0.0, "no jars", 1e-9)
+	p.call("add", 30, _jars_of(30))
+	eq(p.get("cells"), 30, "30 cells piled")
+	near(float(p.get("jars")), _jars_of(30), 1e-6, "30 cells' jars")
+	var got: float = float(p.call("take", 10))
+	near(got, _jars_of(10), 1e-6, "take(10) returns 10 cells' jars")
+	eq(p.get("cells"), 20, "20 cells left")
+	near(float(p.get("jars")), _jars_of(20), 1e-6, "20 cells' jars left")
+	var got2: float = float(p.call("take", 20))
+	near(got2, _jars_of(20), 1e-6, "take(20) returns the rest")
+	eq(p.get("cells"), 0, "pile emptied")
+	near(float(p.get("jars")), 0.0, "no jars left", 1e-6)
+	_fin()
+
+
+# ---------------------------------------------------------------- truck (unchanged rules)
 
 # L126, L230: capacity jars make the truck full and sellable.
 func t_truck_full_and_can_sell() -> void:
@@ -1330,186 +1680,870 @@ func t_truck_trip_time_is_live() -> void:
 	_fin()
 
 
-# ---------------------------------------------------------------- scene-level flow (needs Bob's rebuilt scenes)
+# ---------------------------------------------------------------- the zoom (real input on the farm)
 
-func _mk_main() -> Node:
-	var ps: Variant = load("res://scenes/main.tscn")
-	ck(ps != null, "res://scenes/main.tscn failed to load")
-	if ps == null:
-		return null
-	var m: Node = (ps as PackedScene).instantiate()
-	ck(m != null, "main.tscn failed to instantiate")
-	if m == null:
-		return null
-	root.add_child(m)
-	_to_free.append(m)
-	await _frames(5)
-	return m
+const SCENE_NODES := ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon", "ContinueButton",
+		"UpgradeButton", "BackButton", "HintLabel", "SummaryModal", "SummaryOkButton", "CentrifugeLabel", "MoneyLabel",
+		"FillLabel", "BeeCountLabel", "ShopPanel"]
 
 
-func _nn(m: Node, name: String) -> Node:
-	var n: Node = m.find_child(name, true, false)
-	ck(n != null, "node '%s' missing in the scene (spec: Node paths for Bob)" % name)
-	return n
+## The named nodes of a main instance; a missing one fails the test (spec: Node paths for Bob) and returns {}.
+func _parts(m: Node) -> Dictionary:
+	var d: Dictionary = {}
+	var ok: bool = true
+	for nm in SCENE_NODES:
+		var n: Node = m.find_child(nm, true, false)
+		if n == null:
+			ck(false, "node '%s' missing in the scene (spec: Node paths for Bob)" % nm)
+			ok = false
+		d[nm] = n
+	return d if ok else {}
 
 
-func _shown(n: Node) -> bool:
-	return n != null and (n as CanvasItem).is_visible_in_tree()
+## Listen to the hive: the risen frame (-1 when none), every raise and lower, every lid move.
+func _track(hive: Node) -> Dictionary:
+	var tr: Dictionary = {"risen": -1, "raised": [], "lowered": [], "lid": []}
+	hive.connect("frame_raised", func(i: Variant) -> void:
+		tr["risen"] = int(i)
+		(tr["raised"] as Array).append(int(i)))
+	hive.connect("frame_lowered", func(i: Variant) -> void:
+		(tr["lowered"] as Array).append(int(i))
+		if int(tr["risen"]) == int(i):
+			tr["risen"] = -1)
+	hive.connect("lid_moved", func(o: Variant) -> void: (tr["lid"] as Array).append(bool(o)))
+	return tr
 
 
-# L56, L227: Back returns to the farm; the frame stays in the hive (storage unchanged), the centrifuge is
-# EMPTY, the fork shows again, and the next open shows every cell Capped.
-func t_back_keeps_frame() -> void:
+## CHEAT (Dev mode, marked): a full hive (all frames Capped, overflow empty) and the fill frozen, so nothing arrives by itself.
+func _full_hive_frozen(hive: Node) -> void:
+	hive.call("fill_now")
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+
+
+func _zoom_settle() -> float:
+	return float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + float(cv("slide_seconds")) + 0.5
+
+
+## Tap the fork where it floats, wait for the zoom (frame_raised), then for the camera, lid and slide to settle.
+func _open_zoom(m: Node, p: Dictionary, tr: Dictionary) -> bool:
+	var on_anchor: bool = await fi.click_icon(p["ForkIcon"] as Control)
+	ck(on_anchor, "the fork icon sits at its anchor's projected position (click went there)")
+	var raised: bool = await _until(func() -> bool: return int(tr["risen"]) >= 0, 3.0)
+	await _wait(_zoom_settle())
+	return raised
+
+
+## Scrape the risen frame with real drags until it has no Capped cell (or the zoom moved on); returns the frame index worked.
+func _scrape_risen(m: Node, hive: Node, tr: Dictionary, passes: int = 5) -> int:
+	var f: int = int(tr["risen"])
+	var hc: Node = m.find_child("Honeycomb", true, false)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	if f < 0 or hc == null or cam == null:
+		ck(false, "scrape: no risen frame / Honeycomb / camera (risen=%d)" % f)
+		return f
+	for pass_i in passes:
+		if int(tr["risen"]) != f or fi.capped(hive, f) == 0:
+			break
+		for r in fi.rows(hc, cam):
+			if int(tr["risen"]) != f or fi.capped(hive, f) == 0:
+				break
+			await fi.drag_row(r)
+	return f
+
+
+## After a frame is finished: wait for it to slide down and the next to slide up (or for the zoom to end), then settle.
+func _next_frame(tr: Dictionary, was: int, timeout: float = 4.0) -> bool:
+	var moved: bool = await _until(func() -> bool: return int(tr["risen"]) >= 0 and int(tr["risen"]) != was, timeout)
+	await _wait(float(cv("slide_seconds")) + 0.45)
+	return moved
+
+
+## Total jars held anywhere before bottling: hive storage + overflow + bucket + pile.
+func _jars_everywhere(p: Dictionary) -> float:
+	return float((p["Hive"] as Node).get("storage")) + float((p["Hive"] as Node).get("overflow")) \
+			+ float((p["Centrifuge"] as Node).get("jars")) + float((p["Pile"] as Node).get("jars"))
+
+
+# Spec "The loop" step 3 and Look: tapping the fork zooms (camera size to zoom_size), hides the farm UI, opens the hive lid
+# and raises the first frame with Capped cells; BackButton sits in a top corner clear of the frame and the bucket.
+func t_zoom_ui_and_camera() -> void:
 	var m: Node = await _mk_main()
 	if m == null:
 		_fin()
 		return
-	var hive: Node = _nn(m, "Hive")
-	var cen: Node = _nn(m, "Centrifuge")
-	var fork: Node = _nn(m, "ForkIcon")
-	var farm: Node = _nn(m, "FarmWorld")
-	if hive == null or cen == null or fork == null or farm == null:
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
 		_fin()
 		return
-	# exactly one frame in storage and an almost-empty overflow, so a wrongly run take_frame() shows
-	hive.call("advance", 100000.0, 1.0)
-	hive.call("take_frame")   # storage back to one frame (overflow moved in), overflow empty
-	var jars: float = float(cv("frame_jars"))
-	var ocap: float = jars * float(cv("overflow_frames"))
-	await _frames(3)
-	ck(hive.call("is_full"), "precondition: hive full")
-	ck(float(hive.get("overflow")) < ocap * 0.5, "precondition: overflow well under a frame (%s)" % str(hive.get("overflow")))
-	var storage_before: float = float(hive.get("storage"))
-	ck(_shown(fork), "fork icon shown with a full hive and an EMPTY centrifuge")
-	if fork is BaseButton:
-		(fork as BaseButton).pressed.emit()
-	await _wait(0.8)
+	var hive: Node = p["Hive"]
+	var tr: Dictionary = _track(hive)
+	_full_hive_frozen(hive)
+	await _frames(4)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	ck(cam != null, "a current Camera3D exists on the farm")
+	if cam == null:
+		_fin()
+		return
+	var size0: float = cam.size
+	var farm_ui: Array = ["MoneyLabel", "FillLabel", "BeeCountLabel", "UpgradeButton", "ShopPanel"]
+	for nm in farm_ui:
+		ck(_shown(p[nm]), "%s shows on the farm before the zoom" % nm)
+	ck(_shown(p["ForkIcon"]), "fork shows at a full hive")
+	ck(not _shown(p["BackButton"]) and not _shown(p["HintLabel"]), "BackButton and hint are hidden on the farm")
+	ck((p["ForkIcon"] as Control).size.x >= 120.0 and (p["ForkIcon"] as Control).size.y >= 120.0, "fork icon touch area at least 120 x 120 (%s)" % str((p["ForkIcon"] as Control).size))
+	var raised: bool = await _open_zoom(m, p, tr)
+	ck(raised, "tapping the fork raised a frame (frame_raised)")
+	eq(tr["risen"], 0, "the first frame with Capped cells rises first")
+	eq(tr["lid"], [true], "the hive lid opened (lid_moved(true)) once")
+	near(cam.size, float(cv("zoom_size")), 0.05, "camera size reaches zoom_size")
+	ck(cam.size < size0, "the camera zoomed in (size %s < %s)" % [str(cam.size), str(size0)])
+	for nm in farm_ui + ["ForkIcon", "CentrifugeIcon", "SellIcon", "ContinueButton", "CentrifugeLabel"]:
+		ck(not _shown(p[nm]), "%s is hidden during the zoom" % nm)
+	ck(_shown(p["BackButton"]) and _shown(p["HintLabel"]), "BackButton and the hint show during the zoom")
+	var back: Control = p["BackButton"]
+	ck(back.size.y >= 120.0, "BackButton at least 120 px high (%s)" % str(back.size.y))
+	ck(back.get_global_rect().get_center().y < 320.0, "BackButton sits in a top corner (centre y %s)" % str(back.get_global_rect().get_center().y))
+	var rect: Rect2 = back.get_global_rect()
 	var hc: Node = m.find_child("Honeycomb", true, false)
-	ck(hc != null, "tapping the fork opened the close-up (Honeycomb present)")
-	ck(not (farm as Node3D).visible, "FarmWorld hidden during the close-up")
-	ck(not _shown(fork), "farm UI hidden during the close-up")
+	var hit: int = 0
 	if hc != null:
-		for i in 5:
-			hc.call("uncap_at", i)
-	var back: Node = _nn(m, "BackButton")
-	if back != null and back is BaseButton:
-		(back as BaseButton).pressed.emit()
-	await _wait(0.8)
-	var hc2: Node = m.find_child("Honeycomb", true, false)
-	ck(hc2 == null or hc2.is_queued_for_deletion(), "close-up freed after Back")
-	ck((farm as Node3D).visible, "FarmWorld visible again")
-	ck(float(hive.get("storage")) >= storage_before - 0.0001, "hive storage unchanged after Back (take_frame did not run): before %s now %s" % [str(storage_before), str(hive.get("storage"))])
-	ck(hive.call("is_full"), "hive still full after Back")
-	eq(cen.get("state"), _st(cen, "EMPTY"), "centrifuge EMPTY after Back")
-	ck(_shown(fork), "fork icon shows again after Back")
-	if fork is BaseButton:
-		(fork as BaseButton).pressed.emit()
-	await _wait(0.8)
-	var hc3: Node = m.find_child("Honeycomb", true, false)
-	ck(hc3 != null, "second open: Honeycomb present")
-	if hc3 != null:
-		var n: int = int(cv("grid_cols")) * int(cv("grid_rows"))
-		var capped: int = 0
-		for i in n:
-			if _cell_state(hc3, i) == 0:
-				capped += 1
-		eq(capped, n, "the next open shows every cell Capped (35 at the default)")
+		for pt in fi.cells(hc):
+			if rect.has_point(cam.unproject_position(pt.global_position)):
+				hit += 1
+		eq(hit, 0, "no cell of the risen frame lies under BackButton")
+	var mouth: Node = m.find_child("BucketMouth", true, false)
+	if mouth != null:
+		ck(not rect.has_point(cam.unproject_position((mouth as Node3D).global_position)), "BucketMouth is not under BackButton")
+	var hl: Label = p["HintLabel"]
+	ck(hl.text.strip_edges() != "", "the hint has text")
+	await fi.click_ctl(back)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
+	near(cam.size, size0, 0.05, "the camera returns to its farm size after Back")
+	eq(tr["lid"], [true, false], "the hive lid went back on (lid_moved(false))")
+	eq(tr["risen"], -1, "the risen frame slid back down")
+	for nm in farm_ui:
+		ck(_shown(p[nm]), "%s is back after the zoom" % nm)
+	ck(_shown(p["ForkIcon"]), "fork shows after Back: Capped cells remain")
+	ck(not _shown(p["BackButton"]), "BackButton hidden again on the farm")
 	_fin()
 
 
-# L54, L228: the fork is hidden while the centrifuge is not EMPTY, even with a full hive.
-func t_fork_hidden_unless_empty() -> void:
+# Done when, bucket and pile, lid on, pile auto-load; the whole loop with a 5-frame hive:
+#  frame 1 and 2 -> bucket (35, then 70 cells, lid on), frames 3-5 -> pile (105), zoom ends by itself; Spin, crank
+#  ceil(jars x 4) real clicks, Continue, bottle 4 jars; the lid lifts, the pile loads 70 (lid on, bucket full);
+#  twice more: 35 cells (no zoom open: lid on), then 2 jars. All through real input.
+func t_zoom_bucket_lid_pile_flow() -> void:
 	var m: Node = await _mk_main()
 	if m == null:
 		_fin()
 		return
-	var hive: Node = _nn(m, "Hive")
-	var cen: Node = _nn(m, "Centrifuge")
-	var fork: Node = _nn(m, "ForkIcon")
-	if hive == null or cen == null or fork == null:
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
 		_fin()
 		return
+	var hive: Node = p["Hive"]
+	var cen: Node = p["Centrifuge"]
+	var pile: Node = p["Pile"]
+	var truck: Node = p["Truck"]
+	var tr: Dictionary = _track(hive)
+	_full_hive_frozen(hive)
+	_set_cfg("max_tap_rate", 20.0)               # CHEAT (Dev): quicker cranking, the cap rules are tested elsewhere
+	_set_cfg("bottling_seconds_per_jar", 0.1)    # CHEAT (Dev): quicker bottling
+	await _frames(4)
+	var cpf: int = _cpf()
+	var cap: int = _bucket_cells()
+	var total_cells: int = cpf * _frames_n()
+	eq(fi.capped_total(hive, _frames_n()), total_cells, "precondition: 5 full frames")
+	var jars0: float = _jars_everywhere(p)
+	near(jars0, _hive_jars(), 1e-6, "precondition: 10 jars in the hive")
+	eq(cen.get("state"), _st(cen, "EMPTY"), "precondition: bucket EMPTY")
+	var opened: bool = await _open_zoom(m, p, tr)
+	if not opened:
+		ck(false, "zoom did not open")
+		_fin()
+		return
+	# frame 1 -> bucket
+	var f0: int = await _scrape_risen(m, hive, tr)
+	ck(await _next_frame(tr, f0), "frame %d done: the next frame rose" % f0)
+	await _wait(float(cv("cell_fly_seconds")) + 0.3)
+	eq(cen.get("cells"), cpf, "frame 1: 35 cells in the bucket")
+	eq(pile.get("cells"), 0, "frame 1: pile empty")
+	eq(cen.get("state"), _st(cen, "LOADING"), "35 cells, room left: LOADING")
+	eq(cen.get("lid_open"), true, "lid still off with room left")
+	near(float(cen.get("jars")), _jars_of(cpf), 1e-6, "the frame's 2 jars moved from the hive to the bucket")
+	near(_jars_everywhere(p), jars0, 1e-6, "no jar lost or made (hive + bucket + pile)")
+	# frame 2 -> bucket full -> lid on
+	var f1: int = await _scrape_risen(m, hive, tr)
+	ck(await _next_frame(tr, f1), "frame %d done: the next frame rose" % f1)
+	await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 0.3)
+	eq(cen.get("cells"), cap, "frame 2: the bucket holds 2 x 35 cells")
+	eq(cen.get("lid_open"), false, "the bucket's lid dropped on when it filled")
+	eq(cen.get("state"), _st(cen, "FULL"), "bucket full, lid on: FULL")
+	eq(pile.get("cells"), 0, "nothing piled yet")
+	# frames 3, 4, 5 -> pile
+	var f2: int = await _scrape_risen(m, hive, tr)
+	ck(await _next_frame(tr, f2), "frame %d done: the next frame rose" % f2)
+	await _wait(float(cv("cell_fly_seconds")) + 0.3)
+	eq(cen.get("cells"), cap, "frame 3: the bucket stays at capacity")
+	eq(pile.get("cells"), cpf, "frame 3: its 35 cells went to the pile")
+	near(float(pile.get("jars")), _jars_of(cpf), 1e-6, "the pile holds the frame's jars")
+	var f3: int = await _scrape_risen(m, hive, tr)
+	ck(await _next_frame(tr, f3), "frame %d done: the next frame rose" % f3)
+	var f4: int = await _scrape_risen(m, hive, tr)
+	# the last frame: the zoom ends by itself
+	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + float(cv("slide_seconds")) + float(cv("cell_fly_seconds")) + 0.8)
+	eq(pile.get("cells"), total_cells - cap, "frames 3-5: 105 cells piled")
+	eq(fi.capped_total(hive, _frames_n()), 0, "no Capped cell left in the hive")
+	eq(tr["raised"], [0, 1, 2, 3, 4], "frames rose in order, one at a time")
+	eq(tr["lid"], [true, false], "hive lid off at the start, on at the end of the zoom")
+	near(_jars_everywhere(p), jars0, 1e-6, "all 10 jars accounted for: 4 in the bucket, 6 in the pile")
+	ck(_shown(p["CentrifugeIcon"]), "the zoom ended on its own: Spin shows")
+	ck(_shown(p["MoneyLabel"]), "the farm UI is back")
+	ck(not _shown(p["ForkIcon"]), "the hive is empty and no Back was used: the fork is hidden")
+	eq(cen.get("state"), _st(cen, "FULL"), "bucket FULL after the zoom")
+	# three rounds of spin and bottle: 70 + 70 + 35 cells = 4 + 4 + 2 jars
+	var spot: Vector2 = fi.free_spot(m)
+	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.03
+	var want_cells: Array = [cap, cap, total_cells - 2 * cap]   # 70, 70, 35
+	var want_pile: Array = [total_cells - 2 * cap, 0, 0]         # 35, 0, 0 left after the load that follows
+	var sum_jars: int = 0
+	for round_i in 3:
+		var cells_now: int = int(cen.get("cells"))
+		eq(cells_now, int(want_cells[round_i]), "round %d: the bucket holds %d cells" % [round_i + 1, int(want_cells[round_i])])
+		ck(_shown(p["CentrifugeIcon"]), "round %d: Spin shows" % (round_i + 1))
+		await fi.click_icon(p["CentrifugeIcon"] as Control)
+		await _frames(3)
+		eq(cen.get("state"), _st(cen, "CRANKING"), "round %d: tapping Spin starts CRANKING" % (round_i + 1))
+		var turns: int = _turns_for(cells_now)
+		var sent: int = 0
+		var cranking: int = _st(cen, "CRANKING")
+		while int(cen.get("state")) == cranking and sent < turns + 6:
+			await fi.click_at(spot)
+			await _wait(gap)
+			sent += 1
+		eq(sent, turns, "round %d: ceil(jars x 4) = %d real clicks" % [round_i + 1, turns])
+		eq(cen.get("state"), _st(cen, "DONE"), "round %d: DONE" % (round_i + 1))
+		await _frames(3)
+		ck(_shown(p["ContinueButton"]), "round %d: Continue shows" % (round_i + 1))
+		await fi.click_ctl(p["ContinueButton"] as Control)
+		var jars_expected: int = int(floorf(_jars_of(cells_now) + 0.000001))
+		var summary_shown: bool = await _until(func() -> bool: return _shown(p["SummaryModal"]), 8.0)
+		ck(summary_shown, "round %d: the summary shows after the last jar" % (round_i + 1))
+		sum_jars += jars_expected
+		eq(truck.get("loaded_jars"), sum_jars, "round %d: floor(jars) = %d jars went to the truck" % [round_i + 1, jars_expected])
+		await fi.click_ctl(p["SummaryOkButton"] as Control)
+		await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 0.8)
+		if round_i < 2:
+			eq(pile.get("cells"), int(want_pile[round_i]), "round %d: the pile loaded into the empty bucket by itself (%d cells left)" % [round_i + 1, int(want_pile[round_i])])
+			eq(cen.get("lid_open"), false, "round %d: the bucket closed after the load (full, or no zoom open)" % (round_i + 1))
+			eq(cen.get("state"), _st(cen, "FULL"), "round %d: FULL again, Spin shows" % (round_i + 1))
+		else:
+			eq(pile.get("cells"), 0, "round 3: the pile is empty")
+			eq(cen.get("state"), _st(cen, "EMPTY"), "round 3: bucket EMPTY")
+			eq(cen.get("lid_open"), true, "round 3: the lid lifted off, the bucket is empty and open")
+	eq(truck.get("loaded_jars"), int(cv("truck_capacity_jars")), "10 jars on the truck at the end")
+	_fin()
+
+
+# Done when: "lid on at zoom end with a part-full bucket (Back after one frame: 35 cells, 2 jars, lid on, Spin shows)".
+func t_back_after_one_frame() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var hive: Node = p["Hive"]
+	var cen: Node = p["Centrifuge"]
+	var tr: Dictionary = _track(hive)
+	_full_hive_frozen(hive)
+	await _frames(4)
+	var cpf: int = _cpf()
+	if not await _open_zoom(m, p, tr):
+		ck(false, "zoom did not open")
+		_fin()
+		return
+	var f0: int = await _scrape_risen(m, hive, tr)
+	ck(await _next_frame(tr, f0), "frame %d done, the next rose" % f0)
+	await _wait(float(cv("cell_fly_seconds")) + 0.3)
+	eq(cen.get("lid_open"), true, "before Back: lid still off (35 of 70 cells)")
+	await fi.click_ctl(p["BackButton"] as Control)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")))
+	eq(cen.get("cells"), cpf, "Back: 35 cells in the bucket")
+	near(float(cen.get("jars")), float(cv("frame_jars")), 1e-6, "Back: 2 jars in the bucket")
+	eq(cen.get("lid_open"), false, "Back: the lid is on (zoom ended with cells in the bucket)")
+	eq(cen.get("state"), _st(cen, "FULL"), "Back: FULL")
+	ck(_shown(p["CentrifugeIcon"]), "Back: Spin shows")
+	ck(_shown(p["ForkIcon"]), "Back: the fork stays, four frames still hold Capped cells")
+	eq(fi.capped_total(hive, _frames_n()), cpf * (_frames_n() - 1), "four full frames remain")
+	eq(tr["risen"], -1, "the risen frame went back down")
+	_fin()
+
+
+# Done when: "Back keeps a half-scraped frame's cells; the fork shows while any Capped cell remains".
+# One half-scraped frame: it must come up again, same cells, and be finished; then the zoom ends by itself and the fork goes.
+func t_back_keeps_half_frame() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var hive: Node = p["Hive"]
+	var cen: Node = p["Centrifuge"]
+	var tr: Dictionary = _track(hive)
+	_full_hive_frozen(hive)
+	await _frames(4)
+	var cpf: int = _cpf()
+	if not await _open_zoom(m, p, tr):
+		ck(false, "zoom did not open")
+		_fin()
+		return
+	var hc: Node = m.find_child("Honeycomb", true, false)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	var rws: Array = fi.rows(hc, cam)
+	ck(rws.size() >= 2, "the risen frame shows at least two screen rows (%d)" % rws.size())
+	if rws.size() < 2:
+		_fin()
+		return
+	eq(tr["risen"], 0, "frame 0 is on display")
+	await fi.drag_row(rws[0])
+	await fi.drag_row(rws[1])
+	await _wait(float(cv("cell_fly_seconds")) + 0.4)
+	var left: int = fi.capped(hive, 0)
+	ck(left > 0 and left < cpf, "half a frame scraped: %d of %d cells still Capped" % [left, cpf])
+	var snapshot: PackedByteArray = hive.call("frame_cells", 0)
+	eq(int(cen.get("cells")), cpf - left, "the scraped cells are in the bucket")
+	eq(tr["risen"], 0, "the half frame is still up (not done)")
+	await fi.click_ctl(p["BackButton"] as Control)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")))
+	eq(hive.call("frame_cells", 0), snapshot, "Back kept the half frame's cells exactly (no reset to Capped)")
+	eq(fi.capped(hive, 0), left, "the half frame still has %d Capped cells" % left)
+	eq(tr["risen"], -1, "the half frame slid down")
+	ck(_shown(p["ForkIcon"]), "the fork shows after Back while Capped cells remain")
+	eq(cen.get("lid_open"), false, "Back with cells in the bucket: lid on")
+	ck(_shown(p["CentrifugeIcon"]), "Spin shows")
+	eq(hive.call("next_frame_to_harvest"), 0, "the half frame is the next to harvest")
+	# the way back in: the same frame rises, then the others; at the end the zoom ends by itself and the fork goes
+	tr["raised"] = []
+	if not await _open_zoom(m, p, tr):
+		ck(false, "second zoom did not open")
+		_fin()
+		return
+	eq(tr["risen"], 0, "the half frame rises first on the return")
+	for k in _frames_n():
+		var f: int = await _scrape_risen(m, hive, tr)
+		if k < _frames_n() - 1:
+			ck(await _next_frame(tr, f), "frame %d done, the next rose" % f)
+	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + 1.5)
+	eq(fi.capped_total(hive, _frames_n()), 0, "everything scraped")
+	ck(not _shown(p["ForkIcon"]), "the zoom ended on its own with no Capped cell: the fork is gone (resume cleared)")
+	ck(_shown(p["MoneyLabel"]), "the farm UI is back")
+	_fin()
+
+
+# Done when and step 2: the fork shows whenever the hive is full, at every centrifuge state including CRANKING;
+# not at a hive that is not full (no Back yet).
+func t_fork_rules() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var hive: Node = p["Hive"]
+	var cen: Node = p["Centrifuge"]
 	cen.set_process(false)
-	hive.call("advance", 100000.0, 1.0)   # frame plus a full overflow: as full as it gets
+	(p["Truck"] as Node).set_process(false)
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	await _frames(4)
+	var fork: Node = p["ForkIcon"]
+	ck(not _shown(fork), "empty hive, EMPTY centrifuge: no fork")
+	hive.call("fill_now")
 	await _frames(3)
 	ck(hive.call("is_full"), "precondition: hive full")
-	ck(_shown(fork), "EMPTY + full hive: fork shown (positive control)")
-	cen.call("fill", int(cv("frame_jars")))
+	ck(_shown(fork), "EMPTY: fork shown at a full hive")
+	cen.call("add_cells", _cpf(), _jars_of(_cpf()))
 	await _frames(3)
-	ck(not _shown(fork), "FULL: fork hidden although the hive is full")
+	eq(cen.get("state"), _st(cen, "LOADING"), "precondition: LOADING")
+	ck(_shown(fork), "LOADING: fork shown")
+	cen.call("add_cells", _bucket_cells() - _cpf(), _jars_of(_bucket_cells() - _cpf()))
+	cen.call("close_lid")
+	await _frames(3)
+	eq(cen.get("state"), _st(cen, "FULL"), "precondition: FULL")
+	ck(_shown(fork), "FULL: fork shown (cells will pile up)")
 	cen.call("begin_crank")
 	await _frames(3)
-	ck(not _shown(fork), "CRANKING: fork hidden")
-	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.01
-	_tap_spaced(cen, int(cv("taps_per_frame")), gap)
+	eq(cen.get("state"), _st(cen, "CRANKING"), "precondition: CRANKING")
+	ck(_shown(fork), "CRANKING: fork shown at a full hive")
+	_crank_done(cen)
 	await _frames(3)
 	eq(cen.get("state"), _st(cen, "DONE"), "precondition: DONE")
-	ck(not _shown(fork), "DONE: fork hidden")
+	ck(_shown(fork), "DONE: fork shown")
 	cen.call("open_spigot")
 	await _frames(3)
-	ck(not _shown(fork), "BOTTLING: fork hidden")
+	eq(cen.get("state"), _st(cen, "BOTTLING"), "precondition: BOTTLING")
+	ck(_shown(fork), "BOTTLING: fork shown")
+	# not full any more: hidden at every state (a scrape without the zoom, so no Back has set the resume flag)
+	hive.call("scrape", 0, 0)
+	await _frames(3)
+	ck(not hive.call("is_full"), "precondition: the hive is no longer full")
+	ck(not _shown(fork), "BOTTLING, hive not full, no Back: fork hidden")
 	_fin()
 
 
-# L72-L78: the state table. Fork, centrifuge icon, Continue per state; Sell icon follows the truck.
-func t_state_table_icons() -> void:
+# State table with LOADING and the lid, and the farm icons during the zoom (Spin and Continue are farm-only).
+func t_fork_shows_while_cranking_and_state_table() -> void:
 	var m: Node = await _mk_main()
 	if m == null:
 		_fin()
 		return
-	var hive: Node = _nn(m, "Hive")
-	var cen: Node = _nn(m, "Centrifuge")
-	var truck: Node = _nn(m, "Truck")
-	var fork: Node = _nn(m, "ForkIcon")
-	var cicon: Node = _nn(m, "CentrifugeIcon")
-	var cont: Node = _nn(m, "ContinueButton")
-	var sell: Node = _nn(m, "SellIcon")
-	if hive == null or cen == null or truck == null or fork == null or cicon == null or cont == null or sell == null:
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
 		_fin()
 		return
+	var hive: Node = p["Hive"]
+	var cen: Node = p["Centrifuge"]
+	var truck: Node = p["Truck"]
+	var tr: Dictionary = _track(hive)
 	cen.set_process(false)
 	truck.set_process(false)
-	hive.call("advance", 100000.0, 1.0)
-	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.01
+	_full_hive_frozen(hive)
+	await _frames(4)
+	var cicon: Node = p["CentrifugeIcon"]
+	var cont: Node = p["ContinueButton"]
+	var sell: Node = p["SellIcon"]
+	eq(_shown(sell), bool(truck.call("can_sell")), "EMPTY: Sell icon follows the truck")
+	ck(not _shown(cicon) and not _shown(cont), "EMPTY: Spin and Continue hidden")
+	eq(cen.get("lid_open"), true, "EMPTY: lid off")
+	cen.call("add_cells", _cpf(), _jars_of(_cpf()))
 	await _frames(3)
-	ck(_shown(fork), "EMPTY: fork shown")
-	ck(not _shown(cicon), "EMPTY: centrifuge icon hidden")
-	ck(not _shown(cont), "EMPTY: Continue hidden")
-	eq(_shown(sell), bool(truck.call("can_sell")), "EMPTY: Sell icon follows the truck (empty)")
-	cen.call("fill", int(cv("frame_jars")))
+	ck(not _shown(cicon) and not _shown(cont), "LOADING: Spin and Continue hidden")
+	eq(cen.get("lid_open"), true, "LOADING: lid off")
+	cen.call("add_cells", _bucket_cells() - _cpf(), _jars_of(_bucket_cells() - _cpf()))
+	cen.call("close_lid")
 	await _frames(3)
-	ck(not _shown(fork), "FULL: fork hidden")
-	ck(_shown(cicon), "FULL: centrifuge icon shown")
+	ck(_shown(cicon), "FULL: Spin shows (farm)")
 	ck(not _shown(cont), "FULL: Continue hidden")
+	eq(cen.get("lid_open"), false, "FULL: lid on")
+	# zoom open: Spin hidden
+	ck(await _open_zoom(m, p, tr), "zoom opened with a FULL bucket")
+	ck(not _shown(cicon), "zoom: Spin hidden (farm only)")
+	await fi.click_ctl(p["BackButton"] as Control)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
+	ck(_shown(cicon), "after the zoom: Spin shows again")
 	cen.call("begin_crank")
 	await _frames(3)
-	ck(not _shown(fork), "CRANKING: fork hidden")
-	ck(not _shown(cicon), "CRANKING: centrifuge icon hidden")
-	ck(not _shown(cont), "CRANKING: Continue hidden")
-	_tap_spaced(cen, int(cv("taps_per_frame")), gap)
+	ck(not _shown(cicon) and not _shown(cont), "CRANKING: Spin and Continue hidden")
+	_crank_done(cen)
 	await _frames(3)
-	ck(not _shown(fork), "DONE: fork hidden")
-	ck(not _shown(cicon), "DONE: centrifuge icon hidden")
 	ck(_shown(cont), "DONE: Continue shown")
-	# fill the truck while DONE: the Sell icon must appear in the same state (the table says "as truck allows")
+	ck(not _shown(cicon), "DONE: Spin hidden")
 	for i in int(cv("truck_capacity_jars")):
 		truck.call("receive_jar")
 	await _frames(3)
 	ck(_shown(sell), "DONE: Sell icon shown once the truck is full and home")
+	tr["raised"] = []
+	ck(await _open_zoom(m, p, tr), "zoom opened at DONE")
+	ck(not _shown(cont), "zoom: Continue hidden (farm only)")
+	ck(not _shown(sell), "zoom: Sell icon hidden (farm UI)")
+	await fi.click_ctl(p["BackButton"] as Control)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
+	ck(_shown(cont), "after the zoom: Continue shows again")
 	cen.call("open_spigot")
 	await _frames(3)
-	ck(not _shown(fork), "BOTTLING: fork hidden")
-	ck(not _shown(cicon), "BOTTLING: centrifuge icon hidden")
-	ck(not _shown(cont), "BOTTLING: Continue hidden")
-	ck(_shown(sell), "BOTTLING: Sell icon shown with a full truck at home")
-	# the truck away: the Sell icon is hidden
+	ck(not _shown(cicon) and not _shown(cont), "BOTTLING: Spin and Continue hidden")
 	truck.call("sell")
 	await _frames(3)
 	ck(not _shown(sell), "truck away: Sell icon hidden")
 	_fin()
 
 
-# ---------------------------------------------------------------- floating icons
+# Step 3: "crank input never counts (a drag on a frame is never a crank turn), cranking stops counting until the zoom ends".
+# Cells scraped while CRANKING go to the pile.
+func t_no_crank_during_zoom() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var hive: Node = p["Hive"]
+	var cen: Node = p["Centrifuge"]
+	var pile: Node = p["Pile"]
+	var tr: Dictionary = _track(hive)
+	_full_hive_frozen(hive)
+	await _frames(4)
+	_to_cranking(cen)
+	await _frames(3)
+	eq(cen.get("state"), _st(cen, "CRANKING"), "precondition: CRANKING")
+	ck(_shown(p["ForkIcon"]), "CRANKING at a full hive: the fork shows")
+	var gap: float = 1.0 / float(cv("max_tap_rate")) + 0.03
+	var spot: Vector2 = fi.free_spot(m)
+	await fi.click_at(spot)
+	eq(cen.get("turns_counted"), 1, "positive control: one real click on the farm counts one turn")
+	await _wait(gap)
+	if not await _open_zoom(m, p, tr):
+		ck(false, "zoom did not open while CRANKING")
+		_fin()
+		return
+	eq(cen.get("crank_enabled"), false, "crank_enabled is false during the zoom")
+	var zspot: Vector2 = fi.free_spot(m)
+	for i in 5:
+		await fi.click_at(zspot)
+		await _wait(gap)
+	_push_mouse(zspot, true)
+	await _wait(1.0)
+	_push_mouse(zspot, false)
+	eq(cen.get("turns_counted"), 1, "clicks and a hold during the zoom counted no turn")
+	var hc: Node = m.find_child("Honeycomb", true, false)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	var rws: Array = fi.rows(hc, cam)
+	if rws.size() > 0:
+		await fi.drag_row(rws[0])
+	await _wait(float(cv("cell_fly_seconds")) + 0.4)
+	eq(cen.get("turns_counted"), 1, "a drag across the frame is never a crank turn")
+	ck(int(pile.get("cells")) > 0, "cells scraped while CRANKING went to the pile (%s)" % str(pile.get("cells")))
+	eq(cen.get("cells"), _bucket_cells(), "the cranking bucket took no cell")
+	await fi.click_ctl(p["BackButton"] as Control)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
+	eq(cen.get("crank_enabled"), true, "crank_enabled is true again after the zoom")
+	await fi.click_at(fi.free_spot(m))
+	eq(cen.get("turns_counted"), 2, "after the zoom a real click counts again")
+	_fin()
+
+
+# Step 3: "bottling, the truck and the hive fill keep running" during the zoom; the risen frame never fills.
+func t_zoom_fill_and_bottling_keep_running() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var hive: Node = p["Hive"]
+	var cen: Node = p["Centrifuge"]
+	var truck: Node = p["Truck"]
+	var tr: Dictionary = _track(hive)
+	hive.call("fill_now")
+	_set_cfg("base_seconds_per_jar", 1.5)       # CHEAT (Dev): honey arrives slowly but visibly
+	await _frames(4)
+	_to_cranking(cen)
+	_crank_done(cen)
+	cen.call("open_spigot")
+	await _frames(3)
+	eq(cen.get("state"), _st(cen, "BOTTLING"), "precondition: BOTTLING")
+	ck(_shown(p["ForkIcon"]), "BOTTLING at a full hive: the fork shows")
+	if not await _open_zoom(m, p, tr):
+		ck(false, "zoom did not open while BOTTLING")
+		_fin()
+		return
+	var hc: Node = m.find_child("Honeycomb", true, false)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	var rws: Array = fi.rows(hc, cam)
+	if rws.size() > 0:
+		await fi.drag_row(rws[0])
+	await _wait(float(cv("cell_fly_seconds")) + 0.4)
+	var f: int = int(tr["risen"])
+	var risen_capped: int = fi.capped(hive, f)
+	var ov0: float = float(hive.get("overflow"))
+	var jars0: int = int(truck.get("loaded_jars")) + int(truck.get("crate_jars"))
+	var state0: int = int(cen.get("state"))
+	await _wait(4.0)
+	ck(float(hive.get("overflow")) > ov0 + 0.5, "the hive keeps filling during the zoom: overflow %s -> %s" % [str(ov0), str(hive.get("overflow"))])
+	eq(fi.capped(hive, f), risen_capped, "the risen frame took none of that honey (still %d Capped)" % risen_capped)
+	var jars1: int = int(truck.get("loaded_jars")) + int(truck.get("crate_jars"))
+	ck(jars1 > jars0 or int(cen.get("state")) != state0, "bottling keeps running during the zoom: jars %d -> %d" % [jars0, jars1])
+	_fin()
+
+
+# Done when: "the pop tween's parameters (1.3 -> 1, 0.18 s, back-out) are unchanged". Measured on a real scrape: the scraped
+# cell's global scale (relative to before the scrape) follows Tween.interpolate_value(1.3, -0.3, t, 0.18, BACK, OUT).
+# The test shows it can fail: three altered pops (peak 1.5, 0.36 s, sine easing) must each miss the tolerance on the same samples.
+func t_pop_tween_unchanged() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var hive: Node = p["Hive"]
+	var tr: Dictionary = _track(hive)
+	_full_hive_frozen(hive)
+	await _frames(4)
+	if not await _open_zoom(m, p, tr):
+		ck(false, "zoom did not open")
+		_fin()
+		return
+	var hc: Node = m.find_child("Honeycomb", true, false)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	if not hc.has_signal("cell_scraped"):
+		ck(false, "honeycomb.gd has no signal cell_scraped(cell, jar_value, world_position) (spec: Contract)")
+		_fin()
+		return
+	var base: Dictionary = {}
+	for mi in hc.find_children("*", "MeshInstance3D", true, false):
+		base[mi] = (mi as Node3D).global_transform.basis.get_scale().x
+	var rec: Dictionary = {"t0": -1, "wp": Vector3.ZERO, "node": null, "samples": [], "n": 0}
+	hc.connect("cell_scraped", func(_c: Variant, _v: Variant, wp: Variant) -> void:
+		rec["n"] = int(rec["n"]) + 1
+		if int(rec["t0"]) < 0:
+			rec["t0"] = Time.get_ticks_usec()
+			rec["wp"] = wp)
+	var cs: Array[Node3D] = fi.cells(hc)
+	if cs.size() == 0:
+		ck(false, "no cell colliders under Honeycomb")
+		_fin()
+		return
+	var target: Node3D = cs[cs.size() / 2]
+	var pt: Vector2 = cam.unproject_position(target.global_position)
+	fi.mouse_button(pt, true)
+	var t_end: int = Time.get_ticks_usec() + 400000
+	while Time.get_ticks_usec() < t_end:
+		await process_frame
+		if int(rec["t0"]) < 0:
+			continue
+		if rec["node"] == null:
+			var best: float = 1.0e9
+			for mi in base:
+				if is_instance_valid(mi):
+					best = minf(best, ((mi as Node3D).global_position - (rec["wp"] as Vector3)).length())
+			var pick: Node3D = null
+			var dev: float = -1.0
+			for mi in base:
+				if is_instance_valid(mi) and ((mi as Node3D).global_position - (rec["wp"] as Vector3)).length() <= best + 0.02:
+					var d: float = absf((mi as Node3D).global_transform.basis.get_scale().x / float(base[mi]) - 1.0)
+					if d > dev:
+						dev = d
+						pick = mi as Node3D
+			rec["node"] = pick
+		var node: Node3D = rec["node"]
+		if node != null and is_instance_valid(node):
+			var t: float = float(Time.get_ticks_usec() - int(rec["t0"])) / 1.0e6
+			(rec["samples"] as Array).append([t, node.global_transform.basis.get_scale().x / float(base[node])])
+	fi.mouse_button(pt, false)
+	ck(int(rec["n"]) >= 1, "a real press on a cell scraped it (cell_scraped emitted)")
+	var samples: Array = []
+	for s in (rec["samples"] as Array):
+		if float((s as Array)[0]) <= 0.175:
+			samples.append(s)
+	ck(samples.size() >= 4, "enough samples inside the 0.18 s pop (%d)" % samples.size())
+	if samples.size() < 4:
+		_fin()
+		return
+	var skew: float = 0.0
+	for i in range(1, samples.size()):
+		skew = maxf(skew, float((samples[i] as Array)[0]) - float((samples[i - 1] as Array)[0]))
+	skew = minf(maxf(skew, 0.004), 0.03)
+	var tol: float = 0.04
+	var real_dev: float = _pop_dev(samples, 1.3, 0.18, Tween.TRANS_BACK, skew)
+	ck(real_dev <= tol, "the pop follows 1.3 -> 1 over 0.18 s, back-out: worst deviation %.3f (tolerance %.2f, %d samples)" % [real_dev, tol, samples.size()])
+	var peak: float = 0.0
+	for s in samples:
+		peak = maxf(peak, float((s as Array)[1]))
+	ck(peak >= 1.2 and peak <= 1.32, "the pop starts near 1.3 (peak %.3f)" % peak)
+	# the test can fail: altered pops would not pass on these samples
+	ck(_pop_dev(samples, 1.5, 0.18, Tween.TRANS_BACK, skew) > tol, "self-check: a pop of 1.5 would be caught")
+	ck(_pop_dev(samples, 1.3, 0.36, Tween.TRANS_BACK, skew) > tol, "self-check: a 0.36 s pop would be caught")
+	ck(_pop_dev(samples, 1.3, 0.18, Tween.TRANS_SINE, skew) > tol, "self-check: sine easing instead of back-out would be caught")
+	_fin()
+
+
+## Worst distance between sampled scale and the curve initial=peak -> 1 over dur, allowing +-skew of time (one frame).
+func _pop_dev(samples: Array, peak: float, dur: float, trans: int, skew: float) -> float:
+	var worst: float = 0.0
+	for s in samples:
+		var t: float = float((s as Array)[0])
+		var best: float = 99.0
+		for off in [-skew, 0.0, skew]:
+			var tt: float = clampf(t + off, 0.0, dur)
+			var expv: float = float(Tween.interpolate_value(peak, 1.0 - peak, tt, dur, trans, Tween.EASE_OUT))
+			best = minf(best, absf(float((s as Array)[1]) - expv))
+		worst = maxf(worst, best)
+	return worst
+
+
+# Accessibility / play-test item 7: every touch button has StyleBoxEmpty as its focus style and focus_mode None, so a
+# focused disabled button cannot look enabled. The pixel half (the disabled colour of a button that was told to grab
+# focus) is in play_loop.gd.
+func t_focus_styles() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	for nm in ["UpgradeButton", "ContinueButton", "ForkIcon", "CentrifugeIcon", "SellIcon", "SummaryOkButton", "BackButton"]:
+		var b: Node = _nn(m, nm)
+		if b == null or not (b is Button):
+			ck(false, "%s is not a Button" % nm)
+			continue
+		var btn: Button = b as Button
+		eq(btn.focus_mode, Control.FOCUS_NONE, "%s focus_mode = None" % nm)
+		ck(btn.get_theme_stylebox("focus") is StyleBoxEmpty, "%s: focus style is StyleBoxEmpty (got %s)" % [nm, str(btn.get_theme_stylebox("focus"))])
+		btn.grab_focus()
+		ck(not btn.has_focus(), "%s: grab_focus() does not take focus" % nm)
+	_fin()
+
+
+# Accessibility: icons keep a touch area of at least 120 x 120 whatever their visible size; the visible size is smaller.
+func t_icon_touch_area_in_scene() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	ck(float(cv("icon_visual_px")) < 120.0, "icon_visual_px (%s) is below the 120 px touch area" % str(cv("icon_visual_px")))
+	for nm in ["ForkIcon", "CentrifugeIcon", "SellIcon"]:
+		var c: Node = _nn(m, nm)
+		if c != null and c is Control:
+			var s: Vector2 = (c as Control).size
+			ck(s.x >= 120.0 and s.y >= 120.0, "%s touch area at least 120 x 120 (%s)" % [nm, str(s)])
+	_fin()
+
+
+# Look: "the wheels turn while the truck drives, and their roll matches the direction of travel both ways (no skid)".
+# No-skid means the contact point is at rest: v = omega x up (for a wheel of radius 1), so dot(omega x up, v) > 0 on the
+# drive-off leg AND on the return leg. omega comes from the wheel's global basis between frames, v from its global position.
+func t_truck_wheels_roll_with_travel() -> void:
+	var ps: Variant = load("res://scenes/props/truck.tscn")
+	ck(ps != null, "res://scenes/props/truck.tscn failed to load (spec: Models as reusable scenes)")
+	if ps == null:
+		_fin()
+		return
+	var tk: Node = (ps as PackedScene).instantiate()
+	root.add_child(tk)
+	_to_free.append(tk)
+	_give_config(tk)
+	await _frames(3)
+	_set_cfg("truck_trip_seconds", 6.0)         # CHEAT (Dev): a short trip, slow enough that a wheel turns < 1 rad per frame
+	_set_cfg("truck_slide_distance", 10.0)
+	var names: Array = ["WheelFL", "WheelFR", "WheelRL", "WheelRR"]
+	var cand: Dictionary = {}                   # wheel name -> Array of nodes (the wheel node and its Node3D descendants)
+	for nm in names:
+		var w: Node = tk.find_child(nm, true, false)
+		ck(w != null, "truck.tscn has no node %s (spec)" % nm)
+		if w == null:
+			_fin()
+			return
+		var list: Array = [w]
+		for d in w.find_children("*", "Node3D", true, false):
+			list.append(d)
+		cand[nm] = list
+	for i in int(cv("truck_capacity_jars")):
+		tk.call("receive_jar")
+	var series: Dictionary = {}                 # name -> Array of [pos, [basis per candidate]]
+	for nm in names:
+		series[nm] = []
+	tk.call("sell")
+	var t_end: int = Time.get_ticks_msec() + int((float(cv("truck_trip_seconds")) + 1.0) * 1000.0)
+	while Time.get_ticks_msec() < t_end:
+		await process_frame
+		for nm in names:
+			var bases: Array = []
+			for n in (cand[nm] as Array):
+				bases.append((n as Node3D).global_transform.basis)
+			(series[nm] as Array).append([((cand[nm] as Array)[0] as Node3D).global_position, bases])
+	for nm in names:
+		var sr: Array = series[nm]
+		ck(sr.size() > 20, "%s: enough frames sampled (%d)" % [nm, sr.size()])
+		if sr.size() <= 20:
+			continue
+		var start: Vector3 = (sr[0] as Array)[0]
+		var far_i: int = 0
+		var far_d: float = 0.0
+		for i in sr.size():
+			var d: float = (((sr[i] as Array)[0]) as Vector3).distance_to(start)
+			if d > far_d:
+				far_d = d
+				far_i = i
+		ck(far_d > 1.0, "%s: the truck drove away (%.2f units)" % [nm, far_d])
+		# the spinning node of this wheel: the candidate that turned the most
+		var spin_k: int = 0
+		var spin_tot: float = -1.0
+		for k in (cand[nm] as Array).size():
+			var tot: float = 0.0
+			for i in range(1, sr.size()):
+				var q: Quaternion = ((((sr[i] as Array)[1] as Array)[k] as Basis) * ((((sr[i - 1] as Array)[1] as Array)[k] as Basis).inverse())).orthonormalized().get_rotation_quaternion()
+				tot += 2.0 * acos(clampf(absf(q.w), 0.0, 1.0))
+			if tot > spin_tot:
+				spin_tot = tot
+				spin_k = k
+		ck(spin_tot > 1.0, "%s: the wheel turned while the truck drove (total %.2f rad)" % [nm, spin_tot])
+		var good: Array = [0, 0]
+		var bad: Array = [0, 0]
+		for i in range(1, sr.size()):
+			var v: Vector3 = (((sr[i] as Array)[0]) as Vector3) - (((sr[i - 1] as Array)[0]) as Vector3)
+			if v.length() < 1.0e-4:
+				continue
+			var b1: Basis = ((sr[i] as Array)[1] as Array)[spin_k]
+			var b0: Basis = ((sr[i - 1] as Array)[1] as Array)[spin_k]
+			var q: Quaternion = (b1 * b0.inverse()).orthonormalized().get_rotation_quaternion()
+			if q.w < 0.0:
+				q = -q
+			var ang: float = 2.0 * acos(clampf(q.w, 0.0, 1.0))
+			if ang < 1.0e-3:
+				continue
+			var axis: Vector3 = Vector3(q.x, q.y, q.z).normalized()
+			var leg: int = 0 if i <= far_i else 1
+			if (axis * ang).cross(Vector3.UP).dot(v) > 0.0:
+				good[leg] += 1
+			else:
+				bad[leg] += 1
+		ck(int(good[0]) + int(bad[0]) >= 5, "%s: the drive-off leg has measurable samples (%s)" % [nm, str([good[0], bad[0]])])
+		ck(int(good[1]) + int(bad[1]) >= 5, "%s: the return leg has measurable samples (%s)" % [nm, str([good[1], bad[1]])])
+		eq(bad[0], 0, "%s: drive-off leg: every sample rolls with the travel (no skid); %d good" % [nm, good[0]])
+		eq(bad[1], 0, "%s: return leg: every sample rolls with the travel (no skid); %d good" % [nm, good[1]])
+	_fin()
+
+
+# Dev mode, new action: "Show UI bounds" toggle (outlines drawn on a top CanvasLayer). Behaviour only: toggling on adds
+# visible drawing, toggling off removes it. The look is in the screenshot.
+func t_dev_show_ui_bounds() -> void:
+	_set_dev_mode(true)
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var panel: Node = _find_dev_panel(m)
+	ck(panel != null, "dev panel exists")
+	if panel == null:
+		_fin()
+		return
+	var btn: Button = _button_with(panel, "bounds")
+	ck(btn != null, "no Button with 'bounds' in its text (the Show UI bounds action)")
+	if btn == null:
+		_fin()
+		return
+	var count_vis: Callable = func() -> int:
+		var k: int = 0
+		for n in root.find_children("*", "CanvasItem", true, false):
+			if (n as CanvasItem).is_visible_in_tree():
+				k += 1
+		return k
+	await _frames(3)
+	var before: int = count_vis.call()
+	btn.pressed.emit()
+	await _frames(4)
+	var on: int = count_vis.call()
+	ck(on > before, "Show UI bounds on: visible drawing was added (%d -> %d)" % [before, on])
+	btn.pressed.emit()
+	await _frames(4)
+	var off: int = count_vis.call()
+	eq(off, before, "Show UI bounds off: the outlines are gone")
+	_fin()
+
+
+# ---------------------------------------------------------------- floating icons (unchanged)
 
 func _mk_icon_rig(anchor_pos: Vector3, ortho: bool) -> Dictionary:
 	var cam := Camera3D.new()
@@ -1591,57 +2625,6 @@ func _load_script_static(file: String, method: String) -> Variant:
 	if s == null:
 		return null
 	return (s as GDScript).call(method)
-
-
-# L91-L113, L231: every new config value matches the Values table (checked on the defaults file itself).
-func t_config_values() -> void:
-	var c: Variant = load(DEFAULT_CFG)
-	ck(c != null, "default_config.tres failed to load")
-	if c == null:
-		_fin()
-		return
-	var table: Dictionary = {
-		"frame_jars": 10, "overflow_frames": 1, "sale_value_per_jar": 3, "taps_per_frame": 40,
-		"centrifuge_capacity_frames": 1, "truck_capacity_jars": 10, "truck_trip_seconds": 30.0,
-		"bottling_seconds_per_jar": 3.0, "max_tap_rate": 5.0, "hold_ramp_seconds": 1.5,
-		"base_seconds_per_jar": 6.0, "swarm_fill_bonus_per_level": 0.15, "swarm_base_cost": 25.0,
-		"swarm_cost_growth": 1.18, "swarm_max_level": 10, "grid_cols": 7, "grid_rows": 5,
-		"bees_per_swarm_level": 3, "visual_bee_cap": 60,
-	}
-	for k in table:
-		var v: Variant = c.get(k)
-		ck(v != null, "default_config.tres has no value '%s' (Values table)" % k)
-		if v != null:
-			near(float(v), float(table[k]), "default '%s'" % k)
-	ck(c.get("hold_taps_per_second") == null, "hold_taps_per_second must be removed (L113)")
-	ck(c.get("hold_mode") == null and c.get("no_rapid_tap_mode") == null, "hold_mode / no_rapid_tap_mode must not exist (L26)")
-	var e: Node = _eco()
-	eq(e.call("bee_count"), 20, "base swarm of 20 bees at level 0 (L105; assumes no user dev_config override)")
-	_fin()
-
-
-# L95: every placeholder is marked `# PLACEHOLDER (GDD TBD)` in game_config.gd.
-func t_config_placeholders_marked() -> void:
-	var f := FileAccess.open(_script_path("game_config.gd"), FileAccess.READ)
-	ck(f != null, "game_config.gd unreadable")
-	if f == null:
-		_fin()
-		return
-	var lines: PackedStringArray = f.get_as_text().split("\n")
-	f.close()
-	for name in ["taps_per_frame", "centrifuge_capacity_frames", "truck_capacity_jars", "truck_trip_seconds",
-			"bottling_seconds_per_jar", "max_tap_rate", "hold_ramp_seconds"]:
-		var found: bool = false
-		var marked: bool = false
-		for i in lines.size():
-			if lines[i].contains("var %s" % name):
-				found = true
-				if lines[i].contains("PLACEHOLDER (GDD TBD)") or (i > 0 and lines[i - 1].contains("PLACEHOLDER (GDD TBD)")):
-					marked = true
-		ck(found, "game_config.gd declares no 'var %s'" % name)
-		ck(not found or marked, "'%s' is not marked # PLACEHOLDER (GDD TBD) on its line or the line above" % name)
-	_fin()
-
 
 # L213: the project setting exists and is true for prototypes.
 func t_dev_mode_setting() -> void:
@@ -1780,7 +2763,7 @@ func t_dev_bottling_seconds() -> void:
 	spin.value = spj * 2.0
 	eq(float(cv("bottling_seconds_per_jar")), spj * 2.0, "panel edit reached the live config")
 	_to_cranking(c)
-	_tap_spaced(c, int(cv("taps_per_frame")), 1.0 / float(cv("max_tap_rate")) + 0.01)
+	_tap_spaced(c, _turns_for(_bucket_cells()), _tap_gap())
 	var times: Array = []
 	var clock: Array = [0.0]
 	c.connect("jar_bottled", func(_n: Variant) -> void: times.append(clock[0]))
@@ -1824,7 +2807,7 @@ func t_dev_save_reset_roundtrip() -> void:
 	ck(fresh != null, "GameConfig.load_default() returned null")
 	if fresh != null:
 		near(float(fresh.get("max_tap_rate")), edited, "a new config load carries the saved value over the default")
-		near(float(fresh.get("taps_per_frame")), float(def.get("taps_per_frame")), "an unedited value stays at its default")
+		near(float(fresh.get("taps_per_jar")), float(def.get("taps_per_jar")), "an unedited value stays at its default")
 	reset.pressed.emit()
 	ck(not FileAccess.file_exists(USER_CFG), "Reset to defaults deleted user://dev_config.tres")
 	var fresh2: Variant = _load_script_static("game_config.gd", "load_default")
@@ -1954,6 +2937,8 @@ func t_dev_actions() -> void:
 		await _frames(2)
 		var hive: Node = _nn(m, "Hive")
 		ck(hive != null and hive.call("is_full"), "fill the hive now fills it")
+		if hive != null:
+			eq(_profile(hive), [_cpf(), _cpf(), _cpf(), _cpf(), _cpf()].slice(0, _frames_n()), "Fill hive now fills all 5 frames")
 	if fast != null:
 		fast.pressed.emit()
 		eq(Engine.time_scale, 5.0, "game speed x5 sets Engine.time_scale")

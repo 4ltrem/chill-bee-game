@@ -1,12 +1,16 @@
 [gd_scene load_steps=48 format=3 uid="uid://ub4nv2k6wxgl"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
-[ext_resource type="Script" path="res://scripts/hive.gd" id="2_hive"]
+[ext_resource type="PackedScene" path="res://scenes/props/hive.tscn" id="2_hive"]
 [ext_resource type="Script" path="res://scripts/bees.gd" id="3_bees"]
 [ext_resource type="Script" path="res://scripts/farm_ui.gd" id="4_farmui"]
 [ext_resource type="Script" path="res://scripts/shop_ui.gd" id="5_shopui"]
-[ext_resource type="Script" path="res://scripts/centrifuge.gd" id="6_centrifuge"]
-[ext_resource type="Script" path="res://scripts/truck.gd" id="7_truck"]
+[ext_resource type="PackedScene" path="res://scenes/props/centrifuge.tscn" id="6_centrifuge"]
+[ext_resource type="PackedScene" path="res://scenes/props/truck.tscn" id="7_truck"]
+[ext_resource type="PackedScene" path="res://scenes/props/jar_crate.tscn" id="9_crate"]
+[ext_resource type="PackedScene" path="res://scenes/props/flower_patch.tscn" id="10_patch"]
+[ext_resource type="Script" path="res://scripts/pile.gd" id="11_pile"]
+[ext_resource type="Script" path="res://scripts/harvest_ui.gd" id="12_hui"]
 [ext_resource type="Script" path="res://scripts/floating_icon.gd" id="8_icon"]
 
 [sub_resource type="Environment" id="Environment_sky"]
@@ -23,6 +27,8 @@ albedo_color = Color(0.62, 0.84, 0.52, 1)
 material = SubResource("Material_meadow")
 size = Vector2(12, 12)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBox_empty"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBox_barbg"]
 bg_color = Color(0.3, 0.22, 0.1, 1)
 corner_radius_top_left = 10
@@ -36,47 +42,6 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
-
-[sub_resource type="StandardMaterial3D" id="Material_hive"]
-albedo_color = Color(0.85, 0.72, 0.5, 1)
-
-[sub_resource type="BoxMesh" id="Mesh_hive"]
-material = SubResource("Material_hive")
-size = Vector3(1.6, 1.2, 1.6)
-
-[sub_resource type="StandardMaterial3D" id="Material_flower1"]
-albedo_color = Color(0.97, 0.66, 0.78, 1)
-
-[sub_resource type="StandardMaterial3D" id="Material_flower2"]
-albedo_color = Color(0.78, 0.7, 0.93, 1)
-
-[sub_resource type="StandardMaterial3D" id="Material_flower3"]
-albedo_color = Color(1, 0.85, 0.3, 1)
-
-[sub_resource type="CylinderMesh" id="Mesh_flower1"]
-material = SubResource("Material_flower1")
-top_radius = 0.9
-bottom_radius = 0.9
-height = 0.3
-
-[sub_resource type="CylinderMesh" id="Mesh_flower2"]
-material = SubResource("Material_flower2")
-top_radius = 0.8
-bottom_radius = 0.8
-height = 0.3
-
-[sub_resource type="CylinderMesh" id="Mesh_flower3"]
-material = SubResource("Material_flower3")
-top_radius = 0.7
-bottom_radius = 0.7
-height = 0.3
-
-[sub_resource type="StandardMaterial3D" id="Material_crate"]
-albedo_color = Color(0.5, 0.33, 0.18, 1)
-
-[sub_resource type="BoxMesh" id="Mesh_crate"]
-material = SubResource("Material_crate")
-size = Vector3(1.4, 0.45, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_tag"]
 bg_color = Color(1, 0.76, 0.12, 1)
@@ -221,60 +186,45 @@ size = 20.0
 [node name="Ground" type="MeshInstance3D" parent="FarmWorld"]
 mesh = SubResource("Mesh_ground")
 
-[node name="Hive" type="Node3D" parent="FarmWorld" groups=["bee_home"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1)
-script = ExtResource("2_hive")
-
-[node name="HiveBox" type="MeshInstance3D" parent="FarmWorld/Hive"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
-mesh = SubResource("Mesh_hive")
-
-[node name="ForkAnchor" type="Marker3D" parent="FarmWorld/Hive"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+[node name="Hive" parent="FarmWorld" instance=ExtResource("2_hive")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -2.5)
 
 [node name="Flowers" type="Node3D" parent="FarmWorld"]
 
-[node name="FlowerPatch1" type="Node3D" parent="FarmWorld/Flowers" groups=["flower_patch"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.15, 0)
+[node name="FlowerPatch1" parent="FarmWorld/Flowers" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0.15, -0.5)
+color = Color(0.97, 0.66, 0.78, 1)
+radius = 0.9
 
-[node name="PatchMesh" type="MeshInstance3D" parent="FarmWorld/Flowers/FlowerPatch1"]
-mesh = SubResource("Mesh_flower1")
-
-[node name="FlowerPatch2" type="Node3D" parent="FarmWorld/Flowers" groups=["flower_patch"]]
+[node name="FlowerPatch2" parent="FarmWorld/Flowers" instance=ExtResource("10_patch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.15, -1)
+color = Color(0.78, 0.7, 0.93, 1)
+radius = 0.8
 
-[node name="PatchMesh" type="MeshInstance3D" parent="FarmWorld/Flowers/FlowerPatch2"]
-mesh = SubResource("Mesh_flower2")
-
-[node name="FlowerPatch3" type="Node3D" parent="FarmWorld/Flowers" groups=["flower_patch"]]
+[node name="FlowerPatch3" parent="FarmWorld/Flowers" instance=ExtResource("10_patch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.15, -3)
-
-[node name="PatchMesh" type="MeshInstance3D" parent="FarmWorld/Flowers/FlowerPatch3"]
-mesh = SubResource("Mesh_flower3")
+color = Color(1, 0.85, 0.3, 1)
+radius = 0.7
 
 [node name="Bees" type="MultiMeshInstance3D" parent="FarmWorld"]
 script = ExtResource("3_bees")
 
-[node name="Centrifuge" type="Node3D" parent="FarmWorld"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 3)
-script = ExtResource("6_centrifuge")
+[node name="Centrifuge" parent="FarmWorld" instance=ExtResource("6_centrifuge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.758, 0, 0.258)
 
-[node name="CentrifugeAnchor" type="Marker3D" parent="FarmWorld/Centrifuge"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+[node name="Pile" type="Node3D" parent="FarmWorld"]
+transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, 2.278, 0, -0.272)
+script = ExtResource("11_pile")
 
-[node name="JarCrate" type="Node3D" parent="FarmWorld"]
+[node name="JarCrate" parent="FarmWorld" instance=ExtResource("9_crate")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 
-[node name="CrateBox" type="MeshInstance3D" parent="FarmWorld/JarCrate"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 0)
-mesh = SubResource("Mesh_crate")
-
-[node name="Truck" type="Node3D" parent="FarmWorld"]
+[node name="Truck" parent="FarmWorld" instance=ExtResource("7_truck")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, 4.2)
-script = ExtResource("7_truck")
 
-[node name="SellAnchor" type="Marker3D" parent="FarmWorld/Truck"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+[node name="ZoomFraming" type="Marker3D" parent="FarmWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.968, 0, -1.468)
+metadata/zoom_size = 6.7
 
 [node name="FarmUIRoot" type="CanvasLayer" parent="."]
 
@@ -359,6 +309,7 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="ContinueButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column"]
+focus_mode = 0
 visible = false
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
@@ -366,7 +317,7 @@ theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBox_rect")
 theme_override_styles/hover = SubResource("StyleBox_rect")
 theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
-theme_override_styles/focus = SubResource("StyleBox_rect")
+theme_override_styles/focus = SubResource("StyleBox_empty")
 theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
@@ -391,6 +342,7 @@ text = "Worker Swarm Count"
 horizontal_alignment = 1
 
 [node name="UpgradeButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
+focus_mode = 0
 custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
 theme_override_colors/font_disabled_color = Color(1, 1, 1, 1)
@@ -399,7 +351,7 @@ theme_override_styles/disabled = SubResource("StyleBox_disabled")
 theme_override_styles/normal = SubResource("StyleBox_rect")
 theme_override_styles/hover = SubResource("StyleBox_rect")
 theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
-theme_override_styles/focus = SubResource("StyleBox_rect")
+theme_override_styles/focus = SubResource("StyleBox_empty")
 theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
@@ -423,13 +375,14 @@ text = "Honey: 0 / 10"
 horizontal_alignment = 1
 
 [node name="ForkIcon" type="Button" parent="FarmUIRoot/FarmUI"]
+focus_mode = 0
 custom_minimum_size = Vector2(130, 180)
 layout_mode = 0
 theme_override_font_sizes/font_size = 28
 theme_override_styles/normal = SubResource("StyleBox_tag")
 theme_override_styles/hover = SubResource("StyleBox_tag")
 theme_override_styles/pressed = SubResource("StyleBox_tag_pressed")
-theme_override_styles/focus = SubResource("StyleBox_tag")
+theme_override_styles/focus = SubResource("StyleBox_empty")
 theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
@@ -441,13 +394,14 @@ anchor_path = NodePath("../../../FarmWorld/Hive/ForkAnchor")
 screen_offset = Vector2(0, -100)
 
 [node name="CentrifugeIcon" type="Button" parent="FarmUIRoot/FarmUI"]
+focus_mode = 0
 custom_minimum_size = Vector2(160, 160)
 layout_mode = 0
 theme_override_font_sizes/font_size = 38
 theme_override_styles/normal = SubResource("StyleBox_circle")
 theme_override_styles/hover = SubResource("StyleBox_circle")
 theme_override_styles/pressed = SubResource("StyleBox_circle_pressed")
-theme_override_styles/focus = SubResource("StyleBox_circle")
+theme_override_styles/focus = SubResource("StyleBox_empty")
 theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
@@ -459,13 +413,14 @@ anchor_path = NodePath("../../../FarmWorld/Centrifuge/CentrifugeAnchor")
 screen_offset = Vector2(0, -100)
 
 [node name="SellIcon" type="Button" parent="FarmUIRoot/FarmUI"]
+focus_mode = 0
 custom_minimum_size = Vector2(250, 120)
 layout_mode = 0
 theme_override_font_sizes/font_size = 38
 theme_override_styles/normal = SubResource("StyleBox_pill")
 theme_override_styles/hover = SubResource("StyleBox_pill")
 theme_override_styles/pressed = SubResource("StyleBox_pill_pressed")
-theme_override_styles/focus = SubResource("StyleBox_pill")
+theme_override_styles/focus = SubResource("StyleBox_empty")
 theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
@@ -533,16 +488,68 @@ text = "Batch total: $30"
 horizontal_alignment = 1
 
 [node name="SummaryOkButton" type="Button" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
+focus_mode = 0
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBox_rect")
 theme_override_styles/hover = SubResource("StyleBox_rect")
 theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
-theme_override_styles/focus = SubResource("StyleBox_rect")
+theme_override_styles/focus = SubResource("StyleBox_empty")
 theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "OK"
+
+[node name="HarvestUIRoot" type="CanvasLayer" parent="."]
+
+[node name="HarvestUI" type="Control" parent="HarvestUIRoot"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("12_hui")
+
+[node name="HintLabel" type="Label" parent="HarvestUIRoot/HarvestUI"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -228.0
+offset_top = 6.0
+offset_right = 354.0
+offset_bottom = 106.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "Drag across the cells to uncap them"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="BackButton" type="Button" parent="HarvestUIRoot/HarvestUI"]
+focus_mode = 0
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 124.0
+offset_bottom = 124.0
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBox_back")
+theme_override_styles/hover = SubResource("StyleBox_back")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Back"

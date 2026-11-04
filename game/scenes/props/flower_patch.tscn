@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/flower_patch.gd" id="1_patch"]
+[ext_resource type="Material" path="res://materials/flower_default.tres" id="2_mat"]
+
+[sub_resource type="CylinderMesh" id="Mesh_patch"]
+material = ExtResource("2_mat")
+top_radius = 0.9
+bottom_radius = 0.9
+height = 0.3
+
+[node name="FlowerPatch" type="Node3D" groups=["flower_patch"]]
+script = ExtResource("1_patch")
+
+[node name="PatchMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("Mesh_patch")

@@ -67,7 +67,7 @@ func setup(hive: Hive, centrifuge: Centrifuge, truck: Truck) -> void:
 	_centrifuge = centrifuge
 	if _centrifuge != null:
 		_centrifuge.state_changed.connect(func(_s: int) -> void: _refresh_centrifuge())
-		_centrifuge.extraction_progress.connect(func(_d: int, _t: int) -> void: _refresh_centrifuge())
+		_centrifuge.extraction_progress.connect(func(_d: float, _t: float) -> void: _refresh_centrifuge())
 		_centrifuge.turn_counted.connect(func(_t: int) -> void: _refresh_centrifuge())
 		_refresh_centrifuge()
 	# The truck's load is shown on the truck itself; the farm UI keeps no jar counter.
@@ -104,7 +104,7 @@ func _refresh_centrifuge() -> void:
 	var cranking: bool = _centrifuge.state == Centrifuge.State.CRANKING
 	_centrifuge_label.visible = cranking
 	if cranking:
-		var text: String = "Honey: %d / %d" % [_centrifuge.jars_extracted, _centrifuge.jars_total]
+		var text: String = "Honey: %d / %d" % [floori(_centrifuge.jars_extracted + 1.0e-6), floori(_centrifuge.jars_total + 1.0e-6)]
 		if _centrifuge.turns_counted == 0:
 			text += "\n" + HINT_TEXT
 		_centrifuge_label.text = text

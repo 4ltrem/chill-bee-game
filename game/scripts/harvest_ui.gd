@@ -1,6 +1,6 @@
-# Implements GDD 2 (Phase 1 uncapping close-up, stage 1 only) and 9 (UI & Screens) for Prototype 0.
-# The close-up shows a hint and a BackButton. Extraction, bottling and the summary now play on the farm.
-# Finds its child controls by name (see "Node paths for Bob" in game/specs/prototype-0.md); holds no layout.
+# Implements GDD 9 (UI & Screens: the uncapping zoom on the hive and the centrifuge) for 0.1 Harvest (game/specs/0.1-harvest.md).
+# Lives in main.tscn (HarvestUIRoot/HarvestUI): shows a hint and a BackButton during the zoom, hidden otherwise.
+# Finds its child controls by name (see "Node paths for Bob"); holds no layout.
 class_name HarvestUI
 extends Control
 
@@ -18,20 +18,26 @@ func _ready() -> void:
 		_hint_text = _hint.text
 	if _back_button != null:
 		_back_button.pressed.connect(func() -> void: back_pressed.emit())
-	show_stage1()
+	visible = false
 
 
-## Uncapping in progress: the drag hint and the Back button.
-func show_stage1() -> void:
+## The zoom opens: the drag hint and the Back button.
+func show_zoom() -> void:
+	visible = true
 	if _hint != null:
 		_hint.text = _hint_text
 	if _back_button != null:
 		_back_button.visible = true
 
 
-## Every cell is uncapped: the hint changes and Back goes away (the frame has left the hive).
-func show_stage1_done() -> void:
+## No frame is left to uncap: the hint changes and Back goes away while the zoom closes.
+func show_done() -> void:
 	if _hint != null:
 		_hint.text = "All cells uncapped!"
 	if _back_button != null:
 		_back_button.visible = false
+
+
+## The zoom has ended: everything hides.
+func hide_zoom() -> void:
+	visible = false
