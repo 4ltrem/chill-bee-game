@@ -70,6 +70,7 @@ All must pass. `consistency.py` checks that docs agree with code and config (the
 
 - `git status`, and confirm nothing gitignored is staged: `git check-ignore` any `_meta/sessions/` path you are unsure of. Never stage `session.jsonl`, `subagents/`, `manifest.json` or `_meta/sessions/runs/`.
 - Stage the day's work, including `_meta/memory/` and the session's `decisions.md`, and commit on the current branch with a message that summarises the day in a short subject line and a body listing the main changes and the decision IDs added. End the message with any attribution lines the session's instructions give.
+- **Milestone branches** (`game/CONTEXT.md`, Process 4): during a milestone the day is committed on its `milestone/<version>` branch, on top of the step checkpoints. Merge it into `main` (`git switch main && git merge --no-ff milestone/<version>`) only when Quinn's report for the milestone passes and the designer has played it; otherwise leave the branch open and say so in the report.
 - Do not push unless the designer asks.
 
 ## 7. Report

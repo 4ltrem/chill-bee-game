@@ -522,7 +522,9 @@ class ConsistencyTest(unittest.TestCase):
 
     def test_a_stated_agent_count_that_is_wrong(self):  # Doris's first real finding
         self.edit("README.md", "The agent roster, each agent's model", "The nine agents, each agent's model")
-        self.assertIn("README.md:64: says the nine agents, but .claude/agents/ holds 12", self.problems())
+        line = next(i for i, text in enumerate((self.root / "README.md").read_text(encoding="utf-8").splitlines(), 1)
+                    if "The nine agents" in text)  # found, not hard-coded: README rows get added
+        self.assertIn(f"README.md:{line}: says the nine agents, but .claude/agents/ holds 12", self.problems())
 
     def test_an_estimate_saying_not_yet_run_beside_a_logged_run(self):  # the designer's catch
         self.edit("_meta/agent-runs.md", "| Doris, the Doc Auditor | Measured once,", "| Doris, the Doc Auditor | Not yet run. Measured once,")

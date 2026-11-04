@@ -1,7 +1,8 @@
 - [Pending approvals](pending-approvals.md) — only onboarding-script left (after the guide-playtest revision); three content follow-ups
-- [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day project skill; never early
+- [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day skill; only milestone-branch checkpoint commits mid-session
 - [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, syncing transcripts between machines
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
-- [Session handoff](session-handoff.md) — read first: Prototype 0 rev 3 built and passing; next is the designer's play-test, then revision 4
+- [Session handoff](session-handoff.md) — read first: Prototype 0 closed at r3; 0.1 Harvest spec drafted, awaiting acceptance of its GDD §2 changes
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
+- [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24

@@ -11,6 +11,10 @@ python -I _tools/consistency.py || {
     echo "pre-commit: docs disagree with code (above). Generated sections: python -I _tools/sync_docs.py" >&2
     exit 1
 }
+python -I _tools/contract_check.py || {
+    echo "pre-commit: a script looks up a node no scene has (above): Patricia and Bob's contract" >&2
+    exit 1
+}
 python -I _tools/links.py > /dev/null || {
     python -I _tools/links.py >&2
     echo "pre-commit: broken links (above)" >&2

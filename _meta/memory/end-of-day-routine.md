@@ -11,6 +11,8 @@ decision page, run the checks, commit.
 **Why:** the designer keeps every session for analysis and a future episodic-memory upgrade, works on more than one
 machine (a desktop PC and a laptop), and wants the record to cover the whole day.
 
+Checkpoint commits on a `milestone/<version>` branch after each green build step are allowed mid-session (designer, 2026-11-04, `game/CONTEXT.md` Process 4); the end-of-day commit still covers the day, and the branch merges into `main` when the milestone passes.
+
 **How to apply:** don't re-export, update decisions, republish the page or commit before the designer says the day is
 done. Memories live in the repo (`_meta/memory/`) and travel with git; transcripts stay local on each machine
 (designer's decision, 2026-11-01). Related: [[pending-approvals]].
