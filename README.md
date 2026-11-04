@@ -53,6 +53,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 |---|---|
 | [AGENTS.md](AGENTS.md) | Entry file for AI agents: where everything lives and where to go for each task. [CONTEXT.md](CONTEXT.md) describes the design loop (request, proposal, decision, apply). |
 | [GDD.md](GDD.md) | Game design document |
+| [MILESTONES.md](MILESTONES.md) | Build stages, version numbers (`0.<milestone>.<build>`) and the milestones with their course deliverables |
 | [gdd-review/reviews/](gdd-review/reviews/) | A multi-agent design review of the first draft. Six reviewer agents each reviewed it independently, then cross-examined each other, and a moderator wrote a synthesis ([SYNTHESIS.md](gdd-review/reviews/SYNTHESIS.md)). It was run with [gdd-review-kit](https://github.com/GixGosu/gdd-review-kit). |
 | [gdd-review/gdd.txt](gdd-review/gdd.txt) | Snapshot of the GDD as it was reviewed. Many review findings have since been addressed in `GDD.md`. |
 | [proposals/design/](proposals/design/) | Feature design proposals, e.g. the capstone [Royal Honey Refinery](proposals/design/capstone-machine.md) (Gerard). |

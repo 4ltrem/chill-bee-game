@@ -1,13 +1,15 @@
 ---
 author: designer
 type: spec
-status: approved
+status: closed
 revision: 3
 decided: 2026-11-04
 decision: approved for build (designer set the goal "implement the prototype-0 spec"); slower harvest values and Dev mode added at review
 description: Prototype 0, the manual core loop in Sunny Meadow as a colorbox (primitive shapes and flat colours, no audio); revision 3 follows the 2026-11-03 harvest flow in GDD §2
 ---
 # Prototype 0: the manual core loop (colorbox), revision 3
+
+> **Closed 2026-11-04.** Prototype 0 proved the loop. The work continues as milestone 1, `game/specs/0.1-harvest.md` (see `MILESTONES.md`).
 
 **Sources:** `GDD.md` (1. Primary Game Loop & Phase Structure; 2. Phase 1 Uncapping & Extraction Minigame; 3. Progression Trees, Tree A and Tree B; 8. Accessibility; 9. UI & Screens; Engine Integration; Technical Constraints). Open items from `game/reports/2026-11-03-prototype-0.md`, "Open for revision 3".
 

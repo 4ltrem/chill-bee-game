@@ -7,6 +7,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | Path | What it holds |
 |---|---|
 | [GDD.md](GDD.md) | the game design document: the single source of truth for every decision |
+| [MILESTONES.md](MILESTONES.md) | build stages, version numbers and the milestones, fitted to the course deadlines |
 | [README.md](README.md) | public overview and the Outstanding TBDs checklist |
 | [CONTEXT.md](CONTEXT.md) | the design loop: request, proposal, decision, apply |
 | [proposals/](proposals/CONTEXT.md) | agent proposals, one shelf per agent role, each with a status line |
