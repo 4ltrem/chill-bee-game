@@ -6,7 +6,7 @@ extends Node3D
 signal storage_changed(storage: float, overflow: float)
 signal became_full
 
-@export var config: GameConfig = GameConfig.load_default()
+@export var config: GameConfig = GameConfig.live()
 
 var storage: float = 0.0
 var overflow: float = 0.0
@@ -42,6 +42,15 @@ func advance(delta: float, multiplier: float = 1.0) -> void:
 	else:
 		storage += produced
 	if is_full() and not _full_announced:
+		_full_announced = true
+		became_full.emit()
+	storage_changed.emit(storage, overflow)
+
+
+## Dev mode: fills the frame at once.
+func fill_now() -> void:
+	storage = float(capacity)
+	if not _full_announced:
 		_full_announced = true
 		became_full.emit()
 	storage_changed.emit(storage, overflow)

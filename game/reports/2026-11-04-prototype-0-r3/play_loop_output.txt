@@ -1,0 +1,1032 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 621.01 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 3070
+ 
+window size (405, 720) viewport (720, 1280)
+PASS  JarsLabel removed (L30)
+PASS  HarvestButton removed in revision 3 (L19-L27)
+PASS  SellButton removed in revision 3 (L19-L27)
+PASS  ExtractButton removed in revision 3 (L19-L27)
+PASS  CrankButton removed in revision 3 (L19-L27)
+PASS  NoRapidTapCheck removed in revision 3 (L19-L27)
+PASS  Stage1Panel removed in revision 3 (L19-L27)
+PASS  Stage2Panel removed in revision 3 (L19-L27)
+PASS  no icon, Continue or summary at start
+PASS  MoneyLabel at start (expected $0, got $0)
+PASS  BeeCountLabel at start (expected Bees: 20, got Bees: 20)
+PASS  UpgradeButton disabled with $0
+PASS  the hive filled in real time (storage 0.39)
+PASS  FillLabel format: Hive: 0 / 10
+=== round 1 ===
+PASS  round 1: hive full
+PASS  round 1: overflow well under a frame (0.39245009259259)
+PASS  round 1: centrifuge EMPTY (expected 0, got 0)
+PASS  round 1: fork icon floats above the full hive (L54)
+PASS  round 1: fork icon touch area >= 120 x 120 ((130, 180))
+PASS  round 1: centrifuge icon and Continue hidden
+screenshot r3-1-farm-fork (405, 720) err=0
+PASS  icon ForkIcon sits at its anchor's projected position (360, 398.9839) (rect [P: (295, 308.9839), S: (130, 180)])
+PASS  tapping the fork icon opened the close-up (Honeycomb appeared)
+PASS  round 1: FarmWorld hidden in the close-up
+PASS  round 1: farm UI hidden in the close-up
+PASS  round 1: the close-up camera is current
+PASS  round 1: BackButton at least 120 px high (120)
+PASS  round 1: all cells start Capped (35) (expected 35, got 35)
+PASS  round 1: the cells form grid_rows screen rows (expected 5, got 5)
+PASS  round 1: nothing uncapped before the drag (expected 0, got 0)
+PASS  round 1: a real mouse drag along one row uncaps at least that row (7 cells)
+PASS  round 1: a one-row drag does not uncap the whole frame (7)
+screenshot r3-2-closeup-partial (405, 720) err=0
+PASS  round 1: Back freed the close-up
+PASS  round 1: back on the farm
+PASS  round 1: hive storage unchanged after Back (before 10, now 10): the frame is still in the hive
+PASS  round 1: hive still full after Back
+PASS  round 1: centrifuge still EMPTY after Back (expected 0, got 0)
+PASS  round 1: the fork icon shows again after Back
+PASS  icon ForkIcon sits at its anchor's projected position (360, 398.9839) (rect [P: (295, 308.9839), S: (130, 180)])
+PASS  tapping the fork icon opened the close-up (Honeycomb appeared)
+PASS  round 1: the next open shows every cell Capped again (expected 35, got 35)
+PASS  round 1: one row short, the frame is not done
+PASS  round 1: hint not final yet
+PASS  round 1: every cell uncapped by real drags (35 of 35)
+PASS  round 1: hint reads 'All cells uncapped!' (got 'All cells uncapped!')
+PASS  round 1: the close-up closed by itself after the last cell (about 0.5 s plus the slide)
+PASS  round 1: the farm returned
+PASS  round 1: take_frame() ran, the hive gave up the frame (storage 1.20555555555557)
+PASS  round 1: centrifuge FULL (expected 1, got 1)
+PASS  round 1: centrifuge holds the frame's jars (expected 10, got 10)
+PASS  round 1: hive full again
+PASS  round 1: fork hidden while the centrifuge holds a frame, although the hive is full (L54)
+PASS  round 1: centrifuge icon floats above the full centrifuge
+PASS  round 1: centrifuge icon touch area >= 120 x 120 ((160, 160))
+PASS  round 1: Continue hidden
+PASS  round 1: nothing spins before the tap (still FULL) (expected 1, got 1)
+screenshot r3-3-farm-centrifuge-icon (405, 720) err=0
+PASS  icon CentrifugeIcon sits at its anchor's projected position (156.3532, 448.6177) (rect [P: (76.35321, 368.6177), S: (160, 160)])
+PASS  round 1: tapping the centrifuge icon starts CRANKING (expected 2, got 2)
+PASS  round 1: the centrifuge icon hides
+PASS  round 1: fork hidden while cranking
+PASS  round 1: the centrifuge label shows while cranking
+PASS  round 1: hint 'Tap or hold to spin' while waiting for the first tap (got 'Honey: 0 / 10
+Tap or hold to spin')
+screenshot r3-4-farm-cranking (405, 720) err=0
+PASS  round 1: 10 real clicks spaced past the cap extract 2 to 3 jars (got 2)
+PASS  round 1: label shows the progress 'Honey: n / 10' (got 'Honey: 2 / 10')
+PASS  round 1: positive control, 8 free-spot clicks advanced the extraction (2 -> 4)
+PASS  round 1: UpgradeButton visible and disabled with $0
+PASS  round 1: 8 clicks on UpgradeButton during CRANKING did not crank (expected 4, got 4)
+PASS  round 1: still CRANKING (expected 2, got 2)
+PASS  round 1: a disabled UpgradeButton bought nothing (expected 0, got 0)
+PASS  round 1: the hold finished the frame
+PASS  round 1: real hold finish time ((taps - counted - 1) / max_tap_rate) (expected 4.2 +- 0.4, got 4.215)
+PASS  round 1: DONE after the hold (expected 3, got 3)
+PASS  round 1: all jars extracted (expected 10, got 10)
+PASS  round 1: Continue shown when extraction is done
+PASS  round 1: Continue at least 120 px high (120)
+PASS  round 1: Continue in the lower half of the screen
+PASS  round 1: fork and centrifuge icon hidden in DONE
+screenshot r3-5-farm-done-continue (405, 720) err=0
+PASS  round 1: Continue opens the spigot (BOTTLING) (expected 4, got 4)
+PASS  round 1: Continue hides itself
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: fork hidden while bottling although the hive is full
+PASS  round 1: summary not shown before the last jar
+PASS  round 1: bottling takes jars x bottling_seconds_per_jar (expected 30 +- 0.6, got 29.962)
+PASS  round 1: each jar loaded onto the truck one at a time (expected 10, got 10)
+PASS  round 1: jar 1 loaded at k x bottling_seconds_per_jar (expected 3 +- 0.6, got 2.951)
+PASS  round 1: jar 2 loaded at k x bottling_seconds_per_jar (expected 6 +- 0.6, got 5.95)
+PASS  round 1: jar 3 loaded at k x bottling_seconds_per_jar (expected 9 +- 0.6, got 8.95)
+PASS  round 1: jar 4 loaded at k x bottling_seconds_per_jar (expected 12 +- 0.6, got 11.95)
+PASS  round 1: jar 5 loaded at k x bottling_seconds_per_jar (expected 15 +- 0.6, got 14.95)
+PASS  round 1: jar 6 loaded at k x bottling_seconds_per_jar (expected 18 +- 0.6, got 17.949)
+PASS  round 1: jar 7 loaded at k x bottling_seconds_per_jar (expected 21 +- 0.6, got 20.956)
+PASS  round 1: jar 8 loaded at k x bottling_seconds_per_jar (expected 24 +- 0.6, got 23.963)
+PASS  round 1: jar 9 loaded at k x bottling_seconds_per_jar (expected 27 +- 0.6, got 26.963)
+PASS  round 1: jar 10 loaded at k x bottling_seconds_per_jar (expected 30 +- 0.6, got 29.962)
+PASS  round 1: the truck holds the batch (expected 10, got 10)
+PASS  round 1: the crate stayed empty while the truck was home (expected 0, got 0)
+PASS  round 1: the centrifuge is empty again (expected 0, got 0)
+PASS  round 1: the batch summary shows on the farm
+PASS  round 1: summary jars: Jars: 10
+PASS  round 1: summary value per jar: Value per jar: $3
+PASS  round 1: bonuses are $0: Tool bonus: $0   Quality bonus: $0
+PASS  round 1: batch total (expected Batch total: $30, got Batch total: $30)
+PASS  round 1: no money before the Sell tap (L66) (expected 0, got 0)
+PASS  round 1: OK at least 120 px high (120)
+PASS  round 1: OK in the lower half of the screen
+screenshot r3-6-farm-summary (405, 720) err=0
+PASS  round 1: OK closes the summary
+PASS  round 1: the Sell icon floats above the full truck at home
+PASS  round 1: Sell icon at least 120 px high (120)
+PASS  round 1: Sell icon reads 'Sell $30' (got 'Sell $30')
+PASS  icon SellIcon sits at its anchor's projected position (360, 675.0145) (rect [P: (235, 615.0145), S: (250, 120)])
+PASS  round 1: money credited at the tap, not at the truck's return (expected 30, got 30)
+PASS  round 1: the truck is away
+PASS  round 1: the truck is empty (expected 0, got 0)
+PASS  round 1: the Sell icon is hidden while the truck is away
+PASS  round 1: MoneyLabel (expected $30, got $30)
+PASS  round 1: the truck slid away from home (moved 8.41)
+screenshot r3-7-farm-truck-away (405, 720) err=0
+=== round 2 ===
+PASS  round 2: hive full
+PASS  round 2: fork icon shows again (centrifuge EMPTY)
+PASS  icon ForkIcon sits at its anchor's projected position (360, 398.9839) (rect [P: (295, 308.9839), S: (130, 180)])
+PASS  tapping the fork icon opened the close-up (Honeycomb appeared)
+PASS  round 2: the frame starts all Capped (L68) (expected 35, got 35)
+PASS  round 2: a touch drag uncaps a row (7 cells)
+PASS  round 2: every cell uncapped
+PASS  round 2: the close-up closed by itself
+PASS  round 2: centrifuge FULL (expected 1, got 1)
+PASS  round 2: centrifuge icon shown
+PASS  icon CentrifugeIcon sits at its anchor's projected position (156.3532, 448.6177) (rect [P: (76.35321, 368.6177), S: (160, 160)])
+PASS  round 2: CRANKING (expected 2, got 2)
+PASS  round 2: the hold finished the frame
+PASS  round 2: real hold from the first press, (taps_per_frame - 1) / max_tap_rate (expected 7.8 +- 0.4, got 7.804)
+PASS  round 2: Continue shown
+PASS  round 2: BOTTLING (expected 4, got 4)
+PASS  round 2: the truck is still away while bottling starts
+PASS  round 2: jars bottled while the truck is away fill the crate (crate 2)
+PASS  round 2: nothing loaded on the away truck (expected 0, got 0)
+screenshot r3-8-farm-crate-filling (405, 720) err=0
+PASS  round 2: money 30 covers the Worker Swarm Count cost 25
+PASS  round 2: UpgradeButton enabled while bottling (the shop works at every stage)
+PASS  round 2: Worker Swarm Count level 1 bought mid-harvest (expected 1, got 1)
+PASS  round 2: money after the purchase (expected 5, got 5)
+PASS  round 2: BeeCountLabel after the purchase (expected Bees: 23, got Bees: 23)
+PASS  round 2: drawn bees after the purchase (expected 23, got 23)
+PASS  round 2: UpgradeButton disabled again (cannot afford the next level)
+PASS  round 2: the purchase did not disturb bottling (expected 4, got 4)
+PASS  round 2: bottling finished
+PASS  round 2: jars conserved: crate + truck = the batch (expected 10, got 10)
+PASS  round 2: all the batch is in the crate while the truck is away (expected 0, got 0)
+PASS  round 2: summary shown
+PASS  round 2: OK closes the summary
+PASS  round 2: the truck came back
+PASS  round 2: the crate loaded onto the returned truck up to its capacity (expected 10, got 10)
+PASS  round 2: the rest stays in the crate (expected 0, got 0)
+PASS  round 2: the Sell icon shows on the full truck
+PASS  icon SellIcon sits at its anchor's projected position (360, 675.0145) (rect [P: (235, 615.0145), S: (250, 120)])
+PASS  round 2: Sell credited at the tap (expected 35, got 35)
+PASS  round 2: the truck is away again
+---- 1015 checks, 0 failed
+COMPLETED

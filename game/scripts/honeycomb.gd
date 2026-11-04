@@ -4,6 +4,7 @@ class_name Honeycomb
 extends Node3D
 
 signal all_cells_uncapped
+signal slid_out
 
 const CAPPED: int = 0
 const UNCAPPED: int = 1
@@ -14,17 +15,21 @@ const STATE_Y: Array[float] = [0.12, 0.0, -0.12]   # capped raised, uncapped flu
 const SWEEP_STEP_PX: float = 16.0                   # fast drags are sampled at this screen spacing
 const RAY_LENGTH: float = 200.0
 
-@export var config: GameConfig = GameConfig.load_default()
+@export var config: GameConfig = GameConfig.live()
 @export var cell_radius: float = 0.46
 @export var cell_pitch: float = 1.0
 ## Drags only uncap while true (main.gd turns it off outside stage 1).
 @export var active: bool = true
+## Where the frame comes from and goes to, relative to its home (screen top of the close-up: -Z).
+@export var slide_offset: Vector3 = Vector3(0.0, 0.0, -12.0)
 
 ## One byte per cell: 0 Capped, 1 Uncapped, 2 Extracted.
 var cells: PackedByteArray = PackedByteArray()
 
 var _cell_meshes: Array[MeshInstance3D] = []
 var _materials: Array[StandardMaterial3D] = []
+var _home: Vector3 = Vector3.ZERO
+var _slide: Tween
 var _dragging: bool = false
 var _last_pos: Vector2 = Vector2.ZERO
 
@@ -38,7 +43,31 @@ func _alloc() -> void:
 	cells.fill(CAPPED)
 
 
+## Slides the frame in from the top of the close-up (GDD 2, colorbox: a position tween, config.slide_seconds).
+## Drags may uncap as soon as it starts: the colliders move with the node.
+func slide_in() -> void:
+	_kill_slide()
+	position = _home + slide_offset
+	_slide = create_tween()
+	_slide.tween_property(self, "position", _home, config.slide_seconds).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+## Slides the uncapped frame away the same way, then emits slid_out.
+func slide_out() -> void:
+	_kill_slide()
+	_slide = create_tween()
+	_slide.tween_property(self, "position", _home + slide_offset, config.slide_seconds).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	_slide.tween_callback(func() -> void: slid_out.emit())
+
+
+func _kill_slide() -> void:
+	if _slide != null and _slide.is_valid():
+		_slide.kill()
+	_slide = null
+
+
 func _ready() -> void:
+	_home = position
 	_alloc()
 	_build_materials()
 	_build_cells()
@@ -53,6 +82,7 @@ func get_state(cell: int) -> int:
 
 
 func reset() -> void:
+	_dragging = false
 	cells.fill(CAPPED)
 	for i in _cell_meshes.size():
 		_apply_visual(i)

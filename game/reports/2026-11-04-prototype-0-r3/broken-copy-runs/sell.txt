@@ -1,0 +1,5 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+ 
+FAIL  t_truck_sell_credits_at_once  money credited at once, with no advance() call: expected 30 got 0
+---- 59 passed, 1 failed
+RAN 60 of 60

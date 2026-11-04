@@ -1,6 +1,6 @@
 # game - the Godot project (Patricia, Bob, Quinn)
 
-One job: turn applied designs into a running Godot game. Godot 4.2.1 (standard build, GDScript), Compatibility renderer, portrait; `scenes/main.tscn` is a placeholder bootstrap scene with the isometric camera.
+One job: turn applied designs into a running Godot game. Godot 4.2.1 (standard build, GDScript), Compatibility renderer, portrait; `scenes/main.tscn` is the Prototype 0 farm scene (hive, flowers, centrifuge, crate, truck and farm UI) under the isometric camera.
 
 | Folder | Agent | Holds |
 |---|---|---|
@@ -20,8 +20,8 @@ Do NOT load: the review folders, `_meta/agent-runs.md`, proposals still `propose
 
 ## Process
 1. Build only what the GDD or an applied proposal specifies. If the spec is ambiguous, stop and list the questions.
-2. Patricia writes scripts, Bob writes scenes that attach those scripts by path, Quinn tests both. No agent edits another agent's folder.
-3. TBD balance values stay as marked placeholders in exported variables or config resources.
+2. Patricia writes scripts, Bob writes scenes that attach those scripts by path, Quinn tests both. **Tests come from the spec, not the code** (designer, 2026-11-04): Quinn writes them from the approved spec in parallel with Patricia, without reading her in-progress code, and every expected number is read from the config. A test that fails then is a finding against the code or the spec, never a reason to change the test to match the code. No agent edits another agent's folder.
+3. TBD balance values stay as marked placeholders in exported variables or config resources. Every tunable value lives in the config (never a literal in a script), is read when used rather than cached, and is adjustable live in the in-game **Dev mode** panel (`scripts/dev_panel.gd`). Every spec includes Dev mode and adds its new values to it (designer, 2026-11-04).
 4. **Fixes.** The owner of the folder fixes its bugs: Patricia `scripts/`, Bob `scenes/`, Quinn `tests/`. The orchestrator (the main session) may fix a bug itself only when the diagnosis is certain and the fix is a few lines; anything larger goes back to the owner with Quinn's report. Whoever fixes it, every fix is recorded: a **Fixes** section in the report names the bug, its owner and who fixed it, the bug is counted in the Rework tally in `../_meta/team.md`, and Quinn's tests are re-run before any build is exported.
 
 ## Outputs

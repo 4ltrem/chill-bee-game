@@ -1,34 +1,29 @@
 ---
 name: session-handoff
-description: Where work stood when the designer moved from the VS Code extension to the terminal CLI (2026-11-03); read first in the next session
+description: Where work stands after Prototype 0 revision 3 was built (2026-11-04); read first in the next session
 metadata:
   node_type: memory
   type: project
-  originSessionId: fa5df4be-6365-415d-bd06-9f0be0bb573b
-  modified: 2026-11-03T23:49:49.467Z
+  originSessionId: 864dbfb5-1b7c-49cd-bf94-214920851b62
+  modified: 2026-11-04T01:03:43.220Z
 ---
 
-On 2026-11-03 the designer moved from the VS Code extension to the terminal `claude` CLI, run in VS Code's
-integrated terminal and connected with `/ide`. The reason: the status line (`_tools/statusline.py`) only runs in the
-CLI, and it records plan usage ([[usage-calibration]]). The old session was closed with the end-of-day routine, and
-the CLI session started fresh as a new day. Plan: Claude Team, for the duration of the designer's course.
+Working in the terminal `claude` CLI inside VS Code (`/ide`). The status line (`_tools/statusline.py`) logs plan usage
+by itself, so there's no need to ask the designer for a nudge ([[usage-calibration]]).
 
-**Next up, in order:**
-1. Write the Prototype 0 revision 3 spec (`game/specs/prototype-0.md`) from GDD §2 (harvest flow: fork icon, frame
-   queue, centrifuge with a physical crank you tap or hold, Continue, bottling, sales truck; Long Fork is a later
-   upgrade, not in this prototype). Include the 5 items under "Open for revision 3" in
-   `game/reports/2026-11-03-prototype-0.md` (Bob's harvest light washing out the uncapping pop; the shop overlap;
-   gold Extract button; disabled Upgrade contrast). Prototype values: 1 frame fills the centrifuge; the truck holds
-   10 jars. Show the spec to the designer before any agent builds.
-2. Before launching Patricia, Bob and Quinn: ask the designer to nudge the status line (any message in the CLI) so
-   `_meta/usage/readings.jsonl` has a fresh reading; again after the batch; then run
-   `python -I _tools/runlog.py --calibrate SINCE` and record the second calibration in `_meta/agent-runs.md`.
-3. `content/onboarding-script.md` must follow the new harvest flow when it is revised ([[pending-approvals]]).
+**Status (2026-11-04):** Prototype 0 revision 3 is built. It follows the new GDD §2 harvest flow and adds Dev mode.
+- The spec, `game/specs/prototype-0.md`, is approved. Its Clarifications section records what was settled during
+  the build.
+- Quinn's report, `game/reports/2026-11-04-prototype-0-r3.md`, is a PASS: 60/60 unit tests and 1015 real-input checks.
+- The build is `game/builds/windows/ChillBeeGame.exe`.
+- The second calibration is recorded in `_meta/agent-runs.md`.
+- Not committed yet; that happens at end of day.
 
-**Why:** a fresh session reloads only memory and the docs. Each orchestrator call re-reads its whole context, and
-the old session had reached ~162M tokens processed.
+**Next:**
+1. The designer plays the exe; Dev mode opens with the backquote key. Gather the play-test notes into revision 4.
+   "Open for revision 4" in the report already lists: button focus styles painting over the disabled look (item 7), the Sell icon sits over the hive, the truck clips the shop
+   corner on its way out, rcedit, `dev_mode` false for store builds, and an Android test.
+2. `content/onboarding-script.md` must follow the new harvest flow when it is revised ([[pending-approvals]]).
 
-**How to apply:** read this at the start of the next session. The designer prefers reading long replies in a
-rendered panel, and the terminal renders long tables poorly: in the CLI, keep replies short and put anything long
-(tables, reports, specs) in a Markdown file the designer can open in VS Code's preview. Delete this memory once
-revision 3 is underway.
+**How to apply:** in the CLI keep replies short and put long material in Markdown files. Process rules from this
+session: [[dev-mode-and-pacing]] (Dev mode in every spec, slow placeholders, tests from the spec).

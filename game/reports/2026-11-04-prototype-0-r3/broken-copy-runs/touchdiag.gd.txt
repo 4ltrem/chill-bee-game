@@ -1,0 +1,37 @@
+extends SceneTree
+func _initialize() -> void:
+	_run()
+func _mk() -> Node:
+	var c: Node = load("res://scripts/centrifuge.gd").new()
+	root.add_child(c)
+	c.call("fill", 10); c.call("begin_crank")
+	return c
+func _touch(p: bool, via: String) -> void:
+	var t := InputEventScreenTouch.new()
+	t.index = 0; t.pressed = p; t.position = Vector2(360,640) * (Vector2(root.size)/root.get_visible_rect().size)
+	if via == "parse":
+		Input.parse_input_event(t); Input.flush_buffered_events()
+	else:
+		root.push_input(t)
+func _run() -> void:
+	await process_frame
+	for via in ["parse", "push"]:
+		var c := await _mk()
+		for i in 5:
+			_touch(true, via); _touch(false, via)
+			c.call("advance", 0.21)
+			await process_frame
+		print(via, ": turns_counted=", c.get("turns_counted"), " of 5 sent")
+		c.queue_free()
+		await process_frame
+	# mouse via parse_input_event
+	var c2 := await _mk()
+	for i in 5:
+		var m := InputEventMouseButton.new(); m.button_index = MOUSE_BUTTON_LEFT; m.pressed = true; m.position = Vector2(360,640)*(Vector2(root.size)/root.get_visible_rect().size); m.button_mask=1
+		Input.parse_input_event(m); Input.flush_buffered_events()
+		var m2 := m.duplicate(); m2.pressed=false; m2.button_mask=0
+		Input.parse_input_event(m2); Input.flush_buffered_events()
+		c2.call("advance", 0.21)
+		await process_frame
+	print("mouse via parse_input_event: turns_counted=", c2.get("turns_counted"))
+	quit()

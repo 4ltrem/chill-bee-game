@@ -1,17 +1,14 @@
 # Implements GDD 3 (Progression Trees, Tree A: Worker Swarm Count) and 1 (Primary Game Loop: sell).
-# Autoload "Economy": money, jars, Worker Swarm Count level, cost formula. Logic only, no scene needed.
+# Autoload "Economy": money, Worker Swarm Count level, cost formula. Logic only, no scene needed.
+# Jars live in the centrifuge, crate and truck (truck.gd); the truck credits money through earn().
 extends Node
 
 signal money_changed(money: int)
-signal jars_changed(jars: int)
 signal swarm_level_changed(level: int)
 
-var config: GameConfig = GameConfig.load_default()
+var config: GameConfig = GameConfig.live()
 var money: int = 0
-var jars: int = 0
 var swarm_level: int = 0
-## Accessibility (GDD 8): hold the Crank button instead of rapid tapping. Session only (saving is out of scope).
-var no_rapid_tap_mode: bool = false
 
 
 ## Bees in the swarm: base + per-level * level (Worker Swarm Count adds bees, GDD Tree A).
@@ -52,29 +49,16 @@ func jar_value() -> int:
 	return config.sale_value_per_jar
 
 
-func add_jars(count: int) -> void:
-	if count <= 0:
+## Credits money (the truck's sale, Dev mode's +$100).
+func earn(amount: int) -> void:
+	if amount <= 0:
 		return
-	jars += count
-	jars_changed.emit(jars)
-
-
-## Converts every jar to money. Returns the money earned.
-func sell_jars() -> int:
-	if jars <= 0:
-		return 0
-	var earned: int = jars * config.sale_value_per_jar
-	jars = 0
-	money += earned
-	jars_changed.emit(jars)
+	money += amount
 	money_changed.emit(money)
-	return earned
 
 
 func reset() -> void:
 	money = 0
-	jars = 0
 	swarm_level = 0
 	money_changed.emit(money)
-	jars_changed.emit(jars)
 	swarm_level_changed.emit(swarm_level)

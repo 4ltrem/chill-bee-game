@@ -19,6 +19,10 @@ config/features=PackedStringArray("4.2", "GL Compatibility")
 
 Economy="*res://scripts/economy.gd"
 
+[chill_bee]
+
+dev_mode=true
+
 [display]
 
 window/size/viewport_width=720

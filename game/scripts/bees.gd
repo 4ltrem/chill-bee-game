@@ -49,7 +49,7 @@ func _resize_flock() -> void:
 	var n: int = mini(Economy.bee_count(), Economy.config.visual_bee_cap)
 	if n == _drawn:
 		return
-	var old: int = _drawn
+	var old: int = mini(_drawn, n)
 	_drawn = n
 	multimesh.instance_count = n
 	_phases.resize(n)
@@ -59,6 +59,9 @@ func _resize_flock() -> void:
 
 
 func _process(delta: float) -> void:
+	# Dev mode can change visual_bee_cap or the bee counts live: resize when the target differs (rare, not per bee).
+	if mini(Economy.bee_count(), Economy.config.visual_bee_cap) != _drawn:
+		_resize_flock()
 	_time += delta * speed * TAU
 	var mm: MultiMesh = multimesh
 	for i in _drawn:

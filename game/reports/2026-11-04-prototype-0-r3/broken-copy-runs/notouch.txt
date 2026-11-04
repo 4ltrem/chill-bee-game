@@ -1,0 +1,5 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+ 
+FAIL  t_real_touch_taps_crank  touch taps finished the frame (80 sent): expected 3 got 2
+---- 59 passed, 1 failed
+RAN 60 of 60

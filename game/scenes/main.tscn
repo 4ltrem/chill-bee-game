@@ -1,10 +1,13 @@
-[gd_scene load_steps=19 format=3 uid="uid://ub4nv2k6wxgl"]
+[gd_scene load_steps=48 format=3 uid="uid://ub4nv2k6wxgl"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/hive.gd" id="2_hive"]
 [ext_resource type="Script" path="res://scripts/bees.gd" id="3_bees"]
 [ext_resource type="Script" path="res://scripts/farm_ui.gd" id="4_farmui"]
 [ext_resource type="Script" path="res://scripts/shop_ui.gd" id="5_shopui"]
+[ext_resource type="Script" path="res://scripts/centrifuge.gd" id="6_centrifuge"]
+[ext_resource type="Script" path="res://scripts/truck.gd" id="7_truck"]
+[ext_resource type="Script" path="res://scripts/floating_icon.gd" id="8_icon"]
 
 [sub_resource type="Environment" id="Environment_sky"]
 background_mode = 1
@@ -18,7 +21,7 @@ albedo_color = Color(0.62, 0.84, 0.52, 1)
 
 [sub_resource type="PlaneMesh" id="Mesh_ground"]
 material = SubResource("Material_meadow")
-size = Vector2(10, 10)
+size = Vector2(12, 12)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_barbg"]
 bg_color = Color(0.3, 0.22, 0.1, 1)
@@ -68,6 +71,135 @@ top_radius = 0.7
 bottom_radius = 0.7
 height = 0.3
 
+[sub_resource type="StandardMaterial3D" id="Material_crate"]
+albedo_color = Color(0.5, 0.33, 0.18, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_crate"]
+material = SubResource("Material_crate")
+size = Vector3(1.4, 0.45, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tag"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tag_pressed"]
+bg_color = Color(0.82, 0.58, 0.05, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_circle"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 80
+corner_radius_top_right = 80
+corner_radius_bottom_right = 80
+corner_radius_bottom_left = 80
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_circle_pressed"]
+bg_color = Color(0.82, 0.58, 0.05, 1)
+corner_radius_top_left = 80
+corner_radius_top_right = 80
+corner_radius_bottom_right = 80
+corner_radius_bottom_left = 80
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_pill"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_pill_pressed"]
+bg_color = Color(0.82, 0.58, 0.05, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_rect"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_rect_pressed"]
+bg_color = Color(0.82, 0.58, 0.05, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_back"]
+bg_color = Color(0.97, 0.93, 0.83, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_disabled"]
+bg_color = Color(0.38, 0.34, 0.3, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_modal"]
+bg_color = Color(0.25, 0.2, 0.1, 0.96)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
 
@@ -97,28 +229,52 @@ script = ExtResource("2_hive")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 mesh = SubResource("Mesh_hive")
 
+[node name="ForkAnchor" type="Marker3D" parent="FarmWorld/Hive"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+
 [node name="Flowers" type="Node3D" parent="FarmWorld"]
 
 [node name="FlowerPatch1" type="Node3D" parent="FarmWorld/Flowers" groups=["flower_patch"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.15, 1)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.15, 0)
 
 [node name="PatchMesh" type="MeshInstance3D" parent="FarmWorld/Flowers/FlowerPatch1"]
 mesh = SubResource("Mesh_flower1")
 
 [node name="FlowerPatch2" type="Node3D" parent="FarmWorld/Flowers" groups=["flower_patch"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0.15, 3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.15, -1)
 
 [node name="PatchMesh" type="MeshInstance3D" parent="FarmWorld/Flowers/FlowerPatch2"]
 mesh = SubResource("Mesh_flower2")
 
 [node name="FlowerPatch3" type="Node3D" parent="FarmWorld/Flowers" groups=["flower_patch"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.15, -2.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0.15, -3)
 
 [node name="PatchMesh" type="MeshInstance3D" parent="FarmWorld/Flowers/FlowerPatch3"]
 mesh = SubResource("Mesh_flower3")
 
 [node name="Bees" type="MultiMeshInstance3D" parent="FarmWorld"]
 script = ExtResource("3_bees")
+
+[node name="Centrifuge" type="Node3D" parent="FarmWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 3)
+script = ExtResource("6_centrifuge")
+
+[node name="CentrifugeAnchor" type="Marker3D" parent="FarmWorld/Centrifuge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+
+[node name="JarCrate" type="Node3D" parent="FarmWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
+
+[node name="CrateBox" type="MeshInstance3D" parent="FarmWorld/JarCrate"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 0)
+mesh = SubResource("Mesh_crate")
+
+[node name="Truck" type="Node3D" parent="FarmWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, 4.2)
+script = ExtResource("7_truck")
+
+[node name="SellAnchor" type="Marker3D" parent="FarmWorld/Truck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
 
 [node name="FarmUIRoot" type="CanvasLayer" parent="."]
 
@@ -157,20 +313,15 @@ theme_override_constants/separation = 8
 
 [node name="MoneyLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 40
 text = "$0"
 
-[node name="JarsLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 32
-text = "Jars: 0"
-
 [node name="FillLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 28
@@ -186,6 +337,7 @@ show_percentage = false
 
 [node name="BeeCountLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 32
@@ -194,6 +346,7 @@ text = "Bees: 20"
 [node name="PausedLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 visible = false
 layout_mode = 2
+mouse_filter = 2
 theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 28
@@ -205,16 +358,34 @@ layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
+[node name="ContinueButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column"]
+visible = false
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_rect")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Continue"
+
 [node name="ShopPanel" type="PanelContainer" parent="FarmUIRoot/FarmUI/Margin/Column"]
 layout_mode = 2
 script = ExtResource("5_shopui")
 
 [node name="ShopBox" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="LevelLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_font_sizes/font_size = 28
 text = "Worker Swarm Count"
 horizontal_alignment = 1
@@ -222,18 +393,156 @@ horizontal_alignment = 1
 [node name="UpgradeButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
 custom_minimum_size = Vector2(0, 110)
 layout_mode = 2
+theme_override_colors/font_disabled_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 36
+theme_override_styles/disabled = SubResource("StyleBox_disabled")
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_rect")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "Upgrade"
 
-[node name="HarvestButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column"]
+[node name="CentrifugeLabel" type="Label" parent="FarmUIRoot/FarmUI"]
 visible = false
+layout_mode = 1
+anchors_preset = 0
+offset_left = 24.0
+offset_top = 400.0
+offset_right = 440.0
+offset_bottom = 500.0
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 30
+text = "Honey: 0 / 10"
+horizontal_alignment = 1
+
+[node name="ForkIcon" type="Button" parent="FarmUIRoot/FarmUI"]
+custom_minimum_size = Vector2(130, 180)
+layout_mode = 0
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBox_tag")
+theme_override_styles/hover = SubResource("StyleBox_tag")
+theme_override_styles/pressed = SubResource("StyleBox_tag_pressed")
+theme_override_styles/focus = SubResource("StyleBox_tag")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Harvest"
+script = ExtResource("8_icon")
+anchor_path = NodePath("../../../FarmWorld/Hive/ForkAnchor")
+screen_offset = Vector2(0, -100)
+
+[node name="CentrifugeIcon" type="Button" parent="FarmUIRoot/FarmUI"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 0
+theme_override_font_sizes/font_size = 38
+theme_override_styles/normal = SubResource("StyleBox_circle")
+theme_override_styles/hover = SubResource("StyleBox_circle")
+theme_override_styles/pressed = SubResource("StyleBox_circle_pressed")
+theme_override_styles/focus = SubResource("StyleBox_circle")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Spin"
+script = ExtResource("8_icon")
+anchor_path = NodePath("../../../FarmWorld/Centrifuge/CentrifugeAnchor")
+screen_offset = Vector2(0, -100)
+
+[node name="SellIcon" type="Button" parent="FarmUIRoot/FarmUI"]
+custom_minimum_size = Vector2(250, 120)
+layout_mode = 0
+theme_override_font_sizes/font_size = 38
+theme_override_styles/normal = SubResource("StyleBox_pill")
+theme_override_styles/hover = SubResource("StyleBox_pill")
+theme_override_styles/pressed = SubResource("StyleBox_pill_pressed")
+theme_override_styles/focus = SubResource("StyleBox_pill")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Sell $30"
+script = ExtResource("8_icon")
+anchor_path = NodePath("../../../FarmWorld/Truck/SellAnchor")
+screen_offset = Vector2(0, -80)
+
+[node name="SummaryModal" type="PanelContainer" parent="FarmUIRoot/FarmUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -230.0
+offset_right = 300.0
+offset_bottom = 230.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_modal")
+
+[node name="SummaryMargin" type="MarginContainer" parent="FarmUIRoot/FarmUI/SummaryModal"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="SummaryColumn" type="VBoxContainer" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="SummaryJarsLabel" type="Label" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 34
+text = "Jars: 10"
+horizontal_alignment = 1
+
+[node name="SummaryValueLabel" type="Label" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 34
+text = "Value per jar: $3"
+horizontal_alignment = 1
+
+[node name="SummaryBonusLabel" type="Label" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 26
+text = "Tool bonus: $0   Quality bonus: $0"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="SummaryTotalLabel" type="Label" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 40
+text = "Batch total: $30"
+horizontal_alignment = 1
+
+[node name="SummaryOkButton" type="Button" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Harvest"
-
-[node name="SellButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column"]
-custom_minimum_size = Vector2(0, 120)
-layout_mode = 2
-theme_override_font_sizes/font_size = 36
-text = "Sell"
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_rect")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "OK"

@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-76 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+82 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -66,11 +66,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Ruth | post-ICM | 2 | — | 266,270 | 116 s |
 | **All** | | **26** | **—** | **173,021** | 168 s |
 
-**Doc audits** (2 runs)
+**Doc audits** (3 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Doris | post-ICM | 2 | 82,313 | 404,528 | 156 s |
+| Doris | post-ICM | 3 | 64,292 | 308,971 | 109 s |
 
 **Probes** (2 runs)
 
@@ -80,22 +80,22 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Clara, one empty turn, prompt on stdin | post-ICM | 1 | — | 13,370 | — |
 | **All** | | **2** | **—** | **12,806** | — |
 
-**Subagent runs** (12 runs)
+**Subagent runs** (16 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Patricia (programmer) | post-ICM | 2 | 55,456 | 596,738 | 488 s |
-| Bob (builder) | post-ICM | 2 | 33,148 | 186,456 | 71 s |
-| Quinn (qa-build-engineer) | post-ICM | 2 | 77,778 | 1,570,326 | 668 s |
+| Patricia (programmer) | post-ICM | 3 | 80,291 | 1,648,765 | 639 s |
+| Bob (builder) | post-ICM | 3 | 53,856 | 627,624 | 145 s |
+| Quinn (qa-build-engineer) | post-ICM | 4 | 112,376 | 2,233,768 | 777 s |
 | claude-code-guide | post-ICM | 2 | 48,226 | 255,200 | 52 s |
 | Martin (hiring-manager) | post-ICM | 4 | 40,258 | 222,278 | 61 s |
-| **All** | | **12** | **49,187** | **508,879** | 234 s |
+| **All** | | **16** | **69,339** | **1,072,735** | 363 s |
 
-**Orchestrator** (2 runs)
+**Orchestrator** (3 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 2 | — | 82,003,732 | 130,208 s |
+| Orchestrator (main session) | post-ICM | 3 | — | 59,849,141 | 89,237 s |
 <!-- /generated: run-summary -->
 
 Notes on the Content generation runs:
@@ -139,6 +139,22 @@ All agents draw from one shared daily pool (no per-agent caps). The developer is
 | Tokens per 1% of the 5-hour session | ~28,000 (so one session ≈ 2.8M tokens) |
 
 In practice, a day's budget covers about 15 Terry runs, 28 Gerard runs, or 3 full design reviews (~600k each). The figure is provisional: `/usage` only shows whole percentages, so a 1% change could really be anywhere from about 0.5% to 1.5%, which puts the daily budget between roughly 1.3M and 4M tokens. A second reading (Terry's progression-levers run, 130,520 tokens) was taken mid-run and overlapped other sessions, so it only confirms the range: weekly went 12% → 14% (mid-run) → 15%, and the session window rose 3% for the tail of the run (~28k tokens per 1%, matching the first calibration). Refine it by measuring again on larger tasks (e.g., a full design review), which move the weekly bar by several points.
+
+**Second calibration (2026-11-04, Prototype 0 revision 3 batch, Team plan, status-line readings):** 4 runs (Quinn tests, Patricia, Bob, Quinn report) from 00:24Z, with the orchestrator included. Command: `runlog.py --calibrate 2026-11-04T00:24:00Z`.
+
+| Measure | Before | After | Change |
+|---|---|---|---|
+| Weekly usage | 28% | 31% | 3% |
+| Session (5 h) usage | 63% | 84% | 21% |
+| Subagent tokens (total processed) | | | 11,057,200 |
+| Orchestrator tokens | | | 2,582,350 (2,527,014 of them cache reads) |
+
+| Result | Value |
+|---|---|
+| Tokens per 1% of the weekly limit | ~4.5M all kinds, ~3.7M without the orchestrator's cache reads |
+| Tokens per 1% of the 5-hour session | ~650k (13.6M ÷ 21) |
+
+This is measured in *total processed* tokens, while the first calibration used *final context*, so the two are not comparable: by total processed, a weekly limit is roughly 370M–450M tokens, and a 1/7 daily share is ~53M–65M. A 3% change is still coarse (±0.5% on each reading, so about ±30%). The binding limit in practice was the 5-hour window: this one batch took 21% of it.
 
 ## Per-Task Estimates for the Agents
 
