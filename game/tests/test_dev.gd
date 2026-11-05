@@ -274,7 +274,7 @@ func t_dev_actions() -> void:
 	var e: Node = _eco()
 	var plus: Button = _button_with(p, "$100")
 	var fillb: Button = _button_with(p, "fill")
-	var fast: Button = _button_with(p, "5")
+	var fast: Button = _button_with(p, "×5")
 	ck(plus != null, "no Button with '$100' (the +$100 action)")
 	ck(fillb != null, "no Button with 'fill' (fill the hive now)")
 	ck(fast != null, "no Button with '5' (game speed x5)")

@@ -7,6 +7,9 @@ extends CanvasLayer
 
 const OPEN_KEY: int = KEY_QUOTELEFT
 const OPEN_TOUCHES: int = 3
+## The seven game speeds (0.1.3 spec, item 1), fixed by the spec and not a tunable; never saved.
+const SPEEDS: Array[float] = [0.25, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0]
+const SPEED_TAG_NODE: String = "DevSpeedTag"   # Bob's Label in main.tscn; shown while the speed is not x1
 
 var config: GameConfig
 var hive: Hive
@@ -18,6 +21,9 @@ var _touches: Dictionary = {}       # screen-touch index -> true while down
 var _defaults: GameConfig
 var _building: bool = false
 var _bounds: UiBoundsOverlay
+var _speed_buttons: Array[Button] = []
+var _speed_group := ButtonGroup.new()
+var _speed_tag: Control
 
 
 func _init() -> void:
@@ -43,6 +49,8 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	Engine.time_scale = 1.0
+	if _speed_tag != null and is_instance_valid(_speed_tag):
+		_speed_tag.visible = false
 
 
 # --- the code path the tests use ---
@@ -72,6 +80,7 @@ func reset_to_defaults() -> void:
 	if FileAccess.file_exists(GameConfig.DEV_PATH):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(GameConfig.DEV_PATH))
 	GameConfig.apply_from(config, _defaults)
+	_set_speed(1.0)
 	for value_name in _rows:
 		set_value(value_name, config.get(value_name))
 
@@ -130,8 +139,46 @@ func ui_bounds_shown() -> bool:
 	return _bounds != null and _bounds.visible
 
 
+## Sets the game speed (Engine.time_scale), marks its button and updates the corner tag. Never saved.
 func _set_speed(scale: float) -> void:
 	Engine.time_scale = scale
+	_refresh_speed_ui()
+
+
+## One step along the speed row: -1 slower, +1 faster; stops at the ends.
+func step_speed(direction: int) -> void:
+	var index: int = _speed_index(Engine.time_scale)
+	if index < 0:
+		# Off the row (a test or another script set it): start from the nearest step at or below.
+		index = 0
+		for i in SPEEDS.size():
+			if SPEEDS[i] <= Engine.time_scale:
+				index = i
+	_set_speed(SPEEDS[clampi(index + direction, 0, SPEEDS.size() - 1)])
+
+
+func _speed_index(scale: float) -> int:
+	for i in SPEEDS.size():
+		if is_equal_approx(SPEEDS[i], scale):
+			return i
+	return -1
+
+
+func _refresh_speed_ui() -> void:
+	var index: int = _speed_index(Engine.time_scale)
+	for i in _speed_buttons.size():
+		_speed_buttons[i].set_pressed_no_signal(i == index)
+	if _speed_tag == null or not is_instance_valid(_speed_tag):
+		var host: Node = get_parent() if get_parent() != null else self
+		_speed_tag = host.find_child(SPEED_TAG_NODE, true, false) as Control
+	if _speed_tag != null:
+		_speed_tag.visible = not is_equal_approx(Engine.time_scale, 1.0)
+		if _speed_tag is Label:
+			(_speed_tag as Label).text = _speed_text(Engine.time_scale)
+
+
+static func _speed_text(scale: float) -> String:
+	return "×" + String.num(scale)
 
 
 # --- input ---
@@ -141,6 +188,11 @@ func _input(event: InputEvent) -> void:
 		var focus: Control = get_viewport().gui_get_focus_owner()
 		if not (focus is LineEdit):
 			toggle()
+			get_viewport().set_input_as_handled()
+	elif event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_BRACKETLEFT or event.keycode == KEY_BRACKETRIGHT):
+		# Active only while Dev mode is on (checked per key: a panel left in the tree must not step the speed once it is off).
+		if GameConfig.dev_mode_enabled() and not (get_viewport().gui_get_focus_owner() is LineEdit):
+			step_speed(-1 if event.keycode == KEY_BRACKETLEFT else 1)
 			get_viewport().set_input_as_handled()
 	elif event is InputEventScreenTouch:
 		if event.pressed:
@@ -202,9 +254,13 @@ func _actions_row() -> Control:
 	bounds_button.text = "Show UI bounds"
 	bounds_button.pressed.connect(func() -> void: set_ui_bounds(not ui_bounds_shown()))
 	flow.add_child(bounds_button)
-	flow.add_child(_button("×1", func() -> void: _set_speed(1.0)))
-	flow.add_child(_button("×2", func() -> void: _set_speed(2.0)))
-	flow.add_child(_button("×5", func() -> void: _set_speed(5.0)))
+	for speed in SPEEDS:
+		var button: Button = _button(_speed_text(speed), func() -> void: _set_speed(speed))
+		button.toggle_mode = true
+		button.button_group = _speed_group
+		_speed_buttons.append(button)
+		flow.add_child(button)
+	_refresh_speed_ui()
 	return flow
 
 

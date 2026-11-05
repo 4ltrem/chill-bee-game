@@ -78,5 +78,76 @@
    "t_zoom_view_option_a"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "cell flight ignores the game speed",
+  "file": "scripts/cell_flight.gd",
+  "find": "tween.tween_callback(cell.show)",
+  "replace": "tween.set_ignore_time_scale(true)\n\ttween.tween_callback(cell.show)",
+  "expect": [
+   "t_speed_cell_flight"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hive lid tween ignores the game speed",
+  "file": "scripts/lid_motion.gd",
+  "find": "_tween = _lid.create_tween()",
+  "replace": "_tween = _lid.create_tween().set_ignore_time_scale(true)",
+  "expect": [
+   "t_speed_lid_lift"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "jar cycle timer reads the wall clock",
+  "file": "scripts/centrifuge.gd",
+  "find": "_bottle_timer += delta ",
+  "replace": "_bottle_timer += delta / maxf(Engine.time_scale, 0.001) ",
+  "expect": [
+   "t_speed_jar_cycle"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hotkeys wrap around at the ends",
+  "file": "scripts/dev_panel.gd",
+  "find": "clampi(index + direction, 0, SPEEDS.size() - 1)",
+  "replace": "posmod(index + direction, SPEEDS.size())",
+  "expect": [
+   "t_speed_hotkeys"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "speed tag always shown",
+  "file": "scripts/dev_panel.gd",
+  "find": "_speed_tag.visible = not is_equal_approx(Engine.time_scale, 1.0)",
+  "replace": "_speed_tag.visible = true",
+  "expect": [
+   "t_speed_tag",
+   "t_speed_reset"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Reset to defaults keeps the speed",
+  "file": "scripts/dev_panel.gd",
+  "find": "\t_set_speed(1.0)\n\tfor value_name in _rows:",
+  "replace": "\tfor value_name in _rows:",
+  "expect": [
+   "t_speed_reset"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "a script reads Time.get_ticks_msec",
+  "file": "scripts/cell_flight.gd",
+  "find": "static var _warned: Dictionary = {}",
+  "replace": "static var _warned: Dictionary = {}\nstatic var _born: int = Time.get_ticks_msec()",
+  "expect": [
+   "t_no_wall_clock_in_scripts"
+  ],
+  "suite": "unit"
  }
 ]
