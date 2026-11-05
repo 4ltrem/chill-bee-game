@@ -53,7 +53,7 @@ These rows need a creative choice, so Bob does not get them. Each gets a compari
 **Designer's pick (2026-11-05): A.** `rim_mark.tres` recoloured to charcoal (0.25, 0.25, 0.28) and moved to the Shadow role in `style_check.py`; `style_check.py` then PASSes with 0 rows.
 
 Comparison pages:
-- Rows 1–2 (rim_mark, one decision): section "V3: 3 accent colours…" on **Design Votes**, https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (vote ids `v3-rim-a`, `v3-rim-b`, `v3-rim-ref`; first published alone as https://claude.ai/artifact/8hQRdQuV485d5Jsu5UJF41) (A: rim mark recoloured to charcoal (0.25, 0.25, 0.28), shots `stop-1/A/`; B: rim mark as is, approved as a third accent, shots `stop-1/B/`; reference: round 1). Built with `python -I _tools/compare_page.py stop game/reports/style/farm-0-1-2/blackboard.md --row 2 --option A=… --option B=… --ref …/round-1 --shot 01-farm-start.png`.
+- Rows 1–2 (rim_mark, one decision): section "V3: 3 accent colours…" on **Design Votes**, https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (vote ids `v3-rim-a`, `v3-rim-b`, `v3-rim-ref`; first published alone as https://claude.ai/artifact/8hQRdQuV485d5Jsu5UJF41, deleted 2026-11-05 with the designer's OK) (A: rim mark recoloured to charcoal (0.25, 0.25, 0.28), shots `stop-1/A/`; B: rim mark as is, approved as a third accent, shots `stop-1/B/`; reference: round 1). Built with `python -I _tools/compare_page.py stop game/reports/style/farm-0-1-2/blackboard.md --row 2 --option A=… --option B=… --ref …/round-1 --shot 01-farm-start.png`.
 
 ### Changes (Bob, meanwhile), after round 1
 

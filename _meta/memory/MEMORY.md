@@ -1,9 +1,9 @@
-- [Pending approvals](pending-approvals.md) — only onboarding-script left (after the guide-playtest revision); three content follow-ups
+- [Pending approvals](pending-approvals.md) — onboarding-script, biome-intros re-approval (T6 revise), STYLE_LOOP.md read; three content follow-ups
 - [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day skill; only milestone-branch checkpoint commits mid-session
 - [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, syncing transcripts between machines
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
-- [Session handoff](session-handoff.md) — read first: 0.1.2 on milestone/0.1, Quinn final run, M2 drafts await approval
+- [Session handoff](session-handoff.md) — read first: M2 done on milestone/m2 (merge conflicts expected with 0.1.3 on milestone/0.1)
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
 - [A/B comparison page](ab-comparison-page.md) — every creative A/B choice gets a screenshot comparison artifact (Zoom Framing Options layout)
