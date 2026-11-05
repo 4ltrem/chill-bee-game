@@ -575,6 +575,17 @@ class BuildToolsTest(unittest.TestCase):
         self.assertEqual(self.mu.verdict({"expect": []}, ok)[0], "MISSED")
         self.assertEqual(self.mu.verdict({}, {"status": "TIMEOUT", "fails": []})[0], "BROKEN")
 
+    def test_budget_guard_blocks_warns_and_ignores_stale_readings(self):
+        import budget_guard as b
+        import datetime as d
+        t = d.datetime(2026, 11, 5, 4, 0, tzinfo=d.timezone.utc)
+        r = lambda five, week, mins=5: {"ts": (t - d.timedelta(minutes=mins)).isoformat(), "five_hour": five, "seven_day": week}
+        self.assertEqual(b.decide(r(85, 50), 80, 65, 90, t)[0], "deny")
+        self.assertEqual(b.decide(r(70, 50), 80, 65, 90, t)[0], "warn")
+        self.assertEqual(b.decide(r(40, 95), 80, 65, 90, t)[0], "deny")
+        self.assertEqual(b.decide(r(99, 50, 120), 80, 65, 90, t)[0], "allow")
+        self.assertEqual(b.decide(None, 80, 65, 90, t)[0], "allow")
+
     def test_build_sets_version_and_zips_web_at_root(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

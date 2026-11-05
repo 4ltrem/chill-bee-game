@@ -25,6 +25,8 @@ Tokens per 1% then come from the usage change ÷ (subagent + orchestrator tokens
 main session had processed ~156.5M tokens over 421 calls (154.4M of them cache reads), against ~11.1M for every
 post-ICM agent run in the log. The orchestrator is the main cost, so a calibration that leaves it out is wrong.
 
+**Budget guard (2026-11-05):** after a run hit the 5-hour limit mid-task, `_tools/budget_guard.py` runs as a PreToolUse hook on Agent/Workflow: it denies launches at >= 80% of the 5-hour window or >= 90% weekly, warns at 65%. The designer can lift it for N minutes with `python -I _tools/budget_guard.py --allow-for N`. When it warns, finish the current step and pause rather than starting a batch.
+
 **How to apply:** since 2026-11-03 the hooks do this automatically (`_tools/runlog.py`, `log_subagent.py`,
 `log_session.py`, `statusline.py`; rows in `_meta/agent-runs.csv`). Before a batch of agent runs, check that
 `_meta/usage/readings.jsonl` is getting fresh readings. If it isn't (the status line may not run in the VS Code

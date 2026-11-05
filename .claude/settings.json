@@ -4,6 +4,19 @@
     "command": "python -I \"${CLAUDE_PROJECT_DIR:-.}/_tools/statusline.py\""
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Agent|Workflow",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -I \"$CLAUDE_PROJECT_DIR/_tools/budget_guard.py\"",
+            "timeout": 15,
+            "statusMessage": "Checking plan usage"
+          }
+        ]
+      }
+    ],
     "SubagentStop": [
       {
         "hooks": [
