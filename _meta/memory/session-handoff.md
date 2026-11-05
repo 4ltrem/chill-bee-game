@@ -1,6 +1,6 @@
 ---
 name: session-handoff
-description: Where work stands after Prototype 0 revision 3 was built (2026-11-04); read first in the next session
+description: Where work stands (2026-11-05): 0.1.2 on milestone/0.1, Quinn's final run, M2 drafts awaiting approval; read first
 metadata:
   node_type: memory
   type: project
@@ -20,6 +20,8 @@ by itself, so there's no need to ask the designer for a nudge ([[usage-calibrati
 - Committed in 7d04bc6 (end of day 2026-11-04, decisions D55-D61).
 
 **2026-11-04 (day 2):** 0.1 Harvest built on branch `milestone/0.1` (commits eaa8628..970f28b): Quinn's report `game/reports/2026-11-04-0.1-harvest.md` 78/78, play_loop green, 60 FPS, pop snapshot OK. Open: designer decision on the capped colour (upright pose lights it brighter than r3), intermittent play_loop fork click, the designer uploads `game/builds/chill-bee-game-0.1.0-web.zip` to itch and plays; merge to main at end of day once played. Process changes in game/CONTEXT.md 4-7 and `_tools/contract_check.py`.
+
+**2026-11-05:** 0.1.2 (`game/specs/0.1.2-bottling-and-sale.md`) built on `milestone/0.1`; Patricia's fixes in 9514516 (104/110). Quinn's final run was launched from the previous session (fix 6 tests per the spec Clarifications, split run_tests.gd, mutations.json + mutate.py, reports/.gdignore, `godot_run.py all`, `build.py 0.1.2 --smoke`, report `game/reports/2026-11-05-0.1.2.md`). If that report is missing, his run did not finish: relaunch Quinn with the same brief. Then: review report + `python _tools/contact_sheet.py game/reports/0.1.2-shots`, rework tally rows to `_meta/team.md`, checkpoint commit, designer plays and uploads `game/builds/chill-bee-game-0.1.2-web.zip` to itch (Dev mode "Reset to defaults" once). M2: `STYLE_GUIDE.md` and `game/specs/m2-style-loop.md` are drafts awaiting the designer's approval before any build. Budget guard hook (`_tools/budget_guard.py`) is in `.claude/settings.json`.
 
 **Next (before r4 was drafted):**
 1. The designer plays the exe; Dev mode opens with the backquote key. Gather the play-test notes into revision 4.

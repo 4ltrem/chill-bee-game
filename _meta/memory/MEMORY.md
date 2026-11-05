@@ -3,7 +3,7 @@
 - [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, syncing transcripts between machines
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
-- [Session handoff](session-handoff.md) — read first: 0.1 Harvest built on milestone/0.1, Quinn PASS bar one colour decision; designer to play and upload to itch
+- [Session handoff](session-handoff.md) — read first: 0.1.2 on milestone/0.1, Quinn final run, M2 drafts await approval
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
 - [Cost rules](cost-rules.md) — 9 approved token cuts: godot_run/build/mutate scripts, split tests, sliced briefs, 150-word replies, fresh session per milestone

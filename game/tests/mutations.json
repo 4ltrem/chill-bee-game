@@ -1,0 +1,82 @@
+[
+ {
+  "name": "hive lid lifts only half the height",
+  "file": "scripts/lid_motion.gd",
+  "find": "Vector3.UP * (config.lid_lift_height / _parent_scale_y())",
+  "replace": "Vector3.UP * (config.lid_lift_height * 0.5 / _parent_scale_y())",
+  "expect": [
+   "t_hive_lid_open_path"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "heap draws one cell too few",
+  "file": "scripts/centrifuge.gd",
+  "find": "var shown: int = _landed ",
+  "replace": "var shown: int = maxi(_landed - 1, 0) ",
+  "expect": [
+   "t_heap_shows_every_cell"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "jar cycle is 1.5 x bottling_seconds_per_jar",
+  "file": "scripts/centrifuge.gd",
+  "find": "while jars_bottled < _bottle_count and _bottle_timer >= per_jar:",
+  "replace": "while jars_bottled < _bottle_count and _bottle_timer >= per_jar * 1.5:",
+  "expect": [
+   "t_bottling_timing"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "wheels turn at half speed",
+  "file": "scripts/truck.gd",
+  "find": "roll.dot(axle) / maxf(radius, 0.001)",
+  "replace": "roll.dot(axle) * 0.5 / maxf(radius, 0.001)",
+  "expect": [
+   "t_truck_wheels_roll_with_travel"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "wheels turn backwards",
+  "file": "scripts/truck.gd",
+  "find": "roll.dot(axle) / maxf(radius, 0.001)",
+  "replace": "-roll.dot(axle) / maxf(radius, 0.001)",
+  "expect": [
+   "t_truck_wheels_roll_with_travel"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "no summary after Sell",
+  "file": "scripts/main.gd",
+  "find": "_farm_ui.show_summary(jars, Economy.jar_value(), total)",
+  "replace": "pass",
+  "expect": [
+   "t_summary_after_sell"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "summary button reads Continue",
+  "file": "scenes/main.tscn",
+  "find": "text = \"OK\"",
+  "replace": "text = \"Continue\"",
+  "expect": [
+   "t_no_continue_button"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "zoom camera too tight (option A)",
+  "file": "scripts/default_config.tres",
+  "find": "zoom_size = 2.4",
+  "replace": "zoom_size = 1.0",
+  "expect": [
+   "t_zoom_view_option_a"
+  ],
+  "suite": "unit"
+ }
+]

@@ -331,6 +331,15 @@ func _run() -> void:
 	var tw: int = Time.get_ticks_msec()
 	while int(cen.get("state")) != int(cen.get_script().get_script_constant_map()["State"]["EMPTY"]) and Time.get_ticks_msec() - tw < 25000:
 		await process_frame
+	# 0.1.2: when bottling ends the pile loads into the empty bucket by itself (7 cells here, lid goes on). CHEAT (test only, marked): empty the
+	# bucket again so the 5-frame run starts from a known EMPTY centrifuge; the pile keeps its own cells.
+	var empty_state: int = int(cen.get_script().get_script_constant_map()["State"]["EMPTY"])
+	if int(cen.get("state")) != empty_state:
+		print("MEASURE bucket held ", int(cen.get("cells")), " cells loaded from the pile after bottling (state ", int(cen.get("state")), "): emptied by hand for the 5-frame run")
+		cen.set("cells", 0)
+		cen.set("_landed", 0)
+		cen.set("lid_open", true)
+		cen.call("_set_state", empty_state)
 	_set_cfg("centrifuge_capacity_frames", 5)
 	_set_cfg("taps_per_jar", 4)
 	var pile: Node = main.find_child("Pile", true, false)

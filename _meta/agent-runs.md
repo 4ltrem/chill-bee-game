@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-82 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+100 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -80,22 +80,23 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Clara, one empty turn, prompt on stdin | post-ICM | 1 | — | 13,370 | — |
 | **All** | | **2** | **—** | **12,806** | — |
 
-**Subagent runs** (16 runs)
+**Subagent runs** (33 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Patricia (programmer) | post-ICM | 3 | 80,291 | 1,648,765 | 639 s |
-| Bob (builder) | post-ICM | 3 | 53,856 | 627,624 | 145 s |
-| Quinn (qa-build-engineer) | post-ICM | 4 | 112,376 | 2,233,768 | 777 s |
+| Patricia (programmer) | post-ICM | 7 | 109,118 | 3,520,628 | 2,458 s |
+| Bob (builder) | post-ICM | 10 | 78,252 | 1,439,206 | 459 s |
+| Quinn (qa-build-engineer) | post-ICM | 9 | 176,166 | 7,089,686 | 1,672 s |
 | claude-code-guide | post-ICM | 2 | 48,226 | 255,200 | 52 s |
 | Martin (hiring-manager) | post-ICM | 4 | 40,258 | 222,278 | 61 s |
-| **All** | | **16** | **69,339** | **1,072,735** | 363 s |
+| Ruth (research-assistant) | post-ICM | 1 | 37,318 | 203,725 | 107 s |
+| **All** | | **33** | **103,838** | **3,165,057** | 1,131 s |
 
-**Orchestrator** (3 runs)
+**Orchestrator** (4 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 3 | — | 59,849,141 | 89,237 s |
+| Orchestrator (main session) | post-ICM | 4 | — | 56,022,592 | 82,456 s |
 <!-- /generated: run-summary -->
 
 Notes on the Content generation runs:

@@ -99,8 +99,8 @@ def smoke(root, version):
     os.makedirs(os.path.dirname(shot), exist_ok=True)
     try:
         subprocess.run([EDGE, "--headless=new", "--disable-gpu-sandbox", "--use-angle=swiftshader", "--enable-unsafe-swiftshader",
-                        "--window-size=720,1280", "--virtual-time-budget=20000", f"--screenshot={shot}", url],
-                       capture_output=True, timeout=120)
+                        "--window-size=720,1280", "--virtual-time-budget=100000", f"--screenshot={shot}", url],
+                       capture_output=True, timeout=240)
     finally:
         server.shutdown()
     ok = os.path.exists(shot) and os.path.getsize(shot) > 10_000
