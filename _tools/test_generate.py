@@ -464,6 +464,8 @@ class DecisionPageTest(unittest.TestCase):
         import decision_page as dp
         for log in (TOOLS.parent / "_meta" / "sessions").glob("*/decisions.md"):
             decisions, _ = dp.parse(log)
+            if not decisions and "No decisions were made" in log.read_text(encoding="utf-8"):
+                continue  # a session that holds no decisions says so in one line
             self.assertTrue(decisions, f"{log} has no decision headings in the expected format")
             for d in decisions:
                 self.assertTrue(d["fields"], f"{d['id']} in {log} has no '- Label: text' bullets")
