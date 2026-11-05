@@ -131,7 +131,7 @@ func _on_centrifuge_state(_state: int) -> void:
 func _on_jar_requested(delay: float) -> void:
 	var config: GameConfig = Economy.config
 	var jar: Node3D = JarFlight.fetch(self, _truck.empties_position(), _centrifuge.spigot_position(), config.jar_fly_seconds,
-			config.cell_fly_arc, delay, _centrifuge.spigot_jar_scale(), config.bottling_seconds_per_jar)
+			config.cell_fly_arc, delay, _centrifuge.spigot_jar_scale(), maxf(config.bottling_seconds_per_jar - config.jar_fly_seconds, 0.001))
 	if jar != null:
 		_trips.append(jar)
 
@@ -139,7 +139,7 @@ func _on_jar_requested(delay: float) -> void:
 ## A jar is bottled: the jar at the spigot flies on to the truck or the crate (the truck counts it at once).
 func _on_jar_bottled(_n: int) -> void:
 	var carrier: Node3D = _trips.pop_front() if not _trips.is_empty() else null
-	_truck.receive_jar(_centrifuge.spigot_position(), Economy.config.jar_lid_seconds, carrier)
+	_truck.receive_jar(_centrifuge.spigot_position(), 0.0, carrier)
 
 
 ## Sell (icon): credits the money, sends the truck off, and the summary shows jars sold, price per jar and the total. Returns the total.

@@ -260,32 +260,22 @@ func advance(delta: float) -> void:
 		var ramp: float = clampf(_hold_time / maxf(config.hold_ramp_seconds, 0.001), 0.0, 1.0)
 		spin_speed = maxf(spin_speed, config.spin_max * ramp)
 	if state == State.DONE:
-		open_spigot()   # no Continue: bottling starts by itself after extraction
+		open_spigot()   # no Continue: bottling starts by itself after extraction; this frame's time is not counted
+		return
 	if state == State.BOTTLING:
 		_advance_bottling(delta)
 
 
 func _advance_bottling(delta: float) -> void:
 	var per_jar: float = maxf(config.bottling_seconds_per_jar, 0.001)
-	var left: float = delta
-	while jars_bottled < _bottle_count:
-		if _fetch_remaining > 0.0:   # the empty jar is still flying in: the fill has not started
-			var used: float = minf(left, _fetch_remaining)
-			_fetch_remaining -= used
-			left -= used
-			if _fetch_remaining > 0.0:
-				break
-		_bottle_timer += left
-		left = 0.0
-		if _bottle_timer < per_jar:
-			break
-		left = _bottle_timer - per_jar
-		_bottle_timer = 0.0
+	_bottle_timer += delta   # one cycle per jar: the empty flies in, then it fills; the cycle is exactly per_jar
+	while jars_bottled < _bottle_count and _bottle_timer >= per_jar:
+		_bottle_timer -= per_jar
 		jars_bottled += 1
 		_lid_hold = config.jar_lid_seconds
 		jar_bottled.emit(jars_bottled)
 		if jars_bottled < _bottle_count:
-			_begin_fetch(config.jar_lid_seconds)   # the lid shows, then this jar leaves as the next flies in
+			_begin_fetch(0.0)   # the full jar leaves as the next empty flies in
 	if jars_bottled >= _bottle_count:
 		_bottle_timer = 0.0
 		_fetch_remaining = 0.0
@@ -351,7 +341,7 @@ func honey_jars() -> float:
 	if state == State.BOTTLING:
 		var frac: float = 0.0
 		if jars_bottled < _bottle_count:
-			frac = clampf(_bottle_timer / maxf(config.bottling_seconds_per_jar, 0.001), 0.0, 1.0)
+			frac = _fill_fraction()
 		return maxf(jars_total - float(jars_bottled) - frac, 0.0)
 	return leftover_jars + maxf(jars - leftover_jars, 0.0) * melt_fraction()
 
@@ -483,9 +473,15 @@ func _update_honey_level() -> void:
 func spigot_jar_fraction() -> float:
 	if _lid_hold > 0.0:
 		return 1.0
-	if state == State.BOTTLING and jars_bottled < _bottle_count and _fetch_remaining <= 0.0:
-		return clampf(_bottle_timer / maxf(config.bottling_seconds_per_jar, 0.001), 0.0, 0.999)
+	if state == State.BOTTLING and jars_bottled < _bottle_count and _bottle_timer >= config.jar_fly_seconds:
+		return clampf(_fill_fraction(), 0.0, 0.999)
 	return -1.0
+
+
+## Fill progress of the current jar: 0 while it flies in (the first jar_fly_seconds of its cycle), 1 at the cycle's end.
+func _fill_fraction() -> float:
+	var fly: float = maxf(config.jar_fly_seconds, 0.0)
+	return clampf((_bottle_timer - fly) / maxf(config.bottling_seconds_per_jar - fly, 0.001), 0.0, 1.0)
 
 
 func _update_spigot_jar(delta: float) -> void:
