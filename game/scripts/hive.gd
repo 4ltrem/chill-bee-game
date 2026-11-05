@@ -68,17 +68,26 @@ func _alloc() -> void:
 
 
 func _ready() -> void:
+	apply_scale()
 	_honeycomb = find_child("Honeycomb", true, false) as Honeycomb
 	_lid = find_child("HiveLid", true, false) as Node3D
 	_lid_spot = find_child("HiveLidSpot", true, false) as Node3D
 	if _lid != null:
-		_lid_motion = LidMotion.new(_lid, _lid_spot, config, true)
+		_lid_motion = LidMotion.new(_lid, _lid_spot, config, true, true)
 	else:
 		CellFlight.warn_once("HiveLid", "hive.gd: no HiveLid node (see game/specs/0.1-harvest.md, hive.tscn).")
 	if _honeycomb != null:
 		_honeycomb.slid_out.connect(_on_slid_out)
 		_honeycomb.visible = false
 		_honeycomb.active = false
+
+
+## Sets the hive node's uniform scale from config.hive_scale (read when used, so a Dev mode edit shows at once). Everything under the hive
+## (frame slide, lid lift and lean, cell start points) is in hive-local or global terms and follows.
+func apply_scale() -> void:
+	var target := Vector3.ONE * maxf(config.hive_scale, 0.01)
+	if not scale.is_equal_approx(target):
+		scale = target
 
 
 func cell_value() -> float:
@@ -287,6 +296,7 @@ func _announce_if_full() -> void:
 
 
 func _process(delta: float) -> void:
+	apply_scale()
 	var multiplier: float = 1.0
 	var economy: Node = get_node_or_null("/root/Economy")
 	if economy != null:

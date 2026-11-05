@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_speed.gd"
+extends "res://tests/test_layout.gd"
 
 
 func _initialize() -> void:
@@ -58,6 +58,8 @@ func _run() -> void:
 			# 0.1.3a speed (written from game/specs/0.1.3-next-revision.md before the code)
 			"t_speed_jar_cycle", "t_speed_lid_lift", "t_speed_cell_flight", "t_speed_hotkeys", "t_speed_tag", "t_speed_reset",
 			"t_no_wall_clock_in_scripts",
+			# 0.1.3b layout (written from game/specs/0.1.3-next-revision.md before the code)
+			"t_layout_no_jar_outside_crate", "t_layout_truck_wheels_on_ground", "t_layout_hive_scale_follows_config", "t_layout_objects_on_cells",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

@@ -288,8 +288,10 @@ func t_hive_footprint_and_frames() -> void:
 	if glass.size() > 0:
 		var gs: Array = _span_xz([glass])
 		bucket_d = minf(float(gs[2]) - float(gs[0]), float(gs[3]) - float(gs[1]))
-	ck(w <= 1.7 and dpt <= 1.7, "the hive footprint is 1.7 x 1.7 or less (about 1.6 x 1.6; measured %.2f x %.2f)" % [w, dpt])
-	ck(w >= 0.8 and dpt >= 0.8, "the hive footprint is not degenerate (measured %.2f x %.2f)" % [w, dpt])
+	# 0.1.3: the whole hive is scaled by config hive_scale (spec Changes 2), so the 1.7 and 0.8 limits scale with it
+	var hs: float = float(cv("hive_scale"))
+	ck(w <= 1.7 * hs and dpt <= 1.7 * hs, "the hive footprint is 1.7 x 1.7 or less times hive_scale %.2f (measured %.2f x %.2f)" % [hs, w, dpt])
+	ck(w >= 0.8 * hs and dpt >= 0.8 * hs, "the hive footprint is not degenerate (measured %.2f x %.2f)" % [w, dpt])
 	print("MEASURE hive footprint %.2f x %.2f, bucket outer diameter %.2f (0.1.1's 'footprint = the bucket's' is retired)" % [w, dpt, bucket_d])
 	var zs: Array = []
 	var xs: Array = []
@@ -337,19 +339,25 @@ func t_hive_size_vs_truck() -> void:
 	var hive_h: float = hy.y - hy.x
 	var roof_h: float = ty.y - ty.x
 	print("MEASURE hive height with the lid on %.2f, truck height (ground to roof, jars excluded) %.2f, ratio %.2f" % [hive_h, roof_h, hive_h / maxf(roof_h, 0.001)])
-	ck(roof_h > 0.5, "the truck's height is plausible (%.2f)" % roof_h)
-	ck(hive_h <= 0.6 * roof_h, "the hive with its lid on is at most 0.6 of the truck's roof height (%.2f vs %.2f x 0.6 = %.2f)" % [hive_h, roof_h, 0.6 * roof_h])
+	# 0.1.3: the hive is scaled by hive_scale and the truck by its own node scale (layout C); the 0.1.0 ratios are of the unscaled designs
+	var hs: float = float(cv("hive_scale"))
+	var tsc: float = (tk as Node3D).global_transform.basis.get_scale().y
+	hive_h /= hs
+	roof_h /= tsc
+	ck(roof_h > 0.5, "the truck's height is plausible (%.2f, unscaled)" % roof_h)
+	ck(hive_h <= 0.6 * roof_h, "the hive with its lid on is at most 0.6 of the truck's roof height, both unscaled (%.2f vs %.2f x 0.6 = %.2f)" % [hive_h, roof_h, 0.6 * roof_h])
 	ck(hive_h >= 0.2 * roof_h, "the hive is not flattened away (%.2f is at least 0.2 of the roof %.2f)" % [hive_h, roof_h])
 	var hbody: Node = hive.find_child("HiveBody", true, false)
 	var body: Array = _obbs(hbody if hbody != null else hive, [hive.find_child("HiveLid", true, false), hive.find_child("Honeycomb", true, false), hive.find_child("FrameBars", true, false)])
 	var sp: Array = _span_xz(body)
 	var w: float = float(sp[2]) - float(sp[0])
 	var d: float = float(sp[3]) - float(sp[1])
-	ck(w <= 1.7 and d <= 1.7, "the hive footprint is at most 1.7 x 1.7 (%.2f x %.2f)" % [w, d])
+	ck(w <= 1.7 * hs and d <= 1.7 * hs, "the hive footprint is at most 1.7 x 1.7 times hive_scale %.2f (%.2f x %.2f)" % [hs, w, d])
 	var ts: Array = _span_xz(tb)
 	var tl: float = maxf(float(ts[2]) - float(ts[0]), float(ts[3]) - float(ts[1]))
-	ck(tl >= 2.4 and tl <= 4.0, "the truck is about 3.2 long (measured %.2f; the reference the hive is measured against)" % tl)
-	ck(maxf(w, d) < tl * 0.6, "the hive is clearly smaller than the truck's length (%.2f vs %.2f)" % [maxf(w, d), tl])
+	tl /= tsc
+	ck(tl >= 2.4 and tl <= 4.0, "the truck is about 3.2 long, unscaled (measured %.2f; the reference the hive is measured against)" % tl)
+	ck(maxf(w, d) / hs < tl * 0.6, "the hive is clearly smaller than the truck's length, both unscaled (%.2f vs %.2f)" % [maxf(w, d) / hs, tl])
 	_fin()
 
 

@@ -149,5 +149,96 @@
    "t_no_wall_clock_in_scripts"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "crate box is only 1.0 long, jars hang off",
+  "file": "scenes/props/jar_crate.tscn",
+  "find": "size = Vector3(2.8, 0.45, 1.2)",
+  "replace": "size = Vector3(1.0, 0.45, 1.2)",
+  "expect": [
+   "t_layout_no_jar_outside_crate"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "truck hovers 0.3 above the ground",
+  "file": "scenes/main.tscn",
+  "find": "0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 3.8, 0, 5.2",
+  "replace": "0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 3.8, 0.3, 5.2",
+  "expect": [
+   "t_layout_truck_wheels_on_ground"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "ground stops short of the truck",
+  "file": "scenes/main.tscn",
+  "find": "size = Vector2(13, 13)",
+  "replace": "size = Vector2(8, 8)",
+  "expect": [
+   "t_layout_truck_wheels_on_ground"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hive ignores config hive_scale (fixed 1.4)",
+  "file": "scripts/hive.gd",
+  "find": "var target := Vector3.ONE * maxf(config.hive_scale, 0.01)",
+  "replace": "var target := Vector3.ONE * maxf(1.4, 0.01)",
+  "expect": [
+   "t_layout_hive_scale_follows_config"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "default hive_scale is 1.0",
+  "file": "scripts/default_config.tres",
+  "find": "hive_scale = 1.4",
+  "replace": "hive_scale = 1.0",
+  "expect": [
+   "t_layout_hive_scale_follows_config",
+   "t_config_values"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hive stays on its layout cell (no 1.25 pan offset)",
+  "file": "scenes/main.tscn",
+  "find": "1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.25)",
+  "replace": "1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)",
+  "expect": [
+   "t_layout_objects_on_cells"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "centrifuge one cell right of layout C",
+  "file": "scenes/main.tscn",
+  "find": "0.64, 0, 0, 0, 0.64, 0, 0, 0, 0.64, 0, 0, 0)",
+  "replace": "0.64, 0, 0, 0, 0.64, 0, 0, 0, 0.64, 2, 0, 0)",
+  "expect": [
+   "t_layout_objects_on_cells"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "min_cell_px 200 is not met at the zoom",
+  "file": "scripts/default_config.tres",
+  "find": "min_cell_px = 20",
+  "replace": "min_cell_px = 200",
+  "expect": [
+   "t_cell_width_at_zoom"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "zoom_size 12 shrinks the cells below 20 px",
+  "file": "scripts/default_config.tres",
+  "find": "zoom_size = 6.966",
+  "replace": "zoom_size = 12.0",
+  "expect": [
+   "t_cell_width_at_zoom"
+  ],
+  "suite": "unit"
  }
 ]

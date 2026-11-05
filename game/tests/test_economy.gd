@@ -202,7 +202,7 @@ func t_config_values() -> void:
 	var table: Dictionary = {
 		"frames_per_hive": 5, "frame_jars": 2, "overflow_hives": 1, "centrifuge_capacity_frames": 2, "taps_per_jar": 4,
 		"zoom_seconds": 0.6, "lid_drop_seconds": 0.4, "slide_seconds": 0.3, "cell_fly_seconds": 0.5,
-		"icon_visual_px": 88, "min_cell_px": 44,
+		"icon_visual_px": 88, "min_cell_px": 20, "hive_scale": 1.4,
 		# unchanged from revision 3
 		"sale_value_per_jar": 3, "truck_capacity_jars": 10, "truck_trip_seconds": 30.0,
 		"bottling_seconds_per_jar": 3.0, "max_tap_rate": 5.0, "hold_ramp_seconds": 1.5,

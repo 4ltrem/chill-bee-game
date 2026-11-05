@@ -53,8 +53,14 @@ extends Resource
 @export var cell_fly_arc: float = 1.5                  # PLACEHOLDER (GDD TBD; Patricia): arc height of a cell's flight, in units
 @export var pile_load_stagger_seconds: float = 0.03    # PLACEHOLDER (GDD TBD; Patricia): delay between pile cells flying into the bucket
 @export var icon_visual_px: int = 88                   # visible icon size; the touch area stays at least 120 (GDD 8)
-@export var min_cell_px: int = 44                      # the smallest cell allowed on screen at the zoom (a check, not a look tunable)
-@export var zoom_size: float = 2.4                     # PLACEHOLDER (GDD TBD; 0.1.1: Bob's tighter value to come): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
+@export var min_cell_px: int = 20                      # the smallest cell allowed on screen at the zoom (a check, not a look tunable)
+@export var zoom_size: float = 6.966                     # PLACEHOLDER (GDD TBD; 0.1.1: Bob's tighter value to come): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
+
+# --- 0.1.3 (game/specs/0.1.3-next-revision.md, item 2): the bigger hive and the two camera stops ---
+@export var hive_scale: float = 1.4                    # the hive node's uniform scale (round 4, layout C); read when used, live in Dev mode
+@export var pan_zoom_size: float = 8.878               # second camera stop: ortho size framing the centrifuge, crate and truck (round 5 pan-quarter)
+@export var pan_margin: float = 0.04                   # second camera stop: share of the view kept clear around the framed objects
+@export var camera_pan_seconds: float = 1.2            # PLACEHOLDER (slow on purpose): the pan from the first stop to the second
 
 const DEFAULT_PATH := "res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.tres"

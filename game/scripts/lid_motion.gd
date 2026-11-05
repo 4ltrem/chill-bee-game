@@ -17,17 +17,20 @@ var progress: float = 0.0
 var _lid: Node3D
 var _spot: Node3D
 var _rotate_fall: bool
+var _follow_parent_scale: bool
 var _closed_pos: Vector3
 var _closed_quat: Quaternion
 var _tween: Tween
 
 
+## `follow_parent_scale` true: the lift height is in parent-space units, so a scaled parent (the hive, hive_scale) lifts the lid further.
 ## `rotate_fall` false keeps the lid's own rotation (the centrifuge lid spins while it is on and lands flat).
-func _init(lid: Node3D, spot: Node3D, cfg: GameConfig, rotate_fall: bool) -> void:
+func _init(lid: Node3D, spot: Node3D, cfg: GameConfig, rotate_fall: bool, follow_parent_scale: bool = false) -> void:
 	_lid = lid
 	_spot = spot
 	config = cfg
 	_rotate_fall = rotate_fall
+	_follow_parent_scale = follow_parent_scale
 	_closed_pos = lid.position
 	_closed_quat = lid.quaternion
 
@@ -51,7 +54,7 @@ func apply(s: float) -> void:
 	var drop_s: float = maxf(config.lid_drop_seconds, 0.0)
 	var total: float = lift_s + drop_s
 	var split: float = lift_s / total if total > 0.0 else 0.0
-	var lifted: Vector3 = _closed_pos + Vector3.UP * (config.lid_lift_height / _parent_scale_y())   # the full height in world units
+	var lifted: Vector3 = _closed_pos + Vector3.UP * (config.lid_lift_height / (1.0 if _follow_parent_scale else _parent_scale_y()))   # world units, or parent units when it follows the parent
 	var open_pos: Vector3 = _spot.position if _spot != null else _closed_pos
 	if progress <= split and split > 0.0:
 		var k: float = progress / split
