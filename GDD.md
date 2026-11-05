@@ -54,7 +54,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 
 
 * **Phase 1 (Manual Grinding):** Players actively perform uncapping swipes and centrifuge spinning, manage initial flower planting/watering, and handle sales.
-* **Phase 2 (Automation):** Begins when the player buys their first automation upgrade (see Tree B: Automation), unlocking automated uncapping hubs, electric centrifuges, and a truck that leaves to sell by itself when full. Manual screens remain accessible for upgrading tool efficiency and batch multipliers; once harvesting is automated, tool upgrades apply as flat bonuses (see Tree B).
+* **Phase 2 (Automation):** Begins when the player buys their first automation upgrade (see Tree B: Automation), unlocking the centrifuge motor, the auto-scraper, Faster Delivery and Auto-Sell (the truck leaves to sell by itself when full). Manual screens remain accessible for upgrading tool efficiency and batch multipliers, but are no longer needed: once a unit is automated, its zoom screen opens from upgrade mode instead of from a harvest icon (UI TBD, with the rest of the UI); once harvesting is automated, tool upgrades apply as flat bonuses (see Tree B).
 * **Phase 3 (Prestige Reset / Optimization):** Fully charging the capstone Royal Honey Refinery (see Capstone) produces a Royal Crystal, the end-game reward. Players can then trigger an optional (but encouraged) reset. Each Royal Crystal earned:
   * Permanently adds +15% production, additive (10 Crystals = +150%, 20 = 4x, 100 = 16x). The Patron Pass +25% is applied as a separate multiplier, not added to this percentage.
   * Can also be applied to one starting upgrade for future runs, chosen from a whitelist (e.g., bigger starting frames, faster tools, starting land, starting flower or hive units). Crystals shorten Phase 1 but never skip it: automation and the capstone cannot be pre-bought.
@@ -65,7 +65,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
 * **Pests & Wild Nectar Drops:** Appear only during active play and pause while offline. Tapping them gives a small reward (cleared pests or collected nectar); ignoring them costs nothing. The Patron Golden Drone taps them automatically.
 
 ### 2. Phase 1 Uncapping & Extraction Minigame
-When hive storage reaches capacity in Phase 1, players trigger a tactile, three-stage harvesting sequence. Every player has a small free overflow buffer from the start, so production continues past capacity (including while offline) until the buffer is full. The free buffer holds one extra full hive (10 jars at base, growing with Deep Frame). Overflow Storage enlarges the buffer, Auto-Sell sells overflow honey, and buying automation removes the capacity pause entirely (see Tree B).
+When hive storage reaches capacity in Phase 1, players trigger a tactile, three-stage harvesting sequence. Every player has a small free overflow buffer from the start, so production continues past capacity (including while offline) until the buffer is full. The free buffer holds one extra full hive (10 jars at base, growing with Deep Frame). Overflow Storage enlarges the buffer, and the capacity pause ends once no harvest step needs the player: when both the centrifuge motor and the auto-scraper are owned (see Tree B).
 
 The farm holds the hive, a centrifuge with a spigot, a jar crate and a pickup truck (a vintage truck). The whole harvest plays on the farm; for uncapping, the camera zooms in on the hive and the centrifuge.
 
@@ -73,7 +73,7 @@ The hive is a body holding five frames (2 jars each at base) under a lid. The ce
 
 * **Start:** When the hive is full, a fork icon floats above it. Tapping it starts the harvest.
 * **Stage 1: Uncapping (Tactile Swiping)**
-  * Tapping the fork icon zooms the camera in until the hive and the centrifuge fill most of the screen. The hive's lid drops to the ground beside it and the first full frame slides up out of the body, standing upright. Frames never leave the hive; they only slide up and down.
+  * Tapping the fork icon zooms the camera in on the hive and the centrifuge. This first zoom always keeps both in focus, at every upgrade level; the crate and the truck are not in it. When the bucket is full, the camera pans to the centrifuge, the crate and the truck, with the hive partly visible in the upper-right corner. The hive's lid drops to the ground beside it and the first full frame slides up out of the body, standing upright. Frames never leave the hive; they only slide up and down.
   * Every player starts with the basic uncapping fork: dragging across the matte yellow capped wax cells scrapes them off, revealing glowing golden honey underneath. Each scraped cell pops, then flies into the centrifuge's bucket. When the bucket is full, its lid with the crank drops on, and further cells pile up next to the centrifuge; the piles load into the bucket by themselves when it is next empty.
   * When a frame is fully uncapped it slides back down and the next full frame slides up, until no full frame is left; then the hive's lid goes back on and the camera zooms out. The player can leave at any time with Back: the hive closes, half-scraped frames keep their state, and the fork icon stays while any full frame remains.
   * Supported by particle pop effects, popping audio cues, and native mobile haptic feedback.
@@ -95,12 +95,12 @@ Progression is split across three synergizing upgrade paths using an exponential
 * **Tree B: Hive & Tool Efficiency**
   * *Heated Uncapping Fork:* Increases swipe radius by +12% per level and adds up to +5% batch bonus for clean cuts (base cost $40, 1.22x growth, max level 5).
   * *Centrifuge Gearing:* Reduces required extraction taps or hold time by -15% per level (base cost $35, 1.20x growth, max level 5).
-  * *Long Fork:* Makes uncapping quicker: uncap the entire frame in one sweep (tap the fork icon to take it). A step past the Heated Uncapping Fork, it leads into the automated uncapping hubs (unlock condition, cost and link to automation TBD).
-  * *Deep Frame:* Increases frame capacity from 2 jars to 5 jars per frame (10 to 25 jars per full hive) (base cost $150, 1.45x growth, max level 3).
+  * *Long Fork:* Makes uncapping quicker: uncap the entire frame in one sweep (tap the fork icon to take it). The final fork upgrade, a step past the Heated Uncapping Fork; it leads into the auto-scraper (unlock condition and cost TBD).
+  * *Deep Frame:* Increases frame capacity from 2 jars to 5 jars per frame (10 to 25 jars per full hive). Deep frames are twice as long as standard frames, so they fill more of the screen while uncapping (base cost $150, 1.45x growth, max level 3).
   * *Tool Upgrades After Automation:* Once harvesting is automated, the Heated Uncapping Fork applies as a flat +% yield bonus and Centrifuge Gearing as a flat −% extraction time (values TBD), so these upgrades keep their value.
   * *Overflow Storage (optional):* Enlarges the free overflow buffer, so returning players have extra frames waiting to harvest (capacity and costs TBD).
-  * *Auto-Sell (optional):* Automatically sells overflow honey at a discounted price (discount and costs TBD).
-  * *Automation:* Automated uncapping hubs, electric centrifuges, and a self-driving sales truck that leaves when full, bought with in-game money. Buying the first automation upgrade moves the player into Phase 2 and removes the capacity pause (costs TBD).
+  * *Auto-Sell:* The sales truck leaves by itself when full and sells at the full price (costs TBD).
+  * *Automation:* Separate purchases with in-game money: the **motor** (the electric centrifuge spins by itself), the **auto-scraper** (the Long Fork mounted on a moving gantry, which uncaps frames by itself; unlocked after the Long Fork) and **Faster Delivery** (shorter truck trips). The first automation purchase moves the player into Phase 2; the capacity pause ends once the motor and the auto-scraper are both owned (costs TBD).
   * *Artisanal Branding:* Increases base sale value per jar by +$2.50 (base cost $60, 1.25x growth, max level 10).
 * **Tree C: Native Habitat**
   Its own progression track, measured in biodiversity (Habitat Health and native bee species attracted) rather than honey. Upgrades are bought with in-game money (values TBD).
@@ -153,6 +153,7 @@ Progression is split across three synergizing upgrade paths using an exponential
 * **Indefinite Expansion:** Each biome can be expanded indefinitely by buying more land with in-game money (cost growth TBD).
 * **Grid Placement:** Players place each hive and flower unit on the biome's grid themselves. Space is limited, so the goal is the most honey production per tile.
 * **Hive & Flower Units:** Hives and flower patches are bought and placed as units. Each unit type has tiers (e.g., Langstroth hive → stacked hive → hive tower; wild patch → raised bed → vertical garden). Higher tiers cost much more in-game money but produce more in less space. Units can be upgraded in place.
+* **Jar Crate Tiers:** The jar crate has three tiers, each larger on the grid: tier 1 (a half crate, 1 cell), tier 2 (2 cells), tier 3 (3 cells in a row). Each tier holds more jars waiting and makes a bigger truck load (values TBD).
 * **Biome Units:** Each biome adds new top-tier units in its own style (e.g., chalet hives in Alpine Valley, lantern hives in Enchanted Grove).
 * **Unlocking Tiers:** Higher unit tiers are unlocked through research (see Phase 3).
 

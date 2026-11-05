@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-107 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+110 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -80,7 +80,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Clara, one empty turn, prompt on stdin | post-ICM | 1 | — | 13,370 | — |
 | **All** | | **2** | **—** | **12,806** | — |
 
-**Subagent runs** (38 runs)
+**Subagent runs** (40 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
@@ -88,16 +88,17 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Bob (builder) | post-ICM | 14 | 72,847 | 1,195,391 | 400 s |
 | Quinn (qa-build-engineer) | post-ICM | 9 | 176,166 | 7,089,686 | 1,672 s |
 | claude-code-guide | post-ICM | 2 | 48,226 | 255,200 | 52 s |
-| Martin (hiring-manager) | post-ICM | 4 | 40,258 | 222,278 | 61 s |
+| Martin (hiring-manager) | post-ICM | 5 | 43,901 | 289,301 | 72 s |
 | Ruth (research-assistant) | post-ICM | 1 | 37,318 | 203,725 | 107 s |
 | general-purpose | post-ICM | 1 | 77,014 | 504,718 | 90 s |
-| **All** | | **38** | **98,447** | **2,823,553** | 1,010 s |
+| Terry (progression-tree-expert) | post-ICM | 1 | 34,830 | 142,788 | 168 s |
+| **All** | | **40** | **95,858** | **2,699,879** | 967 s |
 
-**Orchestrator** (5 runs)
+**Orchestrator** (6 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 5 | — | 48,134,012 | 67,356 s |
+| Orchestrator (main session) | post-ICM | 6 | — | 41,833,969 | 56,610 s |
 <!-- /generated: run-summary -->
 
 Notes on the Content generation runs:

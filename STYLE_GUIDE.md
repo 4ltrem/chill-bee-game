@@ -92,7 +92,7 @@ New token: proposed in a FAIL row's Fix and added here by the designer, never by
 | V11 | Touch targets ≥ 120 × 120 px at 720 × 1280; icons may look smaller (`icon_visual_px`), their touch area may not. | script | all | GDD One-Handed Play; spec 0.1 |
 | V12 | Text sizes: body ≥ 28 px, buttons ≥ 32 px at 720 × 1280; UI fonts use the ink outline. | script | all | farm UI (r3) |
 | V13 | No farm prop, icon or modal sits under the shop panel or the top info; icons may overlap props. | critic (screenshot) | all | spec 0.1 |
-| V14 | Cells at the uncapping zoom are ≥ 44 px wide on screen. | script (Quinn's measure) | all | spec 0.1.1 |
+| V14 | Cells at the uncapping zoom are ≥ 20 px wide on screen (was 44 px; the 5 × 5 farm with the hive at 1.4× measures 21.6 px). | script (Quinn's measure) | all | spec 0.1.1; designer 2026-11-05 (round 4, c-1) |
 | V15 | Glass reads as glass: see-through (alpha ≤ 0.35, back faces drawn), honey visible through it. | script + critic | all | GDD §2 (glass walls); spec 0.1 |
 
 ## Voice rules (Clara)

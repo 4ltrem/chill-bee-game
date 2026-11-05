@@ -7,6 +7,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | Path | What it holds |
 |---|---|
 | [GDD.md](GDD.md) | the game design document: the single source of truth for every decision |
+| [STYLE_GUIDE.md](STYLE_GUIDE.md) | the approved look and voice rules (V1–V15, T1–T6) and palette tokens that scenes and text are checked against |
 | [MILESTONES.md](MILESTONES.md) | build stages, version numbers and the milestones, fitted to the course deadlines |
 | [README.md](README.md) | public overview and the Outstanding TBDs checklist |
 | [CONTEXT.md](CONTEXT.md) | the design loop: request, proposal, decision, apply |
@@ -37,6 +38,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | real-world facts or sources are needed | Ruth: `.claude/agents/research-assistant.md`, writing to [research/](research/CONTEXT.md) | the designer's review of the brief |
 | an applied design needs code | Patricia: `.claude/agents/programmer.md`, writing to [game/](game/CONTEXT.md) `scripts/` | Quinn's report |
 | a biome or layout needs a scene | Bob: `.claude/agents/builder.md`, writing to [game/](game/CONTEXT.md) `scenes/` | Quinn's report |
+| a prop needs colorbox variants to compare | Milo: `.claude/agents/modeler.md`, writing to [game/scenes/variants/](game/scenes/variants/CONTEXT.md) | the designer's pick on the compare page |
 | a feature or build is ready to test | Quinn: `.claude/agents/qa-build-engineer.md`, writing to [game/](game/CONTEXT.md) `tests/` and `reports/` | the developer plays the build |
 | a proposal was accepted | [CONTEXT.md](CONTEXT.md), step 4 (apply) | `python -I _tools/links.py` passes |
 | asked for status | `proposals/*/_index.md` and the README TBD list | report what exists |
