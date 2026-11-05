@@ -16,7 +16,7 @@ measured numbers with pass/low pills, the current build as the reference). Nothi
 The designer wants real screenshots (not just text/ASCII) and at most 9 images per page (e.g. 3 × 3 settings), each with
 yes / maybe / no buttons and a note, saved in the artifact's db collection `votes` (capability `db`). On "read my votes",
 read it with ArtifactData `list` and write the result to a decisions JSON next to the shots in the repo. Builder scripts:
-`_templates/ab-compare/` (head.html = the page layout, build_page.py = option cards, build_votes.py = 3 × 3 vote grid) (move into `_tools/compare_page.py` when M2 item 5a is built).
+`_tools/compare_page.py` (subcommands `page` = option cards, `round`/`votes` = vote grids, `stop` = one designer-stop row of a blackboard; layout in `_tools/compare_page_head.html`).
 Current page: https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (grid zoom votes, 2026-11-05).
 
 **Why:** the designer asked for it (2026-11-05), while reviewing the M2 style loop: creative choices are theirs, and

@@ -21,6 +21,7 @@ All agents run through Claude Code. Larger models use up the shared Pro limits f
 | Martin | Hiring Manager | Agent definitions from a template | Haiku | Fills a fixed template; the developer reviews the diff | [hiring-manager.md](../.claude/agents/hiring-manager.md) |
 | Doris | Doc Auditor | End-of-day check of docs against the day's changes: finds statements the changes made untrue; read-only | Sonnet | Close reading of prose against code and config, across many files, like Clara's check; no multi-step math. Runs once a day and nothing checks it after, so Haiku's misses would stay in the docs | [doc-auditor.md](../.claude/agents/doc-auditor.md) |
 | Milo | Modeler | Colorbox prop variants: primitive-only `.tscn` in the palette, no textures, a few variants per model for a compare page | Haiku | Fixed-shape output: primitives with palette tokens. Every variant is checked by script shots and picked by the designer, so a miss costs one variant, not a shipped bug | [modeler.md](../.claude/agents/modeler.md) |
+| Vera | Style Critic | Judges Bob's colorbox screenshots against the style guide's critic rules (V3, V6–V10, V13, V15); PASS or FAIL verdict | Sonnet | A critic with no check after it: it judges shapes, glass and contrast in pictures, where a miss ships. Calibrated on fixtures by `_tools/style_critic_check.py` before it judges a round. Haiku was not chosen because those misses are subtle | [style-critic.md](../.claude/agents/style-critic.md) |
 
 Every role has a definition. New roles come from Martin, copied from the template.
 
@@ -35,6 +36,7 @@ Each agent is a module in the development workflow: a developer input triggers i
 - **Ruth, the Research Assistant:** finds and verifies sources for real-world claims when William needs Bee Journal facts checked, or Connie needs a rule or policy sourced, or a Clara FAIL row asks for a better source; the developer sees a brief in `research/` with each claim, its verbatim quote, URL, source kind and date checked, and the claims it could not source.
 - **Clara, the Content Critic:** checks William's content drafts against `GDD.md` for lore, tone and glossary, child safety and spending, facts and French, and cited sources, and replies with a PASS or FAIL verdict with findings, which the script appends to the run's blackboard; William revises the draft, and the developer sees the verdict.
 - **Milo, the Modeler:** makes a few colorbox variants (default 3) of each requested prop (primitive meshes and palette materials only, no textures) from a prop name, its footprint in cells and a style-reference scene, and the developer sees them on a compare page and picks one; Bob promotes the pick.
+- **Vera, the Style Critic:** judges each round's screenshots of Bob's scenes against the style guide's critic rules (V3, V6–V10, V13, V15), with the script's FAIL table as input, and replies with a PASS or FAIL verdict that `style_loop.py` appends to the run's blackboard; Bob revises the open rows, and the developer sees the verdict.
 - **Andrew, the Audiophile:** searches and curates sound effects and music from a description of a sound, environment, vibe or place, and the developer sees a curated, structured list and a folder with the selected audio files.
 - **Terry, the Progression Tree Expert:** analyzes the balance of the progression tree (efficiency, cost, speed, space and other metrics) for a suggested upgrade or progression, and the developer sees a detailed report comparing it against the existing upgrades and progressions.
 - **Martin, the Hiring Manager:** when the lead architect notices a skill gap, writes a new agent definition by copying [`_templates/agent.md`](../_templates/agent.md) into `.claude/agents/` and adds the role to the roster above; the developer reviews the git diff.
@@ -62,6 +64,7 @@ Every model choice is a bet that the agent's mistakes are caught downstream. A c
 | Ruth (Sonnet; Haiku tried once, reverted) | Clara | briefs that caused a source FAIL | `## Research, round N` sections on blackboards |
 | William (Sonnet) | Clara | rounds per run (1 is clean) | each blackboard's Result |
 | Clara (Sonnet) | the designer only | known errors missed | `_tools/critic_check.py` |
+| Vera (Sonnet) | `_tools/style_critic_check.py` on fixtures, then the designer | known errors missed | `_tools/style_critic_check.py` |
 | Andrew (Haiku) | Connie, the designer | picks with a wrong or unclear licence | audio list reviews |
 | Martin (Haiku) | the designer's diff review | definitions fixed after he wrote them | git history |
 | Patricia, Bob (Sonnet) | Quinn | failing tests per feature, whoever fixed them | `game/reports/`, Rework tally |

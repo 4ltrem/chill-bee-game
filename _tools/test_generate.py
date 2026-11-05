@@ -524,7 +524,8 @@ class ConsistencyTest(unittest.TestCase):
         self.edit("README.md", "The agent roster, each agent's model", "The nine agents, each agent's model")
         line = next(i for i, text in enumerate((self.root / "README.md").read_text(encoding="utf-8").splitlines(), 1)
                     if "The nine agents" in text)  # found, not hard-coded: README rows get added
-        self.assertIn(f"README.md:{line}: says the nine agents, but .claude/agents/ holds 12", self.problems())
+        held = len(list((self.root / ".claude" / "agents").glob("*.md")))  # counted: agents get hired
+        self.assertIn(f"README.md:{line}: says the nine agents, but .claude/agents/ holds {held}", self.problems())
 
     def test_an_estimate_saying_not_yet_run_beside_a_logged_run(self):  # the designer's catch
         self.edit("_meta/agent-runs.md", "| Doris, the Doc Auditor | Measured once,", "| Doris, the Doc Auditor | Not yet run. Measured once,")
@@ -596,6 +597,130 @@ class BuildToolsTest(unittest.TestCase):
             (root / "builds" / "web" / "index.html").write_text("<html></html>", encoding="utf-8")
             ok, _ = self.bu.zip_web(str(root), "0.1.2")
             self.assertTrue(ok)
+
+
+NEON, MEADOW = "0.2, 1.0, 0.1", "0.62, 0.84, 0.52"
+
+
+class StyleLoop(unittest.TestCase):
+    """style_loop.py with a fake renderer, a fake Bob and a fake Vera, in a throwaway workspace."""
+
+    def setUp(self):
+        import style_loop as sl
+        self.sl = sl
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        (self.root / "game" / "materials").mkdir(parents=True)
+        (self.root / "game" / "scenes").mkdir()
+        (self.root / "_meta").mkdir()
+        shutil.copy(TOOLS.parent / "STYLE_GUIDE.md", self.root / "STYLE_GUIDE.md")
+        self.mat(MEADOW)
+        self.saved = g.ROOT, g.run_agent, sl.render
+        g.ROOT = self.root
+        sl.render = self.fake_render
+
+    def tearDown(self):
+        g.ROOT, g.run_agent, self.sl.render = self.saved
+        self.tmp.cleanup()
+
+    def mat(self, rgb):
+        (self.root / "game" / "materials" / "ground_patch.tres").write_text(
+            f'[gd_resource type="StandardMaterial3D" format=3]\n\n[resource]\nalbedo_color = Color({rgb}, 1.0)\n',
+            encoding="utf-8")
+
+    @staticmethod
+    def fake_render(game, out):
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "measure.json").write_text('{"cell_px_min": 45.1}', encoding="utf-8")
+
+    def fake(self, verdicts, fixes=True, tokens=1):
+        calls, prompts = [], []
+
+        def agent(name, prompt):
+            calls.append(name)
+            prompts.append(prompt)
+            reply = ""
+            if name == self.sl.BUILDER and fixes:
+                self.mat(MEADOW)
+            elif name == self.sl.CRITIC:
+                n = re.search(r"round (\d+)", prompt).group(1)
+                said = verdicts.pop(0)
+                row = {"FAIL": "| 1 | V7 | 01-farm-start.png | clutter | move the truck |",
+                       "FAIL:designer": "| 1 | V3 | 01-farm-start.png | a third accent | A: recolour; B: new token (designer) |"
+                       }.get(said, "")
+                reply = (f"### Critic, round {n}\nVERDICT: {said.split(':')[0]}\n| # | Rule | Shot | Finding | Fix |\n"
+                         f"|---|---|---|---|---|\n{row}\n")
+            return reply, {"tokens": tokens, "turns": 1, "seconds": 1}
+        g.run_agent = agent
+        return calls, prompts
+
+    def run_loop(self, *args):
+        with contextlib.redirect_stdout(io.StringIO()):
+            return self.sl.main(["s", *args])
+
+    def board(self):
+        return (self.root / "game" / "reports" / "style" / "s" / "blackboard.md").read_text(encoding="utf-8")
+
+    def test_pass_in_round_one(self):
+        calls, _ = self.fake(["PASS"])
+        self.assertEqual(self.run_loop(), 0)
+        self.assertEqual(calls, [self.sl.CRITIC])
+        self.assertIn("result: pass", self.board())
+
+    def test_script_fail_then_bob_fixes_then_pass(self):
+        self.mat(NEON)
+        calls, prompts = self.fake(["PASS", "PASS"])  # Vera passes, but the script blocks round 1
+        self.assertEqual(self.run_loop(), 0)
+        self.assertEqual(calls, [self.sl.CRITIC, self.sl.BUILDER, self.sl.CRITIC])
+        self.assertIn("V1", prompts[1])
+        self.assertIn("ground_patch", prompts[1])
+        board = self.board()
+        self.assertIn("### Changes (Bob), round 2", board)
+        self.assertIn("No rows: every script rule passes.", board)
+        self.assertIn("Your round 1 verdict", prompts[2])
+
+    def test_max_rounds(self):
+        calls, _ = self.fake(["FAIL", "FAIL"], fixes=False)
+        self.assertEqual(self.run_loop("--max-rounds", "2"), 1)
+        self.assertEqual(calls, [self.sl.CRITIC, self.sl.BUILDER, self.sl.CRITIC])
+        self.assertIn("result: needs-review", self.board())
+
+    def test_token_cap(self):
+        calls, _ = self.fake(["FAIL"], tokens=10)
+        self.assertEqual(self.run_loop("--max-tokens", "5"), 1)
+        self.assertEqual(calls, [self.sl.CRITIC])
+
+    def test_designer_stop_then_resume(self):
+        self.mat(NEON)
+        calls, prompts = self.fake(["FAIL:designer", "PASS"])
+        self.assertEqual(self.run_loop(), 1)
+        self.assertEqual(calls, [self.sl.CRITIC, self.sl.BUILDER])
+        self.assertIn("V1", prompts[1])
+        self.assertNotIn("(designer)", prompts[1])  # Bob never gets a held row
+        board = self.board()
+        self.assertIn("result: waiting-designer", board)
+        self.assertIn("## Waiting for the designer", board)
+        self.assertIn("new token (designer)", board.split("## Waiting for the designer")[1])
+        self.assertEqual(self.run_loop("--resume"), 0)
+        self.assertEqual(calls[-1], self.sl.CRITIC)
+        self.assertTrue((self.root / "game" / "reports" / "style" / "s" / "round-2").is_dir())
+        self.assertIn("result: pass", self.board())
+
+    def test_style_check_catches_every_fixture(self):
+        import style_critic_check as scc
+        saved, g.ROOT = g.ROOT, TOOLS.parent
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertTrue(scc.check_script())
+        finally:
+            g.ROOT = saved
+
+    def test_palette_and_delta_e(self):
+        import style_check as sc
+        tokens = sc.load_palette(TOOLS.parent / "STYLE_GUIDE.md")
+        self.assertIn("truck red", [t["name"] for t in tokens])
+        self.assertAlmostEqual(sc.delta_e((1, 1, 1), (1, 0.96, 0.86)), 13.9, places=1)
+        self.assertAlmostEqual(sc.delta_e((0.85, 0.2, 0.15), (0.75, 0.2, 0.2)), 16.0, places=1)
 
 
 if __name__ == "__main__":

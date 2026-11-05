@@ -97,7 +97,7 @@ New token: proposed in a FAIL row's Fix and added here by the designer, never by
 
 ## Voice rules (Clara)
 
-These restate Clara's five checks (`.claude/agents/content-critic.md`) so both critics share one guide; her definition stays the authority on how she checks them.
+These restate Clara's six checks (`.claude/agents/content-critic.md`) so both critics share one guide; her definition stays the authority on how she checks them.
 
 | ID | Rule | Source |
 |---|---|---|
