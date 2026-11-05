@@ -150,7 +150,7 @@ def scene_literals(file):
 
 def scenes_in(root):
     for dirpath, _, files in os.walk(root):
-        if os.sep + "." in dirpath:
+        if os.sep + "." in os.sep + os.path.relpath(dirpath, root):  # relative: a worktree under .claude/ still counts
             continue
         for f in files:
             if f.endswith(".tscn"):
