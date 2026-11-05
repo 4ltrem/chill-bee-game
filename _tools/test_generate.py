@@ -708,6 +708,15 @@ class StyleLoop(unittest.TestCase):
         self.assertTrue((self.root / "game" / "reports" / "style" / "s" / "round-2").is_dir())
         self.assertIn("result: pass", self.board())
 
+    def test_designer_row_in_the_last_round_ends_at_max_rounds(self):
+        calls, prompts = self.fake(["FAIL:designer", "FAIL:designer"], fixes=False)
+        self.assertEqual(self.run_loop("--max-rounds", "2"), 1)  # round 1 stops for the designer
+        self.assertEqual(self.run_loop("--resume", "--max-rounds", "2", "--note", "defer V3"), 1)
+        self.assertIn("defer V3", prompts[-1])
+        board = self.board()
+        self.assertIn("result: needs-review", board)
+        self.assertIn("new token (designer)", board.split("## Result")[-1])  # listed as open, not waiting
+
     def test_style_check_catches_every_fixture(self):
         import style_critic_check as scc
         saved, g.ROOT = g.ROOT, TOOLS.parent

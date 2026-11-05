@@ -81,10 +81,13 @@ def diff(before, after):
     return "\n".join(out)
 
 
-def critic_prompt(n, shots, table, previous=None, changes=None):
+def critic_prompt(n, shots, table, previous=None, changes=None, note=None):
     """What Vera sees in round n. style_critic_check.py builds round-1 prompts with this too."""
     later = (f"\n\nYour round {n - 1} verdict:\n\n{previous}\n\nBob's changes since then:\n\n~~~~diff\n"
              f"{changes or '(no changes)'}\n~~~~") if previous else ""
+    if note:  # the designer's answer to a stop: a deferred row is not repeated as blocking
+        later += (f"\n\nThe designer's decision since your last verdict: {note}\nA row the designer has deferred "
+                  f"goes in your table as (minor), not as a blocking or (designer) row.")
     return (f"Style loop, round {n}.\n\nShot folder: `{shots}` (Glob `*.png` there and Read each).\n\n"
             f"style_check.py's table for this round (script rules, already measured; blocking unless "
             f"marked (minor)):\n\n{table or '(no rows: the script rules all pass)'}{later}\n\n"
@@ -121,6 +124,7 @@ def main(argv=None):
     ap.add_argument("slug", help="run name, e.g. farm-0-1-2")
     ap.add_argument("--request", default="Check the current farm against STYLE_GUIDE.md and fix what fails.")
     ap.add_argument("--resume", action="store_true", help="continue a run stopped for the designer")
+    ap.add_argument("--note", help="with --resume: the designer's decision on the waiting rows, passed to Vera")
     ap.add_argument("--root", default="game", help="the Godot project folder")
     ap.add_argument("--max-rounds", type=int, default=3)
     ap.add_argument("--max-tokens", type=int, default=600_000)
@@ -140,9 +144,12 @@ def main(argv=None):
         resumed_block = blocks[-1].strip() if blocks else None
         diffs = re.findall(r"^### Changes \(Bob[^\n]*\n\n~~~~diff\n(.*?)\n~~~~", text, re.M | re.S)
         resumed_changes = diffs[-1] if diffs else None
+        if start > a.max_rounds:
+            sys.exit(f"round {start} would pass --max-rounds {a.max_rounds}; raise it to resume")
         g.set_front(board, result="running")
         g.append(board, f"\n## Resumed {datetime.date.today()}\n\nThe designer has answered the rows "
-                        f"waiting above; the loop goes on from round {start}.\n")
+                        f"waiting above; the loop goes on from round {start}.\n"
+                        + (f"\nDesigner's decision: {a.note}\n" if a.note else ""))
     else:
         if board.exists() and g.get_front(board, "result") not in ("failed",):
             sys.exit(f"{rel_board} already exists; use --resume or a new slug")
@@ -177,7 +184,8 @@ def main(argv=None):
             g.append(board, f"\n### style_check.py, round {n}\n\nShots: `{shots.relative_to(g.ROOT).as_posix()}/`\n\n"
                             f"{table or 'No rows: every script rule passes.'}\n")
             print(f"round {n}: style_check {len(blocking)} blocking row(s); Vera checking...", flush=True)
-            prompt = critic_prompt(n, shots.relative_to(g.ROOT).as_posix(), table, previous_block, changes)
+            prompt = critic_prompt(n, shots.relative_to(g.ROOT).as_posix(), table, previous_block, changes,
+                                   a.note if a.resume and n == start else None)
             reply, u = g.run_agent(CRITIC, prompt)
             g.keep_transcript(u, run_folder, f"vera-round-{n}")
             block = g.critic_block(reply, n)
@@ -197,7 +205,7 @@ def main(argv=None):
                 break
             bob_rows, held = open_rows(rows, block)
             previous_block = block
-            if held:
+            if held and n < a.max_rounds:  # in the last round, held rows are listed with the others instead
                 g.append(board, "\n## Waiting for the designer\n\nThese rows need a creative choice, so Bob "
                                 "does not get them. Each becomes a question with votes on the Design Votes page "
                                 "(`_tools/compare_page.py add`); "
@@ -226,7 +234,9 @@ def main(argv=None):
 
     summary = {"pass": f"PASS in round {n}.",
                "waiting-designer": f"Stopped after round {n} for the designer: see Waiting for the designer.",
-               }.get(result, f"Still FAIL after round {n} (max rounds {a.max_rounds} or the token cap).")
+               }.get(result, f"Still FAIL after round {n} (max rounds {a.max_rounds} or the token cap). Open rows:\n\n"
+                             "| # | Rule | Where | Finding | Fix |\n|---|---|---|---|---|\n"
+                             + "\n".join(sum(open_rows(rows, block), [])))
     total = finish(board, a.slug, usage, result, summary, run_folder)
     print(f"{rel_board}: {result} after round {n}, {total:,} tokens")
     return 0 if result == "pass" else 1

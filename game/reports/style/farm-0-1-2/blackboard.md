@@ -148,6 +148,8 @@ These rows need a creative choice, so Bob does not get them. Each becomes a ques
 Comparison pages:
 - Row 1 (V8): section "Style loop round 2: honey as the hero" on **Design Votes**, https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (ids `v8-honey-a`, `v8-honey-ref`; A: truck 0.75×, shots `stop-2/A/`; B: bigger honey props, needs scripts, not rendered; reference: round 2).
 
+**Designer's pick (2026-11-05): neither for now.** V8 (honey as the hero) is deferred to a later spec; round 3 treats it as a minor note.
+
 ### Changes (Bob, meanwhile), after round 2
 
 ~~~~diff
