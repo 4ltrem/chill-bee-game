@@ -1,6 +1,6 @@
 ---
 name: test-speed-fixes
-description: Slow Godot tests and mutate.py - fixes 1-2 done 2026-11-05 (D86, D87); fix 3 (time_scale via Quinn) and the budget guard still open
+description: Slow Godot tests and mutate.py - fixes 1-2 done 2026-11-05 (D89, D90); fix 3 (time_scale via Quinn) and the budget guard still open
 metadata:
   node_type: memory
   type: project

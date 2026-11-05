@@ -11,4 +11,4 @@
 - [Cost rules](cost-rules.md) — 9 approved token cuts: godot_run/build/mutate scripts, split tests, sliced briefs, 150-word replies, fresh session per milestone
 - [Edit lines only](edit-lines-only.md) — change only the needed lines with Edit; no whole-file rewrite scripts
 - [itch upload rule](itch-upload-rule.md) — upload to itch only at a new milestone number (0.2.0, 0.3.0)
-- [Test speed fixes](test-speed-fixes.md) — mutate.py CB_ONLY + progress lines done 11/5 (D86-87); left: time_scale speed-up via Quinn, budget guard threshold
+- [Test speed fixes](test-speed-fixes.md) — mutate.py CB_ONLY + progress lines done 11/5 (D89-90); left: time_scale speed-up via Quinn, budget guard threshold

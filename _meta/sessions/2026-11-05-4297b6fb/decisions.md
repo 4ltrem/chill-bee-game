@@ -12,25 +12,25 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 
 ## Decisions
 
-### D86 · 2026-11-05 · Cost & structure · mutate.py runs only each mutation's expected tests
+### D89 · 2026-11-05 · Cost & structure · mutate.py runs only each mutation's expected tests
 - Decided: `_tools/mutate.py` passes `CB_ONLY=<expect list>` to the unit suite, so each mutation runs only the tests meant to catch it (full suite still runs when `expect` is empty), and each mutation keeps its own log. A full mutate run went from about an hour to about 36 s, 8 of 8 caught.
 - Why: the latest revision's agents waited over an hour on mutate.py, which reran all 110 unit tests (~3.5 min, longer when broken tests wait out their timeouts) for each of 8 mutations.
 - Rejected: the designer's first guess, moving test values from .md files into config: the tests already read `game/scripts/default_config.tres`; the .md files are only named in comments.
 - Files: `_tools/mutate.py`, `_tools/godot_run.py`, `_tools/test_generate.py`
 
-### D87 · 2026-11-05 · Cost & structure · Test runs show progress and per-test time
+### D90 · 2026-11-05 · Cost & structure · Test runs show progress and per-test time
 - Decided: `godot_run.py` prints each suite's start and finish with elapsed time, `mutate.py` prints each mutation's verdict and time, and `game/tests/run_tests.gd` adds the milliseconds to every PASS/FAIL line.
 - Why: a full run is 6-7 minutes of silence and looked stalled; the timings showed three zoom tests take 80 of the unit suite's ~210 s.
 - Files: `_tools/godot_run.py`, `_tools/mutate.py`, `game/tests/run_tests.gd`
 
-### D88 · 2026-11-05 · Cost & structure · Faster unit tests deferred to Quinn
+### D91 · 2026-11-05 · Cost & structure · Faster unit tests deferred to Quinn
 - Decided: running the unit suite at a higher `Engine.time_scale` (about 4x) is deferred to the next working day, as a Quinn brief.
 - Why: timing tests (`t_bottling_timing`, `t_pop_tween_unchanged`) may need adjusting, it may clash with the 0.1.3 build, and the 5-hour window had about 22% left.
 - Files: `_meta/memory/test-speed-fixes.md`
 
 ## Still open
 
-- Unit-suite speed-up via `Engine.time_scale` (D88): brief Quinn; check against the 0.1.3 worktree first.
+- Unit-suite speed-up via `Engine.time_scale` (D91): brief Quinn; check against the 0.1.3 worktree first.
 - Budget guard (`_tools/budget_guard.py`): the designer thinks the 80% block on the 5-hour window should be adjusted (it blocked agents with 22% left, while the end-of-day routine needs ~5%). Pick the new threshold or an end-of-day exemption.
 - Session d82fcc79 changed after its end-of-day commit (re-exported today); check whether it holds decisions not yet logged.
 - Review Bob's M2 layout changes before merging `milestone/m2`: the Harvest tag is 240 x 120 with 32 px text, the disabled Upgrade button is drawn shorter, the spin hint moved up, the uncapping-zoom framing shifted, and hive walls, floor and jar lid are 0.05 thick (round-3 shots in `game/reports/style/farm-0-1-2/round-3/`). They overlap the 0.1.3 scene edits.

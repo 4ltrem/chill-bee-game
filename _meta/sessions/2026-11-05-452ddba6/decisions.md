@@ -12,13 +12,13 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 
 ## Decisions
 
-### D89 · 2026-11-05 · Game design · The truck red and crank gold stay the only accents; the rim mark turns charcoal
+### D86 · 2026-11-05 · Game design · The truck red and crank gold stay the only accents; the rim mark turns charcoal
 - Decided: the first visual-loop stop (V3) went to the designer, who picked A: `game/materials/rim_mark.tres` is recoloured to charcoal (0.25, 0.25, 0.28) and `style_check.py` counts it in the Shadow role. The scene keeps two accent colours, the crank handle and the truck paint, which also clears the V1 row on the rim mark.
 - Why: the style guide allows at most 2 accents in a scene set, and the rim mark was a third (nearest token ΔE 16.0, limit 12.0).
 - Rejected: B, approving the rim mark as a third accent in `STYLE_GUIDE.md`; recolouring it to truck red.
 - Files: `game/materials/rim_mark.tres`, `_tools/style_check.py`, `game/reports/style/farm-0-1-2/blackboard.md`
 
-### D90 · 2026-11-05 · Game design · Honey as the hero of the frame is deferred to a later spec
+### D87 · 2026-11-05 · Game design · Honey as the hero of the frame is deferred to a later spec
 - Decided: at the V8 stop (round 2) the designer chose neither option for now. Vera's note that the gold progress bar, the Harvest and Spin buttons and the red truck out-shine the small honey coins stays a minor note in round 3, to be revisited in a later spec.
 - Why: both options needed a design change of their own: A shrinks the truck, B enlarges the honey props.
 - Rejected: A, shrink the truck; B, enlarge the honey props.
