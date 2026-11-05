@@ -40,7 +40,7 @@ ROLES = {
     "comb_melting": ["Honey"], "honey_level": ["Honey"], "jar_amber": ["Honey"],
     "hive_body": ["Wood"], "hive_lid": ["Wood"], "wood": ["Wood"], "crate_wood": ["Wood"],
     "steel": ["Metal"], "steel_dark": ["Metal"], "spigot": ["Metal"], "crank_arm": ["Metal"],
-    "rim_grey": ["Metal"], "rim_mark": ["Accent"],
+    "rim_grey": ["Metal"], "rim_mark": ["Shadow"],  # designer 2026-11-05: A, charcoal (Design Votes v3-rim)
     "glass": ["Glass"],
     "truck_chassis": ["Shadow"], "tyre": ["Shadow"],
     "truck_paint": ["Accent"], "crank_handle": ["Accent"],
