@@ -1,7 +1,7 @@
 - [Flower patch follow-up](flower-patch-followup.md) — after 0.1.3 merges: patch y→0, register test, merge m2/flower-patch
 - [Pending approvals](pending-approvals.md) — onboarding-script, biome-intros re-approval (T6 revise), STYLE_LOOP.md read; three content follow-ups
 - [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day skill; only milestone-branch checkpoint commits mid-session
-- [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, syncing transcripts between machines
+- [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, transcript sync, learnings file (what broke, how noticed, how fixed)
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
 - [Session handoff](session-handoff.md) — read first: maigd-62 owns the 0.1.3 build; flower-patch B done on m2/flower-patch (unmerged); A5 prep free
