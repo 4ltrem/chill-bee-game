@@ -1,11 +1,10 @@
 # Implements GDD 9 (UI & Screens: farm view HUD) for Prototype 0: money, fill bar, bee counter, paused label,
-# the centrifuge progress label, Continue, and the batch summary modal.
+# the centrifuge progress label and the sale summary modal (0.1.2: shown after Sell, three lines; no Continue).
 # Finds its child controls by name (see "Node paths for Bob" in game/specs/prototype-0.md); holds no layout.
 # The three floating icons are driven by main.gd, which owns the state table.
 class_name FarmUI
 extends Control
 
-signal continue_pressed
 signal summary_closed
 
 const HINT_TEXT := "Tap or hold to spin"
@@ -19,11 +18,9 @@ var _fill_label: Label
 var _paused_label: Label
 var _bee_label: Label
 var _centrifuge_label: Label
-var _continue_button: Button
 var _summary: Control
 var _summary_jars: Label
 var _summary_value: Label
-var _summary_bonus: Label
 var _summary_total: Label
 var _summary_ok: Button
 
@@ -35,16 +32,11 @@ func _ready() -> void:
 	_paused_label = find_child("PausedLabel", true, false) as Label
 	_bee_label = find_child("BeeCountLabel", true, false) as Label
 	_centrifuge_label = find_child("CentrifugeLabel", true, false) as Label
-	_continue_button = find_child("ContinueButton", true, false) as Button
 	_summary = find_child("SummaryModal", true, false) as Control
 	_summary_jars = find_child("SummaryJarsLabel", true, false) as Label
 	_summary_value = find_child("SummaryValueLabel", true, false) as Label
-	_summary_bonus = find_child("SummaryBonusLabel", true, false) as Label
 	_summary_total = find_child("SummaryTotalLabel", true, false) as Label
 	_summary_ok = find_child("SummaryOkButton", true, false) as Button
-	if _continue_button != null:
-		_continue_button.visible = false
-		_continue_button.pressed.connect(func() -> void: continue_pressed.emit())
 	if _summary_ok != null:
 		_summary_ok.pressed.connect(_on_summary_ok)
 	if _summary != null:
@@ -74,20 +66,13 @@ func setup(hive: Hive, centrifuge: Centrifuge, truck: Truck) -> void:
 	_truck = truck
 
 
-func show_continue(value: bool) -> void:
-	if _continue_button != null:
-		_continue_button.visible = value
-
-
 func show_summary(jars: int, per_jar: int, total: int) -> void:
 	if _summary_jars != null:
-		_summary_jars.text = "Jars: %d" % jars
+		_summary_jars.text = "Jars sold: %d" % jars
 	if _summary_value != null:
-		_summary_value.text = "Value per jar: $%d" % per_jar
-	if _summary_bonus != null:
-		_summary_bonus.text = "Tool bonus: $0   Quality bonus: $0"
+		_summary_value.text = "Price per jar: $%d" % per_jar
 	if _summary_total != null:
-		_summary_total.text = "Batch total: $%d" % total
+		_summary_total.text = "Total: $%d" % total
 	if _summary != null:
 		_summary.visible = true
 

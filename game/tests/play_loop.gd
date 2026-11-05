@@ -3,7 +3,7 @@
 # Plays the harvest twice through REAL input (events pushed into the viewport in window pixels, as a real mouse sends them;
 # tests/farm_input.gd): the projected fork icon, drags on the upright risen frame through the farm camera, Back after one
 # frame and a half (the half frame is kept), the return, cells piling while the centrifuge cranks, Spin and spaced real clicks
-# (one real hold in round 2), Continue, bottling (floor(jars) with the carried leftover), the pile loading into the empty bucket,
+# (one real hold in round 2), bottling by itself (0.1.2: no Continue), (floor(jars) with the carried leftover), the pile loading into the empty bucket,
 # a Worker Swarm Count purchase mid-harvest, Sell. Screenshots: every centrifuge state on the farm, the zoom with a risen
 # frame, a cell in flight, a pile, Show UI bounds. Exit code 0 only if no check failed AND the final "COMPLETED" line printed.
 # CHEATS (Dev mode actions, all marked "CHEAT" below, config restored at the end): the hive is filled with fill_now and its
@@ -263,36 +263,55 @@ func _crank(tag: String, use_hold: bool) -> void:
 			await _wait(gap)
 			sent += 1
 		eq(sent, need - done_turns, "%s: ceil(jars x taps_per_jar) real clicks in all (%d turns for %d cells)" % [tag, need, cells])
-	eq(cen.get("state"), _st(cen, "DONE"), "%s: DONE" % tag)
+	ck(_extracted(cen), "%s: extraction done (DONE, or BOTTLING already: 0.1.2 starts bottling by itself)" % tag)
 	await _frames(4)
 
 
-## Continue, bottling (the jars go to the truck or the crate), the summary and its OK. Returns the jars bottled.
+## 0.1.2: no Continue. Bottling starts by itself after the extraction (no input at all), the jars go to the truck or the crate,
+## and NO summary shows after bottling. Returns the jars bottled.
 func _bottle(tag: String, mid: Callable = Callable()) -> int:
 	var cen: Node = P["Centrifuge"]
 	var truck: Node = P["Truck"]
-	var cont: Control = P["ContinueButton"]
-	ck(_vis(cont), "%s: Continue shows" % tag)
-	ck(cont.size.y >= 120.0, "%s: Continue at least 120 px high" % tag)
 	var cells: int = int(cen.get("cells"))
 	var lo: Variant = cen.get("leftover_jars")
 	ck(lo != null, "%s: centrifuge.gd has leftover_jars" % tag)
 	var leftover0: float = float(lo) if lo != null else 0.0
 	var want: int = int(floorf(_jars_of(cells) + leftover0 + 0.000001))
 	var before: int = int(truck.get("loaded_jars")) + int(truck.get("crate_jars"))
-	await fi.click_ctl(cont)
-	await _frames(3)
-	eq(cen.get("state"), _st(cen, "BOTTLING"), "%s: Continue opens the spigot" % tag)
-	if mid.is_valid():
+	var bottling: int = _st(cen, "BOTTLING")
+	var started: bool = await _until(func() -> bool: return int(cen.get("state")) == bottling or int(cen.get("state")) == _st(cen, "EMPTY"), 5.0)
+	ck(started, "%s: bottling started by itself, with no input after the extraction" % tag)
+	if mid.is_valid() and int(cen.get("state")) == bottling:
 		await _wait(float(_cv("bottling_seconds_per_jar")) * 1.5)
 		await mid.call()
-	var shown: bool = await _until(func() -> bool: return _vis(P["SummaryModal"]), 20.0)
-	ck(shown, "%s: the summary shows after bottling" % tag)
+	var done: bool = await _until(func() -> bool: return int(cen.get("state")) != bottling, 40.0)
+	ck(done, "%s: bottling ended" % tag)
+	ck(not _vis(P["SummaryModal"]), "%s: no summary after bottling (0.1.2 change 7: it comes after Sell)" % tag)
 	var after: int = int(truck.get("loaded_jars")) + int(truck.get("crate_jars"))
 	eq(after - before, want, "%s: floor(jars + carried leftover) = %d jars bottled" % [tag, want])
-	await fi.click_ctl(P["SummaryOkButton"] as Control)
 	await _frames(3)
 	return want
+
+
+## True once the extraction is over: DONE, or already BOTTLING / EMPTY (the state may pass through DONE for one frame).
+func _extracted(cen: Node) -> bool:
+	var s: int = int(cen.get("state"))
+	return s == _st(cen, "DONE") or s == _st(cen, "BOTTLING") or s == _st(cen, "EMPTY")
+
+
+## After Sell: the modal shows jars sold, price per jar and the total, then OK closes it.
+func _summary_after_sell(tag: String, jars: int, per: int) -> void:
+	var shown: bool = await _until(func() -> bool: return _vis(P["SummaryModal"]), 5.0)
+	ck(shown, "%s: the summary shows after Sell" % tag)
+	if not shown:
+		return
+	for pair in [["SummaryJarsLabel", jars], ["SummaryValueLabel", per], ["SummaryTotalLabel", jars * per]]:
+		var lb: Node = _n(pair[0])
+		ck(lb != null and (lb as Label).text.contains(str(int(pair[1]))), "%s: %s shows %d (text '%s')" % [tag, pair[0], int(pair[1]), (lb as Label).text if lb != null else "?"])
+	ck(main.find_child("SummaryBonusLabel", true, false) == null, "%s: no SummaryBonusLabel" % tag)
+	await fi.click_ctl(P["SummaryOkButton"] as Control)
+	await _frames(3)
+	ck(not _vis(P["SummaryModal"]), "%s: OK closes the summary" % tag)
 
 
 # ---------------------------------------------------------------- the run
@@ -310,7 +329,7 @@ func _run() -> void:
 	main = (ps as PackedScene).instantiate()
 	root.add_child(main)
 	await _frames(10)
-	for nm in ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon", "ContinueButton", "UpgradeButton",
+	for nm in ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon", "UpgradeButton",
 			"BackButton", "HintLabel", "SummaryModal", "SummaryOkButton", "CentrifugeLabel", "MoneyLabel", "FillLabel", "BeeCountLabel", "Bees"]:
 		P[nm] = _n(nm)
 		if P[nm] == null:
@@ -340,7 +359,9 @@ func _run() -> void:
 
 	# ---- start state; focus item 7: the disabled UpgradeButton renders its disabled style even when told to take focus
 	ck(main.find_child("Harvest", true, false) == null, "no Harvest close-up root (harvest.tscn retired)")
-	ck(not _vis(P["ForkIcon"]) and not _vis(P["CentrifugeIcon"]) and not _vis(P["ContinueButton"]) and not _vis(P["SellIcon"]) and not _vis(P["SummaryModal"]), "no icon, Continue or summary at start")
+	ck(not _vis(P["ForkIcon"]) and not _vis(P["CentrifugeIcon"]) and not _vis(P["SellIcon"]) and not _vis(P["SummaryModal"]), "no icon or summary at start")
+	ck(main.find_child("ContinueButton", true, false) == null, "0.1.2 change 6: there is no ContinueButton node")
+	ck(main.find_child("SummaryBonusLabel", true, false) == null, "0.1.2 change 7: there is no SummaryBonusLabel node")
 	eq((P["MoneyLabel"] as Label).text, "$0", "MoneyLabel at start")
 	eq((P["BeeCountLabel"] as Label).text, "Bees: %d" % bees_base, "BeeCountLabel at start")
 	ck(upgrade.disabled, "UpgradeButton disabled with $0")
@@ -469,12 +490,12 @@ func _run() -> void:
 						await _wait(gap)
 						sent += 1
 					eq(sent + int(turns1 if batch == 1 else 0), need, "%s: ceil(jars x taps_per_jar) = %d turns in all" % [TB, need])
-				eq(cen.get("state"), _st(cen, "DONE"), "%s: DONE" % TB)
+				ck(_extracted(cen), "%s: extraction done" % TB)
 				await _frames(4)
 			else:
 				await _crank(TB, false)
 			if rnd == 1 and batch == 1:
-				await _shot("r4-7-farm-done-continue")
+				await _shot("r4-7-farm-done-bottling-starts")
 			var mid: Callable = Callable()
 			if rnd == 2 and batch == 1:
 				mid = func() -> void:
@@ -521,6 +542,7 @@ func _run() -> void:
 			await _frames(2)
 			eq(eco.get("money"), m0 + TRUCK_CAP * PER, "round 1: money credited at the tap")
 			ck(truck.get("away"), "round 1: the truck is away")
+			await _summary_after_sell("round 1", TRUCK_CAP, PER)
 			await _shot("r4-10-farm-truck-away")
 		else:
 			var back_home: bool = await _until(func() -> bool: return not truck.get("away"), float(_cv("truck_trip_seconds")) + 15.0)
@@ -529,9 +551,11 @@ func _run() -> void:
 			eq(int(truck.get("loaded_jars")) + int(truck.get("crate_jars")), JARS, "round 2: jars conserved: truck + crate = the batch")
 			if _vis(P["SellIcon"]):
 				var m2: int = int(eco.get("money"))
+				var sold: int = int(truck.get("loaded_jars"))
 				await fi.click_icon(P["SellIcon"] as Control)
 				await _frames(2)
 				ck(int(eco.get("money")) > m2, "round 2: Sell credited money at the tap")
+				await _summary_after_sell("round 2", sold, PER)
 
 	# ---- Show UI bounds (Dev action): screenshot with the outlines on, then off
 	var bounds: Button = null

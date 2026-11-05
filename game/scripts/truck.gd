@@ -1,6 +1,9 @@
 # Implements GDD 1 (Primary Game Loop: sell by truck) and 2 (bottling onto the truck) for Prototype 0.
 # Holds the truck's load, the jar crate beside the centrifuge, and the trip. Jars bottled while the truck
 # is away go to the crate (no limit); when the truck returns, crate jars load onto it up to its capacity.
+# 0.1.2 (game/specs/0.1.2-bottling-and-sale.md): the crate shows empty jars on CrateEmpties (config crate_empty_jars_shown, unlimited supply)
+# and full jars on CrateFulls. Counts change at once; the jars' flights (spigot to truck or crate, crate to truck on return) are visual:
+# a jar still in the air is not drawn at its destination until it lands.
 # Visual (0.1 Harvest, game/specs/0.1-harvest.md): the pickup comes from truck.tscn (wheels WheelFL/FR/RL/RR, marker BedJars); one jar
 # (jar.tscn) per loaded jar on the bed, crate jars on the JarCrate node's CrateJars marker. The wheels roll from the truck's real
 # movement, so the roll always matches the direction of travel.
@@ -12,6 +15,8 @@ signal load_changed(loaded_jars: int, crate_jars: int)
 signal departed
 signal returned
 
+const JarFlight := preload("res://scripts/jar_flight.gd")
+const JAR_STEP: float = 0.34        # spacing of the crate's jars (a jar is 0.34 wide), 3 per row
 const CRATE_JARS_SHOWN: int = 10   # the crate shows at most 10 jars, a count label shows the rest (spec)
 const BED_JARS_SHOWN: int = 30     # most jar meshes built on the bed (the truck capacity can be raised in Dev mode)
 const JAR_SCENE_PATH := "res://scenes/props/jar.tscn"
@@ -39,6 +44,10 @@ var _crate_label: Label3D
 var _jar_scene: PackedScene
 var _wheels: Array[Node3D] = []
 var _last_global: Vector3 = Vector3.ZERO
+var _crate_empty_meshes: Array[Node3D] = []
+var _flying_to_bed: int = 0      # jars counted on the truck whose flight has not landed yet
+var _flying_to_crate: int = 0    # jars counted in the crate whose flight has not landed yet
+var _empties_marker: Node3D
 
 
 func is_full() -> bool:
@@ -55,13 +64,54 @@ func load_value() -> int:
 	return loaded_jars * config.sale_value_per_jar
 
 
-## A bottled jar: onto the truck if it is home and not full, else into the crate.
-func receive_jar() -> void:
-	if not away and loaded_jars < capacity:
+## A bottled jar: onto the truck if it is home and not full, else into the crate. With `from` (world space, the spigot) the jar
+## flies there after `delay`; without it the jar simply appears. `carrier` is the jar already at the spigot (JarFlight.fetch), which
+## is the one that flies on; without one a new jar is drawn.
+func receive_jar(from: Variant = null, delay: float = 0.0, carrier: Node3D = null) -> void:
+	var to_bed: bool = not away and loaded_jars < capacity
+	if to_bed:
 		loaded_jars += 1
 	else:
 		crate_jars += 1
+	var slot: int = (loaded_jars if to_bed else crate_jars) - 1
+	var target: Node3D = _slot_node(_bed_jars if to_bed else _crate_jar_meshes, slot)
+	if from is Vector3 and target != null and is_inside_tree():
+		if to_bed:
+			_flying_to_bed += 1
+		else:
+			_flying_to_crate += 1
+		_fly(from as Vector3, target.global_position, delay, target, to_bed, carrier)
+	elif carrier != null:
+		carrier.queue_free()
 	_changed()
+
+
+## Where empty jars leave the crate (world space): the CrateEmpties marker, else the truck itself.
+func empties_position() -> Vector3:
+	if _empties_marker != null and _empties_marker.is_inside_tree():
+		return _empties_marker.global_position
+	return global_position if is_inside_tree() else position
+
+
+func _slot_node(list: Array[Node3D], slot: int) -> Node3D:
+	if slot < 0 or slot >= list.size():
+		return null
+	return list[slot]
+
+
+## Flies one full jar to `target` (a hidden slot jar); the slot shows when it lands.
+func _fly(from: Vector3, to: Vector3, delay: float, target: Node3D, to_bed: bool, carrier: Node3D = null) -> void:
+	var jar_scale: float = target.global_transform.basis.get_scale().x
+	var landed: Callable = func() -> void:
+		if to_bed:
+			_flying_to_bed = maxi(_flying_to_bed - 1, 0)
+		else:
+			_flying_to_crate = maxi(_flying_to_crate - 1, 0)
+		_refresh_jars()
+	if carrier != null:
+		JarFlight.send(self, carrier, to, config.jar_fly_seconds, config.cell_fly_arc, delay, jar_scale, landed)
+	else:
+		JarFlight.launch(self, from, to, config.jar_fly_seconds, config.cell_fly_arc, delay, true, jar_scale, landed)
 
 
 ## Sells the load: credits the money at once, empties the truck and sends it off. Returns the amount (0 if it cannot sell).
@@ -98,8 +148,7 @@ func advance(delta: float) -> void:
 		away = false
 		trip_elapsed = 0.0
 		var moved: int = mini(crate_jars, maxi(capacity - loaded_jars, 0))
-		loaded_jars += moved
-		crate_jars -= moved
+		_load_crate_jars(moved)
 		returned.emit()
 		_changed()
 
@@ -116,6 +165,20 @@ func away_fraction() -> float:
 	if p > 1.0 - slice:
 		return (1.0 - p) / slice
 	return 1.0
+
+
+## The truck is home: `moved` crate jars go onto it (counted at once; each flies from its crate slot to its bed slot).
+func _load_crate_jars(moved: int) -> void:
+	for k in moved:
+		var crate_slot: int = crate_jars - 1
+		var bed_slot: int = loaded_jars
+		loaded_jars += 1
+		crate_jars -= 1
+		var from_node: Node3D = _slot_node(_crate_jar_meshes, crate_slot)
+		var target: Node3D = _slot_node(_bed_jars, bed_slot)
+		if from_node != null and target != null and is_inside_tree():
+			_flying_to_bed += 1
+			_fly(from_node.global_position, target.global_position, config.pile_load_stagger_seconds * float(k), target, true)
 
 
 func _changed() -> void:
@@ -173,16 +236,31 @@ func _build_crate_jars() -> void:
 	var crate: Node3D = get_node_or_null(crate_path) as Node3D
 	if crate == null:
 		return
-	var marker: Node3D = crate.find_child("CrateJars", true, false) as Node3D
+	_empties_marker = crate.find_child("CrateEmpties", true, false) as Node3D
+	if _empties_marker == null:
+		CellFlight.warn_once("CrateEmpties", "truck.gd: no CrateEmpties marker on the crate (see game/specs/0.1.2-bottling-and-sale.md, jar_crate.tscn): no empty jars are drawn.")
+	else:
+		for i in maxi(config.crate_empty_jars_shown, 0):
+			var empty: Node3D = _new_jar()
+			if empty == null:
+				break
+			empty.name = "CrateEmpty%d" % i
+			empty.position = Vector3(JAR_STEP * float(i % 3), 0.0, JAR_STEP * float(i / 3))
+			JarFill.set_fraction(empty, 0.0)
+			_empties_marker.add_child(empty)
+			_crate_empty_meshes.append(empty)
+	var marker: Node3D = crate.find_child("CrateFulls", true, false) as Node3D
 	if marker == null:
-		CellFlight.warn_once("CrateJars", "truck.gd: no CrateJars marker on the crate (see game/specs/0.1-harvest.md, jar_crate.tscn).")
+		marker = crate.find_child("CrateJars", true, false) as Node3D   # 0.1's name, until the 0.1.2 crate scene is in
+	if marker == null:
+		CellFlight.warn_once("CrateFulls", "truck.gd: no CrateFulls marker on the crate (see game/specs/0.1.2-bottling-and-sale.md, jar_crate.tscn).")
 	else:
 		for i in CRATE_JARS_SHOWN:
 			var jar: Node3D = _new_jar()
 			if jar == null:
 				break
 			jar.name = "CrateJar%d" % i
-			jar.position = Vector3(0.4 * float(i % 3), 0.0, 0.3 * float(i / 3))
+			jar.position = Vector3(JAR_STEP * float(i % 3), 0.0, JAR_STEP * float(i / 3))
 			jar.visible = false
 			JarFill.set_full(jar)
 			marker.add_child(jar)
@@ -197,10 +275,15 @@ func _build_crate_jars() -> void:
 
 
 func _refresh_jars() -> void:
+	var bed_shown: int = maxi(loaded_jars - _flying_to_bed, 0)
+	var crate_shown: int = maxi(crate_jars - _flying_to_crate, 0)
 	for i in _bed_jars.size():
-		_bed_jars[i].visible = i < loaded_jars
+		_bed_jars[i].visible = i < bed_shown
 	for i in _crate_jar_meshes.size():
-		_crate_jar_meshes[i].visible = i < crate_jars
+		_crate_jar_meshes[i].visible = i < crate_shown
+	var empties: int = maxi(config.crate_empty_jars_shown, 0)
+	for i in _crate_empty_meshes.size():
+		_crate_empty_meshes[i].visible = i < empties
 	if _crate_label != null:
 		var extra: int = crate_jars - CRATE_JARS_SHOWN
 		_crate_label.visible = extra > 0

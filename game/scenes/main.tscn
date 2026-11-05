@@ -187,7 +187,7 @@ size = 20.0
 mesh = SubResource("Mesh_ground")
 
 [node name="Hive" parent="FarmWorld" instance=ExtResource("2_hive")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.327, 0, -0.927)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1, 0, -0.75)
 
 [node name="Flowers" type="Node3D" parent="FarmWorld"]
 
@@ -223,8 +223,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, 4.2)
 
 [node name="ZoomFraming" type="Marker3D" parent="FarmWorld"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.526, 0, -1.949)
-metadata/zoom_size = 4.7
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, -0.306, -1.929)
+metadata/zoom_size = 2.4
 
 [node name="FarmUIRoot" type="CanvasLayer" parent="."]
 
@@ -308,23 +308,6 @@ layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="ContinueButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column"]
-focus_mode = 0
-visible = false
-custom_minimum_size = Vector2(0, 120)
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-theme_override_styles/normal = SubResource("StyleBox_rect")
-theme_override_styles/hover = SubResource("StyleBox_rect")
-theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
-theme_override_styles/focus = SubResource("StyleBox_empty")
-theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
-theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
-theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
-theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
-text = "Continue"
-
 [node name="ShopPanel" type="PanelContainer" parent="FarmUIRoot/FarmUI/Margin/Column"]
 layout_mode = 2
 script = ExtResource("5_shopui")
@@ -391,7 +374,7 @@ theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "Harvest"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../../FarmWorld/Hive/ForkAnchor")
-screen_offset = Vector2(0, -100)
+screen_offset = Vector2(-70, -90)
 
 [node name="CentrifugeIcon" type="Button" parent="FarmUIRoot/FarmUI"]
 focus_mode = 0
@@ -410,7 +393,7 @@ theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "Spin"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../../FarmWorld/Centrifuge/CentrifugeAnchor")
-screen_offset = Vector2(0, -100)
+screen_offset = Vector2(50, -100)
 
 [node name="SellIcon" type="Button" parent="FarmUIRoot/FarmUI"]
 focus_mode = 0
@@ -471,14 +454,6 @@ mouse_filter = 2
 theme_override_font_sizes/font_size = 34
 text = "Value per jar: $3"
 horizontal_alignment = 1
-
-[node name="SummaryBonusLabel" type="Label" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_font_sizes/font_size = 26
-text = "Tool bonus: $0   Quality bonus: $0"
-horizontal_alignment = 1
-autowrap_mode = 3
 
 [node name="SummaryTotalLabel" type="Label" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
 layout_mode = 2

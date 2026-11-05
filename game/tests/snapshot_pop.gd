@@ -15,7 +15,7 @@
 #   1. PROJECTED SIZE: the on-screen width of the scraped cell's hexagonal face (flat side to flat side, its two +-X extremes projected
 #      through the build's own camera), at each T, divided by the width at the settled end of the pop (T >= 0.30 s). That is the pop's scale
 #      curve as the camera renders it. Tolerance: 0.02 (the curve is geometry, not pixels; a different tween changes it by 0.05 to 0.3).
-#   2. RENDERED PIXELS: the visible bright-yellow (uncapped colour) area of that cell in the captured frame (flood fill from the cell's centre
+#   2. (0.1.2: REPORT-ONLY, no pass/fail; spec 0.1.2 change 4 drops the pixel-area half) RENDERED PIXELS: the visible bright-yellow (uncapped colour) area of that cell in the captured frame (flood fill from the cell's centre
 #      pixel, mask R > 230, G > 230, B < 130), as sqrt(area at T / area at T = 0.165 s), a linear size, for T up to 0.165 s (from 0.18 s the cell
 #      has left its slot in the 0.1 build, a flying copy replaces it). The cell is partly hidden by its raised Capped
 #      neighbours while it is big, differently in the two views, so this is a sanity check with a wide tolerance, 0.12, not a match.
@@ -303,8 +303,7 @@ func _process(d: float) -> void:
 	ck(float(curve[0]["proj"]) > 1.2 and float(samples[0]["t"]) < 0.02, "the first sample (T = %.4f s) shows the cell still enlarged (%.3f of its settled width)" % [float(samples[0]["t"]), float(curve[0]["proj"])])
 	ck(float(curve[8]["proj"]) < 1.0, "the back-out undershoots 1 (T = %.3f s: %.3f)" % [float(samples[8]["t"]), float(curve[8]["proj"])])
 	ck(absf(float(samples[samples.size() - 1]["sc"]) - 1.0) <= 0.001, "T = 0.30 s: the cell's Mesh scale is back at 1 (%.4f)" % float(samples[samples.size() - 1]["sc"]))
-	ck(float(samples[IDX_LAST_IN_POP]["area"]) > 200.0, "a bright yellow cell face is visible at the end of the pop (%d px)" % int(samples[IDX_LAST_IN_POP]["area"]))
-	ck(float(samples[0]["area"]) > 0.0, "a bright yellow cell face is visible at T = 0")
+	print("MEASURE (report-only, 0.1.2) yellow face area at the end of the pop: %d px; at T = 0: %d px" % [int(samples[IDX_LAST_IN_POP]["area"]), int(samples[0]["area"])])
 	var last_sim: float = float(samples[samples.size() - 1]["t"])
 	print("sim clock at the end ", sim_end)
 	ck(last_sim >= 0.30 and last_sim < 0.34, "sim time at the last sample is about 0.30 s (%.4f)" % last_sim)
@@ -328,7 +327,7 @@ func _process(d: float) -> void:
 				wx_t = t
 		print("MEASURE pop curve against the revision 3 reference: worst projected-width difference %.4f at T = %.3f s (tolerance %.2f); worst rendered-pixel difference %.4f at T = %.3f s (tolerance %.2f)" % [worst_p, wp_t, TOL_PROJECTED, worst_x, wx_t, TOL_PIXELS])
 		ck(worst_p <= TOL_PROJECTED, "the projected size curve matches revision 3 within %.2f (worst %.4f)" % [TOL_PROJECTED, worst_p])
-		ck(worst_x <= TOL_PIXELS, "the rendered-pixel size curve matches revision 3 within %.2f (worst %.4f)" % [TOL_PIXELS, worst_x])
+		print("MEASURE (report-only, 0.1.2: no pass/fail) rendered-pixel size curve worst difference %.4f against %.2f" % [worst_x, TOL_PIXELS])
 	print("---- %d checks, %d failed" % [checks, fails])
 	print("COMPLETED")
 	quit(1 if fails > 0 else 0)

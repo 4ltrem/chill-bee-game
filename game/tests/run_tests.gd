@@ -90,7 +90,12 @@ func _run() -> void:
 		"t_dev_ui_bounds_collects_controls", "t_overlap_helper_can_fail", "t_rim_measure_can_fail", "t_config_011", "t_dev_panel_has_lid_values",
 		"t_node_contract_011", "t_hive_footprint_and_frames", "t_hive_lid_open_path", "t_hive_lid_close_path", "t_hive_lid_leaning_pose",
 		"t_centrifuge_lid_paths", "t_heap_shows_every_cell", "t_pile_shows_every_cell", "t_jar_fills_then_lid",
-		"t_truck_and_crate_jars_full_with_lids", "t_wheel_rims", "t_cell_width_at_zoom", "t_zoom_view_contains_hive_and_bucket",
+		"t_truck_and_crate_jars_full_with_lids", "t_wheel_rims", "t_cell_width_at_zoom",
+			# 0.1.2 bottling and sale (written from game/specs/0.1.2-bottling-and-sale.md before the code)
+			"t_zoom_view_option_a", "t_hive_size_vs_truck", "t_centrifuge_lid_rests_clear", "t_flight_judge_can_fail", "t_start_helper_can_fail",
+			"t_continue_finder_can_fail", "t_node_contract_012", "t_config_012", "t_crate_shows_empties", "t_jar_flights_to_spigot_and_truck",
+			"t_jar_lands_in_crate_when_truck_away", "t_crate_fulls_fly_to_truck_on_return", "t_bottling_starts_by_itself", "t_no_continue_button",
+			"t_summary_after_sell",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":
@@ -492,6 +497,19 @@ func _hold_to_done(c: Object, dt: float, limit: float) -> float:
 	return t
 
 
+## 0.1.2 (spec change 6): no Continue. Once the extraction is over the state is DONE for at most a frame, then BOTTLING (or EMPTY when
+## everything is bottled). The signal extraction_done is the exact moment; this checks the state is one of those three.
+func _ext(c: Object, msg: String) -> void:
+	var st: int = int(c.get("state"))
+	ck(st == _st(c, "DONE") or st == _st(c, "BOTTLING") or st == _st(c, "EMPTY"), "%s (state %d: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)" % [msg, st])
+
+
+## Start bottling the way the game does: by itself. Tests that call advance() on a quiet scene start it by hand only if the scene did not.
+func _begin_bottling(c: Object) -> void:
+	if int(c.get("state")) == _st(c, "DONE"):
+		c.call("open_spigot")
+
+
 ## One frame's worth of hive time that fills `jars` jars at multiplier 1
 func _secs_for_jars(jars: float) -> float:
 	return jars * float(cv("base_seconds_per_jar"))
@@ -689,8 +707,9 @@ func t_node_contract() -> void:
 		return
 	for nm in ["Hive", "ForkAnchor", "HiveLidSpot", "FrameSlots", "Honeycomb", "Centrifuge", "CentrifugeAnchor",
 			"CentrifugeLidSpot", "BucketMouth", "Pile", "ZoomFraming", "HarvestUIRoot", "HarvestUI", "HintLabel", "BackButton",
-			"FarmWorld", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon", "ContinueButton", "UpgradeButton"]:
+			"FarmWorld", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon", "UpgradeButton"]:
 		_nn(m, nm)
+	ck(m.find_child("ContinueButton", true, false) == null, "ContinueButton is removed (0.1.2 change 6)")
 	for i in _frames_n():
 		_nn(m, "Slot%d" % (i + 1))
 	ck(m.find_child("Harvest", true, false) == null, "no 'Harvest' close-up root any more")
@@ -1109,7 +1128,7 @@ func t_turns_per_jar() -> void:
 			c.call("advance", _tap_gap())
 			sent += 1
 		eq(sent, want, "%d cells (%s jars): ceil(jars x taps_per_jar) turns" % [cells, str(_jars_of(cells))])
-		eq(c.get("state"), _st(c, "DONE"), "%d cells: DONE after the last turn" % cells)
+		_ext(c, "%d cells: DONE after the last turn" % cells)
 		eq(done[0], 1, "%d cells: extraction_done once" % cells)
 	var c4: Object = await _mk_cen()
 	_to_cranking(c4)
@@ -1162,7 +1181,7 @@ func t_hold_at_cap() -> void:
 	var dt: float = 1.0 / 60.0
 	var expected: float = (float(_turns_for(_bucket_cells())) - 1.0) / float(cv("max_tap_rate"))
 	var t: float = _hold_to_done(c, dt, expected * 3.0 + 5.0)
-	eq(c.get("state"), _st(c, "DONE"), "hold reached DONE")
+	_ext(c, "hold reached DONE")
 	near(t, expected, "hold finish time (turns - 1) / max_tap_rate", dt + 0.002)
 	_fin()
 
@@ -1199,7 +1218,7 @@ func t_hold_never_slower() -> void:
 		tapper.call("advance", step)
 		t_tap += step
 	var tap_finish: float = t_tap - step
-	eq(tapper.get("state"), _st(tapper, "DONE"), "tapped bucket reached DONE")
+	_ext(tapper, "tapped bucket reached DONE")
 	_to_cranking(holder)
 	var t_hold: float = _hold_to_done(holder, dt, 1000.0)
 	ck(t_hold <= tap_finish + dt + 0.002, "held (%.3f s) finishes no later than tapped at max_tap_rate (%.3f s)" % [t_hold, tap_finish])
@@ -1299,15 +1318,15 @@ func t_crank_ignored_outside_cranking() -> void:
 			break
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
-	eq(c.get("state"), _st(c, "DONE"), "CRANKING: real clicks counted and finished the bucket (positive control)")
+	_ext(c, "CRANKING: real clicks counted and finished the bucket (positive control)")
 	var turns: Variant = c.get("turns_counted")
 	for i in burst:   # DONE
 		c.call("tap")
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
-	eq(c.get("state"), _st(c, "DONE"), "DONE unchanged by input")
+	_ext(c, "DONE unchanged by input")
 	eq(c.get("turns_counted"), turns, "DONE: no extra turn")
-	c.call("open_spigot")   # BOTTLING
+	_begin_bottling(c)   # BOTTLING
 	var bottling: int = _st(c, "BOTTLING")
 	for i in 3:
 		c.call("tap")
@@ -1333,7 +1352,7 @@ func t_real_mouse_taps_crank() -> void:
 		c.call("advance", gap)
 		sent += 1
 	eq(sent, n, "exactly ceil(jars x taps_per_jar) real clicks finish the bucket")
-	eq(c.get("state"), _st(c, "DONE"), "DONE")
+	_ext(c, "DONE")
 	var c2: Object = await _mk_cen()
 	_to_cranking(c2)
 	for i in 15:
@@ -1365,7 +1384,7 @@ func t_real_touch_taps_crank() -> void:
 		root.push_input(up)
 		c.call("advance", gap)
 		sent += 1
-	eq(c.get("state"), _st(c, "DONE"), "touch taps finished the bucket (%d sent)" % sent)
+	_ext(c, "touch taps finished the bucket (%d sent)" % sent)
 	_fin()
 
 
@@ -1399,7 +1418,7 @@ func t_button_press_is_not_a_crank() -> void:
 			break
 		_real_click(EMPTY_SPOT)
 		c.call("advance", gap)
-	eq(c.get("state"), _st(c, "DONE"), "clicks off the button finish the bucket (positive control)")
+	_ext(c, "clicks off the button finish the bucket (positive control)")
 	_fin()
 
 
@@ -1422,7 +1441,7 @@ func _bottle_out(c: Object, step: float = 0.05) -> Dictionary:
 	var done_args: Array = []
 	c.connect("jar_bottled", func(n: Variant) -> void: bottled.append(int(n)))
 	c.connect("bottling_done", func(j: Variant) -> void: done_args.append(int(j)))
-	c.call("open_spigot")
+	_begin_bottling(c)
 	var limit: float = float(cv("bottling_seconds_per_jar")) * (float(c.get("jars")) + 4.0) + 5.0
 	var t: float = 0.0
 	var empty: int = _st(c, "EMPTY")
@@ -1444,7 +1463,7 @@ func t_bottling_timing() -> void:
 	var spj: float = float(cv("bottling_seconds_per_jar"))
 	_to_cranking(c, cells)
 	_crank_done(c)
-	eq(c.get("state"), _st(c, "DONE"), "extracted before bottling")
+	_ext(c, "extracted before bottling")
 	var times: Array = []
 	var clock: Array = [0.0]
 	var counts: Array = []
@@ -1454,7 +1473,7 @@ func t_bottling_timing() -> void:
 		counts.append(int(n))
 		t.call("receive_jar"))
 	c.connect("bottling_done", func(j: Variant) -> void: done_args.append(int(j)))
-	c.call("open_spigot")
+	_begin_bottling(c)
 	var dt: float = 0.05
 	var steps: int = int((spj * jars + 2.0) / dt)
 	for i in steps:
@@ -1483,7 +1502,7 @@ func t_bottling_time_is_live() -> void:
 	var times: Array = []
 	var clock: Array = [0.0]
 	c.connect("jar_bottled", func(_n: Variant) -> void: times.append(clock[0]))
-	c.call("open_spigot")
+	_begin_bottling(c)
 	var dt: float = 0.05
 	while times.size() < 1 and clock[0] < spj * 3.0:
 		clock[0] += dt
@@ -1700,7 +1719,7 @@ func t_truck_trip_time_is_live() -> void:
 
 # ---------------------------------------------------------------- the zoom (real input on the farm)
 
-const SCENE_NODES := ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon", "ContinueButton",
+const SCENE_NODES := ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon",
 		"UpgradeButton", "BackButton", "HintLabel", "SummaryModal", "SummaryOkButton", "CentrifugeLabel", "MoneyLabel",
 		"FillLabel", "BeeCountLabel", "ShopPanel"]
 
@@ -1815,7 +1834,7 @@ func t_zoom_ui_and_camera() -> void:
 	eq(tr["lid"], [true], "the hive lid opened (lid_moved(true)) once")
 	near(cam.size, float(cv("zoom_size")), 0.05, "camera size reaches zoom_size")
 	ck(cam.size < size0, "the camera zoomed in (size %s < %s)" % [str(cam.size), str(size0)])
-	for nm in farm_ui + ["ForkIcon", "CentrifugeIcon", "SellIcon", "ContinueButton", "CentrifugeLabel"]:
+	for nm in farm_ui + ["ForkIcon", "CentrifugeIcon", "SellIcon", "CentrifugeLabel"]:
 		ck(not _shown(p[nm]), "%s is hidden during the zoom" % nm)
 	ck(_shown(p["BackButton"]) and _shown(p["HintLabel"]), "BackButton and the hint show during the zoom")
 	var back: Control = p["BackButton"]
@@ -1940,16 +1959,18 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 			await _wait(gap)
 			sent += 1
 		eq(sent, turns, "round %d: ceil(jars x 4) = %d real clicks" % [round_i + 1, turns])
-		eq(cen.get("state"), _st(cen, "DONE"), "round %d: DONE" % (round_i + 1))
+		_ext(cen, "round %d: DONE" % (round_i + 1))
 		await _frames(3)
-		ck(_shown(p["ContinueButton"]), "round %d: Continue shows" % (round_i + 1))
-		await fi.click_ctl(p["ContinueButton"] as Control)
+		ck(p.get("ContinueButton") == null, "round %d: there is no Continue to press (0.1.2)" % (round_i + 1))
 		var jars_expected: int = int(floorf(_jars_of(cells_now) + 0.000001))
-		var summary_shown: bool = await _until(func() -> bool: return _shown(p["SummaryModal"]), 8.0)
-		ck(summary_shown, "round %d: the summary shows after the last jar" % (round_i + 1))
+		var bottling_s: int = _st(cen, "BOTTLING")
+		var by_itself: bool = await _until(func() -> bool: return int(cen.get("state")) == bottling_s or int(cen.get("state")) == _st(cen, "EMPTY"), 5.0)
+		ck(by_itself, "round %d: bottling started by itself, no input after the last turn" % (round_i + 1))
+		var finished_b: bool = await _until(func() -> bool: return int(cen.get("state")) != bottling_s, 40.0)
+		ck(finished_b, "round %d: bottling ended" % (round_i + 1))
+		ck(not _shown(p["SummaryModal"]), "round %d: no summary after bottling (it comes after Sell)" % (round_i + 1))
 		sum_jars += jars_expected
 		eq(truck.get("loaded_jars"), sum_jars, "round %d: floor(jars) = %d jars went to the truck" % [round_i + 1, jars_expected])
-		await fi.click_ctl(p["SummaryOkButton"] as Control)
 		await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.8)
 		if round_i < 2:
 			eq(pile.get("cells"), int(want_pile[round_i]), "round %d: the pile loaded into the empty bucket by itself (%d cells left)" % [round_i + 1, int(want_pile[round_i])])
@@ -1960,6 +1981,13 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 			eq(cen.get("state"), _st(cen, "EMPTY"), "round 3: bucket EMPTY")
 			eq(cen.get("lid_open"), true, "round 3: the lid lifted off, the bucket is empty and open")
 	eq(truck.get("loaded_jars"), int(cv("truck_capacity_jars")), "10 jars on the truck at the end")
+	# Sell: the summary shows only now, with the jars sold, the price per jar and the total
+	var per_jar: int = int(cv("sale_value_per_jar"))
+	ck(_shown(p["SellIcon"]), "the Sell icon shows over the full truck")
+	await fi.click_icon(p["SellIcon"] as Control)
+	var sum_up: bool = await _until(func() -> bool: return _shown(p["SummaryModal"]), 3.0)
+	ck(sum_up, "the summary shows after Sell")
+	await fi.click_ctl(p["SummaryOkButton"] as Control)
 	_fin()
 
 
@@ -2102,9 +2130,9 @@ func t_fork_rules() -> void:
 	ck(_shown(fork), "CRANKING: fork shown at a full hive")
 	_crank_done(cen)
 	await _frames(3)
-	eq(cen.get("state"), _st(cen, "DONE"), "precondition: DONE")
+	_ext(cen, "precondition: DONE")
 	ck(_shown(fork), "DONE: fork shown")
-	cen.call("open_spigot")
+	_begin_bottling(cen)
 	await _frames(3)
 	eq(cen.get("state"), _st(cen, "BOTTLING"), "precondition: BOTTLING")
 	ck(_shown(fork), "BOTTLING: fork shown")
@@ -2135,20 +2163,18 @@ func t_fork_shows_while_cranking_and_state_table() -> void:
 	_full_hive_frozen(hive)
 	await _frames(4)
 	var cicon: Node = p["CentrifugeIcon"]
-	var cont: Node = p["ContinueButton"]
 	var sell: Node = p["SellIcon"]
 	eq(_shown(sell), bool(truck.call("can_sell")), "EMPTY: Sell icon follows the truck")
-	ck(not _shown(cicon) and not _shown(cont), "EMPTY: Spin and Continue hidden")
+	ck(not _shown(cicon), "EMPTY: Spin hidden")
 	eq(cen.get("lid_open"), true, "EMPTY: lid off")
 	cen.call("add_cells", _cpf(), _jars_of(_cpf()))
 	await _frames(3)
-	ck(not _shown(cicon) and not _shown(cont), "LOADING: Spin and Continue hidden")
+	ck(not _shown(cicon), "LOADING: Spin hidden")
 	eq(cen.get("lid_open"), true, "LOADING: lid off")
 	cen.call("add_cells", _bucket_cells() - _cpf(), _jars_of(_bucket_cells() - _cpf()))
 	cen.call("close_lid")
 	await _frames(3)
 	ck(_shown(cicon), "FULL: Spin shows (farm)")
-	ck(not _shown(cont), "FULL: Continue hidden")
 	eq(cen.get("lid_open"), false, "FULL: lid on")
 	# zoom open: Spin hidden
 	ck(await _open_zoom(m, p, tr), "zoom opened with a FULL bucket")
@@ -2158,25 +2184,22 @@ func t_fork_shows_while_cranking_and_state_table() -> void:
 	ck(_shown(cicon), "after the zoom: Spin shows again")
 	cen.call("begin_crank")
 	await _frames(3)
-	ck(not _shown(cicon) and not _shown(cont), "CRANKING: Spin and Continue hidden")
+	ck(not _shown(cicon), "CRANKING: Spin hidden")
 	_crank_done(cen)
 	await _frames(3)
-	ck(_shown(cont), "DONE: Continue shown")
-	ck(not _shown(cicon), "DONE: Spin hidden")
+	ck(not _shown(cicon), "after the extraction: Spin hidden (bottling starts by itself, no Continue)")
 	for i in int(cv("truck_capacity_jars")):
 		truck.call("receive_jar")
 	await _frames(3)
 	ck(_shown(sell), "DONE: Sell icon shown once the truck is full and home")
 	tr["raised"] = []
 	ck(await _open_zoom(m, p, tr), "zoom opened at DONE")
-	ck(not _shown(cont), "zoom: Continue hidden (farm only)")
 	ck(not _shown(sell), "zoom: Sell icon hidden (farm UI)")
 	await fi.click_ctl(p["BackButton"] as Control)
 	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
-	ck(_shown(cont), "after the zoom: Continue shows again")
-	cen.call("open_spigot")
+	_begin_bottling(cen)
 	await _frames(3)
-	ck(not _shown(cicon) and not _shown(cont), "BOTTLING: Spin and Continue hidden")
+	ck(not _shown(cicon), "BOTTLING: Spin hidden")
 	truck.call("sell")
 	await _frames(3)
 	ck(not _shown(sell), "truck away: Sell icon hidden")
@@ -2258,7 +2281,7 @@ func t_zoom_fill_and_bottling_keep_running() -> void:
 	await _frames(4)
 	_to_cranking(cen)
 	_crank_done(cen)
-	cen.call("open_spigot")
+	_begin_bottling(cen)
 	await _frames(3)
 	eq(cen.get("state"), _st(cen, "BOTTLING"), "precondition: BOTTLING")
 	ck(_shown(p["ForkIcon"]), "BOTTLING at a full hive: the fork shows")
@@ -2401,7 +2424,7 @@ func t_focus_styles() -> void:
 	if m == null:
 		_fin()
 		return
-	for nm in ["UpgradeButton", "ContinueButton", "ForkIcon", "CentrifugeIcon", "SellIcon", "SummaryOkButton", "BackButton"]:
+	for nm in ["UpgradeButton", "ForkIcon", "CentrifugeIcon", "SellIcon", "SummaryOkButton", "BackButton"]:
 		var b: Node = _nn(m, nm)
 		if b == null or not (b is Button):
 			ck(false, "%s is not a Button" % nm)
@@ -2785,7 +2808,7 @@ func t_dev_bottling_seconds() -> void:
 	var times: Array = []
 	var clock: Array = [0.0]
 	c.connect("jar_bottled", func(_n: Variant) -> void: times.append(clock[0]))
-	c.call("open_spigot")
+	_begin_bottling(c)
 	var dt: float = 0.05
 	while times.size() < 1 and clock[0] < spj * 6.0:
 		clock[0] += dt
@@ -3070,9 +3093,9 @@ func t_scrape_then_back_in_pop_window_pile() -> void:
 
 
 # Patricia's confirmation (0.1), requested test 2: resume_pending (set by Back, so the fork stays) combined with the pile loading in after
-# bottling while a zoom is open. Order matters, Continue cannot be clicked in the zoom:
+# bottling while a zoom is open. Order matters (0.1.2: bottling starts by itself, no Continue):
 #   zoom 1: frames 1-2 -> bucket (70, lid on), frame 3 -> pile (35); Back with frame 4 risen -> resume_pending, fork shows
-#   Spin, crank to DONE, Continue (real clicks) -> BOTTLING; while bottling the fork (kept by resume_pending) opens zoom 2
+#   Spin, crank to the end (real clicks) -> BOTTLING by itself; while bottling the fork (kept by resume_pending) opens zoom 2
 #   zoom 2: bottling ends inside the zoom -> the pile loads into the empty bucket and the lid STAYS OFF (not full, zoom open)
 #   later scrapes go to the bucket (frame 4: 35 -> 70, lid on when it fills), frame 5 -> pile; the zoom ends on its own:
 #   resume_pending clears, the fork goes, the lid is on. Jars conserved all the way: 10 = hive + bucket + pile + truck.
@@ -3121,12 +3144,11 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	await _frames(3)
 	eq(cen.get("state"), _st(cen, "CRANKING"), "Spin: CRANKING")
 	var sent: int = await _crank_done(cen)
-	eq(cen.get("state"), _st(cen, "DONE"), "cranked to DONE (%d turns)" % sent)
+	_ext(cen, "cranked to DONE (%d turns)" % sent)
 	await _frames(3)
 	ck(_shown(p["ForkIcon"]), "DONE: the fork still shows (resume_pending)")
-	await fi.click_ctl(p["ContinueButton"] as Control)
 	await _frames(3)
-	eq(cen.get("state"), _st(cen, "BOTTLING"), "Continue: BOTTLING")
+	eq(cen.get("state"), _st(cen, "BOTTLING"), "no Continue: BOTTLING started by itself")
 	await _wait(float(cv("bottling_seconds_per_jar")) * 0.5)
 	ck(_shown(p["ForkIcon"]), "BOTTLING: the fork shows (resume_pending)")
 	# ---- zoom 2, opened while bottling
@@ -3650,7 +3672,7 @@ func t_centrifuge_lid_paths() -> void:
 	_judge_path("centrifuge lid, closing", s1, closed_xf, 0.0, false, false)
 	c.call("begin_crank")
 	_crank_done(c)
-	c.call("open_spigot")
+	_begin_bottling(c)
 	var empty: int = _st(c, "EMPTY")
 	var jars: int = maxi(int(floorf(_jars_of(cells))), 1)
 	var secs2: float = float(cv("bottling_seconds_per_jar")) * float(jars) + float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + 1.0
@@ -3674,7 +3696,8 @@ func _span_xz(boxes: Array) -> Array:   # [min x, min z, max x, max z]
 	return [lo.x, lo.y, hi.x, hi.y]
 
 
-# Spec 3: the hive is square to the grid with the bucket's footprint, frames face +X, in a row along Z, 5 fit inside.
+# 0.1.1 spec 3 as changed by 0.1.2 change 2: the hive is square to the grid, footprint <= 1.7 (no longer the bucket's), frames face +X,
+# in a row along Z, all 5 fit inside the footprint.
 func t_hive_footprint_and_frames() -> void:
 	var m: Node = await _mk_main()
 	if m == null:
@@ -3707,8 +3730,9 @@ func t_hive_footprint_and_frames() -> void:
 	if glass.size() > 0:
 		var gs: Array = _span_xz([glass])
 		bucket_d = minf(float(gs[2]) - float(gs[0]), float(gs[3]) - float(gs[1]))
-	ck(w >= 1.8 and w <= 2.2 and dpt >= 1.8 and dpt <= 2.2, "the hive footprint is about 2.0 x 2.0 (measured %.2f x %.2f)" % [w, dpt])
-	ck(absf(w - bucket_d) <= 0.25 and absf(dpt - bucket_d) <= 0.25, "the hive footprint equals the bucket's outer diameter (%.2f x %.2f vs %.2f)" % [w, dpt, bucket_d])
+	ck(w <= 1.7 and dpt <= 1.7, "the hive footprint is 1.7 x 1.7 or less (about 1.6 x 1.6; measured %.2f x %.2f)" % [w, dpt])
+	ck(w >= 0.8 and dpt >= 0.8, "the hive footprint is not degenerate (measured %.2f x %.2f)" % [w, dpt])
+	print("MEASURE hive footprint %.2f x %.2f, bucket outer diameter %.2f (0.1.1's 'footprint = the bucket's' is retired)" % [w, dpt, bucket_d])
 	var zs: Array = []
 	var xs: Array = []
 	for i in _frames_n():
@@ -3719,7 +3743,7 @@ func t_hive_footprint_and_frames() -> void:
 		var nrm: Vector3 = slot.global_basis.y.normalized()
 		ck(nrm.dot(Vector3.RIGHT) >= cos(deg_to_rad(3.0)), "Slot%d's face normal points along world +X (%s)" % [i + 1, str(nrm)])
 		var wdt: float = slot.global_basis.get_scale().x * float(cv("grid_cols"))
-		ck(wdt <= 1.85, "a frame of %d cells at slot scale %.3f is %.2f wide: fits inside about 1.8" % [int(cv("grid_cols")), slot.global_basis.get_scale().x, wdt])
+		ck(wdt <= minf(w, dpt) + 0.05, "a frame of %d cells at slot scale %.3f is %.2f wide: fits inside the footprint (%.2f)" % [int(cv("grid_cols")), slot.global_basis.get_scale().x, wdt, minf(w, dpt)])
 		ck(slot.global_position.x >= lo.x and slot.global_position.x <= hi.x and slot.global_position.z >= lo.y and slot.global_position.z <= hi.y, "Slot%d stands inside the footprint" % (i + 1))
 		zs.append(slot.global_position.z)
 		xs.append(slot.global_position.x)
@@ -3920,14 +3944,14 @@ func t_jar_fills_then_lid() -> void:
 	c.call("close_lid")
 	c.call("begin_crank")
 	_crank_done(c)
-	eq(int(c.get("state")), _st(c, "DONE"), "extracted before bottling")
-	c.call("open_spigot")
+	_ext(c, "extracted before bottling")
+	_begin_bottling(c)
 	var samples: Array = []   # [t, jar visible, frac, lid shown]
 	var t0: int = Time.get_ticks_msec()
 	var empty: int = _st(c, "EMPTY")
 	while Time.get_ticks_msec() - t0 < int((spj * 2.0 + 2.0) * 1000.0) and int(c.get("state")) != empty:
 		await process_frame
-		samples.append([float(Time.get_ticks_msec() - t0) / 1000.0, jar.is_visible_in_tree(), _jar_frac(jar), _jar_lid_shown(jar)])
+		samples.append([float(Time.get_ticks_msec() - t0) / 1000.0, jar.is_visible_in_tree(), _jar_frac(jar), _jar_lid_shown(jar), (jar as Node3D).global_position])
 	ck(samples.size() >= 30, "enough samples while bottling (%d)" % samples.size())
 	var seen_full_lid: bool = false
 	var seen_mid: bool = false
@@ -3969,7 +3993,20 @@ func t_jar_fills_then_lid() -> void:
 	ck(seen_full_lid, "the lid shows once the jar is full")
 	if first_vis >= 0.0 and t_full >= 0.0:
 		var rise: float = t_full - first_vis
-		ck(rise >= spj * 0.7 and rise <= spj * 1.15 + 0.1, "the honey rises over one bottling interval: %.2f s for bottling_seconds_per_jar %.2f" % [rise, spj])
+		# 0.1.2: the jar first flies in from the crate (jar_fly_seconds); the fill time counts from its arrival at the spigot,
+		# the place where the full jar (lid on) was first seen
+		var end_pos: Vector3 = Vector3.ZERO
+		for s2 in samples:
+			if bool(s2[1]) and bool(s2[3]) and float(s2[2]) >= 0.98:
+				end_pos = s2[4]
+				break
+		var arrive: float = first_vis
+		for s2 in samples:
+			if bool(s2[1]) and (s2[4] as Vector3).distance_to(end_pos) <= 0.3:
+				arrive = float(s2[0])
+				break
+		rise = t_full - arrive
+		ck(rise >= spj * 0.7 and rise <= spj * 1.15 + 0.1, "the honey rises over one bottling interval from the jar's arrival at the spigot: %.2f s for bottling_seconds_per_jar %.2f" % [rise, spj])
 	_fin()
 
 
@@ -3992,7 +4029,7 @@ func t_truck_and_crate_jars_full_with_lids() -> void:
 	var seen: int = 0
 	if bed != null:
 		for j in bed.get_children():
-			if (j as Node3D).is_visible_in_tree():
+			if (j as Node3D).is_visible_in_tree() and not (j is Label3D):
 				seen += 1
 				ck(_jar_frac(j) >= 0.98, "a jar on the truck is full (fraction %.2f)" % _jar_frac(j))
 				ck(_jar_lid_shown(j), "a jar on the truck has its lid")
@@ -4003,16 +4040,17 @@ func t_truck_and_crate_jars_full_with_lids() -> void:
 	tk.call("receive_jar")
 	tk.call("receive_jar")
 	await _frames(3)
-	var crate: Node = m.find_child("CrateJars", true, false)
-	ck(crate != null, "CrateJars exists (0.1.0 name)")
+	# 0.1.2: the crate also shows empty jars, on the CrateEmpties side; the full ones (with lids) are the ones on the CrateFulls side
+	var geo: Dictionary = _geo_crate(m)
 	var seen2: int = 0
-	if crate != null:
-		for j in crate.get_children():
-			if (j as Node3D).is_visible_in_tree() and not (j is Label3D):
+	if not geo.is_empty():
+		for j in _vis_jars(m):
+			var jp: Vector3 = (j as Node3D).global_position
+			if _in_crate(geo, jp) and not _empties_side(geo, jp):
 				seen2 += 1
-				ck(_jar_frac(j) >= 0.98, "a jar in the crate is full (fraction %.2f)" % _jar_frac(j))
-				ck(_jar_lid_shown(j), "a jar in the crate has its lid")
-	eq(seen2, 2, "two jars show in the crate")
+				ck(_jar_frac(j) >= 0.98, "a jar in the crate's full group is full (fraction %.2f)" % _jar_frac(j))
+				ck(_jar_lid_shown(j), "a jar in the crate's full group has its lid")
+	eq(seen2, 2, "two full jars show in the crate")
 	_fin()
 
 
@@ -4184,41 +4222,6 @@ func t_cell_width_at_zoom() -> void:
 	_fin()
 
 
-# Spec 3: the zoom shows the hive, its risen frame and the bucket; BackButton is never over either.
-func t_zoom_view_contains_hive_and_bucket() -> void:
-	var z: Dictionary = await _zoom_open_main()
-	if z.is_empty():
-		_fin()
-		return
-	var m: Node = z["m"]
-	var p: Dictionary = z["p"]
-	var cam: Camera3D = root.get_viewport().get_camera_3d()
-	var vp := Rect2(Vector2.ZERO, root.get_visible_rect().size)
-	var hive: Node = p["Hive"]
-	var c: Node = p["Centrifuge"]
-	var lid: Node = hive.find_child("HiveLid", true, false)
-	var body: Array = _obbs(hive, [lid, hive.find_child("Honeycomb", true, false)])
-	var risen: Array = _obbs(hive.find_child("Honeycomb", true, false))
-	var glass: Array = _glass_of(c)
-	ck(body.size() > 0 and risen.size() > 0 and glass.size() > 0, "hive body (%d boxes), risen frame (%d) and bucket glass (%d) all have boxes" % [body.size(), risen.size(), glass.size()])
-	var back: Rect2 = (p["BackButton"] as Control).get_global_rect()
-	for pair in [["the hive", body], ["the risen frame", risen], ["the bucket", [glass]]]:
-		var boxes: Array = pair[1]
-		var r: Rect2 = _screen_of(boxes, cam)
-		ck(vp.encloses(r), "%s is entirely in view at the zoom (screen box %s, viewport %s)" % [pair[0], str(r), str(vp)])
-		var under: int = 0
-		for bx in boxes:
-			var cc: Vector3 = (bx as Array)[0]
-			var ax: Array = (bx as Array)[1]
-			for sx in [-1.0, 1.0]:
-				for sy in [-1.0, 1.0]:
-					for sz in [-1.0, 1.0]:
-						if back.has_point(cam.unproject_position(cc + (ax[0] as Vector3) * sx + (ax[1] as Vector3) * sy + (ax[2] as Vector3) * sz)):
-							under += 1
-		eq(under, 0, "BackButton covers no corner of %s" % pair[0])
-	_fin()
-
-
 # ---------------------------------------------------------------- config and Dev mode of 0.1.1
 
 # Config table of 0.1.1: new values, the retired caps are absent from the defaults file and from game_config.gd.
@@ -4267,4 +4270,883 @@ func t_dev_panel_has_lid_values() -> void:
 		ck(_row_spin(panel, nm) != null, "the Dev panel has a row for %s" % nm)
 	for gone in ["bucket_visual_cap", "pile_visual_cap"]:
 		ck(_row_spin(panel, gone) == null, "the Dev panel has no row for the removed %s" % gone)
+	_fin()
+
+
+
+# ================================================================ 0.1.2 bottling and sale
+# Written from game/specs/0.1.2-bottling-and-sale.md BEFORE the code (Patricia's and Bob's changes were not read). Names used beyond the
+# spec: the 0.1.0/0.1.1 names, plus CrateEmpties / CrateFulls (spec: Contract, Bob), SummaryJarsLabel / SummaryValueLabel / SummaryTotalLabel /
+# SummaryOkButton, and the jar scene's JarGlass / JarHoney / JarLid. Jars are found by their JarGlass child wherever they hang in the tree
+# (the spec does not say which node owns the empties, the fulls or a jar in flight), and classified by what they LOOK like and where they are:
+# empty = no honey, no lid; full = honey up, lid on.
+
+const FLIGHT_MIN_AIR: int = 4
+
+
+## Every visible jar of the scene: the parent of each JarGlass.
+func _vis_jars(m: Node) -> Array:
+	var out: Array = []
+	for g in m.find_children("JarGlass", "", true, false):
+		var j: Node = g.get_parent()
+		if j is Node3D and (j as Node3D).is_visible_in_tree() and not out.has(j):
+			out.append(j)
+	return out
+
+
+func _crate_root(m: Node) -> Node:
+	var n: Node = m.find_child("CrateEmpties", true, false)
+	while n != null and n != m:
+		if n.scene_file_path.ends_with("jar_crate.tscn"):
+			return n
+		n = n.get_parent()
+	var cj: Node = m.find_child("CrateJars", true, false)
+	return cj.get_parent() if cj != null else null
+
+
+## The crate's place: its two group markers and a disc (x, z) around its own boxes (jars not counted) that "in the crate" means.
+func _geo_crate(m: Node) -> Dictionary:
+	var crate: Node = _crate_root(m)
+	var em: Node3D = _nn(m, "CrateEmpties") as Node3D
+	var fu: Node3D = _nn(m, "CrateFulls") as Node3D
+	ck(crate != null, "the crate (a jar_crate.tscn instance holding CrateEmpties) was found")
+	if crate == null or em == null or fu == null:
+		return {}
+	var jars: Array = []
+	for g in crate.find_children("JarGlass", "", true, false):
+		jars.append(g.get_parent())
+	var boxes: Array = _obbs(crate, jars)
+	ck(boxes.size() > 0, "the crate has boxes of its own")
+	if boxes.is_empty():
+		return {}
+	var sp: Array = _span_xz(boxes)
+	var ys: Vector2 = _box_corners_y(boxes)
+	var cen := Vector2((float(sp[0]) + float(sp[2])) * 0.5, (float(sp[1]) + float(sp[3])) * 0.5)
+	var rad: float = Vector2(float(sp[2]) - float(sp[0]), float(sp[3]) - float(sp[1])).length() * 0.5 + 0.3
+	return {"cen": cen, "rad": rad, "ylo": ys.x - 0.3, "yhi": ys.y + 1.5, "em": em.global_position, "fu": fu.global_position}
+
+
+func _in_crate(geo: Dictionary, p: Vector3) -> bool:
+	var cen: Vector2 = geo["cen"]
+	return Vector2(p.x - cen.x, p.z - cen.y).length() <= float(geo["rad"]) and p.y >= float(geo["ylo"]) and p.y <= float(geo["yhi"])
+
+
+func _empties_side(geo: Dictionary, p: Vector3) -> bool:
+	return p.distance_to(geo["em"] as Vector3) <= p.distance_to(geo["fu"] as Vector3)
+
+
+func _jar_empty(j: Node) -> bool:
+	return _jar_frac(j) <= 0.15 and not _jar_lid_shown(j)
+
+
+func _jar_full(j: Node) -> bool:
+	return _jar_frac(j) >= 0.98 and _jar_lid_shown(j)
+
+
+## Offsets (lo, size) of the truck's boxes (jars on the bed not counted) from its origin, so its region can follow it while it drives.
+func _truck_box_off(tk: Node) -> Array:
+	var bed: Node = tk.find_child("BedJars", true, false)
+	var boxes: Array = _obbs(tk, [bed])
+	var lo := Vector3(1.0e9, 1.0e9, 1.0e9)
+	var hi := Vector3(-1.0e9, -1.0e9, -1.0e9)
+	for bx in boxes:
+		var c: Vector3 = (bx as Array)[0]
+		var ax: Array = (bx as Array)[1]
+		var e := Vector3(absf((ax[0] as Vector3).x) + absf((ax[1] as Vector3).x) + absf((ax[2] as Vector3).x), absf((ax[0] as Vector3).y) + absf((ax[1] as Vector3).y) + absf((ax[2] as Vector3).y), absf((ax[0] as Vector3).z) + absf((ax[1] as Vector3).z) + absf((ax[2] as Vector3).z))
+		lo = Vector3(minf(lo.x, c.x - e.x), minf(lo.y, c.y - e.y), minf(lo.z, c.z - e.z))
+		hi = Vector3(maxf(hi.x, c.x + e.x), maxf(hi.y, c.y + e.y), maxf(hi.z, c.z + e.z))
+	var o: Vector3 = (tk as Node3D).global_position
+	return [lo - o, hi - lo]
+
+
+## Sample every visible jar once per frame: traces[instance id] = [{t, pos, frac, lid, tb}], tb = the truck's region (padded) at that frame.
+func _record(m: Node, tk: Node, off: Array, traces: Dictionary, stop: Callable, timeout: float) -> void:
+	var t0: int = Time.get_ticks_msec()
+	var last: int = t0
+	var gt: float = 0.0
+	for k in traces:
+		var arr: Array = traces[k]
+		gt = maxf(gt, float((arr[arr.size() - 1] as Dictionary)["t"]))
+	while float(Time.get_ticks_msec() - t0) < timeout * 1000.0 and not stop.call():
+		await process_frame
+		var now: int = Time.get_ticks_msec()
+		gt += float(now - last) / 1000.0 * Engine.time_scale
+		last = now
+		var tb: AABB = AABB((tk as Node3D).global_position + (off[0] as Vector3), off[1] as Vector3).grow(0.4)
+		for j in _vis_jars(m):
+			var id: int = j.get_instance_id()
+			if not traces.has(id):
+				traces[id] = []
+			(traces[id] as Array).append({"t": gt, "pos": (j as Node3D).global_position, "frac": _jar_frac(j), "lid": _jar_lid_shown(j), "tb": tb})
+
+
+## The flight inside a trace: from the last sample inside `origin` (before the first arrival) to the first arrival in `dest`. [] if none.
+func _cut_flight(trace: Array, origin: Callable, dest: Callable) -> Array:
+	var first_o: int = -1
+	for i in trace.size():
+		if origin.call(trace[i]):
+			first_o = i
+			break
+	if first_o < 0:
+		return []
+	var arr: int = -1
+	for i in range(first_o + 1, trace.size()):
+		if dest.call(trace[i]):
+			arr = i
+			break
+	if arr < 0:
+		return []
+	var start: int = first_o
+	for i in range(first_o, arr):
+		if origin.call(trace[i]):
+			start = i
+	return trace.slice(start, arr + 1)
+
+
+## What is wrong with a flight (empty = nothing): it must be a real flight, not a jump, lasting about jar_fly_seconds.
+func _flight_problems(fl: Array, fly_s: float, origin: Callable, dest: Callable) -> Array:
+	var bad: Array = []
+	if fl.size() < 2:
+		return ["no flight found"]
+	var air: int = 0
+	for i in fl.size():
+		var s: Dictionary = fl[i]
+		if i > 0 and i < fl.size() - 1 and not origin.call(s) and not dest.call(s):
+			air += 1
+	var dur: float = float((fl[fl.size() - 1] as Dictionary)["t"]) - float((fl[0] as Dictionary)["t"])
+	if air < FLIGHT_MIN_AIR:
+		bad.append("only %d samples in the air (need %d): a jump, not a flight" % [air, FLIGHT_MIN_AIR])
+	if dur < fly_s * 0.5 or dur > fly_s * 1.6 + 0.3:
+		bad.append("lasted %.2f s, jar_fly_seconds is %.2f" % [dur, fly_s])
+	return bad
+
+
+## A synthetic flight: n samples from a to b over `secs`.
+func _fake_flight(a: Vector3, b: Vector3, secs: float, n: int) -> Array:
+	var out: Array = []
+	for i in n:
+		var f: float = float(i) / float(n - 1)
+		out.append({"t": secs * f, "pos": a.lerp(b, f), "frac": 0.0, "lid": false, "tb": AABB()})
+	return out
+
+
+func t_flight_judge_can_fail() -> void:
+	var a := Vector3(0.0, 0.0, 0.0)
+	var b := Vector3(3.0, 0.0, 0.0)
+	var at_a: Callable = func(s: Dictionary) -> bool: return (s["pos"] as Vector3).distance_to(a) <= 0.4
+	var at_b: Callable = func(s: Dictionary) -> bool: return (s["pos"] as Vector3).distance_to(b) <= 0.4
+	var good: Array = _fake_flight(a, b, 0.5, 40)
+	var cut: Array = _cut_flight(good, at_a, at_b)
+	ck(cut.size() > 4, "the cutter finds a flight in a good trace (%d samples)" % cut.size())
+	eq(_flight_problems(cut, 0.5, at_a, at_b).size(), 0, "a smooth flight of the right length has no problem")
+	var jump: Array = [{"t": 0.0, "pos": a, "frac": 0.0, "lid": false, "tb": AABB()}, {"t": 0.016, "pos": b, "frac": 0.0, "lid": false, "tb": AABB()}]
+	ck(_flight_problems(_cut_flight(jump, at_a, at_b), 0.5, at_a, at_b).size() > 0, "a teleport is a problem")
+	ck(_flight_problems(_cut_flight(_fake_flight(a, b, 3.0, 40), at_a, at_b), 0.5, at_a, at_b).size() > 0, "a flight six times too slow is a problem")
+	ck(_flight_problems(_cut_flight(_fake_flight(a, b, 0.05, 40), at_a, at_b), 0.5, at_a, at_b).size() > 0, "a flight ten times too fast is a problem")
+	ck(_cut_flight(_fake_flight(a, Vector3(1.5, 0.0, 0.0), 0.5, 40), at_a, at_b).is_empty(), "a jar that never arrives has no flight")
+	_fin()
+
+
+## A fake centrifuge stuck in DONE: the "started by itself" predicate must say no.
+func t_start_helper_can_fail() -> void:
+	var gs := GDScript.new()
+	gs.source_code = "extends Node\nvar state: int = 4\n"
+	gs.reload()
+	var stuck := Node.new()
+	stuck.set_script(gs)
+	root.add_child(stuck)
+	_to_free.append(stuck)
+	var started: bool = await _until(func() -> bool: return int(stuck.get("state")) == 5, 0.3)
+	ck(not started, "a centrifuge that stays in DONE is not 'started by itself' (the predicate can fail)")
+	stuck.set("state", 5)
+	ck(await _until(func() -> bool: return int(stuck.get("state")) == 5, 0.3), "and it says yes once the state moves on")
+	_fin()
+
+
+## Any node named ContinueButton, or any Button whose text says Continue (case-insensitive), under n.
+func _continue_nodes(n: Node) -> Array:
+	var out: Array = []
+	for c in n.find_children("*", "", true, false):
+		if String(c.name) == "ContinueButton" or (c is Button and (c as Button).text.to_lower().contains("continue")):
+			out.append(c)
+	return out
+
+
+func t_continue_finder_can_fail() -> void:
+	var holder := Node.new()
+	var b1 := Button.new()
+	b1.name = "ContinueButton"
+	var b2 := Button.new()
+	b2.text = "Continue"
+	var b3 := Button.new()
+	b3.text = "Sell"
+	holder.add_child(b1)
+	holder.add_child(b2)
+	holder.add_child(b3)
+	_to_free.append(holder)
+	eq(_continue_nodes(holder).size(), 2, "the finder sees a node named ContinueButton and a button saying Continue, not a Sell button")
+	_fin()
+
+
+# ---------------------------------------------------------------- the zoom, option A (spec change 1)
+
+# Spec 1: the zoom frames the WHOLE risen rack (the risen frame: every cell, its bars), every cell at least min_cell_px; the bucket shows
+# at least its rim and mouth (BucketMouth), its lower part may be off-screen. Nothing says the hive must be in view any more.
+func t_zoom_view_option_a() -> void:
+	var z: Dictionary = await _zoom_open_main()
+	if z.is_empty():
+		_fin()
+		return
+	var m: Node = z["m"]
+	var p: Dictionary = z["p"]
+	var tr: Dictionary = z["tr"]
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	var vp := Rect2(Vector2.ZERO, root.get_visible_rect().size)
+	var hive: Node = p["Hive"]
+	var c: Node = p["Centrifuge"]
+	var hc: Node = hive.find_child("Honeycomb", true, false)
+	ck(hc != null, "Honeycomb exists")
+	var fb: Node = hive.find_child("FrameBar%d" % (int(tr["risen"]) + 1), true, false)
+	var rack: Array = _obbs(hc) if hc != null else []
+	if fb != null:
+		rack.append_array(_obbs(fb))
+	ck(rack.size() >= _cpf(), "the risen rack has boxes (%d: %d cells and the bar)" % [rack.size(), _cpf()])
+	var back: Rect2 = (p["BackButton"] as Control).get_global_rect()
+	var r: Rect2 = _screen_of(rack, cam)
+	ck(vp.encloses(r), "the whole risen rack is on screen (screen box %s, viewport %s)" % [str(r), str(vp)])
+	ck(not Rect2(Vector2.ZERO, vp.size * 0.1).encloses(r), "the 'on screen' test can fail: the rack does not fit a tenth of the viewport")
+	var off_cells: int = 0
+	var narrow: int = 0
+	var under: int = 0
+	var seen: int = 0
+	var lo: float = 1.0e9
+	if hc != null:
+		for mi in hc.find_children("*", "MeshInstance3D", true, false):
+			var mm: MeshInstance3D = mi as MeshInstance3D
+			if mm.mesh == null or not mm.is_visible_in_tree():
+				continue
+			seen += 1
+			var cr: Rect2 = _screen_of(_obbs(mm), cam)
+			if not vp.encloses(cr):
+				off_cells += 1
+			if cr.intersects(back):
+				under += 1
+			var w: float = _cell_face_w(mm, cam)
+			lo = minf(lo, w)
+			if w < float(cv("min_cell_px")):
+				narrow += 1
+	eq(seen, _cpf(), "all %d cells of the risen frame were examined" % _cpf())
+	eq(off_cells, 0, "every cell lies entirely on screen")
+	eq(narrow, 0, "every cell is at least min_cell_px wide (smallest %.1f px, min_cell_px %s)" % [lo, str(cv("min_cell_px"))])
+	eq(under, 0, "BackButton covers no cell")
+	var mouth: Node3D = _nn(m, "BucketMouth") as Node3D
+	if mouth != null:
+		var mp: Vector2 = cam.unproject_position(mouth.global_position)
+		ck(not cam.is_position_behind(mouth.global_position) and vp.has_point(mp), "BucketMouth is on screen (%s in %s)" % [str(mp), str(vp)])
+		ck(not back.has_point(mp), "BucketMouth is not under BackButton")
+	var glass: Array = _glass_of(c)
+	ck(glass.size() > 0, "the bucket glass has a box")
+	if glass.size() > 0:
+		var gc: Vector3 = glass[0]
+		var gax: Array = glass[1]
+		var top_ok: int = 0
+		# the rim: the four corners of the glass box's top face (the axis most aligned with world up)
+		var best_axis: int = 0
+		for i in 3:
+			if absf((gax[i] as Vector3).y) > absf((gax[best_axis] as Vector3).y):
+				best_axis = i
+		var up: Vector3 = gax[best_axis]
+		if up.y < 0.0:
+			up = -up
+		var other: Array = []
+		for i in 3:
+			if i != best_axis:
+				other.append(gax[i])
+		for sa in [-1.0, 1.0]:
+			for sb in [-1.0, 1.0]:
+				var corner: Vector3 = gc + up + (other[0] as Vector3) * sa + (other[1] as Vector3) * sb
+				var cp: Vector2 = cam.unproject_position(corner)
+				if vp.has_point(cp) and not back.has_point(cp):
+					top_ok += 1
+		eq(top_ok, 4, "the bucket's top rim (four corners of its top face) is on screen and clear of BackButton")
+	_fin()
+
+
+# ---------------------------------------------------------------- hive vs truck (spec change 2)
+
+# Spec 2: a small backyard box beside the truck: height with the lid on <= 0.6 of the truck's roof height, footprint <= 1.7.
+func t_hive_size_vs_truck() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var hive: Node = _nn(m, "Hive")
+	var tk: Node = _nn(m, "Truck")
+	if hive == null or tk == null:
+		_fin()
+		return
+	var hb: Array = _obbs(hive)
+	var tb: Array = _obbs(tk, [tk.find_child("BedJars", true, false)])
+	ck(hb.size() > 0 and tb.size() > 0, "hive (%d boxes) and truck (%d boxes) have boxes" % [hb.size(), tb.size()])
+	if hb.is_empty() or tb.is_empty():
+		_fin()
+		return
+	var hy: Vector2 = _box_corners_y(hb)
+	var ty: Vector2 = _box_corners_y(tb)
+	var hive_h: float = hy.y - hy.x
+	var roof_h: float = ty.y - ty.x
+	print("MEASURE hive height with the lid on %.2f, truck height (ground to roof, jars excluded) %.2f, ratio %.2f" % [hive_h, roof_h, hive_h / maxf(roof_h, 0.001)])
+	ck(roof_h > 0.5, "the truck's height is plausible (%.2f)" % roof_h)
+	ck(hive_h <= 0.6 * roof_h, "the hive with its lid on is at most 0.6 of the truck's roof height (%.2f vs %.2f x 0.6 = %.2f)" % [hive_h, roof_h, 0.6 * roof_h])
+	ck(hive_h >= 0.2 * roof_h, "the hive is not flattened away (%.2f is at least 0.2 of the roof %.2f)" % [hive_h, roof_h])
+	var hbody: Node = hive.find_child("HiveBody", true, false)
+	var body: Array = _obbs(hbody if hbody != null else hive, [hive.find_child("HiveLid", true, false), hive.find_child("Honeycomb", true, false), hive.find_child("FrameBars", true, false)])
+	var sp: Array = _span_xz(body)
+	var w: float = float(sp[2]) - float(sp[0])
+	var d: float = float(sp[3]) - float(sp[1])
+	ck(w <= 1.7 and d <= 1.7, "the hive footprint is at most 1.7 x 1.7 (%.2f x %.2f)" % [w, d])
+	var ts: Array = _span_xz(tb)
+	var tl: float = maxf(float(ts[2]) - float(ts[0]), float(ts[3]) - float(ts[1]))
+	ck(tl >= 2.4 and tl <= 4.0, "the truck is about 3.2 long (measured %.2f; the reference the hive is measured against)" % tl)
+	ck(maxf(w, d) < tl * 0.6, "the hive is clearly smaller than the truck's length (%.2f vs %.2f)" % [maxf(w, d), tl])
+	_fin()
+
+
+# ---------------------------------------------------------------- the centrifuge lid rests clear (spec change 3)
+
+# Spec 3: the resting lid (CentrifugeLidSpot, EMPTY) overlaps neither the bucket, its base ring, the spigot (all part of the centrifuge's
+# own boxes), nor the hive nor the crate. Oriented boxes, separating-axis test; touching the ground or a neighbour's face is allowed.
+func t_centrifuge_lid_rests_clear() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	var c: Node = _nn(m, "Centrifuge")
+	var hive: Node = _nn(m, "Hive")
+	var lid: Node3D = c.find_child("Lid", true, false) as Node3D
+	var spot: Node3D = c.find_child("CentrifugeLidSpot", true, false) as Node3D
+	var crate: Node = _crate_root(m)
+	if lid == null or spot == null or crate == null:
+		ck(lid != null, "the centrifuge has a Lid")
+		ck(spot != null, "CentrifugeLidSpot exists")
+		ck(crate != null, "the crate was found")
+		_fin()
+		return
+	await _frames(3)
+	ck(lid.global_position.distance_to(spot.global_position) <= 0.02 and _angle_between(lid.global_basis, spot.global_basis) <= 0.03, "an EMPTY centrifuge's lid sits at CentrifugeLidSpot")
+	var lb: Array = _obbs(lid)
+	ck(lb.size() > 0, "the resting lid has boxes")
+	var own: Array = _obbs(c, [lid, c.find_child("HeapRoot", true, false), c.find_child("SpigotJar", true, false)])
+	var parts: Dictionary = {
+		"the bucket, its base ring and the spigot (the centrifuge's own boxes)": own,
+		"the hive": _obbs(hive),
+		"the crate (jars included)": _obbs(crate),
+	}
+	for k in parts:
+		var bodies: Array = parts[k]
+		ck(bodies.size() > 0, "%s has boxes to test against" % k)
+		var pen: float = _max_pen(lb, bodies)
+		var who: String = ""
+		for l in lb:
+			for b in bodies:
+				if _obb_pen(l as Array, b as Array) >= pen - 1.0e-6 and pen > CONTACT_EPS:
+					who = "lid mesh %s into %s" % [str((l as Array)[2].name), str((b as Array)[2].name)]
+		ck(pen <= CONTACT_EPS, "the resting lid does not overlap %s (worst penetration %.3f, contact allowed up to %.2f; %s)" % [k, pen, CONTACT_EPS, who])
+	# the test can fail: put the lid into the middle of the bucket and the same measure must flag it
+	var glass: Array = _glass_of(c)
+	if glass.size() > 0:
+		var home: Transform3D = lid.global_transform
+		lid.global_position = glass[0] as Vector3
+		var forced: float = _max_pen(_obbs(lid), own)
+		ck(forced > CONTACT_EPS, "control: a lid forced into the bucket IS flagged (penetration %.3f)" % forced)
+		lid.global_transform = home
+	_fin()
+
+
+# ---------------------------------------------------------------- nodes and config of 0.1.2
+
+func t_node_contract_012() -> void:
+	var ps: Variant = load("res://scenes/props/jar_crate.tscn")
+	ck(ps != null, "jar_crate.tscn loads")
+	if ps != null:
+		var cr: Node = (ps as PackedScene).instantiate()
+		_to_free.append(cr)
+		for nm in ["CrateEmpties", "CrateFulls"]:
+			var n: Node = cr.find_child(nm, true, false)
+			ck(n != null and n is Node3D, "jar_crate.tscn has a Node3D marker %s" % nm)
+		var e: Node = cr.find_child("CrateEmpties", true, false)
+		var f: Node = cr.find_child("CrateFulls", true, false)
+		if e is Node3D and f is Node3D:
+			ck((e as Node3D).position.distance_to((f as Node3D).position) >= 0.2, "the two groups are apart (markers %.2f apart)" % (e as Node3D).position.distance_to((f as Node3D).position))
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	for nm in ["SummaryModal", "SummaryJarsLabel", "SummaryValueLabel", "SummaryTotalLabel", "SummaryOkButton", "CrateEmpties", "CrateFulls", "BucketMouth", "ZoomFraming"]:
+		_nn(m, nm)
+	ck(m.find_child("SummaryBonusLabel", true, false) == null, "SummaryBonusLabel is removed (spec change 7)")
+	ck(m.find_child("ContinueButton", true, false) == null, "ContinueButton is removed (spec change 6)")
+	_fin()
+
+
+func t_config_012() -> void:
+	var c: Variant = load(DEFAULT_CFG)
+	ck(c != null, "default_config.tres loads")
+	if c == null:
+		_fin()
+		return
+	for pair in [["jar_fly_seconds", 0.5], ["crate_empty_jars_shown", 10.0]]:
+		var v: Variant = c.get(pair[0])
+		ck(v != null, "default_config.tres has '%s'" % pair[0])
+		if v != null:
+			near(float(v), float(pair[1]), "default %s" % pair[0])
+	ck(float(c.get("zoom_size")) > 0.0 and float(c.get("frame_rise")) > 0.0, "zoom_size and frame_rise are Bob's positive values")
+	var f := FileAccess.open(_script_path("game_config.gd"), FileAccess.READ)
+	ck(f != null, "game_config.gd readable")
+	if f != null:
+		var text: String = f.get_as_text()
+		f.close()
+		for nm in ["jar_fly_seconds", "crate_empty_jars_shown"]:
+			ck(text.contains("@export var %s" % nm), "game_config.gd has @export var %s (Dev mode lists exported values)" % nm)
+	_set_dev_mode(true)
+	var panel: Node = await _mk_panel()
+	if panel != null:
+		for nm in ["jar_fly_seconds", "crate_empty_jars_shown", "zoom_size", "frame_rise"]:
+			ck(_row_spin(panel, nm) != null, "the Dev panel has a row for %s" % nm)
+	_fin()
+
+
+# ---------------------------------------------------------------- the crate and the jar flights (spec change 5)
+
+# Spec 5: the crate shows EMPTY jars (clear glass, no honey, no lid), up to crate_empty_jars_shown, on the CrateEmpties side, and no full
+# jar while nothing has been bottled. The number is read from the config (a changed value changes what is drawn).
+func t_crate_shows_empties() -> void:
+	for want_n in [int(cv("crate_empty_jars_shown")), 4]:
+		_set_cfg("crate_empty_jars_shown", want_n)
+		var m: Node = await _mk_main()
+		if m == null:
+			_fin()
+			return
+		_set_cfg("base_seconds_per_jar", 1.0e9)
+		var geo: Dictionary = _geo_crate(m)
+		if geo.is_empty():
+			_fin()
+			return
+		await _frames(4)
+		var empties: int = 0
+		var fulls: int = 0
+		var stray: int = 0
+		var mk: Node3D = m.find_child("CrateEmpties", true, false) as Node3D
+		var near_m: int = 0
+		for j in _vis_jars(m):
+			var jp: Vector3 = (j as Node3D).global_position
+			if not _in_crate(geo, jp):
+				stray += 1
+			elif _empties_side(geo, jp):
+				empties += 1
+				ck(_jar_empty(j), "a jar on the CrateEmpties side is empty: no honey, no lid (fraction %.2f, lid %s)" % [_jar_frac(j), str(_jar_lid_shown(j))])
+				if jp.distance_to(mk.global_position) <= 1.5:
+					near_m += 1
+			else:
+				fulls += 1
+		eq(empties, want_n, "the crate shows %d empty jars (crate_empty_jars_shown)" % want_n)
+		eq(fulls, 0, "no full jar in the crate before anything is bottled")
+		eq(stray, 0, "no jar shows outside the crate before bottling (the spigot jar is hidden)")
+		eq(near_m, want_n, "the empties stand around the CrateEmpties marker (within 1.5)")
+		m.get_parent().remove_child(m)
+		m.free()
+		_to_free.erase(m)
+	_fin()
+
+
+## Common set-up for the flight tests: the scene, the crate's place, the truck's region.
+func _bottling_rig(fly: float, spj: float) -> Dictionary:
+	_set_cfg("jar_fly_seconds", fly)
+	_set_cfg("bottling_seconds_per_jar", spj)
+	var m: Node = await _mk_main()
+	if m == null:
+		return {}
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	var c: Node = _nn(m, "Centrifuge")
+	var tk: Node = _nn(m, "Truck")
+	var geo: Dictionary = _geo_crate(m)
+	if c == null or tk == null or geo.is_empty():
+		return {}
+	await _frames(4)
+	return {"m": m, "c": c, "tk": tk, "geo": geo, "off": _truck_box_off(tk)}
+
+
+## One frame of cells (2 jars), lid on, cranked to the end by calls: from here on the game must carry on by itself.
+func _crank_unaided(c: Node) -> void:
+	var cells: int = _cpf()
+	c.call("add_cells", cells, _jars_of(cells))
+	c.call("close_lid")
+	c.call("begin_crank")
+	_crank_done(c)
+
+
+## Where the jar stands while its honey fills (fraction 0.25 to 0.75, no lid): the place under the spigot, measured, not assumed.
+func _spigot_spot(traces: Dictionary) -> Dictionary:
+	var pts: Array = []
+	for k in traces:
+		for s in (traces[k] as Array):
+			var sd: Dictionary = s
+			if not bool(sd["lid"]) and float(sd["frac"]) > 0.25 and float(sd["frac"]) < 0.75:
+				pts.append(sd["pos"])
+	if pts.size() < 3:
+		return {}
+	var mean := Vector3.ZERO
+	for p in pts:
+		mean += p as Vector3
+	mean /= float(pts.size())
+	var spread: float = 0.0
+	for p in pts:
+		spread = maxf(spread, (p as Vector3).distance_to(mean))
+	return {"pos": mean, "spread": spread, "n": pts.size()}
+
+
+func _bed_count(tk: Node) -> int:
+	var bed: Node = tk.find_child("BedJars", true, false)
+	var n: int = 0
+	if bed != null:
+		for j in bed.get_children():
+			if (j as Node3D).is_visible_in_tree() and not (j is Label3D):
+				n += 1
+	return n
+
+
+# Spec 5: bottling starts, the first empty jar FLIES from the crate to under the spigot (jar_fly_seconds), fills over
+# bottling_seconds_per_jar, gets its lid, then flies to the truck's bed (the truck is home); then the next empty jar flies in.
+# The crate shows its empties again afterwards (unlimited supply). Jars are followed frame by frame through the real scene.
+func t_jar_flights_to_spigot_and_truck() -> void:
+	var fly: float = 0.8
+	var spj: float = 1.5
+	var rig: Dictionary = await _bottling_rig(fly, spj)
+	if rig.is_empty():
+		_fin()
+		return
+	var m: Node = rig["m"]
+	var c: Node = rig["c"]
+	var tk: Node = rig["tk"]
+	var geo: Dictionary = rig["geo"]
+	var off: Array = rig["off"]
+	var jars_n: int = int(floorf(_jars_of(_cpf()) + 0.000001))
+	var empty: int = _st(c, "EMPTY")
+	_crank_unaided(c)
+	var traces: Dictionary = {}
+	await _record(m, tk, off, traces, func() -> bool: return int(c.get("state")) == empty, (spj + 2.0 * fly) * float(jars_n) + 8.0)
+	eq(int(c.get("state")), empty, "bottling ended")
+	await _record(m, tk, off, traces, func() -> bool: return false, fly + 0.8)
+	var spot: Dictionary = _spigot_spot(traces)
+	ck(not spot.is_empty(), "a jar was seen filling (honey between a quarter and three quarters, no lid): the spigot spot exists")
+	if spot.is_empty():
+		_fin()
+		return
+	var sp: Vector3 = spot["pos"]
+	ck(float(spot["spread"]) <= 0.08, "the jar stands still while it fills (spread %.3f)" % float(spot["spread"]))
+	var cpos: Vector3 = (c as Node3D).global_position
+	ck(Vector2(sp.x - cpos.x, sp.z - cpos.z).length() <= 2.5, "the fill spot is at the centrifuge (%.2f from its origin)" % Vector2(sp.x - cpos.x, sp.z - cpos.z).length())
+	ck(not _in_crate(geo, sp), "the fill spot is not in the crate")
+	var in_origin: Callable = func(s: Dictionary) -> bool: return _in_crate(geo, s["pos"]) and _empties_side(geo, s["pos"])
+	var at_spigot: Callable = func(s: Dictionary) -> bool: return (s["pos"] as Vector3).distance_to(sp) <= 0.35
+	var on_truck: Callable = func(s: Dictionary) -> bool: return (s["tb"] as AABB).has_point(s["pos"])
+	var flights_in: Array = []
+	var landings: Array = []
+	var arrivals: Array = []
+	var fulls_at: Array = []
+	for k in traces:
+		var tr: Array = traces[k]
+		var fin: Array = _cut_flight(tr, in_origin, at_spigot)
+		if fin.size() > 0:
+			flights_in.append(fin)
+			var arrive_t: float = float((fin[fin.size() - 1] as Dictionary)["t"])
+			arrivals.append(arrive_t)
+			var full_t: float = -1.0
+			for s in tr:
+				var sd: Dictionary = s
+				if float(sd["t"]) >= arrive_t and bool(sd["lid"]) and float(sd["frac"]) >= 0.98:
+					full_t = float(sd["t"])
+					break
+			fulls_at.append(full_t)
+		var land: Array = _cut_flight(tr, at_spigot, on_truck)
+		if land.size() > 0:
+			landings.append(land)
+			var lastp: Dictionary = tr[tr.size() - 1]
+			ck(float(lastp["frac"]) >= 0.98 and bool(lastp["lid"]), "a jar that reached the truck is full with its lid (fraction %.2f)" % float(lastp["frac"]))
+	ck(flights_in.size() >= jars_n, "%d empty jars flew from the crate to the spigot (found %d)" % [jars_n, flights_in.size()])
+	for fl in flights_in:
+		var bad: Array = _flight_problems(fl, fly, in_origin, at_spigot)
+		ck(bad.is_empty(), "crate-to-spigot flight: %s" % "; ".join(bad))
+	for i in fulls_at.size():
+		var rise: float = float(fulls_at[i]) - float(arrivals[i])
+		ck(float(fulls_at[i]) >= 0.0 and rise >= spj * 0.7 and rise <= spj * 1.15 + 0.25, "the jar fills over bottling_seconds_per_jar after it arrives: %.2f s (bottling_seconds_per_jar %.2f)" % [rise, spj])
+	ck(landings.size() >= jars_n, "%d full jars flew from the spigot onto the truck (found %d)" % [jars_n, landings.size()])
+	for fl in landings:
+		var bad2: Array = _flight_problems(fl, fly, at_spigot, on_truck)
+		ck(bad2.is_empty(), "spigot-to-truck flight: %s" % "; ".join(bad2))
+	arrivals.sort()
+	if arrivals.size() >= 2 and fulls_at.size() >= 1:
+		ck(float(arrivals[1]) >= float(fulls_at.min()) - 0.05, "the next empty jar flies in after the first one is full (second arrival %.2f, first full %.2f)" % [float(arrivals[1]), float(fulls_at.min())])
+	eq(int(tk.get("loaded_jars")), jars_n, "%d jars are on the truck (the count logic is unchanged)" % jars_n)
+	eq(int(tk.get("crate_jars")), 0, "none went to the crate while the truck was home")
+	eq(_bed_count(tk), jars_n, "the landed jars show on the truck's bed")
+	var empties_now: int = 0
+	var fulls_in_crate: int = 0
+	for j in _vis_jars(m):
+		var jp: Vector3 = (j as Node3D).global_position
+		if _in_crate(geo, jp):
+			if _empties_side(geo, jp):
+				empties_now += 1
+			else:
+				fulls_in_crate += 1
+	eq(empties_now, int(cv("crate_empty_jars_shown")), "the crate shows its empties again: a jar taken is replaced (unlimited supply)")
+	eq(fulls_in_crate, 0, "no full jar in the crate")
+	_fin()
+
+
+# Spec 5: with the truck AWAY the filled jar flies back into the crate, full with its lid, to the CrateFulls side, and the crate_jars count follows.
+func t_jar_lands_in_crate_when_truck_away() -> void:
+	var fly: float = 0.8
+	var spj: float = 1.0
+	_set_cfg("truck_trip_seconds", 120.0)
+	var rig: Dictionary = await _bottling_rig(fly, spj)
+	if rig.is_empty():
+		_fin()
+		return
+	var m: Node = rig["m"]
+	var c: Node = rig["c"]
+	var tk: Node = rig["tk"]
+	var geo: Dictionary = rig["geo"]
+	var off: Array = rig["off"]
+	for i in int(cv("truck_capacity_jars")):
+		tk.call("receive_jar")
+	tk.call("sell")
+	ck(bool(tk.get("away")), "the truck is away")
+	await _frames(3)
+	var jars_n: int = int(floorf(_jars_of(_cpf()) + 0.000001))
+	var empty: int = _st(c, "EMPTY")
+	_crank_unaided(c)
+	var traces: Dictionary = {}
+	await _record(m, tk, off, traces, func() -> bool: return int(c.get("state")) == empty, (spj + 2.0 * fly) * float(jars_n) + 8.0)
+	await _record(m, tk, off, traces, func() -> bool: return false, fly + 0.8)
+	var spot: Dictionary = _spigot_spot(traces)
+	ck(not spot.is_empty(), "a jar was seen filling")
+	if spot.is_empty():
+		_fin()
+		return
+	var sp: Vector3 = spot["pos"]
+	var at_spigot: Callable = func(s: Dictionary) -> bool: return (s["pos"] as Vector3).distance_to(sp) <= 0.35
+	var in_fulls: Callable = func(s: Dictionary) -> bool: return _in_crate(geo, s["pos"]) and not _empties_side(geo, s["pos"])
+	var landings: Array = []
+	for k in traces:
+		var land: Array = _cut_flight(traces[k], at_spigot, in_fulls)
+		if land.size() > 0:
+			landings.append(land)
+	ck(landings.size() >= jars_n, "%d full jars flew from the spigot back into the crate's full group (found %d)" % [jars_n, landings.size()])
+	for fl in landings:
+		var bad: Array = _flight_problems(fl, fly, at_spigot, in_fulls)
+		ck(bad.is_empty(), "spigot-to-crate flight: %s" % "; ".join(bad))
+	eq(int(tk.get("crate_jars")), jars_n, "crate_jars counts the %d jars" % jars_n)
+	eq(int(tk.get("loaded_jars")), 0, "nothing on the away truck")
+	var fulls: int = 0
+	var empties: int = 0
+	for j in _vis_jars(m):
+		var jp: Vector3 = (j as Node3D).global_position
+		if not _in_crate(geo, jp):
+			continue
+		if _empties_side(geo, jp):
+			empties += 1
+			ck(_jar_empty(j), "a jar on the empties side stays empty")
+		else:
+			fulls += 1
+			ck(_jar_full(j), "a jar landed in the crate is full with its lid (fraction %.2f)" % _jar_frac(j))
+	eq(fulls, jars_n, "%d full jars stand on the CrateFulls side" % jars_n)
+	eq(empties, int(cv("crate_empty_jars_shown")), "the empties are still there, apart from the fulls")
+	_fin()
+
+
+# Spec 5: when the truck returns, the crate's full jars fly onto it up to its capacity; the rest stay in the crate.
+func t_crate_fulls_fly_to_truck_on_return() -> void:
+	var fly: float = 0.6
+	_set_cfg("truck_capacity_jars", 3)
+	_set_cfg("truck_trip_seconds", 2.0)
+	var rig: Dictionary = await _bottling_rig(fly, 1.0)
+	if rig.is_empty():
+		_fin()
+		return
+	var m: Node = rig["m"]
+	var tk: Node = rig["tk"]
+	var geo: Dictionary = rig["geo"]
+	var off: Array = rig["off"]
+	var cap: int = int(cv("truck_capacity_jars"))
+	for i in cap:
+		tk.call("receive_jar")
+	tk.call("sell")
+	var extra: int = cap + 2
+	for i in extra:
+		tk.call("receive_jar")
+	eq(int(tk.get("crate_jars")), extra, "%d full jars wait in the crate" % extra)
+	await _frames(4)
+	var shown0: int = 0
+	for j in _vis_jars(m):
+		var jp: Vector3 = (j as Node3D).global_position
+		if _in_crate(geo, jp) and not _empties_side(geo, jp):
+			shown0 += 1
+			ck(_jar_full(j), "a jar in the crate's full group is full with its lid")
+	ck(shown0 >= 1, "the crate shows its full jars (%d drawn for %d in the count)" % [shown0, extra])
+	var traces: Dictionary = {}
+	await _record(m, tk, off, traces, func() -> bool: return not bool(tk.get("away")), 10.0)
+	ck(not bool(tk.get("away")), "the truck came back")
+	await _record(m, tk, off, traces, func() -> bool: return false, fly + 1.2)
+	var in_fulls: Callable = func(s: Dictionary) -> bool: return _in_crate(geo, s["pos"]) and not _empties_side(geo, s["pos"])
+	var on_truck: Callable = func(s: Dictionary) -> bool: return (s["tb"] as AABB).has_point(s["pos"]) and not _in_crate(geo, s["pos"])
+	var flights: Array = []
+	for k in traces:
+		var fl: Array = _cut_flight(traces[k], in_fulls, on_truck)
+		if fl.size() > 0:
+			flights.append(fl)
+	eq(flights.size(), cap, "exactly truck_capacity_jars (%d) full jars flew from the crate onto the truck" % cap)
+	for fl in flights:
+		var bad: Array = _flight_problems(fl, fly, in_fulls, on_truck)
+		ck(bad.is_empty(), "crate-to-truck flight: %s" % "; ".join(bad))
+	eq(int(tk.get("loaded_jars")), cap, "the truck holds its capacity")
+	eq(int(tk.get("crate_jars")), extra - cap, "the rest stay in the crate")
+	eq(_bed_count(tk), cap, "the jars show on the truck's bed")
+	_fin()
+
+
+# ---------------------------------------------------------------- bottling by itself, no Continue (spec change 6)
+
+# Spec 6: after the last crank turn the spin winds down and bottling starts with NO input. The jars are bottled and reach the truck.
+func t_bottling_starts_by_itself() -> void:
+	_set_cfg("bottling_seconds_per_jar", 0.5)
+	_set_cfg("jar_fly_seconds", 0.2)
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	var c: Node = _nn(m, "Centrifuge")
+	var tk: Node = _nn(m, "Truck")
+	if c == null or tk == null:
+		_fin()
+		return
+	await _frames(3)
+	var done_n: Array = [0]
+	var bottled: Array = []
+	c.connect("extraction_done", func() -> void: done_n[0] += 1)
+	c.connect("jar_bottled", func(n: Variant) -> void: bottled.append(int(n)))
+	var jars_n: int = int(floorf(_jars_of(_cpf()) + 0.000001))
+	_crank_unaided(c)
+	eq(done_n[0], 1, "extraction_done was emitted once")
+	# from here on: no input of any kind
+	var bottling: int = _st(c, "BOTTLING")
+	var started: bool = await _until(func() -> bool: return int(c.get("state")) == bottling, 3.0)
+	ck(started, "bottling started by itself within 3 s of the last turn (state %d)" % int(c.get("state")))
+	var empty: int = _st(c, "EMPTY")
+	var finished: bool = await _until(func() -> bool: return int(c.get("state")) == empty, float(cv("bottling_seconds_per_jar")) * float(jars_n + 2) + 4.0)
+	ck(finished, "bottling ran to the end with no input")
+	eq(bottled.size(), jars_n, "%d jars were bottled one by one" % jars_n)
+	eq(int(tk.get("loaded_jars")), jars_n, "the jars reached the truck")
+	ck(int(c.get("state")) != _st(c, "DONE"), "the centrifuge is not left waiting in DONE")
+	_fin()
+
+
+# Spec 6: ContinueButton and the DONE wait are removed: no node, no scene entry, no script mentions it, no button says Continue.
+func t_no_continue_button() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	eq(_continue_nodes(m).size(), 0, "no ContinueButton node and no button saying Continue in the running scene")
+	var sc := FileAccess.open("res://scenes/main.tscn", FileAccess.READ)
+	ck(sc != null, "main.tscn readable")
+	if sc != null:
+		ck(not sc.get_as_text().contains("ContinueButton"), "main.tscn has no ContinueButton entry")
+		sc.close()
+	for fn in ["main.gd", "farm_ui.gd"]:
+		var f := FileAccess.open(_script_path(fn), FileAccess.READ)
+		ck(f != null, "%s readable" % fn)
+		if f != null:
+			var text: String = f.get_as_text()
+			f.close()
+			ck(not text.contains("ContinueButton"), "%s no longer mentions ContinueButton" % fn)
+	_fin()
+
+
+# ---------------------------------------------------------------- the summary after Sell (spec change 7)
+
+# Spec 7: bottling shows no summary. Tapping Sell (a real press on the icon) credits the money, sends the truck off, and shows the modal:
+# jars sold, price per jar, total, OK to close; no bonus line. Distinct numbers (4 jars, 7 each, 28) so a wrong line cannot pass by luck.
+func t_summary_after_sell() -> void:
+	_set_cfg("truck_capacity_jars", 4)
+	_set_cfg("sale_value_per_jar", 7)
+	_set_cfg("bottling_seconds_per_jar", 0.4)
+	_set_cfg("jar_fly_seconds", 0.2)
+	_set_cfg("truck_trip_seconds", 60.0)
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var c: Node = p["Centrifuge"]
+	var tk: Node = p["Truck"]
+	var e: Node = _eco()
+	var modal: Node = p["SummaryModal"]
+	await _frames(3)
+	ck(not _shown(modal), "no summary at the start")
+	# bottle 2 jars through the real centrifuge: the modal must stay hidden for the whole run and after it
+	var empty: int = _st(c, "EMPTY")
+	_crank_unaided(c)
+	var seen_modal: bool = false
+	var t0: int = Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 12000:
+		await process_frame
+		if _shown(modal):
+			seen_modal = true
+		if int(c.get("state")) == empty and Time.get_ticks_msec() - t0 >= 1500:
+			break
+	await _wait(0.8)
+	if _shown(modal):
+		seen_modal = true
+	eq(int(c.get("state")), empty, "bottling ended")
+	ck(not seen_modal, "no summary while or after bottling (it comes after Sell)")
+	eq(int(tk.get("loaded_jars")), 2, "two jars bottled onto the truck")
+	for i in 2:
+		tk.call("receive_jar")
+	await _frames(4)
+	ck(bool(tk.call("can_sell")), "the truck is full and home")
+	ck(_shown(p["SellIcon"]), "the Sell icon shows")
+	var money0: int = int(e.get("money"))
+	var x0: float = (tk as Node3D).global_position.x
+	var z0: float = (tk as Node3D).global_position.z
+	var clicked: bool = await fi.click_icon(p["SellIcon"] as Control)
+	ck(clicked, "the press went to where the Sell icon is drawn")
+	var shown: bool = await _until(func() -> bool: return _shown(modal), 3.0)
+	ck(shown, "the summary shows after Sell")
+	eq(int(e.get("money")), money0 + 28, "Sell credited 4 x 7 = 28")
+	ck(bool(tk.get("away")), "the truck is away")
+	if shown:
+		var jl: Node = m.find_child("SummaryJarsLabel", true, false)
+		var vl: Node = m.find_child("SummaryValueLabel", true, false)
+		var tl: Node = m.find_child("SummaryTotalLabel", true, false)
+		var jt: String = String(jl.get("text")) if jl != null else ""
+		var vt: String = String(vl.get("text")) if vl != null else ""
+		var tt: String = String(tl.get("text")) if tl != null else ""
+		print("MEASURE summary texts: jars '%s', value '%s', total '%s'" % [jt, vt, tt])
+		ck(jt.contains("4") and not jt.contains("28") and not jt.contains("7"), "the jars line shows 4 jars sold ('%s')" % jt)
+		ck(vt.contains("7") and not vt.contains("28"), "the price line shows 7 per jar ('%s')" % vt)
+		ck(tt.contains("28"), "the total line shows 28 ('%s')" % tt)
+		ck(m.find_child("SummaryBonusLabel", true, false) == null, "no bonus line")
+		await _wait(0.6)
+		var moved: float = Vector2((tk as Node3D).global_position.x - x0, (tk as Node3D).global_position.z - z0).length()
+		ck(moved > 0.2 and _shown(modal), "the truck drives off behind the open modal (moved %.2f)" % moved)
+		await fi.click_ctl(p["SummaryOkButton"] as Control)
+		await _frames(3)
+		ck(not _shown(modal), "OK closes the summary")
 	_fin()

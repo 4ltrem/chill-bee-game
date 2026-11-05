@@ -1,6 +1,6 @@
 # Implements GDD 2 (Stage 1 end and Stage 2 extraction and bottling, on the farm) and 8 (Accessibility: holding is built in).
 # 0.1 Harvest (game/specs/0.1-harvest.md): the centrifuge is a glass bucket with a spigot and a steel lid that carries the crank.
-# State machine EMPTY -> LOADING -> FULL -> CRANKING -> DONE -> BOTTLING -> EMPTY. Cells scraped from the frames arrive while the lid is
+# State machine EMPTY -> LOADING -> FULL -> CRANKING -> DONE -> BOTTLING -> EMPTY (DONE lasts one frame: bottling starts by itself, 0.1.2). Cells scraped from the frames arrive while the lid is
 # off (EMPTY, LOADING); the lid goes on when the bucket holds its capacity in cells or main.gd closes it. Counted turns obey the tap cap
 # (max_tap_rate); a hold counts one turn on press, then max_tap_rate per second. Crank input arrives only through _unhandled_input while
 # CRANKING and crank_enabled (false during the zoom). Honey is tracked in jars (float): turns needed = ceil(jars x taps_per_jar), a part-full
@@ -16,6 +16,7 @@ signal extraction_progress(done: float, total: float)
 signal turn_counted(turns: int)
 signal extraction_done
 signal jar_bottled(count: int)
+signal jar_requested(delay: float)   # an empty jar should fly from the crate to the spigot, starting after `delay` s and taking jar_fly_seconds
 signal bottling_done(jars: int)
 signal lid_moved(open: bool)
 
@@ -70,6 +71,9 @@ var _honey_level: MeshInstance3D
 var _honey_bottom: Node3D
 var _honey_top: Node3D
 var _spigot_jar: Node3D
+var _fetch_remaining: float = 0.0  # seconds before the next empty jar is at the spigot (its delay plus jar_fly_seconds); the fill waits for it
+## True when main.gd draws the jars itself (a traveling jar per fetch): the SpigotJar node then stays hidden.
+var external_jars: bool = false
 var _lid_hold: float = 0.0         # seconds the spigot jar still shows full with its lid after a jar finishes (visual only)
 
 
@@ -210,12 +214,35 @@ func set_holding(value: bool) -> void:
 		_hold_time = 0.0
 
 
-## Continue was pressed: open the spigot and start bottling.
+## Opens the spigot and starts bottling (called by advance() one frame after extraction ends; tests may call it directly).
 func open_spigot() -> void:
 	if state != State.DONE:
 		return
 	_bottle_timer = 0.0
+	_fetch_remaining = 0.0
 	_set_state(State.BOTTLING)
+	if _bottle_count > 0:
+		_begin_fetch(0.0)
+
+
+## The next empty jar flies in after `delay`; the fill starts when it has landed at the spigot.
+func _begin_fetch(delay: float) -> void:
+	_fetch_remaining = delay + maxf(config.jar_fly_seconds, 0.0)
+	jar_requested.emit(delay)
+
+
+## The drawn size of a jar at the spigot (its world scale).
+func spigot_jar_scale() -> float:
+	if _spigot_jar != null and _spigot_jar.is_inside_tree():
+		return _spigot_jar.global_transform.basis.get_scale().x
+	return 1.0
+
+
+## Where jars land under the spigot and leave from (world space): the SpigotJar node's place.
+func spigot_position() -> Vector3:
+	if _spigot_jar != null and _spigot_jar.is_inside_tree():
+		return _spigot_jar.global_position
+	return global_position if is_inside_tree() else position
 
 
 ## Per-frame logic, separate from _process so it can be tested headless.
@@ -232,20 +259,36 @@ func advance(delta: float) -> void:
 	if held:
 		var ramp: float = clampf(_hold_time / maxf(config.hold_ramp_seconds, 0.001), 0.0, 1.0)
 		spin_speed = maxf(spin_speed, config.spin_max * ramp)
+	if state == State.DONE:
+		open_spigot()   # no Continue: bottling starts by itself after extraction
 	if state == State.BOTTLING:
 		_advance_bottling(delta)
 
 
 func _advance_bottling(delta: float) -> void:
-	_bottle_timer += delta
 	var per_jar: float = maxf(config.bottling_seconds_per_jar, 0.001)
-	while _bottle_timer >= per_jar and jars_bottled < _bottle_count:
-		_bottle_timer -= per_jar
+	var left: float = delta
+	while jars_bottled < _bottle_count:
+		if _fetch_remaining > 0.0:   # the empty jar is still flying in: the fill has not started
+			var used: float = minf(left, _fetch_remaining)
+			_fetch_remaining -= used
+			left -= used
+			if _fetch_remaining > 0.0:
+				break
+		_bottle_timer += left
+		left = 0.0
+		if _bottle_timer < per_jar:
+			break
+		left = _bottle_timer - per_jar
+		_bottle_timer = 0.0
 		jars_bottled += 1
 		_lid_hold = config.jar_lid_seconds
 		jar_bottled.emit(jars_bottled)
+		if jars_bottled < _bottle_count:
+			_begin_fetch(config.jar_lid_seconds)   # the lid shows, then this jar leaves as the next flies in
 	if jars_bottled >= _bottle_count:
 		_bottle_timer = 0.0
+		_fetch_remaining = 0.0
 		var bottled: int = _bottle_count
 		# The leftover fraction stays in the bucket for the next batch; the combs are gone and the lid lifts off.
 		var rest: float = jars_total - float(bottled)
@@ -435,12 +478,12 @@ func _update_honey_level() -> void:
 	_honey_level.position.y = _honey_bottom.position.y + height * 0.5
 
 
-## How full the jar at the spigot looks (0 to 1), or -1 when no jar is there: it fills over bottling_seconds_per_jar, then shows
+## How full the jar at the spigot looks (0 to 1), or -1 when no jar is there (the next one is still flying in): it fills over bottling_seconds_per_jar, then shows
 ## full with its lid for jar_lid_seconds (pure function of the logic, so it is testable).
 func spigot_jar_fraction() -> float:
 	if _lid_hold > 0.0:
 		return 1.0
-	if state == State.BOTTLING and jars_bottled < _bottle_count:
+	if state == State.BOTTLING and jars_bottled < _bottle_count and _fetch_remaining <= 0.0:
 		return clampf(_bottle_timer / maxf(config.bottling_seconds_per_jar, 0.001), 0.0, 0.999)
 	return -1.0
 
@@ -450,6 +493,6 @@ func _update_spigot_jar(delta: float) -> void:
 	if _spigot_jar == null:
 		return
 	var fraction: float = spigot_jar_fraction()
-	_spigot_jar.visible = fraction >= 0.0
+	_spigot_jar.visible = fraction >= 0.0 and not external_jars
 	if fraction >= 0.0:
 		JarFill.set_fraction(_spigot_jar, fraction)

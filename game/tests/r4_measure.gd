@@ -1,5 +1,6 @@
 # Quinn: milestone 0.1 (Harvest) measurements, WINDOWED at the full portrait size, written from game/specs/0.1-harvest.md.
 #   Godot --path game --resolution 720x1280 --position 0,0 -s tests/r4_measure.gd
+# 0.1.2: colour numbers are report-only (no pass/fail); no Continue click.
 # Measures, and prints one "MEASURE" line each (the report copies them):
 #   1. the smallest cell's on-screen width at the zoom (projected mesh AABB, viewport px) against config min_cell_px;
 #   2. the pixel colour of a Capped cell and of an Uncapped one (5 x 5 mean at the cell's projected centre) against the 0.1.1 reference, capped (255, 198, 52)
@@ -263,9 +264,8 @@ func _run() -> void:
 	print("MEASURE colours (frame read %.3f s after the scrape): capped %s, uncapped %s; revision 3: capped %s, uncapped %s" % [age, str(capped_px.to_html(false)), str(uncapped_px.to_html(false)), str(CAPPED_R3.to_html(false)), str(UNCAPPED_R3.to_html(false))])
 	print("MEASURE colours as RGB: capped (%d, %d, %d), uncapped (%d, %d, %d)" % [capped_px.r8, capped_px.g8, capped_px.b8, uncapped_px.r8, uncapped_px.g8, uncapped_px.b8])
 	ck(age >= 0.18 and age <= 0.30, "the frame was read inside the settled pop, before the cell left (%.3f s)" % age)
-	ck(_within(capped_px, CAPPED_R3, 2), "Capped cell pixel equals the 0.1.1 reference (255, 198, 52) +-2 per channel")
-	ck(_within(uncapped_px, UNCAPPED_R3, 2), "Uncapped cell pixel equals the 0.1.0 measured (255, 255, 59) +-2 per channel")
-	ck(not _within(capped_px, uncapped_px, 20), "capped and uncapped still differ visibly")
+	# 0.1.2 change 4: colour and glow are not checked (designer). REPORT-ONLY: numbers above, no pass/fail.
+	print("MEASURE (report-only, 0.1.2) capped within +-2 of the 0.1.1 reference: ", _within(capped_px, CAPPED_R3, 2), "; uncapped within +-2: ", _within(uncapped_px, UNCAPPED_R3, 2), "; capped and uncapped differ by more than 20 per channel: ", not _within(capped_px, uncapped_px, 20))
 
 	# ---- 3. frame time in the zoom with cells flying
 	var rws: Array = fi.rows(hc, cam)
@@ -314,9 +314,15 @@ func _run() -> void:
 	await _frames(5)
 	await _shot("r4-m3-farm-done")
 	_set_cfg("bottling_seconds_per_jar", 3.0)
-	await fi.click_ctl(main.find_child("ContinueButton", true, false) as Control)
-	await _frames(3)
+	# 0.1.2: no Continue; bottling starts by itself after the extraction
+	ck(main.find_child("ContinueButton", true, false) == null, "there is no ContinueButton (0.1.2 change 6)")
 	var bottling: int = int(cen.get("state"))
+	var bstates: Dictionary = cen.get_script().get_script_constant_map()["State"]
+	var bt0: int = Time.get_ticks_msec()
+	while bottling != int(bstates["BOTTLING"]) and Time.get_ticks_msec() - bt0 < 5000:
+		await process_frame
+		bottling = int(cen.get("state"))
+	ck(bottling == int(bstates["BOTTLING"]), "bottling started by itself, no input after the extraction")
 	var bot_avg: float = await _fps_while("farm, bottling (honey level dropping, jars filling)", func() -> bool: return int(cen.get("state")) == bottling, 6.0)
 	ck(bot_avg <= 1000.0 / 60.0 + 0.5, "the farm holds 60 FPS while bottling (avg %.2f ms)" % bot_avg)
 

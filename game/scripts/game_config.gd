@@ -31,6 +31,9 @@ extends Resource
 @export var max_tap_rate: float = 5.0                  # PLACEHOLDER (GDD TBD): most crank turns counted per second (tap or hold)
 @export var hold_ramp_seconds: float = 1.5             # PLACEHOLDER (GDD TBD): seconds for the barrel to reach full spin when held (visual only)
 
+@export var jar_fly_seconds: float = 0.5               # PLACEHOLDER (GDD TBD; 0.1.2): a jar's flight, crate to spigot and spigot to truck or crate
+@export var crate_empty_jars_shown: int = 10           # PLACEHOLDER (GDD TBD; 0.1.2): empty jars drawn in the crate (the supply is unlimited)
+
 # --- Visual and flow tuning (not balance; also in Dev mode) ---
 @export var spin_impulse: float = 5.0                  # barrel spin added per counted turn (rad/s)
 @export var spin_decay: float = 3.0                    # barrel spin lost per second when not cranked (rad/s^2)
@@ -45,13 +48,13 @@ extends Resource
 @export var lid_lift_height: float = 0.6               # PLACEHOLDER (GDD TBD; 0.1.1): how far a lid rises straight up before it falls (parent-space units)
 @export var lid_lift_seconds: float = 0.25             # PLACEHOLDER (GDD TBD; 0.1.1): the lift
 @export var lid_drop_seconds: float = 0.4              # PLACEHOLDER (GDD TBD): the fall after the lift, hive lid and centrifuge lid, off or on (closing plays backwards)
-@export var frame_rise: float = 1.33                   # PLACEHOLDER (GDD TBD; 0.1.1: Bob's new value to come): how far a frame rises above the body (hive root units)
+@export var frame_rise: float = 0.76                   # PLACEHOLDER (GDD TBD; 0.1.1: Bob's new value to come): how far a frame rises above the body (hive root units)
 @export var cell_fly_seconds: float = 0.5              # PLACEHOLDER (GDD TBD): a scraped cell's flight after its pop
 @export var cell_fly_arc: float = 1.5                  # PLACEHOLDER (GDD TBD; Patricia): arc height of a cell's flight, in units
 @export var pile_load_stagger_seconds: float = 0.03    # PLACEHOLDER (GDD TBD; Patricia): delay between pile cells flying into the bucket
 @export var icon_visual_px: int = 88                   # visible icon size; the touch area stays at least 120 (GDD 8)
 @export var min_cell_px: int = 44                      # the smallest cell allowed on screen at the zoom (a check, not a look tunable)
-@export var zoom_size: float = 4.7                     # PLACEHOLDER (GDD TBD; 0.1.1: Bob's tighter value to come): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
+@export var zoom_size: float = 2.4                     # PLACEHOLDER (GDD TBD; 0.1.1: Bob's tighter value to come): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
 
 const DEFAULT_PATH := "res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.tres"

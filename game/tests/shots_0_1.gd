@@ -79,7 +79,7 @@ func _run() -> void:
 	main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
 	await _frames(10)
-	for nm in ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "ContinueButton", "SellIcon"]:
+	for nm in ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon"]:
 		P[nm] = main.find_child(nm, true, false)
 	var hive: Node = P["Hive"]
 	var cen: Node = P["Centrifuge"]
@@ -140,8 +140,7 @@ func _run() -> void:
 		await fi.click_at(spot)
 		await _wait(float(gap) / 1000.0)
 	await _frames(4)
-	await _shot("q-11-farm-DONE-continue-shows")
-	await fi.click_ctl(P["ContinueButton"] as Control)
+	await _shot("q-11-farm-DONE-bottling-starts-by-itself")
 	await _wait(float(cfg.get("bottling_seconds_per_jar")) * 1.5)
 	await _shot("q-12-farm-BOTTLING-jar-filling-honey-level-dropping")
 	var bottling: int = int(cen.get("state"))

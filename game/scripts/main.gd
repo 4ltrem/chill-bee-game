@@ -1,13 +1,14 @@
 # Implements GDD 1 (Primary Game Loop) and 2 (the whole harvest plays on the farm; for uncapping the camera zooms in on the hive and the
 # centrifuge) for 0.1 Harvest (game/specs/0.1-harvest.md). Owns the flow: fork icon -> zoom (hive lid off, frames rise one at a time,
-# scraped cells fly to the bucket or the pile, Back or all frames done) -> centrifuge icon -> crank -> Continue -> bottling onto the
-# truck -> summary (the pile loads into the empty bucket) -> Sell icon -> upgrade -> round again. The farm stays live through the whole
+# scraped cells fly to the bucket or the pile, Back or all frames done) -> centrifuge icon -> crank -> bottling starts by itself (jars
+# fly crate -> spigot -> truck or crate; the pile loads into the empty bucket) -> Sell icon -> summary (0.1.2) -> upgrade -> round again. The farm stays live through the whole
 # harvest; only the farm UI hides during the zoom.
 # Logic is synchronous or runs on timers in advance(delta) (headless-testable); tweens only draw the camera and lids.
 extends Node3D
 
 enum Zoom { NONE, OPENING, RISING, WORKING, LOWERING, CLOSE_DELAY, BACK_LOWERING, CLOSING }
 
+const JarFlight := preload("res://scripts/jar_flight.gd")
 const MAX_FLIGHTS: int = 40   # most cell flights launched at once when the pile loads (flight nodes, not cells drawn: every cell still lands)
 
 var zoom: int = Zoom.NONE
@@ -26,9 +27,11 @@ var _fork_icon: FloatingIcon
 var _centrifuge_icon: FloatingIcon
 var _sell_icon: FloatingIcon
 var _honeycomb: Honeycomb
+var _bees: Bees
 var _harvest_ui: HarvestUI
 var _queue: Array[int] = []        # frames that had Capped cells when the zoom opened
 var _timer: float = 0.0
+var _trips: Array[Node3D] = []     # jars fetched to the spigot, in order, waiting for their bottled signal
 var _going_back: bool = false
 var _cam_home_pos: Vector3 = Vector3.ZERO
 var _cam_home_size: float = 20.0
@@ -43,6 +46,7 @@ func _ready() -> void:
 	_centrifuge = find_child("Centrifuge", true, false) as Centrifuge
 	_truck = find_child("Truck", true, false) as Truck
 	_pile = find_child("Pile", true, false) as Pile
+	_bees = find_child("Bees", true, false) as Bees
 	_zoom_framing = find_child("ZoomFraming", true, false) as Node3D
 	_harvest_ui = find_child("HarvestUI", true, false) as HarvestUI
 	_fork_icon = find_child("ForkIcon", true, false) as FloatingIcon
@@ -71,11 +75,12 @@ func _ready() -> void:
 	if _harvest_ui != null:
 		_harvest_ui.back_pressed.connect(back)
 	_farm_ui.setup(_hive, _centrifuge, _truck)
-	_farm_ui.continue_pressed.connect(_on_continue)
 	_hive.storage_changed.connect(func(_s: float, _o: float) -> void: _refresh_icons())
 	_hive.became_full.connect(_refresh_icons)
 	_centrifuge.state_changed.connect(_on_centrifuge_state)
-	_centrifuge.jar_bottled.connect(func(_n: int) -> void: _truck.receive_jar())
+	_centrifuge.external_jars = true
+	_centrifuge.jar_bottled.connect(_on_jar_bottled)
+	_centrifuge.jar_requested.connect(_on_jar_requested)
 	_centrifuge.bottling_done.connect(_on_bottling_done)
 	_truck.load_changed.connect(func(_l: int, _c: int) -> void: _refresh_icons())
 	_truck.departed.connect(_refresh_icons)
@@ -85,7 +90,7 @@ func _ready() -> void:
 	if _centrifuge_icon != null:
 		_centrifuge_icon.pressed.connect(func() -> void: _centrifuge.begin_crank())
 	if _sell_icon != null:
-		_sell_icon.pressed.connect(func() -> void: _truck.sell())
+		_sell_icon.pressed.connect(sell)
 	_refresh_icons()
 
 
@@ -118,20 +123,36 @@ func _refresh_icons() -> void:
 			_sell_icon.text = "Sell $%d" % _truck.load_value()
 
 
-func _on_centrifuge_state(state: int) -> void:
-	_farm_ui.show_continue(state == Centrifuge.State.DONE)
+func _on_centrifuge_state(_state: int) -> void:
 	_refresh_icons()
 
 
-func _on_continue() -> void:
-	_farm_ui.show_continue(false)
-	_centrifuge.open_spigot()
+## An empty jar flies from the crate to the spigot, fills and gets its lid there (visual; the centrifuge's own timer waits for it).
+func _on_jar_requested(delay: float) -> void:
+	var config: GameConfig = Economy.config
+	var jar: Node3D = JarFlight.fetch(self, _truck.empties_position(), _centrifuge.spigot_position(), config.jar_fly_seconds,
+			config.cell_fly_arc, delay, _centrifuge.spigot_jar_scale(), config.bottling_seconds_per_jar)
+	if jar != null:
+		_trips.append(jar)
 
 
-## Bottling finished: the summary shows, the bucket is empty and open (centrifuge.gd lifted its lid), and the pile loads in.
-func _on_bottling_done(jars: int) -> void:
-	var per_jar: int = Economy.jar_value()
-	_farm_ui.show_summary(jars, per_jar, jars * per_jar)
+## A jar is bottled: the jar at the spigot flies on to the truck or the crate (the truck counts it at once).
+func _on_jar_bottled(_n: int) -> void:
+	var carrier: Node3D = _trips.pop_front() if not _trips.is_empty() else null
+	_truck.receive_jar(_centrifuge.spigot_position(), Economy.config.jar_lid_seconds, carrier)
+
+
+## Sell (icon): credits the money, sends the truck off, and the summary shows jars sold, price per jar and the total. Returns the total.
+func sell() -> int:
+	var jars: int = _truck.loaded_jars
+	var total: int = _truck.sell()
+	if total > 0:
+		_farm_ui.show_summary(jars, Economy.jar_value(), total)
+	return total
+
+
+## Bottling finished: the bucket is empty and open (centrifuge.gd lifted its lid), and the pile loads in.
+func _on_bottling_done(_jars: int) -> void:
 	load_pile()
 
 
@@ -182,6 +203,8 @@ func open_zoom() -> bool:
 	_centrifuge.crank_enabled = false
 	_hive.open_lid()
 	_move_camera(true)
+	if _bees != null and _farm_camera != null:
+		_bees.set_avoid(_farm_camera, _rack_box())
 	_refresh_icons()
 	return true
 
@@ -229,6 +252,24 @@ func advance(delta: float) -> void:
 			_finish_zoom()
 
 
+## The hive's world box with room above for the risen frame (frame_rise, in hive units): what bees keep off while the zoom is open.
+func _rack_box() -> AABB:
+	var box := AABB()
+	var first: bool = true
+	for node in _hive.find_children("*", "MeshInstance3D", true, false):
+		var mi: MeshInstance3D = node as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var b: AABB = mi.global_transform * mi.mesh.get_aabb()
+		box = b if first else box.merge(b)
+		first = false
+	if first:
+		box = AABB(_hive.global_position - Vector3(1.0, 0.0, 1.0), Vector3(2.0, 1.0, 2.0))
+	var rise: float = Economy.config.frame_rise * _hive.global_transform.basis.get_scale().y
+	box = box.merge(AABB(box.position + Vector3.UP * rise, box.size))
+	return box
+
+
 ## Raises the next queued frame that still has Capped cells. False when the queue is exhausted.
 func _raise_next() -> bool:
 	while not _queue.is_empty():
@@ -272,6 +313,8 @@ func _finish_zoom() -> void:
 	_going_back = false
 	_queue.clear()
 	_farm_ui.visible = true
+	if _bees != null:
+		_bees.clear_avoid()
 	if _harvest_ui != null:
 		_harvest_ui.hide_zoom()
 	_centrifuge.crank_enabled = true
