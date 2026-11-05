@@ -68,7 +68,7 @@ func _run() -> void:
 		"t_hold_at_cap", "t_hold_ramp_is_visual_only", "t_hold_never_slower", "t_hold_release_stops",
 		"t_tap_cap", "t_tap_cap_is_live", "t_crank_ignored_outside_cranking", "t_real_mouse_taps_crank",
 		"t_real_touch_taps_crank", "t_button_press_is_not_a_crank",
-		"t_bottling_timing", "t_bottling_time_is_live", "t_bottling_floor_and_leftover_carry",
+		"t_bottling_timing", "t_bottling_time_is_live", "t_bottling_floor_and_leftover_carry", "t_leftover_adds_no_turns",
 		"t_bottling_35_single_cells_is_2_jars", "t_pile_unit",
 		# truck (unchanged) and the wheels
 		"t_truck_full_and_can_sell", "t_truck_sell_credits_at_once", "t_truck_crate_while_away",
@@ -76,7 +76,9 @@ func _run() -> void:
 		# the zoom, through real input
 		"t_zoom_ui_and_camera", "t_zoom_bucket_lid_pile_flow", "t_back_after_one_frame", "t_back_keeps_half_frame",
 		"t_fork_rules", "t_fork_shows_while_cranking_and_state_table", "t_no_crank_during_zoom",
-		"t_zoom_fill_and_bottling_keep_running", "t_pop_tween_unchanged", "t_focus_styles",
+		"t_zoom_fill_and_bottling_keep_running",
+		"t_scrape_then_back_in_pop_window_bucket", "t_scrape_then_back_in_pop_window_pile", "t_resume_pending_pile_loads_while_zoom_open",
+		"t_pop_tween_unchanged", "t_focus_styles",
 		# floating icons (unchanged) and icon sizes
 		"t_icon_follows_anchor", "t_icon_hidden_behind_camera", "t_icon_touch_area_in_scene",
 		# dev mode
@@ -85,8 +87,19 @@ func _run() -> void:
 		"t_dev_user_file_ignored_when_off", "t_dev_backquote_opens", "t_dev_three_finger_opens", "t_dev_actions",
 		"t_dev_show_ui_bounds",
 	]
+	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
+	if only != "":
+		var keep: Array[String] = []
+		for t in tests:
+			if (",%s," % only).contains(",%s," % t):
+				keep.append(t)
+		tests = keep
+		print("CB_ONLY: running ", tests.size(), " test(s): ", tests)
 	_selfcheck()
 	_backup_user_cfg()
+	# the equivalent of the Dev panel's "Reset to defaults": a stale user://dev_config.tres (backed up above, and removed) must not skew the run
+	print("Dev config: a user://dev_config.tres was ", "FOUND (backed up, removed for the run, restored at the end)" if _user_cfg_existed else "not present", "; the live config is reset to default_config.tres")
+	FarmInput.reset_dev_config()
 	var ran: int = 0
 	for t in tests:
 		_eco_reset()
@@ -2942,4 +2955,241 @@ func t_dev_actions() -> void:
 	if fast != null:
 		fast.pressed.emit()
 		eq(Engine.time_scale, 5.0, "game speed x5 sets Engine.time_scale")
+	_fin()
+
+
+# Patricia's confirmation (0.1), requested test 1: a scrape inside the 0.18 s pop window, followed by Back before the pop ends.
+# The scrape moves its jar value at once (logic never waits for tweens), so Back must not lose, double or strand the cell: its slot
+# reads Extracted, its jars are in the bucket (or the pile) exactly once, no flying cell is left over, the lid is on.
+# Real input only: a real press on the cell, then a real click on BackButton, inside the pop (Engine.time_scale slows the game to
+# 0.1 so "inside 0.18 s of game time" holds even on a slow frame; the test measures the game time between the two events).
+func _scrape_back_in_pop(to_pile: bool) -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var hive: Node = p["Hive"]
+	var cen: Node = p["Centrifuge"]
+	var pile: Node = p["Pile"]
+	var tr: Dictionary = _track(hive)
+	_full_hive_frozen(hive)
+	var cap: int = _bucket_cells()
+	if to_pile:
+		cen.call("add_cells", cap, _jars_of(cap))   # CHEAT: a full bucket, so the scraped cell goes to the pile
+		cen.call("close_lid")
+	await _frames(4)
+	var jars0: float = _jars_everywhere(p)
+	var kids0: Array = root.get_children()
+	var cells0: int = int(cen.get("cells"))
+	var pile0: int = int(pile.get("cells"))
+	if not await _open_zoom(m, p, tr):
+		ck(false, "zoom did not open")
+		_fin()
+		return
+	var hc: Node = m.find_child("Honeycomb", true, false)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	var body: Node3D = null
+	for c in hc.find_children("*", "CollisionObject3D", true, false):
+		if c.has_meta("cell_index") and int(c.get_meta("cell_index")) == 17:
+			body = c as Node3D
+	ck(body != null, "cell 17 has a collider with its cell_index")
+	if body == null:
+		_fin()
+		return
+	var at: Vector2 = cam.unproject_position(body.global_position)
+	Engine.time_scale = 0.1
+	var t0: int = Time.get_ticks_msec()
+	fi.mouse_button(at, true)
+	await process_frame
+	fi.mouse_button(at, false)
+	await process_frame
+	var capped_after: int = fi.capped(hive, 0)
+	var state17: int = int(hive.call("frame_cells", 0)[17])
+	await fi.click_ctl(p["BackButton"] as Control)
+	var game_s: float = float(Time.get_ticks_msec() - t0) / 1000.0 * 0.1
+	Engine.time_scale = 1.0
+	ck(game_s < 0.18, "Back was clicked %.3f game-seconds after the scrape, inside the 0.18 s pop" % game_s)
+	eq(capped_after, _cpf() - 1, "the real press scraped exactly one cell")
+	eq(state17, 2, "the slot reads Extracted (2) at once, before the pop ends")
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + float(cv("cell_fly_seconds")) + 0.6)
+	var f0: PackedByteArray = hive.call("frame_cells", 0)
+	eq(int(f0[17]), 2, "after Back: the scraped slot is still Extracted")
+	var extracted: int = 0
+	var capped: int = 0
+	for b in f0:
+		if b == 2:
+			extracted += 1
+		elif b == 0:
+			capped += 1
+	eq(extracted, 1, "after Back: exactly one slot of the frame is empty")
+	eq(capped, _cpf() - 1, "after Back: the other 34 cells are still Capped")
+	if to_pile:
+		eq(pile.get("cells"), pile0 + 1, "the cell is in the pile once (not lost, not doubled)")
+		eq(cen.get("cells"), cells0, "the full bucket took nothing")
+		near(float(pile.get("jars")), _jars_of(1), 1e-9, "the pile holds one cell's jars (2 / 35)")
+	else:
+		eq(cen.get("cells"), cells0 + 1, "the cell is in the bucket once (not lost, not doubled)")
+		eq(pile.get("cells"), pile0, "nothing went to the pile")
+		near(float(cen.get("jars")), _jars_of(1), 1e-9, "the bucket holds one cell's jars (2 / 35)")
+	near(_jars_everywhere(p), jars0, 1e-9, "hive + overflow + bucket + pile: no jar lost or made")
+	var strays: Array = []
+	for n in root.get_children():
+		if not kids0.has(n):
+			strays.append(n.name)
+	eq(strays, [], "no flying cell or other node was left behind under the root")
+	eq(cen.get("lid_open"), false, "the zoom ended with cells in the bucket: lid on")
+	eq(cen.get("state"), _st(cen, "FULL"), "FULL, waiting for Spin")
+	ck(_shown(p["CentrifugeIcon"]), "Spin shows")
+	ck(_shown(p["ForkIcon"]), "the fork stays: 34 + 4 x 35 Capped cells remain")
+	eq(tr["risen"], -1, "the frame went back down")
+	eq(tr["lid"], [true, false], "the hive lid went on again")
+	ck(_shown(p["MoneyLabel"]) and not _shown(p["BackButton"]), "the farm UI is back")
+	# the half frame comes up again with its 34 cells when the fork is tapped
+	tr["raised"] = []
+	ck(await _open_zoom(m, p, tr), "the fork opens the zoom again")
+	eq(tr["raised"], [0], "the frame with the empty slot rises first")
+	eq(fi.capped(hive, 0), _cpf() - 1, "it shows its 34 Capped cells")
+	_fin()
+
+
+func t_scrape_then_back_in_pop_window_bucket() -> void:
+	await _scrape_back_in_pop(false)
+
+
+func t_scrape_then_back_in_pop_window_pile() -> void:
+	await _scrape_back_in_pop(true)
+
+
+# Patricia's confirmation (0.1), requested test 2: resume_pending (set by Back, so the fork stays) combined with the pile loading in after
+# bottling while a zoom is open. Order matters, Continue cannot be clicked in the zoom:
+#   zoom 1: frames 1-2 -> bucket (70, lid on), frame 3 -> pile (35); Back with frame 4 risen -> resume_pending, fork shows
+#   Spin, crank to DONE, Continue (real clicks) -> BOTTLING; while bottling the fork (kept by resume_pending) opens zoom 2
+#   zoom 2: bottling ends inside the zoom -> the pile loads into the empty bucket and the lid STAYS OFF (not full, zoom open)
+#   later scrapes go to the bucket (frame 4: 35 -> 70, lid on when it fills), frame 5 -> pile; the zoom ends on its own:
+#   resume_pending clears, the fork goes, the lid is on. Jars conserved all the way: 10 = hive + bucket + pile + truck.
+func t_resume_pending_pile_loads_while_zoom_open() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var hive: Node = p["Hive"]
+	var cen: Node = p["Centrifuge"]
+	var pile: Node = p["Pile"]
+	var truck: Node = p["Truck"]
+	var tr: Dictionary = _track(hive)
+	_full_hive_frozen(hive)
+	_set_cfg("bottling_seconds_per_jar", 1.5)   # CHEAT (Dev): long enough to open the zoom while bottling, short enough to finish in it
+	await _frames(4)
+	var cpf: int = _cpf()
+	var cap: int = _bucket_cells()
+	var jars0: float = _jars_everywhere(p)
+	var truck_jars: Callable = func() -> int: return int(truck.get("loaded_jars")) + int(truck.get("crate_jars"))
+	eq(m.get("resume_pending"), false, "start: resume_pending is false")
+	# ---- zoom 1
+	if not await _open_zoom(m, p, tr):
+		ck(false, "zoom 1 did not open")
+		_fin()
+		return
+	for k in 3:
+		var f: int = await _scrape_risen(m, hive, tr)
+		ck(await _next_frame(tr, f), "zoom 1: frame %d done, the next rose" % f)
+	await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 0.3)
+	eq(tr["risen"], 3, "zoom 1: frame 4 (index 3) is risen")
+	eq(cen.get("cells"), cap, "zoom 1: the bucket holds 70 cells")
+	eq(pile.get("cells"), cpf, "zoom 1: the pile holds 35 cells")
+	await fi.click_ctl(p["BackButton"] as Control)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")))
+	eq(m.get("resume_pending"), true, "Back set resume_pending")
+	ck(_shown(p["ForkIcon"]), "Back: the fork shows (frames 4 and 5 hold Capped cells)")
+	eq(cen.get("state"), _st(cen, "FULL"), "Back: bucket FULL")
+	near(_jars_everywhere(p) + float(truck_jars.call()), jars0, 1e-9, "zoom 1: jars conserved")
+	# ---- spin and bottle
+	await fi.click_icon(p["CentrifugeIcon"] as Control)
+	await _frames(3)
+	eq(cen.get("state"), _st(cen, "CRANKING"), "Spin: CRANKING")
+	var sent: int = await _crank_done(cen)
+	eq(cen.get("state"), _st(cen, "DONE"), "cranked to DONE (%d turns)" % sent)
+	await _frames(3)
+	ck(_shown(p["ForkIcon"]), "DONE: the fork still shows (resume_pending)")
+	await fi.click_ctl(p["ContinueButton"] as Control)
+	await _frames(3)
+	eq(cen.get("state"), _st(cen, "BOTTLING"), "Continue: BOTTLING")
+	await _wait(float(cv("bottling_seconds_per_jar")) * 0.5)
+	ck(_shown(p["ForkIcon"]), "BOTTLING: the fork shows (resume_pending)")
+	# ---- zoom 2, opened while bottling
+	tr["raised"] = []
+	if not await _open_zoom(m, p, tr):
+		ck(false, "zoom 2 did not open while bottling")
+		_fin()
+		return
+	eq(tr["raised"], [3], "zoom 2: frame 4 (index 3) rises first")
+	eq(cen.get("state"), _st(cen, "BOTTLING"), "zoom 2: bottling keeps running in the zoom")
+	var bottling: int = _st(cen, "BOTTLING")
+	var finished: bool = await _until(func() -> bool: return int(cen.get("state")) != bottling, float(cv("bottling_seconds_per_jar")) * 8.0)
+	ck(finished, "bottling ended inside the zoom")
+	await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 1.0)
+	ck(_shown(p["BackButton"]) and int(tr["risen"]) == 3, "the zoom is still open on frame 4")
+	eq(pile.get("cells"), 0, "the pile loaded into the empty bucket")
+	eq(cen.get("cells"), cpf, "the bucket holds the 35 pile cells")
+	eq(cen.get("lid_open"), true, "the lid stays OFF: the bucket is not full and a zoom is open")
+	eq(cen.get("state"), _st(cen, "LOADING"), "LOADING")
+	eq(truck_jars.call(), int(floorf(_jars_of(cap) + 0.000001)), "the 70-cell batch gave floor(4) = 4 jars to the truck")
+	near(_jars_everywhere(p) + float(truck_jars.call()), jars0, 1e-9, "zoom 2 after bottling: jars conserved")
+	# ---- later scrapes go to the bucket until it is full, then to the pile
+	var f3: int = await _scrape_risen(m, hive, tr)
+	ck(await _next_frame(tr, f3), "frame 4 done, frame 5 rose")
+	await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 0.3)
+	eq(cen.get("cells"), cap, "frame 4's cells went to the bucket (35 + 35)")
+	eq(pile.get("cells"), 0, "nothing piled while the bucket had room")
+	eq(cen.get("lid_open"), false, "the lid dropped on when the bucket filled")
+	eq(cen.get("state"), _st(cen, "FULL"), "FULL")
+	var f4: int = await _scrape_risen(m, hive, tr)
+	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + float(cv("slide_seconds")) + float(cv("cell_fly_seconds")) + 0.8)
+	eq(pile.get("cells"), cpf, "frame 5's cells went to the pile")
+	eq(fi.capped_total(hive, _frames_n()), 0, "no Capped cell left")
+	eq(m.get("resume_pending"), false, "the zoom ended on its own: resume_pending cleared")
+	ck(not _shown(p["ForkIcon"]), "the fork is gone: hive not full and resume_pending false")
+	ck(_shown(p["MoneyLabel"]) and not _shown(p["BackButton"]), "the farm UI is back")
+	eq(cen.get("lid_open"), false, "lid on")
+	eq(cen.get("state"), _st(cen, "FULL"), "FULL after the zoom")
+	ck(_shown(p["CentrifugeIcon"]), "Spin shows")
+	eq(tr["lid"], [true, false, true, false], "hive lid: on-off-on-off over the two zooms")
+	near(_jars_everywhere(p) + float(truck_jars.call()), jars0, 1e-9, "end: 10 jars = hive + bucket + pile + truck")
+	_fin()
+
+
+# Clarification (designer, 2026-11-04): leftover honey needs no cranking. Turns = ceil(jars of the CELLS in the bucket x taps_per_jar); the carried
+# leftover_jars add no turns, but count in the next batch's bottled floor(jars).
+func t_leftover_adds_no_turns() -> void:
+	var c: Object = await _mk_cen()
+	if c == null:
+		_fin()
+		return
+	var n1: int = _cpf() + _cpf() / 2   # 52 cells: 2.97 jars, a carry of 0.97 jars (4 turns' worth if it wrongly counted)
+	_to_cranking(c, n1)
+	_crank_done(c)
+	_bottle_out(c)
+	var left: float = float(c.get("leftover_jars"))
+	ck(left > 0.01, "batch 1 left a fractional carry (%.4f jars)" % left)
+	var n2: int = _cpf() - 5   # 30 cells: 1.71 jars, 7 turns by themselves, 11 if the carry counted
+	_load_bucket(c, n2)
+	c.call("begin_crank")
+	var cranking: int = _st(c, "CRANKING")
+	var sent: int = 0
+	while int(c.get("state")) == cranking and sent < 400:
+		c.call("tap")
+		c.call("advance", _tap_gap())
+		sent += 1
+	eq(sent, _turns_for(n2), "batch 2 (30 cells, carry %.3f): ceil(jars of its cells x taps_per_jar) = %d turns, the carry added none" % [left, _turns_for(n2)])
+	eq(c.get("turns_counted"), _turns_for(n2), "turns_counted agrees")
+	var r2: Dictionary = _bottle_out(c)
+	eq(r2["done"], [2], "the carry still counts in the bottled floor(jars): 30 cells + carry = 2.69 jars, floor 2")
 	_fin()

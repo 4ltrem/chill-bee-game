@@ -1,0 +1,30 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 621.01 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 3070
+ 
+Dev config reset (equivalent of Reset to defaults): a stale user://dev_config.tres was not present
+window (720, 1280) viewport (720, 1280) (the pixel numbers need 720 x 1280)
+PASS  the viewport is 720 x 1280
+MEASURE fps farm, full hive, fork icon showing: 711 frames, avg 7.04 ms (142.1 FPS), p95 7.23 ms, max 13.69 ms, 0 frames over 17.7 ms
+PASS  the zoom is open with a risen frame
+MEASURE cell width at the zoom: 35 cells, smallest width 45.7 px, largest 45.7 px, smallest height (vertex to vertex) 43.1 px, min_cell_px 44, zoom_size 6.7, camera size 6.70, viewport (720, 1280)
+PASS  all 35 cells of the risen frame were measured (expected 35, got 35)
+PASS  the smallest cell is at least min_cell_px wide on screen (45.7 >= 44)
+MEASURE colours (frame read 0.227 s after the scrape): capped ffc634, uncapped ffff3b; revision 3: capped e5b12d, uncapped ffff39
+MEASURE colours as RGB: capped (255, 198, 52), uncapped (255, 255, 59)
+PASS  the frame was read inside the settled pop, before the cell left (0.227 s)
+FAIL  Capped cell pixel equals revision 3's (229, 177, 45) +-2 per channel
+PASS  Uncapped cell pixel equals revision 3's (255, 255, 57) +-2 per channel
+PASS  capped and uncapped still differ visibly
+MEASURE fps zoom, cells flying (cell_fly_seconds raised): 569 frames, avg 7.03 ms (142.3 FPS), p95 7.23 ms, max 10.47 ms, 0 frames over 17.7 ms
+PASS  the zoom with cells flying holds 60 FPS (avg 7.03 ms)
+PASS  the bucket was filled to its capacity by real drags (70 cells) (expected 70, got 70)
+MEASURE fps zoom, cells flying to the pile, bucket lid on: 214 frames, avg 7.03 ms (142.3 FPS), p95 7.23 ms, max 8.18 ms, 0 frames over 17.7 ms
+PASS  Spin shows after Back (bucket full, lid on)
+MEASURE fps farm, cranking (real hold, melt and spin): 427 frames, avg 7.05 ms (141.8 FPS), p95 7.24 ms, max 14.11 ms, 0 frames over 17.7 ms
+PASS  farm, cranking (real hold, melt and spin): at least 60 frames were measured (427)
+PASS  the farm holds 60 FPS while cranking (avg 7.05 ms)
+MEASURE fps farm, bottling (honey level dropping, jars filling): 853 frames, avg 7.04 ms (142.1 FPS), p95 7.25 ms, max 17.28 ms, 0 frames over 17.7 ms
+PASS  farm, bottling (honey level dropping, jars filling): at least 60 frames were measured (853)
+PASS  the farm holds 60 FPS while bottling (avg 7.04 ms)
+---- 15 checks, 1 failed
+COMPLETED

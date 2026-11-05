@@ -1,4 +1,4 @@
-# Quinn: where the truck drives while it is away (r3 layout check). Windowed, prints numbers, saves one screenshot.
+# Quinn: where the truck drives while it is away (r3 layout check, kept for 0.1: it uses only the truck's own API). Windowed, prints numbers, saves one screenshot.
 #   Godot --path game --resolution 720x1280 --position 0,0 --script res://tests/r3_trip.gd
 # Loads 10 jars onto the truck (receive_jar, a Dev-mode style shortcut), sells, then samples the truck's projected
 # box against the ShopPanel and the screen every frame of the trip; saves the frame where the overlap is largest.
@@ -30,6 +30,7 @@ func _prop_rect(node: Node, cam: Camera3D) -> Rect2:
 
 func _run() -> void:
 	await process_frame
+	print("Dev config reset: stale file ", "FOUND and removed" if load("res://tests/farm_input.gd").call("reset_dev_config") else "not present")
 	var main: Node = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
 	for i in 10:
@@ -65,5 +66,5 @@ func _run() -> void:
 			best_img = root.get_texture().get_image()
 	print("TRIP: %d frames sampled; truck box on screen in %d of them; largest overlap of the truck's projected box with ShopPanel %.0f px2 at t=%.2f s (panel %s)" % [frames, on_screen_frames, worst, worst_t, str(panel)])
 	if best_img != null:
-		best_img.save_png(ProjectSettings.globalize_path("res://reports/2026-11-04-prototype-0-r3/10-truck-trip-max-overlap.png"))
+		best_img.save_png(ProjectSettings.globalize_path("res://reports/2026-11-04-0.1-harvest/r4-m4-truck-trip-max-overlap.png"))
 	quit()

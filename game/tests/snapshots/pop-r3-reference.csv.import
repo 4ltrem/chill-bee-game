@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://d3eg72rkxtmii"
+
+[deps]
+
+files=["res://tests/snapshots/pop-r3-reference.projected.translation", "res://tests/snapshots/pop-r3-reference.pixel.translation", "res://tests/snapshots/pop-r3-reference.mesh.translation", "res://tests/snapshots/pop-r3-reference.projected.translation", "res://tests/snapshots/pop-r3-reference.yellow.translation", "res://tests/snapshots/pop-r3-reference.blob.translation", "res://tests/snapshots/pop-r3-reference.blob.translation"]
+
+source_file="res://tests/snapshots/pop-r3-reference.csv"
+dest_files=["res://tests/snapshots/pop-r3-reference.projected.translation", "res://tests/snapshots/pop-r3-reference.pixel.translation", "res://tests/snapshots/pop-r3-reference.mesh.translation", "res://tests/snapshots/pop-r3-reference.projected.translation", "res://tests/snapshots/pop-r3-reference.yellow.translation", "res://tests/snapshots/pop-r3-reference.blob.translation", "res://tests/snapshots/pop-r3-reference.blob.translation"]
+
+[params]
+
+compress=true
+delimiter=0

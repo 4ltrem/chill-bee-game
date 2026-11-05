@@ -1,4 +1,5 @@
-# Quinn: windowed touch test for the crank (spec L61-L62), added in the r3 run.
+# Quinn: windowed touch test for the crank (spec L61-L62), added in the r3 run, updated for 0.1 Harvest (the centrifuge is the one of main.tscn;
+# the bucket is loaded with add_cells() and closed with close_lid(), fill() is gone).
 #   Godot --path game --script res://tests/touch_windowed.gd
 # Sends ScreenTouch events through Input.parse_input_event + flush, so the engine's touch->mouse emulation runs too
 # (the headless run_tests.gd cannot: headless, Input.parse_input_event dispatches nothing). One press arrives as a
@@ -36,16 +37,26 @@ func _touch(pressed: bool, vp_pos: Vector2) -> void:
 	Input.flush_buffered_events()
 
 
+var _main: Node
+
+
 func _mk() -> Node:
-	var c: Node = load("res://scripts/centrifuge.gd").new()
-	root.add_child(c)   # _process runs, as in the game
-	c.call("fill", int(GameConfig.live().frame_jars))
+	_main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
+	root.add_child(_main)   # _process runs, as in the game
+	var c: Node = _main.find_child("Centrifuge", true, false)
+	var cfg: Object = root.get_node("Economy").get("config")
+	var cpf: int = int(cfg.get("grid_cols")) * int(cfg.get("grid_rows"))
+	var n: int = cpf * int(cfg.get("centrifuge_capacity_frames"))   # a full bucket: enough turns for the 2 s hold
+	c.call("add_cells", n, float(n * int(cfg.get("frame_jars"))) / float(cpf))
+	c.call("close_lid")
 	c.call("begin_crank")
 	return c
 
 
 func _run() -> void:
 	await process_frame
+	var stale: bool = load("res://tests/farm_input.gd").call("reset_dev_config")
+	print("Dev config reset: a stale user://dev_config.tres was ", "FOUND and removed" if stale else "not present")
 	var cfg: Object = load("res://scripts/game_config.gd").call("live")
 	var rate: float = float(cfg.get("max_tap_rate"))
 	var spot := Vector2(360.0, 640.0)
@@ -61,7 +72,7 @@ func _run() -> void:
 		while Time.get_ticks_msec() < until:
 			await process_frame
 	ck(int(c.get("turns_counted")) == n, "%d touch taps spaced past the cap count exactly %d turns (got %d)" % [n, n, int(c.get("turns_counted"))])
-	c.queue_free()
+	_main.queue_free()
 	await process_frame
 	# --- a touch hold of T s counts 1 + T x max_tap_rate turns (+-1 frame), never more
 	c = _mk()
@@ -82,7 +93,7 @@ func _run() -> void:
 		await process_frame
 	ck(int(c.get("turns_counted")) == after_release, "releasing the touch stops the counting (%d -> %d)" % [after_release, int(c.get("turns_counted"))])
 	ck(not bool(c.get("holding")), "not holding after release")
-	c.queue_free()
+	_main.queue_free()
 	await process_frame
 	print("---- %d checks, %d failed" % [checks, fails])
 	if fails == 0:

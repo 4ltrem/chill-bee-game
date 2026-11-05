@@ -184,7 +184,10 @@ static func capped_total(hive: Node, frames: int) -> int:
 func screen_rect(node: Node, cam: Camera3D) -> Rect2:
 	var have: bool = false
 	var r := Rect2()
-	for m in node.find_children("*", "MeshInstance3D", true, false):
+	var meshes: Array = node.find_children("*", "MeshInstance3D", true, false)
+	if node is MeshInstance3D:
+		meshes.append(node)   # find_children only searches descendants: a leaf mesh passed in must count itself (r4_measure defect, 2026-11-04)
+	for m in meshes:
 		var mi: MeshInstance3D = m as MeshInstance3D
 		if mi.mesh == null or not mi.is_visible_in_tree():
 			continue
@@ -198,3 +201,14 @@ func screen_rect(node: Node, cam: Camera3D) -> Rect2:
 			else:
 				r = r.expand(p)
 	return r
+
+
+## The equivalent of pressing "Reset to defaults" in the Dev panel, for a test run: deletes user://dev_config.tres if one exists
+## (a stale Dev mode file would override the default_config.tres values) and puts the live config back to the defaults.
+## Returns true if a stale file was found (the caller prints it, so the report can say so).
+static func reset_dev_config() -> bool:
+	var found: bool = FileAccess.file_exists(GameConfig.DEV_PATH)
+	if found:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(GameConfig.DEV_PATH))
+	GameConfig.apply_from(GameConfig.live(), GameConfig.fresh_default())
+	return found

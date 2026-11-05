@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://502mak0k587d"
+
+[deps]
+
+files=["res://tests/snapshots/r3/pop-r3.projected.translation", "res://tests/snapshots/r3/pop-r3.pixel.translation", "res://tests/snapshots/r3/pop-r3.mesh.translation", "res://tests/snapshots/r3/pop-r3.projected.translation", "res://tests/snapshots/r3/pop-r3.yellow.translation", "res://tests/snapshots/r3/pop-r3.blob.translation", "res://tests/snapshots/r3/pop-r3.blob.translation"]
+
+source_file="res://tests/snapshots/r3/pop-r3.csv"
+dest_files=["res://tests/snapshots/r3/pop-r3.projected.translation", "res://tests/snapshots/r3/pop-r3.pixel.translation", "res://tests/snapshots/r3/pop-r3.mesh.translation", "res://tests/snapshots/r3/pop-r3.projected.translation", "res://tests/snapshots/r3/pop-r3.yellow.translation", "res://tests/snapshots/r3/pop-r3.blob.translation", "res://tests/snapshots/r3/pop-r3.blob.translation"]
+
+[params]
+
+compress=true
+delimiter=0

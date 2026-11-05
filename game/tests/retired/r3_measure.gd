@@ -1,3 +1,5 @@
+# RETIRED in the 0.1 Harvest run: drives revision 3 (harvest.tscn close-up, fill(), the old fork flow). Kept because it still runs against a worktree
+# of commit 7d04bc6 (it printed revision 3's capped (229,177,45) / uncapped (255,255,57) on this machine for the 0.1 report). Replaced by tests/r4_measure.gd.
 # Quinn: measurements for the Prototype 0 r3 report (spec "Done when": uncapping pop RGB, layout, contrast, FPS).
 #   Godot --path game --resolution 720x1280 --position 0,0 --script res://tests/r3_measure.gd
 # Windowed. Not a pass/fail suite: it prints numbers and saves screenshots to reports/2026-11-04-prototype-0-r3/.
