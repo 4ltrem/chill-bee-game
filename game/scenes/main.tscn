@@ -223,8 +223,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, 4.2)
 
 [node name="ZoomFraming" type="Marker3D" parent="FarmWorld"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.82, 0, -1.845)
-metadata/zoom_size = 5.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.526, 0, -1.949)
+metadata/zoom_size = 4.7
 
 [node name="FarmUIRoot" type="CanvasLayer" parent="."]
 
