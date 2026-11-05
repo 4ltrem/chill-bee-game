@@ -98,7 +98,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 6 | — | 41,833,969 | 56,610 s |
+| Orchestrator (main session) | post-ICM | 6 | — | 42,017,846 | 56,624 s |
 <!-- /generated: run-summary -->
 
 Notes on the Content generation runs:
