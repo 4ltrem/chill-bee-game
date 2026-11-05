@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 864dbfb5-1b7c-49cd-bf94-214920851b62
-  modified: 2026-11-04T01:03:43.220Z
+  modified: 2026-11-05T06:44:30.010Z
 ---
 
 Working in the terminal `claude` CLI inside VS Code (`/ide`). The status line (`_tools/statusline.py`) logs plan usage
@@ -21,7 +21,9 @@ by itself, so there's no need to ask the designer for a nudge ([[usage-calibrati
 
 **2026-11-04 (day 2):** 0.1 Harvest built on branch `milestone/0.1` (commits eaa8628..970f28b): Quinn's report `game/reports/2026-11-04-0.1-harvest.md` 78/78, play_loop green, 60 FPS, pop snapshot OK. Open: designer decision on the capped colour (upright pose lights it brighter than r3), intermittent play_loop fork click, the designer uploads `game/builds/chill-bee-game-0.1.0-web.zip` to itch and plays; merge to main at end of day once played. Process changes in game/CONTEXT.md 4-7 and `_tools/contract_check.py`.
 
-**2026-11-05:** 0.1.2 (`game/specs/0.1.2-bottling-and-sale.md`) built on `milestone/0.1`; Patricia's fixes in 9514516 (104/110). Quinn's final run was launched from the previous session (fix 6 tests per the spec Clarifications, split run_tests.gd, mutations.json + mutate.py, reports/.gdignore, `godot_run.py all`, `build.py 0.1.2 --smoke`, report `game/reports/2026-11-05-0.1.2.md`). If that report is missing, his run did not finish: relaunch Quinn with the same brief. Then: review report + `python _tools/contact_sheet.py game/reports/0.1.2-shots`, rework tally rows to `_meta/team.md`, checkpoint commit, designer plays and uploads `game/builds/chill-bee-game-0.1.2-web.zip` to itch (Dev mode "Reset to defaults" once). M2: `STYLE_GUIDE.md` and `game/specs/m2-style-loop.md` are drafts awaiting the designer's approval before any build. Budget guard hook (`_tools/budget_guard.py`) is in `.claude/settings.json`.
+**2026-11-05:** 0.1.2 (`game/specs/0.1.2-bottling-and-sale.md`) built on `milestone/0.1`; Patricia's fixes in 9514516 (104/110). Quinn's final run was launched from the previous session (fix 6 tests per the spec Clarifications, split run_tests.gd, mutations.json + mutate.py, reports/.gdignore, `godot_run.py all`, `build.py 0.1.2 --smoke`, report `game/reports/2026-11-05-0.1.2.md`). If that report is missing, his run did not finish: relaunch Quinn with the same brief. Then: review report + `python _tools/contact_sheet.py game/reports/0.1.2-shots`, rework tally rows to `_meta/team.md`, checkpoint commit, designer plays and uploads `game/builds/chill-bee-game-0.1.2-web.zip` to itch (Dev mode "Reset to defaults" once). M2: `STYLE_GUIDE.md` and `game/specs/m2-style-loop.md` are drafts awaiting the designer's approval before any build. Reviewed and revised 2026-11-05 (Biome glow and Bee roles, UI border/shop panel tokens, V2 scoped, V5 provisional, 0.1.2 refs); the designer chose to keep both as drafts for a final read. Budget guard hook (`_tools/budget_guard.py`) is in `.claude/settings.json`.
+
+**Update 2026-11-05 (later):** Quinn's run finished: PASS, committed 92c1119 (110/110, mutations 8/8, 0.1.2 zip built, build.py smoke wait raised to 100 s, untested). Designer to play 0.1.2 and upload; watch the Sell icon over the top-left money label in Bob's farm shot. Draft `game/specs/0.1.3-next-revision.md` holds Dev-mode game speed (x0.25-x10 row, on-screen tag, [ ] hotkeys) plus a slot for the 0.1.2 play-test notes; open question x10 vs x20. Not end of day yet.
 
 **Next (before r4 was drafted):**
 1. The designer plays the exe; Dev mode opens with the backquote key. Gather the play-test notes into revision 4.
