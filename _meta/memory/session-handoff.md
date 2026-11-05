@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 864dbfb5-1b7c-49cd-bf94-214920851b62
-  modified: 2026-11-05T18:27:55.673Z
+  modified: 2026-11-05T18:50:35.950Z
 ---
 
 Working in the terminal `claude` CLI inside VS Code (`/ide`). The status line (`_tools/statusline.py`) logs plan usage
@@ -29,7 +29,7 @@ by itself, so there's no need to ask the designer for a nudge ([[usage-calibrati
 
 **Update 2026-11-05 day 2 (session d82fcc79), read this first:** checkpoint aa4e1a3 on `milestone/0.1`. Applied to the GDD: camera rule, Deep Frame 2× longer, Auto-Sell = truck leaves when full at full price, Automation split (motor, auto-scraper = Long Fork on a gantry, Faster Delivery), pause ends with motor + auto-scraper, crate tiers, automated zooms from upgrade mode (UI TBD). M2 spec approved (items 10 wiring, 11 Milo + `model_shots.py`); Milo the Modeler hired (Haiku). V14 now ≥ 20 px. **Next: start M2 in a fresh session** (style_check.py + fixtures, Quinn's style_shots.gd, model_shots.py). Bob is rendering round 5 in the worktree (`game/reports/round5-shots/`: 3 closer first zooms, 3 second stops with the hive in the upper-right); then a vote page (update the same artifact), then approve the 0.1.3 spec. Its open items: pick from round 5.
 
-**M2 built 2026-11-05 (session 452ddba6), branch `milestone/m2` (e21bf90..ad2d4c5):** all 11 spec items in place; write-up `STYLE_LOOP.md`. Visual demo `game/reports/style/farm-0-1-2/blackboard.md` stopped `waiting-designer` on rim_mark (V1+V3): A recolour charcoal / B approve as accent, voted on Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa, ids `v3-rim-*`). After the pick: apply A (edit `game/materials/rim_mark.tres` to charcoal) or B (designer adds the accent to STYLE_GUIDE.md), then `python -I _tools/style_loop.py farm-0-1-2 --resume` for round 2. Vera's open rows (V8 honey brightness, V9 "Need $25" cue, zoom framing) need scripts/config, so they go to Patricia, not Bob. Flower-patch B picked; promoting it needs `flower_patch.gd` to colour the blossoms (Patricia) and should land in the 0.1.x build, not on m2. `content/biome-intros.md` is back to draft after the T6 revise and needs re-approval. Two stray artifacts (Style Rule V3 8hQRdQuV485d5Jsu5UJF41, Flower Patch 18RZ7YYQW8wR8tx6nekw1V) can be deleted only if the designer says so.
+**M2 done 2026-11-05 (session 452ddba6), branch `milestone/m2`:** all 11 spec items and the Done-when checks met; write-up `STYLE_LOOP.md` (status draft, for the designer's read). Visual demo `game/reports/style/farm-0-1-2/blackboard.md`: 3 rounds, 2 designer stops (rim mark → A charcoal, applied; V8 honey-hero → neither for now), ended `needs-review` at max rounds with 1 open V7 row (glass bucket crowds the zoom view, slab cut off at left) → a spec item for Patricia. Deferred for a later spec: V8 honey as hero, the "x30" pile label (V10 minor). Flower-patch B picked; promoting it needs `flower_patch.gd` to colour the blossoms (Patricia), in the 0.1.x build. `content/biome-intros.md` is back to draft after the T6 revise; needs re-approval. Merge note: Bob's scene edits on m2 (main.tscn Upgrade/hint/Harvest tag/ZoomFraming, hive walls, jar lid, rim_mark charcoal) will conflict with the 0.1.3 build on milestone/0.1. All comparisons now live in Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa); the two stray pages were deleted with the designer's OK.
 
 **Next (before r4 was drafted):**
 1. The designer plays the exe; Dev mode opens with the backquote key. Gather the play-test notes into revision 4.

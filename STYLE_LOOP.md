@@ -82,7 +82,30 @@ The loop held them back from Bob and added the question, with votes, to the one 
 - a 240 × 120 Harvest tag with 32 px text;
 - hive walls, floor and jar lid at 0.05.
 
-The diff is on the blackboard. Result: `waiting-designer`. After the pick, `--resume` renders round 2.
+The diff is on the blackboard. Result: `waiting-designer`.
+
+**The designer picked A.** The rim mark was recoloured to charcoal and moved to the Shadow role, and `style_check.py` then passed with 0 rows. The loop was resumed with `--resume`; Vera's round-1 verdict and Bob's diff carry over.
+
+**Round 2: FAIL.** `style_check.py` had no rows. Vera found that two earlier fixes had not worked yet:
+- the hint was still behind the wider Harvest button;
+- the zoom's left cells were still cut off.
+
+She also held one new row for the designer: V8, honey as the hero, with two options (A: shrink the truck; B: bigger honey props). The question went on Design Votes with A rendered. Meanwhile Bob fixed these in scenes:
+- moved the hint clear of the button;
+- drew the disabled Upgrade button shorter, a shape cue for V9;
+- shifted the zoom framing.
+
+Quinn's suites stayed green after his edits (unit 110, ui 13, touch 4, play 205, measure 17).
+
+**The designer chose "neither for now".** The loop was resumed with `--note`, so Vera knew V8 was deferred.
+
+**Round 3: FAIL at max rounds.** Vera confirmed two fixes from round 2 and dropped their rows:
+- the hint is readable;
+- the disabled button now differs in shape as well as colour.
+
+She listed V8 and the "x30" label as minor. One blocking row is left open: V7, the glass bucket crowding the zoom view and a slab cut off at its left edge. That needs camera or script work, so it goes to the next spec for Patricia.
+
+Result: `needs-review`. This is the spec's "stops at max rounds with its FAIL rows listed".
 
 Some of Vera's rows (V8 honey brightness, the V9 "Need $25" cue, the zoom framing) need script or config changes. Bob may only edit `scenes/` and `materials/`, so they stay open and come back in round 2. That is a real limit of a scene-only refiner. It is recorded here rather than widened: those rows become spec items for Patricia, the programmer.
 
@@ -112,13 +135,13 @@ Tokens are total processed, from the run log (`_meta/agent-runs.csv`, tables "St
 
 | What | Calls | Tokens |
 |---|---|---|
-| Visual loop, round 1 + designer stop | Vera, Bob | 103,927 |
+| Visual loop, 3 rounds and 2 designer stops | Vera × 3, Bob × 2 | 466,798 (round 1: 103,927; round 2: 309,760, of which Bob 255,831; round 3: 53,111) |
 | Voice loop, 2 rounds | Clara × 2, William | 131,695 |
 | Vera calibration | Vera × 2 | 83,171 |
 | Clara before / after | Clara × 2 | 161,219 |
 | Building M2: Vera's hire (Martin), shot scripts (Quinn), compare_page move, Milo's variants | 4 subagents | ≈ 202,500 |
 
-A visual round costs about 50k tokens per agent call. The script half of the evaluator (`style_check.py`, renders, `model_shots.py`) costs no tokens.
+Vera costs about 53k tokens per round. Bob costs 51k on a small fix list and 256k when his rows need layout reasoning (round 2: 17 turns). He is the cost to watch, and it argues for sending him script-only rows less often. The script half of the evaluator (`style_check.py`, renders, `model_shots.py`) costs no tokens.
 
 ## Files
 

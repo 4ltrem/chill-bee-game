@@ -3,7 +3,7 @@ slug: farm-0-1-2
 started: 2026-11-05
 max_rounds: 3
 max_tokens: 600000
-result: waiting-designer
+result: needs-review
 ---
 # Style blackboard: farm-0-1-2
 
@@ -187,3 +187,44 @@ Transcripts: `_meta/sessions/runs/2026-11-05-style-farm-0-1-2/`
 | Vera, round 2 | 53,929 | 25,424 | 9 | 14 s |
 | Bob, round 2 | 255,831 | 37,993 | 17 | 44 s |
 | **Total** | **309,760** | | | |
+
+## Resumed 2026-11-05
+
+The designer has answered the rows waiting above; the loop goes on from round 3.
+
+Designer's decision: V8 (honey as the hero): the designer chose neither option for now; it is deferred to a later spec.
+
+## Round 3
+
+### style_check.py, round 3
+
+Shots: `game/reports/style/farm-0-1-2/round-3/`
+
+No rows: every script rule passes.
+
+### Critic, round 3
+VERDICT: FAIL
+| # | Rule | Shot | Finding | Fix |
+|---|---|---|---|---|
+| 1 | V7 | 03-zoom-uncapping.png | The glass bucket still fills the bottom-right third of the view. It muddies the hive floor and the frame rests. A wood slab at the far left (x 0–35, y 640–900) is still cut off by the screen edge. | Hide the bucket in the zoom view. Shift the camera or hide the slab so nothing is sliced by the screen edge. |
+| 2 | V8 | 04-bucket-full.png | The gold progress bar, the Harvest and Spin buttons and the red truck still out-shine the small honey coins. The designer deferred this to a later spec. | Revisit in the later spec. (minor) |
+| 3 | V10 | 05-pile.png | The "x30" label on the honey pile is still about 10 px high and hard to read against the gold coins. | Enlarge it to 28 px with the ink outline. (minor) |
+
+Checked since round 2 and now dropped:
+- The "Tap or hold to spin" hint now sits clear above the Harvest button and is fully readable. The earlier V7 row on it is fixed.
+- The disabled Upgrade button is now shorter than the affordable one (05-pile.png vs 06-truck-away.png). That adds a shape cue beyond colour, so the V9 row is fixed.
+
+## Result
+
+Still FAIL after round 3 (max rounds 3 or the token cap). Open rows:
+
+| # | Rule | Where | Finding | Fix |
+|---|---|---|---|---|
+| 1 | V7 | 03-zoom-uncapping.png | The glass bucket still fills the bottom-right third of the view. It muddies the hive floor and the frame rests. A wood slab at the far left (x 0–35, y 640–900) is still cut off by the screen edge. | Hide the bucket in the zoom view. Shift the camera or hide the slab so nothing is sliced by the screen edge. |
+
+Transcripts: `_meta/sessions/runs/2026-11-05-style-farm-0-1-2/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Vera, round 3 | 53,111 | 25,316 | 9 | 17 s |
+| **Total** | **53,111** | | | |
