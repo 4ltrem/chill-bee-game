@@ -85,8 +85,15 @@ input[type="search"]:focus-visible, button:focus-visible, summary:focus-visible 
 .btn:hover { border-color: var(--honey); }
 
 main { display: grid; gap: 34px; min-width: 0; }
-#days { display: grid; gap: 34px; }
-.day { display: grid; gap: 12px; }
+/* Days: one card per day, oldest first, in a row that scrolls sideways. */
+#days {
+  display: flex; gap: 16px; align-items: flex-start; overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity; padding-bottom: 12px; scrollbar-color: var(--line) transparent;
+}
+.day {
+  flex: 0 0 min(440px, 86vw); scroll-snap-align: start; display: grid; gap: 12px; align-content: start;
+  padding: 16px 16px 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+}
 .day h2 {
   margin: 0; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
   font: 700 22px/1.2 var(--font-display); text-wrap: balance;
@@ -105,7 +112,7 @@ main { display: grid; gap: 34px; min-width: 0; }
 .id { font: 500 13px/1.6 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
 .title { font-weight: 600; line-height: 1.4; }
 .what { grid-column: 3; color: var(--muted); font-size: 14px; }
-.body { display: grid; gap: 10px; padding: 0 4px 16px 82px; max-width: calc(65ch + 82px); }
+.body { display: grid; gap: 10px; padding: 0 4px 16px 38px; }
 @media (max-width: 520px) { .body { padding-left: 4px; } }
 .field { display: grid; gap: 2px; }
 .field b { font: 500 11px/1.4 var(--font-mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
@@ -130,7 +137,7 @@ footer { color: var(--muted); font-size: 13px; }
   <header>
     <div class="eyebrow" id="eyebrow">Chill Bee Game</div>
     <h1>Decisions behind Chill Bee Game</h1>
-    <p class="lede">Every process and architecture decision from the working sessions, newest day first. Filter by topic, search, and open a decision to see why it was made, what was rejected and which files changed.</p>
+    <p class="lede">Every process and architecture decision from the working sessions, oldest day first, one card per day: scroll sideways for later days. Filter by topic, search, and open a decision to see why it was made, what was rejected and which files changed.</p>
   </header>
 
   <div class="layout">
@@ -147,7 +154,7 @@ footer { color: var(--muted); font-size: 13px; }
     </aside>
 
     <main>
-      <div id="days"></div>
+      <div id="days" tabindex="0" aria-label="Decisions by day, scroll sideways"></div>
       <section class="open" aria-labelledby="open-h">
         <h2 id="open-h">Still yours to decide</h2>
         <ul id="open-list"></ul>
@@ -193,7 +200,7 @@ function renderDays() {
   const q = state.q.trim().toLowerCase();
   const shown = D.filter(d => (!state.topic || d.topic === state.topic) &&
     (!q || JSON.stringify(d).toLowerCase().includes(q)));
-  const days = [...new Set(D.map(d => d.date))].sort().reverse();
+  const days = [...new Set(D.map(d => d.date))].sort();
   for (const day of days) {
     const items = shown.filter(d => d.date === day);
     const sec = el("section", "day");
