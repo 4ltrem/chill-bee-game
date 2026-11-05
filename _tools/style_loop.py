@@ -15,7 +15,7 @@ The round passes only when Vera says PASS and style_check.py has no blocking row
 Designer stops: a row whose Fix ends "(designer)" (a new token, a rule change, two or more
 acceptable answers) is never sent to Bob. If a round has any, Bob fixes the other rows, the rows
 are listed under `## Waiting for the designer`, and the run stops with `result: waiting-designer`.
-Build the comparison page for each (`_tools/compare_page.py stop`), link it on the blackboard,
+Add each as a question on the Design Votes page (`_tools/compare_page.py add`), link it on the blackboard,
 and once the designer has edited STYLE_GUIDE.md or picked an option, `--resume SLUG` continues
 from the next round. A run also stops at PASS, at --max-rounds (counted over the whole run) or
 past --max-tokens (checked after each FAIL).
@@ -135,6 +135,11 @@ def main(argv=None):
         if not board.is_file() or g.get_front(board, "result") != "waiting-designer":
             sys.exit(f"--resume needs {rel_board} with result: waiting-designer")
         start = (round_dirs(base) or [0])[-1] + 1
+        text = board.read_text(encoding="utf-8")  # Vera's last verdict and Bob's meanwhile diff carry over
+        blocks = re.findall(r"^### Critic, round \d+\b.*?(?=^#{2,3} |\Z)", text, re.M | re.S)
+        resumed_block = blocks[-1].strip() if blocks else None
+        diffs = re.findall(r"^### Changes \(Bob[^\n]*\n\n~~~~diff\n(.*?)\n~~~~", text, re.M | re.S)
+        resumed_changes = diffs[-1] if diffs else None
         g.set_front(board, result="running")
         g.append(board, f"\n## Resumed {datetime.date.today()}\n\nThe designer has answered the rows "
                         f"waiting above; the loop goes on from round {start}.\n")
@@ -148,10 +153,10 @@ def main(argv=None):
             f"The shared record of this visual style loop. `style_loop.py` writes every section and hands "
             f"each agent only its slice; no agent reads this file.\n\n## Request\n{a.request}\n",
             encoding="utf-8", newline="\n")
-        start = 1
+        start, resumed_block, resumed_changes = 1, None, None
     run_folder = g.ROOT / g.RUNS / f"{datetime.date.today()}-style-{a.slug}"
     usage, v, n, block, bob_rows, result = [], None, start - 1, None, [], "needs-review"
-    previous_block, changes = None, None
+    previous_block, changes = resumed_block, resumed_changes
     try:
         for n in range(start, a.max_rounds + 1):
             g.append(board, f"\n## Round {n}\n")
@@ -194,7 +199,8 @@ def main(argv=None):
             previous_block = block
             if held:
                 g.append(board, "\n## Waiting for the designer\n\nThese rows need a creative choice, so Bob "
-                                "does not get them. Each gets a comparison page (`_tools/compare_page.py stop`); "
+                                "does not get them. Each becomes a question with votes on the Design Votes page "
+                                "(`_tools/compare_page.py add`); "
                                 "its link goes here. Resume with `style_loop.py " + a.slug + " --resume` once "
                                 "the designer has picked.\n\n| # | Rule | Where | Finding | Fix |\n|---|---|---|---|---|\n"
                                 + "\n".join(re.sub(r"^\|\s*\d+\s*\|", f"| {i} |", r) for i, r in enumerate(held, 1))

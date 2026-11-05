@@ -703,6 +703,8 @@ class StyleLoop(unittest.TestCase):
         self.assertIn("new token (designer)", board.split("## Waiting for the designer")[1])
         self.assertEqual(self.run_loop("--resume"), 0)
         self.assertEqual(calls[-1], self.sl.CRITIC)
+        self.assertIn("Your round 1 verdict", prompts[-1])  # Vera's context survives the stop
+        self.assertIn("ground_patch", prompts[-1])  # with Bob's meanwhile diff
         self.assertTrue((self.root / "game" / "reports" / "style" / "s" / "round-2").is_dir())
         self.assertIn("result: pass", self.board())
 
@@ -721,6 +723,8 @@ class StyleLoop(unittest.TestCase):
         self.assertIn("truck red", [t["name"] for t in tokens])
         self.assertAlmostEqual(sc.delta_e((1, 1, 1), (1, 0.96, 0.86)), 13.9, places=1)
         self.assertAlmostEqual(sc.delta_e((0.85, 0.2, 0.15), (0.75, 0.2, 0.2)), 16.0, places=1)
+        self.assertEqual(sc.accent_limit((TOOLS.parent / "STYLE_GUIDE.md").read_text(encoding="utf-8")), 2)
+        self.assertEqual(sc.accent_limit("| V3 | **Accents are rare:** at most 3 accent-role colours |"), 3)
 
 
 if __name__ == "__main__":

@@ -39,7 +39,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | real-world facts or sources are needed | Ruth: `.claude/agents/research-assistant.md`, writing to [research/](research/CONTEXT.md) | the designer's review of the brief |
 | an applied design needs code | Patricia: `.claude/agents/programmer.md`, writing to [game/](game/CONTEXT.md) `scripts/` | Quinn's report |
 | a biome or layout needs a scene | Bob: `.claude/agents/builder.md`, writing to [game/](game/CONTEXT.md) `scenes/` | Quinn's report |
-| a scene needs a style check | `python -I _tools/style_loop.py <slug>`: `style_check.py`, then Vera (`.claude/agents/style-critic.md`), then Bob, writing the blackboard to `game/reports/style/` | a PASS, or a designer stop with its comparison page (`_tools/compare_page.py stop`) |
+| a scene needs a style check | `python -I _tools/style_loop.py <slug>`: `style_check.py`, then Vera (`.claude/agents/style-critic.md`), then Bob, writing the blackboard to `game/reports/style/` | a PASS, or a designer stop with its question on the Design Votes page (`_tools/compare_page.py add`) |
 | a prop needs colorbox variants to compare | Milo: `.claude/agents/modeler.md`, writing to [game/scenes/variants/](game/scenes/variants/CONTEXT.md) | the designer's pick on the compare page |
 | a feature or build is ready to test | Quinn: `.claude/agents/qa-build-engineer.md`, writing to [game/](game/CONTEXT.md) `tests/` and `reports/` | the developer plays the build |
 | a proposal was accepted | [CONTEXT.md](CONTEXT.md), step 4 (apply) | `python -I _tools/links.py` passes |

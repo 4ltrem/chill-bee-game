@@ -184,7 +184,13 @@ def materials(root):
 
 # ---- rules ---------------------------------------------------------------------------------
 
-def check_materials(root, tokens, rep, threshold, phase):
+def accent_limit(guide_text):
+    """V3's limit, read from the guide's rule text ("at most N accent-role colours"), default 2."""
+    m = re.search(r"\|\s*V3\s*\|[^|]*at most (\d+) accent", guide_text or "")
+    return int(m.group(1)) if m else 2
+
+
+def check_materials(root, tokens, rep, threshold, phase, guide_text=""):
     accents = {}
     for key, path, line, props in materials(root):
         rgb, alpha = color(props.get("albedo_color", ("Color(1, 1, 1, 1)", line))[0])
@@ -229,15 +235,17 @@ def check_materials(root, tokens, rep, threshold, phase):
             if props.get("cull_mode", ("0",))[0] != "2":
                 rep.add("V15", path, line, f"glass `{key}` culls back faces", "set `cull_mode = 2` (back faces drawn)")
     # V3: accents
-    if len(accents) > 2:
+    limit = accent_limit(guide_text)
+    if len(accents) > limit:
         names = ", ".join(f"`{k}`" for k in accents)
         approved = [k for k in accents if ROLES.get(k) == ["Accent"] and nearest(accents[k][2], tokens, ["Accent"])[0] <= threshold]
         extra = [k for k in accents if k not in approved] or list(accents)[2:]
         for k in extra:
             path, ln, rgb = accents[k]
-            rep.add("V3", path, ln, f"{len(accents)} accent colours in the scene set ({names}); at most 2",
+            rep.add("V3", path, ln, f"{len(accents)} accent colours in the scene set ({names}); at most {limit}",
                     f"A: recolour `{k}` to a calm non-accent token (e.g. charcoal or steel); "
-                    f"B: approve `{k}` as a new accent in STYLE_GUIDE.md (designer)")
+                    f"B: approve `{k}` as a new accent: add its token to the Accent role and raise V3's limit to "
+                    f"{len(accents)} in STYLE_GUIDE.md (designer)")
     # a V1 row on a material held by a V3 designer stop waits for the same decision
     held = {r["where"] for r in rep.rows if r["rule"] == "V3"}
     for r in rep.rows:
@@ -385,7 +393,7 @@ def run(root, guide, phase="colorbox", threshold=12.0, shots=None, budget=2000, 
     ONLY = [Path(x).resolve() for x in scenes] if scenes is not None else None
     tokens = load_palette(guide)
     rep = Report(root)
-    check_materials(root, tokens, rep, threshold, phase)
+    check_materials(root, tokens, rep, threshold, phase, Path(guide).read_text(encoding="utf-8"))
     meshes(root, rep, phase, budget)
     check_ui(root, tokens, rep, threshold)
     check_shots(shots, rep)
