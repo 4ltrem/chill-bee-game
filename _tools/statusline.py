@@ -54,8 +54,13 @@ def main(raw, root=None):
     five, week = pct(data, "five_hour"), pct(data, "seven_day")
     if five is not None or week is not None:
         stamp = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
-        save({"ts": stamp, "session": data.get("session_id", ""), "five_hour": five, "seven_day": week},
-             (root or ROOT) / "_meta" / "usage" / "readings.jsonl")
+        reading = {"ts": stamp, "session": data.get("session_id", ""), "five_hour": five, "seven_day": week}
+        resets = ((data.get("rate_limits") or {}).get("seven_day") or {}).get("resets_at")
+        if isinstance(resets, (int, float)):   # epoch seconds; budget_guard.py paces the week by it
+            resets = datetime.datetime.fromtimestamp(resets, datetime.timezone.utc).isoformat()
+        if isinstance(resets, str) and resets:
+            reading["week_resets"] = resets
+        save(reading, (root or ROOT) / "_meta" / "usage" / "readings.jsonl")
     return line(data)
 
 

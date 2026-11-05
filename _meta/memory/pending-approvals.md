@@ -17,8 +17,7 @@ playtest ([[guide-playtest]]), since that revision returns it to `draft` anyway.
 now wrong (fork icon, tap/hold the centrifuge's physical crank or the screen around it, Continue, sales truck instead).
 
 Also waiting (2026-11-05, M2): `content/biome-intros.md` went back to `draft` after the T6 voice-loop revise
-(`content/_runs/biome-intros/blackboard-2.md`) and needs re-approval; `STYLE_LOOP.md` (the A6 write-up) awaits the
-designer's read.
+(`content/_runs/biome-intros/blackboard-2.md`) and needs re-approval. `STYLE_LOOP.md` (the A6 write-up) was approved 2026-11-05 (second shift).
 
 Follow-ups recorded in the approvals' `decision:` lines, not started:
 - The Sunny Meadow bumble bee visitor appears in the world, so the GDD species table needs a Meadow flower for it

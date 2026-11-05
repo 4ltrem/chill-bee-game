@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: fa5df4be-6365-415d-bd06-9f0be0bb573b
-  modified: 2026-11-03T23:23:09.168Z
+  modified: 2026-11-05T23:29:10.047Z
 ---
 
 Rule (designer, 2026-11-03): every agent run, of any agent or kind (Agent tool, `generate.py`, headless `claude -p`),
@@ -25,7 +25,7 @@ Tokens per 1% then come from the usage change ÷ (subagent + orchestrator tokens
 main session had processed ~156.5M tokens over 421 calls (154.4M of them cache reads), against ~11.1M for every
 post-ICM agent run in the log. The orchestrator is the main cost, so a calibration that leaves it out is wrong.
 
-**Budget guard (2026-11-05):** after a run hit the 5-hour limit mid-task, `_tools/budget_guard.py` runs as a PreToolUse hook on Agent/Workflow: it denies launches at >= 80% of the 5-hour window or >= 90% weekly, warns at 65%. The designer can lift it for N minutes with `python -I _tools/budget_guard.py --allow-for N`. When it warns, finish the current step and pause rather than starting a batch.
+**Budget guard (2026-11-05):** after a run hit the 5-hour limit mid-task, `_tools/budget_guard.py` runs as a PreToolUse hook on Agent/Workflow: it denies a launch when 5-hour usage + that agent type's largest logged cost (COST table) > 95%, at >= 95% weekly, or for heavy agents (Bob, Patricia, Quinn) when weekly is > 10 points ahead of an even pace (week resets Sat 8:59am Toronto); warns at 65%. Reworked 2026-11-05 second shift: the flat 80% block had stopped a ~1% Doris run. Refresh COST from `_meta/agent-runs.csv` when runs change. The designer can lift it for N minutes with `python -I _tools/budget_guard.py --allow-for N`. When it warns, finish the current step and pause rather than starting a batch.
 
 **How to apply:** since 2026-11-03 the hooks do this automatically (`_tools/runlog.py`, `log_subagent.py`,
 `log_session.py`, `statusline.py`; rows in `_meta/agent-runs.csv`). Before a batch of agent runs, check that

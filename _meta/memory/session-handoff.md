@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 864dbfb5-1b7c-49cd-bf94-214920851b62
-  modified: 2026-11-05T20:11:42.336Z
+  modified: 2026-11-05T23:39:24.189Z
 ---
 
 Working in the terminal `claude` CLI inside VS Code (`/ide`). The status line (`_tools/statusline.py`) logs plan usage
@@ -36,6 +36,8 @@ by itself, so there's no need to ask the designer for a nudge ([[usage-calibrati
 - **Why the played exe lacks the new hive/centrifuge placement and the lid lean:** it is still 0.1.2, and 0.1.3 isn't built yet.
 - **Flower-patch B is done** on `m2/flower-patch` (fe2f237, worktree `.claude/worktrees/flower-patch`, spec `game/specs/flower-patch-b.md`). It is not merged. The post-merge steps are in [[flower-patch-followup]].
 - **Still free for this session:** A5 prep (due 11/15).
+
+**2026-11-05 second shift (session cbb6da0e):** a NEW session owns 0.1.3 (steps b, c); this one does tooling: STYLE_LOOP.md approved, budget guard reworked (per-agent cost + weekly pace, week resets Sat 8:59am Toronto), Milo's shots on one grid, close up. Rex, the Script Runner (`script-runner`, Haiku) is hired and passed a test run (tool tests, ~65k tokens, 0% of the window); the 0.1.3 session may dispatch Rex for full suites, builds and mutate runs, while Quinn's definition still says he runs them himself until [[quinn-split-pending]] is applied after 0.1.3. **New 0.1.3 session, start here:** checkpoint on `milestone/m2` (second shift); 0.1.3 lives in `.claude/worktrees/0.1.3` on `milestone/0.1.3`; resume step b (see "End of day 2026-11-05" below). Weekly budget: 73% used, resets Sat 11/7 8:59am Toronto; finishing 0.1.3 b + c costs ~20% of the week.
 
 **End of day 2026-11-05 (read first):** the designer stopped all agents. 0.1.3 lives in the worktree `.claude/worktrees/0.1.3` on `milestone/0.1.3` (from m2 d0ebd3e): 28c773b = step a, green (speed row); 64a02b0 = **WIP step b, red**: Patricia's hive_scale and config keys are done, while Bob's layout port and Quinn's `test_layout.gd` stopped part-way. Resume: Bob finishes the port (spec item 2, Contract Bob item 2), then Quinn updates the old tests to the new values (`min_cell_px` 20, hive 1.4×) and runs `godot_run.py all --refresh`; then step c (camera stops, lid lean, HUD, V7). Fresh worktrees need `--refresh`. The M2 sessions' decision logs (452ddba6, 1f6110f3) are written: D86-D88. Decisions D75-D85 are in `_meta/sessions/2026-11-05-d82fcc79/decisions.md`.
 

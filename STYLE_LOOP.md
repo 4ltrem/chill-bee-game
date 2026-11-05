@@ -1,7 +1,7 @@
 ---
 author: orchestrator
 type: write-up
-status: draft
+status: approved
 milestone: M2 (Assignment 6)
 description: How Chill Bee Game enforces its style guide with two self-correcting Generator → Evaluator → Refiner loops (visual and voice), with the demo runs, their blackboards and their cost
 ---

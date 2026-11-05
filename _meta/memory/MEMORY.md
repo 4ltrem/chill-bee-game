@@ -1,5 +1,5 @@
 - [Flower patch follow-up](flower-patch-followup.md) — after 0.1.3 merges: patch y→0, register test, merge m2/flower-patch
-- [Pending approvals](pending-approvals.md) — onboarding-script, biome-intros re-approval (T6 revise), STYLE_LOOP.md read; three content follow-ups
+- [Pending approvals](pending-approvals.md) — onboarding-script, biome-intros re-approval (T6 revise); three content follow-ups
 - [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day skill; only milestone-branch checkpoint commits mid-session
 - [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, transcript sync, learnings file (what broke, how noticed, how fixed)
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
@@ -12,3 +12,6 @@
 - [Edit lines only](edit-lines-only.md) — change only the needed lines with Edit; no whole-file rewrite scripts
 - [itch upload rule](itch-upload-rule.md) — upload to itch only at a new milestone number (0.2.0, 0.3.0)
 - [Test speed fixes](test-speed-fixes.md) — mutate.py CB_ONLY + progress lines done 11/5 (D89-90); left: time_scale speed-up via Quinn, budget guard threshold
+- [Variant shots](variant-shots.md) — Milo's variants: one shared grid, one load, close-up shot of each
+- [Demo link submissions](demo-link-submissions.md) — every assignment is a demo link, resubmitted after each milestone
+- [Quinn split pending](quinn-split-pending.md) — after 0.1.3: Quinn's run bullets move to Rex (script-runner); replacement text inside

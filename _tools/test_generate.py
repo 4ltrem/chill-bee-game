@@ -588,11 +588,18 @@ class BuildToolsTest(unittest.TestCase):
         import datetime as d
         t = d.datetime(2026, 11, 5, 4, 0, tzinfo=d.timezone.utc)
         r = lambda five, week, mins=5: {"ts": (t - d.timedelta(minutes=mins)).isoformat(), "five_hour": five, "seven_day": week}
-        self.assertEqual(b.decide(r(85, 50), 80, 65, 90, t)[0], "deny")
-        self.assertEqual(b.decide(r(70, 50), 80, 65, 90, t)[0], "warn")
-        self.assertEqual(b.decide(r(40, 95), 80, 65, 90, t)[0], "deny")
-        self.assertEqual(b.decide(r(99, 50, 120), 80, 65, 90, t)[0], "allow")
-        self.assertEqual(b.decide(None, 80, 65, 90, t)[0], "allow")
+        reset = "2026-11-07T13:59:00+00:00"   # t is 4.6 days into that week: pace ~66%
+        dec = lambda rd, agent: b.decide(rd, agent, t, reset=reset)[0]
+        self.assertEqual(dec(r(78, 50), "doc-auditor"), "warn")          # 78 + 2 <= 95: a cheap agent still runs
+        self.assertEqual(dec(r(70, 50), "qa-build-engineer"), "deny")    # 70 + 30 > 95
+        self.assertEqual(dec(r(60, 50), "qa-build-engineer"), "allow")
+        self.assertEqual(dec(r(60, 50), "mystery"), "allow")             # unknown counts as 25
+        self.assertEqual(dec(r(40, 80), "builder"), "deny")              # 80 > pace 66 + 10
+        self.assertEqual(dec(r(40, 80), "style-critic"), "allow")        # light agents ignore the pace
+        self.assertEqual(dec(r(10, 95), "style-critic"), "deny")         # weekly cap
+        self.assertEqual(dec(r(99, 50, 120), "builder"), "allow")        # stale reading
+        self.assertEqual(dec(None, "builder"), "allow")
+        self.assertAlmostEqual(b.week_pace(t, d.datetime(2026, 10, 24, 13, 59, tzinfo=d.timezone.utc)), 65.5, delta=0.5)
 
     def test_build_sets_version_and_zips_web_at_root(self):
         with tempfile.TemporaryDirectory() as d:
