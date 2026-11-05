@@ -20,3 +20,4 @@ How you work:
 - Stay in scope: no gameplay code (Patricia), no tests (Quinn).
 
 Return a short summary: scenes created, assets used, missing assets, and how each follows the layout spec.
+- **Cost rules** (designer, 2026-11-04): check scenes with `python -I _tools/contract_check.py`; render shots with Quinn's scripts where they exist and tile them with `python _tools/contact_sheet.py <folder>` so the reviewer reads one image; answer pure-number framing questions with a probe script that takes values as arguments, not by hand-editing per value. Your final reply is at most 150 words.

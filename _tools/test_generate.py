@@ -539,5 +539,53 @@ class ConsistencyTest(unittest.TestCase):
         self.assertIn("AGENTS.md: no route mentions .claude/agents/new-agent.md (Nina)", found)
 
 
+class BuildToolsTest(unittest.TestCase):
+    """godot_run.py summaries, mutate.py verdicts, build.py version and zip (no Godot needed)."""
+
+    def setUp(self):
+        import godot_run, mutate, build
+        self.gr, self.mu, self.bu = godot_run, mutate, build
+
+    def test_unit_summary_keeps_fails_and_drops_engine_noise(self):
+        text = "\n".join(["PASS  t_a  (3 checks)", 'ERROR: Parameter "m" is null.', "   at: mesh_get_surface_count (x)",
+                          "FAIL  t_b  expected 4 got 5", "MEASURE fps farm: 711 frames", "---- 1 passed, 1 failed", "RAN 2 of 2"])
+        r = self.gr.summarise("unit", text, 1)
+        self.assertEqual(r["status"], "FAIL")
+        self.assertEqual(r["total"], {"passed": 1, "failed": 1, "checks": 2})
+        self.assertEqual(r["fails"], ["FAIL  t_b  expected 4 got 5"])
+        self.assertEqual(r["measures"], ["MEASURE fps farm: 711 frames"])
+        self.assertEqual(r["noise_dropped"], 2)
+        self.assertEqual(r["errors"], [])
+
+    def test_windowed_suite_needs_completed(self):
+        text = "PASS  x\n---- 5 checks, 0 failed"
+        self.assertEqual(self.gr.summarise("play", text, 0)["status"], "FAIL")
+        self.assertEqual(self.gr.summarise("play", text + "\nCOMPLETED", 0)["status"], "PASS")
+
+    def test_start_suite_fails_on_script_errors_only(self):
+        self.assertEqual(self.gr.summarise("start", "Godot Engine v4.2.1\n", 1)["status"], "PASS")
+        bad = 'SCRIPT ERROR: Parse Error: Identifier "JarFlight" not declared in the current scope.'
+        self.assertEqual(self.gr.summarise("start", bad, 1)["status"], "FAIL")
+
+    def test_mutation_verdicts(self):
+        fail = {"status": "FAIL", "fails": ["FAIL  t_pop  curve differs", "FAIL  t_other  x"]}
+        ok = {"status": "PASS", "fails": []}
+        self.assertEqual(self.mu.verdict({"expect": ["t_pop"]}, fail)[0], "CAUGHT")
+        self.assertEqual(self.mu.verdict({"expect": ["t_pop", "t_missing"]}, fail)[0], "MISSED")
+        self.assertEqual(self.mu.verdict({"expect": []}, ok)[0], "MISSED")
+        self.assertEqual(self.mu.verdict({}, {"status": "TIMEOUT", "fails": []})[0], "BROKEN")
+
+    def test_build_sets_version_and_zips_web_at_root(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "project.godot").write_text('[application]\n\nconfig/name="X"\nconfig/version="0.1.0"\n', encoding="utf-8")
+            self.bu.set_version(str(root), "0.1.2")
+            self.assertIn('config/version="0.1.2"', (root / "project.godot").read_text(encoding="utf-8"))
+            (root / "builds" / "web").mkdir(parents=True)
+            (root / "builds" / "web" / "index.html").write_text("<html></html>", encoding="utf-8")
+            ok, _ = self.bu.zip_web(str(root), "0.1.2")
+            self.assertTrue(ok)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

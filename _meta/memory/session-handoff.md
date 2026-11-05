@@ -19,7 +19,7 @@ by itself, so there's no need to ask the designer for a nudge ([[usage-calibrati
 - The second calibration is recorded in `_meta/agent-runs.md`.
 - Committed in 7d04bc6 (end of day 2026-11-04, decisions D55-D61).
 
-**2026-11-04 (day 2):** the designer play-tested r3 and redesigned the harvest: uncapping as a zoom on the farm, two-piece hive (5 frames x 2 jars, lid), two-piece centrifuge (bucket + crank lid, holds 2 frames), scraped cells fly to the bucket or pile beside it. Prototype 0 closed at r3; the rework is drafted as `game/specs/0.1-harvest.md` (status draft, milestone M1 in MILESTONES.md, [[course-milestones]]) with GDD §2 changes listed at its top; awaiting the designer's acceptance before GDD edit and agent runs. Ruth's `research/hive-harvest-equipment.md` is a draft.
+**2026-11-04 (day 2):** 0.1 Harvest built on branch `milestone/0.1` (commits eaa8628..970f28b): Quinn's report `game/reports/2026-11-04-0.1-harvest.md` 78/78, play_loop green, 60 FPS, pop snapshot OK. Open: designer decision on the capped colour (upright pose lights it brighter than r3), intermittent play_loop fork click, the designer uploads `game/builds/chill-bee-game-0.1.0-web.zip` to itch and plays; merge to main at end of day once played. Process changes in game/CONTEXT.md 4-7 and `_tools/contract_check.py`.
 
 **Next (before r4 was drafted):**
 1. The designer plays the exe; Dev mode opens with the backquote key. Gather the play-test notes into revision 4.

@@ -5,3 +5,6 @@
 
 # Exports
 builds/
+
+# godot_run.py raw logs
+reports/_runs/
