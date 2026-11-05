@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-127 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+136 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -80,26 +80,26 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Clara, one empty turn, prompt on stdin | post-ICM | 1 | — | 13,370 | — |
 | **All** | | **2** | **—** | **12,806** | — |
 
-**Subagent runs** (45 runs)
+**Subagent runs** (52 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Patricia (programmer) | post-ICM | 7 | 109,118 | 3,520,628 | 2,458 s |
-| Bob (builder) | post-ICM | 15 | 74,703 | 1,237,847 | 408 s |
-| Quinn (qa-build-engineer) | post-ICM | 10 | 164,955 | 6,436,000 | 1,517 s |
+| Patricia (programmer) | post-ICM | 10 | 90,920 | 2,682,443 | 1,903 s |
+| Bob (builder) | post-ICM | 17 | 68,617 | 1,108,128 | 363 s |
+| Quinn (qa-build-engineer) | post-ICM | 12 | 150,827 | 5,815,155 | 1,860 s |
 | claude-code-guide | post-ICM | 2 | 48,226 | 255,200 | 52 s |
 | Martin (hiring-manager) | post-ICM | 6 | 43,440 | 280,294 | 68 s |
 | Ruth (research-assistant) | post-ICM | 1 | 37,318 | 203,725 | 107 s |
 | general-purpose | post-ICM | 2 | 72,871 | 609,698 | 88 s |
 | Terry (progression-tree-expert) | post-ICM | 1 | 34,830 | 142,788 | 168 s |
 | Milo (modeler) | post-ICM | 1 | 28,511 | 82,321 | 45 s |
-| **All** | | **45** | **91,942** | **2,475,833** | 878 s |
+| **All** | | **52** | **86,329** | **2,293,940** | 933 s |
 
-**Orchestrator** (6 runs)
+**Orchestrator** (8 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 6 | — | 43,058,330 | 56,920 s |
+| Orchestrator (main session) | post-ICM | 8 | — | 38,321,657 | 44,263 s |
 
 **Style loop** (7 runs)
 

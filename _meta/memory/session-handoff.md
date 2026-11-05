@@ -1,11 +1,11 @@
 ---
 name: session-handoff
-description: Where work stands (2026-11-05): 0.1.2 on milestone/0.1, Quinn's final run, M2 drafts awaiting approval; read first
+description: Where work stands (end of 2026-11-05): M2 done on milestone/m2; 0.1.3 step b WIP and red in worktree milestone/0.1.3; read first
 metadata:
   node_type: memory
   type: project
   originSessionId: 864dbfb5-1b7c-49cd-bf94-214920851b62
-  modified: 2026-11-05T18:50:35.950Z
+  modified: 2026-11-05T20:11:42.336Z
 ---
 
 Working in the terminal `claude` CLI inside VS Code (`/ide`). The status line (`_tools/statusline.py`) logs plan usage
@@ -30,6 +30,14 @@ by itself, so there's no need to ask the designer for a nudge ([[usage-calibrati
 **Update 2026-11-05 day 2 (session d82fcc79), read this first:** checkpoint aa4e1a3 on `milestone/0.1`. Applied to the GDD: camera rule, Deep Frame 2× longer, Auto-Sell = truck leaves when full at full price, Automation split (motor, auto-scraper = Long Fork on a gantry, Faster Delivery), pause ends with motor + auto-scraper, crate tiers, automated zooms from upgrade mode (UI TBD). M2 spec approved (items 10 wiring, 11 Milo + `model_shots.py`); Milo the Modeler hired (Haiku). V14 now ≥ 20 px. **Next: start M2 in a fresh session** (style_check.py + fixtures, Quinn's style_shots.gd, model_shots.py). Bob is rendering round 5 in the worktree (`game/reports/round5-shots/`: 3 closer first zooms, 3 second stops with the hive in the upper-right); then a vote page (update the same artifact), then approve the 0.1.3 spec. Its open items: pick from round 5.
 
 **M2 done 2026-11-05 (session 452ddba6), branch `milestone/m2`:** all 11 spec items and the Done-when checks met; write-up `STYLE_LOOP.md` (status draft, for the designer's read). Visual demo `game/reports/style/farm-0-1-2/blackboard.md`: 3 rounds, 2 designer stops (rim mark → A charcoal, applied; V8 honey-hero → neither for now), ended `needs-review` at max rounds with 1 open V7 row (glass bucket crowds the zoom view, slab cut off at left) → a spec item for Patricia. Deferred for a later spec: V8 honey as hero, the "x30" pile label (V10 minor). Flower-patch B picked; promoting it needs `flower_patch.gd` to colour the blossoms (Patricia), in the 0.1.x build. `content/biome-intros.md` is back to draft after the T6 revise; needs re-approval. Merge note: Bob's scene edits on m2 (main.tscn Upgrade/hint/Harvest tag/ZoomFraming, hive walls, jar lid, rim_mark charcoal) will conflict with the 0.1.3 build on milestone/0.1. All comparisons now live in Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa); the two stray pages were deleted with the designer's OK.
+
+**Update 2026-11-05 (session maigd-20, read first):**
+- **Two sessions are working in parallel.** The other session, maigd-62, owns the 0.1.3 build (speed row, then the grid, then the camera and lid). It works in `.claude/worktrees/0.1.3` on `milestone/0.1.3`, plus the throwaway `ab-centrifuge` worktree. Until it reports 0.1.3 merged, don't touch `main.tscn`, `hive.tscn`, `centrifuge*`, the camera scripts or `run_tests.gd`.
+- **Why the played exe lacks the new hive/centrifuge placement and the lid lean:** it is still 0.1.2, and 0.1.3 isn't built yet.
+- **Flower-patch B is done** on `m2/flower-patch` (fe2f237, worktree `.claude/worktrees/flower-patch`, spec `game/specs/flower-patch-b.md`). It is not merged. The post-merge steps are in [[flower-patch-followup]].
+- **Still free for this session:** A5 prep (due 11/15).
+
+**End of day 2026-11-05 (read first):** the designer stopped all agents. 0.1.3 lives in the worktree `.claude/worktrees/0.1.3` on `milestone/0.1.3` (from m2 d0ebd3e): 28c773b = step a, green (speed row); 64a02b0 = **WIP step b, red**: Patricia's hive_scale and config keys are done, while Bob's layout port and Quinn's `test_layout.gd` stopped part-way. Resume: Bob finishes the port (spec item 2, Contract Bob item 2), then Quinn updates the old tests to the new values (`min_cell_px` 20, hive 1.4×) and runs `godot_run.py all --refresh`; then step c (camera stops, lid lean, HUD, V7). Fresh worktrees need `--refresh`. The M2 sessions' decision logs (452ddba6, 1f6110f3) are not written: a subagent writes them from D86. Decisions D75-D85 are in `_meta/sessions/2026-11-05-d82fcc79/decisions.md`.
 
 **Next (before r4 was drafted):**
 1. The designer plays the exe; Dev mode opens with the backquote key. Gather the play-test notes into revision 4.

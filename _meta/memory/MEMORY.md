@@ -1,12 +1,13 @@
+- [Flower patch follow-up](flower-patch-followup.md) — after 0.1.3 merges: patch y→0, register test, merge m2/flower-patch
 - [Pending approvals](pending-approvals.md) — onboarding-script, biome-intros re-approval (T6 revise), STYLE_LOOP.md read; three content follow-ups
 - [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day skill; only milestone-branch checkpoint commits mid-session
 - [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, syncing transcripts between machines
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
-- [Session handoff](session-handoff.md) — read first: M2 done on milestone/m2 (merge conflicts expected with 0.1.3 on milestone/0.1)
+- [Session handoff](session-handoff.md) — read first: maigd-62 owns the 0.1.3 build; flower-patch B done on m2/flower-patch (unmerged); A5 prep free
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
-- [A/B comparison page](ab-comparison-page.md) — every creative A/B choice gets a screenshot comparison artifact (Zoom Framing Options layout)
+- [A/B comparison page](ab-comparison-page.md) — every creative A/B choice becomes a new section of the one Design Votes artifact; never a new artifact or browser tab
 - [Cost rules](cost-rules.md) — 9 approved token cuts: godot_run/build/mutate scripts, split tests, sliced briefs, 150-word replies, fresh session per milestone
 - [Edit lines only](edit-lines-only.md) — change only the needed lines with Edit; no whole-file rewrite scripts
 - [itch upload rule](itch-upload-rule.md) — upload to itch only at a new milestone number (0.2.0, 0.3.0)
