@@ -81,11 +81,10 @@ The hive is a body holding five frames (2 jars each at base) under a lid. The ce
 * **Stage 2: Centrifuge Extraction (Speed Taps or Hold)**
   * The bucket holds several frames' worth of cells (capacity TBD). Its lid goes on when the bucket is full, or when the player leaves the zoom with cells in it. An icon then floats above it; tapping it continues the harvest.
   * The centrifuge has a physical crank on its cylinder. The player taps or holds the crank, or anywhere on screen around it (but not on buttons such as Back), to spin it, spraying honey streams against its glass walls: as it spins, the combs inside melt into honey. Holding ramps the spin up to the fastest tap rate, so holding is never slower than tapping. There is no on-screen crank button.
-  * When extraction is done, a Continue button appears.
+  * When extraction is done, bottling starts by itself.
 * **Stage 3: Bottling & Selling**
-  * Continue opens the spigot and glass jars fill one at a time, while the honey level in the glass bucket drops until it is empty. Each full jar is loaded onto the truck.
-  * Completing the batch displays a summary modal showing base honey value, tool precision bonuses, and artisanal quality multipliers.
-  * When the truck is full (capacity TBD), a Sell ($X) icon floats above it, showing what the load will earn. Tapping it sells the load: the truck speeds off and comes back (trip time TBD). Jars bottled while it is away wait in the crate and load when it returns.
+  * Empty glass jars wait in the jar crate. One at a time, a jar flies under the spigot and fills, while the honey level in the glass bucket drops until it is empty. Each full jar gets its lid and is loaded onto the truck, or back into the crate while the truck is away.
+  * When the truck is full (capacity TBD), a Sell ($X) icon floats above it, showing what the load will earn. Tapping it sells the load: the truck speeds off and comes back (trip time TBD), and a summary shows the jars sold, the price per jar and the total, plus tool precision and artisanal quality bonuses once those exist. Jars bottled while it is away wait in the crate and load when it returns.
 
 ### 3. Progression Trees & Economy Balance
 Progression is split across three synergizing upgrade paths using an exponential cost model ($\text{Cost} = \text{Base} \times \text{Growth}^{\text{Level}}$):

@@ -2,8 +2,8 @@
 #   Godot --path game --resolution 720x1280 --position 0,0 -s tests/r4_measure.gd
 # Measures, and prints one "MEASURE" line each (the report copies them):
 #   1. the smallest cell's on-screen width at the zoom (projected mesh AABB, viewport px) against config min_cell_px;
-#   2. the pixel colour of a Capped cell and of an Uncapped one (5 x 5 mean at the cell's projected centre) against revision 3's
-#      numbers, capped (229, 177, 45) and uncapped (255, 255, 57), +-2 per channel (spec: "Models as reusable scenes");
+#   2. the pixel colour of a Capped cell and of an Uncapped one (5 x 5 mean at the cell's projected centre) against the 0.1.1 reference, capped (255, 198, 52)
+#      and uncapped (255, 255, 59) (0.1.0 measured), +-2 per channel (0.1.1 spec change 1; the tolerance is not widened);
 #   3. frame time on the farm and in the zoom with cells flying (60 FPS = 16.7 ms), desktop.
 # Capture timing: an Uncapped cell leaves its slot 0.18 s after the scrape (pop), so the frame is read 0.20-0.30 s after the
 # scrape (the check below fails outside that window) and cell_fly_seconds is raised (CHEAT, restored) so the cell has barely moved.
@@ -14,8 +14,8 @@ extends SceneTree
 
 const FarmInput := preload("res://tests/farm_input.gd")
 const SHOT_DIR := "res://reports/2026-11-04-0.1-harvest/"
-const CAPPED_R3 := Color8(229, 177, 45)
-const UNCAPPED_R3 := Color8(255, 255, 57)
+const CAPPED_R3 := Color8(255, 198, 52)    # 0.1.1 reference: 0.1.0's measured capped colour (report 2026-11-04-0.1-harvest.md), accepted by the designer; revision 3's (229, 177, 45) is retired
+const UNCAPPED_R3 := Color8(255, 255, 59)  # 0.1.0 measured (report line 76); revision 3 was 255, 255, 57
 
 var fi: RefCounted
 var main: Node
@@ -263,8 +263,8 @@ func _run() -> void:
 	print("MEASURE colours (frame read %.3f s after the scrape): capped %s, uncapped %s; revision 3: capped %s, uncapped %s" % [age, str(capped_px.to_html(false)), str(uncapped_px.to_html(false)), str(CAPPED_R3.to_html(false)), str(UNCAPPED_R3.to_html(false))])
 	print("MEASURE colours as RGB: capped (%d, %d, %d), uncapped (%d, %d, %d)" % [capped_px.r8, capped_px.g8, capped_px.b8, uncapped_px.r8, uncapped_px.g8, uncapped_px.b8])
 	ck(age >= 0.18 and age <= 0.30, "the frame was read inside the settled pop, before the cell left (%.3f s)" % age)
-	ck(_within(capped_px, CAPPED_R3, 2), "Capped cell pixel equals revision 3's (229, 177, 45) +-2 per channel")
-	ck(_within(uncapped_px, UNCAPPED_R3, 2), "Uncapped cell pixel equals revision 3's (255, 255, 57) +-2 per channel")
+	ck(_within(capped_px, CAPPED_R3, 2), "Capped cell pixel equals the 0.1.1 reference (255, 198, 52) +-2 per channel")
+	ck(_within(uncapped_px, UNCAPPED_R3, 2), "Uncapped cell pixel equals the 0.1.0 measured (255, 255, 59) +-2 per channel")
 	ck(not _within(capped_px, uncapped_px, 20), "capped and uncapped still differ visibly")
 
 	# ---- 3. frame time in the zoom with cells flying
@@ -320,6 +320,40 @@ func _run() -> void:
 	var bot_avg: float = await _fps_while("farm, bottling (honey level dropping, jars filling)", func() -> bool: return int(cen.get("state")) == bottling, 6.0)
 	ck(bot_avg <= 1000.0 / 60.0 + 0.5, "the farm holds 60 FPS while bottling (avg %.2f ms)" % bot_avg)
 
+
+	# ---- 5. (0.1.1) 60 FPS with a FULL 5-frame bucket melting and a large pile: nothing is capped any more, so every cell is drawn
+	var tw: int = Time.get_ticks_msec()
+	while int(cen.get("state")) != int(cen.get_script().get_script_constant_map()["State"]["EMPTY"]) and Time.get_ticks_msec() - tw < 25000:
+		await process_frame
+	_set_cfg("centrifuge_capacity_frames", 5)
+	_set_cfg("taps_per_jar", 4)
+	var pile: Node = main.find_child("Pile", true, false)
+	var cap5: int = 5 * int(_cv("grid_cols")) * int(_cv("grid_rows"))
+	ck(int(cen.get("state")) == int(cen.get_script().get_script_constant_map()["State"]["EMPTY"]), "the centrifuge is EMPTY before the 5-frame run")
+	var jars5: float = float(cap5 * int(_cv("frame_jars"))) / float(int(_cv("grid_cols")) * int(_cv("grid_rows")))
+	cen.call("add_cells", cap5, jars5)
+	cen.call("land_cells", cap5)
+	pile.call("add", 600, 600.0 * 2.0 / 35.0)
+	pile.call("land", 600)
+	await _frames(10)
+	await _fps("farm, full 5-frame bucket (175 cells) and a 600-cell pile, still", 3.0)
+	cen.call("close_lid")
+	await _frames(5)
+	var cr5: int = int(cen.get("state"))
+	var need5: int = int(ceil(float(cap5 * int(_cv("frame_jars"))) / float(int(_cv("grid_cols")) * int(_cv("grid_rows"))) * float(_cv("taps_per_jar"))))
+	cen.call("begin_crank")
+	var spot5: Vector2 = fi.free_spot(main)
+	_hold_os(spot5, true)
+	var melt_avg: float = await _fps_while("farm, 175 cells melting in the glass bucket (real hold), 600-cell pile", func() -> bool: return int(cen.get("state")) == int(cen.get_script().get_script_constant_map()["State"]["CRANKING"]), (float(need5) / float(_cv("max_tap_rate"))) + 3.0)
+	_hold_os(spot5, false)
+	ck(melt_avg <= 1000.0 / 60.0 + 0.5, "60 FPS with a full 5-frame bucket melting and a large pile (avg %.2f ms)" % melt_avg)
+	var heap_n: int = 0
+	var hr: Node = cen.find_child("HeapRoot", true, false)
+	if hr != null:
+		for ch in hr.get_children():
+			if ch is Node3D and (ch as Node3D).is_visible_in_tree():
+				heap_n += 1
+	print("MEASURE heap nodes visible at the end of the melt test: ", heap_n, " (cells in bucket ", int(cen.get("cells")), ")")
 	for k in _cfg_saved:
 		_cfg().set(k, _cfg_saved[k])
 	print("---- %d checks, %d failed" % [checks, fails])

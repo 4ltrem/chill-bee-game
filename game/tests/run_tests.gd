@@ -86,6 +86,11 @@ func _run() -> void:
 		"t_dev_panel_when_on", "t_dev_max_tap_rate", "t_dev_bottling_seconds", "t_dev_save_reset_roundtrip",
 		"t_dev_user_file_ignored_when_off", "t_dev_backquote_opens", "t_dev_three_finger_opens", "t_dev_actions",
 		"t_dev_show_ui_bounds",
+		# 0.1.1 play-test fixes
+		"t_dev_ui_bounds_collects_controls", "t_overlap_helper_can_fail", "t_rim_measure_can_fail", "t_config_011", "t_dev_panel_has_lid_values",
+		"t_node_contract_011", "t_hive_footprint_and_frames", "t_hive_lid_open_path", "t_hive_lid_close_path", "t_hive_lid_leaning_pose",
+		"t_centrifuge_lid_paths", "t_heap_shows_every_cell", "t_pile_shows_every_cell", "t_jar_fills_then_lid",
+		"t_truck_and_crate_jars_full_with_lids", "t_wheel_rims", "t_cell_width_at_zoom", "t_zoom_view_contains_hive_and_bucket",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":
@@ -710,8 +715,8 @@ func t_config_values() -> void:
 		return
 	var table: Dictionary = {
 		"frames_per_hive": 5, "frame_jars": 2, "overflow_hives": 1, "centrifuge_capacity_frames": 2, "taps_per_jar": 4,
-		"zoom_seconds": 0.6, "lid_drop_seconds": 0.4, "slide_seconds": 0.3, "frame_rise": 1.2, "cell_fly_seconds": 0.5,
-		"pile_visual_cap": 40, "bucket_visual_cap": 40, "icon_visual_px": 88, "min_cell_px": 44,
+		"zoom_seconds": 0.6, "lid_drop_seconds": 0.4, "slide_seconds": 0.3, "cell_fly_seconds": 0.5,
+		"icon_visual_px": 88, "min_cell_px": 44,
 		# unchanged from revision 3
 		"sale_value_per_jar": 3, "truck_capacity_jars": 10, "truck_trip_seconds": 30.0,
 		"bottling_seconds_per_jar": 3.0, "max_tap_rate": 5.0, "hold_ramp_seconds": 1.5,
@@ -728,7 +733,7 @@ func t_config_values() -> void:
 	ck(zs != null, "default_config.tres has no value 'zoom_size' (Values table: Bob sets it)")
 	if zs != null:
 		ck(float(zs) > 0.0, "zoom_size is a positive ortho size (got %s)" % str(zs))
-	for gone in ["taps_per_frame", "overflow_frames", "hold_taps_per_second", "hold_mode", "no_rapid_tap_mode"]:
+	for gone in ["taps_per_frame", "overflow_frames", "hold_taps_per_second", "hold_mode", "no_rapid_tap_mode", "bucket_visual_cap", "pile_visual_cap"]:
 		ck(c.get(gone) == null, "'%s' must be gone from the config (replaced or removed)" % gone)
 	var e: Node = _eco()
 	eq(e.call("bee_count"), 20, "base swarm of 20 bees at level 0 (assumes no user dev_config override)")
@@ -761,7 +766,7 @@ func t_config_placeholders_marked() -> void:
 	# every value of the Values table is an @export var (adjustable in Dev mode)
 	var text: String = "\n".join(lines)
 	for name in ["frames_per_hive", "frame_jars", "overflow_hives", "zoom_seconds", "lid_drop_seconds", "frame_rise",
-			"cell_fly_seconds", "pile_visual_cap", "bucket_visual_cap", "icon_visual_px", "min_cell_px", "zoom_size"]:
+			"cell_fly_seconds", "icon_visual_px", "min_cell_px", "zoom_size"]:
 		ck(text.contains("@export var %s" % name), "game_config.gd has no '@export var %s' (Dev mode lists exported values)" % name)
 	_fin()
 
@@ -3248,4 +3253,1018 @@ func t_dev_ui_bounds_collects_controls() -> void:
 	ck(not got.has(p["BackButton"]), "the hidden BackButton is not collected")
 	btn.pressed.emit()
 	await _frames(3)
+	_fin()
+
+
+# ================================================================ 0.1.1 play-test fixes (game/specs/0.1.1-playtest-fixes.md)
+# Written from the spec before the code. Node names not in the 0.1.1 contract are the 0.1.0 names ("everything not named stays"):
+# HiveLid, HiveBody, FrameBars/FrameBar<n>, Honeycomb under Hive; Lid, Bucket, HeapRoot, SpigotJar under Centrifuge; BedJars on the
+# truck, CrateJars on the crate. A renamed node fails ONE test with its name in the message (listed in the report as an ambiguity).
+
+## Two boxes lying in contact (resting lid, leaning lid) are not an overlap: the penetration must exceed this many units.
+const CONTACT_EPS: float = 0.03
+
+
+## Oriented boxes of every visible MeshInstance3D under `n` (inclusive), skipping the subtrees in `skip`: [centre, [3 half axes], mesh].
+func _obbs(n: Node, skip: Array = []) -> Array:
+	var out: Array = []
+	var meshes: Array = n.find_children("*", "MeshInstance3D", true, false)
+	if n is MeshInstance3D:
+		meshes.append(n)
+	for m in meshes:
+		var mi: MeshInstance3D = m as MeshInstance3D
+		if mi.mesh == null or not mi.is_visible_in_tree():
+			continue
+		var skipped: bool = false
+		for s in skip:
+			if s != null and (s == mi or (s as Node).is_ancestor_of(mi)):
+				skipped = true
+		if skipped:
+			continue
+		var a: AABB = mi.mesh.get_aabb()
+		var gt: Transform3D = mi.global_transform
+		out.append([gt * (a.position + a.size * 0.5), [gt.basis.x * (a.size.x * 0.5), gt.basis.y * (a.size.y * 0.5), gt.basis.z * (a.size.z * 0.5)], mi])
+	return out
+
+
+## Separating-axis penetration depth of two oriented boxes (15 axes): <= 0 when separated, else the smallest overlap along any axis.
+func _obb_pen(a: Array, b: Array) -> float:
+	var aa: Array = a[1]
+	var ab: Array = b[1]
+	var axes: Array = []
+	for v in aa:
+		axes.append(v)
+	for v in ab:
+		axes.append(v)
+	for i in 3:
+		for j in 3:
+			axes.append((aa[i] as Vector3).cross(ab[j] as Vector3))
+	var d: Vector3 = (b[0] as Vector3) - (a[0] as Vector3)
+	var best: float = 1.0e9
+	for ax in axes:
+		var l: float = (ax as Vector3).length()
+		if l < 1.0e-4:
+			continue
+		var u: Vector3 = (ax as Vector3) / l
+		var ra: float = 0.0
+		for v in aa:
+			ra += absf((v as Vector3).dot(u))
+		var rb: float = 0.0
+		for v in ab:
+			rb += absf((v as Vector3).dot(u))
+		var pen: float = ra + rb - absf(d.dot(u))
+		if pen <= 0.0:
+			return pen
+		best = minf(best, pen)
+	return best
+
+
+## Largest penetration of any box of `lid` into any box of `body` (<= CONTACT_EPS means touching or clear).
+func _max_pen(lid: Array, body: Array) -> float:
+	var worst: float = -1.0e9
+	for l in lid:
+		for b in body:
+			worst = maxf(worst, _obb_pen(l as Array, b as Array))
+	return worst
+
+
+func _box_corners_y(boxes: Array) -> Vector2:   # (min y, max y) of the corners
+	var lo: float = 1.0e9
+	var hi: float = -1.0e9
+	for bx in boxes:
+		var c: Vector3 = (bx as Array)[0]
+		var ax: Array = (bx as Array)[1]
+		var ext: float = absf((ax[0] as Vector3).y) + absf((ax[1] as Vector3).y) + absf((ax[2] as Vector3).y)
+		lo = minf(lo, c.y - ext)
+		hi = maxf(hi, c.y + ext)
+	return Vector2(lo, hi)
+
+
+func _mk_box(size: Vector3, xf: Transform3D) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	var bm := BoxMesh.new()
+	bm.size = size
+	mi.mesh = bm
+	root.add_child(mi)
+	mi.global_transform = xf
+	_to_free.append(mi)
+	return mi
+
+
+func _angle_between(a: Basis, b: Basis) -> float:
+	return (a.orthonormalized().inverse() * b.orthonormalized()).get_rotation_quaternion().get_angle()
+
+
+## The overlap helper has to be able to fail, or every lid pass below means nothing: a box through a box, a box beside it,
+## and a 45-degree box that only overlaps in a world AABB.
+func t_overlap_helper_can_fail() -> void:
+	var a: MeshInstance3D = _mk_box(Vector3.ONE, Transform3D(Basis.IDENTITY, Vector3.ZERO))
+	var b: MeshInstance3D = _mk_box(Vector3.ONE, Transform3D(Basis.IDENTITY, Vector3(0.5, 0.0, 0.0)))
+	var c: MeshInstance3D = _mk_box(Vector3.ONE, Transform3D(Basis.IDENTITY, Vector3(1.0, 0.0, 0.0)))
+	var d: MeshInstance3D = _mk_box(Vector3.ONE, Transform3D(Basis(Vector3.UP, deg_to_rad(45.0)), Vector3(1.3, 0.0, 0.0)))
+	var e: MeshInstance3D = _mk_box(Vector3.ONE, Transform3D(Basis(Vector3.UP, deg_to_rad(45.0)), Vector3(1.1, 0.0, 0.0)))
+	var ba: Array = _obbs(a)
+	ck(_max_pen(_obbs(b), ba) > CONTACT_EPS, "a box half inside another overlaps (%.3f)" % _max_pen(_obbs(b), ba))
+	ck(_max_pen(_obbs(c), ba) <= CONTACT_EPS, "boxes in face contact do not overlap (%.3f)" % _max_pen(_obbs(c), ba))
+	ck(_max_pen(_obbs(d), ba) <= 0.0, "a 45 degree box 1.3 away is separated although its world AABB is not (%.3f)" % _max_pen(_obbs(d), ba))
+	ck(_max_pen(_obbs(e), ba) > CONTACT_EPS, "the same box at 1.1 overlaps (%.3f)" % _max_pen(_obbs(e), ba))
+	_fin()
+
+
+## Sample a lid's global transform and its worst penetration into the body, once per frame, for `game_secs` of game time.
+## Engine.time_scale slows the game so a tween of 0.65 s gives well over 30 frames.
+func _sample_lid(lid: Node3D, body_fn: Callable, game_secs: float, scale: float = 0.25) -> Array:
+	var out: Array = []
+	Engine.time_scale = scale
+	var t_end: int = Time.get_ticks_msec() + int(game_secs / scale * 1000.0)
+	while Time.get_ticks_msec() < t_end:
+		await process_frame
+		out.append({"xf": lid.global_transform, "pen": _max_pen(_obbs(lid), body_fn.call() as Array)})
+	Engine.time_scale = 1.0
+	return out
+
+
+## Checks every path must satisfy: >= 30 samples, really moving (a teleport passes an overlap test trivially), no overlap, ends at `end_xf`.
+func _judge_path(tag: String, s: Array, end_xf: Transform3D, lift: float, check_lift: bool, rot_locked_in_lift: bool) -> void:
+	ck(s.size() >= 30, "%s: at least 30 samples (%d)" % [tag, s.size()])
+	if s.size() < 2:
+		return
+	var moving: int = 0
+	var worst: float = -1.0e9
+	var worst_i: int = 0
+	var y0: float = ((s[0] as Dictionary)["xf"] as Transform3D).origin.y
+	var o0: Vector3 = ((s[0] as Dictionary)["xf"] as Transform3D).origin
+	var peak: float = 0.0
+	for i in s.size():
+		var xf: Transform3D = (s[i] as Dictionary)["xf"]
+		if i > 0 and not xf.origin.is_equal_approx(((s[i - 1] as Dictionary)["xf"] as Transform3D).origin):
+			moving += 1
+		var pen: float = float((s[i] as Dictionary)["pen"])
+		if pen > worst:
+			worst = pen
+			worst_i = i
+		peak = maxf(peak, xf.origin.y - y0)
+	ck(moving >= 20, "%s: the lid really moves over the samples (%d of %d samples differ from the previous one)" % [tag, moving, s.size()])
+	ck(worst <= CONTACT_EPS, "%s: the lid box never overlaps the body or a frame: worst penetration %.3f at sample %d of %d (contact allowed up to %.2f)" % [tag, worst, worst_i, s.size(), CONTACT_EPS])
+	var last: Transform3D = (s[s.size() - 1] as Dictionary)["xf"]
+	ck(last.origin.distance_to(end_xf.origin) <= 0.02, "%s: ends at the target position (off by %.3f)" % [tag, last.origin.distance_to(end_xf.origin)])
+	ck(_angle_between(last.basis, end_xf.basis) <= 0.03, "%s: ends at the target rotation (off by %.1f deg)" % [tag, rad_to_deg(_angle_between(last.basis, end_xf.basis))])
+	if check_lift:
+		ck(peak >= lift * 0.95, "%s: the lid rises by lid_lift_height first (peak rise %.3f, lift %.3f)" % [tag, peak, lift])
+		var reached: int = -1
+		for i in s.size():
+			if ((s[i] as Dictionary)["xf"] as Transform3D).origin.y - y0 >= lift * 0.98:
+				reached = i
+				break
+		ck(reached >= 0, "%s: a sample reaches the lift height" % tag)
+		if reached >= 0:
+			var sideways: float = 0.0
+			var turned: float = 0.0
+			for i in reached + 1:
+				var xf2: Transform3D = (s[i] as Dictionary)["xf"]
+				sideways = maxf(sideways, Vector2(xf2.origin.x - o0.x, xf2.origin.z - o0.z).length())
+				turned = maxf(turned, _angle_between(((s[0] as Dictionary)["xf"] as Transform3D).basis, xf2.basis))
+			ck(sideways <= 0.03, "%s: the lift is straight up (sideways drift %.3f before the top)" % [tag, sideways])
+			if rot_locked_in_lift:
+				ck(turned <= 0.05, "%s: no tipping before the top of the lift (%.1f deg)" % [tag, rad_to_deg(turned)])
+
+
+func _hive_body(hive: Node) -> Callable:
+	var lid: Node = hive.find_child("HiveLid", true, false)
+	var hc: Node = hive.find_child("Honeycomb", true, false)
+	return func() -> Array: return _obbs(hive, [lid, hc])
+
+
+func _hive_setup() -> Dictionary:
+	var m: Node = await _mk_main()
+	if m == null:
+		return {}
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	var hive: Node = _nn(m, "Hive")
+	if hive == null:
+		return {}
+	var lid: Node = hive.find_child("HiveLid", true, false)
+	var spot: Node = hive.find_child("HiveLidSpot", true, false)
+	ck(lid != null, "the hive has a lid node named HiveLid (0.1.0 name; the spec names only HiveLidSpot)")
+	ck(spot != null, "HiveLidSpot exists")
+	if lid == null or spot == null:
+		return {}
+	await _frames(3)
+	return {"m": m, "hive": hive, "lid": lid, "spot": spot}
+
+
+# Spec 2: open path (lift, then tip and fall to the leaning pose), no overlap at any sampled point, ends at HiveLidSpot's full transform.
+func t_hive_lid_open_path() -> void:
+	var h: Dictionary = await _hive_setup()
+	if h.is_empty():
+		_fin()
+		return
+	var hive: Node = h["hive"]
+	var lid: Node3D = h["lid"]
+	var closed: Transform3D = lid.global_transform
+	var lift: float = float(cv("lid_lift_height"))
+	var secs: float = float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + 0.35
+	hive.call("open_lid")
+	var s: Array = await _sample_lid(lid, _hive_body(hive), secs)
+	var target: Transform3D = (h["spot"] as Node3D).global_transform
+	_judge_path("hive lid, opening", s, target, lift, true, true)
+	ck(not target.origin.is_equal_approx(closed.origin), "the open pose differs from the closed one")
+	_fin()
+
+
+# Spec 2: closing plays the same path backwards: lifts to lid_lift_height, then comes down onto the hive, ends at the closed transform.
+func t_hive_lid_close_path() -> void:
+	var h: Dictionary = await _hive_setup()
+	if h.is_empty():
+		_fin()
+		return
+	var hive: Node = h["hive"]
+	var lid: Node3D = h["lid"]
+	var closed: Transform3D = lid.global_transform
+	var lift: float = float(cv("lid_lift_height"))
+	var secs: float = float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + 0.35
+	hive.call("open_lid")
+	await _sample_lid(lid, _hive_body(hive), secs)
+	hive.call("close_lid")
+	var s: Array = await _sample_lid(lid, _hive_body(hive), secs)
+	_judge_path("hive lid, closing", s, closed, lift, false, false)
+	var peak: float = 0.0
+	for e in s:
+		peak = maxf(peak, ((e as Dictionary)["xf"] as Transform3D).origin.y - closed.origin.y)
+	ck(peak >= lift * 0.95, "closing passes through the lifted pose (peak %.3f above closed, lift %.3f)" % [peak, lift])
+	_fin()
+
+
+func _screen_of(boxes: Array, cam: Camera3D) -> Rect2:
+	var have: bool = false
+	var r := Rect2()
+	for bx in boxes:
+		var c: Vector3 = (bx as Array)[0]
+		var ax: Array = (bx as Array)[1]
+		for sx in [-1.0, 1.0]:
+			for sy in [-1.0, 1.0]:
+				for sz in [-1.0, 1.0]:
+					var p: Vector2 = cam.unproject_position(c + (ax[0] as Vector3) * sx + (ax[1] as Vector3) * sy + (ax[2] as Vector3) * sz)
+					if not have:
+						r = Rect2(p, Vector2.ZERO)
+						have = true
+					else:
+						r = r.expand(p)
+	return r
+
+
+# Spec 2: the open pose: leaning about 60-70 degrees from flat, lower edge on the ground, on the side away from the centrifuge, never
+# between the camera and the risen frame.
+func t_hive_lid_leaning_pose() -> void:
+	var h: Dictionary = await _hive_setup()
+	if h.is_empty():
+		_fin()
+		return
+	var m: Node = h["m"]
+	var hive: Node = h["hive"]
+	var lid: Node3D = h["lid"]
+	var body_boxes: Array = (_hive_body(hive).call() as Array)
+	ck(body_boxes.size() > 0, "the hive has body boxes")
+	var ground: float = _box_corners_y(body_boxes).x
+	var top: float = _box_corners_y(_obbs(hive.find_child("HiveBody", true, false) if hive.find_child("HiveBody", true, false) != null else hive, [lid, hive.find_child("Honeycomb", true, false), hive.find_child("FrameBars", true, false)])).y
+	hive.call("fill_now")
+	hive.call("open_lid")
+	await _wait(float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + 0.4)
+	var lb: Array = _obbs(lid)
+	ck(lb.size() > 0, "the open lid has boxes")
+	if lb.is_empty():
+		_fin()
+		return
+	var ax: Array = (lb[0] as Array)[1]
+	var thin: int = 0
+	for i in 3:
+		if (ax[i] as Vector3).length() < (ax[thin] as Vector3).length():
+			thin = i
+	var n: Vector3 = (ax[thin] as Vector3).normalized()
+	var tilt: float = rad_to_deg(acos(clampf(absf(n.y), 0.0, 1.0)))
+	ck(tilt >= 55.0 and tilt <= 75.0, "the open lid leans about 60-70 degrees from flat (measured %.1f, accepted 55 to 75)" % tilt)
+	var low: float = _box_corners_y(lb).x
+	ck(absf(low - ground) <= 0.1, "the lid's lower edge is on the ground (lowest corner %.3f, ground %.3f)" % [low, ground])
+	ck(_box_corners_y(lb).y > ground + 0.5, "the lid stands up (highest corner %.3f)" % _box_corners_y(lb).y)
+	var hc: Vector3 = Vector3.ZERO
+	for b in body_boxes:
+		hc += (b as Array)[0] as Vector3
+	hc /= float(body_boxes.size())
+	var lc: Vector3 = Vector3.ZERO
+	for b in lb:
+		lc += (b as Array)[0] as Vector3
+	lc /= float(lb.size())
+	var cen: Node3D = _nn(m, "Centrifuge") as Node3D
+	var away: Vector3 = ((cen.global_position - hive.global_position) * Vector3(1.0, 0.0, 1.0)).normalized()
+	ck((lc - hc).dot(away) < 0.0, "the lid rests on the side away from the centrifuge (offset along the centrifuge direction %.2f)" % (lc - hc).dot(away))
+	hive.call("raise_frame", 0)
+	await _wait(float(cv("slide_seconds")) + 0.4)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	var fb: Node = hive.find_child("FrameBar1", true, false)
+	var frame_boxes: Array = _obbs(hive.find_child("Honeycomb", true, false))
+	if fb != null:
+		frame_boxes.append_array(_obbs(fb))
+	ck(frame_boxes.size() > 0, "the risen frame has boxes (FrameBar1 and Honeycomb cells)")
+	var blocked: bool = false
+	var fwd: Vector3 = -cam.global_transform.basis.z
+	var f_rect: Rect2 = _screen_of(frame_boxes, cam)
+	var f_depth: float = 0.0
+	for b in frame_boxes:
+		f_depth += ((b as Array)[0] as Vector3 - cam.global_position).dot(fwd)
+	f_depth /= float(maxi(frame_boxes.size(), 1))
+	for b in lb:
+		var r: Rect2 = _screen_of([b], cam)
+		var depth: float = ((b as Array)[0] as Vector3 - cam.global_position).dot(fwd)
+		if r.intersects(f_rect) and r.intersection(f_rect).get_area() > 100.0 and depth < f_depth:
+			blocked = true
+	ck(not blocked, "the open lid is not between the camera and the risen frame")
+	ck(_box_corners_y(frame_boxes).x >= top + 0.05, "the risen frame clears the body with a visible gap (lowest frame point %.3f, body top %.3f; frame_rise %s)" % [_box_corners_y(frame_boxes).x, top, str(cv("frame_rise"))])
+	_fin()
+
+
+func _glass_of(c: Node) -> Array:   # the largest glass.tres box of the centrifuge that is not the jar's
+	var best: Array = []
+	var vol: float = -1.0
+	for mi in c.find_children("*", "MeshInstance3D", true, false):
+		var m: MeshInstance3D = mi as MeshInstance3D
+		if m.mesh == null:
+			continue
+		var mat: Material = _mesh_mat(m)
+		if mat == null or not mat.resource_path.ends_with("glass.tres"):
+			continue
+		var in_jar: bool = false
+		var p: Node = m.get_parent()
+		while p != null and p != c:
+			if p.name == "SpigotJar":
+				in_jar = true
+			p = p.get_parent()
+		if in_jar:
+			continue
+		var bx: Array = _obbs(m)
+		if bx.is_empty():
+			continue
+		var ax: Array = (bx[0] as Array)[1]
+		var v: float = (ax[0] as Vector3).length() * (ax[1] as Vector3).length() * (ax[2] as Vector3).length()
+		if v > vol:
+			vol = v
+			best = bx[0]
+	return best
+
+
+# Spec 2: the centrifuge lid gets the same lift, so it no longer passes through the bucket; lands flat on the ground beside it.
+func t_centrifuge_lid_paths() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	_set_cfg("bottling_seconds_per_jar", 0.5)
+	var c: Node = _nn(m, "Centrifuge")
+	var lid: Node3D = c.find_child("Lid", true, false) as Node3D
+	var spot: Node3D = c.find_child("CentrifugeLidSpot", true, false) as Node3D
+	ck(lid != null, "the centrifuge has a lid node named Lid (0.1.0 name)")
+	if lid == null or spot == null:
+		_fin()
+		return
+	await _frames(3)
+	var body_fn: Callable = func() -> Array: return _obbs(c, [lid, c.find_child("HeapRoot", true, false), c.find_child("SpigotJar", true, false)])
+	var body0: Array = body_fn.call()
+	ck(body0.size() > 0, "the centrifuge body has boxes")
+	var ground: float = _box_corners_y(body0).x
+	var open_xf: Transform3D = spot.global_transform
+	ck(lid.global_position.distance_to(open_xf.origin) <= 0.02 and _angle_between(lid.global_basis, open_xf.basis) <= 0.03, "an EMPTY centrifuge's lid sits at CentrifugeLidSpot (full transform)")
+	var lb0: Array = _obbs(lid)
+	ck(absf((lid.global_basis.y.normalized()).y) >= cos(deg_to_rad(3.0)), "the open centrifuge lid is flat (up axis tilt)")
+	ck(absf(_box_corners_y(lb0).x - ground) <= 0.1, "the open centrifuge lid is on the ground (%.3f vs %.3f)" % [_box_corners_y(lb0).x, ground])
+	var cells: int = 20
+	c.call("add_cells", cells, _jars_of(cells))
+	c.call("close_lid")
+	var secs: float = float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + float(cv("close_delay_seconds")) + 0.4
+	var s1: Array = await _sample_lid(lid, body_fn, secs)
+	var glass: Array = _glass_of(c)
+	ck(glass.size() > 0, "a glass.tres bucket mesh exists on the centrifuge")
+	var closed_xf: Transform3D = lid.global_transform
+	if glass.size() > 0:
+		var gc: Vector3 = glass[0]
+		ck(Vector2(closed_xf.origin.x - gc.x, closed_xf.origin.z - gc.z).length() <= 0.15, "the closed lid sits over the bucket's axis")
+	_judge_path("centrifuge lid, closing", s1, closed_xf, 0.0, false, false)
+	c.call("begin_crank")
+	_crank_done(c)
+	c.call("open_spigot")
+	var empty: int = _st(c, "EMPTY")
+	var jars: int = maxi(int(floorf(_jars_of(cells))), 1)
+	var secs2: float = float(cv("bottling_seconds_per_jar")) * float(jars) + float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + 1.0
+	var s2: Array = await _sample_lid(lid, body_fn, secs2, 0.5)
+	ck(int(c.get("state")) == empty, "bottling ended (EMPTY)")
+	_judge_path("centrifuge lid, opening", s2, open_xf, float(cv("lid_lift_height")), true, false)
+	ck(absf((lid.global_basis.y.normalized()).y) >= cos(deg_to_rad(3.0)), "the opened centrifuge lid lands flat")
+	_fin()
+
+
+func _span_xz(boxes: Array) -> Array:   # [min x, min z, max x, max z]
+	var lo := Vector2(1.0e9, 1.0e9)
+	var hi := Vector2(-1.0e9, -1.0e9)
+	for bx in boxes:
+		var cc: Vector3 = (bx as Array)[0]
+		var axs: Array = (bx as Array)[1]
+		var ex: float = absf((axs[0] as Vector3).x) + absf((axs[1] as Vector3).x) + absf((axs[2] as Vector3).x)
+		var ez: float = absf((axs[0] as Vector3).z) + absf((axs[1] as Vector3).z) + absf((axs[2] as Vector3).z)
+		lo = Vector2(minf(lo.x, cc.x - ex), minf(lo.y, cc.z - ez))
+		hi = Vector2(maxf(hi.x, cc.x + ex), maxf(hi.y, cc.z + ez))
+	return [lo.x, lo.y, hi.x, hi.y]
+
+
+# Spec 3: the hive is square to the grid with the bucket's footprint, frames face +X, in a row along Z, 5 fit inside.
+func t_hive_footprint_and_frames() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var hive: Node = _nn(m, "Hive")
+	var c: Node = _nn(m, "Centrifuge")
+	if hive == null or c == null:
+		_fin()
+		return
+	var hb: Node = hive.find_child("HiveBody", true, false)
+	ck(hb != null, "HiveBody exists (0.1.0 name)")
+	var floor_boxes: Array = _obbs(hb if hb != null else hive, [hive.find_child("HiveLid", true, false), hive.find_child("Honeycomb", true, false), hive.find_child("FrameBars", true, false)])
+	ck(floor_boxes.size() > 0, "HiveBody has boxes")
+	for bx in floor_boxes:
+		for a3 in ((bx as Array)[1] as Array):
+			var hv := Vector2((a3 as Vector3).x, (a3 as Vector3).z)
+			if hv.length() > 1.0e-3:
+				var ang: float = rad_to_deg(atan2(hv.y, hv.x))
+				var off: float = absf(fposmod(ang + 45.0, 90.0) - 45.0)
+				ck(off <= 2.0, "a hive body box is square to the ground grid (axis %.1f deg off)" % off)
+	var sp: Array = _span_xz(floor_boxes)
+	var lo := Vector2(float(sp[0]), float(sp[1]))
+	var hi := Vector2(float(sp[2]), float(sp[3]))
+	var w: float = hi.x - lo.x
+	var dpt: float = hi.y - lo.y
+	var glass: Array = _glass_of(c)
+	ck(glass.size() > 0, "bucket glass found")
+	var bucket_d: float = 2.0
+	if glass.size() > 0:
+		var gs: Array = _span_xz([glass])
+		bucket_d = minf(float(gs[2]) - float(gs[0]), float(gs[3]) - float(gs[1]))
+	ck(w >= 1.8 and w <= 2.2 and dpt >= 1.8 and dpt <= 2.2, "the hive footprint is about 2.0 x 2.0 (measured %.2f x %.2f)" % [w, dpt])
+	ck(absf(w - bucket_d) <= 0.25 and absf(dpt - bucket_d) <= 0.25, "the hive footprint equals the bucket's outer diameter (%.2f x %.2f vs %.2f)" % [w, dpt, bucket_d])
+	var zs: Array = []
+	var xs: Array = []
+	for i in _frames_n():
+		var slot: Node3D = hive.find_child("Slot%d" % (i + 1), true, false) as Node3D
+		ck(slot != null, "Slot%d exists" % (i + 1))
+		if slot == null:
+			continue
+		var nrm: Vector3 = slot.global_basis.y.normalized()
+		ck(nrm.dot(Vector3.RIGHT) >= cos(deg_to_rad(3.0)), "Slot%d's face normal points along world +X (%s)" % [i + 1, str(nrm)])
+		var wdt: float = slot.global_basis.get_scale().x * float(cv("grid_cols"))
+		ck(wdt <= 1.85, "a frame of %d cells at slot scale %.3f is %.2f wide: fits inside about 1.8" % [int(cv("grid_cols")), slot.global_basis.get_scale().x, wdt])
+		ck(slot.global_position.x >= lo.x and slot.global_position.x <= hi.x and slot.global_position.z >= lo.y and slot.global_position.z <= hi.y, "Slot%d stands inside the footprint" % (i + 1))
+		zs.append(slot.global_position.z)
+		xs.append(slot.global_position.x)
+	zs.sort()
+	for i in range(1, zs.size()):
+		ck(float(zs[i]) - float(zs[i - 1]) > 0.05, "the frames stand in a row along Z, one behind the other (gap %.3f)" % (float(zs[i]) - float(zs[i - 1])))
+	if xs.size() > 0:
+		ck(float(xs.max()) - float(xs.min()) <= 0.05, "all frames share one X: a row along Z (spread %.3f)" % (float(xs.max()) - float(xs.min())))
+	_fin()
+
+
+# ---------------------------------------------------------------- heap and pile show every cell (spec 4)
+
+## Drawn cells under a node: visible MultiMesh instances, or visible direct Node3D children that are not labels or markers.
+func _drawn_positions(n: Node) -> Array:
+	var out: Array = []
+	if n == null:
+		return out
+	for mm in n.find_children("*", "MultiMeshInstance3D", true, false):
+		var mmi: MultiMeshInstance3D = mm as MultiMeshInstance3D
+		if mmi.multimesh == null or not mmi.is_visible_in_tree():
+			continue
+		var k: int = mmi.multimesh.visible_instance_count if mmi.multimesh.visible_instance_count >= 0 else mmi.multimesh.instance_count
+		for i in k:
+			out.append(mmi.global_transform * mmi.multimesh.get_instance_transform(i).origin)
+	for ch in n.get_children():
+		if ch is Node3D and not (ch is Label3D) and not (ch is Marker3D) and not (ch is MultiMeshInstance3D) and (ch as Node3D).is_visible_in_tree():
+			out.append((ch as Node3D).global_position)
+	return out
+
+
+# Spec 4: with centrifuge_capacity_frames = 5 the heap shows exactly the cells the bucket holds after each frame (35, 70 ... 175), all
+# inside the glass. bucket_visual_cap is gone.
+func t_heap_shows_every_cell() -> void:
+	_set_cfg("centrifuge_capacity_frames", 5)
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	var c: Node = _nn(m, "Centrifuge")
+	var hr: Node = c.find_child("HeapRoot", true, false) if c != null else null
+	ck(hr != null, "HeapRoot exists on the centrifuge (0.1.0 name)")
+	var glass: Array = _glass_of(c) if c != null else []
+	ck(glass.size() > 0, "a glass.tres bucket mesh exists")
+	if hr == null or glass.is_empty():
+		_fin()
+		return
+	eq(_bucket_cells(), 5 * _cpf(), "capacity 5 frames = %d cells" % (5 * _cpf()))
+	var gs: Array = _span_xz([glass])
+	var gc := Vector2((float(gs[0]) + float(gs[2])) * 0.5, (float(gs[1]) + float(gs[3])) * 0.5)
+	var radius: float = minf(float(gs[2]) - float(gs[0]), float(gs[3]) - float(gs[1])) * 0.5
+	var yr: Vector2 = _box_corners_y([glass])
+	for k in range(1, 6):
+		var n: int = _cpf()
+		c.call("add_cells", n, _jars_of(n))
+		c.call("land_cells", n)
+		await _frames(4)
+		var pos: Array = _drawn_positions(hr)
+		eq(pos.size(), k * _cpf(), "after frame %d the heap shows every one of the bucket's %d cells" % [k, k * _cpf()])
+		var outside: int = 0
+		for p in pos:
+			var v: Vector3 = p
+			if Vector2(v.x - gc.x, v.z - gc.y).length() > radius or v.y < yr.x or v.y > yr.y:
+				outside += 1
+		eq(outside, 0, "after frame %d every heap cell lies inside the glass (radius %.2f, y %.2f to %.2f)" % [k, radius, yr.x, yr.y])
+	eq(int(c.get("cells")), 5 * _cpf(), "the bucket counts 175 cells")
+	_fin()
+
+
+# Spec 4: the pile shows every piled cell (pile_visual_cap gone); the count label stays.
+func t_pile_shows_every_cell() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	var p: Node = _nn(m, "Pile")
+	if p == null:
+		_fin()
+		return
+	for n in [10, 100, 400]:
+		var have: int = int(p.get("cells"))
+		p.call("add", n, _jars_of(n))
+		p.call("land", n)
+		await _frames(4)
+		var want: int = have + n
+		eq((_drawn_positions(p) as Array).size(), want, "the pile shows all %d cells it holds" % want)
+	var label: Label3D = null
+	for ch in p.get_children():
+		if ch is Label3D:
+			label = ch as Label3D
+	ck(label != null, "the pile keeps its count label (a Label3D child)")
+	if label != null:
+		ck(label.is_visible_in_tree() and label.text.contains(str(int(p.get("cells")))), "the count label shows the pile's %d cells (text '%s')" % [int(p.get("cells")), label.text])
+	_fin()
+
+
+# ---------------------------------------------------------------- the jar (spec 5)
+
+func _mat_path(mi: MeshInstance3D) -> String:
+	var mat: Material = _mesh_mat(mi)
+	return mat.resource_path if mat != null else ""
+
+
+## The material a mesh instance draws with: override, surface override, the primitive mesh's own, then surface 0
+## (the dummy renderer of a headless run cannot count surfaces of a primitive mesh).
+func _mesh_mat(mi: MeshInstance3D) -> Material:
+	var mat: Material = mi.material_override
+	if mat == null:
+		mat = mi.get_surface_override_material(0)
+	if mat == null and mi.mesh is PrimitiveMesh:
+		mat = (mi.mesh as PrimitiveMesh).material
+	if mat == null and mi.mesh != null and not (mi.mesh is PrimitiveMesh) and mi.mesh.get_surface_count() > 0:
+		mat = mi.mesh.surface_get_material(0)
+	return mat
+
+
+func t_node_contract_011() -> void:
+	var ps: Variant = load("res://scenes/props/jar.tscn")
+	ck(ps != null, "jar.tscn loads")
+	if ps != null:
+		var j: Node = (ps as PackedScene).instantiate()
+		_to_free.append(j)
+		ck(j is Node3D and not (j is MeshInstance3D), "the jar's root is a plain Node3D (was a MeshInstance3D in 0.1.0): %s" % j.get_class())
+		eq(String(j.name), "Jar", "the jar's root is named Jar")
+		for nm in ["JarGlass", "JarHoney", "JarHoneyBottom", "JarHoneyTop", "JarLid"]:
+			ck(j.find_child(nm, true, false) != null, "jar.tscn has %s" % nm)
+		for nm in ["JarHoneyBottom", "JarHoneyTop"]:
+			ck(j.find_child(nm, true, false) is Marker3D, "%s is a Marker3D" % nm)
+		var g: Node = j.find_child("JarGlass", true, false)
+		var hn: Node = j.find_child("JarHoney", true, false)
+		var ld: Node = j.find_child("JarLid", true, false)
+		if g is MeshInstance3D:
+			ck(_mat_path(g as MeshInstance3D).ends_with("glass.tres"), "JarGlass uses glass.tres (%s)" % _mat_path(g as MeshInstance3D))
+		if hn is MeshInstance3D:
+			ck(_mat_path(hn as MeshInstance3D).ends_with("honey_level.tres"), "JarHoney uses honey_level.tres (%s)" % _mat_path(hn as MeshInstance3D))
+		if ld != null:
+			var lm: MeshInstance3D = ld as MeshInstance3D
+			if lm == null:
+				var lms: Array = ld.find_children("*", "MeshInstance3D", true, false)
+				lm = lms[0] as MeshInstance3D if lms.size() > 0 else null
+			ck(lm != null and _mat_path(lm).ends_with("steel.tres"), "JarLid is steel (steel.tres)")
+		if j.find_child("JarHoneyBottom", true, false) != null and j.find_child("JarHoneyTop", true, false) != null:
+			ck((j.find_child("JarHoneyTop", true, false) as Node3D).position.y > (j.find_child("JarHoneyBottom", true, false) as Node3D).position.y, "JarHoneyTop is above JarHoneyBottom")
+	var m: Node = await _mk_main()
+	if m != null:
+		var c: Node = _nn(m, "Centrifuge")
+		var sj: Node = c.find_child("SpigotJar", true, false) if c != null else null
+		ck(sj != null and sj.scene_file_path.ends_with("jar.tscn"), "SpigotJar is a jar.tscn instance")
+		var zf: Node = _nn(m, "ZoomFraming")
+		if zf != null:
+			ck(zf.has_meta("zoom_size"), "ZoomFraming carries the zoom_size metadata")
+			var d: Variant = load(DEFAULT_CFG)
+			if zf.has_meta("zoom_size") and d != null:
+				near(float(zf.get_meta("zoom_size")), float(d.get("zoom_size")), "the config default zoom_size equals ZoomFraming's metadata (Bob's value)", 0.01)
+	_fin()
+
+
+## Honey height of a jar as a fraction between its two markers: the top of JarHoney's box. 0 when JarHoney is hidden.
+func _jar_frac(jar: Node) -> float:
+	var hn: Node3D = jar.find_child("JarHoney", true, false) as Node3D
+	var b: Node3D = jar.find_child("JarHoneyBottom", true, false) as Node3D
+	var t: Node3D = jar.find_child("JarHoneyTop", true, false) as Node3D
+	if hn == null or b == null or t == null:
+		return -1.0
+	if not hn.is_visible_in_tree():
+		return 0.0
+	var bx: Array = _obbs(hn)
+	if bx.is_empty():
+		return 0.0
+	var top: float = _box_corners_y(bx).y
+	return (top - b.global_position.y) / (t.global_position.y - b.global_position.y)
+
+
+func _jar_lid_shown(jar: Node) -> bool:
+	var ld: Node3D = jar.find_child("JarLid", true, false) as Node3D
+	return ld != null and ld.is_visible_in_tree()
+
+
+# Spec 5: at the spigot the empty jar has no lid, the honey rises over bottling_seconds_per_jar, then the lid goes on.
+func t_jar_fills_then_lid() -> void:
+	_set_cfg("bottling_seconds_per_jar", 1.5)
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	var c: Node = _nn(m, "Centrifuge")
+	var jar: Node = c.find_child("SpigotJar", true, false)
+	ck(jar != null, "SpigotJar exists")
+	if jar == null:
+		_fin()
+		return
+	var spj: float = float(cv("bottling_seconds_per_jar"))
+	var cells: int = _cpf()   # one frame: 2 jars
+	c.call("add_cells", cells, _jars_of(cells))
+	c.call("close_lid")
+	c.call("begin_crank")
+	_crank_done(c)
+	eq(int(c.get("state")), _st(c, "DONE"), "extracted before bottling")
+	c.call("open_spigot")
+	var samples: Array = []   # [t, jar visible, frac, lid shown]
+	var t0: int = Time.get_ticks_msec()
+	var empty: int = _st(c, "EMPTY")
+	while Time.get_ticks_msec() - t0 < int((spj * 2.0 + 2.0) * 1000.0) and int(c.get("state")) != empty:
+		await process_frame
+		samples.append([float(Time.get_ticks_msec() - t0) / 1000.0, jar.is_visible_in_tree(), _jar_frac(jar), _jar_lid_shown(jar)])
+	ck(samples.size() >= 30, "enough samples while bottling (%d)" % samples.size())
+	var seen_full_lid: bool = false
+	var seen_mid: bool = false
+	var bad_lid: int = 0
+	var shrink: int = 0
+	var first_vis: float = -1.0
+	var first_frac: float = -2.0
+	var first_lid: bool = true
+	var t_full: float = -1.0
+	var prev: float = -1.0
+	for s in samples:
+		var vis: bool = s[1]
+		var f: float = s[2]
+		var lid: bool = s[3]
+		if not vis:
+			prev = -1.0
+			continue
+		if first_vis < 0.0:
+			first_vis = s[0]
+			first_frac = f
+			first_lid = lid
+		if lid and f < 0.98:
+			bad_lid += 1
+		if f >= 0.98 and lid:
+			seen_full_lid = true
+			if t_full < 0.0:
+				t_full = s[0]
+		if f > 0.3 and f < 0.7:
+			seen_mid = true
+		if prev >= 0.0 and f < prev - 0.02 and not (f <= 0.15):
+			shrink += 1
+		prev = f
+	ck(first_vis >= 0.0, "the jar appeared at the spigot")
+	ck(first_frac >= -0.5 and first_frac <= 0.15, "the jar appears empty (honey fraction %.2f)" % first_frac)
+	ck(not first_lid, "the jar appears without its lid")
+	eq(bad_lid, 0, "the lid is shown only when the jar is full (samples with lid and honey below full)")
+	eq(shrink, 0, "the honey only rises within one jar")
+	ck(seen_mid, "the honey passes through the middle of the jar (rises gradually)")
+	ck(seen_full_lid, "the lid shows once the jar is full")
+	if first_vis >= 0.0 and t_full >= 0.0:
+		var rise: float = t_full - first_vis
+		ck(rise >= spj * 0.7 and rise <= spj * 1.15 + 0.1, "the honey rises over one bottling interval: %.2f s for bottling_seconds_per_jar %.2f" % [rise, spj])
+	_fin()
+
+
+# Spec 5: jars on the truck and in the crate are full, with lids.
+func t_truck_and_crate_jars_full_with_lids() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	var tk: Node = _nn(m, "Truck")
+	if tk == null:
+		_fin()
+		return
+	for i in 3:
+		tk.call("receive_jar")
+	await _frames(3)
+	var bed: Node = tk.find_child("BedJars", true, false)
+	ck(bed != null, "BedJars exists on the truck (0.1.0 name)")
+	var seen: int = 0
+	if bed != null:
+		for j in bed.get_children():
+			if (j as Node3D).is_visible_in_tree():
+				seen += 1
+				ck(_jar_frac(j) >= 0.98, "a jar on the truck is full (fraction %.2f)" % _jar_frac(j))
+				ck(_jar_lid_shown(j), "a jar on the truck has its lid")
+	eq(seen, 3, "three jars show on the truck bed")
+	for i in int(cv("truck_capacity_jars")) - 3:
+		tk.call("receive_jar")
+	tk.call("sell")
+	tk.call("receive_jar")
+	tk.call("receive_jar")
+	await _frames(3)
+	var crate: Node = m.find_child("CrateJars", true, false)
+	ck(crate != null, "CrateJars exists (0.1.0 name)")
+	var seen2: int = 0
+	if crate != null:
+		for j in crate.get_children():
+			if (j as Node3D).is_visible_in_tree() and not (j is Label3D):
+				seen2 += 1
+				ck(_jar_frac(j) >= 0.98, "a jar in the crate is full (fraction %.2f)" % _jar_frac(j))
+				ck(_jar_lid_shown(j), "a jar in the crate has its lid")
+	eq(seen2, 2, "two jars show in the crate")
+	_fin()
+
+
+# ---------------------------------------------------------------- wheel rims (spec 6)
+
+## Total angle (rad) the offset between two nodes turned over the samples. Both nodes' positions move with the truck; their difference does not.
+func _offset_turn(offsets: Array) -> float:
+	var tot: float = 0.0
+	for i in range(1, offsets.size()):
+		var a: Vector3 = offsets[i - 1]
+		var b: Vector3 = offsets[i]
+		if a.length() > 1.0e-6 and b.length() > 1.0e-6:
+			tot += a.angle_to(b)
+	return tot
+
+
+## The rotation measure has to fail on a mark that does not turn: a spinning wheel with the mark as a child, and with the mark beside it.
+func t_rim_measure_can_fail() -> void:
+	var wheel := Node3D.new()
+	var rim := Node3D.new()
+	var mark_child := Node3D.new()
+	var mark_loose := Node3D.new()
+	root.add_child(wheel)
+	root.add_child(mark_loose)
+	wheel.add_child(rim)
+	wheel.add_child(mark_child)
+	mark_child.position = Vector3(0.0, 0.3, 0.0)
+	mark_loose.position = Vector3(0.0, 0.3, 0.0)
+	_to_free.append(wheel)
+	_to_free.append(mark_loose)
+	var turning: Array = []
+	var loose: Array = []
+	for i in 20:
+		wheel.rotate_x(0.1)
+		turning.append(mark_child.global_position - rim.global_position)
+		loose.append(mark_loose.global_position - rim.global_position)
+	ck(_offset_turn(turning) > 1.5, "a mark on the wheel turns (%.2f rad)" % _offset_turn(turning))
+	ck(_offset_turn(loose) < 0.001 or _offset_turn(loose) < 0.5 * _offset_turn(turning), "a mark beside the wheel is measured as not turning (%.2f rad)" % _offset_turn(loose))
+	_fin()
+
+
+# Spec 6: each wheel has a light-grey Rim and an off-centre contrasting RimMark as children; they turn with the wheel.
+func t_wheel_rims() -> void:
+	var ps: Variant = load("res://scenes/props/truck.tscn")
+	ck(ps != null, "truck.tscn loads")
+	if ps == null:
+		_fin()
+		return
+	var tk: Node = (ps as PackedScene).instantiate()
+	root.add_child(tk)
+	_to_free.append(tk)
+	_give_config(tk)
+	await _frames(3)
+	_set_cfg("truck_trip_seconds", 6.0)
+	_set_cfg("truck_slide_distance", 10.0)
+	var names: Array = ["WheelFL", "WheelFR", "WheelRL", "WheelRR"]
+	var offs: Dictionary = {}
+	var wheels: Dictionary = {}
+	for nm in names:
+		var w: Node3D = tk.find_child(nm, true, false) as Node3D
+		ck(w != null, "%s exists" % nm)
+		if w == null:
+			_fin()
+			return
+		var rim: Node3D = w.get_node_or_null("Rim") as Node3D
+		var mark: Node3D = w.get_node_or_null("RimMark") as Node3D
+		ck(rim != null, "%s has a child named Rim" % nm)
+		ck(mark != null, "%s has a child named RimMark" % nm)
+		if rim == null or mark == null:
+			_fin()
+			return
+		wheels[nm] = [w, rim, mark]
+		offs[nm] = []
+		ck((mark.global_position - rim.global_position).length() > 0.02, "%s: RimMark is off-centre from the rim (%.3f)" % [nm, (mark.global_position - rim.global_position).length()])
+		var rm: Array = rim.find_children("*", "MeshInstance3D", true, false)
+		if rim is MeshInstance3D:
+			rm.append(rim)
+		var mm: Array = mark.find_children("*", "MeshInstance3D", true, false)
+		if mark is MeshInstance3D:
+			mm.append(mark)
+		ck(rm.size() > 0 and mm.size() > 0, "%s: Rim and RimMark are drawn (have meshes)" % nm)
+		if rm.size() > 0 and mm.size() > 0:
+			var rc: Color = _albedo_of(rm[0] as MeshInstance3D)
+			var mc: Color = _albedo_of(mm[0] as MeshInstance3D)
+			ck(rc.get_luminance() >= 0.55 and (maxf(rc.r, maxf(rc.g, rc.b)) - minf(rc.r, minf(rc.g, rc.b))) <= 0.2, "%s: the rim is light grey (albedo %s)" % [nm, str(rc)])
+			ck(absf(rc.get_luminance() - mc.get_luminance()) >= 0.25 or (Vector3(rc.r, rc.g, rc.b) - Vector3(mc.r, mc.g, mc.b)).length() >= 0.4, "%s: the mark contrasts with the rim (%s on %s)" % [nm, str(mc), str(rc)])
+	for i in int(cv("truck_capacity_jars")):
+		tk.call("receive_jar")
+	tk.call("sell")
+	var t_end: int = Time.get_ticks_msec() + int((float(cv("truck_trip_seconds")) + 1.0) * 1000.0)
+	var wspin: Dictionary = {}
+	for nm in names:
+		wspin[nm] = []
+	while Time.get_ticks_msec() < t_end:
+		await process_frame
+		for nm in names:
+			var tr: Array = wheels[nm]
+			(offs[nm] as Array).append((tr[2] as Node3D).global_position - (tr[1] as Node3D).global_position)
+			(wspin[nm] as Array).append((tr[0] as Node3D).global_basis)
+	for nm in names:
+		var turn: float = _offset_turn(offs[nm])
+		var wturn: float = 0.0
+		var bs: Array = wspin[nm]
+		for i in range(1, bs.size()):
+			wturn += _angle_between(bs[i - 1], bs[i])
+		ck(wturn > 1.0, "%s: the wheel turned while driving (%.2f rad)" % [nm, wturn])
+		ck(turn > 1.0, "%s: RimMark turned around the rim (%.2f rad) so the roll is visible" % [nm, turn])
+		ck(absf(turn - wturn) <= 0.25 * wturn + 0.3, "%s: RimMark turns with the wheel (mark %.2f rad, wheel %.2f rad)" % [nm, turn, wturn])
+	_fin()
+
+
+func _albedo_of(mi: MeshInstance3D) -> Color:
+	var mat: Material = _mesh_mat(mi)
+	if mat is BaseMaterial3D:
+		return (mat as BaseMaterial3D).albedo_color
+	return Color(0.0, 0.0, 0.0)
+
+
+# ---------------------------------------------------------------- the zoom at the new angle (spec 3)
+
+## Screen width (px) of one cell's hexagonal face: its two flat sides through the cell centre along the mesh's local X (the frame's width axis).
+func _cell_face_w(mi: MeshInstance3D, cam: Camera3D) -> float:
+	var aabb: AABB = mi.mesh.get_aabb()
+	var c: Vector3 = aabb.position + aabb.size * 0.5
+	c.y = aabb.end.y
+	var hx := Vector3(aabb.size.x * 0.5, 0.0, 0.0)
+	var gt: Transform3D = mi.global_transform
+	return cam.unproject_position(gt * (c + hx)).distance_to(cam.unproject_position(gt * (c - hx)))
+
+
+func _zoom_open_main() -> Dictionary:
+	var m: Node = await _mk_main()
+	if m == null:
+		return {}
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		return {}
+	var tr: Dictionary = _track(p["Hive"])
+	_full_hive_frozen(p["Hive"])
+	await _frames(4)
+	var raised: bool = await _open_zoom(m, p, tr)
+	ck(raised, "the zoom opened with a risen frame")
+	return {"m": m, "p": p, "tr": tr}
+
+
+# Spec 3: every cell is at least min_cell_px wide AS SEEN at the new angle; all 35 are measured (a vacuous pass is impossible).
+func t_cell_width_at_zoom() -> void:
+	var z: Dictionary = await _zoom_open_main()
+	if z.is_empty():
+		_fin()
+		return
+	var m: Node = z["m"]
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	var hc: Node = m.find_child("Honeycomb", true, false)
+	ck(hc != null, "Honeycomb exists")
+	var n: int = 0
+	var lo: float = 1.0e9
+	if hc != null:
+		for mi in hc.find_children("*", "MeshInstance3D", true, false):
+			var mm: MeshInstance3D = mi as MeshInstance3D
+			if mm.mesh == null or not mm.is_visible_in_tree():
+				continue
+			var w: float = _cell_face_w(mm, cam)
+			if w > 0.0:
+				lo = minf(lo, w)
+				n += 1
+	eq(n, _cpf(), "all %d cells of the risen frame were measured" % _cpf())
+	ck(n > 0 and lo >= float(cv("min_cell_px")), "the smallest cell is at least min_cell_px wide on screen: %.1f px >= %s (camera size %.2f, zoom_size %s)" % [lo, str(cv("min_cell_px")), cam.size, str(cv("zoom_size"))])
+	_fin()
+
+
+# Spec 3: the zoom shows the hive, its risen frame and the bucket; BackButton is never over either.
+func t_zoom_view_contains_hive_and_bucket() -> void:
+	var z: Dictionary = await _zoom_open_main()
+	if z.is_empty():
+		_fin()
+		return
+	var m: Node = z["m"]
+	var p: Dictionary = z["p"]
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	var vp := Rect2(Vector2.ZERO, root.get_visible_rect().size)
+	var hive: Node = p["Hive"]
+	var c: Node = p["Centrifuge"]
+	var lid: Node = hive.find_child("HiveLid", true, false)
+	var body: Array = _obbs(hive, [lid, hive.find_child("Honeycomb", true, false)])
+	var risen: Array = _obbs(hive.find_child("Honeycomb", true, false))
+	var glass: Array = _glass_of(c)
+	ck(body.size() > 0 and risen.size() > 0 and glass.size() > 0, "hive body (%d boxes), risen frame (%d) and bucket glass (%d) all have boxes" % [body.size(), risen.size(), glass.size()])
+	var back: Rect2 = (p["BackButton"] as Control).get_global_rect()
+	for pair in [["the hive", body], ["the risen frame", risen], ["the bucket", [glass]]]:
+		var boxes: Array = pair[1]
+		var r: Rect2 = _screen_of(boxes, cam)
+		ck(vp.encloses(r), "%s is entirely in view at the zoom (screen box %s, viewport %s)" % [pair[0], str(r), str(vp)])
+		var under: int = 0
+		for bx in boxes:
+			var cc: Vector3 = (bx as Array)[0]
+			var ax: Array = (bx as Array)[1]
+			for sx in [-1.0, 1.0]:
+				for sy in [-1.0, 1.0]:
+					for sz in [-1.0, 1.0]:
+						if back.has_point(cam.unproject_position(cc + (ax[0] as Vector3) * sx + (ax[1] as Vector3) * sy + (ax[2] as Vector3) * sz)):
+							under += 1
+		eq(under, 0, "BackButton covers no corner of %s" % pair[0])
+	_fin()
+
+
+# ---------------------------------------------------------------- config and Dev mode of 0.1.1
+
+# Config table of 0.1.1: new values, the retired caps are absent from the defaults file and from game_config.gd.
+func t_config_011() -> void:
+	var c: Variant = load(DEFAULT_CFG)
+	ck(c != null, "default_config.tres loads")
+	if c == null:
+		_fin()
+		return
+	near(float(c.get("lid_lift_height")), 0.6, "default lid_lift_height")
+	near(float(c.get("lid_lift_seconds")), 0.25, "default lid_lift_seconds")
+	near(float(c.get("lid_drop_seconds")), 0.4, "default lid_drop_seconds (now the fall after the lift)")
+	ck(c.get("zoom_size") != null and float(c.get("zoom_size")) > 0.0, "zoom_size is Bob's positive value")
+	ck(c.get("frame_rise") != null and float(c.get("frame_rise")) > 0.0, "frame_rise is Bob's positive value")
+	for gone in ["bucket_visual_cap", "pile_visual_cap"]:
+		ck(c.get(gone) == null, "'%s' is removed from the config (every cell shows)" % gone)
+	var f := FileAccess.open(_script_path("game_config.gd"), FileAccess.READ)
+	ck(f != null, "game_config.gd readable")
+	if f != null:
+		var text: String = f.get_as_text()
+		f.close()
+		for gone in ["bucket_visual_cap", "pile_visual_cap"]:
+			ck(not text.contains("var %s" % gone), "game_config.gd no longer declares %s" % gone)
+		for nm in ["lid_lift_height", "lid_lift_seconds"]:
+			ck(text.contains("@export var %s" % nm), "game_config.gd has @export var %s (Dev mode lists exported values)" % nm)
+	# no script reads a removed value
+	var d := DirAccess.open("res://scripts")
+	if d != null:
+		for fn in d.get_files():
+			if fn.ends_with(".gd"):
+				var sf := FileAccess.open("res://scripts/" + fn, FileAccess.READ)
+				var src: String = sf.get_as_text()
+				sf.close()
+				ck(not src.contains("bucket_visual_cap") and not src.contains("pile_visual_cap"), "%s does not mention a removed cap" % fn)
+	_fin()
+
+
+# Dev mode picks up the new values (rows for lid_lift_height and lid_lift_seconds) and not the removed ones.
+func t_dev_panel_has_lid_values() -> void:
+	_set_dev_mode(true)
+	var panel: Node = await _mk_panel()
+	if panel == null:
+		_fin()
+		return
+	for nm in ["lid_lift_height", "lid_lift_seconds", "lid_drop_seconds", "zoom_size", "frame_rise"]:
+		ck(_row_spin(panel, nm) != null, "the Dev panel has a row for %s" % nm)
+	for gone in ["bucket_visual_cap", "pile_visual_cap"]:
+		ck(_row_spin(panel, gone) == null, "the Dev panel has no row for the removed %s" % gone)
 	_fin()
