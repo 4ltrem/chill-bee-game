@@ -24,6 +24,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 TOOLS = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(TOOLS)
@@ -101,19 +102,29 @@ def summarise(suite, text, code):
             "measures": measures, "errors": errors[:20], "noise_dropped": noise, "completed": completed}
 
 
-def run_suite(suite, root, logdir, timeout):
+def progress(msg):
+    print("godot_run: " + msg, file=sys.stderr, flush=True)
+
+
+def run_suite(suite, root, logdir, timeout, env=None, log_name=None):
+    """Run one suite; `env` is merged over os.environ, `log_name` names the log (default: the suite)."""
     cmd = command(suite, root)
+    full_env = {**os.environ, **env} if env else None
+    progress(f"{suite} ...")
+    started = time.time()
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
+        proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout, env=full_env)
         text, code = proc.stdout + proc.stderr, proc.returncode
     except subprocess.TimeoutExpired as exc:
         out = exc.stdout or b""
         text = out.decode("utf-8", "replace") if isinstance(out, bytes) else out
         code = None
-    log = os.path.join(logdir, suite + ".log")
+    log = os.path.join(logdir, (log_name or suite) + ".log")
     with open(log, "w", encoding="utf-8") as fh:
         fh.write(" ".join(cmd) + "\n\n" + text)
     result = summarise(suite, text, code)
+    secs = int(time.time() - started)
+    progress(f"{suite} done in {secs // 60}m{secs % 60:02d}s ({result['status']})")
     result["log"] = os.path.relpath(log, REPO).replace(os.sep, "/")
     return result
 

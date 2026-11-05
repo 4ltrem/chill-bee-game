@@ -576,6 +576,11 @@ class BuildToolsTest(unittest.TestCase):
         self.assertEqual(self.mu.verdict({"expect": []}, ok)[0], "MISSED")
         self.assertEqual(self.mu.verdict({}, {"status": "TIMEOUT", "fails": []})[0], "BROKEN")
 
+    def test_mutation_env_runs_only_expected_unit_tests(self):
+        self.assertEqual(self.mu.mutation_env({"expect": ["a", "b"]}, "unit"), {"CB_ONLY": "a,b"})
+        self.assertIsNone(self.mu.mutation_env({"expect": []}, "unit"))
+        self.assertIsNone(self.mu.mutation_env({"expect": ["a"]}, "play"))
+
     def test_budget_guard_blocks_warns_and_ignores_stale_readings(self):
         import budget_guard as b
         import datetime as d

@@ -13,14 +13,18 @@ Replaces the hand-made "broken copies" Quinn built for each new test (8 full pro
 `find` must occur exactly once in `file` (relative to the game folder). The game folder is copied once
 to a temp folder (without builds/ and reports/); each mutation is applied, the suite is run there through
 godot_run.py, and the file is restored. A mutation is CAUGHT when every test in `expect` fails (or, with
-`expect` empty, when anything fails). Exit 0 only when every mutation was caught. Standard library only.
+`expect` empty, when anything fails). A unit mutation with `expect` runs only those tests, alone, through
+the CB_ONLY env var of run_tests.gd (minutes saved per mutation); without `expect` the whole suite runs.
+Each mutation logs to its own file. Exit 0 only when every mutation was caught. Standard library only.
 """
 import argparse
 import json
 import os
 import shutil
 import sys
+import re
 import tempfile
+import time
 
 TOOLS = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(TOOLS)
@@ -49,6 +53,12 @@ def verdict(mutation, result):
     return ("CAUGHT", f"{len(failed)} tests failed") if result["status"] == "FAIL" else ("MISSED", "every test passed")
 
 
+def mutation_env(mutation, suite):
+    """Pure: extra env for the suite run; unit mutations with `expect` run only those tests (CB_ONLY)."""
+    expect = mutation.get("expect") or []
+    return {"CB_ONLY": ",".join(expect)} if expect and suite == "unit" else None
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("names", nargs="*", help="run only these mutations (default: all)")
@@ -71,7 +81,7 @@ def main(argv=None):
     os.makedirs(logdir, exist_ok=True)
     rows, all_caught = [], True
     try:
-        for m in mutations:
+        for i, m in enumerate(mutations, 1):
             path = os.path.join(copy, m["file"])
             original = open(path, encoding="utf-8").read()
             count = original.count(m["find"])
@@ -80,11 +90,16 @@ def main(argv=None):
                 all_caught = False
                 continue
             open(path, "w", encoding="utf-8", newline="").write(original.replace(m["find"], m["replace"]))
+            suite = args.suite or m.get("suite", "unit")
+            slug = re.sub(r"[^a-z0-9]+", "-", m["name"].lower()).strip("-")[:40]
+            started = time.time()
             try:
-                result = godot_run.run_suite(args.suite or m.get("suite", "unit"), copy, logdir, args.timeout)
+                result = godot_run.run_suite(suite, copy, logdir, args.timeout, env=mutation_env(m, suite),
+                                             log_name=f"{suite}-{i}-{slug}")
             finally:
                 open(path, "w", encoding="utf-8", newline="").write(original)
             v, why = verdict(m, result)
+            print(f"mutate {i}/{len(mutations)}: {m['name']} ... {v} in {int(time.time() - started)}s", file=sys.stderr, flush=True)
             all_caught = all_caught and v == "CAUGHT"
             rows.append((m["name"], v, why))
     finally:

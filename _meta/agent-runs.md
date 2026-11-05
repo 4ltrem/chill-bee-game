@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-136 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+139 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -66,11 +66,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Ruth | post-ICM | 2 | — | 266,270 | 116 s |
 | **All** | | **31** | **31,316** | **154,563** | 145 s |
 
-**Doc audits** (4 runs)
+**Doc audits** (5 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Doris | post-ICM | 4 | 62,643 | 296,604 | 89 s |
+| Doris | post-ICM | 5 | 55,075 | 257,691 | 73 s |
 
 **Probes** (2 runs)
 
@@ -80,7 +80,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Clara, one empty turn, prompt on stdin | post-ICM | 1 | — | 13,370 | — |
 | **All** | | **2** | **—** | **12,806** | — |
 
-**Subagent runs** (52 runs)
+**Subagent runs** (53 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
@@ -90,16 +90,16 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | claude-code-guide | post-ICM | 2 | 48,226 | 255,200 | 52 s |
 | Martin (hiring-manager) | post-ICM | 6 | 43,440 | 280,294 | 68 s |
 | Ruth (research-assistant) | post-ICM | 1 | 37,318 | 203,725 | 107 s |
-| general-purpose | post-ICM | 2 | 72,871 | 609,698 | 88 s |
+| general-purpose | post-ICM | 3 | 67,064 | 491,472 | 83 s |
 | Terry (progression-tree-expert) | post-ICM | 1 | 34,830 | 142,788 | 168 s |
 | Milo (modeler) | post-ICM | 1 | 28,511 | 82,321 | 45 s |
-| **All** | | **52** | **86,329** | **2,293,940** | 933 s |
+| **All** | | **53** | **85,746** | **2,255,469** | 917 s |
 
-**Orchestrator** (8 runs)
+**Orchestrator** (9 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 8 | — | 38,321,657 | 44,263 s |
+| Orchestrator (main session) | post-ICM | 9 | — | 34,748,470 | 39,478 s |
 
 **Style loop** (7 runs)
 

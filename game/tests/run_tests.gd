@@ -76,7 +76,9 @@ func _run() -> void:
 		_cur_msgs.clear()
 		_checks = 0
 		_finished = false
+		var t0: int = Time.get_ticks_msec()
 		await call(t)
+		var ms: int = Time.get_ticks_msec() - t0
 		if not _finished:
 			_cur_ok = false
 			_cur_msgs.append("test stopped before its final line (script error or missing method; see the engine error above)")
@@ -87,10 +89,10 @@ func _run() -> void:
 		ran += 1
 		if _cur_ok:
 			_passed += 1
-			print("PASS  ", t, "  (", _checks, " checks)")
+			print("PASS  ", t, "  (", _checks, " checks, ", ms, " ms)")
 		else:
 			_failed += 1
-			print("FAIL  ", t, "  ", " | ".join(_cur_msgs))
+			print("FAIL  ", t, "  ", " | ".join(_cur_msgs), "  (", ms, " ms)")
 	_restore_user_cfg()
 	print("---- %d passed, %d failed" % [_passed, _failed])
 	print("RAN %d of %d" % [ran, tests.size()])
