@@ -178,7 +178,7 @@ func _n(name: String) -> Node:
 # ---------------------------------------------------------------- the zoom, through real input
 
 func _zoom_settle() -> float:
-	return float(_cv("zoom_seconds")) + float(_cv("lid_drop_seconds")) + float(_cv("slide_seconds")) + 0.5
+	return float(_cv("zoom_seconds")) + _lid_t() + float(_cv("slide_seconds")) + 0.5
 
 
 func _open_zoom(tag: String) -> bool:
@@ -227,7 +227,7 @@ func _next_frame(was: int) -> bool:
 
 
 func _zoom_out_wait() -> void:
-	await _wait(_zoom_settle() + float(_cv("zoom_seconds")) + float(_cv("lid_drop_seconds")) + float(_cv("close_delay_seconds")))
+	await _wait(_zoom_settle() + float(_cv("zoom_seconds")) + _lid_t() + float(_cv("close_delay_seconds")))
 
 
 ## Spin icon, then spaced real clicks until DONE (or one real hold). Returns the number of counted turns by this call.
@@ -492,7 +492,7 @@ func _run() -> void:
 			if rnd == 1 and batch == 1:
 				await _shot("r4-8-farm-bottling")
 			bottled_total += await _bottle(TB, mid)
-			await _wait(float(_cv("cell_fly_seconds")) + float(_cv("lid_drop_seconds")) + 0.8)
+			await _wait(float(_cv("cell_fly_seconds")) + _lid_t() + 0.8)
 			if int(pile.get("cells")) > 0 or int(cen.get("cells")) > 0:
 				# the pile loaded into the empty bucket by itself
 				ck(int(cen.get("cells")) > 0, "%s: the pile loaded into the empty bucket" % TB)
@@ -549,3 +549,9 @@ func _run() -> void:
 	print("---- %d checks, %d failed" % [checks, fails])
 	print("COMPLETED")
 	quit(1 if fails > 0 else 0)
+
+
+## Lid time of 0.1.1: the lift then the fall (lid_lift_seconds is absent from older configs: counts as 0).
+func _lid_t() -> float:
+	var lift: Variant = root.get_node("Economy").get("config").get("lid_lift_seconds")
+	return float(_cv("lid_drop_seconds")) + (float(lift) if lift != null else 0.0)

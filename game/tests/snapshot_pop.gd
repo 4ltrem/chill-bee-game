@@ -210,7 +210,7 @@ func _run() -> void:
 		while risen < 0 and Time.get_ticks_msec() - t0 < 4000:
 			await process_frame
 		ck(risen >= 0, "the zoom opened with a risen frame")
-		await _wait(float(cfg.get("zoom_seconds")) + float(cfg.get("lid_drop_seconds")) + float(cfg.get("slide_seconds")) + 0.8)
+		await _wait(float(cfg.get("zoom_seconds")) + _lid_t(cfg) + float(cfg.get("slide_seconds")) + 0.8)
 	else:
 		fork.emit_signal("pressed")
 		await _wait(1.6)
@@ -332,3 +332,9 @@ func _process(d: float) -> void:
 	print("---- %d checks, %d failed" % [checks, fails])
 	print("COMPLETED")
 	quit(1 if fails > 0 else 0)
+
+
+## Lid time of 0.1.1: the lift then the fall (the revision 3 build has no lid_lift_seconds: counts as 0). Waits only, never the reference data.
+func _lid_t(c: Object) -> float:
+	var lift: Variant = c.get("lid_lift_seconds")
+	return float(c.get("lid_drop_seconds")) + (float(lift) if lift != null else 0.0)

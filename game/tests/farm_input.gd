@@ -43,6 +43,25 @@ func click_at(vp_pos: Vector2) -> void:
 	await tree.process_frame
 
 
+## A tap with no frame between press and release (0.1.1). A windowed run also receives the REAL OS cursor's motion events at frame
+## boundaries; one of them between a pushed press and release moves the Button's press out of it and cancels `pressed` (headless
+## reproduction: the intermittent fork miss of 0.1.0). Hover first (a motion onto the target, as a real mouse arrives), then press and
+## release in the same call, so no engine frame can slip a foreign event in between.
+func tap_at(vp_pos: Vector2) -> void:
+	mouse_move_free(vp_pos)
+	mouse_button(vp_pos, true)
+	mouse_button(vp_pos, false)
+	await tree.process_frame
+
+
+func mouse_move_free(vp_pos: Vector2) -> void:
+	var ev := InputEventMouseMotion.new()
+	ev.position = vp_pos * to_window()
+	ev.global_position = ev.position
+	ev.button_mask = 0
+	root.push_input(ev)
+
+
 func click_ctl(ctl: Control) -> void:
 	await click_at(ctl.get_global_rect().get_center())
 
@@ -58,12 +77,12 @@ func click_icon(icon: Control) -> bool:
 		anchor = icon.get_node_or_null(ap) as Node3D
 	var rect: Rect2 = icon.get_global_rect()
 	if anchor == null or cam == null:
-		await click_ctl(icon)
+		await tap_at(icon.get_global_rect().get_center())
 		return false
 	var projected: Vector2 = cam.unproject_position(anchor.global_position) + (icon.get("screen_offset") as Vector2)
 	var near_rect: bool = rect.grow(6.0).has_point(projected)
 	var inside := Vector2(clampf(projected.x, rect.position.x + 6.0, rect.end.x - 6.0), clampf(projected.y, rect.position.y + 6.0, rect.end.y - 6.0))
-	await click_at(inside)
+	await tap_at(inside)
 	return near_rect
 
 
@@ -93,23 +112,26 @@ func cells(hc: Node) -> Array[Node3D]:
 	return out
 
 
-## Cell centres on screen grouped into rows (top to bottom, each left to right). Cells of one row share a screen y on the
-## upright frame, so a gap of more than `row_gap` px starts a new row.
-func rows(hc: Node, cam: Camera3D, row_gap: float = 11.0) -> Array:
-	var pts: Array[Vector2] = []
+## Cell centres on screen grouped into rows (top to bottom, each left to right).
+## 0.1.1: the frame stands upright with its face normal along world +X, so rows no longer share a SCREEN y under the isometric camera
+## (the screen y slants along the row). Rows are grouped by WORLD height instead (cells of one row share a world y on an upright frame;
+## a new row starts when the gap in y is more than half the largest gap), and each row is sorted by screen x. `row_gap` is kept for
+## the old call sites and ignored.
+func rows(hc: Node, cam: Camera3D, _row_gap: float = 11.0) -> Array:
+	var items: Array = []   # [world_y, screen point]
 	for c in cells(hc):
-		pts.append(cam.unproject_position(c.global_position))
-	pts.sort_custom(func(a: Vector2, b: Vector2) -> bool: return a.y < b.y)
+		items.append([c.global_position.y, cam.unproject_position(c.global_position)])
+	items.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) > float(b[0]))
+	var max_gap: float = 0.0
+	for i in range(1, items.size()):
+		max_gap = maxf(max_gap, float((items[i - 1] as Array)[0]) - float((items[i] as Array)[0]))
 	var out: Array = []
 	var cur: Array[Vector2] = []
-	var row_y: float = 0.0
-	for p in pts:
-		if cur.size() > 0 and absf(p.y - row_y) > row_gap:
+	for i in items.size():
+		if cur.size() > 0 and float((items[i - 1] as Array)[0]) - float((items[i] as Array)[0]) > max_gap * 0.5 and max_gap > 0.01:
 			out.append(cur)
 			cur = []
-		if cur.size() == 0:
-			row_y = p.y
-		cur.append(p)
+		cur.append((items[i] as Array)[1])
 	if cur.size() > 0:
 		out.append(cur)
 	for r in out:

@@ -8,6 +8,8 @@ extends Node3D
 
 enum Zoom { NONE, OPENING, RISING, WORKING, LOWERING, CLOSE_DELAY, BACK_LOWERING, CLOSING }
 
+const MAX_FLIGHTS: int = 40   # most cell flights launched at once when the pile loads (flight nodes, not cells drawn: every cell still lands)
+
 var zoom: int = Zoom.NONE
 ## Set by Back, cleared when a zoom ends on its own: the fork icon shows while any frame still has a Capped cell.
 var resume_pending: bool = false
@@ -142,7 +144,7 @@ func load_pile() -> void:
 	if n <= 0:
 		return
 	var config: GameConfig = Economy.config
-	var flights: int = maxi(1, mini(n, config.pile_visual_cap))
+	var flights: int = maxi(1, mini(n, MAX_FLIGHTS))
 	var stagger: float = config.pile_load_stagger_seconds
 	var closes_in: float = config.cell_fly_seconds + stagger * float(flights - 1)
 	var from: Vector3 = _pile.landing_position()
@@ -172,7 +174,7 @@ func open_zoom() -> bool:
 		return false
 	_going_back = false
 	zoom = Zoom.OPENING
-	_timer = Economy.config.lid_drop_seconds
+	_timer = Economy.config.lid_move_seconds()
 	_farm_ui.visible = false
 	if _harvest_ui != null:
 		_harvest_ui.show_zoom()
@@ -258,7 +260,7 @@ func _on_frame_done() -> void:
 ## Hive lid back on, camera out, and the bucket's lid on if it is open with cells in it (spec step 3, either way the zoom ends).
 func _start_closing(on_own: bool) -> void:
 	zoom = Zoom.CLOSING
-	_timer = maxf(Economy.config.zoom_seconds, Economy.config.lid_drop_seconds)
+	_timer = maxf(Economy.config.zoom_seconds, Economy.config.lid_move_seconds())
 	resume_pending = not on_own
 	_hive.close_lid()
 	_centrifuge.close_lid()

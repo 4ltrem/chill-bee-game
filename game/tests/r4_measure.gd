@@ -204,7 +204,7 @@ func _run() -> void:
 	var t0: int = Time.get_ticks_msec()
 	while risen < 0 and Time.get_ticks_msec() - t0 < 4000:
 		await process_frame
-	await _wait(float(_cv("zoom_seconds")) + float(_cv("lid_drop_seconds")) + float(_cv("slide_seconds")) + 0.6)
+	await _wait(float(_cv("zoom_seconds")) + _lid_t() + float(_cv("slide_seconds")) + 0.6)
 	var hc: Node = main.find_child("Honeycomb", true, false)
 	var cam: Camera3D = root.get_viewport().get_camera_3d()
 	ck(risen >= 0 and hc != null, "the zoom is open with a risen frame")
@@ -298,7 +298,7 @@ func _run() -> void:
 
 	# ---- 4. cranking, then bottling (farm view), desktop
 	await fi.click_ctl(main.find_child("BackButton", true, false) as Control)
-	await _wait(float(_cv("zoom_seconds")) + float(_cv("lid_drop_seconds")) + float(_cv("slide_seconds")) + 0.8)
+	await _wait(float(_cv("zoom_seconds")) + _lid_t() + float(_cv("slide_seconds")) + 0.8)
 	var cicon: Control = main.find_child("CentrifugeIcon", true, false) as Control
 	ck(cicon.is_visible_in_tree(), "Spin shows after Back (bucket full, lid on)")
 	await fi.click_icon(cicon)
@@ -325,3 +325,9 @@ func _run() -> void:
 	print("---- %d checks, %d failed" % [checks, fails])
 	print("COMPLETED")
 	quit(1 if fails > 0 else 0)
+
+
+## Lid time of 0.1.1: the lift then the fall (lid_lift_seconds is absent from older configs: counts as 0).
+func _lid_t() -> float:
+	var lift: Variant = _cfg().get("lid_lift_seconds")
+	return float(_cv("lid_drop_seconds")) + (float(lift) if lift != null else 0.0)

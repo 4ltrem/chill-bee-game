@@ -164,6 +164,7 @@ func _build_bed_jars() -> void:
 		var layer: int = i / 10
 		jar.position = Vector3(0.4 * float(col), 0.3 * float(layer), 0.6 * float(row))
 		jar.visible = false
+		JarFill.set_full(jar)
 		marker.add_child(jar)
 		_bed_jars.append(jar)
 
@@ -183,6 +184,7 @@ func _build_crate_jars() -> void:
 			jar.name = "CrateJar%d" % i
 			jar.position = Vector3(0.4 * float(i % 3), 0.0, 0.3 * float(i / 3))
 			jar.visible = false
+			JarFill.set_full(jar)
 			marker.add_child(jar)
 			_crate_jar_meshes.append(jar)
 	_crate_label = Label3D.new()

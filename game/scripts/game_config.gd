@@ -27,6 +27,7 @@ extends Resource
 @export var truck_capacity_jars: int = 10              # PLACEHOLDER (GDD TBD): jars the truck carries
 @export var truck_trip_seconds: float = 30.0           # PLACEHOLDER (GDD TBD): seconds the truck is away after Sell
 @export var bottling_seconds_per_jar: float = 3.0      # PLACEHOLDER (GDD TBD): seconds to bottle one jar
+@export var jar_lid_seconds: float = 0.25             # PLACEHOLDER (GDD TBD; 0.1.1, Patricia): how long the spigot jar shows full with its lid on before the next jar (visual only)
 @export var max_tap_rate: float = 5.0                  # PLACEHOLDER (GDD TBD): most crank turns counted per second (tap or hold)
 @export var hold_ramp_seconds: float = 1.5             # PLACEHOLDER (GDD TBD): seconds for the barrel to reach full spin when held (visual only)
 
@@ -41,16 +42,16 @@ extends Resource
 
 # --- 0.1 Harvest (game/specs/0.1-harvest.md, "Values"): the zoom, lids, flying cells, piles, icons ---
 @export var zoom_seconds: float = 0.6                  # PLACEHOLDER (GDD TBD): the camera's zoom in and out
-@export var lid_drop_seconds: float = 0.4              # PLACEHOLDER (GDD TBD): hive lid and centrifuge lid, off or on
-@export var frame_rise: float = 1.2                    # PLACEHOLDER (GDD TBD): how far a frame rises above the body (hive root units)
+@export var lid_lift_height: float = 0.6               # PLACEHOLDER (GDD TBD; 0.1.1): how far a lid rises straight up before it falls (parent-space units)
+@export var lid_lift_seconds: float = 0.25             # PLACEHOLDER (GDD TBD; 0.1.1): the lift
+@export var lid_drop_seconds: float = 0.4              # PLACEHOLDER (GDD TBD): the fall after the lift, hive lid and centrifuge lid, off or on (closing plays backwards)
+@export var frame_rise: float = 1.33                   # PLACEHOLDER (GDD TBD; 0.1.1: Bob's new value to come): how far a frame rises above the body (hive root units)
 @export var cell_fly_seconds: float = 0.5              # PLACEHOLDER (GDD TBD): a scraped cell's flight after its pop
 @export var cell_fly_arc: float = 1.5                  # PLACEHOLDER (GDD TBD; Patricia): arc height of a cell's flight, in units
 @export var pile_load_stagger_seconds: float = 0.03    # PLACEHOLDER (GDD TBD; Patricia): delay between pile cells flying into the bucket
-@export var pile_visual_cap: int = 40                  # PLACEHOLDER (GDD TBD): most pile cells drawn
-@export var bucket_visual_cap: int = 40                # PLACEHOLDER (GDD TBD): most comb meshes drawn in the glass bucket
 @export var icon_visual_px: int = 88                   # visible icon size; the touch area stays at least 120 (GDD 8)
 @export var min_cell_px: int = 44                      # the smallest cell allowed on screen at the zoom (a check, not a look tunable)
-@export var zoom_size: float = 6.7                     # PLACEHOLDER (GDD TBD): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
+@export var zoom_size: float = 5.0                     # PLACEHOLDER (GDD TBD; 0.1.1: Bob's tighter value to come): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
 
 const DEFAULT_PATH := "res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.tres"
@@ -67,6 +68,11 @@ func cells_per_frame() -> int:
 ## Jars one cell is worth: frame_jars / cells_per_frame (2 / 35 at base).
 func cell_value() -> float:
 	return float(frame_jars) / float(maxi(cells_per_frame(), 1))
+
+
+## Seconds a lid takes to open or close: the lift plus the fall.
+func lid_move_seconds() -> float:
+	return maxf(lid_lift_seconds, 0.0) + maxf(lid_drop_seconds, 0.0)
 
 
 ## Cells the centrifuge bucket holds when full.

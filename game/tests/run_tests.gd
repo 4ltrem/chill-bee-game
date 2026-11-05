@@ -1734,7 +1734,7 @@ func _full_hive_frozen(hive: Node) -> void:
 
 
 func _zoom_settle() -> float:
-	return float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + float(cv("slide_seconds")) + 0.5
+	return float(cv("zoom_seconds")) + _lid_t() + float(cv("slide_seconds")) + 0.5
 
 
 ## Tap the fork where it floats, wait for the zoom (frame_raised), then for the camera, lid and slide to settle.
@@ -1888,7 +1888,7 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 	# frame 2 -> bucket full -> lid on
 	var f1: int = await _scrape_risen(m, hive, tr)
 	ck(await _next_frame(tr, f1), "frame %d done: the next frame rose" % f1)
-	await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 0.3)
+	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.3)
 	eq(cen.get("cells"), cap, "frame 2: the bucket holds 2 x 35 cells")
 	eq(cen.get("lid_open"), false, "the bucket's lid dropped on when it filled")
 	eq(cen.get("state"), _st(cen, "FULL"), "bucket full, lid on: FULL")
@@ -1904,7 +1904,7 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 	ck(await _next_frame(tr, f3), "frame %d done: the next frame rose" % f3)
 	var f4: int = await _scrape_risen(m, hive, tr)
 	# the last frame: the zoom ends by itself
-	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + float(cv("slide_seconds")) + float(cv("cell_fly_seconds")) + 0.8)
+	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + _lid_t() + float(cv("slide_seconds")) + float(cv("cell_fly_seconds")) + 0.8)
 	eq(pile.get("cells"), total_cells - cap, "frames 3-5: 105 cells piled")
 	eq(fi.capped_total(hive, _frames_n()), 0, "no Capped cell left in the hive")
 	eq(tr["raised"], [0, 1, 2, 3, 4], "frames rose in order, one at a time")
@@ -1945,7 +1945,7 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 		sum_jars += jars_expected
 		eq(truck.get("loaded_jars"), sum_jars, "round %d: floor(jars) = %d jars went to the truck" % [round_i + 1, jars_expected])
 		await fi.click_ctl(p["SummaryOkButton"] as Control)
-		await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 0.8)
+		await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.8)
 		if round_i < 2:
 			eq(pile.get("cells"), int(want_pile[round_i]), "round %d: the pile loaded into the empty bucket by itself (%d cells left)" % [round_i + 1, int(want_pile[round_i])])
 			eq(cen.get("lid_open"), false, "round %d: the bucket closed after the load (full, or no zoom open)" % (round_i + 1))
@@ -1983,7 +1983,7 @@ func t_back_after_one_frame() -> void:
 	await _wait(float(cv("cell_fly_seconds")) + 0.3)
 	eq(cen.get("lid_open"), true, "before Back: lid still off (35 of 70 cells)")
 	await fi.click_ctl(p["BackButton"] as Control)
-	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")))
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + _lid_t())
 	eq(cen.get("cells"), cpf, "Back: 35 cells in the bucket")
 	near(float(cen.get("jars")), float(cv("frame_jars")), 1e-6, "Back: 2 jars in the bucket")
 	eq(cen.get("lid_open"), false, "Back: the lid is on (zoom ended with cells in the bucket)")
@@ -2033,7 +2033,7 @@ func t_back_keeps_half_frame() -> void:
 	eq(int(cen.get("cells")), cpf - left, "the scraped cells are in the bucket")
 	eq(tr["risen"], 0, "the half frame is still up (not done)")
 	await fi.click_ctl(p["BackButton"] as Control)
-	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")))
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + _lid_t())
 	eq(hive.call("frame_cells", 0), snapshot, "Back kept the half frame's cells exactly (no reset to Capped)")
 	eq(fi.capped(hive, 0), left, "the half frame still has %d Capped cells" % left)
 	eq(tr["risen"], -1, "the half frame slid down")
@@ -2052,7 +2052,7 @@ func t_back_keeps_half_frame() -> void:
 		var f: int = await _scrape_risen(m, hive, tr)
 		if k < _frames_n() - 1:
 			ck(await _next_frame(tr, f), "frame %d done, the next rose" % f)
-	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + 1.5)
+	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + _lid_t() + 1.5)
 	eq(fi.capped_total(hive, _frames_n()), 0, "everything scraped")
 	ck(not _shown(p["ForkIcon"]), "the zoom ended on its own with no Capped cell: the fork is gone (resume cleared)")
 	ck(_shown(p["MoneyLabel"]), "the farm UI is back")
@@ -3015,7 +3015,7 @@ func _scrape_back_in_pop(to_pile: bool) -> void:
 	ck(game_s < 0.18, "Back was clicked %.3f game-seconds after the scrape, inside the 0.18 s pop" % game_s)
 	eq(capped_after, _cpf() - 1, "the real press scraped exactly one cell")
 	eq(state17, 2, "the slot reads Extracted (2) at once, before the pop ends")
-	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + float(cv("cell_fly_seconds")) + 0.6)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + _lid_t() + float(cv("cell_fly_seconds")) + 0.6)
 	var f0: PackedByteArray = hive.call("frame_cells", 0)
 	eq(int(f0[17]), 2, "after Back: the scraped slot is still Extracted")
 	var extracted: int = 0
@@ -3101,12 +3101,12 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	for k in 3:
 		var f: int = await _scrape_risen(m, hive, tr)
 		ck(await _next_frame(tr, f), "zoom 1: frame %d done, the next rose" % f)
-	await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 0.3)
+	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.3)
 	eq(tr["risen"], 3, "zoom 1: frame 4 (index 3) is risen")
 	eq(cen.get("cells"), cap, "zoom 1: the bucket holds 70 cells")
 	eq(pile.get("cells"), cpf, "zoom 1: the pile holds 35 cells")
 	await fi.click_ctl(p["BackButton"] as Control)
-	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")))
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + _lid_t())
 	eq(m.get("resume_pending"), true, "Back set resume_pending")
 	ck(_shown(p["ForkIcon"]), "Back: the fork shows (frames 4 and 5 hold Capped cells)")
 	eq(cen.get("state"), _st(cen, "FULL"), "Back: bucket FULL")
@@ -3135,7 +3135,7 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	var bottling: int = _st(cen, "BOTTLING")
 	var finished: bool = await _until(func() -> bool: return int(cen.get("state")) != bottling, float(cv("bottling_seconds_per_jar")) * 8.0)
 	ck(finished, "bottling ended inside the zoom")
-	await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 1.0)
+	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 1.0)
 	ck(_shown(p["BackButton"]) and int(tr["risen"]) == 3, "the zoom is still open on frame 4")
 	eq(pile.get("cells"), 0, "the pile loaded into the empty bucket")
 	eq(cen.get("cells"), cpf, "the bucket holds the 35 pile cells")
@@ -3146,13 +3146,13 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	# ---- later scrapes go to the bucket until it is full, then to the pile
 	var f3: int = await _scrape_risen(m, hive, tr)
 	ck(await _next_frame(tr, f3), "frame 4 done, frame 5 rose")
-	await _wait(float(cv("cell_fly_seconds")) + float(cv("lid_drop_seconds")) + 0.3)
+	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.3)
 	eq(cen.get("cells"), cap, "frame 4's cells went to the bucket (35 + 35)")
 	eq(pile.get("cells"), 0, "nothing piled while the bucket had room")
 	eq(cen.get("lid_open"), false, "the lid dropped on when the bucket filled")
 	eq(cen.get("state"), _st(cen, "FULL"), "FULL")
 	var f4: int = await _scrape_risen(m, hive, tr)
-	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + float(cv("lid_drop_seconds")) + float(cv("slide_seconds")) + float(cv("cell_fly_seconds")) + 0.8)
+	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + _lid_t() + float(cv("slide_seconds")) + float(cv("cell_fly_seconds")) + 0.8)
 	eq(pile.get("cells"), cpf, "frame 5's cells went to the pile")
 	eq(fi.capped_total(hive, _frames_n()), 0, "no Capped cell left")
 	eq(m.get("resume_pending"), false, "the zoom ended on its own: resume_pending cleared")
@@ -3192,4 +3192,60 @@ func t_leftover_adds_no_turns() -> void:
 	eq(c.get("turns_counted"), _turns_for(n2), "turns_counted agrees")
 	var r2: Dictionary = _bottle_out(c)
 	eq(r2["done"], [2], "the carry still counts in the bottled floor(jars): 30 cells + carry = 2.69 jars, floor 2")
+	_fin()
+
+
+## Lid time of 0.1.1: the lift then the fall (lid_lift_seconds is absent from a 0.1.0 config: counts as 0 so the old waits still work).
+func _lid_t() -> float:
+	var c: Variant = _cfg()
+	var lift: Variant = c.get("lid_lift_seconds") if c != null else null
+	return float(cv("lid_drop_seconds")) + (float(lift) if lift != null else 0.0)
+
+
+# Spec 0.1 ("Show UI bounds": outlines every visible Control's rect, icons' touch rects dashed, anchor points). Test defect of 0.1.0:
+# t_dev_show_ui_bounds only counted visible CanvasItems around the toggle, so it passed while the overlay drew nothing (its _collect skipped
+# Node3D subtrees and Main is a Node3D, so it collected no Control). This test asks the overlay what it would draw, in the running main scene.
+# The pixels on the rect edges are checked in tests/ui_bounds_pixels.gd (needs a window).
+func t_dev_ui_bounds_collects_controls() -> void:
+	_set_dev_mode(true)
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	var panel: Node = _find_dev_panel(m)
+	ck(panel != null, "dev panel exists")
+	if panel == null or p.is_empty():
+		_fin()
+		return
+	_full_hive_frozen(p["Hive"])   # the fork icon floats
+	await _frames(4)
+	var btn: Button = _button_with(panel, "bounds")
+	ck(btn != null, "no Button with 'bounds' in its text")
+	if btn == null:
+		_fin()
+		return
+	btn.pressed.emit()
+	await _frames(4)
+	var ov: Node = root.find_child("UiBoundsOverlay", true, false)
+	ck(ov != null, "the overlay node (UiBoundsOverlay) exists after the toggle")
+	if ov == null or not ov.has_method("collect_controls"):
+		ck(false, "the overlay has no collect_controls()")
+		_fin()
+		return
+	var got: Array = ov.call("collect_controls")
+	ck(got.size() > 0, "collect_controls() returned %d controls, must be > 0 with the farm UI showing" % got.size())
+	var visible_named: int = 0
+	for nm in SCENE_NODES:
+		var n: Node = p[nm]
+		if n is Control and (n as Control).is_visible_in_tree():
+			visible_named += 1
+			ck(got.has(n), "collect_controls() includes the visible Control '%s'" % nm)
+	ck(visible_named >= 4, "at least 4 named Controls were visible to be collected (%d)" % visible_named)
+	for nm in ["ForkIcon", "UpgradeButton", "MoneyLabel"]:
+		ck(got.has(p[nm]), "collect_controls() includes %s (fork shows at a full hive; Upgrade and Money are farm UI)" % nm)
+	# it must not list a hidden Control
+	ck(not got.has(p["BackButton"]), "the hidden BackButton is not collected")
+	btn.pressed.emit()
+	await _frames(3)
 	_fin()

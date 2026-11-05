@@ -3,7 +3,7 @@
 # The hive owns the frames: `frames` holds one byte per cell (0 Capped, 1 Uncapped, 2 Extracted = empty slot). Storage in jars is
 # derived (capped cells x cell value); an empty slot becomes Capped when enough honey arrives, in frame order, skipping the risen
 # frame. Honey with no slot to go to waits in the overflow buffer (one hive) and pours back as slots empty. Full is decided from slot
-# counts, never from a float. Every state change happens at the call; tweens (lid, frame rise) only draw it.
+# counts, never from a float. Every state change happens at the call; tweens (lid lift and fall, frame rise) only draw it.
 class_name Hive
 extends Node3D
 
@@ -33,9 +33,8 @@ var _empty: int = 0
 var _full_announced: bool = false
 var _honeycomb: Honeycomb
 var _lid: Node3D
-var _lid_closed_pos: Vector3 = Vector3.ZERO
 var _lid_spot: Node3D
-var _lid_tween: Tween
+var _lid_motion: LidMotion
 
 ## Jars in the hive: capped cells x the cell value.
 var storage: float:
@@ -73,7 +72,7 @@ func _ready() -> void:
 	_lid = find_child("HiveLid", true, false) as Node3D
 	_lid_spot = find_child("HiveLidSpot", true, false) as Node3D
 	if _lid != null:
-		_lid_closed_pos = _lid.position
+		_lid_motion = LidMotion.new(_lid, _lid_spot, config, true)
 	else:
 		CellFlight.warn_once("HiveLid", "hive.gd: no HiveLid node (see game/specs/0.1-harvest.md, hive.tscn).")
 	if _honeycomb != null:
@@ -200,17 +199,8 @@ func _move_lid(open: bool) -> void:
 	if lid_open == open:
 		return
 	lid_open = open
-	if _lid != null:
-		var target: Vector3 = _lid_closed_pos
-		if open and _lid_spot != null:
-			target = _lid_spot.position
-		if _lid_tween != null and _lid_tween.is_valid():
-			_lid_tween.kill()
-		if is_inside_tree():
-			_lid_tween = create_tween()
-			_lid_tween.tween_property(_lid, "position", target, config.lid_drop_seconds).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN if open else Tween.EASE_OUT)
-		else:
-			_lid.position = target
+	if _lid_motion != null:
+		_lid_motion.play(open)   # lifts, then tips and falls to the HiveLidSpot transform; closing is the same path backwards
 	lid_moved.emit(open)
 
 

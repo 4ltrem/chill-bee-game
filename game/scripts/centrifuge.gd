@@ -20,9 +20,9 @@ signal bottling_done(jars: int)
 signal lid_moved(open: bool)
 
 const EPS: float = 1.0e-6          # float slack for jars x taps and floor(jars)
-const HEAP_PITCH: float = 0.5      # spiral spacing of the comb heap, in HeapRoot units
-const HEAP_LAYER: float = 0.3      # one heap layer's height per 14 cells, in HeapRoot units
-const HEAP_PER_LAYER: int = 14
+const HEAP_RADIUS: float = 3.4     # the heap's layers fill a disc of this radius, in HeapRoot units (inside the glass: 1.0 / HeapRoot's 0.25 = 4.0, less a cell's 0.46)
+const HEAP_LAYER: float = 0.3      # one heap layer's height (a cell's height), in HeapRoot units
+const HEAP_PER_LAYER: int = 40     # cells per layer, spread over the disc (a 5-frame bucket is 5 layers)
 const GOLDEN_ANGLE: float = 2.39996
 
 @export var config: GameConfig = GameConfig.live()
@@ -58,8 +58,7 @@ var _landed: int = 0               # cells whose flight finished (drawn in the h
 var _spinner: Node3D
 var _lid: Node3D
 var _lid_spot: Node3D
-var _lid_closed_pos: Vector3 = Vector3.ZERO
-var _lid_tween: Tween
+var _lid_motion: LidMotion
 var _mouth: Node3D
 var _heap_root: Node3D
 var _heap: Array[Node3D] = []
@@ -71,7 +70,7 @@ var _honey_level: MeshInstance3D
 var _honey_bottom: Node3D
 var _honey_top: Node3D
 var _spigot_jar: Node3D
-var _spigot_jar_home_y: float = 0.0
+var _lid_hold: float = 0.0         # seconds the spigot jar still shows full with its lid after a jar finishes (visual only)
 
 
 # --- the bucket ---
@@ -243,6 +242,7 @@ func _advance_bottling(delta: float) -> void:
 	while _bottle_timer >= per_jar and jars_bottled < _bottle_count:
 		_bottle_timer -= per_jar
 		jars_bottled += 1
+		_lid_hold = config.jar_lid_seconds
 		jar_bottled.emit(jars_bottled)
 	if jars_bottled >= _bottle_count:
 		_bottle_timer = 0.0
@@ -355,12 +355,11 @@ func _ready() -> void:
 	_honey_top = find_child("HoneyTop", true, false) as Node3D
 	_spigot_jar = find_child("SpigotJar", true, false) as Node3D
 	if _spigot_jar != null:
-		_spigot_jar_home_y = _spigot_jar.position.y
 		_spigot_jar.visible = false
 	if _lid != null:
-		_lid_closed_pos = _lid.position
+		_lid_motion = LidMotion.new(_lid, _lid_spot, config, false)   # position only: the lid keeps its spin and lands flat
 		if _lid_spot != null:
-			_lid.position = _lid_spot.position   # starts EMPTY: the lid sits on the ground beside the bucket
+			_lid_motion.apply(1.0)   # starts EMPTY: the lid sits on the ground beside the bucket
 	else:
 		CellFlight.warn_once("CentrifugeLid", "centrifuge.gd: no Lid node (see game/specs/0.1-harvest.md, centrifuge.tscn).")
 	var melting: Material = CellFlight.material("comb_melting")
@@ -369,20 +368,8 @@ func _ready() -> void:
 
 
 func _move_lid_visual(open: bool, delay: float) -> void:
-	if _lid == null:
-		return
-	var target: Vector3 = _lid_closed_pos
-	if open and _lid_spot != null:
-		target = _lid_spot.position
-	if _lid_tween != null and _lid_tween.is_valid():
-		_lid_tween.kill()
-	if not is_inside_tree():
-		_lid.position = target
-		return
-	_lid_tween = create_tween()
-	if delay > 0.0:
-		_lid_tween.tween_interval(delay)
-	_lid_tween.tween_property(_lid, "position", target, config.lid_drop_seconds).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN if open else Tween.EASE_OUT)
+	if _lid_motion != null:
+		_lid_motion.play(open, delay)   # lifts clear of the bucket first, then falls (closing: the same path backwards)
 
 
 func _process(delta: float) -> void:
@@ -397,13 +384,13 @@ func _process(delta: float) -> void:
 			_lid.rotate_y(spin_speed * delta)
 	_update_heap()
 	_update_honey_level()
-	_update_spigot_jar()
+	_update_spigot_jar(delta)
 
 
 func _update_heap() -> void:
 	if _heap_root == null:
 		return
-	var shown: int = mini(_landed, config.bucket_visual_cap)
+	var shown: int = _landed   # every landed cell is drawn, up to the bucket's capacity (cells never exceeds it)
 	var melt: float = melt_fraction()
 	if shown == _last_shown and is_equal_approx(melt, _last_melt):
 		return
@@ -414,8 +401,11 @@ func _update_heap() -> void:
 		if cell == null:
 			break
 		var i: int = _heap.size()
-		var radius: float = sqrt(float(i)) * HEAP_PITCH
-		cell.position = Vector3(cos(float(i) * GOLDEN_ANGLE) * radius, HEAP_LAYER * float(i / HEAP_PER_LAYER), sin(float(i) * GOLDEN_ANGLE) * radius)
+		var layer: int = i / HEAP_PER_LAYER
+		var k: int = i % HEAP_PER_LAYER
+		var radius: float = sqrt((float(k) + 0.5) / float(HEAP_PER_LAYER)) * HEAP_RADIUS   # even spread over the disc
+		var angle: float = float(k) * GOLDEN_ANGLE + float(layer) * 1.3
+		cell.position = Vector3(cos(angle) * radius, HEAP_LAYER * (float(layer) + 0.5), sin(angle) * radius)
 		_heap_root.add_child(cell)
 		_heap.append(cell)
 	var melting: bool = melt > 0.0 and _melt_material != null
@@ -445,12 +435,21 @@ func _update_honey_level() -> void:
 	_honey_level.position.y = _honey_bottom.position.y + height * 0.5
 
 
-func _update_spigot_jar() -> void:
+## How full the jar at the spigot looks (0 to 1), or -1 when no jar is there: it fills over bottling_seconds_per_jar, then shows
+## full with its lid for jar_lid_seconds (pure function of the logic, so it is testable).
+func spigot_jar_fraction() -> float:
+	if _lid_hold > 0.0:
+		return 1.0
+	if state == State.BOTTLING and jars_bottled < _bottle_count:
+		return clampf(_bottle_timer / maxf(config.bottling_seconds_per_jar, 0.001), 0.0, 0.999)
+	return -1.0
+
+
+func _update_spigot_jar(delta: float) -> void:
+	_lid_hold = maxf(_lid_hold - delta, 0.0)
 	if _spigot_jar == null:
 		return
-	var filling: bool = state == State.BOTTLING and jars_bottled < _bottle_count
-	_spigot_jar.visible = filling
-	if filling:
-		var grow: float = clampf(_bottle_timer / maxf(config.bottling_seconds_per_jar, 0.001), 0.05, 1.0)
-		_spigot_jar.scale = Vector3(1.0, grow, 1.0)
-		_spigot_jar.position.y = _spigot_jar_home_y * grow
+	var fraction: float = spigot_jar_fraction()
+	_spigot_jar.visible = fraction >= 0.0
+	if fraction >= 0.0:
+		JarFill.set_fraction(_spigot_jar, fraction)

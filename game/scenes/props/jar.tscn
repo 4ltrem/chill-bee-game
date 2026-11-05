@@ -1,12 +1,43 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3]
 
-[ext_resource type="Material" path="res://materials/jar_amber.tres" id="1_amber"]
+[ext_resource type="Material" path="res://materials/glass.tres" id="1_glass"]
+[ext_resource type="Material" path="res://materials/honey_level.tres" id="2_honey"]
+[ext_resource type="Material" path="res://materials/steel.tres" id="3_steel"]
 
-[sub_resource type="CylinderMesh" id="Mesh_jar"]
-material = ExtResource("1_amber")
-top_radius = 0.17
+[sub_resource type="CylinderMesh" id="Mesh_glass"]
+material = ExtResource("1_glass")
+top_radius = 0.15
 bottom_radius = 0.17
-height = 0.3
+height = 0.26
 
-[node name="Jar" type="MeshInstance3D"]
-mesh = SubResource("Mesh_jar")
+[sub_resource type="CylinderMesh" id="Mesh_honey"]
+material = ExtResource("2_honey")
+top_radius = 0.14
+bottom_radius = 0.14
+height = 1.0
+
+[sub_resource type="CylinderMesh" id="Mesh_lid"]
+material = ExtResource("3_steel")
+top_radius = 0.165
+bottom_radius = 0.165
+height = 0.04
+
+[node name="Jar" type="Node3D"]
+
+[node name="JarGlass" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, 0)
+mesh = SubResource("Mesh_glass")
+
+[node name="JarHoneyBottom" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.13, 0)
+
+[node name="JarHoneyTop" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+
+[node name="JarHoney" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.21, 0, 0, 0, 1, 0, -0.025, 0)
+mesh = SubResource("Mesh_honey")
+
+[node name="JarLid" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.13, 0)
+mesh = SubResource("Mesh_lid")

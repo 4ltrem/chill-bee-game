@@ -1,6 +1,6 @@
 # Implements GDD 2 Stage 1 (cells that arrive while the bucket is closed pile up beside the centrifuge) for 0.1 Harvest
 # (game/specs/0.1-harvest.md). Holds the piled cells and their honey in jars. Counts change at the call; the drawn cells follow
-# when a flying cell lands (`land`). Draws up to config.pile_visual_cap cells (honey_cell.tscn, Mesh only), and a count label beyond.
+# when a flying cell lands (`land`). Draws every landed cell (honey_cell.tscn, Mesh only) in layers, with a count label above the top.
 class_name Pile
 extends Node3D
 
@@ -64,7 +64,7 @@ func take(n: int) -> float:
 
 ## How many cells are drawn right now.
 func visible_count() -> int:
-	return mini(_landed, config.pile_visual_cap)
+	return _landed
 
 
 func is_empty() -> bool:
@@ -98,5 +98,7 @@ func _refresh() -> void:
 	for i in _meshes.size():
 		_meshes[i].visible = i < shown
 	if _label != null:
-		_label.visible = cells > config.pile_visual_cap
+		_label.visible = cells > 0
 		_label.text = "x%d" % cells
+		var top: float = LAYER_HEIGHT * (float((maxi(shown, 1) - 1) / (COLUMNS * ROWS)) + 1.0)
+		_label.position.y = maxf(LABEL_HEIGHT, top + 0.5)

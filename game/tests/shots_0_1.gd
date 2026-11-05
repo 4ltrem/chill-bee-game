@@ -48,7 +48,7 @@ func _cfg() -> Object:
 
 func _settle() -> float:
 	var c: Object = _cfg()
-	return float(c.get("zoom_seconds")) + float(c.get("lid_drop_seconds")) + float(c.get("slide_seconds")) + 0.6
+	return float(c.get("zoom_seconds")) + _lid_t(c) + float(c.get("slide_seconds")) + 0.6
 
 
 func _open_zoom() -> void:
@@ -148,7 +148,7 @@ func _run() -> void:
 	var t1: int = Time.get_ticks_msec()
 	while int(cen.get("state")) == bottling and Time.get_ticks_msec() - t1 < 40000:
 		await process_frame
-	await _wait(float(cfg.get("cell_fly_seconds")) + float(cfg.get("lid_drop_seconds")) + 1.0)
+	await _wait(float(cfg.get("cell_fly_seconds")) + _lid_t(cfg) + 1.0)
 	await _shot("q-13-farm-pile-loaded-into-bucket-summary")
 	var ok: Node = main.find_child("SummaryOkButton", true, false)
 	if ok != null and (ok as CanvasItem).is_visible_in_tree():
@@ -174,3 +174,9 @@ func _run() -> void:
 
 func tr_clear() -> void:
 	risen = -1
+
+
+## Lid time of 0.1.1: the lift then the fall (lid_lift_seconds is absent from older configs: counts as 0).
+func _lid_t(c: Object) -> float:
+	var lift: Variant = c.get("lid_lift_seconds")
+	return float(c.get("lid_drop_seconds")) + (float(lift) if lift != null else 0.0)

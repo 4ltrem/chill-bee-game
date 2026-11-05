@@ -187,7 +187,7 @@ size = 20.0
 mesh = SubResource("Mesh_ground")
 
 [node name="Hive" parent="FarmWorld" instance=ExtResource("2_hive")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -2.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.327, 0, -0.927)
 
 [node name="Flowers" type="Node3D" parent="FarmWorld"]
 
@@ -223,8 +223,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, 4.2)
 
 [node name="ZoomFraming" type="Marker3D" parent="FarmWorld"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.968, 0, -1.468)
-metadata/zoom_size = 6.7
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.82, 0, -1.845)
+metadata/zoom_size = 5.0
 
 [node name="FarmUIRoot" type="CanvasLayer" parent="."]
 

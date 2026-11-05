@@ -37,7 +37,7 @@ func _process(_delta: float) -> void:
 		_canvas.queue_redraw()
 
 
-## Every visible Control in the tree (the Dev panel and this overlay excluded). 3D subtrees hold no Controls and are skipped.
+## Every visible Control in the tree (the Dev panel and this overlay excluded). 3D subtrees are walked too (the CanvasLayers sit under the Node3D scene root).
 func collect_controls() -> Array[Control]:
 	_controls.clear()
 	_collect(get_tree().root)
@@ -46,7 +46,7 @@ func collect_controls() -> Array[Control]:
 
 func _collect(node: Node) -> void:
 	for child in node.get_children():
-		if child == self or child is DevPanel or child is Node3D:
+		if child == self or child is DevPanel:
 			continue
 		if child is Control and (child as Control).is_visible_in_tree():
 			_controls.append(child as Control)
