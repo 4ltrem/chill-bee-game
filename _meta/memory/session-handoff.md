@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 864dbfb5-1b7c-49cd-bf94-214920851b62
-  modified: 2026-11-05T06:44:30.010Z
+  modified: 2026-11-05T07:40:08.820Z
 ---
 
 Working in the terminal `claude` CLI inside VS Code (`/ide`). The status line (`_tools/statusline.py`) logs plan usage
@@ -24,6 +24,8 @@ by itself, so there's no need to ask the designer for a nudge ([[usage-calibrati
 **2026-11-05:** 0.1.2 (`game/specs/0.1.2-bottling-and-sale.md`) built on `milestone/0.1`; Patricia's fixes in 9514516 (104/110). Quinn's final run was launched from the previous session (fix 6 tests per the spec Clarifications, split run_tests.gd, mutations.json + mutate.py, reports/.gdignore, `godot_run.py all`, `build.py 0.1.2 --smoke`, report `game/reports/2026-11-05-0.1.2.md`). If that report is missing, his run did not finish: relaunch Quinn with the same brief. Then: review report + `python _tools/contact_sheet.py game/reports/0.1.2-shots`, rework tally rows to `_meta/team.md`, checkpoint commit, designer plays and uploads `game/builds/chill-bee-game-0.1.2-web.zip` to itch (Dev mode "Reset to defaults" once). M2: `STYLE_GUIDE.md` and `game/specs/m2-style-loop.md` are drafts awaiting the designer's approval before any build. Reviewed and revised 2026-11-05 (Biome glow and Bee roles, UI border/shop panel tokens, V2 scoped, V5 provisional, 0.1.2 refs); the designer chose to keep both as drafts for a final read. Budget guard hook (`_tools/budget_guard.py`) is in `.claude/settings.json`.
 
 **Update 2026-11-05 (later):** Quinn's run finished: PASS, committed 92c1119 (110/110, mutations 8/8, 0.1.2 zip built, build.py smoke wait raised to 100 s, untested). Designer to play 0.1.2 and upload; watch the Sell icon over the top-left money label in Bob's farm shot. Draft `game/specs/0.1.3-next-revision.md` holds Dev-mode game speed (x0.25-x10 row, on-screen tag, [ ] hotkeys) plus a slot for the 0.1.2 play-test notes; open question x10 vs x20. Not end of day yet.
+
+**Update 2026-11-05 (main session, the other one closed):** layout A/B page "Centrifuge By The Crate" (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), mock in worktree `.claude/worktrees/ab-centrifuge` (branch `ab/centrifuge-by-crate`, uncommitted). The designer liked B (everything in view) but the scale is wrong, so: **5 × 5 farm grid** goes into the 0.1.3 spec. Crate tiers: 1 = half size, 1 cell; 2 = today's size, 2 cells; 3 = 3 cells; each tier holds more jars per batch (Terry sets the numbers). Truck 2 cells; centrifuge 1–2 cells, 1–2 cells from the hive, near the crate. Bob's layouts A/B/C (int array + emoji grid + Discord block) are in `game/specs/0.1.3-farm-grid-layouts.md` and on the comparison page (round 2). Finding: no layout fits hive + centrifuge + crate whole in one zoom at 44 px cells (C closest, cropped; whole needs ~30 px). Next: the designer picks a layout and the zoom trade-off, then the 0.1.3 spec. The closed session 5d085f00 was exported to `_meta/sessions/2026-11-04-5d085f00/` by this session. Crate tiers change GDD §4, so they need the designer's accept before the GDD is edited.
 
 **Next (before r4 was drafted):**
 1. The designer plays the exe; Dev mode opens with the backquote key. Gather the play-test notes into revision 4.

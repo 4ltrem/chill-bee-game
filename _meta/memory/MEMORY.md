@@ -6,4 +6,5 @@
 - [Session handoff](session-handoff.md) — read first: 0.1.2 on milestone/0.1, Quinn final run, M2 drafts await approval
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
+- [A/B comparison page](ab-comparison-page.md) — every creative A/B choice gets a screenshot comparison artifact (Zoom Framing Options layout)
 - [Cost rules](cost-rules.md) — 9 approved token cuts: godot_run/build/mutate scripts, split tests, sliced briefs, 150-word replies, fresh session per milestone
