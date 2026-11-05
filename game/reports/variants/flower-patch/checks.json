@@ -1,0 +1,17 @@
+{
+ "flower-patch-a.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "flower-patch-b.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "flower-patch-c.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ }
+}

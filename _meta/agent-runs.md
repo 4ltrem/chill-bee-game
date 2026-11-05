@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-117 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+124 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -56,15 +56,15 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 |---|---|---|---|---|---|
 | Terry | pre-ICM | 5 | 126,566 | — | 840 s |
 
-**Content generation** (27 runs)
+**Content generation** (31 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| William | post-ICM | 10 | — | 227,460 | 172 s |
+| William | post-ICM | 11 | 19,159 | 211,125 | 158 s |
 | Clara | post-ICM | 5 | — | 111,377 | 151 s |
-| Critic | post-ICM | 10 | 40,803 | 121,370 | 170 s |
+| Critic | post-ICM | 13 | 34,356 | 106,128 | 137 s |
 | Ruth | post-ICM | 2 | — | 266,270 | 116 s |
-| **All** | | **27** | **40,803** | **169,545** | 163 s |
+| **All** | | **31** | **31,316** | **154,563** | 145 s |
 
 **Doc audits** (4 runs)
 
@@ -80,7 +80,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Clara, one empty turn, prompt on stdin | post-ICM | 1 | — | 13,370 | — |
 | **All** | | **2** | **—** | **12,806** | — |
 
-**Subagent runs** (44 runs)
+**Subagent runs** (45 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
@@ -92,19 +92,22 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Ruth (research-assistant) | post-ICM | 1 | 37,318 | 203,725 | 107 s |
 | general-purpose | post-ICM | 2 | 72,871 | 609,698 | 88 s |
 | Terry (progression-tree-expert) | post-ICM | 1 | 34,830 | 142,788 | 168 s |
-| **All** | | **44** | **93,384** | **2,530,231** | 897 s |
+| Milo (modeler) | post-ICM | 1 | 28,511 | 82,321 | 45 s |
+| **All** | | **45** | **91,942** | **2,475,833** | 878 s |
 
 **Orchestrator** (6 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 6 | — | 42,310,568 | 56,783 s |
+| Orchestrator (main session) | post-ICM | 6 | — | 43,058,330 | 56,920 s |
 
-**Style loop** (2 runs)
+**Style loop** (4 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Vera | post-ICM | 2 | 16,796 | 41,586 | 9 s |
+| Vera | post-ICM | 3 | 19,760 | 45,373 | 13 s |
+| Bob | post-ICM | 1 | 19,275 | 50,978 | 12 s |
+| **All** | | **4** | **19,638** | **46,774** | 13 s |
 <!-- /generated: run-summary -->
 
 Notes on the Content generation runs:

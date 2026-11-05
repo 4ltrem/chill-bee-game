@@ -5,12 +5,14 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: e0d1da16-c10b-4153-9084-bbcd654fdb0b
-  modified: 2026-11-05T07:54:21.929Z
+  modified: 2026-11-05T18:24:01.426Z
 ---
 
 Any creative A/B test (layout, framing, colour or token, look options; any choice with two or more acceptable answers)
-gets a screenshot comparison page for the designer: modify the existing comparison artifact when it is the same
-question, or make a new one in the same layout. Layout reference: "Zoom Framing Options",
+gets a screenshot comparison page for the designer. **All of them go into the one existing comparison artifact**
+(https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa): a new question becomes a new section on it, and earlier rounds
+stay collapsed. Never publish a separate artifact and never open it in the browser; just give the link (designer,
+2026-11-05: the V3 and Flower Patch pages opened in the browser as two separate artifacts). Layout reference: "Zoom Framing Options",
 https://claude.ai/artifact/37Prvthj1P2Z2bQPokRkym (brief, one card per option with letter, title, 720 × 1280 shot,
 measured numbers with pass/low pills, the current build as the reference). Nothing is applied until the designer picks.
 The designer wants real screenshots (not just text/ASCII) and at most 9 images per page (e.g. 3 × 3 settings), each with

@@ -8,15 +8,15 @@
 
 [sub_resource type="BoxMesh" id="Mesh_floor"]
 material = ExtResource("3_body")
-size = Vector3(1.3, 0.03, 1.3)
+size = Vector3(1.3, 0.05, 1.3)
 
 [sub_resource type="BoxMesh" id="Mesh_wallx"]
 material = ExtResource("3_body")
-size = Vector3(0.04, 0.68, 1.3)
+size = Vector3(0.05, 0.68, 1.3)
 
 [sub_resource type="BoxMesh" id="Mesh_wallz"]
 material = ExtResource("3_body")
-size = Vector3(1.22, 0.68, 0.04)
+size = Vector3(1.22, 0.68, 0.05)
 
 [sub_resource type="BoxMesh" id="Mesh_lid"]
 material = ExtResource("4_lid")

@@ -326,9 +326,9 @@ horizontal_alignment = 1
 
 [node name="UpgradeButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
 focus_mode = 0
-custom_minimum_size = Vector2(0, 110)
+custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
-theme_override_colors/font_disabled_color = Color(1, 1, 1, 1)
+theme_override_colors/font_disabled_color = Color(1, 0.96, 0.86, 1)
 theme_override_font_sizes/font_size = 36
 theme_override_styles/disabled = SubResource("StyleBox_disabled")
 theme_override_styles/normal = SubResource("StyleBox_rect")
@@ -359,9 +359,9 @@ horizontal_alignment = 1
 
 [node name="ForkIcon" type="Button" parent="FarmUIRoot/FarmUI"]
 focus_mode = 0
-custom_minimum_size = Vector2(130, 180)
+custom_minimum_size = Vector2(240, 120)
 layout_mode = 0
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBox_tag")
 theme_override_styles/hover = SubResource("StyleBox_tag")
 theme_override_styles/pressed = SubResource("StyleBox_tag_pressed")

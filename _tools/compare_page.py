@@ -4,6 +4,7 @@
     python -I _tools/compare_page.py round SHOTS_DIR ROUND.json SPEC.json PREVIOUS_PAGE.html OUT.html
     python -I _tools/compare_page.py votes SHOTS_DIR SHOTS.json PREVIOUS_PAGE.html OUT.html
     python -I _tools/compare_page.py variants SHOTS_DIR OUT.html [--title T] [--checks CHECKS.json]
+    python -I _tools/compare_page.py add PAGE.html OUT.html --h1 H1 [--stop BLACKBOARD ROW --prefix P --option A=DIR ... --ref DIR --shot NAME] [--variants DIR PREFIX TITLE --checks CHECKS.json]
     python -I _tools/compare_page.py stop  BLACKBOARD.md --row N --option A=DIR --option B=DIR --ref DIR --shot NAME --out OUT.html
 
 page:  SPEC.json {title, eyebrow, h1, brief, min_px, options:[{letter,title,shot,extra_shots:[[label,path]],px,on:[...],cut:[...],change}],
@@ -308,6 +309,12 @@ def fix_options(fix):
     return {parts[k]: parts[k + 1].strip().rstrip(";").strip() for k in range(1, len(parts) - 1, 2)}
 
 
+def short(text, n=60):
+    """An option's card title: its first clause, cut at a word boundary."""
+    t = re.split(r"\s\(|;|\. ", text.replace("`", ""))[0].strip()
+    return t if len(t) <= n else t[:n].rsplit(" ", 1)[0] + "…"
+
+
 def cmd_stop(blackboard, row, options, ref, shot, out):
     num, rule, where, finding, fix = waiting_row(blackboard, row)[:5]
     texts = fix_options(fix)
@@ -316,9 +323,9 @@ def cmd_stop(blackboard, row, options, ref, shot, out):
         letter, folder = spec.split("=", 1)
         measure = os.path.join(folder, "measure.json")
         px = json.load(open(measure, encoding="utf-8")).get("cell_px_min") if os.path.exists(measure) else None
-        opts.append({"letter": letter, "title": texts.get(letter, "Option " + letter).split(".")[0][:60],
+        opts.append({"letter": letter, "title": short(texts.get(letter, "Option " + letter)),
                      "shot": os.path.join(folder, shot), "px": px, "change": esc(texts.get(letter, ""))})
-    spec = {"title": f"{rule}: {finding}"[:80], "eyebrow": f"Chill Bee Game &middot; designer stop &middot; row {num}",
+    spec = {"title": f"Style Rule {rule}", "eyebrow": f"Chill Bee Game &middot; designer stop &middot; row {num}",
             "h1": f"{rule}: {finding}", "brief": f"{esc(where)}. {esc(finding)}", "min_px": 20, "options": opts,
             "ref": {"title": "Current build", "text": "The build as it is now; nothing changes until you pick.",
                     "shots": [[shot, os.path.join(ref, shot)]]},
@@ -362,6 +369,71 @@ def cmd_variants(shots_dir, out, title, checks=None):
     open(out, "w", encoding="utf-8").write("\n".join(p) + "\n")
 
 
+def vote_card(sid, title, shot, lines=(), pill=None, meta=None):
+    """One votable card (yes / maybe / no + note), the same markup the votes SCRIPT binds to."""
+    meta = dict(meta or {}, file=os.path.basename(shot))
+    pill_html = f'<span class="pill {"ok" if pill[1] else "low"}">{esc(pill[0])}</span>' if pill else ""
+    body = "".join(f'<p class="small">{l}</p>' for l in lines)
+    return (f'<article class="card" data-id="{esc(sid)}" data-meta="{html.escape(json.dumps(meta), quote=True)}">'
+            f'<header><h2>{esc(title)}</h2>{pill_html}</header><figure><img src="{b64(shot)}" alt="{esc(title)}"></figure>{body}'
+            f'<div class="votes" role="group" aria-label="Vote for {esc(sid)}">'
+            + "".join(f'<button type="button" data-v="{v}" aria-pressed="false">{v}</button>' for v in ("yes", "maybe", "no"))
+            + f'</div><textarea aria-label="Note for {esc(sid)}" placeholder="Note (optional)" rows="1"></textarea></article>')
+
+
+def add_sections(page, sections, h1, brief, title=None):
+    """Put new question sections at the top of an existing vote page; everything already there is
+    collapsed under "Earlier questions". sections: [{eyebrow, h2, text, cards: [vote_card html]}]."""
+    i = page.index('<div class="wrap">') + len('<div class="wrap">')
+    k = page.rindex("</div>", 0, page.rindex('<div class="lb"'))
+    old = page[i:k].replace(' id="status"', "")
+    new = ['\n<section class="brief" style="max-width:none"><span class="eyebrow">Chill Bee Game &middot; comparisons</span>',
+           f"<h1>{esc(h1)}</h1><p>{brief}</p>", '<p class="status" id="status">Loading saved votes…</p></section>']
+    for sec in sections:
+        new.append(f'<section class="row"><span class="eyebrow">{sec["eyebrow"]}</span><h2>{esc(sec["h2"])}</h2>'
+                   f'<p class="small">{sec["text"]}</p><div class="rgrid">' + "\n".join(sec["cards"]) + "</div></section>")
+    new.append(f'<details><summary>Earlier questions</summary><div class="wrap">{old}</div></details>\n')
+    page = page[:i] + "\n".join(new) + page[k:]
+    if title:
+        page = re.sub(r"<title>[^<]*</title>", f"<title>{esc(title)}</title>", page, count=1)
+    return page
+
+
+def cmd_add(page_path, out, sections, h1, brief, title=None):
+    page = open(page_path, encoding="utf-8").read()
+    open(out, "w", encoding="utf-8").write(add_sections(page, sections, h1, brief, title))
+
+
+def stop_section(blackboard, row, options, ref, shot, prefix):
+    """The designer-stop question as a votable section: one card per option and the current build."""
+    num, rule, where, finding, fix = waiting_row(blackboard, row)[:5]
+    texts = fix_options(fix)
+    cards = []
+    for spec in options:
+        letter, folder = spec.split("=", 1)
+        cards.append(vote_card(f"{prefix}-{letter.lower()}", f"{letter}: {short(texts.get(letter, 'Option ' + letter))}",
+                               os.path.join(folder, shot), [esc(texts.get(letter, ""))], meta={"question": prefix, "option": letter}))
+    cards.append(vote_card(f"{prefix}-ref", "Current build (reference)", os.path.join(ref, shot),
+                           ["The build as it is now; nothing changes until you pick."], meta={"question": prefix, "option": "ref"}))
+    return {"eyebrow": f"Style loop &middot; designer stop &middot; {esc(rule)}", "h2": f"{rule}: {finding}",
+            "text": f"<code>{esc(where)}</code>. Vote yes on the option to apply.", "cards": cards}
+
+
+def variants_section(shots_dir, prefix, title, checks=None):
+    files = sorted(f for f in os.listdir(shots_dir) if f.endswith(".png"))[:9]
+    checks = json.load(open(checks, encoding="utf-8")) if checks else {}
+    cards = []
+    for f in files:
+        c = checks.get(f, {})
+        sid = f[:-4] if f[:-4].startswith(prefix) else f"{prefix}-{f[:-4]}"  # model shots are already <prop>-a
+        cards.append(vote_card(sid, f[:-4], os.path.join(shots_dir, f), [esc(c.get("summary", ""))],
+                               ("style_check " + ("PASS" if c.get("pass", True) else "FAIL"), c.get("pass", True)),
+                               meta={"question": prefix}))
+    return {"eyebrow": "Colorbox variants (Milo) &middot; 5 &times; 5 test grid", "h2": title,
+            "text": "Each variant on the test grid under the farm's light and camera, checked by <code>style_check.py</code>. "
+                    "Bob promotes the pick into <code>game/scenes/props/</code>.", "cards": cards}
+
+
 def main(argv):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -370,6 +442,20 @@ def main(argv):
         s = sub.add_parser(name)
         for a in args:
             s.add_argument(a)
+    s = sub.add_parser("add", help="put new questions at the top of an existing vote page")
+    s.add_argument("page")
+    s.add_argument("out")
+    s.add_argument("--h1", required=True)
+    s.add_argument("--brief", default="")
+    s.add_argument("--title")
+    s.add_argument("--stop", nargs=2, metavar=("BLACKBOARD", "ROW"), action="append", default=[],
+                   help="a designer-stop row; with --option, --ref, --shot, --prefix")
+    s.add_argument("--option", action="append", default=[], metavar="LETTER=DIR")
+    s.add_argument("--ref")
+    s.add_argument("--shot")
+    s.add_argument("--variants", nargs=3, metavar=("SHOTS_DIR", "PREFIX", "TITLE"), action="append", default=[])
+    s.add_argument("--checks", action="append", default=[], help="checks.json per --variants, in order")
+    s.add_argument("--prefix", action="append", default=[], help="vote id prefix per --stop, in order")
     s = sub.add_parser("variants")
     s.add_argument("shots_dir")
     s.add_argument("out")
@@ -389,6 +475,10 @@ def main(argv):
         cmd_round(a.shots_dir, a.round_json, a.spec_json, a.prev_page, a.out)
     elif a.cmd == "votes":
         cmd_votes(a.shots_dir, a.shots_json, a.prev_page, a.out)
+    elif a.cmd == "add":
+        secs = [stop_section(b, int(r), a.option, a.ref, a.shot, a.prefix[n]) for n, (b, r) in enumerate(a.stop)]
+        secs += [variants_section(d, pre, t, a.checks[n] if n < len(a.checks) else None) for n, (d, pre, t) in enumerate(a.variants)]
+        cmd_add(a.page, a.out, secs, a.h1, a.brief, a.title)
     elif a.cmd == "variants":
         cmd_variants(a.shots_dir, a.out, a.title, a.checks)
     else:

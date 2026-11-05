@@ -20,7 +20,7 @@ height = 1.0
 material = ExtResource("3_steel")
 top_radius = 0.165
 bottom_radius = 0.165
-height = 0.04
+height = 0.05
 
 [node name="Jar" type="Node3D"]
 

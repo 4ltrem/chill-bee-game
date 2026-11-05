@@ -67,7 +67,7 @@ def main(argv=None):
         sys.exit(f"no shot for {', '.join(missing)}")
     page = out / "vote.html"
     compare_page.cmd_variants(str(out), str(page), f"{a.prop.replace('-', ' ').title()} variants", str(out / "checks.json"))
-    print(f"vote page: {page.relative_to(ROOT).as_posix()} ({len(variants)} shot(s)); publish it with the Artifact tool")
+    print(f"vote page: {page.relative_to(ROOT).as_posix()} ({len(variants)} shot(s)); add it to Design Votes with `compare_page.py add PAGE OUT --variants {out.relative_to(ROOT).as_posix()} {a.prop} TITLE --checks .../checks.json`")
     return 0
 
 

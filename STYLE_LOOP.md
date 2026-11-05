@@ -48,16 +48,77 @@ The rules are the approved [STYLE_GUIDE.md](STYLE_GUIDE.md): **V1–V15** for th
 - **The critic sees only what scripts can't measure**: clutter and cut-off objects (V7), honey as the brightest thing (V8), state by more than colour (V9), overlap with the HUD (V13), glass reading as glass (V15), plus a second look at accents, shapes and on-screen contrast.
 - **The loop can't pass by persuasion.** A round passes only when Vera says PASS *and* `style_check.py` has no blocking row.
 - **Refiners get a slice, not the board.** Bob sees only open FAIL rows; Vera sees the shots, the script table and (from round 2) her previous verdict plus Bob's diff. No agent reads the blackboard.
-- **Creative choices go to the designer.** A Fix with two or more acceptable answers, a new token or a rule change ends in `(designer)`. Bob never gets it; the loop fixes the rest, lists those rows under *Waiting for the designer*, builds an A/B comparison page (`compare_page.py stop`), and resumes with `--resume` after the designer picks.
+- **Creative choices go to the designer.** A Fix with two or more acceptable answers, a new token or a rule change ends in `(designer)`. Bob never gets it; the loop fixes the rest, lists those rows under *Waiting for the designer*, adds an A/B question with votes to the Design Votes page (`compare_page.py add`), and resumes with `--resume` after the designer picks.
 - **The evaluators are tested.** `style_critic_check.py` must catch every known-bad fixture: six script fixtures (neon → V1, glowing hive → V2, texture + imported mesh → V4, third accent → V3, 90 px button → V11, low-contrast disabled text → V10) and two rendered shots Vera must fail (a cluttered, accent-heavy diorama → V3 + V7; a grey-on-grey disabled button → V10). `test_generate.py` checks the controller with fake agents (PASS in round 1, FAIL then PASS, max rounds, token cap, designer stop and resume).
 
 ## Demo runs
 
-<!-- filled in from the runs -->
+### Visual: the 0.1.2 farm (`game/reports/style/farm-0-1-2/blackboard.md`)
+`python -I _tools/style_loop.py farm-0-1-2`, on the 0.1.2 build, 2026-11-05.
+
+**Round 1: FAIL.**
+- **`style_check.py`: 9 blocking rows.** These include the two the spec predicted:
+  - V1, white disabled-button text, ΔE 13.9 from cream;
+  - V1/V3, `rim_mark.tres`, ΔE 16 from truck red and a third accent colour.
+
+  It also found rows nobody had predicted:
+  - V6: hive walls and floor 0.03–0.04 units thick, and the jar lid 0.04;
+  - V11: the Upgrade button is 110 px tall;
+  - V12: the Harvest tag uses 28 px text.
+- **Vera: 5 blocking rows** (plus 1 minor) that no script could find:
+  - V7: the "Harvest" label spills out of a narrow pill over a flower;
+  - V7: the spin hint is hidden behind that button;
+  - V8: the gold UI, the buttercup and the red truck outshine the honey;
+  - V9: the Upgrade button shows "can't afford" by colour alone;
+  - V7: cells cut off at the zoom's left edge, which Quinn had also noticed.
+
+**Designer stop.** The rim-mark rows have two acceptable answers:
+- A: recolour the mark to charcoal;
+- B: approve it as a third accent.
+
+The loop held them back from Bob and added the question, with votes, to the one comparison page **Design Votes** (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa, `compare_page.py add`). Meanwhile Bob fixed the other rows that could be fixed in scenes:
+- cream disabled text;
+- a 120 px Upgrade button;
+- a 240 × 120 Harvest tag with 32 px text;
+- hive walls, floor and jar lid at 0.05.
+
+The diff is on the blackboard. Result: `waiting-designer`. After the pick, `--resume` renders round 2.
+
+Some of Vera's rows (V8 honey brightness, the V9 "Need $25" cue, the zoom framing) need script or config changes. Bob may only edit `scenes/` and `materials/`, so they stay open and come back in round 2. That is a real limit of a scene-only refiner. It is recorded here rather than widened: those rows become spec items for Patricia, the programmer.
+
+### Voice: Biome intros (`content/_runs/biome-intros/blackboard-2.md`)
+`python -I _tools/generate.py biome-intros --revise` re-checked the approved Biome intros against the T1–T6 rules.
+
+**Round 1: FAIL.** Clara found:
+- a T1 lore line made stale by the GDD's newer Tree C flower table;
+- an unsourced real-world flower colour (T4);
+- "altitude gives your honey a character", read as a real-world claim (T4).
+
+She also ran the new T6 check (Look & words): every hive described matches the GDD.
+
+**Round 2: PASS.** William revised, and only 1 minor note remains. The draft goes back to `status: draft` for the designer to re-approve.
+
+### Props: Milo → vote page with no hand steps (spec item 11)
+1. Milo wrote three flower-patch variants (`game/scenes/variants/flower-patch/`).
+2. `python -I _tools/model_shots.py flower-patch` rendered them on the 5 × 5 test grid, ran `style_check.py` on each (3/3 PASS), and built the yes / maybe / no vote page.
+3. Added to **Design Votes** (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa). The designer voted B yes, A maybe, C no.
+
+### Evaluator calibration
+- `style_critic_check.py`: the 6 script fixtures were caught, and Vera caught both rendered fixtures on her first run (clutter → V3 + V7; low-contrast disabled text → V10).
+- `critic_check.py` before and after Clara's T1–T6 change: PASS both times. All three known errors were caught each time (10, then 12 blocking findings).
 
 ## Cost
+Tokens are total processed, from the run log (`_meta/agent-runs.csv`, tables "Style loop", "Content generation" and "Subagent runs").
 
-<!-- filled in from the run log -->
+| What | Calls | Tokens |
+|---|---|---|
+| Visual loop, round 1 + designer stop | Vera, Bob | 103,927 |
+| Voice loop, 2 rounds | Clara × 2, William | 131,695 |
+| Vera calibration | Vera × 2 | 83,171 |
+| Clara before / after | Clara × 2 | 161,219 |
+| Building M2: Vera's hire (Martin), shot scripts (Quinn), compare_page move, Milo's variants | 4 subagents | ≈ 202,500 |
+
+A visual round costs about 50k tokens per agent call. The script half of the evaluator (`style_check.py`, renders, `model_shots.py`) costs no tokens.
 
 ## Files
 
