@@ -153,8 +153,8 @@
  {
   "name": "crate box is only 1.0 long, jars hang off",
   "file": "scenes/props/jar_crate.tscn",
-  "find": "size = Vector3(2.8, 0.45, 1.2)",
-  "replace": "size = Vector3(1.0, 0.45, 1.2)",
+  "find": "size = Vector3(2.8, 0.45, 1.4)",
+  "replace": "size = Vector3(1.0, 0.45, 1.4)",
   "expect": [
    "t_layout_no_jar_outside_crate"
   ],
