@@ -34,7 +34,7 @@ description: The goal-oriented coding agent: finds what the specs ask for that t
 
 3. **The code-writing step and the iteration loop in `goal_agent.py`.**
    Until `gaps()` comes back empty (or a stop), it re-scans, scores, takes the top goal, and for it:
-   - creates or reuses the worktree and branch;
+   - checks out the milestone branch in the main folder (a worktree only under `game/CONTEXT.md` Process 10);
    - briefs Patricia's handoff (Process 5), then Patricia and Bob in parallel, and Quinn from the spec. Each runs as a fresh headless `claude -p` with only its spec slice, as `generate.py` does;
    - runs `contract_check.py`, then the style loop or `ui_shots.py` for visual checks, then `godot_run.py`, the snapshot suite and `mutate.py --since`;
    - sends failures to the folder's owner (Process 9) with at most 2 fix rounds before it stops for the designer;

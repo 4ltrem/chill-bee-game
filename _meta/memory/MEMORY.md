@@ -5,7 +5,7 @@
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
 - [0.1.3 play-test](playtest-0-1-3.md) — 11/6: UI broken (Back inconsistent, Spin/Harvest move, x5 tag overlaps); noted, not fixing yet
-- [Session handoff](session-handoff.md) — read first: 11/6 milestone/0.1 = 0.1.3 + m2 + flower-patch, green (3b6fdf1); main not yet moved; UI compare shots pending
+- [Session handoff](session-handoff.md) — read first: one folder on milestone/0.1 (no worktrees); 0.1.4 + M3 (A5) specs drafted, awaiting approval
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
 - [A/B comparison page](ab-comparison-page.md) — every creative A/B choice becomes a new section of the one Design Votes artifact; never a new artifact or browser tab
@@ -13,6 +13,7 @@
 - [Edit lines only](edit-lines-only.md) — change only the needed lines with Edit; no whole-file rewrite scripts
 - [itch upload rule](itch-upload-rule.md) — upload to itch only at a new milestone number (0.2.0, 0.3.0)
 - [Test speed fixes](test-speed-fixes.md) — mutate.py CB_ONLY + progress lines done 11/5 (D89-90); left: time_scale speed-up via Quinn, budget guard threshold
+- [One folder rule](one-folder-rule.md) — main folder on the milestone branch; worktree only for parallel work, removed when merged
 - [Scripted shots](scripted-shots.md) — same moments = `_tools/ui_shots.py`; agent only when a new screen/phase/menu is added
 - [Variant shots](variant-shots.md) — Milo's variants: one shared grid, one load, close-up shot of each
 - [Demo link submissions](demo-link-submissions.md) — every assignment is a demo link, resubmitted after each milestone
