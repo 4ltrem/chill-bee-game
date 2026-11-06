@@ -4,6 +4,17 @@
 extends "res://tests/test_second_stop.gd"
 
 
+# Tests that stay at x1 (they read the wall clock on purpose, own Engine.time_scale through the Dev speed row, or measure wall seconds
+# of a motion at a chosen speed). The ONE place; every other test runs at CB_TIME_SCALE.
+const X1_TESTS: Array[String] = [
+	"t_speed_jar_cycle", "t_speed_lid_lift", "t_speed_cell_flight", "t_speed_hotkeys", "t_speed_tag", "t_speed_reset",
+	"t_camera_pan_follows_time_scale",   # measures the pan in wall seconds at x5 and x0.5
+	"t_dev_actions",                      # presses the Dev speed button and reads Engine.time_scale
+	"t_pop_tween_unchanged",              # samples a 0.18 s tween: too few frames at x6 (0.042 vs 0.04 tolerance)
+	"t_jar_fills_then_lid",               # samples a 1.0 s honey rise per frame: missed at x6
+]
+
+
 func _initialize() -> void:
 	_run()
 
@@ -80,8 +91,16 @@ func _run() -> void:
 	# the equivalent of the Dev panel's "Reset to defaults": a stale user://dev_config.tres (backed up above, and removed) must not skew the run
 	print("Dev config: a user://dev_config.tres was ", "FOUND (backed up, removed for the run, restored at the end)" if _user_cfg_existed else "not present", "; the live config is reset to default_config.tres")
 	FarmInput.reset_dev_config()
+	var sc: String = OS.get_environment("CB_TIME_SCALE")
+	_run_scale = maxf(float(sc), 0.01) if sc != "" else 1.0
+	print("Test speed: CB_TIME_SCALE x", _run_scale, " (tests in X1_TESTS run at x1: ", X1_TESTS.size(), ")")
+	process_frame.connect(_clk_tick)
 	var ran: int = 0
 	for t in tests:
+		_wall_clock = X1_TESTS.has(t)
+		_clk_tick()
+		Engine.time_scale = 1.0 if _wall_clock else _run_scale
+		var t_start: int = Time.get_ticks_msec()
 		_eco_reset()
 		_cur_ok = true
 		_cur_msgs.clear()
@@ -96,6 +115,7 @@ func _run() -> void:
 			_cur_msgs.append("test made no checks")
 		_cleanup()
 		ran += 1
+		print("TIME  ", t, "  ", Time.get_ticks_msec() - t_start, " ms wall")
 		if _cur_ok:
 			_passed += 1
 			print("PASS  ", t, "  (", _checks, " checks)")

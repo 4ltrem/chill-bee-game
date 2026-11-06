@@ -96,12 +96,13 @@ func _angle_between(a: Basis, b: Basis) -> float:
 ## Engine.time_scale slows the game so a tween of 0.65 s gives well over 30 frames.
 func _sample_lid(lid: Node3D, body_fn: Callable, game_secs: float, scale: float = 0.25) -> Array:
 	var out: Array = []
+	_clk_tick()
 	Engine.time_scale = scale
-	var t_end: int = Time.get_ticks_msec() + int(game_secs / scale * 1000.0)
-	while Time.get_ticks_msec() < t_end:
+	var t_end: int = _gms() + int(game_secs * 1000.0)
+	while _gms() < t_end:
 		await process_frame
 		out.append({"xf": lid.global_transform, "pen": _max_pen(_obbs(lid), body_fn.call() as Array)})
-	Engine.time_scale = 1.0
+	_restore_scale()
 	return out
 
 

@@ -215,7 +215,7 @@ func _go_second_stop(speed: float = 1.0, pan_seconds: float = -1.0) -> Dictionar
 	var cb: Callable = func() -> void:
 		var cam: Camera3D = root.get_viewport().get_camera_3d()
 		if cam != null:
-			(rec["s"] as Array).append([Time.get_ticks_usec(), _pose(cam)])
+			(rec["s"] as Array).append([_gus(), _pose(cam)])
 	process_frame.connect(cb)
 	var frames_needed: int = _frames_n()   # 0.1.3c: a full bucket does not pan: every frame is finished first (the extra cells go to the pile), then the pan
 	for k in frames_needed:

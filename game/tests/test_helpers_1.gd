@@ -360,8 +360,9 @@ func _scrape_back_in_pop(to_pile: bool) -> void:
 		_fin()
 		return
 	var at: Vector2 = cam.unproject_position(body.global_position)
+	_clk_tick()
 	Engine.time_scale = 0.1
-	var t0: int = Time.get_ticks_msec()
+	var t0: int = _gms()
 	fi.mouse_button(at, true)
 	await process_frame
 	fi.mouse_button(at, false)
@@ -369,8 +370,8 @@ func _scrape_back_in_pop(to_pile: bool) -> void:
 	var capped_after: int = fi.capped(hive, 0)
 	var state17: int = int(hive.call("frame_cells", 0)[17])
 	await fi.click_ctl(p["BackButton"] as Control)
-	var game_s: float = float(Time.get_ticks_msec() - t0) / 1000.0 * 0.1
-	Engine.time_scale = 1.0
+	var game_s: float = float(_gms() - t0) / 1000.0   # game clock: already game seconds
+	_restore_scale()
 	ck(game_s < 0.18, "Back was clicked %.3f game-seconds after the scrape, inside the 0.18 s pop" % game_s)
 	eq(capped_after, _cpf() - 1, "the real press scraped exactly one cell")
 	eq(state17, 2, "the slot reads Extracted (2) at once, before the pop ends")

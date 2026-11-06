@@ -160,8 +160,8 @@ func t_truck_wheels_roll_with_travel() -> void:
 	for nm in names:
 		series[nm] = []
 	tk.call("sell")
-	var t_end: int = Time.get_ticks_msec() + int((float(cv("truck_trip_seconds")) + 1.0) * 1000.0)
-	while Time.get_ticks_msec() < t_end:
+	var t_end: int = _gms() + int((float(cv("truck_trip_seconds")) + 1.0) * 1000.0)
+	while _gms() < t_end:
 		await process_frame
 		for nm in names:
 			var bases: Array = []
@@ -351,11 +351,11 @@ func t_wheel_rims() -> void:
 	for i in int(cv("truck_capacity_jars")):
 		tk.call("receive_jar")
 	tk.call("sell")
-	var t_end: int = Time.get_ticks_msec() + int((float(cv("truck_trip_seconds")) + 1.0) * 1000.0)
+	var t_end: int = _gms() + int((float(cv("truck_trip_seconds")) + 1.0) * 1000.0)
 	var wspin: Dictionary = {}
 	for nm in names:
 		wspin[nm] = []
-	while Time.get_ticks_msec() < t_end:
+	while _gms() < t_end:
 		await process_frame
 		for nm in names:
 			var tr: Array = wheels[nm]
@@ -400,12 +400,12 @@ func t_summary_after_sell() -> void:
 	var empty: int = _st(c, "EMPTY")
 	_crank_unaided(c)
 	var seen_modal: bool = false
-	var t0: int = Time.get_ticks_msec()
-	while Time.get_ticks_msec() - t0 < 12000:
+	var t0: int = _gms()
+	while _gms() - t0 < 12000:
 		await process_frame
 		if _shown(modal):
 			seen_modal = true
-		if int(c.get("state")) == empty and Time.get_ticks_msec() - t0 >= 1500:
+		if int(c.get("state")) == empty and _gms() - t0 >= 1500:
 			break
 	await _wait(0.8)
 	if _shown(modal):

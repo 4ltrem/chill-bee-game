@@ -181,16 +181,16 @@ func _truck_box_off(tk: Node) -> Array:
 
 ## Sample every visible jar once per frame: traces[instance id] = [{t, pos, frac, lid, tb}], tb = the truck's region (padded) at that frame.
 func _record(m: Node, tk: Node, off: Array, traces: Dictionary, stop: Callable, timeout: float) -> void:
-	var t0: int = Time.get_ticks_msec()
+	var t0: int = _gms()
 	var last: int = t0
 	var gt: float = 0.0
 	for k in traces:
 		var arr: Array = traces[k]
 		gt = maxf(gt, float((arr[arr.size() - 1] as Dictionary)["t"]))
-	while float(Time.get_ticks_msec() - t0) < timeout * 1000.0 and not stop.call():
+	while float(_gms() - t0) < timeout * 1000.0 and not stop.call():
 		await process_frame
-		var now: int = Time.get_ticks_msec()
-		gt += float(now - last) / 1000.0 * Engine.time_scale
+		var now: int = _gms()
+		gt += float(now - last) / 1000.0   # game clock
 		last = now
 		var tb: AABB = AABB((tk as Node3D).global_position + (off[0] as Vector3), off[1] as Vector3).grow(0.4)
 		for j in _vis_jars(m):

@@ -40,6 +40,14 @@ var _setting_touched: bool = false
 var _user_cfg_backup: PackedByteArray = PackedByteArray()
 var _user_cfg_existed: bool = false
 
+# Test speed (designer 2026-11-05): run_tests.gd sets Engine.time_scale from env CB_TIME_SCALE (default 1). Every wait in a test counts GAME
+# time (_gms/_gus: wall time times Engine.time_scale, summed per frame), so a timeout in seconds means game seconds at any scale. The tests
+# in X1_TESTS (run_tests.gd) read the wall clock on purpose or own Engine.time_scale; they run at x1 and _gms/_gus give plain wall time there.
+var _run_scale: float = 1.0
+var _wall_clock: bool = false
+var _clk_us: float = 0.0
+var _clk_last: int = -1
+
 const USER_CFG := "user://dev_config.tres"
 const DEFAULT_CFG := "res://scripts/default_config.tres"
 const DEV_SETTING := "chill_bee/dev_mode"
@@ -136,7 +144,8 @@ func _cleanup() -> void:
 	if _setting_touched:
 		ProjectSettings.set_setting(DEV_SETTING, _setting_saved)
 		_setting_touched = false
-	Engine.time_scale = 1.0
+	_clk_tick()
+	Engine.time_scale = _run_scale
 	if FileAccess.file_exists(USER_CFG):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(USER_CFG))
 
@@ -241,8 +250,35 @@ func _add_root(n: Node) -> void:
 	n.set_physics_process(false)
 
 
-func _wait(sec: float) -> void:
+func _wait(sec: float) -> void:   # create_timer follows Engine.time_scale: game seconds
 	await create_timer(sec).timeout
+
+
+## Accumulate game time (wall time x Engine.time_scale). Called every frame (run_tests.gd) and by every read, so a mid-test scale change is
+## off by at most one frame.
+func _clk_tick() -> void:
+	var now: int = Time.get_ticks_usec()
+	if _clk_last >= 0:
+		_clk_us += float(now - _clk_last) * Engine.time_scale
+	_clk_last = now
+
+
+## Game microseconds / milliseconds since the run began (wall clock in an x1 test).
+func _gus() -> int:
+	if _wall_clock:
+		return Time.get_ticks_usec()
+	_clk_tick()
+	return int(_clk_us)
+
+
+func _gms() -> int:
+	return _gus() / 1000
+
+
+## Put the run's scale back (for a test that sets its own slow-motion and is done with it).
+func _restore_scale() -> void:
+	_clk_tick()
+	Engine.time_scale = _run_scale
 
 
 func _frames(n: int) -> void:
@@ -252,8 +288,8 @@ func _frames(n: int) -> void:
 
 ## Poll until cond.call() is true or timeout (s).
 func _until(cond: Callable, timeout: float) -> bool:
-	var t0: int = Time.get_ticks_msec()
-	while float(Time.get_ticks_msec() - t0) < timeout * 1000.0:
+	var t0: int = _gms()
+	while float(_gms() - t0) < timeout * 1000.0:
 		if cond.call():
 			return true
 		await process_frame

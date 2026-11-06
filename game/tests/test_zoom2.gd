@@ -306,7 +306,7 @@ func t_pop_tween_unchanged() -> void:
 	hc.connect("cell_scraped", func(_c: Variant, _v: Variant, wp: Variant) -> void:
 		rec["n"] = int(rec["n"]) + 1
 		if int(rec["t0"]) < 0:
-			rec["t0"] = Time.get_ticks_usec()
+			rec["t0"] = _gus()
 			rec["wp"] = wp)
 	var cs: Array[Node3D] = fi.cells(hc)
 	if cs.size() == 0:
@@ -316,8 +316,8 @@ func t_pop_tween_unchanged() -> void:
 	var target: Node3D = cs[cs.size() / 2]
 	var pt: Vector2 = cam.unproject_position(target.global_position)
 	fi.mouse_button(pt, true)
-	var t_end: int = Time.get_ticks_usec() + 400000
-	while Time.get_ticks_usec() < t_end:
+	var t_end: int = _gus() + 400000
+	while _gus() < t_end:
 		await process_frame
 		if int(rec["t0"]) < 0:
 			continue
@@ -337,7 +337,7 @@ func t_pop_tween_unchanged() -> void:
 			rec["node"] = pick
 		var node: Node3D = rec["node"]
 		if node != null and is_instance_valid(node):
-			var t: float = float(Time.get_ticks_usec() - int(rec["t0"])) / 1.0e6
+			var t: float = float(_gus() - int(rec["t0"])) / 1.0e6
 			(rec["samples"] as Array).append([t, node.global_transform.basis.get_scale().x / float(base[node])])
 	fi.mouse_button(pt, false)
 	ck(int(rec["n"]) >= 1, "a real press on a cell scraped it (cell_scraped emitted)")

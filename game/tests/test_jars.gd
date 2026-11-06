@@ -22,15 +22,15 @@ func t_jar_fills_then_lid() -> void:
 	# Clarifications 2026-11-04: the jar at the spigot is whichever flying jar is filling (SpigotJar may stay hidden): every visible jar
 	# is sampled each frame, and the jar that shows honey between 0.3 and 0.7 with no lid is the one under test.
 	var per_jar: Dictionary = {}   # instance id -> [t, visible, frac, lid shown, position]
-	var t0: int = Time.get_ticks_msec()
+	var t0: int = _gms()
 	var empty: int = _st(c, "EMPTY")
-	while Time.get_ticks_msec() - t0 < int((spj * 2.0 + 2.0) * 1000.0) and int(c.get("state")) != empty:
+	while _gms() - t0 < int((spj * 2.0 + 2.0) * 1000.0) and int(c.get("state")) != empty:
 		await process_frame
 		for j in _vis_jars(m):
 			var jid: int = j.get_instance_id()
 			if not per_jar.has(jid):
 				per_jar[jid] = []
-			(per_jar[jid] as Array).append([float(Time.get_ticks_msec() - t0) / 1000.0, true, _jar_frac(j), _jar_lid_shown(j), (j as Node3D).global_position])
+			(per_jar[jid] as Array).append([float(_gms() - t0) / 1000.0, true, _jar_frac(j), _jar_lid_shown(j), (j as Node3D).global_position])
 	var samples: Array = []
 	for jid in per_jar:
 		for s0 in (per_jar[jid] as Array):
