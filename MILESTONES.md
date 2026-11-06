@@ -26,7 +26,7 @@ description: Build milestones and version numbers for Chill Bee Game, fitted to 
 
 ## Open
 - M1: spec `game/specs/0.1-harvest.md` approved and its GDD §2 changes applied (2026-11-04).
-- Uploads (designer, 2026-11-05): a build goes to itch.io only when a new milestone number is reached (0.2.0, 0.3.0); builds within a milestone are played locally.
+- Uploads (designer, 2026-11-05): a build goes to itch.io only when a new milestone number is reached (0.2.0, 0.3.0); builds within a milestone are played locally. Exception (designer, 2026-11-06): an assignment's demo build also goes on itch (0.1.4 = the A5 demo).
 - M1: 0.1.0 uploaded to itch.io and playing in the browser (designer, 2026-11-04); 0.1.1 play-test fixes in progress (`game/specs/0.1.1-playtest-fixes.md`).
 - M2: built 2026-11-05 on `milestone/m2` from `game/specs/m2-style-loop.md` and the approved `STYLE_GUIDE.md`; write-up `STYLE_LOOP.md` approved by the designer (2026-11-05). Each assignment is submitted as a demo link, resubmitted after every milestone.
 - M2 and M3 each need a new agent or tool (Martin for a style critic; a `_tools/` planner for A5); scoped when started.

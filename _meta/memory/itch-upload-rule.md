@@ -12,6 +12,8 @@ Upload a build to itch.io (4ltrem.itch.io/chill-bee-game) only when the version 
 (0.2.0, 0.3.0). Builds within a milestone (0.1.2, 0.1.3 ...) are played locally from `game/builds/`. Recorded in
 MILESTONES.md.
 
+**Exception (designer, 2026-11-06):** a build that is an assignment's demo also goes on itch, even within a milestone. 0.1.4 is the A5 demo, so it is uploaded ([[demo-link-submissions]]).
+
 **Why:** the designer said so on 2026-11-05 to save time while the layout is being fixed. 0.1.0 is already on itch,
 which covers M1's web-export deliverable.
 
