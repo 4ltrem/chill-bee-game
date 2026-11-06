@@ -123,3 +123,105 @@ func t_second_stop_fork_icon_tap() -> void:
 	near(_cam().size, float(cv("zoom_size")), 0.05, "the camera went back to the first zoom")
 	eq(bool(m.call("at_second_stop")), false, "the second stop is left")
 	_fin()
+
+
+# ---------------------------------------------------------------- icons never overlap (0.1.3c, "Icons anchored in the game world")
+
+## Every FloatingIcon of the scene (Fork, Spin, Sell), visible or not.
+func _icon_nodes(m: Node) -> Array:
+	var out: Array = []
+	for n in m.find_children("*", "Button", true, false):
+		if n is FloatingIcon:
+			out.append(n)
+	return out
+
+
+## One camera state: visible icons >= 120 x 120, no two touch rects intersect, none meets TopInfo or ShopPanel; at the second stop
+## none meets the hive's or the centrifuge's screen rect. Returns the visible icon count.
+func _icons_state(m: Node, p: Dictionary, label: String, second: bool) -> int:
+	await _frames(3)
+	var vis: Array = []
+	for ic in _icon_nodes(m):
+		if (ic as Control).is_visible_in_tree():
+			vis.append(ic)
+	var hud: Array = []
+	for nm in ["TopInfo", "ShopPanel"]:
+		var c: Control = m.find_child(nm, true, false) as Control
+		ck(c != null, "%s: %s exists" % [label, nm])
+		if c != null and c.is_visible_in_tree():
+			hud.append(c)
+	var world: Array = []
+	if second:
+		world.append(["hive", _screen_of(_obbs(p["Hive"] as Node), _cam()).intersection(_vp())])
+		world.append(["centrifuge", _screen_of(_obbs(p["Centrifuge"] as Node), _cam())])
+	for i in vis.size():
+		var a: Control = vis[i]
+		var ra: Rect2 = a.get_global_rect()
+		ck(ra.size.x >= 120.0 and ra.size.y >= 120.0, "%s: %s touch rect is at least 120 x 120 (%s)" % [label, a.name, str(ra.size)])
+		for j in range(i + 1, vis.size()):
+			var b: Control = vis[j]
+			eq(ra.intersects(b.get_global_rect()), false, "%s: %s and %s touch rects do not intersect (%s, %s)" % [label, a.name, b.name, str(ra), str(b.get_global_rect())])
+		for h in hud:
+			eq(ra.intersects((h as Control).get_global_rect()), false, "%s: %s does not meet %s (%s, %s)" % [label, a.name, h.name, str(ra), str((h as Control).get_global_rect())])
+		for w in world:
+			eq(ra.intersects(w[1] as Rect2), false, "%s: %s does not meet the %s (%s, %s)" % [label, a.name, w[0], str(ra), str(w[1])])
+	# every icon, shown or not: place each on its anchor and compare all pairs (an icon hidden by the state table still must not share a spot)
+	var all_icons: Array = _icon_nodes(m)
+	var rects: Array = []
+	for ic in all_icons:
+		var fic: FloatingIcon = ic
+		var placed: bool = fic.place()
+		rects.append(fic.get_global_rect() if placed else Rect2())
+		ck(placed or fic.use_fixed_center == false, "%s: %s placed (anchor in front of the camera)" % [label, fic.name])
+	for i in all_icons.size():
+		for j in range(i + 1, all_icons.size()):
+			if (rects[i] as Rect2).size != Vector2.ZERO and (rects[j] as Rect2).size != Vector2.ZERO:
+				eq((rects[i] as Rect2).intersects(rects[j] as Rect2), false, "%s: all icons: %s and %s anchored apart (%s, %s)" % [label, all_icons[i].name, all_icons[j].name, str(rects[i]), str(rects[j])])
+	return vis.size()
+
+
+## Icons are placed only by their 3D anchors: every FloatingIcon has screen_offset (0, 0); in each camera state the visible icons
+## stay clear of one another, of TopInfo and ShopPanel, and at the second stop of the hive and the centrifuge.
+func t_icons_never_overlap() -> void:
+	# self-check: the intersection test reports an overlap
+	ck(Rect2(0, 0, 120, 120).intersects(Rect2(60, 60, 120, 120)), "self-check: overlapping rects are reported")
+	_portrait()
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var icons: Array = _icon_nodes(m)
+	eq(icons.size(), 3, "the scene has three FloatingIcons (Fork, Spin, Sell)")
+	for ic in icons:
+		eq((ic as FloatingIcon).screen_offset, Vector2.ZERO, "%s: screen_offset is (0, 0)" % ic.name)
+	var tr: Dictionary = _track(p["Hive"])
+	_full_hive_frozen(p["Hive"])
+	await _frames(4)
+	var n_farm: int = await _icons_state(m, p, "farm view", false)
+	ck(n_farm >= 1, "farm view: at least one icon shows with the hive full (%d)" % n_farm)
+	var raised: bool = await _open_zoom(m, p, tr)
+	ck(raised, "the zoom opened with a risen frame")
+	if not raised:
+		_fin()
+		return
+	await _wait(_zoom_settle())
+	var n_zoom: int = await _icons_state(m, p, "first zoom", false)
+	# on to the second stop: finish every frame, then Back (as _second_stop_with_capped does)
+	var frames: int = int(ceil(float(_bucket_cells()) / float(_cpf())))
+	for k in frames:
+		var f: int = await _scrape_risen(m, p["Hive"], tr)
+		ck(await _next_frame(tr, f), "frame %d done: the next frame rose" % f)
+	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.3)
+	await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
+	var reached: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
+	await _wait(0.4)
+	ck(reached, "the second stop was reached (size %s)" % str(_cam().size))
+	if reached:
+		var n_second: int = await _icons_state(m, p, "second stop", true)
+		ck(n_second >= 1, "second stop: at least one icon shows (%d)" % n_second)
+	ck(n_zoom >= 0, "first zoom measured")
+	_fin()

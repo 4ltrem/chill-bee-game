@@ -77,6 +77,7 @@ func _run() -> void:
 			"t_camera_pan_follows_time_scale", "t_camera_helpers_can_fail", "t_camera_lid_lean_matches_hive", "t_camera_lid_component_shared",
 			# 0.1.3c second-stop input paths (real taps)
 			"t_second_stop_back_tap", "t_second_stop_spin_icon_tap", "t_second_stop_fork_icon_tap",
+			"t_icons_never_overlap",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

@@ -18,7 +18,7 @@ const MIN_TOUCH: Vector2 = Vector2(120.0, 120.0)   # GDD 8 / spec Accessibility
 const STYLE_NAMES: Array[String] = ["normal", "hover", "pressed", "disabled", "hover_pressed", "focus"]
 
 var _anchor: Node3D
-## 0.1.3c: at the second camera stop main.gd pins an icon to a screen point (centre, px) instead of its anchor.
+## 0.1.3c: main.gd pins an icon to a screen point (centre, px) only at the second stop, when its anchor is off screen or over the hive/centrifuge.
 var use_fixed_center: bool = false
 var fixed_center: Vector2 = Vector2.ZERO
 var _wanted: bool = true   # follows its anchor until main.gd says otherwise

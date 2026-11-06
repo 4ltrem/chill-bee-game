@@ -440,6 +440,26 @@
   "expect": [
    "t_barrel_eases_to_stop"
   ],
+ "suite": "unit"
+ },
+ {
+  "name": "Spin anchored on the Fork's anchor",
+  "file": "scenes/main.tscn",
+  "find": "NodePath(\"../../../FarmWorld/Centrifuge/CentrifugeAnchor\")",
+  "replace": "NodePath(\"../../../FarmWorld/Hive/ForkAnchor\")",
+  "expect": [
+   "t_icons_never_overlap"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Spin screen_offset put back",
+  "file": "scenes/main.tscn",
+  "find": "CentrifugeAnchor\")\nscreen_offset = Vector2(0, 0)",
+  "replace": "CentrifugeAnchor\")\nscreen_offset = Vector2(50, -60)",
+  "expect": [
+   "t_icons_never_overlap"
+  ],
   "suite": "unit"
  }
 ]

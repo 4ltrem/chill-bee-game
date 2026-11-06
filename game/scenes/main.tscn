@@ -392,7 +392,7 @@ theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "Harvest"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../../FarmWorld/Hive/ForkAnchor")
-screen_offset = Vector2(-70, -140)
+screen_offset = Vector2(0, 0)
 
 [node name="CentrifugeIcon" type="Button" parent="FarmUIRoot/FarmUI"]
 focus_mode = 0
@@ -411,7 +411,7 @@ theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "Spin"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../../FarmWorld/Centrifuge/CentrifugeAnchor")
-screen_offset = Vector2(50, -60)
+screen_offset = Vector2(0, 0)
 
 [node name="SellIcon" type="Button" parent="FarmUIRoot/FarmUI"]
 focus_mode = 0
@@ -430,7 +430,7 @@ theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "Sell $30"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../../FarmWorld/Truck/SellAnchor")
-screen_offset = Vector2(0, -80)
+screen_offset = Vector2(0, 0)
 
 [node name="SummaryModal" type="PanelContainer" parent="FarmUIRoot/FarmUI"]
 visible = false

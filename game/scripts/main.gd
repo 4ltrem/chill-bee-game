@@ -520,12 +520,26 @@ func _enter_second_stop_hud() -> void:
 		var at := Vector2(clampf(hive_rect.get_center().x, half.x, view.x - half.x), minf(hive_rect.end.y + gap + half.y, view.y - half.y))
 		if Rect2(at - half, half * 2.0).intersects(cen_rect):
 			at.y = minf(cen_rect.end.y + gap + half.y, view.y - half.y)   # the centrifuge reaches under the hive: Harvest goes below both
-		_fork_icon.fixed_center = at
-		_fork_icon.use_fixed_center = true
+		_pin_if_blocked(_fork_icon, at, [hive_rect, cen_rect], screen)
 	if _centrifuge_icon != null:
 		var half: Vector2 = _centrifuge_icon.size * 0.5
-		_centrifuge_icon.fixed_center = Vector2(maxf(cen_rect.position.x - gap - half.x, half.x), cen_rect.get_center().y)
-		_centrifuge_icon.use_fixed_center = true
+		_pin_if_blocked(_centrifuge_icon, Vector2(maxf(cen_rect.position.x - gap - half.x, half.x), cen_rect.get_center().y), [hive_rect, cen_rect], screen)
+
+
+## 0.1.3c: an icon follows its anchor alone; it is pinned to `fallback` (centre, px) only when the anchor puts it off screen
+## or over the hive's or centrifuge's rect.
+func _pin_if_blocked(icon: FloatingIcon, fallback: Vector2, rects: Array, screen: Rect2) -> void:
+	icon.use_fixed_center = false
+	if not icon.place():
+		return
+	var box := Rect2(icon.global_position, icon.size)
+	var blocked: bool = not screen.encloses(box)
+	for r in rects:
+		if box.intersects(r as Rect2):
+			blocked = true
+	if blocked:
+		icon.fixed_center = fallback
+		icon.use_fixed_center = true
 
 
 func _leave_second_stop_hud() -> void:
