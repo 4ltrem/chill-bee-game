@@ -510,7 +510,7 @@
   "find": "head.material_override = material",
   "replace": "head.material_override = null",
   "expect": [
-   "t_node_contract"
+   "t_flower_patch_b"
   ],
   "suite": "unit"
  }

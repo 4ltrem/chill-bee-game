@@ -29,7 +29,7 @@ func _run() -> void:
 		"t_fill_multiplier", "t_bee_count", "t_fill_multiplier_is_bees_over_base", "t_economy_removed_jars",
 		"t_earn_and_jar_value", "t_drawn_count_capped",
 		# contract and config (new values, retired values, retired scene)
-		"t_node_contract", "t_config_values", "t_config_placeholders_marked", "t_retired_api_gone",
+		"t_node_contract", "t_flower_patch_b", "t_config_values", "t_config_placeholders_marked", "t_retired_api_gone",
 		# hive: fill by frames and slots, risen frame, overflow of one hive, scrape
 		"t_fill_time_level0", "t_fill_time_with_levels", "t_hive_rate_is_live", "t_fill_in_order_slot_by_slot",
 		"t_risen_frame_never_fills", "t_overflow_one_hive_then_pause", "t_became_full_once_while_filling",

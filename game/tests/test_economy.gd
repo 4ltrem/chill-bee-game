@@ -189,9 +189,6 @@ func t_node_contract() -> void:
 	var back: Node = m.find_child("BackButton", true, false)
 	if back != null and back is Control:
 		ck((back as Control).size.y >= 120.0, "BackButton at least 120 px high (%s)" % str((back as Control).size.y))
-	# game/specs/flower-patch-b.md: run_tests.gd is off limits there, so the flower-patch tests ride on this registered test.
-	# Register t_flower_patch_b in run_tests.gd and delete the next line when that list may be edited.
-	await _fp_all(m)
 	_fin()
 
 

@@ -228,7 +228,7 @@ func t_layout_objects_on_cells() -> void:
 		if f == null:
 			continue
 		var fe: Vector3 = (flowers[i] as Vector3) - f.global_position
-		near(f.global_position.y, 0.15, "FlowerPatch%d keeps y 0.15" % (i + 1), 0.001)
+		near(f.global_position.y, 0.0, "FlowerPatch%d sits on the ground (y 0, flower-patch B origin)" % (i + 1), 0.001)
 		fe.y = 0.0
 		ck(fe.length() <= POS_TOL, "FlowerPatch%d sits on its cell %s (got %s)" % [i + 1, str(flowers[i]), str(f.global_position)])
 	# the check can fail: it reports an object one cell away

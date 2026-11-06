@@ -194,17 +194,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 [node name="Flowers" type="Node3D" parent="FarmWorld"]
 
 [node name="FlowerPatch1" parent="FarmWorld/Flowers" instance=ExtResource("10_patch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.15, -4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -4)
 color = Color(0.97, 0.66, 0.78, 1)
 radius = 0.9
 
 [node name="FlowerPatch2" parent="FarmWorld/Flowers" instance=ExtResource("10_patch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.15, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -2)
 color = Color(0.78, 0.7, 0.93, 1)
 radius = 0.8
 
 [node name="FlowerPatch3" parent="FarmWorld/Flowers" instance=ExtResource("10_patch")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.15, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 color = Color(1, 0.85, 0.3, 1)
 radius = 0.7
 
