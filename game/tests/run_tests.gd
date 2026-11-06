@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_second_stop.gd"
+extends "res://tests/test_replay.gd"
 
 
 # Tests that stay at x1 (they read the wall clock on purpose, own Engine.time_scale through the Dev speed row, or measure wall seconds
@@ -12,6 +12,7 @@ const X1_TESTS: Array[String] = [
 	"t_dev_actions",                      # presses the Dev speed button and reads Engine.time_scale
 	"t_pop_tween_unchanged",              # samples a 0.18 s tween: too few frames at x6 (0.042 vs 0.04 tolerance)
 	"t_jar_fills_then_lid",               # samples a 1.0 s honey rise per frame: missed at x6
+	"t_replay_fill_and_back", "t_replay_without_back_stays_in_zoom",   # a replay feeds one drag motion per frame: at x6 each frame is 0.1 s of game time
 ]
 
 
@@ -78,6 +79,10 @@ func _run() -> void:
 			# 0.1.3c second-stop input paths (real taps)
 			"t_second_stop_back_tap", "t_second_stop_spin_icon_tap", "t_second_stop_fork_icon_tap",
 			"t_icons_never_overlap",
+			# 0.1.3 play-test (2026-11-06)
+			"t_pan_after_all_frames_uncapped", "t_pan_after_back_then_harvest_again", "t_icons_above_props", "t_spin_icon_in_first_zoom",
+			# input-recorder replay
+			"t_replay_fill_and_back", "t_replay_without_back_stays_in_zoom",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

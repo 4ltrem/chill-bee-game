@@ -39,7 +39,9 @@ var _cam_tween: Tween
 var _crate: Node3D
 var _closing_to_second: bool = false   # the zoom now closing ends at the second stop (bucket full) instead of the farm view
 var _at_second_stop: bool = false
-var _filled_in_zoom: bool = false      # the bucket became full while this zoom was open: the zoom ends after its frame and pans to the second stop
+var _back_saved: Dictionary = {}   # BackButton's layout before the second stop moved it
+var _spin_pending: bool = false        # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
+var _filled_in_zoom: bool = false    # the bucket became full while this zoom was open: the zoom ends after its frame and pans to the second stop
 
 
 func _ready() -> void:
@@ -57,6 +59,9 @@ func _ready() -> void:
 	_fork_icon = find_child("ForkIcon", true, false) as FloatingIcon
 	_centrifuge_icon = find_child("CentrifugeIcon", true, false) as FloatingIcon
 	_sell_icon = find_child("SellIcon", true, false) as FloatingIcon
+	if _centrifuge_icon != null and _farm_ui != null and _centrifuge_icon.get_parent() == _farm_ui:
+		# FarmUI is hidden during a zoom; Spin must show in the first zoom, so it lives beside it (it places itself from its anchor)
+		_centrifuge_icon.reparent(_farm_ui.get_parent(), false)
 	if GameConfig.dev_mode_enabled():
 		var panel := DevPanel.new()
 		panel.name = "DevPanel"
@@ -93,7 +98,7 @@ func _ready() -> void:
 	if _fork_icon != null:
 		_fork_icon.pressed.connect(open_zoom)
 	if _centrifuge_icon != null:
-		_centrifuge_icon.pressed.connect(func() -> void: _centrifuge.begin_crank())
+		_centrifuge_icon.pressed.connect(spin_tapped)
 	if _sell_icon != null:
 		_sell_icon.pressed.connect(sell)
 	_refresh_icons()
@@ -120,7 +125,8 @@ func _refresh_icons() -> void:
 	if _fork_icon != null:
 		_fork_icon.set_wanted(on_farm and fork_available())
 	if _centrifuge_icon != null:
-		_centrifuge_icon.set_wanted(on_farm and _centrifuge.state == Centrifuge.State.FULL)
+		# 0.1.3 play-test (c): also shown during the first zoom (not while it closes: the second stop shows it itself)
+		_centrifuge_icon.set_wanted((on_farm or zoom != Zoom.CLOSING) and _centrifuge.state == Centrifuge.State.FULL)
 	if _sell_icon != null:
 		var can_sell: bool = on_farm and _truck.can_sell()
 		_sell_icon.set_wanted(can_sell)
@@ -203,6 +209,7 @@ func open_zoom() -> bool:
 	_going_back = false
 	_leave_second_stop_hud()
 	_filled_in_zoom = false
+	_spin_pending = false
 	zoom = Zoom.OPENING
 	_timer = Economy.config.lid_move_seconds()
 	_farm_ui.visible = false
@@ -216,6 +223,16 @@ func open_zoom() -> bool:
 		_bees.set_avoid(_farm_camera, _rack_box())
 	_refresh_icons()
 	return true
+
+
+## The Spin icon. On the farm or at the second stop it starts the crank. In the first zoom (0.1.3c) it ends the zoom like Back (frames not yet
+## uncapped stay), pans to the second stop and starts the crank there (_finish_zoom).
+func spin_tapped() -> void:
+	if zoom == Zoom.NONE:
+		_centrifuge.begin_crank()
+	elif zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING and _centrifuge.state == Centrifuge.State.FULL:
+		_spin_pending = true
+		back()   # a zoom already closing on its own (CLOSE_DELAY) needs nothing more: it pans because the bucket is full
 
 
 ## Back: the risen frame sinks keeping its state, the hive lid goes back on and the camera zooms out.
@@ -316,12 +333,13 @@ func _start_closing(on_own: bool) -> void:
 	resume_pending = not on_own or (_filled_in_zoom and _hive.has_capped_cells())   # all frames done: nothing left to resume
 	_hive.close_lid()
 	_centrifuge.close_lid()
-	_closing_to_second = _filled_in_zoom and _bucket_is_full()
+	_closing_to_second = _bucket_is_full() or _spin_pending   # 0.1.3 play-test: a bucket already full when the zoom opened (Back, then Harvest again) pans too
 	if _closing_to_second:
 		_timer = maxf(Economy.config.camera_pan_seconds, Economy.config.lid_move_seconds())
 		_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)
 	else:
 		_move_camera(false)
+	_refresh_icons()
 
 
 func _finish_zoom() -> void:
@@ -338,6 +356,9 @@ func _finish_zoom() -> void:
 	elif _harvest_ui != null:
 		_harvest_ui.hide_zoom()
 	_refresh_icons()
+	if _spin_pending:
+		_spin_pending = false
+		_centrifuge.begin_crank()
 
 
 ## A scraped cell: its jar value already left the hive. It goes to the bucket if the bucket is open with room, otherwise to the pile.
@@ -524,6 +545,57 @@ func _enter_second_stop_hud() -> void:
 	if _centrifuge_icon != null:
 		var half: Vector2 = _centrifuge_icon.size * 0.5
 		_pin_if_blocked(_centrifuge_icon, Vector2(maxf(cen_rect.position.x - gap - half.x, half.x), cen_rect.get_center().y), [hive_rect, cen_rect], screen)
+	_move_back_button(pose, [hive_rect, cen_rect], gap, view)
+
+
+## 0.1.3c: Back moves to the first free spot (scanned from the top right) that overlaps no TopInfo, icon, hive, centrifuge, crate or truck
+## rect and ends above the ShopPanel; _leave_second_stop_hud restores its layout. Left in place if no spot is free.
+func _move_back_button(pose: Dictionary, rects: Array, gap: float, view: Vector2) -> void:
+	var back: Control = find_child("BackButton", true, false) as Control
+	if back == null:
+		return
+	if _back_saved.is_empty():
+		_back_saved = {"al": back.anchor_left, "ar": back.anchor_right, "ol": back.offset_left, "ot": back.offset_top,
+				"or": back.offset_right, "ob": back.offset_bottom, "gh": back.grow_horizontal}
+	var avoid: Array[Rect2] = []
+	for r in rects:
+		avoid.append(r as Rect2)
+	if _crate != null:
+		avoid.append(_screen_rect(_mesh_box(_crate), pose))
+	if _truck != null:
+		avoid.append(_screen_rect(_mesh_box(_truck, _truck.home_global_position() - _truck.global_position), pose))
+	var info: Control = find_child("TopInfo", true, false) as Control
+	if info != null and info.is_visible_in_tree():
+		avoid.append(info.get_global_rect())
+	for c in [_fork_icon, _centrifuge_icon, find_child("SellIcon", true, false)]:
+		if c != null and (c as Control).is_visible_in_tree():
+			avoid.append((c as Control).get_global_rect())
+	var shop: Control = find_child("ShopPanel", true, false) as Control
+	var floor_y: float = shop.global_position.y if shop != null and shop.is_visible_in_tree() else view.y
+	var sz: Vector2 = Vector2(maxf(back.size.x, back.custom_minimum_size.x), maxf(back.size.y, back.custom_minimum_size.y))
+	var step: float = 20.0
+	var y: float = gap
+	while y + sz.y <= floor_y - gap:
+		var x: float = view.x - sz.x - gap
+		while x >= gap:
+			var box := Rect2(Vector2(x, y), sz)
+			var free: bool = true
+			for r in avoid:
+				if box.intersects(r.grow(gap)):
+					free = false
+					break
+			if free:
+				var origin: Vector2 = (back.get_parent() as Control).global_position if back.get_parent() is Control else Vector2.ZERO
+				back.anchor_left = 0.0
+				back.anchor_right = 0.0
+				back.grow_horizontal = Control.GROW_DIRECTION_END
+				back.offset_left = x - origin.x
+				back.offset_right = x - origin.x + sz.x
+				back.offset_top = y - origin.y
+				back.offset_bottom = y - origin.y + sz.y
+				return
+			x -= step
+		y += step
 
 
 ## 0.1.3c: an icon follows its anchor alone; it is pinned to `fallback` (centre, px) only when the anchor puts it off screen
@@ -544,6 +616,16 @@ func _pin_if_blocked(icon: FloatingIcon, fallback: Vector2, rects: Array, screen
 
 func _leave_second_stop_hud() -> void:
 	_at_second_stop = false
+	var back: Control = find_child("BackButton", true, false) as Control
+	if back != null and not _back_saved.is_empty():
+		back.anchor_left = _back_saved["al"]
+		back.anchor_right = _back_saved["ar"]
+		back.offset_left = _back_saved["ol"]
+		back.offset_top = _back_saved["ot"]
+		back.offset_right = _back_saved["or"]
+		back.offset_bottom = _back_saved["ob"]
+		back.grow_horizontal = _back_saved["gh"]
+	_back_saved = {}
 	if _fork_icon != null:
 		_fork_icon.use_fixed_center = false
 	if _centrifuge_icon != null:

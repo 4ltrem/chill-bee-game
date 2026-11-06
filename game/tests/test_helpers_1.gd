@@ -407,7 +407,13 @@ func _scrape_back_in_pop(to_pile: bool) -> void:
 	ck(_shown(p["ForkIcon"]), "the fork stays: 34 + 4 x 35 Capped cells remain")
 	eq(tr["risen"], -1, "the frame went back down")
 	eq(tr["lid"], [true, false], "the hive lid went on again")
-	ck(_shown(p["MoneyLabel"]) and not _shown(p["BackButton"]), "the farm UI is back")
+	# designer, 2026-11-06: closing the zoom with a full bucket (Back included) pans to the second stop; not full -> the farm
+	if to_pile:
+		eq(bool(m.call("at_second_stop")), true, "the bucket is full: Back panned to the second stop")
+		ck(_shown(p["BackButton"]), "the second stop shows Back")
+	else:
+		eq(bool(m.call("at_second_stop")), false, "the bucket is not full: Back went to the farm, not the second stop")
+		ck(_shown(p["MoneyLabel"]) and not _shown(p["BackButton"]), "the farm UI is back")
 	# the half frame comes up again with its 34 cells when the fork is tapped
 	tr["raised"] = []
 	ck(await _open_zoom(m, p, tr), "the fork opens the zoom again")

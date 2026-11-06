@@ -225,3 +225,139 @@ func t_icons_never_overlap() -> void:
 		ck(n_second >= 1, "second stop: at least one icon shows (%d)" % n_second)
 	ck(n_zoom >= 0, "first zoom measured")
 	_fin()
+
+
+# ---------------------------------------------------------------- designer's 0.1.3 play-test (2026-11-06): the pan, icons above props, Spin in the first zoom
+
+## The designer's ordinary hands: real drags on the risen frame, the next frame the moment it rises, no pause, until no Capped cell is left.
+func _uncap_all(m: Node, p: Dictionary, tr: Dictionary) -> bool:
+	var hive: Node = p["Hive"]
+	var t0: int = _gms()
+	while fi.capped_total(hive, _frames_n()) > 0 and float(_gms() - t0) < 120000.0:
+		if int(tr["risen"]) >= 0:
+			await _scrape_risen(m, hive, tr)
+		await process_frame
+	return fi.capped_total(hive, _frames_n()) == 0
+
+
+## From the last uncapped cell the camera must be at the second stop within camera_pan_seconds + 1 s (the pan, never skipped).
+func _pan_follows(m: Node, label: String) -> void:
+	var secs: float = float(cv("camera_pan_seconds")) + 1.0
+	var reached: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01 and bool(m.call("at_second_stop")), secs)
+	ck(reached, "%s: the camera is at the second stop within camera_pan_seconds + 1 s of the last cell (size %s, at_second_stop %s)" % [label, str(_cam().size), str(m.call("at_second_stop"))])
+
+
+## Fill the bucket by uncapping, keep uncapping until every frame is done, then the pan (no Back pressed).
+func t_pan_after_all_frames_uncapped() -> void:
+	_portrait()
+	var z: Dictionary = await _zoom_open_main()
+	if z.is_empty():
+		_fin()
+		return
+	var m: Node = z["m"]
+	var done: bool = await _uncap_all(m, z["p"], z["tr"])
+	ck(done, "every frame of the hive was uncapped with real drags")
+	var cen: Node = (z["p"] as Dictionary)["Centrifuge"]
+	eq(cen.get("state"), _st(cen, "FULL"), "the bucket is full")
+	await _pan_follows(m, "all frames uncapped")
+	_fin()
+
+
+## Back pressed once the bucket filled (Capped frames left), Harvest again, then uncap everything: the pan still happens.
+func t_pan_after_back_then_harvest_again() -> void:
+	var s: Dictionary = await _second_stop_with_capped()
+	if s.is_empty():
+		_fin()
+		return
+	var m: Node = s["m"]
+	var p: Dictionary = s["p"]
+	var tr: Dictionary = s["tr"]
+	tr["risen"] = -1
+	await fi.tap_at((p["ForkIcon"] as Control).get_global_rect().get_center())
+	var raised: bool = await _until(func() -> bool: return int(tr["risen"]) >= 0, 3.0)
+	ck(raised, "Harvest again: a frame rises")
+	var back_in: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("zoom_size"))) < 0.05, _zoom_settle() + 2.0)
+	ck(back_in, "the camera went back to the first zoom")
+	var done: bool = await _uncap_all(m, p, tr)
+	ck(done, "every remaining frame was uncapped")
+	await _pan_follows(m, "after Back and Harvest again")
+	_fin()
+
+
+## Icon `ic` over `prop`: centre x within 40 px of the prop's screen-rect centre, rect bottom at or above the prop's rect top (+20 px).
+func _icon_above(ic: FloatingIcon, prop: Node, label: String) -> void:
+	var placed: bool = ic.place()
+	ck(placed, "%s: %s is placed (anchor in front of the camera)" % [label, ic.name])
+	var r: Rect2 = ic.get_global_rect()
+	var pr: Rect2 = _screen_of(_obbs(prop), _cam())
+	ck(absf(r.get_center().x - pr.get_center().x) <= 40.0, "%s: %s centre x %.0f is within 40 px of %s centre x %.0f" % [label, ic.name, r.get_center().x, prop.name, pr.get_center().x])
+	ck(r.end.y <= pr.position.y + 20.0, "%s: %s bottom %.0f is at or above the %s top %.0f (+20)" % [label, ic.name, r.end.y, prop.name, pr.position.y])
+
+
+## Fork over the hive and Spin over the centrifuge, on the farm view and in the first zoom.
+func t_icons_above_props() -> void:
+	_portrait()
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var p: Dictionary = _parts(m)
+	if p.is_empty():
+		_fin()
+		return
+	var tr: Dictionary = _track(p["Hive"])
+	_full_hive_frozen(p["Hive"])
+	await _frames(6)
+	# self-check: an icon pushed 200 px sideways leaves the +-40 px band (the measure can fail)
+	var ic: FloatingIcon = p["ForkIcon"]
+	ic.place()
+	var pr: Rect2 = _screen_of(_obbs(p["Hive"] as Node), _cam())
+	ic.position.x += 200.0
+	ck(absf(ic.get_global_rect().get_center().x - pr.get_center().x) > 40.0, "self-check: an icon 200 px off is outside the band")
+	_icon_above(p["ForkIcon"], p["Hive"], "farm view")
+	_icon_above(p["CentrifugeIcon"], p["Centrifuge"], "farm view")
+	var raised: bool = await _open_zoom(m, p, tr)
+	ck(raised, "the zoom opened")
+	if raised:
+		await _wait(_zoom_settle())
+		_icon_above(p["ForkIcon"], p["Hive"], "first zoom")
+		_icon_above(p["CentrifugeIcon"], p["Centrifuge"], "first zoom")
+	_fin()
+
+
+## First zoom, bucket full (frames still Capped, so the zoom stays open): Spin shows, and covers neither the risen rack nor the BucketMouth.
+func t_spin_icon_in_first_zoom() -> void:
+	_portrait()
+	var z: Dictionary = await _zoom_open_main()
+	if z.is_empty():
+		_fin()
+		return
+	var m: Node = z["m"]
+	var p: Dictionary = z["p"]
+	var tr: Dictionary = z["tr"]
+	var cen: Node = p["Centrifuge"]
+	var frames: int = int(ceil(float(_bucket_cells()) / float(_cpf())))
+	for k in frames:
+		var f: int = await _scrape_risen(m, p["Hive"], tr)
+		ck(await _next_frame(tr, f), "frame %d done: the next frame rose" % f)
+	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.3)
+	eq(cen.get("state"), _st(cen, "FULL"), "the bucket is full")
+	near(_cam().size, float(cv("zoom_size")), 0.05, "still in the first zoom")
+	var spin: Control = p["CentrifugeIcon"]
+	ck(_shown(spin), "Spin is visible in the first zoom with a full bucket")
+	var r: Rect2 = spin.get_global_rect()
+	ck(_vp().encloses(r), "Spin is wholly on screen (%s)" % str(r))
+	var hc: Node = (p["Hive"] as Node).find_child("Honeycomb", true, false)
+	var fb: Node = (p["Hive"] as Node).find_child("FrameBar%d" % (int(tr["risen"]) + 1), true, false)
+	var rack: Array = _obbs(hc) if hc != null else []
+	if fb != null:
+		rack.append_array(_obbs(fb))
+	var rr: Rect2 = _screen_of(rack, _cam())
+	ck(rack.size() > 0 and rr.size.x > 50.0, "the risen rack has a screen rect (%s)" % str(rr))
+	eq(_overlap_area(r, rr) < 1.0, true, "Spin does not cover the rack (spin %s, rack %s)" % [str(r), str(rr)])
+	var mouth: Node3D = _nn(m, "BucketMouth") as Node3D
+	ck(mouth != null, "BucketMouth exists")
+	if mouth != null:
+		var mp: Vector2 = _cam().unproject_position(mouth.global_position)
+		ck(not r.has_point(mp), "Spin does not cover the BucketMouth (mouth %s, spin %s)" % [str(mp), str(r)])
+	_fin()

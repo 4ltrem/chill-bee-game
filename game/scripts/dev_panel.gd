@@ -24,6 +24,8 @@ var _bounds: UiBoundsOverlay
 var _speed_buttons: Array[Button] = []
 var _speed_group := ButtonGroup.new()
 var _speed_tag: Control
+var recorder: InputRecorder          # the input recorder (0.1.3 spec); F8 or the Record button toggles it
+var _recording_label: Label
 
 
 func _init() -> void:
@@ -44,7 +46,14 @@ func _ready() -> void:
 	if config == null:
 		config = GameConfig.live()
 	_defaults = GameConfig.fresh_default()
+	recorder = InputRecorder.new()
+	recorder.name = "InputRecorder"
+	recorder.config = config
+	add_child(recorder)
 	_build()
+	recorder.recording_changed.connect(_on_recording_changed)
+	if config.record_from_launch:
+		recorder.start()
 
 
 func _exit_tree() -> void:
@@ -226,6 +235,10 @@ func _build() -> void:
 	column.add_child(title)
 	column.add_child(_actions_row())
 	column.add_child(_file_row())
+	_recording_label = Label.new()
+	_recording_label.name = "RecordingLabel"
+	_recording_label.text = "Recording: off (F8)"
+	column.add_child(_recording_label)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -269,7 +282,13 @@ func _file_row() -> Control:
 	flow.add_child(_button("Save", save_values))
 	flow.add_child(_button("Reset to defaults", reset_to_defaults))
 	flow.add_child(_button("Print values", print_values))
+	flow.add_child(_button("Record (F8)", func() -> void: recorder.toggle()))
 	return flow
+
+
+func _on_recording_changed(name_now: String) -> void:
+	if _recording_label != null:
+		_recording_label.text = "Recording: " + name_now if name_now != "" else "Recording: off (F8)"
 
 
 func _make_row(value_name: String) -> Control:

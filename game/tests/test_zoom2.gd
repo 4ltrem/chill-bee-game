@@ -187,9 +187,9 @@ func t_fork_shows_while_cranking_and_state_table() -> void:
 	await _frames(3)
 	ck(_shown(cicon), "FULL: Spin shows (farm)")
 	eq(cen.get("lid_open"), false, "FULL: lid on")
-	# zoom open: Spin hidden
+	# first zoom open: Spin shows while the centrifuge is full (spec: "Spin in the first zoom")
 	ck(await _open_zoom(m, p, tr), "zoom opened with a FULL bucket")
-	ck(not _shown(cicon), "zoom: Spin hidden (farm only)")
+	ck(_shown(cicon), "first zoom: Spin shows (centrifuge full)")
 	await fi.click_ctl(p["BackButton"] as Control)
 	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
 	ck(_shown(cicon), "after the zoom: Spin shows again")

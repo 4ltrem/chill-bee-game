@@ -461,5 +461,47 @@
    "t_icons_never_overlap"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "no pan after the last frame",
+  "file": "scripts/main.gd",
+  "find": "_closing_to_second = _bucket_is_full() or _spin_pending",
+  "replace": "_closing_to_second = false",
+  "expect": [
+   "t_pan_after_all_frames_uncapped",
+   "t_pan_after_back_then_harvest_again"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Fork icon pushed beside the hive",
+  "file": "scenes/main.tscn",
+  "find": "Hive/ForkAnchor\")\nscreen_offset = Vector2(0, 0)",
+  "replace": "Hive/ForkAnchor\")\nscreen_offset = Vector2(120, 0)",
+  "expect": [
+   "t_icons_above_props"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Spin hidden in the first zoom",
+  "file": "scripts/main.gd",
+  "find": "_centrifuge_icon.set_wanted((on_farm or zoom != Zoom.CLOSING) and _centrifuge.state == Centrifuge.State.FULL)",
+  "replace": "_centrifuge_icon.set_wanted(on_farm and _centrifuge.state == Centrifuge.State.FULL)",
+  "expect": [
+   "t_spin_icon_in_first_zoom"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Closing the zoom with a full bucket does not pan",
+  "file": "scripts/main.gd",
+  "find": "_closing_to_second = _bucket_is_full() or _spin_pending",
+  "replace": "_closing_to_second = _spin_pending",
+  "expect": [
+   "t_scrape_then_back_in_pop_window_pile",
+   "t_replay_fill_and_back"
+  ],
+  "suite": "unit"
  }
 ]
