@@ -4,7 +4,7 @@
     python -I _tools/compare_page.py round SHOTS_DIR ROUND.json SPEC.json PREVIOUS_PAGE.html OUT.html
     python -I _tools/compare_page.py votes SHOTS_DIR SHOTS.json PREVIOUS_PAGE.html OUT.html
     python -I _tools/compare_page.py variants SHOTS_DIR OUT.html [--title T] [--checks CHECKS.json]
-    python -I _tools/compare_page.py add PAGE.html OUT.html --h1 H1 [--stop BLACKBOARD ROW --prefix P --option A=DIR ... --ref DIR --shot NAME] [--variants DIR PREFIX TITLE --checks CHECKS.json]
+    python -I _tools/compare_page.py add PAGE.html OUT.html --h1 H1 [--stop BLACKBOARD ROW --prefix P --option A=DIR ... --ref DIR --shot NAME] [--variants DIR PREFIX TITLE --checks CHECKS.json] [--versions PREFIX TITLE --version LABEL=PNG[=CAPTION] ...]
     python -I _tools/compare_page.py stop  BLACKBOARD.md --row N --option A=DIR --option B=DIR --ref DIR --shot NAME --out OUT.html
 
 page:  SPEC.json {title, eyebrow, h1, brief, min_px, options:[{letter,title,shot,extra_shots:[[label,path]],px,on:[...],cut:[...],change}],
@@ -434,6 +434,15 @@ def variants_section(shots_dir, prefix, title, checks=None):
                     "Bob promotes the pick into <code>game/scenes/props/</code>.", "cards": cards}
 
 
+def versions_section(prefix, title, versions, text=""):
+    """One card per build version, each a contact sheet of the same ui_shots.py moments. versions: [(label, png, caption)]."""
+    cards = [vote_card(f"{prefix}-{label}", label, png, [esc(cap)] if cap else [], meta={"question": prefix, "version": label})
+             for label, png, cap in versions]
+    return {"eyebrow": "Versions side by side &middot; <code>_tools/ui_shots.py</code>", "h2": title,
+            "text": text or "Each sheet shows the same moments in one version. Click a sheet to see it full size. "
+                            "Vote yes on the version that places things right, and say in the note which moment.", "cards": cards}
+
+
 def main(argv):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -456,6 +465,9 @@ def main(argv):
     s.add_argument("--variants", nargs=3, metavar=("SHOTS_DIR", "PREFIX", "TITLE"), action="append", default=[])
     s.add_argument("--checks", action="append", default=[], help="checks.json per --variants, in order")
     s.add_argument("--prefix", action="append", default=[], help="vote id prefix per --stop, in order")
+    s.add_argument("--versions", nargs=2, metavar=("PREFIX", "TITLE"), help="a versions section; with --version")
+    s.add_argument("--version", action="append", default=[], metavar="LABEL=PNG[=CAPTION]")
+    s.add_argument("--versions-text", default="")
     s = sub.add_parser("variants")
     s.add_argument("shots_dir")
     s.add_argument("out")
@@ -478,6 +490,9 @@ def main(argv):
     elif a.cmd == "add":
         secs = [stop_section(b, int(r), a.option, a.ref, a.shot, a.prefix[n]) for n, (b, r) in enumerate(a.stop)]
         secs += [variants_section(d, pre, t, a.checks[n] if n < len(a.checks) else None) for n, (d, pre, t) in enumerate(a.variants)]
+        if a.versions:
+            vs = [(v.split("=", 2) + [""])[:3] for v in a.version]
+            secs.insert(0, versions_section(a.versions[0], a.versions[1], vs, a.versions_text))
         cmd_add(a.page, a.out, secs, a.h1, a.brief, a.title)
     elif a.cmd == "variants":
         cmd_variants(a.shots_dir, a.out, a.title, a.checks)
