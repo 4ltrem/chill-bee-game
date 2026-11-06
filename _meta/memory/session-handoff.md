@@ -53,3 +53,5 @@ by itself, so there's no need to ask the designer for a nudge ([[usage-calibrati
 
 **How to apply:** in the CLI keep replies short and put long material in Markdown files. Process rules from this
 session: [[dev-mode-and-pacing]] (Dev mode in every spec, slow placeholders, tests from the spec).
+
+**2026-11-06 afternoon (session 49ba7bdd), read first:** the designer played 0.1.3; the UI bugs go to the next revision ([[playtest-0-1-3]]). `milestone/0.1` now holds 0.1.3 + m2 + flower-patch (merged in worktree `.claude/worktrees/merge-0.1`, last commit 3b6fdf1, all suites green at x6, flower-patch follow-up done; Bob's flower shots and an exe export not yet done). `main` NOT yet fast-forwarded (waiting on the designer). `ab/centrifuge-by-crate` archived in commit 2a5d5bc (worktree still present). Bob is rendering `ui_compare_shots.gd` (same 9 moments per version, `game/reports/ui-compare/<label>/`) for a Design Votes section: which version placed the layout/UI right.
