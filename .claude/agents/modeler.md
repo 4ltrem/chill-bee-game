@@ -1,7 +1,7 @@
 ---
 name: modeler
 description: Milo, the Modeler. Makes colorbox prop variants: primitive-only Godot scenes (.tscn) in the approved palette, no textures, a few variants per model for a compare page. Use when a prop needs colorbox variants for the designer to pick from.
-tools: Read, Grep, Glob, Write
+tools: Read, Grep, Glob, Write, Edit
 model: haiku
 ---
 

@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4297b6fb-4f37-489e-a81b-e6e820fcf5da
-  modified: 2026-11-06T03:17:15.535Z
+  modified: 2026-11-06T06:07:09.365Z
 ---
 
 On 2026-11-05 the designer found test runs slow and Quinn's latest revision took over an hour, most of it waiting on `_tools/mutate.py`. The tests do NOT read .md files (only comments name the specs); values already come from `scripts/default_config.tres`. The time is real-time gameplay: animations, 3 s/jar bottling, `_until` timeouts up to 40 s.
@@ -18,6 +18,8 @@ Fixes (1 and 2 DONE 2026-11-05, commit f5a0cbd: mutate run ~1 h -> ~36 s; 3 stil
 3. **Unit speed-up via Engine.time_scale** (e.g. 4x, env-controlled): brief Quinn, since timing tests (t_bottling_timing, t_pop_tween_unchanged) may need adjusting. Check it doesn't clash with the 0.1.3 build (see [[session-handoff]]).
 
 **2026-11-05 evening, designer: "these qa runs are way too long, after this one it's time to upgrade".** Right after the current 0.1.3c QA round, before any new build work: fix 3 (time_scale), apply [[quinn-split-pending]] (Quinn writes tests, Rex runs them), and iterate with CB_ONLY on the affected tests, keeping the full `godot_run.py all` for checkpoints only. Agent QA rounds took 12–57 min each in 0.1.3c.
+
+**2026-11-06, done; designer: "anything that needs to be tested in real time I can do, I do not want to wait an hour for tests".** Standard checkpoint run (Rex): `CB_TIME_SCALE=6 CB_SKIP_X1=1 python -I _tools/godot_run.py all` plus `python -I _tools/mutate.py --since <last checkpoint>` (only new or changed mutations; ~1 min for 11). The 10 X1_TESTS (real-time) are played by the designer instead. The hour-long mutate run came from a worktree holding an old mutate.py without per-mutation CB_ONLY: a milestone worktree must take `_tools/` fixes from its parent branch (`git checkout milestone/m2 -- _tools/<file>`).
 
 **Why:** agent runs block on the tests; see [[cost-rules]] (godot_run/mutate were cost cuts).
 **How to apply:** start tomorrow with 1 and 2 (tool changes); test with `python -I _tools/test_generate.py` and one `mutate.py` run.

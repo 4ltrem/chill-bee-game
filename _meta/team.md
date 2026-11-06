@@ -53,6 +53,7 @@ Each agent is a module in the development workflow: a developer input triggers i
 3. **No invented systems:** ground every suggestion in `GDD.md`: the existing 3-phase progression model and the low-poly 3D constraints.
 4. **Agents propose; the designer decides.** No agent edits `GDD.md` (see [AGENTS.md](../AGENTS.md)).
 5. **Edit lines, not files** (designer, 2026-11-05): change an existing file only with Edit, on the lines that need it; never rewrite it with Write, `sed -i` or a script. Write is for new files.
+6. **Wait by running, not sleeping** (2026-11-06): run scripts in the foreground with a long Bash timeout (up to 600000 ms); never `sleep` to wait for something (the harness blocks it and points to Monitor, which agents don't have). A run longer than 10 minutes goes in the background with `run_in_background`, and you wait for its completion notice.
 
 ## Model reviews
 
