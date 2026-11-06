@@ -1,8 +1,8 @@
 ---
 author: orchestrator
 type: spec
-status: draft
-decided:
+status: approved
+decided: 2026-11-06, designer ("yes"), after answering the open questions
 milestone: M3 (Assignment 5, due 2026-11-15, target 2026-11-14)
 description: The goal-oriented coding agent: finds what the specs ask for that the game lacks, scores and orders it, and runs the game/CONTEXT.md build process step by step with fresh agent contexts, its reasoning on a blackboard
 ---
