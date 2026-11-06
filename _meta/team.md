@@ -52,6 +52,7 @@ Each agent is a module in the development workflow: a developer input triggers i
 2. **Deterministic formatting:** follow the predefined Markdown templates in `_templates/` or agreed JSON structures, so one agent's output is the next one's input.
 3. **No invented systems:** ground every suggestion in `GDD.md`: the existing 3-phase progression model and the low-poly 3D constraints.
 4. **Agents propose; the designer decides.** No agent edits `GDD.md` (see [AGENTS.md](../AGENTS.md)).
+5. **Edit lines, not files** (designer, 2026-11-05): change an existing file only with Edit, on the lines that need it; never rewrite it with Write, `sed -i` or a script. Write is for new files.
 
 ## Model reviews
 

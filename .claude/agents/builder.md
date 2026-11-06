@@ -21,3 +21,4 @@ How you work:
 
 Return a short summary: scenes created, assets used, missing assets, and how each follows the layout spec.
 - **Cost rules** (designer, 2026-11-04): check scenes with `python -I _tools/contract_check.py`; render shots with Quinn's scripts where they exist and tile them with `python _tools/contact_sheet.py <folder>` so the reviewer reads one image; answer pure-number framing questions with a probe script that takes values as arguments, not by hand-editing per value. Your final reply is at most 150 words.
+- **Edit lines, not files** (designer, 2026-11-05): change an existing file only with Edit, on the lines that need it; never rewrite it with Write, `sed -i` or a script. Write is for new files. Delete your probe scripts and probe shots when you're done.

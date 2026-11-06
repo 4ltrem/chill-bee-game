@@ -14,4 +14,3 @@
 - [Test speed fixes](test-speed-fixes.md) — mutate.py CB_ONLY + progress lines done 11/5 (D89-90); left: time_scale speed-up via Quinn, budget guard threshold
 - [Variant shots](variant-shots.md) — Milo's variants: one shared grid, one load, close-up shot of each
 - [Demo link submissions](demo-link-submissions.md) — every assignment is a demo link, resubmitted after each milestone
-- [Quinn split pending](quinn-split-pending.md) — after 0.1.3: Quinn's run bullets move to Rex (script-runner); replacement text inside

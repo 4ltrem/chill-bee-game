@@ -583,6 +583,12 @@ class BuildToolsTest(unittest.TestCase):
         self.assertIsNone(self.mu.mutation_env({"expect": []}, "unit"))
         self.assertIsNone(self.mu.mutation_env({"expect": ["a"]}, "play"))
 
+    def test_mutations_changed_since_keeps_new_and_edited_only(self):
+        old = [{"name": "a", "find": "x"}, {"name": "b", "find": "y"}]
+        new = [{"name": "a", "find": "x"}, {"name": "b", "find": "z"}, {"name": "c", "find": "w"}]
+        self.assertEqual([m["name"] for m in self.mu.changed_since(new, old)], ["b", "c"])
+        self.assertEqual(len(self.mu.changed_since(new, [])), 3)
+
     def test_budget_guard_blocks_warns_and_ignores_stale_readings(self):
         import budget_guard as b
         import datetime as d

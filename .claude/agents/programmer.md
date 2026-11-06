@@ -21,3 +21,4 @@ How you work:
 
 Return a short summary: files created or changed, placeholders left for TBD values, and anything Quinn should test.
 - **Cost rules** (designer, 2026-11-04): check your work with `python -I _tools/contract_check.py` and `python -I _tools/godot_run.py unit start` (add `--refresh` after adding a `class_name`), reading the summary rather than raw Godot output. Read only the spec sections your task names. Your final reply is at most 150 words; details go in the spec section you were asked to write or a file.
+- **Edit lines, not files** (designer, 2026-11-05): change an existing file only with Edit, on the lines that need it; never rewrite it with Write, `sed -i` or a script. Write is for new files. Read only the line ranges your brief names when it names them.

@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Prove the tests catch real breakage: apply named code mutations to a copy of the game and run the tests.
 
-    python -I _tools/mutate.py [NAME ...] [--file game/tests/mutations.json] [--suite unit] [--root game]
+    python -I _tools/mutate.py [NAME ...] [--since GIT_REF] [--file game/tests/mutations.json] [--suite unit] [--root game]
+
+--since REF runs only the mutations that are new or changed since that commit (designer, 2026-11-06: a
+checkpoint proves its new tests, not all 45 again). Temp copies left by killed runs (older than 6 h) are
+removed at the start.
 
 Replaces the hand-made "broken copies" Quinn built for each new test (8 full project copies in the
 0.1.0 run). Mutations live in game/tests/mutations.json, Quinn's file:
@@ -59,9 +63,33 @@ def mutation_env(mutation, suite):
     return {"CB_ONLY": ",".join(expect)} if expect and suite == "unit" else None
 
 
+def changed_since(mutations, old):
+    """Pure: the mutations that are new, or whose entry differs, compared with the list `old` (tested in test_generate.py)."""
+    before = {m.get("name"): m for m in old}
+    return [m for m in mutations if before.get(m.get("name")) != m]
+
+
+def old_mutations(ref, path):
+    """mutations.json as it was at git commit `ref` ([] when the file did not exist there)."""
+    import subprocess
+    rel = os.path.relpath(os.path.abspath(path), REPO).replace(os.sep, "/")
+    out = subprocess.run(["git", "-C", REPO, "show", f"{ref}:{rel}"], capture_output=True, text=True, encoding="utf-8")
+    return json.loads(out.stdout) if out.returncode == 0 else []
+
+
+def sweep_stale(hours=6):
+    """Remove cbg-mutate-* temp copies left by killed runs (older than `hours`)."""
+    base = tempfile.gettempdir()
+    for name in os.listdir(base):
+        p = os.path.join(base, name)
+        if name.startswith("cbg-mutate-") and os.path.isdir(p) and time.time() - os.path.getmtime(p) > hours * 3600:
+            shutil.rmtree(p, ignore_errors=True)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("names", nargs="*", help="run only these mutations (default: all)")
+    ap.add_argument("--since", help="run only mutations new or changed since this git commit")
     ap.add_argument("--file", default=os.path.join(REPO, "game", "tests", "mutations.json"))
     ap.add_argument("--suite", default=None, help="override every mutation's suite")
     ap.add_argument("--root", default=os.path.join(REPO, "game"))
@@ -70,6 +98,9 @@ def main(argv=None):
     mutations = json.load(open(args.file, encoding="utf-8"))
     if args.names:
         mutations = [m for m in mutations if m["name"] in args.names]
+    if args.since:
+        mutations = changed_since(mutations, old_mutations(args.since, args.file))
+    sweep_stale()
     if not mutations:
         print("mutate: no mutations to run")
         return 1
