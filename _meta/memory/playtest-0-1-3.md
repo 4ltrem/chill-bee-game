@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 49ba7bdd-dbda-4adf-93f8-abf4c4364924
-  modified: 2026-11-06T20:07:40.447Z
+  modified: 2026-11-06T20:38:49.989Z
 ---
 
 The designer played 0.1.3 (worktree exe, commit 59e11bd) on 2026-11-06 afternoon. Verdict: "the ui is fucked". They said **don't fix yet, just note**:
@@ -21,6 +21,8 @@ The designer played 0.1.3 (worktree exe, commit 59e11bd) on 2026-11-06 afternoon
 - Place Harvest lower. In the farm view it goes just above the hive lid; at the second stop it can sit on the lid.
 - Spin goes just above the centrifuge lid.
 - Sell sits lower; ab-A's Sell placement is the known good one.
+
+**Merged-build play-test (11/6, later):** at the second stop, after the centrifuge fills and pours, the player has to tap Spin again before the pile loads. It should load on its own in every view. This is item 7 of `game/specs/0.1.4-ui-placement.md`.
 
 **Recordings of this play-test:** `%APPDATA%\Godot\app_userdata\Chill Bee Game\recordings\2026-11-06-279.json` (14:33) and `2026-11-06-280.json` (14:35, 2 MB). Replay them to reproduce the bugs. The other ~278 files there are from the 03:00 test runs. The tests write into the player's recordings folder, which is a side issue to clean up.
 
