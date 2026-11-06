@@ -20,10 +20,10 @@ Project memories live in `_meta/memory/` and travel with git. Each machine point
 ## 1. Export the session
 
 ```
-python -I _tools/export_session.py
+python -I _tools/export_session.py --all
 ```
 
-It copies this session's transcript (the most recently updated one for this workspace) and its subagents' transcripts into `_meta/sessions/<date>-<first 8 of session id>/`, with a `manifest.json`. Note the folder it prints. Transcripts, subagent folders, manifests and `_meta/sessions/runs/` are gitignored: they hold the account email and everything read. `generate.py` already moved its own agents' transcripts into `_meta/sessions/runs/`.
+It copies every transcript that is not yet exported, or has changed since its export, and their subagents' transcripts. That includes sessions closed with `/clear` (each `/clear` starts a new session id) and sessions run in a second terminal. The day's decision log (step 2) covers every session it exported today, not only this one. Each goes into `_meta/sessions/<date>-<first 8 of session id>/`, with a `manifest.json`. Note the folder it prints. Transcripts, subagent folders, manifests and `_meta/sessions/runs/` are gitignored: they hold the account email and everything read. `generate.py` already moved its own agents' transcripts into `_meta/sessions/runs/`.
 
 ## 2. Log the day's decisions
 

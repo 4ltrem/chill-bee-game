@@ -1,7 +1,7 @@
 ---
 author: orchestrator
 type: write-up
-status: draft
+status: approved
 milestone: M2 (Assignment 6)
 description: How Chill Bee Game enforces its style guide with two self-correcting Generator → Evaluator → Refiner loops (visual and voice), with the demo runs, their blackboards and their cost
 ---
@@ -47,6 +47,7 @@ The rules are the approved [STYLE_GUIDE.md](STYLE_GUIDE.md): **V1–V15** for th
 - **Measure first, judge second.** Everything a number can settle is a script row with the rule ID, `file:line`, the measured value and a Fix: palette distance in CIE Lab (ΔE ≤ 12 to a token *in the role allowed for that object*), emission only on Honey, at most 2 accent colours, primitive meshes and no textures, parts ≥ 0.05 units, button text contrast ≥ 4.5:1 (WCAG), touch targets ≥ 120 px, fonts ≥ 28/32 px with the ink outline, cells ≥ 20 px at the zoom, glass alpha ≤ 0.35 with back faces drawn. The palette is parsed from the guide on every run, so the designer's edits to the guide take effect without code changes.
 - **The critic sees only what scripts can't measure**: clutter and cut-off objects (V7), honey as the brightest thing (V8), state by more than colour (V9), overlap with the HUD (V13), glass reading as glass (V15), plus a second look at accents, shapes and on-screen contrast.
 - **The loop can't pass by persuasion.** A round passes only when Vera says PASS *and* `style_check.py` has no blocking row.
+- **Vera scores every asset** (designer, 2026-11-05). Under her findings table, each prop and UI element gets a score out of 10 with a one-line reason, on the look words (cozy, whimsical, chunky/round, calm, pastel) and on her rules that apply to it, e.g. "hive: whimsical 3/10, chunky/round 9/10". A score below 6 is also a blocking findings row with a fix for Bob. Score rows start with the asset name, so `style_loop.py` reads only the numbered rows as findings.
 - **Refiners get a slice, not the board.** Bob sees only open FAIL rows; Vera sees the shots, the script table and (from round 2) her previous verdict plus Bob's diff. No agent reads the blackboard.
 - **Creative choices go to the designer.** A Fix with two or more acceptable answers, a new token or a rule change ends in `(designer)`. Bob never gets it; the loop fixes the rest, lists those rows under *Waiting for the designer*, adds an A/B question with votes to the Design Votes page (`compare_page.py add`), and resumes with `--resume` after the designer picks.
 - **The evaluators are tested.** `style_critic_check.py` must catch every known-bad fixture: six script fixtures (neon → V1, glowing hive → V2, texture + imported mesh → V4, third accent → V3, 90 px button → V11, low-contrast disabled text → V10) and two rendered shots Vera must fail (a cluttered, accent-heavy diorama → V3 + V7; a grey-on-grey disabled button → V10). `test_generate.py` checks the controller with fake agents (PASS in round 1, FAIL then PASS, max rounds, token cap, designer stop and resume).

@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """Render a prop's colorbox variants, check each against STYLE_GUIDE.md, and build their vote page. No agent.
 
-    python -I _tools/model_shots.py PROP [--size 12] [--no-render]
+    python -I _tools/model_shots.py PROP [--size N] [--no-render]
 
 Milo writes game/scenes/variants/PROP/PROP-a.tscn, -b, -c. This script then:
-  1. renders each variant on the 5 × 5 test grid (cell 2.0) with the farm's light and camera at
-     720 × 1280 (game/tests/model_shots.gd) into game/reports/variants/PROP/;
+  1. loads all the variants once, side by side on one shared test grid (cell 2.0), and shoots each
+     close up (the others hidden) with the farm's light and camera angle at 720 × 1280 (game/tests/model_shots.gd) into game/reports/variants/PROP/;
   2. runs style_check.py on each variant alone (its scene and the materials it uses), and writes
      checks.json and checks.md there;
   3. builds the yes / maybe / no vote page (compare_page.py variants, at most 9 shots) as
      game/reports/variants/PROP/vote.html, for the orchestrator to publish.
---size is the camera's orthographic size (default 12: the whole grid; the farm's uncapping zoom
-is too close for a whole prop). Exit 0 when the page is built, whatever the checks say: a variant
+--size fixes the camera's orthographic size; by default (0) the camera zooms in close on each
+variant, fitted to its bounds (designer, 2026-11-05). Exit 0 when the page is built, whatever the checks say: a variant
 that fails is shown with its FAIL pill so the designer can still pick it and Bob fixes it on
 promotion. Standard library only.
 """
@@ -42,7 +42,7 @@ def render(prop, out, size):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("prop")
-    ap.add_argument("--size", type=float, default=12.0, help="camera orthographic size")
+    ap.add_argument("--size", type=float, default=0.0, help="fixed camera orthographic size (default 0: fit each variant close)")
     ap.add_argument("--no-render", action="store_true", help="reuse the shots already in the folder")
     a = ap.parse_args(argv)
     variants = sorted((ROOT / "game" / "scenes" / "variants" / a.prop).glob(f"{a.prop}-*.tscn"))

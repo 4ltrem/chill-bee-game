@@ -66,11 +66,15 @@ def letters(topics):
 def build(root=None):
     root = root or ROOT
     logs = sorted((root / SESSIONS).glob("*/decisions.md"))
-    decisions, still_open = [], []
-    for log in logs:  # sorted by folder name, which starts with the date
+    decisions, still_open, newest = [], [], (-1, "")
+    for log in logs:
         d, o = parse(log)
         decisions += d
-        still_open = o or still_open  # the newest session's list wins
+        # the newest session's list wins: newest = highest decision ID (IDs are global and in order;
+        # folder names sort by date and then a random session id, so same-day sessions sort wrongly)
+        key = (max((int(x["id"][1:]) for x in d), default=-1), log.parent.name)
+        if o and key > newest:
+            still_open, newest = o, key
     decisions.sort(key=lambda d: (d["date"], int(d["id"][1:])))
     topics = list(dict.fromkeys(d["topic"] for d in decisions))
     data = {"decisions": decisions, "open": still_open, "sessions": len(logs), "letters": letters(topics)}

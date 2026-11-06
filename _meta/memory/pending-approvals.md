@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: fa5df4be-6365-415d-bd06-9f0be0bb573b
-  modified: 2026-11-03T23:09:03.140Z
+  modified: 2026-11-05T18:52:24.010Z
 ---
 
 Decided 2026-11-03 (in each file's `decided:` / `decision:`): research/bee-journal-real.md rejected (Haiku brief),
@@ -15,6 +15,9 @@ Still waiting: `content/onboarding-script.md`. Approve it only after the signatu
 playtest ([[guide-playtest]]), since that revision returns it to `draft` anyway. That revision must also follow the
 2026-11-03 harvest flow in GDD §2 (commit 75a8ee1): its crank button, No-Rapid-Tap branch and Market Stand beats are
 now wrong (fork icon, tap/hold the centrifuge's physical crank or the screen around it, Continue, sales truck instead).
+
+Also waiting (2026-11-05, M2): `content/biome-intros.md` went back to `draft` after the T6 voice-loop revise
+(`content/_runs/biome-intros/blackboard-2.md`) and needs re-approval. `STYLE_LOOP.md` (the A6 write-up) was approved 2026-11-05 (second shift).
 
 Follow-ups recorded in the approvals' `decision:` lines, not started:
 - The Sunny Meadow bumble bee visitor appears in the world, so the GDD species table needs a Meadow flower for it

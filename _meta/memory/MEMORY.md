@@ -1,12 +1,17 @@
-- [Pending approvals](pending-approvals.md) — only onboarding-script left (after the guide-playtest revision); three content follow-ups
+- [Flower patch follow-up](flower-patch-followup.md) — after 0.1.3 merges: patch y→0, register test, merge m2/flower-patch
+- [Pending approvals](pending-approvals.md) — onboarding-script, biome-intros re-approval (T6 revise); three content follow-ups
 - [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day skill; only milestone-branch checkpoint commits mid-session
-- [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, syncing transcripts between machines
+- [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, transcript sync, learnings file (what broke, how noticed, how fixed)
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
-- [Session handoff](session-handoff.md) — read first: 0.1.2 on milestone/0.1, Quinn final run, M2 drafts await approval
+- [0.1.3 play-test](playtest-0-1-3.md) — 11/6: UI broken (Back inconsistent, Spin/Harvest move, x5 tag overlaps); noted, not fixing yet
+- [Session handoff](session-handoff.md) — read first: maigd-62 owns the 0.1.3 build; flower-patch B done on m2/flower-patch (unmerged); A5 prep free
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
-- [A/B comparison page](ab-comparison-page.md) — every creative A/B choice gets a screenshot comparison artifact (Zoom Framing Options layout)
+- [A/B comparison page](ab-comparison-page.md) — every creative A/B choice becomes a new section of the one Design Votes artifact; never a new artifact or browser tab
 - [Cost rules](cost-rules.md) — 9 approved token cuts: godot_run/build/mutate scripts, split tests, sliced briefs, 150-word replies, fresh session per milestone
 - [Edit lines only](edit-lines-only.md) — change only the needed lines with Edit; no whole-file rewrite scripts
 - [itch upload rule](itch-upload-rule.md) — upload to itch only at a new milestone number (0.2.0, 0.3.0)
+- [Test speed fixes](test-speed-fixes.md) — mutate.py CB_ONLY + progress lines done 11/5 (D89-90); left: time_scale speed-up via Quinn, budget guard threshold
+- [Variant shots](variant-shots.md) — Milo's variants: one shared grid, one load, close-up shot of each
+- [Demo link submissions](demo-link-submissions.md) — every assignment is a demo link, resubmitted after each milestone

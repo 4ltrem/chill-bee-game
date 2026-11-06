@@ -20,5 +20,5 @@ Do NOT load: `GDD.md` unless the request names a prop the style guide cannot pla
 - `game/scenes/variants/<prop>/<prop>-a.tscn`, `-b.tscn`, `-c.tscn` (only these)
 
 ## Check
-- Shots and judgement are not this shelf's job. `_tools/model_shots.py <prop>` (to be built, M2 spec item 11) places each variant on the 5 × 5 test grid and runs `_tools/style_check.py`; `_tools/compare_page.py` builds the vote page (yes / maybe / no).
+- Shots and judgement are not this shelf's job. `_tools/model_shots.py <prop>` loads all the variants once, side by side on one shared test grid, shoots each close up, and runs `_tools/style_check.py`; `_tools/compare_page.py` builds the vote page (yes / maybe / no).
 - The designer's pick on the compare page ends the run. Bob then promotes the picked variant into `game/scenes/props/`.

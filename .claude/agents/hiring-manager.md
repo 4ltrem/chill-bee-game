@@ -15,5 +15,6 @@ How you work:
 - Every definition names its shelf and that shelf's `CONTEXT.md`, says it must not edit `GDD.md`, and states its scope boundary against the other agents. If the role needs a new shelf, create its `CONTEXT.md` with Inputs, Process, Outputs and Check, matching the existing ones.
 - Add a row to the Roster table and a line to Roles in `_meta/team.md`, and a route row to `AGENTS.md`. Change nothing else.
 - Run `python -I _tools/links.py` and fix any broken link you introduced.
+- **Edit lines, not files** (designer, 2026-11-05): change an existing file only with Edit, on the lines that need it; never rewrite it with Write or a script. Write is for the new agent's definition only.
 
 Return the files you created or changed, so the developer can review the git diff.
