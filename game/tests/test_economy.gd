@@ -189,7 +189,216 @@ func t_node_contract() -> void:
 	var back: Node = m.find_child("BackButton", true, false)
 	if back != null and back is Control:
 		ck((back as Control).size.y >= 120.0, "BackButton at least 120 px high (%s)" % str((back as Control).size.y))
+	# game/specs/flower-patch-b.md: run_tests.gd is off limits there, so the flower-patch tests ride on this registered test.
+	# Register t_flower_patch_b in run_tests.gd and delete the next line when that list may be edited.
+	await _fp_all(m)
 	_fin()
+
+
+# ---------------------------------------------------------------- flower patch B (game/specs/flower-patch-b.md)
+
+const FP_COLORS: Array = [Color(0.97, 0.66, 0.78), Color(0.78, 0.7, 0.93), Color(1.0, 0.85, 0.3)]
+const FP_RADII: Array = [0.9, 0.8, 0.7]
+const FP_PALETTE_DE: float = 12.0   # STYLE_GUIDE V1
+
+
+func t_flower_patch_b() -> void:
+	await _fp_all()
+	_fin()
+
+
+func _fp_all(main: Node = null) -> void:
+	var m: Node = main if main != null else await _mk_main()
+	if m == null:
+		return
+	_fp_prop_contract()
+	_fp_main(m)
+
+
+func _fp_blossoms(patch: Node) -> Array:
+	var out: Array = []
+	var b: Node = patch.get_node_or_null("Blossoms")
+	if b != null:
+		for c in b.get_children():
+			out.append(c)
+	return out
+
+
+func _fp_prop() -> Node:
+	var ps: Variant = load("res://scenes/props/flower_patch.tscn")
+	ck(ps != null, "props/flower_patch.tscn loads")
+	if ps == null:
+		return null
+	return (ps as PackedScene).instantiate()   # not added to the tree: _ready has not run, positions are as authored
+
+
+func _fp_lab(c: Color) -> Vector3:
+	var lin: Array = []
+	for v in [c.r, c.g, c.b]:
+		lin.append(v / 12.92 if v <= 0.04045 else pow((v + 0.055) / 1.055, 2.4))
+	var x: float = (0.4124 * lin[0] + 0.3576 * lin[1] + 0.1805 * lin[2]) / 0.95047
+	var y: float = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+	var z: float = (0.0193 * lin[0] + 0.1192 * lin[1] + 0.9505 * lin[2]) / 1.08883
+	var f: Array = []
+	for t in [x, y, z]:
+		f.append(pow(t, 1.0 / 3.0) if t > 0.008856 else 7.787 * t + 16.0 / 116.0)
+	return Vector3(116.0 * f[1] - 16.0, 500.0 * (f[0] - f[1]), 200.0 * (f[1] - f[2]))
+
+
+func _fp_tokens() -> Array:
+	var f := FileAccess.open(ProjectSettings.globalize_path("res://") + "../STYLE_GUIDE.md", FileAccess.READ)
+	var out: Array = []
+	if f == null:
+		return out
+	var rx := RegEx.new()
+	rx.compile("^\\s+- .+? \\(([\\d.]+),\\s*([\\d.]+),\\s*([\\d.]+)\\)")
+	var in_pal: bool = false
+	for line in f.get_as_text().split("\n"):
+		if line.begins_with("## "):
+			in_pal = line.begins_with("## Palette")
+			continue
+		var r: RegExMatch = rx.search(line) if in_pal else null
+		if r != null:
+			out.append(Color(float(r.get_string(1)), float(r.get_string(2)), float(r.get_string(3))))
+	return out
+
+
+func _fp_prop_contract() -> void:
+	var p: Node = _fp_prop()
+	if p == null:
+		return
+	_to_free.append(p)
+	eq(String(p.name), "FlowerPatch", "the prop root is named FlowerPatch")
+	ck(p is Node3D, "the prop root is a Node3D")
+	ck(p.get_script() != null and String(p.get_script().resource_path).ends_with("scripts/flower_patch.gd"), "the root carries scripts/flower_patch.gd")
+	var base: Node = p.get_node_or_null("Base")
+	ck(base is MeshInstance3D, "Base is a MeshInstance3D")
+	var stems: Node = p.get_node_or_null("Stems")
+	ck(stems is Node3D and stems.get_child_count() >= 1, "Stems is a Node3D holding the stems")
+	var bl: Node = p.get_node_or_null("Blossoms")
+	ck(bl is Node3D and bl.get_child_count() >= 1, "Blossoms is a Node3D holding the blossom heads")
+	for c in _fp_blossoms(p):
+		ck(c is MeshInstance3D, "Blossoms holds only MeshInstance3D (%s is %s)" % [c.name, c.get_class()])
+	ck(p.find_child("PatchMesh", true, false) == null, "PatchMesh is removed from the prop")
+	# the group is joined in _ready: a throwaway instance in the tree proves it, then goes
+	var q: Node = _fp_prop()
+	if q != null:
+		root.add_child(q)
+		ck(q.is_in_group("flower_patch"), "a FlowerPatch joins the group flower_patch")
+		root.remove_child(q)
+		q.free()
+	# every material colour in the prop, as authored, is within dE 12 of a palette token (STYLE_GUIDE V1)
+	var tokens: Array = _fp_tokens()
+	ck(tokens.size() >= 10, "STYLE_GUIDE.md palette read (%d tokens)" % tokens.size())
+	for mi in p.find_children("*", "MeshInstance3D", true, false):
+		var mat: Material = (mi as MeshInstance3D).get_active_material(0)
+		ck(mat is StandardMaterial3D, "%s has a StandardMaterial3D" % mi.name)
+		if mat is StandardMaterial3D and tokens.size() > 0:
+			var col: Color = (mat as StandardMaterial3D).albedo_color
+			var best: float = 999.0
+			for t in tokens:
+				best = minf(best, _fp_lab(col).distance_to(_fp_lab(t)))
+			ck(best <= FP_PALETTE_DE, "%s colour %s is dE %.1f from the nearest palette token (limit 12)" % [mi.name, str(col), best])
+	var leaf: Variant = load("res://materials/leaf.tres")
+	ck(leaf is StandardMaterial3D, "materials/leaf.tres exists")
+	if leaf is StandardMaterial3D and base is MeshInstance3D and stems != null:
+		var lc: Color = (leaf as StandardMaterial3D).albedo_color
+		near(lc.r, 0.62, "leaf.tres albedo r", 0.01)
+		near(lc.g, 0.84, "leaf.tres albedo g", 0.01)
+		near(lc.b, 0.52, "leaf.tres albedo b", 0.01)
+		ck(_mat_path(base as MeshInstance3D).ends_with("leaf.tres"), "Base uses leaf.tres (%s)" % _mat_path(base as MeshInstance3D))
+		for s in stems.get_children():
+			if s is MeshInstance3D:
+				ck(_mat_path(s as MeshInstance3D).ends_with("leaf.tres"), "stem %s uses leaf.tres" % s.name)
+
+
+func _fp_main(m: Node) -> void:
+	var proto: Node = _fp_prop()
+	if proto == null:
+		return
+	_to_free.append(proto)
+	var auth: Array = _fp_blossoms(proto)
+	var auth_stems: Array = proto.get_node("Stems").get_children() if proto.get_node_or_null("Stems") != null else []
+	var base_scale: Vector3 = (proto.get_node("Base") as Node3D).scale if proto.get_node_or_null("Base") != null else Vector3.ONE
+	var def: Variant = load("res://materials/flower_default.tres")
+	ck(def is StandardMaterial3D, "flower_default.tres loads")
+	if def is StandardMaterial3D:
+		var dc: Color = (def as StandardMaterial3D).albedo_color
+		near(dc.r, 0.97, "flower_default.tres albedo r unchanged", 0.001)
+		near(dc.g, 0.66, "flower_default.tres albedo g unchanged", 0.001)
+		near(dc.b, 0.78, "flower_default.tres albedo b unchanged", 0.001)
+	var patches: Array = []
+	for i in 3:
+		var p: Node = m.find_child("FlowerPatch%d" % (i + 1), true, false)
+		ck(p != null, "main.tscn has FlowerPatch%d" % (i + 1))
+		if p == null:
+			return
+		patches.append(p)
+	var seen: Array = []
+	var first_mat: Material = null
+	for i in 3:
+		var n: int = i + 1
+		var p: Node3D = patches[i] as Node3D
+		var want: Color = FP_COLORS[i]
+		var col: Color = p.get("color")
+		near(col.r, want.r, "FlowerPatch%d color r (scene data)" % n, 0.01)
+		near(col.g, want.g, "FlowerPatch%d color g (scene data)" % n, 0.01)
+		near(col.b, want.b, "FlowerPatch%d color b (scene data)" % n, 0.01)
+		var bs: Array = _fp_blossoms(p)
+		eq(bs.size(), auth.size(), "FlowerPatch%d blossom count" % n)
+		for b in bs:
+			var mat: Material = (b as MeshInstance3D).material_override
+			ck(mat is StandardMaterial3D, "FlowerPatch%d %s has a material_override StandardMaterial3D" % [n, b.name])
+			if mat is StandardMaterial3D:
+				var a: Color = (mat as StandardMaterial3D).albedo_color
+				ck(absf(a.r - col.r) <= 0.01 and absf(a.g - col.g) <= 0.01 and absf(a.b - col.b) <= 0.01,
+					"FlowerPatch%d %s shows %s, expected the patch color %s" % [n, b.name, str(a), str(col)])
+				ck(mat != def and mat.resource_path != "res://materials/flower_default.tres", "FlowerPatch%d %s override is not the shared flower_default.tres" % [n, b.name])
+				if i == 0 and first_mat == null:
+					first_mat = mat
+				elif i > 0:
+					ck(mat != first_mat, "FlowerPatch%d %s does not share patch 1's material object" % [n, b.name])
+		if bs.size() > 0 and (bs[0] as MeshInstance3D).material_override is StandardMaterial3D:
+			seen.append(((bs[0] as MeshInstance3D).material_override as StandardMaterial3D).albedo_color)
+		# radius: k = radius / 0.9
+		var k: float = float(FP_RADII[i]) / 0.9
+		near(float(p.get("radius")), float(FP_RADII[i]), "FlowerPatch%d radius (scene data)" % n, 0.001)
+		var base: Node3D = p.get_node("Base") as Node3D
+		near(base.scale.x, k * base_scale.x, "FlowerPatch%d Base scale x = k" % n, 0.01)
+		near(base.scale.z, k * base_scale.z, "FlowerPatch%d Base scale z = k" % n, 0.01)
+		near(base.scale.y, base_scale.y, "FlowerPatch%d Base scale y unchanged" % n, 0.01)
+		for j in mini(bs.size(), auth.size()):
+			var ap: Vector3 = (auth[j] as Node3D).position
+			var np: Vector3 = (bs[j] as Node3D).position
+			near(np.x, k * ap.x, "FlowerPatch%d blossom %d x = k * authored" % [n, j], 0.01)
+			near(np.z, k * ap.z, "FlowerPatch%d blossom %d z = k * authored" % [n, j], 0.01)
+			near(np.y, ap.y, "FlowerPatch%d blossom %d y unchanged" % [n, j], 0.01)
+			var asc: Vector3 = (auth[j] as Node3D).scale
+			var nsc: Vector3 = (bs[j] as Node3D).scale
+			ck(nsc.distance_to(asc) <= 0.01, "FlowerPatch%d blossom %d scale unchanged (%s vs %s)" % [n, j, str(nsc), str(asc)])
+		var sts: Array = p.get_node("Stems").get_children()
+		for j in mini(sts.size(), auth_stems.size()):
+			var sp: Vector3 = (auth_stems[j] as Node3D).position
+			var cp: Vector3 = (sts[j] as Node3D).position
+			near(cp.x, k * sp.x, "FlowerPatch%d stem %d x = k * authored" % [n, j], 0.01)
+			near(cp.z, k * sp.z, "FlowerPatch%d stem %d z = k * authored" % [n, j], 0.01)
+			near(cp.y, sp.y, "FlowerPatch%d stem %d y unchanged" % [n, j], 0.01)
+		# the root transform belongs to main.tscn: scale stays 1
+		near(p.scale.x, 1.0, "FlowerPatch%d root scale x not written" % n, 0.001)
+		near(p.scale.z, 1.0, "FlowerPatch%d root scale z not written" % n, 0.001)
+	ck(seen.size() == 3, "three patches have blossoms")
+	if seen.size() == 3:
+		ck(_fp_lab(seen[0]).distance_to(_fp_lab(seen[1])) > 5.0 and _fp_lab(seen[1]).distance_to(_fp_lab(seen[2])) > 5.0
+			and _fp_lab(seen[0]).distance_to(_fp_lab(seen[2])) > 5.0, "the three patches show three different colours")
+	eq(get_nodes_in_group("flower_patch").size(), 3, "three nodes in group flower_patch while main runs")
+	var bees: Node = m.find_child("Bees", true, false)
+	ck(bees != null, "Bees node exists")
+	if bees != null:
+		var tg: Variant = bees.get("_targets")
+		ck(tg is Array, "bees.gd keeps its _targets list")
+		if tg is Array:
+			eq((tg as Array).size(), 3, "the bees find 3 flower patches (not the fallback spot)")
+
 
 
 # "Values" table: every new value, checked on the defaults file itself.

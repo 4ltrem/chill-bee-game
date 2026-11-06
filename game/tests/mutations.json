@@ -503,5 +503,15 @@
    "t_replay_fill_and_back"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "flower patch skips the colour override",
+  "file": "scripts/flower_patch.gd",
+  "find": "head.material_override = material",
+  "replace": "head.material_override = null",
+  "expect": [
+   "t_node_contract"
+  ],
+  "suite": "unit"
  }
 ]
