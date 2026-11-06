@@ -60,7 +60,28 @@ func t_hive_lid_close_path() -> void:
 	_fin()
 
 
-# Spec 2: the open pose: leaning about 60-70 degrees from flat, lower edge on the ground, on the side away from the centrifuge, never
+## The largest-volume box of a lid, as its tilt from flat in degrees (angle between its thinnest axis and world up).
+func _lid_tilt(lid: Node3D) -> float:
+	var best: Array = []
+	var vol: float = -1.0
+	for b in _obbs(lid):
+		var ax: Array = (b as Array)[1]
+		var v: float = (ax[0] as Vector3).length() * (ax[1] as Vector3).length() * (ax[2] as Vector3).length()
+		if v > vol:
+			vol = v
+			best = b
+	if best.is_empty():
+		return -1.0
+	var axs: Array = best[1]
+	var thin: int = 0
+	for i in 3:
+		if (axs[i] as Vector3).length() < (axs[thin] as Vector3).length():
+			thin = i
+	var n: Vector3 = (axs[thin] as Vector3).normalized()
+	return rad_to_deg(acos(clampf(absf(n.y), 0.0, 1.0)))
+
+
+# Spec 2: the open pose: leaning about 60-70 degrees from flat, lower edge on the ground, not toward the centrifuge (0.1.3c: offset along the centrifuge direction <= 0.05), never
 # between the camera and the risen frame.
 func t_hive_lid_leaning_pose() -> void:
 	var h: Dictionary = await _hive_setup()
@@ -103,7 +124,7 @@ func t_hive_lid_leaning_pose() -> void:
 	lc /= float(lb.size())
 	var cen: Node3D = _nn(m, "Centrifuge") as Node3D
 	var away: Vector3 = ((cen.global_position - hive.global_position) * Vector3(1.0, 0.0, 1.0)).normalized()
-	ck((lc - hc).dot(away) < 0.0, "the lid rests on the side away from the centrifuge (offset along the centrifuge direction %.2f)" % (lc - hc).dot(away))
+	ck((lc - hc).dot(away) <= 0.05, "the lid does not rest toward the centrifuge (0.1.3c: offset along the centrifuge direction %.2f, limit 0.05)" % (lc - hc).dot(away))
 	hive.call("raise_frame", 0)
 	await _wait(float(cv("slide_seconds")) + 0.4)
 	var cam: Camera3D = root.get_viewport().get_camera_3d()
@@ -130,7 +151,7 @@ func t_hive_lid_leaning_pose() -> void:
 
 
 # Spec 2: the centrifuge lid gets the same lift, so it no longer passes through the bucket; lands flat on the ground beside it.
-func t_centrifuge_lid_paths() -> void:
+func t_centrifuge_lid_paths() -> void:   # 0.1.3c: the lid opens to LidLeanSpot and leans (screen upper-left, centrifuge-local -x)
 	var m: Node = await _mk_main()
 	if m == null:
 		_fin()
@@ -139,8 +160,9 @@ func t_centrifuge_lid_paths() -> void:
 	_set_cfg("bottling_seconds_per_jar", 0.5)
 	var c: Node = _nn(m, "Centrifuge")
 	var lid: Node3D = c.find_child("Lid", true, false) as Node3D
-	var spot: Node3D = c.find_child("CentrifugeLidSpot", true, false) as Node3D
+	var spot: Node3D = c.find_child("LidLeanSpot", true, false) as Node3D
 	ck(lid != null, "the centrifuge has a lid node named Lid (0.1.0 name)")
+	ck(spot != null, "the centrifuge has a LidLeanSpot marker")
 	if lid == null or spot == null:
 		_fin()
 		return
@@ -150,10 +172,13 @@ func t_centrifuge_lid_paths() -> void:
 	ck(body0.size() > 0, "the centrifuge body has boxes")
 	var ground: float = _box_corners_y(body0).x
 	var open_xf: Transform3D = spot.global_transform
-	ck(lid.global_position.distance_to(open_xf.origin) <= 0.02 and _angle_between(lid.global_basis, open_xf.basis) <= 0.03, "an EMPTY centrifuge's lid sits at CentrifugeLidSpot (full transform)")
+	ck(lid.global_position.distance_to(open_xf.origin) <= 0.02 and _angle_between(lid.global_basis, open_xf.basis) <= 0.03, "an EMPTY centrifuge's lid sits at LidLeanSpot (full transform)")
 	var lb0: Array = _obbs(lid)
-	ck(absf((lid.global_basis.y.normalized()).y) >= cos(deg_to_rad(3.0)), "the open centrifuge lid is flat (up axis tilt)")
-	ck(absf(_box_corners_y(lb0).x - ground) <= 0.1, "the open centrifuge lid is on the ground (%.3f vs %.3f)" % [_box_corners_y(lb0).x, ground])
+	var tilt0: float = _lid_tilt(lid)
+	ck(tilt0 >= 55.0 and tilt0 <= 75.0, "the open centrifuge lid leans (%.1f deg from flat, accepted 55 to 75)" % tilt0)
+	var local_x: float = ((c as Node3D).global_basis.inverse() * (lid.global_position - (c as Node3D).global_position)).x
+	ck(local_x < 0.0, "the leaned lid is on the centrifuge's local -x side, screen upper-left (local x %.2f)" % local_x)
+	ck(absf(_box_corners_y(lb0).x - ground) <= 0.1, "the leaned centrifuge lid's lower edge is on the ground (%.3f vs %.3f)" % [_box_corners_y(lb0).x, ground])
 	var cells: int = 20
 	c.call("add_cells", cells, _jars_of(cells))
 	c.call("close_lid")
@@ -175,11 +200,12 @@ func t_centrifuge_lid_paths() -> void:
 	var s2: Array = await _sample_lid(lid, body_fn, secs2, 0.5)
 	ck(int(c.get("state")) == empty, "bottling ended (EMPTY)")
 	_judge_path("centrifuge lid, opening", s2, open_xf, float(cv("lid_lift_height")), true, false)
-	ck(absf((lid.global_basis.y.normalized()).y) >= cos(deg_to_rad(3.0)), "the opened centrifuge lid lands flat")
+	var tilt1: float = _lid_tilt(lid)
+	ck(tilt1 >= 55.0 and tilt1 <= 75.0, "the opened centrifuge lid lands leaning (%.1f deg from flat)" % tilt1)
 	_fin()
 
 
-# Spec 3: the resting lid (CentrifugeLidSpot, EMPTY) overlaps neither the bucket, its base ring, the spigot (all part of the centrifuge's
+# Spec 3 (0.1.3c: leaned at LidLeanSpot): the resting lid (EMPTY) overlaps neither the bucket, its base ring, the spigot (all part of the centrifuge's
 # own boxes), nor the hive nor the crate. Oriented boxes, separating-axis test; touching the ground or a neighbour's face is allowed.
 func t_centrifuge_lid_rests_clear() -> void:
 	var m: Node = await _mk_main()
@@ -190,16 +216,16 @@ func t_centrifuge_lid_rests_clear() -> void:
 	var c: Node = _nn(m, "Centrifuge")
 	var hive: Node = _nn(m, "Hive")
 	var lid: Node3D = c.find_child("Lid", true, false) as Node3D
-	var spot: Node3D = c.find_child("CentrifugeLidSpot", true, false) as Node3D
+	var spot: Node3D = c.find_child("LidLeanSpot", true, false) as Node3D
 	var crate: Node = _crate_root(m)
 	if lid == null or spot == null or crate == null:
 		ck(lid != null, "the centrifuge has a Lid")
-		ck(spot != null, "CentrifugeLidSpot exists")
+		ck(spot != null, "LidLeanSpot exists")
 		ck(crate != null, "the crate was found")
 		_fin()
 		return
 	await _frames(3)
-	ck(lid.global_position.distance_to(spot.global_position) <= 0.02 and _angle_between(lid.global_basis, spot.global_basis) <= 0.03, "an EMPTY centrifuge's lid sits at CentrifugeLidSpot")
+	ck(lid.global_position.distance_to(spot.global_position) <= 0.02 and _angle_between(lid.global_basis, spot.global_basis) <= 0.03, "an EMPTY centrifuge's lid sits at LidLeanSpot")
 	var lb: Array = _obbs(lid)
 	ck(lb.size() > 0, "the resting lid has boxes")
 	var own: Array = _obbs(c, [lid, c.find_child("HeapRoot", true, false), c.find_child("SpigotJar", true, false)])

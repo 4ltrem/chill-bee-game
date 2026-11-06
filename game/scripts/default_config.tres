@@ -47,6 +47,6 @@ icon_visual_px = 88
 min_cell_px = 20
 zoom_size = 6.966
 hive_scale = 1.4
-pan_zoom_size = 8.878
+pan_zoom_size = 8.45
 pan_margin = 0.04
 camera_pan_seconds = 1.2

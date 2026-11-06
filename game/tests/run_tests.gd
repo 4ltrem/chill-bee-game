@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_layout.gd"
+extends "res://tests/test_second_stop.gd"
 
 
 func _initialize() -> void:
@@ -60,6 +60,12 @@ func _run() -> void:
 			"t_no_wall_clock_in_scripts",
 			# 0.1.3b layout (written from game/specs/0.1.3-next-revision.md before the code)
 			"t_layout_no_jar_outside_crate", "t_layout_truck_wheels_on_ground", "t_layout_hive_scale_follows_config", "t_layout_objects_on_cells",
+			# 0.1.3c camera (written from game/specs/0.1.3-next-revision.md before the code)
+			"t_camera_first_zoom_cells", "t_camera_first_zoom_in_frame", "t_camera_first_zoom_v7", "t_camera_second_stop_in_frame",
+			"t_camera_second_stop_hive_share", "t_camera_second_stop_hud_clear", "t_camera_back_from_second_stop", "t_camera_pan_seconds",
+			"t_camera_pan_follows_time_scale", "t_camera_helpers_can_fail", "t_camera_lid_lean_matches_hive", "t_camera_lid_component_shared",
+			# 0.1.3c second-stop input paths (real taps)
+			"t_second_stop_back_tap", "t_second_stop_spin_icon_tap", "t_second_stop_fork_icon_tap",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

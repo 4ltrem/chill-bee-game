@@ -37,6 +37,10 @@ func _press_speed(m: Node, n: float) -> bool:
 
 ## Run `start`, then wait frames until `done` is true. Returns {secs: wall seconds, frame: longest frame (s) seen, ok: finished in time}.
 func _timed(start: Callable, done: Callable, timeout: float) -> Dictionary:
+	# Start on a frame boundary: the frame in progress when the clock starts has a delta that began BEFORE t0 (scaled by the speed, a hitch
+	# before t0 - scene build, shader compile - shows as game time the wall clock never saw: the intermittent x0.25 cell-flight miss, 3.965 s
+	# against 4.056 s +- 0.084 s, 2026-11-05). Waiting one frame first makes the first delta start at t0.
+	await process_frame
 	var t0: int = Time.get_ticks_usec()
 	start.call()
 	var last: int = t0

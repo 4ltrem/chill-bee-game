@@ -157,8 +157,17 @@ func _zoom_settle() -> float:
 
 ## Tap the fork where it floats, wait for the zoom (frame_raised), then for the camera, lid and slide to settle.
 func _open_zoom(m: Node, p: Dictionary, tr: Dictionary) -> bool:
-	var on_anchor: bool = await fi.click_icon(p["ForkIcon"] as Control)
-	ck(on_anchor, "the fork icon sits at its anchor's projected position (click went there)")
+	var on_anchor: bool = false
+	if m.has_method("at_second_stop") and bool(m.call("at_second_stop")):
+		# 0.1.3c: at the second stop Harvest is placed from the object rects (fixed_center), not at its anchor: tap where it is drawn
+		var icon: Control = p["ForkIcon"] as Control
+		var fc: Vector2 = icon.get("fixed_center") as Vector2
+		on_anchor = bool(icon.get("use_fixed_center")) and icon.get_global_rect().get_center().distance_to(fc) <= 6.0
+		await fi.tap_at(icon.get_global_rect().get_center())
+		ck(on_anchor, "at the second stop the fork icon sits at its placed position (fixed_center %s; click went there)" % str(fc))
+	else:
+		on_anchor = await fi.click_icon(p["ForkIcon"] as Control)
+		ck(on_anchor, "the fork icon sits at its anchor's projected position (click went there)")
 	var raised: bool = await _until(func() -> bool: return int(tr["risen"]) >= 0, 3.0)
 	await _wait(_zoom_settle())
 	return raised

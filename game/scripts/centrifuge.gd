@@ -380,7 +380,9 @@ func _press(pressed: bool, source: String) -> void:
 func _ready() -> void:
 	_spinner = find_child("Spinner", true, false) as Node3D
 	_lid = find_child("Lid", true, false) as Node3D
-	_lid_spot = find_child("CentrifugeLidSpot", true, false) as Node3D
+	_lid_spot = find_child("LidLeanSpot", true, false) as Node3D   # 0.1.3c: the lid leans against the bucket like the hive's (shared LidMotion)
+	if _lid_spot == null:
+		_lid_spot = find_child("CentrifugeLidSpot", true, false) as Node3D
 	_mouth = find_child("BucketMouth", true, false) as Node3D
 	_heap_root = find_child("HeapRoot", true, false) as Node3D
 	_honey_level = find_child("HoneyLevel", true, false) as MeshInstance3D
@@ -390,7 +392,7 @@ func _ready() -> void:
 	if _spigot_jar != null:
 		_spigot_jar.visible = false
 	if _lid != null:
-		_lid_motion = LidMotion.new(_lid, _lid_spot, config, false)   # position only: the lid keeps its spin and lands flat
+		_lid_motion = LidMotion.new(_lid, _lid_spot, config, true)   # same path as the hive lid: lifts, tips and leans to the spot; the spin resumes when it closes
 		if _lid_spot != null:
 			_lid_motion.apply(1.0)   # starts EMPTY: the lid sits on the ground beside the bucket
 	else:

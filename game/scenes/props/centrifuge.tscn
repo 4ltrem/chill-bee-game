@@ -108,7 +108,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.075, 3.125)
 
 [node name="LidLeanSpot" type="Marker3D" parent="."]
-transform = Transform3D(0.342, 0.9397, 0, -0.9397, 0.342, 0, 0, 0, 1, 1.2755, 1.013, 0)
+transform = Transform3D(0.342, -0.9397, 0, 0.9397, 0.342, 0, 0, 0, 1, -1.2755, 1.013, 0)
 
 [node name="BucketMouth" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)

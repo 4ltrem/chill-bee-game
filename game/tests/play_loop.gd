@@ -557,6 +557,42 @@ func _run() -> void:
 				ck(int(eco.get("money")) > m2, "round 2: Sell credited money at the tap")
 				await _summary_after_sell("round 2", sold, PER)
 
+	# ---- 0.1.3c (written from game/specs/0.1.3-next-revision.md before the code): both camera stops in the loop, through real input.
+	# A full hive, the fork: first stop (zoom_size); the first frames scraped until the bucket is full: the camera pans over camera_pan_seconds
+	# to pan_zoom_size (second stop); Back returns to the farm view; Spin, crank, bottle and the pile all still work.
+	print("=== two camera stops ===")
+	var camc: Camera3D = root.get_viewport().get_camera_3d()
+	var size_farm: float = camc.size
+	hive.call("fill_now")
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	tr["raised"] = []
+	tr["lid"] = []
+	await _frames(4)
+	eq(cen.get("state"), _st(cen, "EMPTY"), "stops: the bucket is EMPTY before the extra batch")
+	ck(await _open_zoom("stops"), "stops: first stop open")
+	near(camc.size, float(_cv("zoom_size")), "stops: the first stop is at zoom_size", 0.05)
+	var n_fill: int = int(CAP_CELLS / CPF)
+	for k in n_fill:
+		var fk: int = await _scrape_risen()
+		if k < n_fill - 1:
+			ck(await _next_frame(fk), "stops: frame %d done, the next rose" % fk)
+	var panned: bool = await _until(func() -> bool: return absf(camc.size - float(_cv("pan_zoom_size"))) < 0.02, float(_cv("camera_pan_seconds")) + 8.0)
+	ck(panned, "stops: the bucket is full and the camera panned to pan_zoom_size (%s, now %s)" % [str(_cv("pan_zoom_size")), str(camc.size)])
+	await _wait(0.5)
+	eq(cen.get("cells"), CAP_CELLS, "stops: the bucket holds its capacity at the second stop")
+	ck(_vis(P["BackButton"]), "stops: BackButton shows at the second stop")
+	await _shot("r4-12-second-stop")
+	if _vis(P["BackButton"]):
+		await fi.click_ctl(P["BackButton"] as Control)
+	await _zoom_out_wait()
+	near(camc.size, size_farm, "stops: Back from the second stop returns to the farm view", 0.05)
+	ck(_vis(P["MoneyLabel"]), "stops: the farm UI is back")
+	eq(cen.get("state"), _st(cen, "FULL"), "stops: FULL after Back (Spin waits)")
+	await _crank("stops", false)
+	var stops_jars: int = await _bottle("stops", Callable())
+	eq(stops_jars, int(CAP_CELLS * int(_cv("frame_jars")) / CPF), "stops: the full bucket bottled its jars")
+	await _wait(float(_cv("cell_fly_seconds")) + _lid_t() + 0.8)
+
 	# ---- Show UI bounds (Dev action): screenshot with the outlines on, then off
 	var bounds: Button = null
 	for b in main.get_tree().root.find_children("*", "Button", true, false):

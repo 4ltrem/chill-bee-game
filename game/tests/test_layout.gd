@@ -139,12 +139,20 @@ func t_layout_truck_wheels_on_ground() -> void:
 		return
 	ck(float(r["off"]) <= 0.05, "the wheels' lowest points sit on the ground plane (worst %.3f off, ground top y %.3f)" % [float(r["off"]), float(r["gy"])])
 	ck(bool(r["inside"]), "every wheel is over the ground plane's rectangle (the ground reaches under the truck)")
+	# every box of the truck (body, bed, wheels at full radius, jars) inside the ground rectangle with a margin of 0.5 on each side
+	var gsp: Array = _span_xz(_obbs(ground))
+	var tsp: Array = _span_xz(_obbs(tk))
+	var margin: float = minf(minf(float(tsp[0]) - float(gsp[0]), float(tsp[1]) - float(gsp[1])), minf(float(gsp[2]) - float(tsp[2]), float(gsp[3]) - float(tsp[3])))
+	ck(margin >= 0.5, "the whole truck lies inside the ground with a margin of at least 0.5 (smallest margin %.2f; truck x %.2f..%.2f z %.2f..%.2f, ground x %.2f..%.2f z %.2f..%.2f)" % [margin, tsp[0], tsp[2], tsp[1], tsp[3], gsp[0], gsp[2], gsp[1], gsp[3]])
 	# the check can fail: lift the ground and the wheels hover, move the ground away and they are outside
 	var g0: Vector3 = ground.position
 	ground.position = g0 + Vector3(0.0, 0.3, 0.0)
 	ck(float(_wheel_ground(tk, ground)["off"]) > 0.1, "self-check: a ground 0.3 higher is reported")
 	ground.position = g0 + Vector3(0.0, 0.0, -20.0)
 	ck(not bool(_wheel_ground(tk, ground)["inside"]), "self-check: a ground moved away is reported")
+	ground.position = g0 + Vector3(0.0, 0.0, 14.0)
+	var sp2: Array = _span_xz(_obbs(ground))
+	ck(minf(minf(float(tsp[0]) - float(sp2[0]), float(tsp[1]) - float(sp2[1])), minf(float(sp2[2]) - float(tsp[2]), float(sp2[3]) - float(tsp[3]))) < 0.5, "self-check: a ground shifted 14 units leaves the truck under the 0.5 margin")
 	ground.position = g0
 	_fin()
 

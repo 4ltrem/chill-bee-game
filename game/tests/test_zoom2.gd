@@ -488,7 +488,11 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	eq(fi.capped_total(hive, _frames_n()), 0, "no Capped cell left")
 	eq(m.get("resume_pending"), false, "the zoom ended on its own: resume_pending cleared")
 	ck(not _shown(p["ForkIcon"]), "the fork is gone: hive not full and resume_pending false")
-	ck(_shown(p["MoneyLabel"]) and not _shown(p["BackButton"]), "the farm UI is back")
+	# 0.1.3c: the bucket filled in this zoom, so the zoom ended at the second stop (Back shows there); Back returns to the farm view
+	ck(_shown(p["MoneyLabel"]) and not _shown(p["HintLabel"]), "the farm UI is back (the second stop shows it with Back)")
+	await fi.click_ctl(p["BackButton"] as Control)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("camera_pan_seconds")))
+	ck(_shown(p["MoneyLabel"]) and not _shown(p["BackButton"]), "after Back the farm view is back")
 	eq(cen.get("lid_open"), false, "lid on")
 	eq(cen.get("state"), _st(cen, "FULL"), "FULL after the zoom")
 	ck(_shown(p["CentrifugeIcon"]), "Spin shows")

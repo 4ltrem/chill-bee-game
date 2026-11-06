@@ -240,5 +240,156 @@
    "t_cell_width_at_zoom"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "first zoom too far out: cells under min_cell_px",
+  "file": "scripts/default_config.tres",
+  "find": "zoom_size = 6.966",
+  "replace": "zoom_size = 9.5",
+  "expect": [
+   "t_camera_first_zoom_cells"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "first zoom too close: hive cut by the frame",
+  "file": "scripts/default_config.tres",
+  "find": "zoom_size = 6.966",
+  "replace": "zoom_size = 4.0",
+  "expect": [
+   "t_camera_first_zoom_in_frame"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "second stop too wide: hive shows too much",
+  "file": "scripts/default_config.tres",
+  "find": "pan_zoom_size = 8.878",
+  "replace": "pan_zoom_size = 14.0",
+  "expect": [
+   "t_camera_second_stop_hive_share"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "second stop too tight: truck cut off",
+  "file": "scripts/default_config.tres",
+  "find": "pan_zoom_size = 8.878",
+  "replace": "pan_zoom_size = 6.5",
+  "expect": [
+   "t_camera_second_stop_in_frame"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "centrifuge lid leans at 45 degrees",
+  "file": "scenes/props/centrifuge.tscn",
+  "find": "Transform3D(0.342, -0.9397, 0, 0.9397, 0.342, 0, 0, 0, 1, -1.2755, 1.013, 0)",
+  "replace": "Transform3D(0.7071, -0.7071, 0, 0.7071, 0.7071, 0, 0, 0, 1, -1.2755, 1.013, 0)",
+  "expect": [
+   "t_camera_lid_lean_matches_hive"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "camera pan takes half the seconds",
+  "file": "scripts/main.gd",
+  "find": "_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)",
+  "replace": "_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds * 0.5)",
+  "expect": [
+   "t_camera_pan_seconds"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "camera tween ignores the game speed",
+  "file": "scripts/main.gd",
+  "find": "_cam_tween = create_tween().set_parallel(true)",
+  "replace": "_cam_tween = create_tween().set_ignore_time_scale(true).set_parallel(true)",
+  "expect": [
+   "t_camera_pan_follows_time_scale"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "first zoom framed 3 units right (V7: wood cut at the left edge)",
+  "file": "scripts/main.gd",
+  "find": "return _zoom_framing.global_position - forward * distance",
+  "replace": "return _zoom_framing.global_position - forward * distance + _farm_camera.global_transform.basis.x * 3.0",
+  "expect": [
+   "t_camera_first_zoom_v7"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "second stop HUD: top info not fitted around hive",
+  "file": "scripts/main.gd",
+  "find": "_farm_ui.fit_top_info([hive_rect, cen_rect] as Array[Rect2], gap)",
+  "replace": "pass",
+  "expect": [
+   "t_camera_second_stop_hud_clear"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "centrifuge lid has its own tween",
+  "file": "scripts/centrifuge.gd",
+  "find": "_lid_spot = find_child(\"LidLeanSpot\", true, false) as Node3D",
+  "replace": "_lid_spot = find_child(\"LidLeanSpot\", true, false) as Node3D\n\tvar _own_lid_tween: Tween = create_tween()",
+  "expect": [
+   "t_camera_lid_component_shared"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Harvest icon not moved at the second stop",
+  "file": "scripts/main.gd",
+  "find": "_fork_icon.use_fixed_center = true",
+  "replace": "_fork_icon.use_fixed_center = false",
+  "expect": [
+   "t_second_stop_fork_icon_tap"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Spin icon not moved at the second stop",
+  "file": "scripts/main.gd",
+  "find": "_centrifuge_icon.use_fixed_center = true",
+  "replace": "_centrifuge_icon.use_fixed_center = false",
+  "expect": [
+   "t_second_stop_spin_icon_tap"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Back does nothing at the second stop",
+  "file": "scripts/main.gd",
+  "find": "\tif not _at_second_stop or zoom != Zoom.NONE:\n\t\treturn\n\t_leave_second_stop_hud()",
+  "replace": "\treturn\n\t_leave_second_stop_hud()",
+  "expect": [
+   "t_second_stop_back_tap",
+   "t_camera_back_from_second_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hive lid rests toward the centrifuge",
+  "file": "scenes/props/hive.tscn",
+  "find": "Transform3D(0.342, -0.9397, 0, 0.9397, 0.342, 0, 0, 0, 1, -0.735, 0.679, 0)",
+  "replace": "Transform3D(0.342, 0.9397, 0, -0.9397, 0.342, 0, 0, 0, 1, 0.735, 0.679, 0)",
+  "expect": [
+   "t_hive_lid_leaning_pose"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "ground shrunk back to 13 x 13 (truck floats off the land)",
+  "file": "scenes/main.tscn",
+  "find": "size = Vector2(18, 18)",
+  "replace": "size = Vector2(13, 13)",
+  "expect": [
+   "t_layout_truck_wheels_on_ground"
+  ],
+  "suite": "unit"
  }
 ]

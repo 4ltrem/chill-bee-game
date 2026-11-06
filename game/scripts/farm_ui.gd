@@ -23,6 +23,10 @@ var _summary_jars: Label
 var _summary_value: Label
 var _summary_total: Label
 var _summary_ok: Button
+var _top_saved: bool = false
+var _top_flags: int = 0
+var _bar_flags: int = 0
+var _bar_min_x: float = 0.0
 
 
 func _ready() -> void:
@@ -64,6 +68,42 @@ func setup(hive: Hive, centrifuge: Centrifuge, truck: Truck) -> void:
 		_refresh_centrifuge()
 	# The truck's load is shown on the truck itself; the farm UI keeps no jar counter.
 	_truck = truck
+
+
+## 0.1.3c, second camera stop: the top info column shrinks to its content and the Hive bar stops `gap` px left of every obstacle rect (the hive,
+## the centrifuge) that sits level with the column.
+func fit_top_info(obstacles: Array[Rect2], gap: float) -> void:
+	var info: Control = find_child("TopInfo", true, false) as Control
+	if info == null:
+		return
+	if not _top_saved:
+		_top_saved = true
+		_top_flags = info.size_flags_horizontal
+		if _fill_bar != null:
+			_bar_flags = _fill_bar.size_flags_horizontal
+			_bar_min_x = _fill_bar.custom_minimum_size.x
+	info.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	if _fill_bar != null:
+		_fill_bar.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		var max_right: float = INF
+		var column: Rect2 = info.get_global_rect()
+		for r in obstacles:
+			if r.position.y < column.end.y and r.end.y > column.position.y:
+				max_right = minf(max_right, r.position.x - gap)
+		_fill_bar.custom_minimum_size.x = maxf(max_right - info.global_position.x, 1.0) if max_right < INF else _bar_min_x
+
+
+## Back to the full-width Hive bar.
+func restore_top_info() -> void:
+	if not _top_saved:
+		return
+	_top_saved = false
+	var info: Control = find_child("TopInfo", true, false) as Control
+	if info != null:
+		info.size_flags_horizontal = _top_flags
+	if _fill_bar != null:
+		_fill_bar.size_flags_horizontal = _bar_flags
+		_fill_bar.custom_minimum_size.x = _bar_min_x
 
 
 func show_summary(jars: int, per_jar: int, total: int) -> void:

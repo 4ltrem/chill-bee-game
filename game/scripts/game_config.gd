@@ -58,7 +58,7 @@ extends Resource
 
 # --- 0.1.3 (game/specs/0.1.3-next-revision.md, item 2): the bigger hive and the two camera stops ---
 @export var hive_scale: float = 1.4                    # the hive node's uniform scale (round 4, layout C); read when used, live in Dev mode
-@export var pan_zoom_size: float = 8.878               # second camera stop: ortho size framing the centrifuge, crate and truck (round 5 pan-quarter)
+@export var pan_zoom_size: float = 8.45                # second camera stop: ortho size framing the centrifuge, crate and truck (round 5 pan-quarter)
 @export var pan_margin: float = 0.04                   # second camera stop: share of the view kept clear around the framed objects
 @export var camera_pan_seconds: float = 1.2            # PLACEHOLDER (slow on purpose): the pan from the first stop to the second
 

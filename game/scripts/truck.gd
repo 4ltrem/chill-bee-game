@@ -50,6 +50,14 @@ var _flying_to_crate: int = 0    # jars counted in the crate whose flight has no
 var _empties_marker: Node3D
 
 
+## Where the truck stands at home, in world space (for framing the camera while it is away).
+func home_global_position() -> Vector3:
+	var parent: Node3D = get_parent() as Node3D
+	if parent != null and parent.is_inside_tree():
+		return parent.global_transform * _home
+	return _home
+
+
 func is_full() -> bool:
 	return loaded_jars >= capacity
 

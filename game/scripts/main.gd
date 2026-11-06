@@ -36,6 +36,10 @@ var _going_back: bool = false
 var _cam_home_pos: Vector3 = Vector3.ZERO
 var _cam_home_size: float = 20.0
 var _cam_tween: Tween
+var _crate: Node3D
+var _closing_to_second: bool = false   # the zoom now closing ends at the second stop (bucket full) instead of the farm view
+var _at_second_stop: bool = false
+var _filled_in_zoom: bool = false      # the bucket became full while this zoom was open: the zoom ends after its frame and pans to the second stop
 
 
 func _ready() -> void:
@@ -45,6 +49,7 @@ func _ready() -> void:
 	_farm_camera = find_child("Camera3D", false, false) as Camera3D
 	_centrifuge = find_child("Centrifuge", true, false) as Centrifuge
 	_truck = find_child("Truck", true, false) as Truck
+	_crate = find_child("JarCrate", true, false) as Node3D
 	_pile = find_child("Pile", true, false) as Pile
 	_bees = find_child("Bees", true, false) as Bees
 	_zoom_framing = find_child("ZoomFraming", true, false) as Node3D
@@ -123,7 +128,9 @@ func _refresh_icons() -> void:
 			_sell_icon.text = "Sell $%d" % _truck.load_value()
 
 
-func _on_centrifuge_state(_state: int) -> void:
+func _on_centrifuge_state(state_now: int) -> void:
+	if state_now == Centrifuge.State.FULL and zoom != Zoom.NONE and zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING:
+		_filled_in_zoom = true
 	_refresh_icons()
 
 
@@ -194,6 +201,8 @@ func open_zoom() -> bool:
 	if _queue.is_empty():
 		return false
 	_going_back = false
+	_leave_second_stop_hud()
+	_filled_in_zoom = false
 	zoom = Zoom.OPENING
 	_timer = Economy.config.lid_move_seconds()
 	_farm_ui.visible = false
@@ -213,6 +222,8 @@ func open_zoom() -> bool:
 ## The fork stays available while any frame has Capped cells (resume_pending).
 func back() -> void:
 	match zoom:
+		Zoom.NONE:
+			leave_second_stop()
 		Zoom.OPENING:
 			_going_back = true
 			zoom = Zoom.BACK_LOWERING
@@ -242,7 +253,7 @@ func advance(delta: float) -> void:
 		Zoom.LOWERING:
 			if _going_back:
 				_start_closing(false)
-			elif not _raise_next():
+			elif not _raise_next():   # a bucket that fills mid-zoom does not end it: finish every frame (the extra cells go to the pile), then pan
 				_begin_close_delay()
 		Zoom.CLOSE_DELAY:
 			_start_closing(true)
@@ -302,10 +313,15 @@ func _on_frame_done() -> void:
 func _start_closing(on_own: bool) -> void:
 	zoom = Zoom.CLOSING
 	_timer = maxf(Economy.config.zoom_seconds, Economy.config.lid_move_seconds())
-	resume_pending = not on_own
+	resume_pending = not on_own or (_filled_in_zoom and _hive.has_capped_cells())   # all frames done: nothing left to resume
 	_hive.close_lid()
 	_centrifuge.close_lid()
-	_move_camera(false)
+	_closing_to_second = _filled_in_zoom and _bucket_is_full()
+	if _closing_to_second:
+		_timer = maxf(Economy.config.camera_pan_seconds, Economy.config.lid_move_seconds())
+		_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)
+	else:
+		_move_camera(false)
 
 
 func _finish_zoom() -> void:
@@ -315,9 +331,12 @@ func _finish_zoom() -> void:
 	_farm_ui.visible = true
 	if _bees != null:
 		_bees.clear_avoid()
-	if _harvest_ui != null:
-		_harvest_ui.hide_zoom()
 	_centrifuge.crank_enabled = true
+	if _closing_to_second:
+		_closing_to_second = false
+		_enter_second_stop_hud()
+	elif _harvest_ui != null:
+		_harvest_ui.hide_zoom()
 	_refresh_icons()
 
 
@@ -358,8 +377,16 @@ func zoom_position() -> Vector3:
 func _move_camera(zoom_in: bool) -> void:
 	if _farm_camera == null:
 		return
-	var target_pos: Vector3 = zoom_position() if zoom_in else _cam_home_pos
-	var target_size: float = zoom_size() if zoom_in else _cam_home_size
+	_move_camera_to({"position": zoom_position() if zoom_in else _cam_home_pos, "size": zoom_size() if zoom_in else _cam_home_size},
+			Economy.config.zoom_seconds)
+
+
+## Tweens the farm camera to a pose ({position, size}) over `seconds` (the tween runs on the engine clock, so Engine.time_scale speeds it).
+func _move_camera_to(pose: Dictionary, seconds: float) -> void:
+	if _farm_camera == null:
+		return
+	var target_pos: Vector3 = pose["position"]
+	var target_size: float = pose["size"]
 	if _cam_tween != null and _cam_tween.is_valid():
 		_cam_tween.kill()
 	if not is_inside_tree():
@@ -367,5 +394,145 @@ func _move_camera(zoom_in: bool) -> void:
 		_farm_camera.size = target_size
 		return
 	_cam_tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	_cam_tween.tween_property(_farm_camera, "global_position", target_pos, Economy.config.zoom_seconds)
-	_cam_tween.tween_property(_farm_camera, "size", target_size, Economy.config.zoom_seconds)
+	_cam_tween.tween_property(_farm_camera, "global_position", target_pos, seconds)
+	_cam_tween.tween_property(_farm_camera, "size", target_size, seconds)
+
+
+# --- the second camera stop (0.1.3 item 2): centrifuge, crate and truck framed at pan_zoom_size, the hive partly in the upper-right ---
+
+## True when the bucket holds a full load. This one function is the trigger: a zoom that ends with a full bucket pans to the second stop.
+func _bucket_is_full() -> bool:
+	return _centrifuge != null and _centrifuge.state == Centrifuge.State.FULL and _centrifuge.cells >= _centrifuge.capacity_cells()
+
+
+func at_second_stop() -> bool:
+	return _at_second_stop
+
+
+## Back at the second stop: the camera returns to the farm view.
+func leave_second_stop() -> void:
+	if not _at_second_stop or zoom != Zoom.NONE:
+		return
+	_leave_second_stop_hud()
+	if _harvest_ui != null:
+		_harvest_ui.hide_zoom()
+	_move_camera(false)
+
+
+func _view_px() -> Vector2:
+	return get_viewport().get_visible_rect().size if is_inside_tree() else Vector2(720.0, 1280.0)
+
+
+## World box of every visible mesh under `node`, moved by `shift`.
+func _mesh_box(node: Node3D, shift: Vector3 = Vector3.ZERO) -> AABB:
+	var box := AABB()
+	var first: bool = true
+	for found in node.find_children("*", "MeshInstance3D", true, false):
+		var mi: MeshInstance3D = found as MeshInstance3D
+		if mi.mesh == null or not mi.visible:
+			continue
+		var b: AABB = mi.global_transform * mi.mesh.get_aabb()
+		box = b if first else box.merge(b)
+		first = false
+	if first:
+		return AABB(node.global_position, Vector3.ZERO)
+	box.position += shift
+	return box
+
+
+## The box's footprint on the camera plane: x along the camera's right, y along its up (world units).
+func _plane_rect(box: AABB, right: Vector3, up: Vector3) -> Rect2:
+	var lo := Vector2(INF, INF)
+	var hi := Vector2(-INF, -INF)
+	for i in 8:
+		var p: Vector3 = box.get_endpoint(i)
+		var q := Vector2(p.dot(right), p.dot(up))
+		lo = Vector2(minf(lo.x, q.x), minf(lo.y, q.y))
+		hi = Vector2(maxf(hi.x, q.x), maxf(hi.y, q.y))
+	return Rect2(lo, hi - lo)
+
+
+## The second stop's camera, from the objects' rects (no marker): {position, size, plane_x, plane_y, fits}. The framed rect (centrifuge, crate
+## and the truck at home) grows by config.pan_margin of the view, sits at the view's lower-left above the shop panel, and the rest of
+## the view (upper-right) shows the hive. `fits` is false when pan_zoom_size is too small for the rect (warns once).
+func second_stop_pose() -> Dictionary:
+	var config: GameConfig = Economy.config
+	var size: float = config.pan_zoom_size
+	if _farm_camera == null or _centrifuge == null or _truck == null:
+		return {"position": _cam_home_pos, "size": size, "plane_x": 0.0, "plane_y": 0.0, "fits": false}
+	var right: Vector3 = _farm_camera.global_basis.x
+	var up: Vector3 = _farm_camera.global_basis.y
+	var view: Vector2 = _view_px()
+	var aspect: float = view.x / view.y
+	var rect: Rect2 = _plane_rect(_mesh_box(_centrifuge), right, up)
+	if _crate != null:
+		rect = rect.merge(_plane_rect(_mesh_box(_crate), right, up))
+	rect = rect.merge(_plane_rect(_mesh_box(_truck, _truck.home_global_position() - _truck.global_position), right, up))
+	rect = rect.grow_individual(config.pan_margin * size * aspect, config.pan_margin * size, config.pan_margin * size * aspect, config.pan_margin * size)
+	var shop: Control = find_child("ShopPanel", true, false) as Control
+	var shop_share: float = clampf((view.y - shop.global_position.y) / view.y, 0.0, 0.9) if shop != null else 0.0
+	var width: float = size * aspect
+	var fits: bool = rect.size.x <= width and rect.size.y <= size * (1.0 - shop_share)
+	if not fits:
+		CellFlight.warn_once("pan_zoom_size", "main.gd: pan_zoom_size %.3f is too small for the centrifuge, crate and truck plus pan_margin (needs %.3f)." % [size, maxf(rect.size.x / aspect, rect.size.y / (1.0 - shop_share))])
+	var plane_x: float = rect.position.x + width * 0.5                       # view centre on the camera plane
+	var plane_y: float = rect.position.y - shop_share * size + size * 0.5
+	var home_x: float = _cam_home_pos.dot(right)
+	var home_y: float = _cam_home_pos.dot(up)
+	return {"position": _cam_home_pos + right * (plane_x - home_x) + up * (plane_y - home_y), "size": size,
+			"plane_x": plane_x, "plane_y": plane_y, "fits": fits}
+
+
+## Where a world point lands on screen (px) when the camera sits at `pose`.
+func _pose_screen(point: Vector3, pose: Dictionary) -> Vector2:
+	var view: Vector2 = _view_px()
+	var size: float = pose["size"]
+	var u: float = point.dot(_farm_camera.global_basis.x) - float(pose["plane_x"])
+	var v: float = point.dot(_farm_camera.global_basis.y) - float(pose["plane_y"])
+	return Vector2((u / (size * view.x / view.y) + 0.5) * view.x, (0.5 - v / size) * view.y)
+
+
+func _screen_rect(box: AABB, pose: Dictionary) -> Rect2:
+	var lo := Vector2(INF, INF)
+	var hi := Vector2(-INF, -INF)
+	for i in 8:
+		var q: Vector2 = _pose_screen(box.get_endpoint(i), pose)
+		lo = Vector2(minf(lo.x, q.x), minf(lo.y, q.y))
+		hi = Vector2(maxf(hi.x, q.x), maxf(hi.y, q.y))
+	return Rect2(lo, hi - lo)
+
+
+## The camera has arrived at the second stop: Back shows, the Hive bar stops left of the hive, Harvest sits below the hive and Spin left of the
+## centrifuge (every position from the objects' screen rects, so nothing covers either).
+func _enter_second_stop_hud() -> void:
+	_at_second_stop = true
+	if _harvest_ui != null:
+		_harvest_ui.show_pan()
+	var pose: Dictionary = second_stop_pose()
+	var view: Vector2 = _view_px()
+	var gap: float = Economy.config.pan_margin * view.y
+	var screen := Rect2(Vector2.ZERO, view)
+	var hive_rect: Rect2 = _screen_rect(_mesh_box(_hive), pose).intersection(screen)
+	var cen_rect: Rect2 = _screen_rect(_mesh_box(_centrifuge), pose)
+	_farm_ui.fit_top_info([hive_rect, cen_rect] as Array[Rect2], gap)
+	if _fork_icon != null:
+		var half: Vector2 = _fork_icon.size * 0.5
+		var at := Vector2(clampf(hive_rect.get_center().x, half.x, view.x - half.x), minf(hive_rect.end.y + gap + half.y, view.y - half.y))
+		if Rect2(at - half, half * 2.0).intersects(cen_rect):
+			at.y = minf(cen_rect.end.y + gap + half.y, view.y - half.y)   # the centrifuge reaches under the hive: Harvest goes below both
+		_fork_icon.fixed_center = at
+		_fork_icon.use_fixed_center = true
+	if _centrifuge_icon != null:
+		var half: Vector2 = _centrifuge_icon.size * 0.5
+		_centrifuge_icon.fixed_center = Vector2(maxf(cen_rect.position.x - gap - half.x, half.x), cen_rect.get_center().y)
+		_centrifuge_icon.use_fixed_center = true
+
+
+func _leave_second_stop_hud() -> void:
+	_at_second_stop = false
+	if _fork_icon != null:
+		_fork_icon.use_fixed_center = false
+	if _centrifuge_icon != null:
+		_centrifuge_icon.use_fixed_center = false
+	if _farm_ui != null:
+		_farm_ui.restore_top_info()
