@@ -59,7 +59,7 @@ func _run() -> void:
 		# 0.1.1 play-test fixes
 		"t_dev_ui_bounds_collects_controls", "t_overlap_helper_can_fail", "t_rim_measure_can_fail", "t_config_011", "t_dev_panel_has_lid_values",
 		"t_node_contract_011", "t_hive_footprint_and_frames", "t_hive_lid_open_path", "t_hive_lid_close_path", "t_hive_lid_leaning_pose",
-		"t_centrifuge_lid_paths", "t_heap_shows_every_cell", "t_pile_shows_every_cell", "t_jar_fills_then_lid",
+		"t_centrifuge_lid_paths", "t_barrel_eases_to_stop", "t_heap_shows_every_cell", "t_pile_shows_every_cell", "t_jar_fills_then_lid",
 		"t_truck_and_crate_jars_full_with_lids", "t_wheel_rims", "t_cell_width_at_zoom",
 			# 0.1.2 bottling and sale (written from game/specs/0.1.2-bottling-and-sale.md before the code)
 			"t_zoom_view_option_a", "t_hive_size_vs_truck", "t_centrifuge_lid_rests_clear", "t_flight_judge_can_fail", "t_start_helper_can_fail",
@@ -94,6 +94,13 @@ func _run() -> void:
 	var sc: String = OS.get_environment("CB_TIME_SCALE")
 	_run_scale = maxf(float(sc), 0.01) if sc != "" else 1.0
 	print("Test speed: CB_TIME_SCALE x", _run_scale, " (tests in X1_TESTS run at x1: ", X1_TESTS.size(), ")")
+	if OS.get_environment("CB_SKIP_X1") == "1":   # designer, 2026-11-06: real-time checks are played by hand; routine runs skip them
+		var rt: Array[String] = []
+		for t in tests:
+			if not X1_TESTS.has(t):
+				rt.append(t)
+		tests = rt
+		print("CB_SKIP_X1: the ", X1_TESTS.size(), " real-time tests are skipped (played by the designer)")
 	process_frame.connect(_clk_tick)
 	var ran: int = 0
 	for t in tests:

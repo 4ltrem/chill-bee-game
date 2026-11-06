@@ -13,7 +13,7 @@ extends SceneTree
 
 const FarmInput := preload("res://tests/farm_input.gd")
 const MAIN_SCENE := "res://scenes/main.tscn"
-const SHOT_DIR := "res://reports/2026-11-04-0.1-harvest/"
+const SHOT_DIR := "res://reports/_runs/shots/play_loop/"
 # r3 numbers for the disabled UpgradeButton at $0 (reports/2026-11-04-prototype-0-r3.md): background (97, 87, 76)
 const DISABLED_BG := Color8(97, 87, 76)
 
@@ -571,7 +571,7 @@ func _run() -> void:
 	eq(cen.get("state"), _st(cen, "EMPTY"), "stops: the bucket is EMPTY before the extra batch")
 	ck(await _open_zoom("stops"), "stops: first stop open")
 	near(camc.size, float(_cv("zoom_size")), "stops: the first stop is at zoom_size", 0.05)
-	var n_fill: int = int(CAP_CELLS / CPF)
+	var n_fill: int = NF   # 0.1.3c: finish, then pan: every frame is uncapped (extras go to the pile) before the camera pans
 	for k in n_fill:
 		var fk: int = await _scrape_risen()
 		if k < n_fill - 1:

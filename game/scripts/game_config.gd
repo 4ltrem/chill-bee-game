@@ -37,6 +37,7 @@ extends Resource
 # --- Visual and flow tuning (not balance; also in Dev mode) ---
 @export var spin_impulse: float = 5.0                  # barrel spin added per counted turn (rad/s)
 @export var spin_decay: float = 3.0                    # barrel spin lost per second when not cranked (rad/s^2)
+@export var barrel_stop_seconds: float = 0.6            # PLACEHOLDER (0.1.3c, slow): the spinning barrel eases to rest at a quarter turn before the centrifuge lid lifts
 @export var spin_max: float = 18.0                     # barrel spin cap (rad/s)
 @export var slide_seconds: float = 0.3                 # a frame rising or sinking by frame_rise
 @export var close_delay_seconds: float = 0.5           # pause after the frame slides away before the close-up closes
@@ -54,11 +55,11 @@ extends Resource
 @export var pile_load_stagger_seconds: float = 0.03    # PLACEHOLDER (GDD TBD; Patricia): delay between pile cells flying into the bucket
 @export var icon_visual_px: int = 88                   # visible icon size; the touch area stays at least 120 (GDD 8)
 @export var min_cell_px: int = 20                      # the smallest cell allowed on screen at the zoom (a check, not a look tunable)
-@export var zoom_size: float = 6.966                     # PLACEHOLDER (GDD TBD; 0.1.1: Bob's tighter value to come): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
+@export var zoom_size: float = 6.966                    # PLACEHOLDER (GDD TBD; 0.1.1: Bob's tighter value to come): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
 
 # --- 0.1.3 (game/specs/0.1.3-next-revision.md, item 2): the bigger hive and the two camera stops ---
 @export var hive_scale: float = 1.4                    # the hive node's uniform scale (round 4, layout C); read when used, live in Dev mode
-@export var pan_zoom_size: float = 8.45                # second camera stop: ortho size framing the centrifuge, crate and truck (round 5 pan-quarter)
+@export var pan_zoom_size: float = 9.3                 # second camera stop: ortho size framing the centrifuge, crate and truck (round 5 pan-quarter)
 @export var pan_margin: float = 0.04                   # second camera stop: share of the view kept clear around the framed objects
 @export var camera_pan_seconds: float = 1.2            # PLACEHOLDER (slow on purpose): the pan from the first stop to the second
 

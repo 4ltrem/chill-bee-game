@@ -18,19 +18,22 @@ var _lid: Node3D
 var _spot: Node3D
 var _rotate_fall: bool
 var _follow_parent_scale: bool
+var _tip_late: bool
 var _closed_pos: Vector3
 var _closed_quat: Quaternion
 var _tween: Tween
 
 
 ## `follow_parent_scale` true: the lift height is in parent-space units, so a scaled parent (the hive, hive_scale) lifts the lid further.
+## `tip_late` true (the centrifuge lid): the tip waits for the drop, so a tilted lid never swings over the bucket while it moves sideways.
 ## `rotate_fall` false keeps the lid's own rotation (the centrifuge lid spins while it is on and lands flat).
-func _init(lid: Node3D, spot: Node3D, cfg: GameConfig, rotate_fall: bool, follow_parent_scale: bool = false) -> void:
+func _init(lid: Node3D, spot: Node3D, cfg: GameConfig, rotate_fall: bool, follow_parent_scale: bool = false, tip_late: bool = false) -> void:
 	_lid = lid
 	_spot = spot
 	config = cfg
 	_rotate_fall = rotate_fall
 	_follow_parent_scale = follow_parent_scale
+	_tip_late = tip_late
 	_closed_pos = lid.position
 	_closed_quat = lid.quaternion
 
@@ -68,7 +71,7 @@ func apply(s: float) -> void:
 	var down: float = df * df                            # then down
 	_lid.position = Vector3(lerpf(lifted.x, open_pos.x, across), lerpf(lifted.y, open_pos.y, down), lerpf(lifted.z, open_pos.z, across))
 	if _spot != null:   # every lid lands at the spot's rotation (the centrifuge lid's spin ends flat); the lift never turns it
-		_lid.quaternion = _closed_quat.slerp(_spot.quaternion, f)
+		_lid.quaternion = _closed_quat.slerp(_spot.quaternion, clampf((f - SIDE_PART) / 0.2, 0.0, 1.0) if _tip_late else f)
 
 
 ## Plays the path to open or closed, starting after `delay` seconds. Without a tree the lid jumps there.

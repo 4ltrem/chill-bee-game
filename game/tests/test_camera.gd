@@ -6,13 +6,11 @@ extends "res://tests/test_layout.gd"
 #
 # Measures, all from the live camera and the scene's boxes (nothing from the camera script):
 #  - silhouette: the 2D convex hull of every visible mesh box of a prop, projected; "share shown" = sample points (SIL_STEP px grid) inside any
-#    hull that lie in the viewport / all sample points inside any hull. The hive's share at the second stop must be HIVE_SHOW_MIN..MAX.
+#    hull that lie in the viewport / all sample points inside any hull. The hive's share at the second stop must be > 0 and < 100% (round 6).
 #  - V7 (M2 style row): the glass bucket's projected rect covers less than BUCKET_MAX_SHARE of the bottom-right third of the view
 #    (right half of the bottom third), and no wood mesh (wood.tres, crate_wood.tres) is cut by the left screen edge.
 
 const SIL_STEP: float = 10.0
-const HIVE_SHOW_MIN: float = 0.15
-const HIVE_SHOW_MAX: float = 0.35
 const QUAD_MIN_SHARE: float = 0.9     # of the visible hive samples, this share lies in the upper-right quadrant
 const BUCKET_MAX_SHARE: float = 0.5
 const LEAN_TOL_DEG: float = 1.0
@@ -276,26 +274,44 @@ func t_camera_first_zoom_cells() -> void:
 	_fin()
 
 
-# Item 2, first zoom: the hive and the centrifuge are wholly in frame (the crate and the truck need not be).
+# Round 6, first zoom: every frame of the risen rack (cells and bar) and the centrifuge's BucketMouth are on screen; the hive's and the
+# centrifuge's outer edges may crop. Round 6 A: zoom_size is the ZoomFraming value. Every frame rises to the same place, so the risen one stands for all.
 func t_camera_first_zoom_in_frame() -> void:
 	var z: Dictionary = await _first_zoom_setup()
 	if z.is_empty():
 		_fin()
 		return
+	var m: Node = z["m"]
 	var p: Dictionary = z["p"]
+	var tr: Dictionary = z["tr"]
 	var cam: Camera3D = _cam()
 	var vp: Rect2 = _vp()
-	for nm in ["Hive", "Centrifuge"]:
-		var r: Rect2 = _screen_of(_obbs(p[nm] as Node), cam)
-		ck(vp.encloses(r), "%s is wholly in frame at the first stop (screen box %s, viewport %s)" % [nm, str(r), str(vp)])
-	ck(not Rect2(Vector2.ZERO, vp.size * 0.3).encloses(_screen_of(_obbs(p["Hive"] as Node), cam)), "self-check: the hive does not fit 30% of the viewport, so 'in frame' can fail")
-	# a viewport the hive is only half in must be reported
-	var hr: Rect2 = _screen_of(_obbs(p["Hive"] as Node), cam)
-	ck(not Rect2(hr.position + hr.size * 0.5, hr.size).encloses(hr), "self-check: a rect shifted half a hive is not enclosing")
+	var hive: Node = p["Hive"]
+	var hc: Node = hive.find_child("Honeycomb", true, false)
+	var fb: Node = hive.find_child("FrameBar%d" % (int(tr["risen"]) + 1), true, false)
+	var rack: Array = _obbs(hc) if hc != null else []
+	if fb != null:
+		rack.append_array(_obbs(fb))
+	ck(rack.size() >= _cpf(), "the risen rack has boxes (%d: %d cells and the bar)" % [rack.size(), _cpf()])
+	var rr: Rect2 = _screen_of(rack, cam)
+	ck(vp.encloses(rr), "every frame of the risen rack is on screen (screen box %s, viewport %s)" % [str(rr), str(vp)])
+	ck(not Rect2(Vector2.ZERO, vp.size * 0.1).encloses(rr), "self-check: the rack does not fit a tenth of the viewport, so 'on screen' can fail")
+	ck(not Rect2(rr.position + rr.size * 0.5, rr.size).encloses(rr), "self-check: a rect shifted half a rack is not enclosing")
+	var mouth: Node3D = _nn(m, "BucketMouth") as Node3D
+	ck(mouth != null, "BucketMouth exists")
+	if mouth != null:
+		var mp: Vector2 = cam.unproject_position(mouth.global_position)
+		ck(not cam.is_position_behind(mouth.global_position) and vp.has_point(mp), "the centrifuge's BucketMouth is on screen (%s in %s)" % [str(mp), str(vp)])
+	var zf: Node = m.find_child("ZoomFraming", true, false)
+	ck(zf != null and zf.has_meta("zoom_size"), "ZoomFraming carries the zoom_size metadata")
+	if zf != null and zf.has_meta("zoom_size"):
+		near(float(cam.size), float(zf.get_meta("zoom_size")), 0.05, "the first stop's camera size equals the ZoomFraming metadata")
+		near(float(cv("zoom_size")), float(zf.get_meta("zoom_size")), 0.05, "config zoom_size equals the ZoomFraming metadata")
 	_fin()
 
 
-# Item 2, first zoom, the M2 V7 row: the glass bucket no longer fills the bottom-right third; no wood slab is cut off at the left edge.
+# Item 2, first zoom, the M2 V7 row: the glass bucket no longer fills the bottom-right third; no wood slab outside the hive is cut off at
+# the left edge (round 6: the hive's outer edges may crop now).
 func t_camera_first_zoom_v7() -> void:
 	var z: Dictionary = await _first_zoom_setup()
 	if z.is_empty():
@@ -316,9 +332,10 @@ func t_camera_first_zoom_v7() -> void:
 		ck(_overlap_area(Rect2(third.position, third.size), third) / third.get_area() >= BUCKET_MAX_SHARE, "self-check: a bucket that covers the whole third is reported")
 	var wood: int = 0
 	var cut: Array = []
+	var hive_n: Node = (z["p"] as Dictionary)["Hive"]
 	for mi in m.find_children("*", "MeshInstance3D", true, false):
 		var mm: MeshInstance3D = mi as MeshInstance3D
-		if mm.mesh == null or not mm.is_visible_in_tree():
+		if mm.mesh == null or not mm.is_visible_in_tree() or hive_n.is_ancestor_of(mm) or (m.find_child("Truck", true, false) != null and m.find_child("Truck", true, false).is_ancestor_of(mm)):   # round 6 A: the truck waits at the edge of the first zoom and may crop, like the hive
 			continue
 		var mp: String = _mat_path(mm)
 		if not (mp.ends_with("/wood.tres") or mp.ends_with("/crate_wood.tres")):
@@ -328,7 +345,7 @@ func t_camera_first_zoom_v7() -> void:
 		if r.position.x < -1.0 and r.end.x > 1.0 and r.end.y > 0.0 and r.position.y < vp.size.y:
 			cut.append("%s %s" % [mm.name, str(r)])
 	ck(wood > 0, "wood meshes exist to measure (%d)" % wood)
-	eq(cut, [], "no wood mesh is cut off by the left screen edge")
+	eq(cut, [], "no wood mesh outside the hive is cut off by the left screen edge")
 	ck(Rect2(-20.0, 100.0, 60.0, 50.0).position.x < -1.0 and Rect2(-20.0, 100.0, 60.0, 50.0).end.x > 1.0, "self-check: a slab spanning x -20..40 counts as cut")
 	_fin()
 
@@ -357,7 +374,7 @@ func t_camera_second_stop_in_frame() -> void:
 	_fin()
 
 
-# Item 2, second stop: 15-35% of the hive's silhouette shows, in the upper-right quadrant.
+# Round 6, second stop: the hive shows in the upper-right and is partly cut by the screen edge (share > 0 and < 100%).
 func t_camera_second_stop_hive_share() -> void:
 	var s: Dictionary = await _go_second_stop()
 	if s.is_empty():
@@ -371,7 +388,7 @@ func t_camera_second_stop_hive_share() -> void:
 	var st: Dictionary = _sil_stats(hulls, vp)
 	ck(int(st["total"]) > 200, "the silhouette was sampled (%d points at %s px)" % [int(st["total"]), str(SIL_STEP)])
 	var share: float = float(st["share"])
-	ck(share >= HIVE_SHOW_MIN and share <= HIVE_SHOW_MAX, "%.1f%% of the hive's silhouette shows at the second stop (want %.0f-%.0f%%; %d of %d points)" % [share * 100.0, HIVE_SHOW_MIN * 100.0, HIVE_SHOW_MAX * 100.0, int(st["shown"]), int(st["total"])])
+	ck(int(st["shown"]) > 0 and int(st["shown"]) < int(st["total"]), "the hive is partly shown: %.1f%% of its silhouette is on screen (want > 0 and < 100%%; %d of %d points)" % [share * 100.0, int(st["shown"]), int(st["total"])])
 	ck(int(st["shown"]) > 0 and float(st["quad"]) >= QUAD_MIN_SHARE, "the visible part is in the upper-right quadrant (%.0f%% of its points; centroid %s; want >= %.0f%%)" % [float(st["quad"]) * 100.0, str(st["centroid"]), QUAD_MIN_SHARE * 100.0])
 	_fin()
 
@@ -552,7 +569,7 @@ func t_camera_lid_lean_matches_hive() -> void:
 	var empty: int = _st(c, "EMPTY")
 	var done: bool = await _until(func() -> bool: return int(c.get("state")) == empty, float(cv("bottling_seconds_per_jar")) * 4.0 + 6.0)
 	ck(done, "bottling ended (EMPTY)")
-	await _wait(float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + 0.5)
+	await _wait(float(cv("barrel_stop_seconds")) + float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + 0.5)
 	var t1: float = _lid_tilt(lid)
 	ck(absf(t1 - tilt_hive) <= LEAN_TOL_DEG, "after bottling the centrifuge lid leans %.1f deg; the hive lid %.1f deg (+- %.0f deg)" % [t1, tilt_hive, LEAN_TOL_DEG])
 	ck(lid.global_position.distance_to(lean.global_position) <= 0.05, "the leaned lid sits at LidLeanSpot (%.3f units away)" % lid.global_position.distance_to(lean.global_position))

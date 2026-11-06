@@ -3,11 +3,11 @@ extends "res://tests/test_speed.gd"
 # Quinn: 0.1.3b layout tests, written from game/specs/0.1.3-next-revision.md (Changes 2, Contract "everywhere") and
 # game/specs/0.1.3-farm-grid-layouts.md (layout C, cell 2.0) before the code. Each file extends the one before it.
 # Cell centre: x = (col - 2) * 2.0, z = (row - 2) * 2.0. Layout C: hive (1,2), centrifuge (2,2), pile (2,3), crate (3,3)+(3,4),
-# truck (4,3)+(4,4), flowers at (0,3) (1,4) (2,0), cells given as (col,row) below. The hive moves 1.25 up-right on screen (the
-# round-5 pan-quarter), the truck (0.8, 0, 1.2) off its cells (Contract, Bob).
+# truck (4,3)+(4,4), flowers at (0,3) (1,4) (2,0), cells given as (col,row) below. The hive sits on its cell (round 6: the 1.25
+# pan offset is gone), the truck (0.8, 0, 1.2) off its cells (Contract, Bob).
 
 const LAYOUT_CELL: float = 2.0
-const HIVE_PAN_OFFSET: float = 1.25
+const HIVE_PAN_OFFSET: float = 0.0      # round 6: the hive stands on its layout-C cell
 const POS_TOL: float = 0.06
 
 
@@ -190,7 +190,7 @@ func t_layout_hive_scale_follows_config() -> void:
 	_fin()
 
 
-# Item 2: the objects sit on layout C's cells at cell 2.0; the hive is moved 1.25 up-right (on screen) from its cell.
+# Item 2: the objects sit on layout C's cells at cell 2.0; the hive stands on its cell (round 6).
 func t_layout_objects_on_cells() -> void:
 	var m: Node = await _mk_main()
 	if m == null:
@@ -204,9 +204,8 @@ func t_layout_objects_on_cells() -> void:
 	var cell: Vector3 = _cell_xz(2.0, 1.0)
 	var d: Vector3 = hive - cell
 	d.y = 0.0
-	near(d.length(), HIVE_PAN_OFFSET, "the hive stands %.2f from its layout-C cell (col 2, row 1) (%.3f)" % [HIVE_PAN_OFFSET, d.length()], 0.03)
-	# the camera looks along (-1,-1,-1): screen right is (1,0,-1), screen up on the ground is (-1,0,-1)
-	ck(d.dot(Vector3(1.0, 0.0, -1.0).normalized()) > 0.1 and d.dot(Vector3(-1.0, 0.0, -1.0).normalized()) > 0.1, "the offset is up-right on screen (%s)" % str(d))
+	near(d.length(), HIVE_PAN_OFFSET, "the hive stands on its layout-C cell (col 2, row 1), %.3f off" % d.length(), 0.03)
+	ck(d.length() <= POS_TOL, "the hive is within %.2f of its cell, not shifted (the round-5 offset was 1.25)" % POS_TOL)
 	var want: Array = [
 		["Centrifuge", _cell_xz(2.0, 2.0)],
 		["Pile", _cell_xz(3.0, 2.0)],

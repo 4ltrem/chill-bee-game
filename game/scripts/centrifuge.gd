@@ -60,6 +60,12 @@ var _spinner: Node3D
 var _lid: Node3D
 var _lid_spot: Node3D
 var _lid_motion: LidMotion
+var _stop_left: float = 0.0   # seconds of the barrel's ease-out still to run before the lid lifts
+var _stop_w0: float = 0.0
+var _stop_total: float = 0.0
+var _stop_k: float = 0.0
+var _stop_start: float = 0.0
+var _stop_target: float = 0.0
 var _mouth: Node3D
 var _heap_root: Node3D
 var _heap: Array[Node3D] = []
@@ -144,7 +150,31 @@ func close_lid(delay: float = -1.0) -> bool:
 
 func _open_lid() -> void:
 	lid_open = true
-	_move_lid_visual(true, 0.0)
+	var delay: float = 0.0
+	var stop_s: float = maxf(config.barrel_stop_seconds, 0.0)
+	if spin_speed > 0.01 and stop_s > 0.0 and _spinner != null:
+		# 0.1.3c: the barrel eases to rest (linear slow-down) at the next quarter turn, then the lid lifts
+		var quarter: float = PI * 0.5
+		var ang: float = _spinner.rotation.y
+		var turns: float = roundf((ang + spin_speed * stop_s * 0.5) / quarter)   # nearest quarter turn to a linear stop of barrel_stop_seconds
+		while (turns * quarter - ang) > spin_speed * stop_s * 0.95 and (turns - 1.0) * quarter > ang + 0.001:
+			turns -= 1.0
+		if turns * quarter <= ang + 0.001:
+			turns = ceilf(ang / quarter + 0.001)
+		_stop_target = turns * quarter
+		_stop_w0 = spin_speed   # starts at the current speed and only falls: speed = w0 * (1 - u)^k, ending exactly on the quarter turn
+		_stop_start = ang
+		var dist: float = _stop_target - ang
+		_stop_total = stop_s
+		if dist > spin_speed * stop_s * 0.95:   # slow barrel: the next quarter is too far for the time, so the stop is linear and stretches
+			_stop_total = 2.0 * dist / spin_speed
+		_stop_k = maxf(spin_speed * _stop_total / dist - 1.0, 0.0)
+		_stop_left = _stop_total
+		delay = _stop_total
+	elif _spinner != null:
+		spin_speed = 0.0
+		_spinner.rotation.y = snappedf(_spinner.rotation.y, PI * 0.5)
+	_move_lid_visual(true, delay)
 	lid_moved.emit(true)
 
 
@@ -392,7 +422,7 @@ func _ready() -> void:
 	if _spigot_jar != null:
 		_spigot_jar.visible = false
 	if _lid != null:
-		_lid_motion = LidMotion.new(_lid, _lid_spot, config, true)   # same path as the hive lid: lifts, tips and leans to the spot; the spin resumes when it closes
+		_lid_motion = LidMotion.new(_lid, _lid_spot, config, true, false, true)   # same path as the hive lid: lifts, tips and leans to the spot; the spin resumes when it closes
 		if _lid_spot != null:
 			_lid_motion.apply(1.0)   # starts EMPTY: the lid sits on the ground beside the bucket
 	else:
@@ -412,8 +442,20 @@ func _process(delta: float) -> void:
 	if holding and _hold_source == "mouse" and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		set_holding(false)
 	advance(delta)
+	var easing: bool = _stop_left > 0.0
+	if _stop_left > 0.0:
+		_stop_left = maxf(_stop_left - delta, 0.0)
+		var rest: float = _stop_left / maxf(_stop_total, 0.001)   # 1 at the start, 0 at the end
+		spin_speed = _stop_w0 * pow(rest, _stop_k)
+		if _spinner != null:   # on the ease curve: angle left = distance * rest^(k+1) (no end snap)
+			_spinner.rotation.y = _stop_target - (_stop_target - _stop_start) * pow(rest, _stop_k + 1.0)
+		if _stop_left <= 0.0:
+			spin_speed = 0.0
+			if _spinner != null:
+				_spinner.rotation.y = _stop_target
+			_stop_target = 0.0
 	if spin_speed > 0.0:
-		if _spinner != null:
+		if _spinner != null and not easing:
 			_spinner.rotate_y(spin_speed * delta)
 		if _lid != null and not lid_open:
 			_lid.rotate_y(spin_speed * delta)

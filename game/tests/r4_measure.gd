@@ -14,7 +14,7 @@
 extends SceneTree
 
 const FarmInput := preload("res://tests/farm_input.gd")
-const SHOT_DIR := "res://reports/2026-11-04-0.1-harvest/"
+const SHOT_DIR := "res://reports/_runs/shots/r4_measure/"
 const CAPPED_R3 := Color8(255, 198, 52)    # 0.1.1 reference: 0.1.0's measured capped colour (report 2026-11-04-0.1-harvest.md), accepted by the designer; revision 3's (229, 177, 45) is retired
 const UNCAPPED_R3 := Color8(255, 255, 59)  # 0.1.0 measured (report line 76); revision 3 was 255, 255, 57
 

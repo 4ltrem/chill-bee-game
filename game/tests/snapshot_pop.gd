@@ -20,7 +20,7 @@
 #      has left its slot in the 0.1 build, a flying copy replaces it). The cell is partly hidden by its raised Capped
 #      neighbours while it is big, differently in the two views, so this is a sanity check with a wide tolerance, 0.12, not a match.
 #   3. The settled ratio is exactly 1 and the first sample (T = 0) is 1.3 (the pop starts at scale 1.3), in both.
-# Outputs: crops of the cell (PNG, 96 x 96 px around it) per sample, and a CSV of the curves, in CB_OUT (default res://tests/snapshots/<tag>/).
+# Outputs: crops of the cell (PNG, 96 x 96 px around it) per sample, and a CSV of the curves, in CB_OUT (default res://reports/_runs/snapshots/<tag>/).
 # Exit code 0 only if every check holds AND the final "COMPLETED" line printed.
 extends SceneTree
 
@@ -174,7 +174,7 @@ func _interp(rows: Array, t: float, key: String) -> float:
 func _run() -> void:
 	var mode: String = OS.get_environment("CB_MODE") if OS.get_environment("CB_MODE") != "" else "check"
 	_tag = OS.get_environment("CB_TAG") if OS.get_environment("CB_TAG") != "" else "r4"
-	_out = OS.get_environment("CB_OUT") if OS.get_environment("CB_OUT") != "" else ProjectSettings.globalize_path("res://tests/snapshots/%s/" % _tag)
+	_out = OS.get_environment("CB_OUT") if OS.get_environment("CB_OUT") != "" else ProjectSettings.globalize_path("res://reports/_runs/snapshots/%s/" % _tag)
 	DirAccess.make_dir_recursive_absolute(_out)
 	# Reset to defaults equivalent (a stale user://dev_config.tres would override the default values)
 	if FileAccess.file_exists("user://dev_config.tres"):

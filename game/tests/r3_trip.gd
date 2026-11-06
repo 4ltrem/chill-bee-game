@@ -66,5 +66,6 @@ func _run() -> void:
 			best_img = root.get_texture().get_image()
 	print("TRIP: %d frames sampled; truck box on screen in %d of them; largest overlap of the truck's projected box with ShopPanel %.0f px2 at t=%.2f s (panel %s)" % [frames, on_screen_frames, worst, worst_t, str(panel)])
 	if best_img != null:
-		best_img.save_png(ProjectSettings.globalize_path("res://reports/2026-11-04-0.1-harvest/r4-m4-truck-trip-max-overlap.png"))
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://reports/_runs/shots/r3_trip/"))
+		best_img.save_png(ProjectSettings.globalize_path("res://reports/_runs/shots/r3_trip/r4-m4-truck-trip-max-overlap.png"))
 	quit()

@@ -255,4 +255,109 @@ func t_centrifuge_lid_rests_clear() -> void:
 	_fin()
 
 
+# 0.1.3c Barrel stop: after a spin the barrel eases to rest over barrel_stop_seconds (game time, +-1 frame), speed falling monotonically,
+# no snap, resting on a quarter turn, and the lid starts lifting only after it rests. Real frames, sampled after each one.
+func t_barrel_eases_to_stop() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	_set_cfg("bottling_seconds_per_jar", 0.3)
+	_set_cfg("spin_decay", 0.0)   # the barrel is still spinning when bottling ends, so the stop has something to ease
+	var stop_s: float = float(cv("barrel_stop_seconds"))
+	ck(stop_s > 0.0, "barrel_stop_seconds is a positive config value (%.2f)" % stop_s)
+	var c: Node = _nn(m, "Centrifuge")
+	var spinner: Node3D = c.find_child("Spinner", true, false) as Node3D
+	ck(spinner != null, "the centrifuge has a Spinner node")
+	if spinner == null:
+		_fin()
+		return
+	await _frames(3)
+	c.call("add_cells", 20, _jars_of(20))
+	c.call("close_lid")
+	await _wait(float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + float(cv("close_delay_seconds")) + 0.4)
+	c.call("begin_crank")
+	_crank_done(c)
+	var ev: Dictionary = {"t0": -1.0, "w_before": 0.0}
+	c.connect("lid_moved", func(open: bool) -> void:
+		if open and ev["t0"] < 0.0:
+			ev["t0"] = float(_gus()) / 1.0e6
+			ev["w_before"] = float(c.get("spin_speed")))
+	var samples: Array = []   # {t, w, a (unwrapped rad), p (lid progress)}
+	var prev: Dictionary = {}
+	var unwrapped: float = 0.0
+	var last_raw: float = 0.0
+	var limit: float = float(cv("bottling_seconds_per_jar")) * 6.0 + stop_s + 4.0
+	var t_begin: float = float(_gus()) / 1.0e6
+	var end_t: float = -1.0
+	while float(_gus()) / 1.0e6 - t_begin < limit and (end_t < 0.0 or float(_gus()) / 1.0e6 < end_t):
+		await process_frame
+		var bx: Basis = spinner.transform.basis
+		var raw: float = atan2(-bx.x.z, bx.x.x)
+		unwrapped += wrapf(raw - last_raw, -PI, PI)
+		last_raw = raw
+		var lm: Variant = c.get("_lid_motion")
+		var smp: Dictionary = {"t": float(_gus()) / 1.0e6, "w": float(c.get("spin_speed")), "a": unwrapped, "d": m.get_process_delta_time() * Engine.time_scale, "p": float((lm as LidMotion).progress) if lm != null else 0.0, "open": ev["t0"] >= 0.0}
+		if ev["t0"] >= 0.0:
+			if end_t < 0.0:
+				end_t = ev["t0"] + stop_s + float(cv("lid_lift_seconds")) + float(cv("lid_drop_seconds")) + 0.6
+				samples.append(prev)   # the last frame before the lid opened: the speed the stop starts from
+			samples.append(smp)
+		prev = smp
+	ck(ev["t0"] >= 0.0, "bottling ended and the lid opened")
+	ck(float(ev["w_before"]) >= 5.0, "the barrel was spinning when the lid was ordered open (%.2f rad/s)" % float(ev["w_before"]))
+	if ev["t0"] < 0.0 or samples.size() < 3:
+		_fin()
+		return
+	var t0: float = ev["t0"]
+	var dtmax: float = 0.0
+	for i in range(1, samples.size()):
+		dtmax = maxf(dtmax, float(samples[i]["t"]) - float(samples[i - 1]["t"]))
+	# speed falls monotonically to 0 (the samples start with the frame before the lid opened)
+	var mono: bool = true
+	var rest_i: int = -1
+	for i in range(1, samples.size()):
+		if float(samples[i]["w"]) > float(samples[i - 1]["w"]) + 1.0e-4:
+			mono = false
+		if rest_i < 0 and float(samples[i]["w"]) <= 1.0e-4:
+			rest_i = i
+	ck(mono, "the barrel's angular speed never rises while it stops")
+	ck(rest_i > 0, "the barrel's angular speed reaches 0")
+	var final_w: float = float(samples[samples.size() - 1]["w"])
+	ck(final_w <= 1.0e-4, "it stays at rest (%.4f rad/s)" % final_w)
+	if rest_i < 0:
+		_fin()
+		return
+	var took: float = float(samples[rest_i]["t"]) - t0
+	ck(absf(took - stop_s) <= dtmax + 0.02, "it comes to rest in barrel_stop_seconds (%.3f s, config %.3f, one frame %.3f)" % [took, stop_s, dtmax])
+	# no snap: the angle covered per game second (the frame's process delta x time_scale, so wall-clock jitter cannot fake a rise) never grows frame to frame (the last frame is clipped, so it can only be smaller)
+	var worst: float = 0.0
+	var worst_at: int = 0
+	for i in range(2, rest_i + 1):
+		var r1: float = absf(float(samples[i]["a"]) - float(samples[i - 1]["a"])) / maxf(float(samples[i]["d"]), 1.0e-6)
+		var r0: float = absf(float(samples[i - 1]["a"]) - float(samples[i - 2]["a"])) / maxf(float(samples[i - 1]["d"]), 1.0e-6)
+		if r1 - r0 > worst:
+			worst = r1 - r0
+			worst_at = i
+	ck(worst <= 0.35, "no frame turns the barrel faster than the frame before it (worst rise %.2f rad/s at sample %d)" % [worst, worst_at])
+	var jump: float = absf(float(samples[rest_i]["a"]) - float(samples[rest_i - 1]["a"]))
+	var prior: float = absf(float(samples[rest_i - 1]["a"]) - float(samples[rest_i - 2]["a"])) if rest_i >= 2 else jump
+	ck(jump <= prior + 0.02, "the step into rest is not a snap (%.3f rad, the frame before turned %.3f)" % [jump, prior])
+	var rest_deg: float = rad_to_deg(float(samples[rest_i]["a"]))
+	var off: float = absf(rest_deg - roundf(rest_deg / 90.0) * 90.0)
+	ck(off <= 1.0, "it rests on a multiple of 90 degrees (%.2f deg, %.2f off)" % [rest_deg, off])
+	# the lid starts lifting only after the barrel rests
+	var early: String = ""
+	var lifted: bool = false
+	for s in samples:
+		if float(s["p"]) > 0.001:
+			lifted = true
+			if float(s["t"]) - t0 < stop_s - dtmax - 0.02 and early == "":
+				early = "lid progress %.3f at %.3f s after the lid was ordered, barrel rests at %.3f s" % [float(s["p"]), float(s["t"]) - t0, took]
+	ck(lifted, "the lid does lift once the barrel has rested")
+	ck(early == "", "the lid does not lift before the barrel rests (%s)" % early)
+	_fin()
+
+
 # ---------------------------------------------------------------- nodes and config of 0.1.2

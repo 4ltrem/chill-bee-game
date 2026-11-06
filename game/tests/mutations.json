@@ -202,10 +202,10 @@
   "suite": "unit"
  },
  {
-  "name": "hive stays on its layout cell (no 1.25 pan offset)",
+  "name": "hive moved 1.25 off its layout cell",
   "file": "scenes/main.tscn",
-  "find": "1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.25)",
-  "replace": "1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)",
+  "find": "1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)",
+  "replace": "1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.25)",
   "expect": [
    "t_layout_objects_on_cells"
   ],
@@ -244,28 +244,28 @@
  {
   "name": "first zoom too far out: cells under min_cell_px",
   "file": "scripts/default_config.tres",
-  "find": "zoom_size = 6.966",
-  "replace": "zoom_size = 9.5",
+  "find": "\nzoom_size = ",
+  "replace": "\nzoom_size = 9.5 #",
   "expect": [
    "t_camera_first_zoom_cells"
   ],
   "suite": "unit"
  },
  {
-  "name": "first zoom too close: hive cut by the frame",
+  "name": "first zoom too close: risen rack cut by the frame",
   "file": "scripts/default_config.tres",
-  "find": "zoom_size = 6.966",
-  "replace": "zoom_size = 4.0",
+  "find": "\nzoom_size = ",
+  "replace": "\nzoom_size = 4.0 #",
   "expect": [
    "t_camera_first_zoom_in_frame"
   ],
   "suite": "unit"
  },
  {
-  "name": "second stop too wide: hive shows too much",
+  "name": "second stop too wide: hive wholly shown",
   "file": "scripts/default_config.tres",
-  "find": "pan_zoom_size = 8.878",
-  "replace": "pan_zoom_size = 14.0",
+  "find": "pan_zoom_size = 9.3",
+  "replace": "pan_zoom_size = 30.0",
   "expect": [
    "t_camera_second_stop_hive_share"
   ],
@@ -274,7 +274,7 @@
  {
   "name": "second stop too tight: truck cut off",
   "file": "scripts/default_config.tres",
-  "find": "pan_zoom_size = 8.878",
+  "find": "pan_zoom_size = 9.3",
   "replace": "pan_zoom_size = 6.5",
   "expect": [
    "t_camera_second_stop_in_frame"
@@ -389,6 +389,56 @@
   "replace": "size = Vector2(13, 13)",
   "expect": [
    "t_layout_truck_wheels_on_ground"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "first zoom so close the BucketMouth leaves the screen",
+  "file": "scripts/default_config.tres",
+  "find": "\nzoom_size = ",
+  "replace": "\nzoom_size = 2.0 #",
+  "expect": [
+   "t_camera_first_zoom_in_frame"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "second stop so tight the hive is off screen",
+  "file": "scripts/default_config.tres",
+  "find": "pan_zoom_size = 9.3",
+  "replace": "pan_zoom_size = 3.0",
+  "expect": [
+   "t_camera_second_stop_hive_share"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "barrel stops instantly (no ease)",
+  "file": "scripts/centrifuge.gd",
+  "find": "if spin_speed > 0.01 and stop_s > 0.0 and _spinner != null:",
+  "replace": "if false and stop_s > 0.0 and _spinner != null:",
+  "expect": [
+   "t_barrel_eases_to_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "lid opens before the barrel rests",
+  "file": "scripts/centrifuge.gd",
+  "find": "\t\tdelay = _stop_total\n",
+  "replace": "\t\tdelay = 0.0\n",
+  "expect": [
+   "t_barrel_eases_to_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "barrel rests off a quarter turn",
+  "file": "scripts/centrifuge.gd",
+  "find": "_stop_target = turns * quarter",
+  "replace": "_stop_target = ang + spin_speed * stop_s * 0.5 + 0.4",
+  "expect": [
+   "t_barrel_eases_to_stop"
   ],
   "suite": "unit"
  }
