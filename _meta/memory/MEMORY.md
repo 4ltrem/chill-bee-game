@@ -5,7 +5,7 @@
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
 - [0.1.3 play-test](playtest-0-1-3.md) — 11/6: UI broken (Back inconsistent, Spin/Harvest move, x5 tag overlaps); noted, not fixing yet
-- [Session handoff](session-handoff.md) — read first: one folder on milestone/0.1 (no worktrees); 0.1.4 + M3 (A5) specs drafted, awaiting approval
+- [Session handoff](session-handoff.md) — read first: 0.1.4 + M3 specs approved 11/6; next: build M3 goal_agent.py, then it builds 0.1.4 (A5 demo, itch)
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
 - [A/B comparison page](ab-comparison-page.md) — every creative A/B choice becomes a new section of the one Design Votes artifact; never a new artifact or browser tab
