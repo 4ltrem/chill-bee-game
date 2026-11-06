@@ -1,0 +1,14 @@
+{
+ "page": "https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa",
+ "round": 5,
+ "read": "2026-11-05",
+ "pick": {"first_zoom": "z1-tight", "second_stop": "pan-quarter"},
+ "votes": [
+  {"id": "r5-z1-tight", "vote": "yes", "min_cell_px": 21.8, "zoom_size": 6.966, "note": "can zoom in even closer, crate doesn't need to be visible, also a jar is hanging off the crate"},
+  {"id": "r5-z1-mid", "vote": "no", "min_cell_px": 20.6, "zoom_size": 7.361, "note": ""},
+  {"id": "r5-z1-loose", "vote": "no", "min_cell_px": 19.2, "zoom_size": 7.886, "note": ""},
+  {"id": "r5-pan-quarter", "vote": "yes", "zoom_size": 8.878, "hive_shift_world": 1.25, "note": "looks good,  truck is hovering off the green plane so maybe extend it"},
+  {"id": "r5-pan-third", "vote": "no", "zoom_size": 8.878, "hive_shift_world": 1.0, "note": ""},
+  {"id": "r5-pan-half", "vote": "no", "zoom_size": 8.878, "hive_shift_world": 0.25, "note": ""}
+ ]
+}

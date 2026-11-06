@@ -210,10 +210,10 @@ radius = 0.7
 script = ExtResource("3_bees")
 
 [node name="Centrifuge" parent="FarmWorld" instance=ExtResource("6_centrifuge")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.758, 0, 0.258)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4, 0, 0.9)
 
 [node name="Pile" type="Node3D" parent="FarmWorld"]
-transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, 2.278, 0, -0.272)
+transform = Transform3D(0.28, 0, 0, 0, 0.28, 0, 0, 0, 0.28, -2.7, 0, 2.0)
 script = ExtResource("11_pile")
 
 [node name="JarCrate" parent="FarmWorld" instance=ExtResource("9_crate")]
@@ -225,6 +225,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, 4.2)
 [node name="ZoomFraming" type="Marker3D" parent="FarmWorld"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.24, -0.306, -1.929)
 metadata/zoom_size = 2.4
+
+[node name="ZoomFramingB" type="Marker3D" parent="FarmWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0.8)
+metadata/zoom_size = 11.0
 
 [node name="FarmUIRoot" type="CanvasLayer" parent="."]
 

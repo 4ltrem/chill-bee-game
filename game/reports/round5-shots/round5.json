@@ -1,0 +1,50 @@
+[
+	{
+		"change": "hive + centrifuge (lid on its own cell) framed with a 3% margin on each side; hive 1.4x, 7 x 5 cells; the crate and truck are out of frame",
+		"file": "z1-tight.png",
+		"label": "First zoom, tight: hive + centrifuge",
+		"min_cell_px": 21.8,
+		"zoom_size": 6.966
+	},
+	{
+		"change": "hive + centrifuge (lid on its own cell) framed with a 6% margin on each side; hive 1.4x, 7 x 5 cells; the crate and truck are out of frame",
+		"file": "z1-mid.png",
+		"label": "First zoom, mid: hive + centrifuge",
+		"min_cell_px": 20.6,
+		"zoom_size": 7.361
+	},
+	{
+		"change": "hive + centrifuge (lid on its own cell) framed with a 10% margin on each side; hive 1.4x, 7 x 5 cells; the crate and truck are out of frame",
+		"file": "z1-loose.png",
+		"label": "First zoom, loose: hive + centrifuge",
+		"min_cell_px": 19.2,
+		"zoom_size": 7.886
+	},
+	{
+		"change": "camera panned to the full centrifuge + crate + truck (margin 4%, above the shop panel), hive 24% showing in the upper-right corner (share of its on-screen silhouette); hive shifted 1.25 world units up-right on screen (-z) from its layout cell, because at the layout position the full centrifuge + crate + truck already leave more of it showing; centrifuge lid on its own cell 7; truck nudged (0.8, 1.2) so it clears the crate; HUD kept off the hive",
+		"file": "pan-quarter.png",
+		"hive_shift_world": 1.25,
+		"hive_visible": 0.24,
+		"label": "Second stop, hive about quarter showing",
+		"min_cell_px": null,
+		"zoom_size": 8.878
+	},
+	{
+		"change": "camera panned to the full centrifuge + crate + truck (margin 4%, above the shop panel), hive 34% showing in the upper-right corner (share of its on-screen silhouette); hive shifted 1.00 world units up-right on screen (-z) from its layout cell, because at the layout position the full centrifuge + crate + truck already leave more of it showing; centrifuge lid on its own cell 7; truck nudged (0.8, 1.2) so it clears the crate; HUD kept off the hive",
+		"file": "pan-third.png",
+		"hive_shift_world": 1,
+		"hive_visible": 0.34,
+		"label": "Second stop, hive about third showing",
+		"min_cell_px": null,
+		"zoom_size": 8.878
+	},
+	{
+		"change": "camera panned to the full centrifuge + crate + truck (margin 4%, above the shop panel), hive 54% showing in the upper-right corner (share of its on-screen silhouette); hive shifted 0.25 world units up-right on screen (-z) from its layout cell, because at the layout position the full centrifuge + crate + truck already leave more of it showing; centrifuge lid on its own cell 7; truck nudged (0.8, 1.2) so it clears the crate; HUD kept off the hive",
+		"file": "pan-half.png",
+		"hive_shift_world": 0.25,
+		"hive_visible": 0.54,
+		"label": "Second stop, hive about half showing",
+		"min_cell_px": null,
+		"zoom_size": 8.878
+	}
+]

@@ -1,0 +1,42 @@
+[
+	{
+		"change": "none: today's 7 x 5 rack, hive 1.0x (frame 0.99 x 0.61 world)",
+		"file": "a-1-uncap.png",
+		"label": "accept small cells",
+		"min_cell_px": 17.1,
+		"option": "A",
+		"zoom_size": 6.333
+	},
+	{
+		"change": "camera framed on the three rects (margin 7%); centrifuge lid spot moved to local (-3.1, 0.075, 0.8) = world (-2.0, 0.05, 0.5), the empty cell west of the centrifuge",
+		"file": "pan.png",
+		"label": "second camera stop: centrifuge (full), crate, truck",
+		"min_cell_px": null,
+		"option": "pan",
+		"zoom_size": 8.257
+	},
+	{
+		"change": "whole hive scaled 1.4x (body 1.82, lid 1.96 inside the 2.0 cell): frame 1.38 x 0.85 world, cells x1.4, 7 x 5 kept",
+		"file": "c-1-uncap.png",
+		"label": "bigger frames",
+		"min_cell_px": 21.6,
+		"option": "C",
+		"zoom_size": 7.032
+	},
+	{
+		"change": "5 x 4 cells (20, was 35) on the same frame: cell pitch and size x1.25, hive 1.0x",
+		"file": "c-2-uncap.png",
+		"label": "fewer cells",
+		"min_cell_px": 21.4,
+		"option": "C",
+		"zoom_size": 6.333
+	},
+	{
+		"change": "hive 1.4x and 5 x 4 cells at pitch 1.25: cells x1.75",
+		"file": "c-3-uncap.png",
+		"label": "both",
+		"min_cell_px": 26.9,
+		"option": "C",
+		"zoom_size": 7.032
+	}
+]

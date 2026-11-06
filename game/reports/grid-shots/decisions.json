@@ -1,0 +1,106 @@
+{
+ "page": "https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa",
+ "layout": "C",
+ "read": "2026-11-05",
+ "votes": [
+  {
+   "cell_size": 1.5,
+   "farm_camera_size": 19.422,
+   "file": "c1.5-z1.png",
+   "min_cell_px": 74.6,
+   "zoom": 1,
+   "zoom_size": 1.451,
+   "id": "c1.5-z1",
+   "vote": "no",
+   "note": ""
+  },
+  {
+   "cell_size": 1.5,
+   "farm_camera_size": 19.422,
+   "file": "c1.5-z2.png",
+   "min_cell_px": 19.1,
+   "zoom": 2,
+   "zoom_size": 5.66,
+   "id": "c1.5-z2",
+   "vote": "no",
+   "note": ""
+  },
+  {
+   "cell_size": 1.5,
+   "farm_camera_size": 19.422,
+   "file": "c1.5-z3.png",
+   "min_cell_px": 18.9,
+   "zoom": 3,
+   "zoom_size": 5.717,
+   "id": "c1.5-z3",
+   "vote": "no",
+   "note": ""
+  },
+  {
+   "cell_size": 2,
+   "farm_camera_size": 25.896,
+   "file": "c2.0-z1.png",
+   "min_cell_px": 74.6,
+   "zoom": 1,
+   "zoom_size": 1.451,
+   "id": "c2-z1",
+   "vote": "no",
+   "note": ""
+  },
+  {
+   "cell_size": 2,
+   "farm_camera_size": 25.896,
+   "file": "c2.0-z2.png",
+   "min_cell_px": 17.1,
+   "zoom": 2,
+   "zoom_size": 6.333,
+   "id": "c2-z2",
+   "vote": "yes",
+   "note": "I like this, new variation only zoomed in on centrifuge and hive, after centrifuge is full the camera pans to focusing on the  centrifuge, the crate and truck"
+  },
+  {
+   "cell_size": 2,
+   "farm_camera_size": 25.896,
+   "file": "c2.0-z3.png",
+   "min_cell_px": 17.1,
+   "zoom": 3,
+   "zoom_size": 6.333,
+   "id": "c2-z3",
+   "vote": "maybe",
+   "note": ""
+  },
+  {
+   "cell_size": 2.4,
+   "farm_camera_size": 31.075,
+   "file": "c2.4-z1.png",
+   "min_cell_px": 74.6,
+   "zoom": 1,
+   "zoom_size": 1.451,
+   "id": "c2.4-z1",
+   "vote": "no",
+   "note": ""
+  },
+  {
+   "cell_size": 2.4,
+   "farm_camera_size": 31.075,
+   "file": "c2.4-z2.png",
+   "min_cell_px": 15.8,
+   "zoom": 2,
+   "zoom_size": 6.871,
+   "id": "c2.4-z2",
+   "vote": "no",
+   "note": ""
+  },
+  {
+   "cell_size": 2.4,
+   "farm_camera_size": 31.075,
+   "file": "c2.4-z3.png",
+   "min_cell_px": 15.8,
+   "zoom": 3,
+   "zoom_size": 6.871,
+   "id": "c2.4-z3",
+   "vote": "no",
+   "note": ""
+  }
+ ]
+}

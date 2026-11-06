@@ -1,0 +1,53 @@
+{
+ "page": "https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa",
+ "round": 4,
+ "read": "2026-11-05",
+ "pick": "C",
+ "votes": [
+  {
+   "id": "r4-a-1-uncap",
+   "option": "A",
+   "label": "accept small cells",
+   "file": "a-1-uncap.png",
+   "min_cell_px": 17.1,
+   "zoom_size": 6.333,
+   "vote": "no",
+   "note": ""
+  },
+  {
+   "id": "r4-c-1-uncap",
+   "option": "C",
+   "label": "bigger frames",
+   "file": "c-1-uncap.png",
+   "min_cell_px": 21.6,
+   "zoom_size": 7.032,
+   "change": "whole hive scaled 1.4x, 7 x 5 kept",
+   "vote": "yes",
+   "note": "you can zoom in even closer the hive and centrifuge the truck and crate dont need to be visible fgor the first zoom only the second in which the hive will be partly visible oin the upper right corner of the screen"
+  },
+  {
+   "id": "r4-c-3-uncap",
+   "option": "C",
+   "label": "both",
+   "file": "c-3-uncap.png",
+   "min_cell_px": 26.9,
+   "zoom_size": 7.032,
+   "change": "hive 1.4x and 5 x 4 cells at pitch 1.25",
+   "vote": "yes",
+   "note": ""
+  },
+  {
+   "id": "r4-pan",
+   "option": "pan",
+   "label": "second camera stop: centrifuge, crate, truck",
+   "file": "pan.png",
+   "zoom_size": 8.257,
+   "vote": "no",
+   "note": ""
+  }
+ ],
+ "designer_followups_2026-11-05": [
+  "Deep Frame: purchased frames are 2x longer and take more of the screen",
+  "Rule: the first zoom always has the hive and centrifuge in focus; truck and crate only in the second stop, with the hive partly visible in the upper-right corner"
+ ]
+}

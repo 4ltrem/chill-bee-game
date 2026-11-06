@@ -1,0 +1,74 @@
+[
+	{
+		"cell_size": 1.5,
+		"farm_camera_size": 19.422,
+		"file": "c1.5-z1.png",
+		"min_cell_px": 74.6,
+		"zoom": 1,
+		"zoom_size": 1.451
+	},
+	{
+		"cell_size": 1.5,
+		"farm_camera_size": 19.422,
+		"file": "c1.5-z2.png",
+		"min_cell_px": 19.1,
+		"zoom": 2,
+		"zoom_size": 5.66
+	},
+	{
+		"cell_size": 1.5,
+		"farm_camera_size": 19.422,
+		"file": "c1.5-z3.png",
+		"min_cell_px": 18.9,
+		"zoom": 3,
+		"zoom_size": 5.717
+	},
+	{
+		"cell_size": 2,
+		"farm_camera_size": 25.896,
+		"file": "c2.0-z1.png",
+		"min_cell_px": 74.6,
+		"zoom": 1,
+		"zoom_size": 1.451
+	},
+	{
+		"cell_size": 2,
+		"farm_camera_size": 25.896,
+		"file": "c2.0-z2.png",
+		"min_cell_px": 17.1,
+		"zoom": 2,
+		"zoom_size": 6.333
+	},
+	{
+		"cell_size": 2,
+		"farm_camera_size": 25.896,
+		"file": "c2.0-z3.png",
+		"min_cell_px": 17.1,
+		"zoom": 3,
+		"zoom_size": 6.333
+	},
+	{
+		"cell_size": 2.4,
+		"farm_camera_size": 31.075,
+		"file": "c2.4-z1.png",
+		"min_cell_px": 74.6,
+		"zoom": 1,
+		"zoom_size": 1.451
+	},
+	{
+		"cell_size": 2.4,
+		"farm_camera_size": 31.075,
+		"file": "c2.4-z2.png",
+		"min_cell_px": 15.8,
+		"zoom": 2,
+		"zoom_size": 6.871
+	},
+	{
+		"cell_size": 2.4,
+		"farm_camera_size": 31.075,
+		"file": "c2.4-z3.png",
+		"min_cell_px": 15.8,
+		"zoom": 3,
+		"zoom_size": 6.871
+	}
+]
