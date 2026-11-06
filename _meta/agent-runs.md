@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-186 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+187 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -96,11 +96,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Rex (script-runner) | post-ICM | 6 | 20,890 | 193,306 | 617 s |
 | **All** | | **93** | **71,066** | **1,710,784** | 791 s |
 
-**Orchestrator** (13 runs)
+**Orchestrator** (14 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 13 | — | 31,755,575 | 30,418 s |
+| Orchestrator (main session) | post-ICM | 14 | — | 29,841,850 | 28,291 s |
 
 **Style loop** (7 runs)
 

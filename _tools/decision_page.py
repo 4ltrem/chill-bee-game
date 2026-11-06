@@ -76,6 +76,10 @@ def build(root=None):
         if o and key > newest:
             still_open, newest = o, key
     decisions.sort(key=lambda d: (d["date"], int(d["id"][1:])))
+    for a, b in zip(decisions, decisions[1:]):
+        if int(b["id"][1:]) < int(a["id"][1:]):
+            print(f"warning: {b['id']} ({b['date']}) is numbered below {a['id']} ({a['date']}); "
+                  "number decisions in date order", file=sys.stderr)
     topics = list(dict.fromkeys(d["topic"] for d in decisions))
     data = {"decisions": decisions, "open": still_open, "sessions": len(logs), "letters": letters(topics)}
     payload = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")

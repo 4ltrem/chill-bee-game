@@ -24,5 +24,5 @@ Paths are from the repository root. "Designer" is the user. Decisions about a si
 - Files: `game/tests/model_shots.gd`
 
 ### D97 · 2026-11-05 · Workspace & agents · Rex, the Script Runner
-- Decided: Martin hired Rex (`script-runner`, Haiku) to run test suites, builds, mutation and shot scripts and report their summaries; Quinn's definition was to change after 0.1.3 (applied 2026-11-06, D104).
+- Decided: Martin hired Rex (`script-runner`, Haiku) to run test suites, builds, mutation and shot scripts and report their summaries; Quinn's definition was to change after 0.1.3 (applied 2026-11-06, D102).
 - Files: `.claude/agents/script-runner.md`, `_meta/team.md`

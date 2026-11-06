@@ -52,7 +52,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 
 - **Build M3 in a fresh session after the weekly reset (Sat 11/7 9:00 Toronto):** `_tools/goal_agent.py` scan/gaps/priority_score with tests, then `--plan` on 0.1.4 for the designer, `--dry-run`, then the real run building 0.1.4 on `milestone/0.1.4` in the main folder; upload 0.1.4 to itch; write `GOAL_AGENT.md`. A5 due 11/15, 11:59 ET.
 - `build.py`'s web smoke test: the 100 s wait still shows the loading spinner; it matters now, since 0.1.4 goes on itch.
-- Run `style_critic_check.py` with Vera's new scores (D106).
+- Run `style_critic_check.py` with Vera's new scores (D101).
 - The farm ground is 18 × 18, so the zoom shows no sky around the diorama; about 14 × 14 would bring the floating look back.
 - Patricia's Edit tool writes CRLF into `main.gd`; git normalises it on commit.
 - Budget guard: reworked on 2026-11-05 (D95); confirm the 80% complaint is resolved.

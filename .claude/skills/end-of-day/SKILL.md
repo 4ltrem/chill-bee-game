@@ -30,7 +30,8 @@ It copies every transcript that is not yet exported, or has changed since its ex
 In that folder, create `decisions.md` from `_templates/decisions.md` if it does not exist yet; otherwise update it (the routine may run twice in one session).
 
 - Add every decision made in this session that is not logged yet: process, architecture, model, rule and tooling decisions, and anything the designer explicitly decided or deferred. Decisions about a single draft or proposal belong in that file's `decided:` / `decision:` frontmatter, not here, but a deferral or a rule change that came with them does belong here.
-- Number them after the highest `D<n>` in any `_meta/sessions/*/decisions.md` (IDs are global across sessions and machines).
+- Number them after the highest `D<n>` in any `_meta/sessions/*/decisions.md` (IDs are global across sessions and machines), in the order they were made, not the order you write them: find each one's first decision moment in the transcript and list them by it, so IDs and dates rise together.
+- Dates are the designer's local date in Toronto (America/Toronto), never UTC: transcript timestamps are UTC, so a decision at 02:51Z on 11/6 is dated 11/5 (21:51 Toronto). A session past midnight gets both dates.
 - Use the strict format the template shows: `### D<n> · <YYYY-MM-DD> · <Topic> · <Title>`, then `- Label: text` bullets (`Decided` first, then `Why`, `Rejected`, `Files`, or another label). Reuse an existing topic name when one fits: Workspace & agents, Pipeline design, Critic quality, Cost & structure, Bee Journal rules, Research & blackboard, Models, Records & deliverables.
 - Rewrite `## Still open` as the full current list: carry over unresolved items from the newest previous log, drop resolved ones, add new ones. The page shows only the newest session's list.
 - Write for the designer reading it later: plain sentences, what was decided and why, real file paths.
