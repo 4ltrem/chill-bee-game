@@ -414,7 +414,13 @@ func t_camera_second_stop_hud_clear() -> void:
 		if not (c is FloatingIcon):
 			controls.append(c)
 	ck(controls.size() > 0, "HUD controls are visible at the second stop (%d)" % controls.size())
-	eq(_hud_hits(controls, hive_rect), [], "no HUD control overlaps the hive's visible screen rect %s" % str(hive_rect))
+	# 0.1.4 spec item 3: Back is "a screen-space button in the top-right corner in the first zoom and at the second stop", and the
+	# hive shows in the upper-right there, so Back may meet the hive's box; every other control must stay clear of it.
+	var non_back: Array = []
+	for c in controls:
+		if (c as Node).name != "BackButton":
+			non_back.append(c)
+	eq(_hud_hits(non_back, hive_rect), [], "no HUD control overlaps the hive's visible screen rect %s" % str(hive_rect))
 	eq(_hud_hits(controls, cen_rect), [], "no HUD control overlaps the centrifuge's screen rect %s" % str(cen_rect))
 	# the checks can fail: a control placed on each rect is reported
 	var probe := Button.new()

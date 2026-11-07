@@ -690,3 +690,150 @@ Quinn should add a test for a second-stop pour with a waiting pile.
 
 - Check `contract`: PASS
 - Check `tests`: PASS
+- Green: checkpoint `90b18b9` on `milestone/0.1.4`
+
+## Pass 8: scan (2026-11-07T13:51:52-05:00)
+
+Unit results from `game/reports/_runs/20261107-134836/unit.log`. 1 of 17 goals done.
+
+### Gaps
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
+| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ ledger 90e03c6 |
+| C3 Back in one fixed place | change | Patricia, Bob | missing | none found |
+| C4 Speed tag clear of the top info | change | Bob | partial (built, waits on its tests) | ✓ ledger fb94e04 |
+| C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
+| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
+| C7 The pile loads on its own at the second stop | change | Patricia | partial (built, waits on its tests) | ✓ ledger 90b18b9 |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
+| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
+| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
+| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
+| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
+| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
+| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
+
+### Order
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C3 Back in one fixed place | 10.9 | 2 | 3 | 1.1 | 1 | 2 goal(s) wait on it; play-test fix; cost 1.1 (Patricia, Bob) |
+| 2 | C1 Harvest button is the honey meter | 8.9 | 2 | 2 | 1.1 | 1 | 2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob) |
+| 3 | C6 Housekeeping from 0.1.3: | 7.27 | 2 | 1 | 0.73 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia) |
+| 4 | T2.1 no two HUD controls overlap, and none is cut off b | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 5 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 6 | T4.1 Back's rect is in the top-right quadrant, and the  | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 7 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C1, C3, C5, C6 |
+| 9 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C1 |
+| 10 | T3.1 Back has the same screen rect in the first zoom an | 0.0 | 0 | 3 | 0.62 | 0 | waits on C3 |
+| 11 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C5 |
+| 12 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C5: Bigger hive frames and combs
+  - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
+  - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
+
+Next: **C3** (score 10.9: 2 goal(s) wait on it; play-test fix; cost 1.1 (Patricia, Bob)).
+
+### Step: C3 (2026-11-07T13:51:52-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C3-patricia.md` (931 chars)
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/C3-bob.md` (978 chars)
+- Budget guard for Patricia: allow (reading 4 min old)
+- Budget guard for Bob: allow (reading 4 min old)
+
+**Bob** (60,321 tokens, 4 turns, 11 s):
+
+Items 3 and 4 were already in place in `scenes/main.tscn`, so I changed no files. `python -I _tools/contract_check.py` passes with 67 lookups and 0 unresolved. I did not render the scene.
+
+- **Back button:** `HarvestUIRoot/HarvestUI/BackButton` is anchored top-right with `anchors_preset = 1`. Its offsets are (-144, 16, -24, 136) and `grow_horizontal = 0`, which matches the handoff.
+- **Speed tag:** `FarmUIRoot/FarmUI/Margin/Column/TopInfo/DevSpeedTag` is the last child of `TopInfo`, after `PausedLabel`. It has `layout_mode = 2`, `horizontal_alignment = 0` and `visible = false`.
+
+`git status` shows no uncommitted changes in `game/scenes`. That means the edits were already committed, or I mis-read the state.
+
+Open questions: none for these two items. Patricia's two open questions in the handoff, on frame scale and `frame_rise`, belong to Item 5 and I did not touch them.
+
+
+**Patricia** (106,099 tokens, 11 turns, 22 s):
+
+Back is now fixed in the top-right corner. The 0.1.3c scan that moved it is gone. `contract_check.py` passes (62 lookups, 0 unresolved). I did not run the unit or play-loop tests.
+
+**Files changed**
+- `scripts/main.gd`:
+  - Deleted `_move_back_button` (the Back scan).
+  - Deleted the `_back_saved` variable.
+  - Deleted the layout restore in `_leave_second_stop_hud`.
+  - `_enter_second_stop_hud` no longer moves Back.
+- `scripts/harvest_ui.gd`: comment only. It still finds `BackButton` by name and shows it in the first zoom and at the second stop.
+
+**Node used:** `HarvestUIRoot/HarvestUI/BackButton`. It needs Bob's top-right anchoring: `anchors_preset = 1`, offsets about (-144, 16, -24, 136), `grow_horizontal = 0`.
+
+**Open questions:** None for item 3.
+
+**Quinn:** A test that Back's global rect is identical in the first zoom and at the second stop would cover this. A press-test of Back at the second stop would also help.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      132 passed, 1 failed  (exit 1, 194 noise lines dropped)  game/reports/_runs/20261107-135216/unit.log
+    FAIL  t_camera_second_stop_hud_clear  no HUD control overlaps the hive's visible screen rect [P: (395.162, 61.98021), S: (320, 320)]: expected [] got ["BackButton [P: (576, 16), S: (120, 120)]"]  (6007 ms)
+```
+
+#### Fix round 1: to Patricia, Bob, Quinn
+
+- Budget guard for Patricia: allow (reading 3 min old)
+- Budget guard for Bob: allow (reading 3 min old)
+- Budget guard for Quinn: allow (reading 3 min old)
+
+**Bob** (49,887 tokens, 5 turns, 9 s):
+
+I changed nothing, because this failure can't be fixed in `scenes/` or `materials/`.
+
+`BackButton` is correctly placed in `main.tscn`. It is anchored top-right at (576, 16), 120×120 px. That position is what spec item 3 asks for.
+
+The hive's visible rect at the second stop is (395, 62) with size 320×320, so it covers x 395–715 and y 62–382. That is the upper-right area, and `BackButton` sits inside it. This follows from the camera framing in `game/scripts/`, which puts the hive in the upper-right. Spec item 2 asks for that framing, and `t_camera_second_stop_hive_share` tests it.
+
+Moving `BackButton` out of the rect would break the top-right placement from item 3. It would also drop it below the 120 px minimum size and the top-corner test. The spec items conflict, so the designer needs to decide one of these:
+- Patricia shifts the camera so the hive's visible rect stays clear of the top-right 120×136 px corner.
+- The test excludes `BackButton` from the hive-rect check, as it already does for `FloatingIcon`.
+
+
+**Patricia** (172,138 tokens, 9 turns, 31 s):
+
+I made no changes. The fix isn't something `scripts/` can settle without changing a tuned value or the spec, so it needs a decision.
+
+**Cause:** `t_camera_second_stop_hud_clear` fails because the spec's fixed top-right Back button overlaps the hive at the second stop. Back is at x 576–696, y 16–136. The visible hive is at x 395–715, y 62–382. `second_stop_pose()` in `main.gd` frames the centrifuge, crate and truck at the lower-left, above the shop panel. That leaves the hive in the upper-right, under Back. Back is correctly placed per spec item 3, and the same spec has it unmoved at the second stop.
+
+**Options:**
+1. **Raise `pan_zoom_size`** from 9.3 in `default_config.tres` and `game_config.gd`. It zooms out and moves the hive away from the corner, but it is a design value the designer tunes, so I won't change it on my own.
+2. **Change the test or spec.** Exempt Back from the hive check, as the test already does for anchored buttons, or accept that Back may cover part of the hive. That is Quinn's or Gerard's call.
+
+Which option do you want?
+
+
+**Quinn** (77,069 tokens, 6 turns, 33 s):
+
+`t_camera_second_stop_hud_clear` now passes. I reran only that test (`CB_ONLY=t_camera_second_stop_hud_clear`): 1 passed, 0 failed. I did not rerun the full suite, so the other 132 are unchecked after the edit. Nothing was committed.
+
+**Cause:** the old expectation was that no non-Spin control overlaps the hive's visible screen rect. Spec item 3 puts Back top-right, and at the second stop the hive sits in the upper-right. Back is at (576,16), size 120×120, and the hive rect is at (395,62), size 320×320, so they overlap.
+
+**Fix:** in `game/tests/test_camera.gd`, the hive-rect check now skips `BackButton`. A comment beside it quotes spec item 3: "a screen-space button in the top-right corner in the first zoom and at the second stop".
+
+**Still enforced:** Back must stay clear of the centrifuge rect. Every other control must stay clear of both the hive and centrifuge rects.
+
+**Flag for the designer:** the spec lets Back cover part of the hive at the second stop. If that overlap is unwanted, the spec needs a different Back position or hive framing.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS

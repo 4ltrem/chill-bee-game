@@ -39,7 +39,6 @@ var _cam_tween: Tween
 var _crate: Node3D
 var _closing_to_second: bool = false   # the zoom now closing ends at the second stop (bucket full) instead of the farm view
 var _at_second_stop: bool = false
-var _back_saved: Dictionary = {}   # BackButton's layout before the second stop moved it
 var _spin_pending: bool = false        # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
 var _filled_in_zoom: bool = false    # the bucket became full while this zoom was open: the zoom ends after its frame and pans to the second stop
 
@@ -534,71 +533,11 @@ func _enter_second_stop_hud() -> void:
 	var hive_rect: Rect2 = _screen_rect(_mesh_box(_hive), pose).intersection(screen)
 	var cen_rect: Rect2 = _screen_rect(_mesh_box(_centrifuge), pose)
 	_farm_ui.fit_top_info([hive_rect, cen_rect] as Array[Rect2], gap)
-	_move_back_button(pose, [hive_rect, cen_rect], gap, view)
-
-
-## 0.1.3c: Back moves to the first free spot (scanned from the top right) that overlaps no TopInfo, icon, hive, centrifuge, crate or truck
-## rect and ends above the ShopPanel; _leave_second_stop_hud restores its layout. Left in place if no spot is free.
-func _move_back_button(pose: Dictionary, rects: Array, gap: float, view: Vector2) -> void:
-	var back: Control = find_child("BackButton", true, false) as Control
-	if back == null:
-		return
-	if _back_saved.is_empty():
-		_back_saved = {"al": back.anchor_left, "ar": back.anchor_right, "ol": back.offset_left, "ot": back.offset_top,
-				"or": back.offset_right, "ob": back.offset_bottom, "gh": back.grow_horizontal}
-	var avoid: Array[Rect2] = []
-	for r in rects:
-		avoid.append(r as Rect2)
-	if _crate != null:
-		avoid.append(_screen_rect(_mesh_box(_crate), pose))
-	if _truck != null:
-		avoid.append(_screen_rect(_mesh_box(_truck, _truck.home_global_position() - _truck.global_position), pose))
-	var info: Control = find_child("TopInfo", true, false) as Control
-	if info != null and info.is_visible_in_tree():
-		avoid.append(info.get_global_rect())
-	for c in [_fork_icon, _centrifuge_icon, find_child("SellIcon", true, false)]:
-		if c != null and (c as Control).is_visible_in_tree():
-			avoid.append((c as Control).get_global_rect())
-	var shop: Control = find_child("ShopPanel", true, false) as Control
-	var floor_y: float = shop.global_position.y if shop != null and shop.is_visible_in_tree() else view.y
-	var sz: Vector2 = Vector2(maxf(back.size.x, back.custom_minimum_size.x), maxf(back.size.y, back.custom_minimum_size.y))
-	var step: float = 20.0
-	var y: float = gap
-	while y + sz.y <= floor_y - gap:
-		var x: float = view.x - sz.x - gap
-		while x >= gap:
-			var box := Rect2(Vector2(x, y), sz)
-			var free: bool = true
-			for r in avoid:
-				if box.intersects(r.grow(gap)):
-					free = false
-					break
-			if free:
-				var origin: Vector2 = (back.get_parent() as Control).global_position if back.get_parent() is Control else Vector2.ZERO
-				back.anchor_left = 0.0
-				back.anchor_right = 0.0
-				back.grow_horizontal = Control.GROW_DIRECTION_END
-				back.offset_left = x - origin.x
-				back.offset_right = x - origin.x + sz.x
-				back.offset_top = y - origin.y
-				back.offset_bottom = y - origin.y + sz.y
-				return
-			x -= step
-		y += step
+	# Back stays where the scene puts it: top-right, fixed (0.1.4 item 3); nothing moves it here.
 
 
 func _leave_second_stop_hud() -> void:
 	_at_second_stop = false
 	_refresh_icons()   # Harvest was hidden at the second stop; the state table shows it again
-	var back: Control = find_child("BackButton", true, false) as Control
-	if back != null and not _back_saved.is_empty():
-		back.anchor_left = _back_saved["al"]
-		back.anchor_right = _back_saved["ar"]
-		back.offset_left = _back_saved["ol"]
-		back.offset_top = _back_saved["ot"]
-		back.offset_right = _back_saved["or"]
-		back.offset_bottom = _back_saved["ob"]
-		back.grow_horizontal = _back_saved["gh"]
-	_back_saved = {}
 	if _farm_ui != null:
 		_farm_ui.restore_top_info()

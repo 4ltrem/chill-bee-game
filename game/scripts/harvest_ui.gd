@@ -31,7 +31,7 @@ func show_zoom() -> void:
 		_back_button.visible = true
 
 
-## The second camera stop (0.1.3c): only the Back button shows, next to the farm HUD.
+## The second camera stop (0.1.3c): only the Back button shows, fixed top-right like the first zoom.
 func show_pan() -> void:
 	visible = true
 	if _hint != null:
