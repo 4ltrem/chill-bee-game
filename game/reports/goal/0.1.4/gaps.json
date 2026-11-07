@@ -1,0 +1,579 @@
+{
+ "spec": "0.1.4-ui-placement.md",
+ "version": "0.1.4",
+ "at": "2026-11-07T12:16:42-05:00",
+ "unit_log": "game/reports/_runs/20261107-120831/unit.log",
+ "goals": {
+  "H": {
+   "kind": "handoff",
+   "title": "Node handoff (Patricia to Bob)",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [],
+   "depends": [],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "handoff",
+     "name": "game/specs/0.1.4-node-handoff.md",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "C1": {
+   "kind": "change",
+   "title": "Harvest button is the honey meter",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "C2": {
+   "kind": "change",
+   "title": "Buttons anchored to their props, the same way in every view",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "harvest_anchor_offset",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "spin_anchor_offset",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "sell_anchor_offset",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "button_screen_margin",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "C3": {
+   "kind": "change",
+   "title": "Back in one fixed place",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "C4": {
+   "kind": "change",
+   "title": "Speed tag clear of the top info",
+   "owners": [
+    "Bob"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "C5": {
+   "kind": "change",
+   "title": "Bigger hive frames and combs",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "frame_scale",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "C6": {
+   "kind": "change",
+   "title": "Housekeeping from 0.1.3:",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "C7": {
+   "kind": "change",
+   "title": "The pile loads on its own at the second stop",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "T2.1": {
+   "kind": "test",
+   "title": "no two HUD controls overlap, and none is cut off by the screen edge;",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "T3.1": {
+   "kind": "test",
+   "title": "Back has the same screen rect in the first zoom and at the second stop",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "T2.2": {
+   "kind": "test",
+   "title": "Harvest, Spin and Sell stay within `button_screen_margin` of their anc",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "T4.1": {
+   "kind": "test",
+   "title": "Back's rect is in the top-right quadrant, and the speed tag is below t",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "C4"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "T1.1": {
+   "kind": "test",
+   "title": "the Harvest fill equals the hive fill fraction (± 1%), and the count l",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "C1"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "T5.1": {
+   "kind": "test",
+   "title": "the hive's cell size on screen is within 15% of a pile cell's in the f",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "C5"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "T6.1": {
+   "kind": "test",
+   "title": "no test file appears in `user://recordings` after a full run;",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [
+    "C6"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "T7.1": {
+   "kind": "test",
+   "title": "item 7: at the second stop, with a pile waiting, a finished pour is fo",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [
+    "C7"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  },
+  "T.1": {
+   "kind": "test",
+   "title": "mutations in `tests/mutations.json` prove the new tests.",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "depends": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "ambiguous": false
+  }
+ },
+ "order": [
+  {
+   "id": "H",
+   "score": 16.17,
+   "factors": {
+    "unblocks": 5,
+    "value": 1,
+    "cost": 0.83,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C7",
+   "score": 11.17,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.83,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C6",
+   "score": 7.17,
+   "factors": {
+    "unblocks": 2,
+    "value": 1,
+    "cost": 0.83,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 1.2,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "C2",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 3,
+    "value": 3,
+    "cost": 1.2,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "C3",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 1.2,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "C4",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.36,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "C5",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 1.2,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "T.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.64,
+    "ready": 0,
+    "blocked_by": [
+     "C1",
+     "C2",
+     "C3",
+     "C4",
+     "C5",
+     "C6",
+     "C7"
+    ]
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.64,
+    "ready": 0,
+    "blocked_by": [
+     "C1"
+    ]
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.64,
+    "ready": 0,
+    "blocked_by": [
+     "C2"
+    ]
+   }
+  },
+  {
+   "id": "T2.2",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.64,
+    "ready": 0,
+    "blocked_by": [
+     "C2"
+    ]
+   }
+  },
+  {
+   "id": "T3.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.64,
+    "ready": 0,
+    "blocked_by": [
+     "C3"
+    ]
+   }
+  },
+  {
+   "id": "T4.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.64,
+    "ready": 0,
+    "blocked_by": [
+     "C4"
+    ]
+   }
+  },
+  {
+   "id": "T5.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.64,
+    "ready": 0,
+    "blocked_by": [
+     "C5"
+    ]
+   }
+  },
+  {
+   "id": "T6.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.64,
+    "ready": 0,
+    "blocked_by": [
+     "C6"
+    ]
+   }
+  },
+  {
+   "id": "T7.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.64,
+    "ready": 0,
+    "blocked_by": [
+     "C7"
+    ]
+   }
+  }
+ ],
+ "ambiguous": []
+}
