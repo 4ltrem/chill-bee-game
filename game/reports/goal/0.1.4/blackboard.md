@@ -933,9 +933,18 @@ mutate 5/5: 0.1.4 Spin is declared under FarmUI again ... CAUGHT in 1s
 
 2 fix rounds failed on T2.1, T2.2: `mutations` still fails (output above: mutation 3, "buttons are not nudged clear of each other", is missed). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.1.4-ui-placement.md --accept T2.1 --note "<the change>"`. Then rerun the same command to go on.
 
+## Resumed 2026-11-07
+
+Command: `goal_agent.py 0.1.4-ui-placement.md --accept T2.1 --note Fix rounds went to Bob and Patricia; their scene and script changes (HintLabel narrowed in main.tscn, hint clamp in harvest_ui.gd, HiveCountLabel at the button's top edge in farm_ui.gd) made the suite green (138/138). Orchestrator: regenerated tests/fixtures/recording_fill_and_back.json with make_recording_fixture.gd (the recording tapped 0.1.3's Harvest position, so both replay tests failed at x1; they pass now). Open: mutation 3 'buttons are not nudged clear of each other' is MISSED, so Quinn strengthens the nudge test; goal_agent now routes a mutation-only failure to Quinn.` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T2.1 (2026-11-07T15:11:11-05:00)
+
+- Change (orchestrator, Process 9): Fix rounds went to Bob and Patricia; their scene and script changes (HintLabel narrowed in main.tscn, hint clamp in harvest_ui.gd, HiveCountLabel at the button's top edge in farm_ui.gd) made the suite green (138/138). Orchestrator: regenerated tests/fixtures/recording_fill_and_back.json with make_recording_fixture.gd (the recording tapped 0.1.3's Harvest position, so both replay tests failed at x1; they pass now). Open: mutation 3 'buttons are not nudged clear of each other' is MISSED, so Quinn strengthens the nudge test; goal_agent now routes a mutation-only failure to Quinn.
+- Accepted: checkpoint `b65f5e1` on `milestone/0.1.4`
+
 ## Result
 
-Last invocation: waiting for the designer after 2 failed fix rounds on T2.1, T2.2. Converted on 2026-11-07 to the shared board format (_templates/blackboard.md): the --plan and --dry-run passes were dropped, the later passes show only changed rows, and the per-invocation Results were merged here.
+T2.1 accepted with a manual fix (checkpoint `b65f5e1` on `milestone/0.1.4`). Rerun `goal_agent.py 0.1.4-ui-placement.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`
 
@@ -972,8 +981,8 @@ Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`
 
 ## Resumed 2026-11-07
 
-Command: `goal_agent.py 0.1.4-ui-placement.md --accept T2.1 --note Fix rounds went to Bob and Patricia; their scene and script changes (HintLabel narrowed in main.tscn, hint clamp in harvest_ui.gd, HiveCountLabel at the button's top edge in farm_ui.gd) made the suite green (138/138). Orchestrator: regenerated tests/fixtures/recording_fill_and_back.json with make_recording_fixture.gd (the recording tapped 0.1.3's Harvest position, so both replay tests failed at x1; they pass now). Open: mutation 3 'buttons are not nudged clear of each other' is MISSED, so Quinn strengthens the nudge test; goal_agent now routes a mutation-only failure to Quinn.` (the run had stopped: `waiting-designer`).
+Command: `goal_agent.py 0.1.4-ui-placement.md --accept T2.2 --note With T2.1 (one Quinn step).` (the run had stopped: `stopped`).
 
-### Manual fix: T2.1 (2026-11-07T15:11:11-05:00)
+### Manual fix: T2.2 (2026-11-07T15:11:14-05:00)
 
-- Change (orchestrator, Process 9): Fix rounds went to Bob and Patricia; their scene and script changes (HintLabel narrowed in main.tscn, hint clamp in harvest_ui.gd, HiveCountLabel at the button's top edge in farm_ui.gd) made the suite green (138/138). Orchestrator: regenerated tests/fixtures/recording_fill_and_back.json with make_recording_fixture.gd (the recording tapped 0.1.3's Harvest position, so both replay tests failed at x1; they pass now). Open: mutation 3 'buttons are not nudged clear of each other' is MISSED, so Quinn strengthens the nudge test; goal_agent now routes a mutation-only failure to Quinn.
+- Change (orchestrator, Process 9): With T2.1 (one Quinn step).
