@@ -66,13 +66,14 @@ class AgentError(Exception):
     pass
 
 
-def run_agent(agent, prompt):
-    """Run one agent headless with the prompt on stdin; return (reply text, usage summary)."""
+def run_agent(agent, prompt, tools="WebFetch,WebSearch"):
+    """Run one agent headless with the prompt on stdin; return (reply text, usage summary).
+    tools: the --allowedTools list (goal_agent.py passes Bash and the file tools for Patricia, Bob and Quinn)."""
     claude = shutil.which("claude")
     if not claude:
         raise AgentError("claude CLI not found on PATH")
     cmd = [claude, "-p", "--agent", agent, "--output-format", "json",
-           "--permission-mode", "acceptEdits", "--allowedTools", "WebFetch,WebSearch"]
+           "--permission-mode", "acceptEdits", "--allowedTools", tools]
     started = now_iso()
     proc = subprocess.run(cmd, cwd=ROOT, input=prompt, capture_output=True, text=True, encoding="utf-8",
                           env={**os.environ, "CHILLBEE_HEADLESS": "1"})  # log_session.py skips these

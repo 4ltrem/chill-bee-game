@@ -1,0 +1,4 @@
+PASS  t_cost  (3 checks, 10 ms)
+PASS  t_meter_fill  (4 checks, 10 ms)
+FAIL  t_tag_under_money  tag overlaps money  (12 ms)
+---- 2 passed, 1 failed
