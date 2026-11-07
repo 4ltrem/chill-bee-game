@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T12:19:16-05:00",
- "unit_log": "game/reports/_runs/20261107-120831/unit.log",
+ "at": "2026-11-07T13:24:24-05:00",
+ "unit_log": "game/reports/_runs/20261107-132012/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -63,31 +63,36 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
      "name": "harvest_anchor_offset",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "spin_anchor_offset",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "sell_anchor_offset",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "button_screen_margin",
-     "ok": false
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "90e03c6",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -379,67 +384,78 @@
  },
  "order": [
   {
-   "id": "C2",
-   "score": 13.85,
-   "factors": {
-    "unblocks": 3,
-    "value": 3,
-    "cost": 1.15,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C4",
-   "score": 11.64,
+   "score": 11.63,
    "factors": {
     "unblocks": 2,
     "value": 3,
-    "cost": 0.36,
+    "cost": 0.37,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C7",
-   "score": 11.21,
+   "score": 11.27,
    "factors": {
     "unblocks": 2,
     "value": 3,
-    "cost": 0.79,
+    "cost": 0.73,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C3",
-   "score": 10.85,
+   "score": 10.9,
    "factors": {
     "unblocks": 2,
     "value": 3,
-    "cost": 1.15,
+    "cost": 1.1,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C1",
-   "score": 8.85,
+   "score": 8.9,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 1.15,
+    "cost": 1.1,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C6",
-   "score": 7.21,
+   "score": 7.27,
    "factors": {
     "unblocks": 2,
     "value": 1,
-    "cost": 0.79,
+    "cost": 0.73,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 5.38,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.62,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.2",
+   "score": 5.38,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.62,
     "ready": 1,
     "blocked_by": []
    }
@@ -450,11 +466,10 @@
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.64,
+    "cost": 0.62,
     "ready": 0,
     "blocked_by": [
      "C1",
-     "C2",
      "C3",
      "C4",
      "C5",
@@ -469,36 +484,10 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.64,
+    "cost": 0.62,
     "ready": 0,
     "blocked_by": [
      "C1"
-    ]
-   }
-  },
-  {
-   "id": "T2.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.64,
-    "ready": 0,
-    "blocked_by": [
-     "C2"
-    ]
-   }
-  },
-  {
-   "id": "T2.2",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.64,
-    "ready": 0,
-    "blocked_by": [
-     "C2"
     ]
    }
   },
@@ -508,7 +497,7 @@
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.64,
+    "cost": 0.62,
     "ready": 0,
     "blocked_by": [
      "C3"
@@ -521,7 +510,7 @@
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.64,
+    "cost": 0.62,
     "ready": 0,
     "blocked_by": [
      "C4"
@@ -534,7 +523,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.64,
+    "cost": 0.62,
     "ready": 0,
     "blocked_by": [
      "C5"
@@ -547,7 +536,7 @@
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.64,
+    "cost": 0.62,
     "ready": 0,
     "blocked_by": [
      "C6"
@@ -560,7 +549,7 @@
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.64,
+    "cost": 0.62,
     "ready": 0,
     "blocked_by": [
      "C7"
