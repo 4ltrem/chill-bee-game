@@ -12,6 +12,7 @@ One job: turn applied designs into a running Godot game. Godot 4.2.1 (standard b
 | `tests/` | Quinn, the QA & Build Engineer | automated tests |
 | `reports/` | Quinn, the QA & Build Engineer | `<date>-<slug>.md` test, build and performance reports |
 | `reports/style/` | `_tools/style_loop.py` (not Quinn); Vera, the Style Critic, judges its shots | `<slug>/blackboard.md` and `<slug>/round-N/` shots and `measure.json` of each visual style loop run |
+| `reports/goal/` | `_tools/goal_agent.py` (not Quinn), the M3 goal agent | `<run>/blackboard.md`, `gaps.json` and `briefs/` of each goal-agent run, and `ledger.json`, the goals it built to green |
 
 ## Inputs
 - Working (this run): the work order in `specs/` (e.g. `specs/prototype-0.md`), or the feature list, layout spec or build request

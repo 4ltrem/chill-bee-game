@@ -804,6 +804,9 @@ def main(argv=None):
     ap.add_argument("--max-goals", type=int, default=0, help="stop after this many green steps (0 = no limit)")
     ap.add_argument("--goal", help="build this goal next instead of the top score (it must be ready)")
     ap.add_argument("--run", help="run folder name under game/reports/goal/ (default: the spec's version)")
+    ap.add_argument("--accept", metavar="GOAL", help="after a stop: record GOAL as green with a manual fix (Process 9), "
+                    "checkpoint it, and exit; run the checks first")
+    ap.add_argument("--note", default="", help="with --accept: the manual change, for the blackboard and GOAL_AGENT.md")
     a = ap.parse_args(argv)
     path = Path(a.spec)
     if not path.is_file():
@@ -820,6 +823,16 @@ def main(argv=None):
     n = len(re.findall(r"^## Pass \d+", board.read_text(encoding="utf-8"), re.M)) + 1
     mode = "plan" if a.plan else "dry run" if a.dry_run else "build"
     g.append(board, f"\n---\n\nInvocation ({mode}) {now()}: `goal_agent.py {' '.join(argv or sys.argv[1:])}`\n")
+    if a.accept:
+        goal = spec["goals"].get(a.accept)
+        if not goal or not a.note:
+            print("goal_agent: --accept needs a goal of this spec and a --note naming the manual change")
+            return 2
+        g.append(board, f"\n### Manual fix: {goal['id']} ({now()})\n\n- Change (orchestrator, Process 9): {a.note}\n")
+        msg = checkpoint(spec, [goal], run, folder, folder.parent / "ledger.json")
+        g.append(board, f"- Accepted: {msg}\n")
+        print(f"goal_agent: {goal['id']} accepted: {msg}")
+        return 0
     usage, built, result = [], 0, "done"
     branch = f"milestone/{spec['version']}"
     if not (a.plan or a.dry_run):
@@ -865,6 +878,10 @@ def main(argv=None):
                 g.append(board, f"\n**Stop:** {result}.\n")
                 plan_pass(spec, ROOT / "game", folder, board, costs, n)   # the re-scan after the last write
                 break
+    except Exception as e:   # an agent or check crashed: never record it as done (generate.py marks `result: failed`)
+        result = f"failed ({type(e).__name__}: {e})"
+        g.append(board, f"\n**Stop:** the run crashed: {result}. A rerun re-scans and continues from the ledger.\n")
+        raise
     finally:
         if usage:
             total = sum(u["tokens"] for *_, u in usage)

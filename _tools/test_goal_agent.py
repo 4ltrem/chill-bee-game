@@ -209,6 +209,25 @@ class Loop(unittest.TestCase):
         self.assertEqual(sorted(fix), sorted([ga.PROGRAMMER, ga.BUILDER, ga.QA]))
         self.assertIn("quote the spec line", next(p for a, p in self.calls if a == ga.QA))
 
+    def test_a_crashed_agent_is_recorded_as_failed(self):
+        def crash(agent, prompt):
+            raise ga.g.AgentError("simulated CLI failure")
+        ga.run_agent = crash
+        with self.assertRaises(ga.g.AgentError), contextlib.redirect_stdout(io.StringIO()):
+            ga.main(["9.9-fixture.md", "--run", "t"])
+        board = (self.tmp / "game" / "reports" / "goal" / "t" / "blackboard.md").read_text(encoding="utf-8")
+        self.assertIn("## Result", board)
+        self.assertIn("failed (AgentError", board.split("## Result")[-1])
+        self.assertFalse((self.tmp / "game" / "reports" / "goal" / "ledger.json").is_file())
+
+    def test_accept_records_a_manual_fix_and_commits(self):
+        code, out, board = self.run_main("--accept", "C3", "--note", "widened the test's tolerance")
+        self.assertEqual((code, self.calls), (0, []))
+        self.assertIn("Manual fix: C3", board)
+        ledger = json.loads((self.tmp / "game" / "reports" / "goal" / "ledger.json").read_text(encoding="utf-8"))
+        self.assertIn("C3", ledger["9.9-fixture.md"])
+        self.assertEqual(self.run_main("--accept", "C3")[0], 2)            # a note is required
+
     def test_budget_guard_pauses_never_skips(self):
         self.budget = (False, "Budget guard: 5-hour usage is 90%")
         code, out, board = self.run_main()
