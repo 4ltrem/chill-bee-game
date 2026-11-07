@@ -837,3 +837,177 @@ Which option do you want?
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `ui shots`: PASS
+- Green: checkpoint `747a5a1` on `milestone/0.1.4`
+
+## Pass 9: scan (2026-11-07T13:59:57-05:00)
+
+Unit results from `game/reports/_runs/20261107-135608/unit.log`. 1 of 17 goals done.
+
+### Gaps
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
+| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ ledger 90e03c6 |
+| C3 Back in one fixed place | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger 747a5a1 |
+| C4 Speed tag clear of the top info | change | Bob | partial (built, waits on its tests) | ✓ ledger fb94e04 |
+| C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
+| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
+| C7 The pile loads on its own at the second stop | change | Patricia | partial (built, waits on its tests) | ✓ ledger 90b18b9 |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
+| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
+| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
+| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
+| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
+| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
+| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
+
+### Order
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C1 Harvest button is the honey meter | 8.9 | 2 | 2 | 1.1 | 1 | 2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob) |
+| 2 | C6 Housekeeping from 0.1.3: | 7.27 | 2 | 1 | 0.73 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia) |
+| 3 | T2.1 no two HUD controls overlap, and none is cut off b | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 4 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 5 | T3.1 Back has the same screen rect in the first zoom an | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 6 | T4.1 Back's rect is in the top-right quadrant, and the  | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 7 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C1, C5, C6 |
+| 9 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C1 |
+| 10 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C5 |
+| 11 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C5: Bigger hive frames and combs
+  - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
+  - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
+
+Next: **C1** (score 8.9: 2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob)).
+
+### Step: C1 (2026-11-07T13:59:57-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C1-patricia.md` (1468 chars)
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/C1-bob.md` (1488 chars)
+- Budget guard for Patricia: allow (reading 0 min old)
+- Budget guard for Bob: allow (reading 0 min old)
+
+**Bob** (127,981 tokens, 12 turns, 28 s):
+
+Item 1 is built in `main.tscn`. The contract check has two unresolved lookups, both expected: `farm_ui.gd` lines 34–35 still look up `FillBar` and `FillLabel`. Patricia is removing those in parallel. I did not render the scene.
+
+**Files changed:** `game/scenes/main.tscn` only.
+
+**Node names:**
+- Removed `TopInfo/FillBar` and `TopInfo/FillLabel`.
+- Added `ForkIcon/HarvestFill`, a `ColorRect` in the fill colour with `mouse_filter` ignore and `show_behind_parent`. Its rect is inset 4 px on each side of the button.
+- Added `FarmUI/HiveCountLabel` ("0/10", font 28, outlined, centred).
+- Added a `disabled` style on `ForkIcon`, `StyleBox_tag_disabled`: muted token at 50% alpha, same border.
+
+**Open questions:**
+1. The disabled background is semi-transparent, because an opaque one would cover the fill drawn behind it. The fill shows through dimmed. I'd rather keep it than add a node outside the handoff.
+2. `ColorRect` has no rounded corners, so the fill's corners may poke past the 28 px rounding. A shader or `StyleBoxFlat` panel would fix that.
+
+
+**Patricia** (227,009 tokens, 17 turns, 231 s):
+
+Item 1 is done in `scripts/`. The unit run has failures, which come from tests that still look up `FillLabel` and from scene nodes Bob hasn't added yet. `contract_check.py` passes: 63 lookups, 0 unresolved. I did not run the `play_loop` playthrough.
+
+**Files changed**
+- `farm_ui.gd`: the `FillBar` and `FillLabel` code is removed, and a new per-frame `_process` drives the fill and the count label. It sets the `HarvestFill` height from the button's bottom to the hive's fill fraction. It hides the fill when empty or full, so the button's own enabled look shows. It writes "7/10" to `HiveCountLabel` and places it above the button.
+- `main.gd`: `ForkIcon` is now always wanted on the farm view, except at the second stop. It is `disabled` unless `fork_available()` holds, and that is re-checked every frame.
+- `floating_icon.gd`: the visible shape is now the first child, so `HarvestFill` draws over it and under the button text.
+
+**Node names used:** `ForkIcon`, `HarvestFill`, `HiveCountLabel`.
+
+**Placeholder:** `count_gap_px` = 4.0 (label gap above the button). The spec gives no value.
+
+**For Quinn:** the tests that look up `FillLabel` need updating, and the tests that assert the fork is hidden when not full need to assert disabled instead. There is also no test yet for the fill height or the label text.
+
+**Open questions:** none.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_back_keeps_half_frame  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (401 ms)
+    FAIL  t_fork_rules  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (404 ms)
+    FAIL  t_fork_shows_while_cranking_and_state_table  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (398 ms)
+    FAIL  t_no_crank_during_zoom  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (399 ms)
+    FAIL  t_zoom_fill_and_bottling_keep_running  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (393 ms)
+    FAIL  t_scrape_then_back_in_pop_window_bucket  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (370 ms)
+    FAIL  t_scrape_then_back_in_pop_window_pile  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (380 ms)
+    FAIL  t_resume_pending_pile_loads_while_zoom_open  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (401 ms)
+    FAIL  t_dev_ui_bounds_collects_controls  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (419 ms)
+    FAIL  t_cell_width_at_zoom  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (382 ms)
+    FAIL  t_zoom_view_option_a  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (373 ms)
+    FAIL  t_summary_after_sell  node 'FillLabel' missing in the scene (spec: Node paths for Bob)  (385 ms)
+```
+
+#### Fix round 1: to Patricia, Bob, Quinn
+
+- Budget guard for Patricia: allow (reading 3 min old)
+- Budget guard for Bob: allow (reading 3 min old)
+- Budget guard for Quinn: allow (reading 3 min old)
+
+**Patricia** (30,183 tokens, 2 turns, 6 s):
+
+Nothing changed: all 12 failures come from Quinn's `tests/` folder, not `scripts/`.
+
+- **Cause:** `FillLabel` was removed on purpose, as the spec requires ("The top Hive bar is removed"). Bob's node handoff also says to remove `TopInfo/FillBar` and `TopInfo/FillLabel`. Three tests still list `FillLabel` as a required node:
+  - `tests/test_base.gd:63`
+  - `tests/test_zoom.gd:26`
+  - `tests/play_loop.gd:333`
+- **Scripts:** a grep finds no `FillLabel` reference under `game/scripts/`, so I have nothing to fix there. The `contract_check.py` run from the earlier step already reported 0 unresolved lookups.
+- **For Quinn:**
+  - Drop `FillLabel` from those lists. The new node is `HiveCountLabel`; the new fill node is `HarvestFill`.
+  - Update the assertions that expect the fork hidden when not full. It is now shown but disabled.
+  - Add tests for the `HarvestFill` height and the "7/10" label text. Neither has a test yet.
+
+I did not run any tests.
+
+
+**Bob** (96,154 tokens, 9 turns, 19 s):
+
+I made no changes. The failure isn't in `scenes/` or `materials/`.
+
+`scenes/main.tscn` already follows the spec and `specs/0.1.4-node-handoff.md`:
+- The top Hive bar (`FillBar` and `FillLabel`) is removed.
+- `HarvestFill` sits under `ForkIcon`.
+- `HiveCountLabel` is added.
+
+The check fails because the tests still ask for the removed `FillLabel`. The handoff says it was removed on purpose.
+
+`tests/test_base.gd` line 63 already uses `HiveCountLabel`. Two files still list `FillLabel` and need the same edit:
+- `tests/test_zoom.gd` line 26 (`farm_ui` list).
+- `tests/play_loop.gd` line 333.
+
+`tests/retired/r3_measure.gd` also names it, but it is retired and probably doesn't matter.
+
+Quinn needs to make that edit. I didn't render anything.
+
+
+**Quinn** (272,339 tokens, 19 turns, 234 s):
+
+All 12 failing tests now pass under `CB_ONLY`. They ran in three passes: 10 of 12 in the first, then the remaining two after a fix, with `t_fork_rules` and `t_back_keeps_half_frame` re-run in between.
+
+**Fixes, all in `tests/`:**
+- **`test_base.gd` (`SCENE_NODES`) and `test_zoom.gd` (line 26):** `FillLabel` is now `HiveCountLabel`. The spec's "The top Hive bar is removed" removes `FillLabel`, and the node handoff adds `HiveCountLabel`.
+- **`test_zoom2.gd`, `t_fork_rules` (two checks):** the old expectation was "fork hidden" when the hive is not full. Item 1 says "The Harvest button is always shown … pressable only when full", so these checks now expect it shown but disabled. The spec line is quoted in a comment beside each.
+- **`test_zoom2.gd`, `t_back_keeps_half_frame`:** the same replacement. The check now accepts the button hidden or disabled once no Capped cell remains.
+
+**Not touched:**
+- `play_loop.gd:333` still lists `FillLabel`. It is a standalone script, not part of the failing set.
+- `shots_0_1_3.gd:401` still looks for `FillBar`, which the spec also removes.
+
+I made no code findings against `scripts/` or `scenes/`. I did not run the full suite.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS

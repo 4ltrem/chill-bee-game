@@ -44,6 +44,7 @@ func _ready() -> void:
 	_shape.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_shape.draw.connect(_draw_shape)
 	add_child(_shape)
+	move_child(_shape, 0)   # 0.1.4: the shape draws first, so a show_behind_parent child (ForkIcon/HarvestFill) draws over it, under the text
 
 
 ## The visible shape's size: the Button's size minus (120 - icon_visual_px) in each dimension, never below 1.

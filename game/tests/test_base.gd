@@ -60,7 +60,7 @@ const EMPTY_SPOT := Vector2(360.0, 640.0)
 
 const SCENE_NODES := ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon",
 		"UpgradeButton", "BackButton", "HintLabel", "SummaryModal", "SummaryOkButton", "CentrifugeLabel", "MoneyLabel",
-		"FillLabel", "BeeCountLabel", "ShopPanel"]
+		"HiveCountLabel", "BeeCountLabel", "ShopPanel"]   # 0.1.4-ui-placement item 1: "The top Hive bar is removed" (FillLabel); the count is HiveCountLabel
 
 
 ## Two boxes lying in contact (resting lid, leaning lid) are not an overlap: the penetration must exceed this many units.

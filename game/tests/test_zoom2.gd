@@ -98,7 +98,8 @@ func t_back_keeps_half_frame() -> void:
 			ck(await _next_frame(tr, f), "frame %d done, the next rose" % f)
 	await _wait(float(cv("close_delay_seconds")) + float(cv("zoom_seconds")) + _lid_t() + 1.5)
 	eq(fi.capped_total(hive, _frames_n()), 0, "everything scraped")
-	ck(not _shown(p["ForkIcon"]), "the zoom ended on its own with no Capped cell: the fork is gone (resume cleared)")
+	# spec 0.1.4-ui-placement item 1: "always shown ... pressable only when full"; item 2: hidden only at the second stop
+	ck(not m.call("fork_available") and (not _shown(p["ForkIcon"]) or (p["ForkIcon"] as BaseButton).disabled), "the zoom ended on its own with no Capped cell: no Harvest available, button hidden or disabled (resume cleared)")
 	ck(_shown(p["MoneyLabel"]), "the farm UI is back")
 	_fin()
 
@@ -121,7 +122,8 @@ func t_fork_rules() -> void:
 	_set_cfg("base_seconds_per_jar", 1.0e9)
 	await _frames(4)
 	var fork: Node = p["ForkIcon"]
-	ck(not _shown(fork), "empty hive, EMPTY centrifuge: no fork")
+	# spec 0.1.4-ui-placement item 1: "The Harvest button is always shown ... it is pressable only when full"
+	ck(_shown(fork) and (fork as BaseButton).disabled, "empty hive, EMPTY centrifuge: Harvest shown but disabled")
 	hive.call("fill_now")
 	await _frames(3)
 	ck(hive.call("is_full"), "precondition: hive full")
@@ -151,7 +153,8 @@ func t_fork_rules() -> void:
 	hive.call("scrape", 0, 0)
 	await _frames(3)
 	ck(not hive.call("is_full"), "precondition: the hive is no longer full")
-	ck(not _shown(fork), "BOTTLING, hive not full, no Back: fork hidden")
+	# spec 0.1.4-ui-placement item 1: "The Harvest button is always shown ... it is pressable only when full"
+	ck(_shown(fork) and (fork as BaseButton).disabled, "BOTTLING, hive not full, no Back: Harvest shown but disabled")
 	_fin()
 
 

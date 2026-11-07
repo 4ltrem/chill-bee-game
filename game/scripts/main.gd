@@ -102,6 +102,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	advance(delta)
+	if _fork_icon != null:
+		_fork_icon.disabled = not fork_available()   # the hive fills between state changes
 
 
 # --- the state table: which floating icons show right now ---
@@ -119,7 +121,9 @@ func _refresh_icons() -> void:
 		return
 	var on_farm: bool = zoom == Zoom.NONE
 	if _fork_icon != null:
-		_fork_icon.set_wanted(on_farm and not _at_second_stop and fork_available())   # hidden at the second stop (designer 2026-11-06)
+		# 0.1.4 item 1: always shown on the farm view (the button is the honey meter); pressable only when the fork rule holds
+		_fork_icon.set_wanted(on_farm and not _at_second_stop)   # hidden at the second stop (designer 2026-11-06)
+		_fork_icon.disabled = not fork_available()
 	if _centrifuge_icon != null:
 		# 0.1.3 play-test (c): also shown during the first zoom (not while it closes: the second stop shows it itself)
 		_centrifuge_icon.set_wanted((on_farm or zoom != Zoom.CLOSING) and _centrifuge.state == Centrifuge.State.FULL)

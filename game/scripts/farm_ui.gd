@@ -13,8 +13,12 @@ var _hive: Hive
 var _centrifuge: Centrifuge
 var _truck: Truck
 var _money_label: Label
-var _fill_bar: ProgressBar
-var _fill_label: Label
+var _fill_bar: ProgressBar   # 0.1.4: removed from the scene (the Harvest button is the meter); kept null-safe for fit_top_info
+var _fork: FloatingIcon
+var _harvest_fill: Control
+var _count_label: Label
+## PLACEHOLDER (0.1.4 item 1): px between the hive-count label and the top of the Harvest button's visible shape. No value in the spec.
+@export var count_gap_px: float = 4.0
 var _paused_label: Label
 var _bee_label: Label
 var _centrifuge_label: Label
@@ -31,8 +35,9 @@ var _bar_min_x: float = 0.0
 
 func _ready() -> void:
 	_money_label = find_child("MoneyLabel", true, false) as Label
-	_fill_bar = find_child("FillBar", true, false) as ProgressBar
-	_fill_label = find_child("FillLabel", true, false) as Label
+	_fork = find_child("ForkIcon", true, false) as FloatingIcon
+	_harvest_fill = find_child("HarvestFill", true, false) as Control
+	_count_label = find_child("HiveCountLabel", true, false) as Label
 	_paused_label = find_child("PausedLabel", true, false) as Label
 	_bee_label = find_child("BeeCountLabel", true, false) as Label
 	_centrifuge_label = find_child("CentrifugeLabel", true, false) as Label
@@ -151,7 +156,31 @@ func _refresh_hive() -> void:
 	if _fill_bar != null:
 		_fill_bar.max_value = _hive.capacity
 		_fill_bar.value = _hive.storage
-	if _fill_label != null:
-		_fill_label.text = "Hive: %d / %d" % [floori(_hive.storage), _hive.capacity]
+	if _count_label != null:
+		var text: String = "%d/%d" % [floori(_hive.storage), _hive.capacity]   # no "Hive" word (designer 2026-11-06)
+		if _count_label.text != text:
+			_count_label.text = text
+			_count_label.size = _count_label.get_combined_minimum_size()
 	if _paused_label != null:
 		_paused_label.visible = _hive.is_paused()
+
+
+## 0.1.4 item 1: the Harvest button's background fills from the bottom with the hive's fill fraction (HarvestFill, a child of ForkIcon),
+## and HiveCountLabel sits just above the button's visible shape. At full the fill hides and the button's own enabled look shows.
+func _process(_delta: float) -> void:
+	if _hive == null or _fork == null:
+		return
+	var frac: float = 1.0 if _hive.is_full() else clampf(_hive.storage / maxf(float(_hive.capacity), 1.0), 0.0, 1.0)
+	var vs: Vector2 = _fork.visible_size()
+	var top_left: Vector2 = (_fork.size - vs) * 0.5
+	if _harvest_fill != null:
+		var show_fill: bool = frac > 0.0 and frac < 1.0
+		_harvest_fill.visible = show_fill
+		if show_fill:
+			_harvest_fill.position = top_left + Vector2(0.0, vs.y * (1.0 - frac))
+			_harvest_fill.size = Vector2(vs.x, vs.y * frac)
+	if _count_label != null:
+		_count_label.visible = _fork.visible
+		if _fork.visible:
+			var anchor_pt: Vector2 = _fork.global_position + top_left
+			_count_label.global_position = Vector2(anchor_pt.x + (vs.x - _count_label.size.x) * 0.5, anchor_pt.y - _count_label.size.y - count_gap_px)

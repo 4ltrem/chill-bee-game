@@ -23,7 +23,7 @@ func t_zoom_ui_and_camera() -> void:
 		_fin()
 		return
 	var size0: float = cam.size
-	var farm_ui: Array = ["MoneyLabel", "FillLabel", "BeeCountLabel", "UpgradeButton", "ShopPanel"]
+	var farm_ui: Array = ["MoneyLabel", "HiveCountLabel", "BeeCountLabel", "UpgradeButton", "ShopPanel"]
 	for nm in farm_ui:
 		ck(_shown(p[nm]), "%s shows on the farm before the zoom" % nm)
 	ck(_shown(p["ForkIcon"]), "fork shows at a full hive")

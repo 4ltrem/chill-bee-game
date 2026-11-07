@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://ub4nv2k6wxgl"]
+[gd_scene load_steps=49 format=3 uid="uid://ub4nv2k6wxgl"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="PackedScene" path="res://scenes/props/hive.tscn" id="2_hive"]
@@ -57,6 +57,18 @@ border_color = Color(0.35, 0.22, 0.05, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_tag_pressed"]
 bg_color = Color(0.82, 0.58, 0.05, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tag_disabled"]
+bg_color = Color(0.38, 0.34, 0.3, 0.5)
 corner_radius_top_left = 28
 corner_radius_top_right = 28
 corner_radius_bottom_right = 28
@@ -271,22 +283,6 @@ theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 40
 text = "$0"
 
-[node name="FillLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 28
-text = "Hive: 0 / 10"
-
-[node name="FillBar" type="ProgressBar" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
-custom_minimum_size = Vector2(0, 36)
-layout_mode = 2
-mouse_filter = 2
-theme_override_styles/background = SubResource("StyleBox_barbg")
-theme_override_styles/fill = SubResource("StyleBox_barfill")
-show_percentage = false
-
 [node name="BeeCountLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 layout_mode = 2
 mouse_filter = 2
@@ -377,6 +373,7 @@ layout_mode = 0
 theme_override_font_sizes/font_size = 32
 theme_override_styles/normal = SubResource("StyleBox_tag")
 theme_override_styles/hover = SubResource("StyleBox_tag")
+theme_override_styles/disabled = SubResource("StyleBox_tag_disabled")
 theme_override_styles/pressed = SubResource("StyleBox_tag_pressed")
 theme_override_styles/focus = SubResource("StyleBox_empty")
 theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
@@ -388,6 +385,27 @@ text = "Harvest"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../../FarmWorld/Hive/ForkAnchor")
 screen_offset = Vector2(0, 0)
+
+[node name="HarvestFill" type="ColorRect" parent="FarmUIRoot/FarmUI/ForkIcon"]
+show_behind_parent = true
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 236.0
+offset_bottom = 116.0
+mouse_filter = 2
+color = Color(1, 0.76, 0.12, 1)
+
+[node name="HiveCountLabel" type="Label" parent="FarmUIRoot/FarmUI"]
+layout_mode = 0
+offset_right = 240.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "0/10"
+horizontal_alignment = 1
 
 [node name="CentrifugeIcon" type="Button" parent="FarmUIRoot"]
 focus_mode = 0
