@@ -195,10 +195,19 @@ class Loop(unittest.TestCase):
         self.check_codes = [1, 1, 1]                                        # the contract check fails every round
         code, out, board = self.run_main()
         self.assertEqual(code, 1)
-        self.assertEqual(len(self.calls), 2 + 2 * 2)                        # C3's two owners, then two fix rounds
+        self.assertEqual(len(self.calls), 2 + 2 * 2)                        # C3 owners, then two fix rounds (contract: no Quinn)
         self.assertIn("fix round 2", self.calls[-1][1])
         self.assertIn("**Stop:** 2 fix rounds failed", board)
         self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
+
+    def test_a_failing_old_test_after_a_change_also_goes_to_quinn(self):
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        self.check_codes = [0, 1]                                           # contract passes, the suite fails once
+        code, out, board = self.run_main("--max-goals", "1")
+        self.assertEqual(code, 0)
+        fix = [a for a, p in self.calls if "fix round 1" in p]
+        self.assertEqual(sorted(fix), sorted([ga.PROGRAMMER, ga.BUILDER, ga.QA]))
+        self.assertIn("quote the spec line", next(p for a, p in self.calls if a == ga.QA))
 
     def test_budget_guard_pauses_never_skips(self):
         self.budget = (False, "Budget guard: 5-hour usage is 90%")
@@ -207,13 +216,26 @@ class Loop(unittest.TestCase):
         self.assertIn("**Paused:**", board)
         self.assertIn("Result", board)
 
-    def test_ambiguous_goal_stops_the_run(self):
+    def test_ambiguous_goal_is_skipped_then_stops_the_run(self):
         spec = self.tmp / "game" / "specs" / "9.9-fixture.md"
         spec.write_text(spec.read_text(encoding="utf-8").replace("The frames scale up;", "The frames scale up (TBD);"),
                         encoding="utf-8")
         code, out, board = self.run_main()
-        self.assertEqual((code, self.calls), (1, []))
+        self.assertEqual(code, 1)
+        self.assertEqual([a for a, _ in self.calls], [ga.PROGRAMMER])        # the handoff is built; C3 never is
         self.assertIn("Ambiguous", board)
+        self.assertIn("## Result", board)
+        self.assertIn("waiting-designer", board.split("## Result")[-1])
+
+    def test_open_question_in_the_handoff_holds_its_change(self):
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text(
+            "# handoff\n\n## Open questions\n1. The bigger frames don't fit the body: which scale?\n"
+            "2. Tag font (answered: 28).\n", encoding="utf-8")
+        spec = ga.parse_spec(self.tmp / "game" / "specs" / "9.9-fixture.md")
+        report = ga.gaps(spec, ga.scan(self.tmp / "game"))
+        self.assertTrue(report["C3"]["ambiguous"])
+        self.assertEqual(len(report["C3"]["questions"]), 1)                  # the answered one no longer holds it
+        self.assertFalse(report["C2"]["ambiguous"])
 
     def test_unapproved_spec_is_refused(self):
         spec = self.tmp / "game" / "specs" / "9.9-fixture.md"

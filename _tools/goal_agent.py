@@ -312,11 +312,13 @@ def scan(game, ledger_path=None):
             if m:
                 results[m.group(2)] = m.group(1)
     handoffs = sorted(p.name for p in (game / "specs").glob("*handoff*.md"))
+    handoff_text = {p.name: p.read_text(encoding="utf-8") for p in (game / "specs").glob("*handoff*.md")}
     ledger = {}
     ledger_path = Path(ledger_path) if ledger_path else game / "reports" / "goal" / "ledger.json"
     if ledger_path.is_file():
         ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
     return {"keys": keys, "nodes": nodes, "groups": groups, "x1": x1, "results": results,
+            "handoff_text": handoff_text,
             "unit_log": log.relative_to(game.parent).as_posix() if log and game.parent in log.parents else
             (str(log) if log else None), "handoffs": handoffs, "ledger": ledger}
 
@@ -340,6 +342,8 @@ def gaps(spec, found):
     """Each goal's status (done | partial | missing), its evidence, and whether it is built and waits on its tests."""
     report = {}
     ledger = found["ledger"].get(spec["file"], {})
+    questions = open_questions(spec, found)
+    changes = [g for g in spec["goals"].values() if g["kind"] == "change" and g["items"]]
     for gid, goal in spec["goals"].items():
         ev = []
         for k in goal["keys"]:
@@ -372,9 +376,27 @@ def gaps(spec, found):
         else:
             status = "missing"
         waits = status == "partial" and goal["kind"] == "change" and (built or (code and all(e["ok"] for e in code)))
+        asks = [q for q in questions if goal["kind"] == "change" and set(q[0]) & set(goal["items"])
+                and len(q[0]) < len(changes)]
         report[gid] = {"status": status, "evidence": ev, "built": built, "waits_on_tests": waits,
-                       "ambiguous": bool(AMBIGUOUS.search(goal["text"])) and status != "done"}
+                       "questions": [q[1] for q in asks],
+                       "ambiguous": (bool(AMBIGUOUS.search(goal["text"])) or bool(asks)) and status != "done"}
     return report
+
+
+def open_questions(spec, found):
+    """[(items, question)] from the "## Open questions" of this version's node handoff (Process 1: they stop a goal).
+    The designer answers by editing the question out, or marking it "(answered"."""
+    changes = [(g["items"][0], g["title"], g["text"]) for g in spec["goals"].values() if g["kind"] == "change"
+               and g["items"]]
+    out = []
+    for name, text in found.get("handoff_text", {}).items():
+        if not name.startswith(spec["version"]):
+            continue
+        for q in re.findall(r"^\d+\.\s+(.+)$", section(text, "Open questions"), re.M):
+            if "(answered" not in q.lower():
+                out.append((match_items(q, changes), q.strip()))
+    return out
 
 
 # ---------------------------------------------------------------------------------------------- scoring
@@ -500,8 +522,9 @@ def plan_pass(spec, game, folder, board, costs, n):
                     f"{done} of {len(report)} goals done.\n\n### Gaps\n\n{gaps_table(spec, report)}\n\n"
                     f"### Order\n\n{scores_table(spec, ranked) if ranked else 'Nothing left to build.'}\n")
     if ambiguous:
-        g.append(board, "\n### Ambiguous (not scored; the run stops for the designer)\n\n" +
-                 "\n".join(f"- {a}: {spec['goals'][a]['title']}" for a in ambiguous) + "\n")
+        g.append(board, "\n### Ambiguous (not scored; built after the designer answers)\n\n" + "\n".join(
+            f"- {a}: {spec['goals'][a]['title']}" + "".join(f"\n  - Question: {q}" for q in report[a]["questions"])
+            for a in ambiguous) + "\n")
     return report, ranked, ambiguous
 
 
@@ -720,7 +743,15 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
     head = (f"Goal agent run `{run}`, fix round {rnd} for goal {', '.join(b['id'] for b in batch)} of "
             f"`game/specs/{spec['file']}`, branch `{branch}`. These checks failed after the last step. Fix what is in "
             f"your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit.\n\n")
-    return {a: head + f"Your folder: {FOLDERS[a]}\n\n{report}\n\nReply in at most 150 words." for a in owners}
+    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{report}\n\nSpec text:\n{spec_slice(spec, goal)}\n\n"
+                     f"Reply in at most 150 words." for a in owners}
+    if goal["kind"] == "change" and any(l == "tests" for l, _ in failed):
+        # an older test may pin what this change was asked to change (e.g. the removed Hive bar): Quinn's folder
+        out[QA] = head + (f"Your folder: {FOLDERS[QA]}. Update only a test whose expectation this change of the "
+                          f"spec replaces, and quote the spec line in a comment beside it. Any other failure is a "
+                          f"finding against the code: leave the test and say which. Rerun only the tests you touch "
+                          f"(CB_ONLY).\n\n{report}\n\nSpec text:\n{spec_slice(spec, goal)}\n\nReply in at most 150 words.")
+    return out
 
 
 def call_agents(plan, board, usage, run, label):
@@ -801,11 +832,11 @@ def main(argv=None):
             print_plan(spec, report, ranked, ambiguous, folder)
             if a.plan:
                 return 0
-            if ambiguous:
+            ready = [e for e in ranked if e["factors"]["ready"]]
+            if ambiguous and not ready:   # the other goals were built first; now only the designer can unblock the rest
                 result = "waiting-designer"
                 g.append(board, "\n**Stop:** ambiguous goal(s); the questions are listed above (Process 1).\n")
                 break
-            ready = [e for e in ranked if e["factors"]["ready"]]
             if a.goal and built == 0:
                 ready = [e for e in ranked if e["id"] == a.goal and e["factors"]["ready"]] or []
                 if not ready:
