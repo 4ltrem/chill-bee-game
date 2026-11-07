@@ -110,7 +110,7 @@ def cmd_round(shots_dir, round_json, spec_json, prev_page, out):
 .status{font-size:13px;color:var(--muted)}
 .lb{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;place-items:center;z-index:9;padding:16px}
 .lb.open{display:grid}.lb img{max-height:94vh;max-width:100%;border-radius:8px}
-"""
+""" + LB_FULL_CSS
     page = "\n".join(head[:css_end] + [extra] + head[css_end:]).replace("<title>Zoom Framing Options</title>", f"<title>{html.escape(spec['title'])}</title>")
     p = [page, '<div class="wrap">', '<section class="brief" style="max-width:none">', f'<span class="eyebrow">{spec["eyebrow"]}</span>',
          f"<h1>{html.escape(spec['h1'])}</h1>", f"<p>{spec['brief']}</p>", '<p class="status" id="status">Loading saved votes…</p></section>']
@@ -211,6 +211,12 @@ def cmd_votes(shots_dir, shots_json, prev_page, out):
     open(out, "w", encoding="utf-8").write("\n".join(p) + "\n")
 
 
+LB_JS_OLD = "  document.querySelectorAll('.card figure img').forEach(img => img.addEventListener('click', () => { lb.querySelector('img').src = img.src; lb.classList.add('open'); }));"
+# A contact sheet (anything wider than a 9:16 phone shot) opens at its own size and scrolls; a phone shot still fits the window.
+LB_JS = ("  document.querySelectorAll('.card figure img').forEach(img => img.addEventListener('click', () => { lb.querySelector('img').src = img.src; "
+         "lb.classList.toggle('full', img.naturalWidth / img.naturalHeight > 0.6); lb.classList.add('open'); lb.scrollTo(0, 0); }));")
+LB_FULL_CSS = ".lb.full{overflow:auto;place-items:start}.lb.full img{max-height:none;max-width:none}\n"
+
 VOTE_CSS = """
 .vgrid{display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:12px;align-items:start}
 .vgrid .colh{font-weight:700;font-size:13px;color:var(--muted);text-align:center}
@@ -229,7 +235,7 @@ VOTE_CSS = """
 .lb{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;place-items:center;z-index:9;padding:16px}
 .lb.open{display:grid}.lb img{max-height:94vh;max-width:100%;border-radius:8px}
 .emoji{font-size:24px;line-height:1.1;margin:0}
-"""
+""" + LB_FULL_CSS
 
 
 SCRIPT = r"""<script>
@@ -249,7 +255,7 @@ SCRIPT = r"""<script>
   }
   // lightbox
   const lb = document.getElementById('lb');
-  document.querySelectorAll('.card figure img').forEach(img => img.addEventListener('click', () => { lb.querySelector('img').src = img.src; lb.classList.add('open'); }));
+""" + LB_JS + r"""
   lb.addEventListener('click', () => lb.classList.remove('open'));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') lb.classList.remove('open'); });
 
@@ -369,13 +375,15 @@ def cmd_variants(shots_dir, out, title, checks=None):
     open(out, "w", encoding="utf-8").write("\n".join(p) + "\n")
 
 
-def vote_card(sid, title, shot, lines=(), pill=None, meta=None):
-    """One votable card (yes / maybe / no + note), the same markup the votes SCRIPT binds to."""
+def vote_card(sid, title, shot, lines=(), pill=None, meta=None, wide=False):
+    """One votable card (yes / maybe / no + note), the same markup the votes SCRIPT binds to.
+    wide: keep the image's own proportions (a contact sheet) instead of the head's 9:16 phone box."""
     meta = dict(meta or {}, file=os.path.basename(shot))
     pill_html = f'<span class="pill {"ok" if pill[1] else "low"}">{esc(pill[0])}</span>' if pill else ""
     body = "".join(f'<p class="small">{l}</p>' for l in lines)
+    ratio = ' style="aspect-ratio:auto"' if wide else ""
     return (f'<article class="card" data-id="{esc(sid)}" data-meta="{html.escape(json.dumps(meta), quote=True)}">'
-            f'<header><h2>{esc(title)}</h2>{pill_html}</header><figure><img src="{b64(shot)}" alt="{esc(title)}"></figure>{body}'
+            f'<header><h2>{esc(title)}</h2>{pill_html}</header><figure><img src="{b64(shot)}" alt="{esc(title)}"{ratio}></figure>{body}'
             f'<div class="votes" role="group" aria-label="Vote for {esc(sid)}">'
             + "".join(f'<button type="button" data-v="{v}" aria-pressed="false">{v}</button>' for v in ("yes", "maybe", "no"))
             + f'</div><textarea aria-label="Note for {esc(sid)}" placeholder="Note (optional)" rows="1"></textarea></article>')
@@ -390,10 +398,14 @@ def add_sections(page, sections, h1, brief, title=None):
     new = ['\n<section class="brief" style="max-width:none"><span class="eyebrow">Chill Bee Game &middot; comparisons</span>',
            f"<h1>{esc(h1)}</h1><p>{brief}</p>", '<p class="status" id="status">Loading saved votes…</p></section>']
     for sec in sections:
+        grid = '<div class="rgrid" style="grid-template-columns:minmax(0,1fr)">' if sec.get("wide") else '<div class="rgrid">'
         new.append(f'<section class="row"><span class="eyebrow">{sec["eyebrow"]}</span><h2>{esc(sec["h2"])}</h2>'
-                   f'<p class="small">{sec["text"]}</p><div class="rgrid">' + "\n".join(sec["cards"]) + "</div></section>")
+                   f'<p class="small">{sec["text"]}</p>{grid}' + "\n".join(sec["cards"]) + "</div></section>")
     new.append(f'<details><summary>Earlier questions</summary><div class="wrap">{old}</div></details>\n')
     page = page[:i] + "\n".join(new) + page[k:]
+    page = page.replace(LB_JS_OLD, LB_JS)  # pages built before the full-size lightbox
+    if LB_FULL_CSS not in page:
+        page = page.replace("</style>", LB_FULL_CSS + "</style>", 1)
     if title:
         page = re.sub(r"<title>[^<]*</title>", f"<title>{esc(title)}</title>", page, count=1)
     return page
@@ -436,9 +448,9 @@ def variants_section(shots_dir, prefix, title, checks=None):
 
 def versions_section(prefix, title, versions, text=""):
     """One card per build version, each a contact sheet of the same ui_shots.py moments. versions: [(label, png, caption)]."""
-    cards = [vote_card(f"{prefix}-{label}", label, png, [esc(cap)] if cap else [], meta={"question": prefix, "version": label})
-             for label, png, cap in versions]
-    return {"eyebrow": "Versions side by side &middot; <code>_tools/ui_shots.py</code>", "h2": title,
+    cards = [vote_card(f"{prefix}-{label}", label, png, [esc(cap)] if cap else [], meta={"question": prefix, "version": label},
+                       wide=True) for label, png, cap in versions]
+    return {"eyebrow": "Versions side by side &middot; <code>_tools/ui_shots.py</code>", "h2": title, "wide": True,
             "text": text or "Each sheet shows the same moments in one version. Click a sheet to see it full size. "
                             "Vote yes on the version that places things right, and say in the note which moment.", "cards": cards}
 
