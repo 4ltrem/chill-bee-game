@@ -609,3 +609,84 @@ Items 3 and 4 are done in `scenes/main.tscn`. `contract_check.py` passes with 0 
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `ui shots`: PASS
+- Green: checkpoint `fb94e04` on `milestone/0.1.4`
+
+## Pass 7: scan (2026-11-07T13:28:21-05:00)
+
+Unit results from `game/reports/_runs/20261107-132443/unit.log`. 1 of 17 goals done.
+
+### Gaps
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
+| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ ledger 90e03c6 |
+| C3 Back in one fixed place | change | Patricia, Bob | missing | none found |
+| C4 Speed tag clear of the top info | change | Bob | partial (built, waits on its tests) | ✓ ledger fb94e04 |
+| C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
+| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
+| C7 The pile loads on its own at the second stop | change | Patricia | missing | none found |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
+| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
+| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
+| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
+| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
+| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
+| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
+
+### Order
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C7 The pile loads on its own at the second stop | 11.27 | 2 | 3 | 0.73 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.73 (Patricia) |
+| 2 | C3 Back in one fixed place | 10.9 | 2 | 3 | 1.1 | 1 | 2 goal(s) wait on it; play-test fix; cost 1.1 (Patricia, Bob) |
+| 3 | C1 Harvest button is the honey meter | 8.9 | 2 | 2 | 1.1 | 1 | 2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob) |
+| 4 | C6 Housekeeping from 0.1.3: | 7.27 | 2 | 1 | 0.73 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia) |
+| 5 | T2.1 no two HUD controls overlap, and none is cut off b | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 6 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 7 | T4.1 Back's rect is in the top-right quadrant, and the  | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C1, C3, C5, C6, C7 |
+| 9 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C1 |
+| 10 | T3.1 Back has the same screen rect in the first zoom an | 0.0 | 0 | 3 | 0.62 | 0 | waits on C3 |
+| 11 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C5 |
+| 12 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C6 |
+| 13 | T7.1 item 7: at the second stop, with a pile waiting, a | 0.0 | 0 | 3 | 0.62 | 0 | waits on C7 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C5: Bigger hive frames and combs
+  - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
+  - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
+
+Next: **C7** (score 11.27: 2 goal(s) wait on it; play-test fix; cost 0.73 (Patricia)).
+
+### Step: C7 (2026-11-07T13:28:21-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C7-patricia.md` (1338 chars)
+- Budget guard for Patricia: allow (reading 0 min old)
+
+**Patricia** (491,165 tokens, 24 turns, 1213 s):
+
+I changed no files for item 7. I couldn't find a code path where the pile needs a Spin press to load, so I stopped to ask.
+
+**What the code does now:** `main.gd` runs `load_pile()` when `bottling_done` fires, in every view. In the second stop the bucket is full again after the load, and Spin is then only needed to start spinning.
+
+**What I tried:** I added a per-frame safety net that loads a landed pile into an empty, open bucket. It broke `t_pile_shows_every_cell`, because that test fills the pile while the bucket is open and empty. The replay tests failed too, so I reverted it.
+
+**Tests:** `t_replay_fill_and_back` and `t_replay_without_back_stays_in_zoom` fail on the unmodified code. They were already failing before my change, so they need Quinn. I did not run `play_loop.gd`. `contract_check.py` reported 0 unresolved lookups.
+
+**Node names used:** none.
+
+**Open questions:**
+1. Does the designer's "retap Spin" mean the pile did not load, or that the loaded bucket did not start spinning on its own? The spec says Spin starts spinning, so I read it as the first.
+2. If the pile really didn't load, what were the steps? Is it a pour at the second stop with the bucket only partly refilled?
+
+Quinn should add a test for a second-stop pour with a waiting pile.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
