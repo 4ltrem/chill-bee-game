@@ -1011,3 +1011,74 @@ I made no code findings against `scripts/` or `scenes/`. I did not run the full 
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `ui shots`: PASS
+- Green: checkpoint `b431c26` on `milestone/0.1.4`
+
+## Pass 10: scan (2026-11-07T14:13:07-05:00)
+
+Unit results from `game/reports/_runs/20261107-140910/unit.log`. 1 of 17 goals done.
+
+### Gaps
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
+| C1 Harvest button is the honey meter | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger b431c26 |
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ ledger 90e03c6 |
+| C3 Back in one fixed place | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger 747a5a1 |
+| C4 Speed tag clear of the top info | change | Bob | partial (built, waits on its tests) | ✓ ledger fb94e04 |
+| C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
+| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
+| C7 The pile loads on its own at the second stop | change | Patricia | partial (built, waits on its tests) | ✓ ledger 90b18b9 |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
+| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
+| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
+| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
+| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
+| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
+| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
+
+### Order
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C6 Housekeeping from 0.1.3: | 7.27 | 2 | 1 | 0.73 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia) |
+| 2 | T2.1 no two HUD controls overlap, and none is cut off b | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 3 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 4 | T3.1 Back has the same screen rect in the first zoom an | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 5 | T4.1 Back's rect is in the top-right quadrant, and the  | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 6 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
+| 7 | T1.1 the Harvest fill equals the hive fill fraction (±  | 3.38 | 0 | 2 | 0.62 | 1 | designer feature; cost 0.62 (Quinn) |
+| 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C5, C6 |
+| 9 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C5 |
+| 10 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C5: Bigger hive frames and combs
+  - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
+  - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
+
+Next: **C6** (score 7.27: 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia)).
+
+### Step: C6 (2026-11-07T14:13:07-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C6-patricia.md` (987 chars)
+- Budget guard for Patricia: allow (reading 3 min old)
+
+**Patricia** (154,687 tokens, 12 turns, 568 s):
+
+Item 6 is done in `game/scripts/input_recorder.gd`, but the full test run was not clean and I did not verify the fix. `contract_check` found 0 unresolved lookups. `godot_run.py unit start` printed PASS, but its exit code was 1 and I did not look into that.
+
+- **Change:** `InputRecorder` has a new `dir` variable, used instead of the fixed `DIR` for the output folder and the file-name search. When Godot is launched with `--script` or `-s`, `dir` is `OS.get_cache_dir()/chill_bee_test_recordings`. Otherwise it stays `user://recordings`.
+- **Coverage:** this covers every test and shot script that goes through the Dev panel's recorder. `ui_compare_shots.gd` already turns recording off itself.
+- **Fixture maker:** `make_recording_fixture.gd` reads back the path `stop()` returns, which is now the temp folder, so it still works.
+- **Not run:** I did not run the full suite or the windowed playthrough, and I did not check that `user://recordings` stays empty. Quinn should check T6.1: file count in `user://recordings` before and after a full run.
+- **Node names:** none used for this item.
+- **Open questions:** none.
+
+- Check `contract`: PASS
+- Check `tests`: PASS

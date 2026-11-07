@@ -8,6 +8,11 @@ extends Node
 
 const DIR: String = "user://recordings"
 const TOGGLE_KEY: int = KEY_F8
+const TEST_DIR_NAME: String = "chill_bee_test_recordings"   # 0.1.4 item 6: under tests the recorder writes here, never to user://recordings
+
+## Where recordings go. Under a test or shot script (launched with --script / -s) it is a folder in the OS cache dir, so the player's
+## user://recordings stays untouched. Set it before start() to override.
+var dir: String = _default_dir()
 
 signal recording_changed(file_name: String)   # file name while recording, "" when stopped
 
@@ -62,8 +67,8 @@ func stop() -> String:
 	if not recording:
 		return ""
 	recording = false
-	var path: String = DIR + "/" + file_name
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(DIR))
+	var path: String = dir + "/" + file_name
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir))
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify(snapshot(), "\t"))
@@ -106,9 +111,16 @@ func _next_file_name() -> String:
 	var d: Dictionary = Time.get_date_dict_from_system()
 	var stem: String = "%04d-%02d-%02d" % [d["year"], d["month"], d["day"]]
 	var n: int = 1
-	while FileAccess.file_exists("%s/%s-%d.json" % [DIR, stem, n]):
+	while FileAccess.file_exists("%s/%s-%d.json" % [dir, stem, n]):
 		n += 1
 	return "%s-%d.json" % [stem, n]
+
+
+static func _default_dir() -> String:
+	var args: PackedStringArray = OS.get_cmdline_args()
+	if args.has("--script") or args.has("-s"):
+		return OS.get_cache_dir().path_join(TEST_DIR_NAME)
+	return DIR
 
 
 # --- event <-> Dictionary ---
