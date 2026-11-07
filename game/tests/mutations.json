@@ -513,5 +513,55 @@
    "t_flower_patch_b"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.1.4 buttons ignore the screen margin",
+  "file": "scripts/floating_icon.gd",
+  "find": "var m: float = config.button_screen_margin\n\tvar lo",
+  "replace": "var m: float = 0.0\n\tvar lo",
+  "expect": [
+   "t_buttons_clamped_when_anchor_off_screen"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 a per-view offset moves the buttons off their anchors",
+  "file": "scripts/floating_icon.gd",
+  "find": "screen_offset + Vector2(0.0, _config_offset())",
+  "replace": "screen_offset + Vector2(0.0, _config_offset() + camera.size * 6.0)",
+  "expect": [
+   "t_buttons_at_anchor_or_clamped"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 buttons are not nudged clear of each other",
+  "file": "scripts/floating_icon.gd",
+  "find": "\t\tif not box.intersects(other):\n\t\t\tcontinue\n",
+  "replace": "\t\tif true:\n\t\t\tcontinue\n",
+  "expect": [
+   "t_hud_no_overlap_no_cutoff"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 Harvest shows at the second stop",
+  "file": "scripts/main.gd",
+  "find": "_fork_icon.set_wanted(on_farm and not _at_second_stop)",
+  "replace": "_fork_icon.set_wanted(on_farm)",
+  "expect": [
+   "t_harvest_hidden_at_second_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 Spin is declared under FarmUI again",
+  "file": "scenes/main.tscn",
+  "find": "[node name=\"CentrifugeIcon\" type=\"Button\" parent=\"FarmUIRoot\"]",
+  "replace": "[node name=\"CentrifugeIcon\" type=\"Button\" parent=\"FarmUIRoot/FarmUI\"]",
+  "expect": [
+   "t_spin_placed_by_scene"
+  ],
+  "suite": "unit"
  }
 ]

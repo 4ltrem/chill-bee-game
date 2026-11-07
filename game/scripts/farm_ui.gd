@@ -183,4 +183,6 @@ func _process(_delta: float) -> void:
 		_count_label.visible = _fork.visible
 		if _fork.visible:
 			var anchor_pt: Vector2 = _fork.global_position + top_left
-			_count_label.global_position = Vector2(anchor_pt.x + (vs.x - _count_label.size.x) * 0.5, anchor_pt.y - _count_label.size.y - count_gap_px)
+			# never inside the button's 120 px touch rect (the overlap check compares rects): at most its top edge
+			var label_y: float = minf(anchor_pt.y - count_gap_px, _fork.global_position.y) - _count_label.size.y
+			_count_label.global_position = Vector2(anchor_pt.x + (vs.x - _count_label.size.x) * 0.5, label_y)

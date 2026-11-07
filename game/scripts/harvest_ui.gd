@@ -29,6 +29,18 @@ func show_zoom() -> void:
 		_hint.text = _hint_text
 	if _back_button != null:
 		_back_button.visible = true
+	_keep_hint_clear_of_back()
+
+
+## 0.1.4: the hint's right edge stops 16 px left of Back (parent-relative maths, so it needs no layout pass).
+func _keep_hint_clear_of_back() -> void:
+	if _hint == null or _back_button == null:
+		return
+	var parent_w: float = _hint.get_parent_area_size().x
+	var back_left: float = parent_w * _back_button.anchor_left + _back_button.offset_left
+	var max_right: float = back_left - 16.0 - parent_w * _hint.anchor_right
+	if _hint.offset_right > max_right:
+		_hint.offset_right = max_right
 
 
 ## The second camera stop (0.1.3c): only the Back button shows, fixed top-right like the first zoom.

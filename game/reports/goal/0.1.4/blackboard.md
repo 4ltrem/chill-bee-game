@@ -1,132 +1,21 @@
+---
+spec: 0.1.4-ui-placement.md
+version: 0.1.4
+run: 0.1.4
+started: 2026-11-07
+result: running
+---
 # Goal agent: 0.1.4-ui-placement.md (run 0.1.4)
 
-Spec: `game/specs/0.1.4-ui-placement.md` (version 0.1.4). Agent: `_tools/goal_agent.py` (spec `game/specs/m3-goal-agent.md`).
-No agent reads this file; it is the run's record.
+The shared record of this run. The script writes every section and hands each agent only the slice it needs; no agent reads this file. Inputs (briefs, drafts, shots) are linked; what agents and checks return (verdicts, replies, scores) is written here.
 
----
+## Request
+Build what `game/specs/0.1.4-ui-placement.md` (version 0.1.4) asks for that the game lacks. Agent: `_tools/goal_agent.py` (spec `game/specs/m3-goal-agent.md`).
 
-Invocation (plan) 2026-11-07T12:16:06-05:00: `goal_agent.py 0.1.4-ui-placement.md --plan`
-
-## Pass 1: scan (2026-11-07T12:16:06-05:00)
-
-Unit results from `game/reports/_runs/20261107-120831/unit.log`. 0 of 17 goals done.
-
-### Gaps
-
-| Goal | Kind | Owners | Status | Evidence |
-|---|---|---|---|---|
-| H Node handoff (Patricia to Bob) | handoff | Patricia | missing | ✗ handoff game/specs/0.1.4-node-handoff.md |
-| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
-| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | missing | ✗ config harvest_anchor_offset, ✗ config spin_anchor_offset, ✗ config sell_anchor_offset, ✗ config button_screen_margin |
-| C3 Back in one fixed place | change | Patricia, Bob | missing | none found |
-| C4 Speed tag clear of the top info | change | Bob | missing | none found |
-| C5 Bigger hive frames and combs | change | Patricia, Bob | missing | ✗ config frame_scale |
-| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
-| C7 The pile loads on its own at the second stop | change | Patricia | missing | none found |
-| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
-| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
-| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
-| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
-| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
-| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
-| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
-| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
-| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
-
-### Order
-
-| Rank | Goal | Score | unblocks | value | cost | ready | Why |
-|---|---|---|---|---|---|---|---|
-| 1 | H Node handoff (Patricia to Bob) | 16.17 | 5 | 1 | 0.83 | 1 | 5 goal(s) wait on it; housekeeping/handoff; cost 0.83 (Patricia) |
-| 2 | C7 The pile loads on its own at the second stop | 11.17 | 2 | 3 | 0.83 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.83 (Patricia) |
-| 3 | C6 Housekeeping from 0.1.3: | 7.17 | 2 | 1 | 0.83 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.83 (Patricia) |
-| 4 | C1 Harvest button is the honey meter | 0.0 | 2 | 2 | 1.2 | 0 | waits on H |
-| 5 | C2 Buttons anchored to their props, the same way in e | 0.0 | 3 | 3 | 1.2 | 0 | waits on H |
-| 6 | C3 Back in one fixed place | 0.0 | 2 | 3 | 1.2 | 0 | waits on H |
-| 7 | C4 Speed tag clear of the top info | 0.0 | 2 | 3 | 0.36 | 0 | waits on H |
-| 8 | C5 Bigger hive frames and combs | 0.0 | 2 | 2 | 1.2 | 0 | waits on H |
-| 9 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.64 | 0 | waits on C1, C2, C3, C4, C5, C6, C7 |
-| 10 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.64 | 0 | waits on C1 |
-| 11 | T2.1 no two HUD controls overlap, and none is cut off b | 0.0 | 0 | 3 | 0.64 | 0 | waits on C2 |
-| 12 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 0.0 | 0 | 3 | 0.64 | 0 | waits on C2 |
-| 13 | T3.1 Back has the same screen rect in the first zoom an | 0.0 | 0 | 3 | 0.64 | 0 | waits on C3 |
-| 14 | T4.1 Back's rect is in the top-right quadrant, and the  | 0.0 | 0 | 3 | 0.64 | 0 | waits on C4 |
-| 15 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.64 | 0 | waits on C5 |
-| 16 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.64 | 0 | waits on C6 |
-| 17 | T7.1 item 7: at the second stop, with a pile waiting, a | 0.0 | 0 | 3 | 0.64 | 0 | waits on C7 |
-
-Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
-
----
-
-Invocation (dry run) 2026-11-07T12:16:06-05:00: `goal_agent.py 0.1.4-ui-placement.md --dry-run`
-
-## Pass 2: scan (2026-11-07T12:16:07-05:00)
-
-Unit results from `game/reports/_runs/20261107-120831/unit.log`. 0 of 17 goals done.
-
-### Gaps
-
-| Goal | Kind | Owners | Status | Evidence |
-|---|---|---|---|---|
-| H Node handoff (Patricia to Bob) | handoff | Patricia | missing | ✗ handoff game/specs/0.1.4-node-handoff.md |
-| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
-| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | missing | ✗ config harvest_anchor_offset, ✗ config spin_anchor_offset, ✗ config sell_anchor_offset, ✗ config button_screen_margin |
-| C3 Back in one fixed place | change | Patricia, Bob | missing | none found |
-| C4 Speed tag clear of the top info | change | Bob | missing | none found |
-| C5 Bigger hive frames and combs | change | Patricia, Bob | missing | ✗ config frame_scale |
-| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
-| C7 The pile loads on its own at the second stop | change | Patricia | missing | none found |
-| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
-| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
-| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
-| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
-| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
-| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
-| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
-| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
-| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
-
-### Order
-
-| Rank | Goal | Score | unblocks | value | cost | ready | Why |
-|---|---|---|---|---|---|---|---|
-| 1 | H Node handoff (Patricia to Bob) | 16.17 | 5 | 1 | 0.83 | 1 | 5 goal(s) wait on it; housekeeping/handoff; cost 0.83 (Patricia) |
-| 2 | C7 The pile loads on its own at the second stop | 11.17 | 2 | 3 | 0.83 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.83 (Patricia) |
-| 3 | C6 Housekeeping from 0.1.3: | 7.17 | 2 | 1 | 0.83 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.83 (Patricia) |
-| 4 | C1 Harvest button is the honey meter | 0.0 | 2 | 2 | 1.2 | 0 | waits on H |
-| 5 | C2 Buttons anchored to their props, the same way in e | 0.0 | 3 | 3 | 1.2 | 0 | waits on H |
-| 6 | C3 Back in one fixed place | 0.0 | 2 | 3 | 1.2 | 0 | waits on H |
-| 7 | C4 Speed tag clear of the top info | 0.0 | 2 | 3 | 0.36 | 0 | waits on H |
-| 8 | C5 Bigger hive frames and combs | 0.0 | 2 | 2 | 1.2 | 0 | waits on H |
-| 9 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.64 | 0 | waits on C1, C2, C3, C4, C5, C6, C7 |
-| 10 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.64 | 0 | waits on C1 |
-| 11 | T2.1 no two HUD controls overlap, and none is cut off b | 0.0 | 0 | 3 | 0.64 | 0 | waits on C2 |
-| 12 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 0.0 | 0 | 3 | 0.64 | 0 | waits on C2 |
-| 13 | T3.1 Back has the same screen rect in the first zoom an | 0.0 | 0 | 3 | 0.64 | 0 | waits on C3 |
-| 14 | T4.1 Back's rect is in the top-right quadrant, and the  | 0.0 | 0 | 3 | 0.64 | 0 | waits on C4 |
-| 15 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.64 | 0 | waits on C5 |
-| 16 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.64 | 0 | waits on C6 |
-| 17 | T7.1 item 7: at the second stop, with a pile waiting, a | 0.0 | 0 | 3 | 0.64 | 0 | waits on C7 |
-
-Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
-
-Next: **H** (score 16.17: 5 goal(s) wait on it; housekeeping/handoff; cost 0.83 (Patricia)).
-
-### Step: H (2026-11-07T12:16:07-05:00)
-
-- Brief for Patricia: `game/reports/goal/0.1.4/briefs/H-patricia.md` (4050 chars)
-- Checks: 
-- Dry run: no agent called.
-
-## Result (2026-11-07T12:16:07-05:00): dry-run
-
----
-
-Invocation (build) 2026-11-07T12:16:42-05:00: `goal_agent.py 0.1.4-ui-placement.md --max-goals 1`
+Command: `goal_agent.py 0.1.4-ui-placement.md --max-goals 1`
 Branch `milestone/0.1.4`: checked out from `milestone/0.1` (new).
 
-## Pass 3: scan (2026-11-07T12:16:42-05:00)
+## Pass 1: scan (2026-11-07T12:16:42-05:00)
 
 Unit results from `game/reports/_runs/20261107-120831/unit.log`. 0 of 17 goals done.
 
@@ -211,109 +100,52 @@ I wrote `game/specs/0.1.4-node-handoff.md` and no code. I haven't run any checks
 
 **Stop:** stopped after 1 goal(s) (--max-goals).
 
-## Pass 4: scan (2026-11-07T12:17:26-05:00)
+## Pass 2: scan (2026-11-07T12:17:26-05:00)
 
-Unit results from `game/reports/_runs/20261107-120831/unit.log`. 1 of 17 goals done.
+Unit results from `game/reports/_runs/20261107-120831/unit.log`. 1 of 17 goals done. Only what changed since the last pass is shown.
 
-### Gaps
+### Gaps changed (1 of 17)
 
 | Goal | Kind | Owners | Status | Evidence |
 |---|---|---|---|---|
 | H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
-| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
-| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | missing | ✗ config harvest_anchor_offset, ✗ config spin_anchor_offset, ✗ config sell_anchor_offset, ✗ config button_screen_margin |
-| C3 Back in one fixed place | change | Patricia, Bob | missing | none found |
-| C4 Speed tag clear of the top info | change | Bob | missing | none found |
-| C5 Bigger hive frames and combs | change | Patricia, Bob | missing | ✗ config frame_scale |
-| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
-| C7 The pile loads on its own at the second stop | change | Patricia | missing | none found |
-| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
-| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
-| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
-| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
-| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
-| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
-| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
-| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
-| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
 
-### Order
+### Order: new or rescored (5 of 16)
 
 | Rank | Goal | Score | unblocks | value | cost | ready | Why |
 |---|---|---|---|---|---|---|---|
 | 1 | C2 Buttons anchored to their props, the same way in e | 13.8 | 3 | 3 | 1.2 | 1 | 3 goal(s) wait on it; play-test fix; cost 1.2 (Patricia, Bob) |
 | 2 | C4 Speed tag clear of the top info | 11.64 | 2 | 3 | 0.36 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.36 (Bob) |
-| 3 | C7 The pile loads on its own at the second stop | 11.17 | 2 | 3 | 0.83 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.83 (Patricia) |
 | 4 | C3 Back in one fixed place | 10.8 | 2 | 3 | 1.2 | 1 | 2 goal(s) wait on it; play-test fix; cost 1.2 (Patricia, Bob) |
 | 5 | C1 Harvest button is the honey meter | 8.8 | 2 | 2 | 1.2 | 1 | 2 goal(s) wait on it; designer feature; cost 1.2 (Patricia, Bob) |
 | 6 | C5 Bigger hive frames and combs | 8.8 | 2 | 2 | 1.2 | 1 | 2 goal(s) wait on it; designer feature; cost 1.2 (Patricia, Bob) |
-| 7 | C6 Housekeeping from 0.1.3: | 7.17 | 2 | 1 | 0.83 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.83 (Patricia) |
-| 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.64 | 0 | waits on C1, C2, C3, C4, C5, C6, C7 |
-| 9 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.64 | 0 | waits on C1 |
-| 10 | T2.1 no two HUD controls overlap, and none is cut off b | 0.0 | 0 | 3 | 0.64 | 0 | waits on C2 |
-| 11 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 0.0 | 0 | 3 | 0.64 | 0 | waits on C2 |
-| 12 | T3.1 Back has the same screen rect in the first zoom an | 0.0 | 0 | 3 | 0.64 | 0 | waits on C3 |
-| 13 | T4.1 Back's rect is in the top-right quadrant, and the  | 0.0 | 0 | 3 | 0.64 | 0 | waits on C4 |
-| 14 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.64 | 0 | waits on C5 |
-| 15 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.64 | 0 | waits on C6 |
-| 16 | T7.1 item 7: at the second stop, with a pile waiting, a | 0.0 | 0 | 3 | 0.64 | 0 | waits on C7 |
 
 Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
 
-## Result (2026-11-07T12:17:26-05:00): stopped after 1 goal(s) (--max-goals)
+## Resumed 2026-11-07
 
-1 agent call(s), 221,991 tokens.
-
----
-
-Invocation (build) 2026-11-07T12:19:16-05:00: `goal_agent.py 0.1.4-ui-placement.md`
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `stopped`).
 Branch `milestone/0.1.4`: already on it.
 
-## Pass 5: scan (2026-11-07T12:19:16-05:00)
+## Pass 3: scan (2026-11-07T12:19:16-05:00)
 
-Unit results from `game/reports/_runs/20261107-120831/unit.log`. 1 of 17 goals done.
+Unit results from `game/reports/_runs/20261107-120831/unit.log`. 1 of 17 goals done. Only what changed since the last pass is shown.
 
-### Gaps
+### Gaps changed (1 of 17)
 
 | Goal | Kind | Owners | Status | Evidence |
 |---|---|---|---|---|
-| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
-| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
-| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | missing | ✗ config harvest_anchor_offset, ✗ config spin_anchor_offset, ✗ config sell_anchor_offset, ✗ config button_screen_margin |
-| C3 Back in one fixed place | change | Patricia, Bob | missing | none found |
-| C4 Speed tag clear of the top info | change | Bob | missing | none found |
 | C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
-| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
-| C7 The pile loads on its own at the second stop | change | Patricia | missing | none found |
-| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
-| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
-| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
-| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
-| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
-| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
-| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
-| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
-| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
 
-### Order
+### Order: new or rescored (5 of 15)
 
 | Rank | Goal | Score | unblocks | value | cost | ready | Why |
 |---|---|---|---|---|---|---|---|
 | 1 | C2 Buttons anchored to their props, the same way in e | 13.85 | 3 | 3 | 1.15 | 1 | 3 goal(s) wait on it; play-test fix; cost 1.15 (Patricia, Bob) |
-| 2 | C4 Speed tag clear of the top info | 11.64 | 2 | 3 | 0.36 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.36 (Bob) |
 | 3 | C7 The pile loads on its own at the second stop | 11.21 | 2 | 3 | 0.79 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.79 (Patricia) |
 | 4 | C3 Back in one fixed place | 10.85 | 2 | 3 | 1.15 | 1 | 2 goal(s) wait on it; play-test fix; cost 1.15 (Patricia, Bob) |
 | 5 | C1 Harvest button is the honey meter | 8.85 | 2 | 2 | 1.15 | 1 | 2 goal(s) wait on it; designer feature; cost 1.15 (Patricia, Bob) |
 | 6 | C6 Housekeeping from 0.1.3: | 7.21 | 2 | 1 | 0.79 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.79 (Patricia) |
-| 7 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.64 | 0 | waits on C1, C2, C3, C4, C5, C6, C7 |
-| 8 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.64 | 0 | waits on C1 |
-| 9 | T2.1 no two HUD controls overlap, and none is cut off b | 0.0 | 0 | 3 | 0.64 | 0 | waits on C2 |
-| 10 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 0.0 | 0 | 3 | 0.64 | 0 | waits on C2 |
-| 11 | T3.1 Back has the same screen rect in the first zoom an | 0.0 | 0 | 3 | 0.64 | 0 | waits on C3 |
-| 12 | T4.1 Back's rect is in the top-right quadrant, and the  | 0.0 | 0 | 3 | 0.64 | 0 | waits on C4 |
-| 13 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.64 | 0 | waits on C5 |
-| 14 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.64 | 0 | waits on C6 |
-| 15 | T7.1 item 7: at the second stop, with a pile waiting, a | 0.0 | 0 | 3 | 0.64 | 0 | waits on C7 |
 
 Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
 
@@ -322,7 +154,6 @@ Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × fac
 - C5: Bigger hive frames and combs
   - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
   - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
-
 Next: **C2** (score 13.85: 3 goal(s) wait on it; play-test fix; cost 1.15 (Patricia, Bob)).
 
 ### Step: C2 (2026-11-07T12:19:16-05:00)
@@ -513,53 +344,35 @@ FAIL    unit      132 passed, 1 failed  (exit 1, 194 noise lines dropped)  game/
     FAIL  t_pan_after_back_then_harvest_again  back on the farm view the fork icon sits at its anchor's projected position (click went there)  (8847 ms)
 ```
 
-**Stop:** 2 fix rounds failed on C2; the designer decides.
+## Waiting for the designer
 
-## Result (2026-11-07T13:13:24-05:00): failed
+2 fix rounds failed on C2: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.1.4-ui-placement.md --accept C2 --note "<the change>"`. Then rerun the same command to go on.
 
-8 agent call(s), 2,855,348 tokens.
+## Resumed 2026-11-07
 
----
-
-Invocation (build) 2026-11-07T13:24:00-05:00: `goal_agent.py 0.1.4-ui-placement.md --accept C2 --note tests/test_helpers_1.gd: _open_zoom's 'fork icon sits at its anchor' check also accepts a button nudged clear of another control (spec item 2: 'clamped inside the screen with a 16 px margin and nudged clear'); diagnosed by a probe: Spin's anchor meets Harvest's on the way back from the second stop, so Harvest is nudged 86 px up. 1 failing test after Quinn's 2 fix rounds; full checks then green (133/133, contract, ui_shots).`
+Command: `goal_agent.py 0.1.4-ui-placement.md --accept C2 --note tests/test_helpers_1.gd: _open_zoom's 'fork icon sits at its anchor' check also accepts a button nudged clear of another control (spec item 2: 'clamped inside the screen with a 16 px margin and nudged clear'); diagnosed by a probe: Spin's anchor meets Harvest's on the way back from the second stop, so Harvest is nudged 86 px up. 1 failing test after Quinn's 2 fix rounds; full checks then green (133/133, contract, ui_shots).` (the run had stopped: `failed`).
 
 ### Manual fix: C2 (2026-11-07T13:24:00-05:00)
 
 - Change (orchestrator, Process 9): tests/test_helpers_1.gd: _open_zoom's 'fork icon sits at its anchor' check also accepts a button nudged clear of another control (spec item 2: 'clamped inside the screen with a 16 px margin and nudged clear'); diagnosed by a probe: Spin's anchor meets Harvest's on the way back from the second stop, so Harvest is nudged 86 px up. 1 failing test after Quinn's 2 fix rounds; full checks then green (133/133, contract, ui_shots).
 - Accepted: checkpoint `90e03c6` on `milestone/0.1.4`
 
----
+## Resumed 2026-11-07
 
-Invocation (build) 2026-11-07T13:24:24-05:00: `goal_agent.py 0.1.4-ui-placement.md`
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `stopped`).
 Branch `milestone/0.1.4`: already on it.
 
-## Pass 6: scan (2026-11-07T13:24:24-05:00)
+## Pass 4: scan (2026-11-07T13:24:24-05:00)
 
-Unit results from `game/reports/_runs/20261107-132012/unit.log`. 1 of 17 goals done.
+Unit results from `game/reports/_runs/20261107-132012/unit.log`. 1 of 17 goals done. Only what changed since the last pass is shown.
 
-### Gaps
+### Gaps changed (1 of 17)
 
 | Goal | Kind | Owners | Status | Evidence |
 |---|---|---|---|---|
-| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
-| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
 | C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ ledger 90e03c6 |
-| C3 Back in one fixed place | change | Patricia, Bob | missing | none found |
-| C4 Speed tag clear of the top info | change | Bob | missing | none found |
-| C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
-| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
-| C7 The pile loads on its own at the second stop | change | Patricia | missing | none found |
-| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
-| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
-| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
-| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
-| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
-| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
-| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
-| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
-| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
 
-### Order
+### Order: new or rescored (14 of 14)
 
 | Rank | Goal | Score | unblocks | value | cost | ready | Why |
 |---|---|---|---|---|---|---|---|
@@ -585,7 +398,6 @@ Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × fac
 - C5: Bigger hive frames and combs
   - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
   - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
-
 Next: **C4** (score 11.63: 2 goal(s) wait on it; play-test fix; cost 0.37 (Bob)).
 
 ### Step: C4 (2026-11-07T13:24:24-05:00)
@@ -611,49 +423,22 @@ Items 3 and 4 are done in `scenes/main.tscn`. `contract_check.py` passes with 0 
 - Check `ui shots`: PASS
 - Green: checkpoint `fb94e04` on `milestone/0.1.4`
 
-## Pass 7: scan (2026-11-07T13:28:21-05:00)
+## Pass 5: scan (2026-11-07T13:28:21-05:00)
 
-Unit results from `game/reports/_runs/20261107-132443/unit.log`. 1 of 17 goals done.
+Unit results from `game/reports/_runs/20261107-132443/unit.log`. 1 of 17 goals done. Only what changed since the last pass is shown.
 
-### Gaps
+### Gaps changed (1 of 17)
 
 | Goal | Kind | Owners | Status | Evidence |
 |---|---|---|---|---|
-| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
-| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
-| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ ledger 90e03c6 |
-| C3 Back in one fixed place | change | Patricia, Bob | missing | none found |
 | C4 Speed tag clear of the top info | change | Bob | partial (built, waits on its tests) | ✓ ledger fb94e04 |
-| C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
-| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
-| C7 The pile loads on its own at the second stop | change | Patricia | missing | none found |
-| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
-| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
-| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
-| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
-| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
-| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
-| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
-| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
-| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
 
-### Order
+### Order: new or rescored (2 of 13)
 
 | Rank | Goal | Score | unblocks | value | cost | ready | Why |
 |---|---|---|---|---|---|---|---|
-| 1 | C7 The pile loads on its own at the second stop | 11.27 | 2 | 3 | 0.73 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.73 (Patricia) |
-| 2 | C3 Back in one fixed place | 10.9 | 2 | 3 | 1.1 | 1 | 2 goal(s) wait on it; play-test fix; cost 1.1 (Patricia, Bob) |
-| 3 | C1 Harvest button is the honey meter | 8.9 | 2 | 2 | 1.1 | 1 | 2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob) |
-| 4 | C6 Housekeeping from 0.1.3: | 7.27 | 2 | 1 | 0.73 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia) |
-| 5 | T2.1 no two HUD controls overlap, and none is cut off b | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 6 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
 | 7 | T4.1 Back's rect is in the top-right quadrant, and the  | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
 | 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C1, C3, C5, C6, C7 |
-| 9 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C1 |
-| 10 | T3.1 Back has the same screen rect in the first zoom an | 0.0 | 0 | 3 | 0.62 | 0 | waits on C3 |
-| 11 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C5 |
-| 12 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C6 |
-| 13 | T7.1 item 7: at the second stop, with a pile waiting, a | 0.0 | 0 | 3 | 0.62 | 0 | waits on C7 |
 
 Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
 
@@ -662,7 +447,6 @@ Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × fac
 - C5: Bigger hive frames and combs
   - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
   - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
-
 Next: **C7** (score 11.27: 2 goal(s) wait on it; play-test fix; cost 0.73 (Patricia)).
 
 ### Step: C7 (2026-11-07T13:28:21-05:00)
@@ -692,48 +476,22 @@ Quinn should add a test for a second-stop pour with a waiting pile.
 - Check `tests`: PASS
 - Green: checkpoint `90b18b9` on `milestone/0.1.4`
 
-## Pass 8: scan (2026-11-07T13:51:52-05:00)
+## Pass 6: scan (2026-11-07T13:51:52-05:00)
 
-Unit results from `game/reports/_runs/20261107-134836/unit.log`. 1 of 17 goals done.
+Unit results from `game/reports/_runs/20261107-134836/unit.log`. 1 of 17 goals done. Only what changed since the last pass is shown.
 
-### Gaps
+### Gaps changed (1 of 17)
 
 | Goal | Kind | Owners | Status | Evidence |
 |---|---|---|---|---|
-| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
-| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
-| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ ledger 90e03c6 |
-| C3 Back in one fixed place | change | Patricia, Bob | missing | none found |
-| C4 Speed tag clear of the top info | change | Bob | partial (built, waits on its tests) | ✓ ledger fb94e04 |
-| C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
-| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
 | C7 The pile loads on its own at the second stop | change | Patricia | partial (built, waits on its tests) | ✓ ledger 90b18b9 |
-| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
-| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
-| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
-| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
-| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
-| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
-| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
-| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
-| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
 
-### Order
+### Order: new or rescored (2 of 12)
 
 | Rank | Goal | Score | unblocks | value | cost | ready | Why |
 |---|---|---|---|---|---|---|---|
-| 1 | C3 Back in one fixed place | 10.9 | 2 | 3 | 1.1 | 1 | 2 goal(s) wait on it; play-test fix; cost 1.1 (Patricia, Bob) |
-| 2 | C1 Harvest button is the honey meter | 8.9 | 2 | 2 | 1.1 | 1 | 2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob) |
-| 3 | C6 Housekeeping from 0.1.3: | 7.27 | 2 | 1 | 0.73 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia) |
-| 4 | T2.1 no two HUD controls overlap, and none is cut off b | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 5 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 6 | T4.1 Back's rect is in the top-right quadrant, and the  | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
 | 7 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
 | 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C1, C3, C5, C6 |
-| 9 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C1 |
-| 10 | T3.1 Back has the same screen rect in the first zoom an | 0.0 | 0 | 3 | 0.62 | 0 | waits on C3 |
-| 11 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C5 |
-| 12 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C6 |
 
 Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
 
@@ -742,7 +500,6 @@ Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × fac
 - C5: Bigger hive frames and combs
   - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
   - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
-
 Next: **C3** (score 10.9: 2 goal(s) wait on it; play-test fix; cost 1.1 (Patricia, Bob)).
 
 ### Step: C3 (2026-11-07T13:51:52-05:00)
@@ -839,47 +596,22 @@ Which option do you want?
 - Check `ui shots`: PASS
 - Green: checkpoint `747a5a1` on `milestone/0.1.4`
 
-## Pass 9: scan (2026-11-07T13:59:57-05:00)
+## Pass 7: scan (2026-11-07T13:59:57-05:00)
 
-Unit results from `game/reports/_runs/20261107-135608/unit.log`. 1 of 17 goals done.
+Unit results from `game/reports/_runs/20261107-135608/unit.log`. 1 of 17 goals done. Only what changed since the last pass is shown.
 
-### Gaps
+### Gaps changed (1 of 17)
 
 | Goal | Kind | Owners | Status | Evidence |
 |---|---|---|---|---|
-| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
-| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
-| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ ledger 90e03c6 |
 | C3 Back in one fixed place | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger 747a5a1 |
-| C4 Speed tag clear of the top info | change | Bob | partial (built, waits on its tests) | ✓ ledger fb94e04 |
-| C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
-| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
-| C7 The pile loads on its own at the second stop | change | Patricia | partial (built, waits on its tests) | ✓ ledger 90b18b9 |
-| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
-| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
-| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
-| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
-| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
-| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
-| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
-| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
-| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
 
-### Order
+### Order: new or rescored (2 of 11)
 
 | Rank | Goal | Score | unblocks | value | cost | ready | Why |
 |---|---|---|---|---|---|---|---|
-| 1 | C1 Harvest button is the honey meter | 8.9 | 2 | 2 | 1.1 | 1 | 2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob) |
-| 2 | C6 Housekeeping from 0.1.3: | 7.27 | 2 | 1 | 0.73 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia) |
-| 3 | T2.1 no two HUD controls overlap, and none is cut off b | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 4 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
 | 5 | T3.1 Back has the same screen rect in the first zoom an | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 6 | T4.1 Back's rect is in the top-right quadrant, and the  | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 7 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
 | 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C1, C5, C6 |
-| 9 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C1 |
-| 10 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C5 |
-| 11 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C6 |
 
 Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
 
@@ -888,7 +620,6 @@ Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × fac
 - C5: Bigger hive frames and combs
   - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
   - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
-
 Next: **C1** (score 8.9: 2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob)).
 
 ### Step: C1 (2026-11-07T13:59:57-05:00)
@@ -1013,46 +744,22 @@ I made no code findings against `scripts/` or `scenes/`. I did not run the full 
 - Check `ui shots`: PASS
 - Green: checkpoint `b431c26` on `milestone/0.1.4`
 
-## Pass 10: scan (2026-11-07T14:13:07-05:00)
+## Pass 8: scan (2026-11-07T14:13:07-05:00)
 
-Unit results from `game/reports/_runs/20261107-140910/unit.log`. 1 of 17 goals done.
+Unit results from `game/reports/_runs/20261107-140910/unit.log`. 1 of 17 goals done. Only what changed since the last pass is shown.
 
-### Gaps
+### Gaps changed (1 of 17)
 
 | Goal | Kind | Owners | Status | Evidence |
 |---|---|---|---|---|
-| H Node handoff (Patricia to Bob) | handoff | Patricia | done | ✓ handoff 0.1.4-node-handoff.md, ✓ ledger c31bbb8 |
 | C1 Harvest button is the honey meter | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger b431c26 |
-| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ ledger 90e03c6 |
-| C3 Back in one fixed place | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger 747a5a1 |
-| C4 Speed tag clear of the top info | change | Bob | partial (built, waits on its tests) | ✓ ledger fb94e04 |
-| C5 Bigger hive frames and combs | change | Patricia, Bob | missing AMBIGUOUS | ✗ config frame_scale |
-| C6 Housekeeping from 0.1.3: | change | Patricia | missing | none found |
-| C7 The pile loads on its own at the second stop | change | Patricia | partial (built, waits on its tests) | ✓ ledger 90b18b9 |
-| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | missing | none found |
-| T3.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | missing | none found |
-| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | missing | none found |
-| T4.1 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
-| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | missing | none found |
-| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | missing | none found |
-| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | missing | none found |
-| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | missing | none found |
-| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | missing | none found |
 
-### Order
+### Order: new or rescored (2 of 10)
 
 | Rank | Goal | Score | unblocks | value | cost | ready | Why |
 |---|---|---|---|---|---|---|---|
-| 1 | C6 Housekeeping from 0.1.3: | 7.27 | 2 | 1 | 0.73 | 1 | 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia) |
-| 2 | T2.1 no two HUD controls overlap, and none is cut off b | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 3 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 4 | T3.1 Back has the same screen rect in the first zoom an | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 5 | T4.1 Back's rect is in the top-right quadrant, and the  | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
-| 6 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.38 | 0 | 3 | 0.62 | 1 | play-test fix; cost 0.62 (Quinn) |
 | 7 | T1.1 the Harvest fill equals the hive fill fraction (±  | 3.38 | 0 | 2 | 0.62 | 1 | designer feature; cost 0.62 (Quinn) |
 | 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C5, C6 |
-| 9 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.62 | 0 | waits on C5 |
-| 10 | T6.1 no test file appears in `user://recordings` after  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C6 |
 
 Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
 
@@ -1061,7 +768,6 @@ Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × fac
 - C5: Bigger hive frames and combs
   - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
   - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
-
 Next: **C6** (score 7.27: 2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia)).
 
 ### Step: C6 (2026-11-07T14:13:07-05:00)
@@ -1082,3 +788,192 @@ Item 6 is done in `game/scripts/input_recorder.gd`, but the full test run was no
 
 - Check `contract`: PASS
 - Check `tests`: PASS
+- Green: checkpoint `287bdd0` on `milestone/0.1.4`
+
+## Pass 9: scan (2026-11-07T14:25:29-05:00)
+
+Unit results from `game/reports/_runs/20261107-142237/unit.log`. 1 of 17 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 17)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C6 Housekeeping from 0.1.3: | change | Patricia | partial (built, waits on its tests) | ✓ ledger 287bdd0 |
+
+### Order: new or rescored (2 of 9)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 7 | T6.1 no test file appears in `user://recordings` after  | 1.38 | 0 | 1 | 0.62 | 1 | housekeeping/handoff; cost 0.62 (Quinn) |
+| 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.62 | 0 | waits on C5 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C5: Bigger hive frames and combs
+  - Question: A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.
+  - Question: A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune.
+Next: **T2.1** (score 5.38: play-test fix; cost 0.62 (Quinn)), with T2.2.
+
+### Step: T2.1, T2.2 (2026-11-07T14:25:29-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T2.1-quinn.md` (2417 chars)
+- Budget guard for Quinn: allow (reading 0 min old)
+
+**Quinn** (556,555 tokens, 24 turns, 142 s):
+
+I wrote five tests for T2.1 and T2.2. Four pass and `t_hud_no_overlap_no_cutoff` fails on two findings. I did not run the mutations; they go to Rex.
+
+**Findings:**
+- **Hive count label:** in the farm view, `HiveCountLabel` (y 372–411) overlaps `ForkIcon` (y 399–519) by about 12 px. Owner is Patricia.
+- **Back button:** in the first zoom, `BackButton` (x 576–696) overlaps `HintLabel` (x 132–714). Owner is Bob, and the handoff said that corner was free.
+
+**Files changed:**
+- Created `game/tests/test_ui_placement.gd`, which chains after `test_replay.gd`.
+- Edited `run_tests.gd`: the `extends` line, plus the five names under the `# 0.1.4 item 2 (written from game/specs/0.1.4-ui-placement.md before the code)` comment.
+- Edited `mutations.json`: five mutations, one per test.
+
+**Tests:** `t_hud_no_overlap_no_cutoff`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_harvest_hidden_at_second_stop`, `t_spin_placed_by_scene`.
+
+**Nodes used:** `ForkIcon`, `CentrifugeIcon`, `SellIcon`, `BackButton`, `TopInfo`, `ShopPanel`, `HiveCountLabel`, `HintLabel`, and their anchors.
+
+**Open question:** the HUD test counts a control's full rect. If `HiveCountLabel` is meant to sit over the button's top, say so and I'll loosen that one pair.
+
+I started no processes.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      137 passed, 1 failed  (exit 1, 202 noise lines dropped)  game/reports/_runs/20261107-142752/unit.log
+    FAIL  t_hud_no_overlap_no_cutoff  farm view: no HUD controls overlap and none is cut off: expected [] got ["ForkIcon [P: (330.5096, 399.7905), S: (240, 120)] overlaps HiveCountLabel [P: (413.0096, 372.7905), S: (75, 39)]"] | first zoom: no 
+```
+
+#### Fix round 1: to Bob, Patricia
+
+- Budget guard for Bob: allow (reading 2 min old)
+- Budget guard for Patricia: allow (reading 2 min old)
+
+**Bob** (92,164 tokens, 6 turns, 13 s):
+
+The failure isn't in `scenes/` or `materials/`, so I changed nothing.
+
+`ForkIcon` is the 240×120 Harvest touch rect at (330.5, 399.8). `HiveCountLabel` is at (413, 372.8) and 75×39, so its bottom edge sits at y≈411.8, about 12 px inside that rect.
+
+The cause is `game/scripts/farm_ui.gd`, lines 185–186 (Patricia's file). It places the label above the visible shape of the button, which is smaller than the touch rect (`visible_size()` is the size minus `120 − icon_visual_px`). The label therefore sits above the drawn button but inside its touch rect, and Quinn's check compares full rects.
+
+The scene can't fix this, because the touch size of at least 120×120 is required by the spec and by other tests.
+
+**Suggested fix, for Patricia:** place the label above the full rect (`_fork.global_position.y − label.size.y − gap`). Alternatively, the overlap check could use `visible_size()` rects. That choice is a spec call.
+
+
+**Patricia** (244,554 tokens, 14 turns, 1219 s):
+
+The farm-view overlap is fixed, but the unit run still has 3 failures, and I can't fix them from `scripts/`.
+
+**Fixed:** in `scripts/farm_ui.gd`, `HiveCountLabel` now sits at most at the top edge of ForkIcon's 120 px rect. The farm-view check from the last round no longer fails.
+
+**Still failing (last run: 147 passed, 3 failed):**
+- **`t_hud_no_overlap_no_cutoff`, first zoom:** `BackButton` (x 576–696) overlaps `HintLabel` (x 132–714, y 6–106). Both are placed in `main.tscn`, so this is Bob's folder. The hint label's offsets need narrowing, or Back needs to move.
+- **`t_replay_fill_and_back` and `t_replay_without_back_stays_in_zoom`:** the replay ends in zoom with a bucket of 26 frames instead of 70. This looks like a timing or replay-speed problem. Nothing I changed touches the replay. It needs Quinn, or a check that it also fails without my edit.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      137 passed, 1 failed  (exit 1, 202 noise lines dropped)  game/reports/_runs/20261107-145118/unit.log
+    FAIL  t_hud_no_overlap_no_cutoff  first zoom: no HUD controls overlap and none is cut off: expected [] got ["BackButton [P: (576, 16), S: (120, 120)] overlaps HintLabel [P: (132, 6), S: (582, 100)]"]  (3672 ms)
+```
+
+#### Fix round 2: to Bob, Patricia
+
+- Budget guard for Bob: Budget guard: 5-hour usage is 66%, week 9% (4% of the week gone). Keep this run small, or tell the designer before launching more agents.
+- Budget guard for Patricia: Budget guard: 5-hour usage is 66%, week 9% (4% of the week gone). Keep this run small, or tell the designer before launching more agents.
+
+**Bob** (57,209 tokens, 5 turns, 12 s):
+
+I fixed the overlap in `game/scenes/main.tscn`, but I haven't re-run `t_hud_no_overlap_no_cutoff` or rendered the scene.
+
+`HintLabel` was 582 px wide and ran from x=132 to 714. `BackButton` starts at x=576, so the two overlapped. I narrowed the label by changing `offset_right` from 354 to 200, so it now ends at x=560. That leaves a 16 px gap before the button. I also raised `offset_bottom` from 106 to 116, so the hint text can wrap to three lines at the narrower width.
+
+`python -I _tools/contract_check.py` reports 63 lookups and 0 unresolved.
+
+Nothing in `materials/` needed changing. I made no commit.
+
+
+**Patricia** (116,948 tokens, 8 turns, 620 s):
+
+The overlap failure is fixed, but the unit run now shows two new failures in the replay tests. I haven't confirmed my change didn't cause them.
+
+I'm not running anything now. The run I started has exited.
+
+**Fix:** `scripts/harvest_ui.gd` now stops the hint's right edge 16 px left of BackButton when the zoom opens. This is what `t_hud_no_overlap_no_cutoff` checks, and it no longer fails. The real fix is a one-line change in `main.tscn`, which is Bob's folder: HintLabel's `offset_right = 354` runs under BackButton.
+
+**New failures:** unit is 148 passed, 2 failed. The run took about 10 minutes, so these may be timeouts.
+- `t_replay_fill_and_back`: the replay stays in the zoom state and never reaches the second stop.
+- `t_replay_without_back_stays_in_zoom`: the bucket count is 26, not 70.
+
+Both replays involve BackButton and the hint. Quinn should check whether they depend on the hint's layout or on timing under load.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 4 of 5 caught
+mutate 1/5: 0.1.4 buttons ignore the screen margin ... CAUGHT in 1s
+mutate 2/5: 0.1.4 a per-view offset moves the buttons off their anchors ... CAUGHT in 13s
+mutate 3/5: 0.1.4 buttons are not nudged clear of each other ... MISSED in 13s
+mutate 4/5: 0.1.4 Harvest shows at the second stop ... CAUGHT in 14s
+mutate 5/5: 0.1.4 Spin is declared under FarmUI again ... CAUGHT in 1s
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T2.1, T2.2: `mutations` still fails (output above: mutation 3, "buttons are not nudged clear of each other", is missed). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.1.4-ui-placement.md --accept T2.1 --note "<the change>"`. Then rerun the same command to go on.
+
+## Result
+
+Last invocation: waiting for the designer after 2 failed fix rounds on T2.1, T2.2. Converted on 2026-11-07 to the shared board format (_templates/blackboard.md): the --plan and --dry-run passes were dropped, the later passes show only changed rows, and the per-invocation Results were merged here.
+
+Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 221,991 | — | 16 | 42 s |
+| Bob, C2 | 455,025 | — | 22 | 73 s |
+| Patricia, C2 | 533,260 | — | 33 | 695 s |
+| Bob, C2 fix 1 | 137,517 | — | 9 | 20 s |
+| Quinn, C2 fix 1 | 927,906 | — | 34 | 616 s |
+| Patricia, C2 fix 1 | 468,748 | — | 26 | 1831 s |
+| Bob, C2 fix 2 | 46,461 | — | 5 | 11 s |
+| Patricia, C2 fix 2 | 121,927 | — | 7 | 20 s |
+| Quinn, C2 fix 2 | 164,504 | — | 13 | 160 s |
+| Bob, C4 | 100,407 | — | 9 | 18 s |
+| Patricia, C7 | 491,165 | — | 24 | 1213 s |
+| Bob, C3 | 60,321 | — | 4 | 11 s |
+| Patricia, C3 | 106,099 | — | 11 | 22 s |
+| Bob, C3 fix 1 | 49,887 | — | 5 | 9 s |
+| Patricia, C3 fix 1 | 172,138 | — | 9 | 31 s |
+| Quinn, C3 fix 1 | 77,069 | — | 6 | 33 s |
+| Bob, C1 | 127,981 | — | 12 | 28 s |
+| Patricia, C1 | 227,009 | — | 17 | 231 s |
+| Patricia, C1 fix 1 | 30,183 | — | 2 | 6 s |
+| Bob, C1 fix 1 | 96,154 | — | 9 | 19 s |
+| Quinn, C1 fix 1 | 272,339 | — | 19 | 234 s |
+| Patricia, C6 | 154,687 | — | 12 | 568 s |
+| Quinn, T2.1, | 556,555 | — | 24 | 142 s |
+| Bob, T2.1, fix 1 | 92,164 | — | 6 | 13 s |
+| Patricia, T2.1, fix 1 | 244,554 | — | 14 | 1219 s |
+| Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
+| Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
+| **Total** | **6,110,208** | | | |
+
+## Resumed 2026-11-07
+
+Command: `goal_agent.py 0.1.4-ui-placement.md --accept T2.1 --note Fix rounds went to Bob and Patricia; their scene and script changes (HintLabel narrowed in main.tscn, hint clamp in harvest_ui.gd, HiveCountLabel at the button's top edge in farm_ui.gd) made the suite green (138/138). Orchestrator: regenerated tests/fixtures/recording_fill_and_back.json with make_recording_fixture.gd (the recording tapped 0.1.3's Harvest position, so both replay tests failed at x1; they pass now). Open: mutation 3 'buttons are not nudged clear of each other' is MISSED, so Quinn strengthens the nudge test; goal_agent now routes a mutation-only failure to Quinn.` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T2.1 (2026-11-07T15:11:11-05:00)
+
+- Change (orchestrator, Process 9): Fix rounds went to Bob and Patricia; their scene and script changes (HintLabel narrowed in main.tscn, hint clamp in harvest_ui.gd, HiveCountLabel at the button's top edge in farm_ui.gd) made the suite green (138/138). Orchestrator: regenerated tests/fixtures/recording_fill_and_back.json with make_recording_fixture.gd (the recording tapped 0.1.3's Harvest position, so both replay tests failed at x1; they pass now). Open: mutation 3 'buttons are not nudged clear of each other' is MISSED, so Quinn strengthens the nudge test; goal_agent now routes a mutation-only failure to Quinn.

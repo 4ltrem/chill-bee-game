@@ -1,0 +1,190 @@
+0.1.4-ui-placement.md: 1/17 goals done (H)
+  C1     missing  Harvest button is the honey meter
+  C2     partial  (built, waits on tests) Buttons anchored to their props, the same way in every view
+  C3     missing  Back in one fixed place
+  C4     missing  Speed tag clear of the top info
+  C5     missing  Bigger hive frames and combs
+  C6     missing  Housekeeping from 0.1.3:
+  C7     missing  The pile loads on its own at the second stop
+  T2.1   missing  no two HUD controls overlap, and none is cut off by the scre
+  T3.1   missing  Back has the same screen rect in the first zoom and at the s
+  T2.2   missing  Harvest, Spin and Sell stay within `button_screen_margin` of
+  T4.1   missing  Back's rect is in the top-right quadrant, and the speed tag 
+  T1.1   missing  the Harvest fill equals the hive fill fraction (± 1%), and t
+  T5.1   missing  the hive's cell size on screen is within 15% of a pile cell'
+  T6.1   missing  no test file appears in `user://recordings` after a full run
+  T7.1   missing  item 7: at the second stop, with a pile waiting, a finished 
+  T.1    missing  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. C4      11.63  2 goal(s) wait on it; play-test fix; cost 0.37 (Bob)
+   2. C7      11.27  2 goal(s) wait on it; play-test fix; cost 0.73 (Patricia)
+   3. C3       10.9  2 goal(s) wait on it; play-test fix; cost 1.1 (Patricia, Bob)
+   4. C1        8.9  2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob)
+   5. C6       7.27  2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia)
+   6. T2.1     5.38  play-test fix; cost 0.62 (Quinn)
+   7. T2.2     5.38  play-test fix; cost 0.62 (Quinn)
+   8. T.1       0.0  waits on C1, C3, C4, C5, C6, C7
+   9. T1.1      0.0  waits on C1
+  10. T3.1      0.0  waits on C3
+  11. T4.1      0.0  waits on C4
+  12. T5.1      0.0  waits on C5
+  13. T6.1      0.0  waits on C6
+  14. T7.1      0.0  waits on C7
+Ambiguous: C5
+gaps.json: game/reports/goal/0.1.4/gaps.json
+0.1.4-ui-placement.md: 1/17 goals done (H)
+  C1     missing  Harvest button is the honey meter
+  C2     partial  (built, waits on tests) Buttons anchored to their props, the same way in every view
+  C3     missing  Back in one fixed place
+  C4     partial  (built, waits on tests) Speed tag clear of the top info
+  C5     missing  Bigger hive frames and combs
+  C6     missing  Housekeeping from 0.1.3:
+  C7     missing  The pile loads on its own at the second stop
+  T2.1   missing  no two HUD controls overlap, and none is cut off by the scre
+  T3.1   missing  Back has the same screen rect in the first zoom and at the s
+  T2.2   missing  Harvest, Spin and Sell stay within `button_screen_margin` of
+  T4.1   missing  Back's rect is in the top-right quadrant, and the speed tag 
+  T1.1   missing  the Harvest fill equals the hive fill fraction (± 1%), and t
+  T5.1   missing  the hive's cell size on screen is within 15% of a pile cell'
+  T6.1   missing  no test file appears in `user://recordings` after a full run
+  T7.1   missing  item 7: at the second stop, with a pile waiting, a finished 
+  T.1    missing  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. C7      11.27  2 goal(s) wait on it; play-test fix; cost 0.73 (Patricia)
+   2. C3       10.9  2 goal(s) wait on it; play-test fix; cost 1.1 (Patricia, Bob)
+   3. C1        8.9  2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob)
+   4. C6       7.27  2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia)
+   5. T2.1     5.38  play-test fix; cost 0.62 (Quinn)
+   6. T2.2     5.38  play-test fix; cost 0.62 (Quinn)
+   7. T4.1     5.38  play-test fix; cost 0.62 (Quinn)
+   8. T.1       0.0  waits on C1, C3, C5, C6, C7
+   9. T1.1      0.0  waits on C1
+  10. T3.1      0.0  waits on C3
+  11. T5.1      0.0  waits on C5
+  12. T6.1      0.0  waits on C6
+  13. T7.1      0.0  waits on C7
+Ambiguous: C5
+gaps.json: game/reports/goal/0.1.4/gaps.json
+0.1.4-ui-placement.md: 1/17 goals done (H)
+  C1     missing  Harvest button is the honey meter
+  C2     partial  (built, waits on tests) Buttons anchored to their props, the same way in every view
+  C3     missing  Back in one fixed place
+  C4     partial  (built, waits on tests) Speed tag clear of the top info
+  C5     missing  Bigger hive frames and combs
+  C6     missing  Housekeeping from 0.1.3:
+  C7     partial  (built, waits on tests) The pile loads on its own at the second stop
+  T2.1   missing  no two HUD controls overlap, and none is cut off by the scre
+  T3.1   missing  Back has the same screen rect in the first zoom and at the s
+  T2.2   missing  Harvest, Spin and Sell stay within `button_screen_margin` of
+  T4.1   missing  Back's rect is in the top-right quadrant, and the speed tag 
+  T1.1   missing  the Harvest fill equals the hive fill fraction (± 1%), and t
+  T5.1   missing  the hive's cell size on screen is within 15% of a pile cell'
+  T6.1   missing  no test file appears in `user://recordings` after a full run
+  T7.1   missing  item 7: at the second stop, with a pile waiting, a finished 
+  T.1    missing  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. C3       10.9  2 goal(s) wait on it; play-test fix; cost 1.1 (Patricia, Bob)
+   2. C1        8.9  2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob)
+   3. C6       7.27  2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia)
+   4. T2.1     5.38  play-test fix; cost 0.62 (Quinn)
+   5. T2.2     5.38  play-test fix; cost 0.62 (Quinn)
+   6. T4.1     5.38  play-test fix; cost 0.62 (Quinn)
+   7. T7.1     5.38  play-test fix; cost 0.62 (Quinn)
+   8. T.1       0.0  waits on C1, C3, C5, C6
+   9. T1.1      0.0  waits on C1
+  10. T3.1      0.0  waits on C3
+  11. T5.1      0.0  waits on C5
+  12. T6.1      0.0  waits on C6
+Ambiguous: C5
+gaps.json: game/reports/goal/0.1.4/gaps.json
+0.1.4-ui-placement.md: 1/17 goals done (H)
+  C1     missing  Harvest button is the honey meter
+  C2     partial  (built, waits on tests) Buttons anchored to their props, the same way in every view
+  C3     partial  (built, waits on tests) Back in one fixed place
+  C4     partial  (built, waits on tests) Speed tag clear of the top info
+  C5     missing  Bigger hive frames and combs
+  C6     missing  Housekeeping from 0.1.3:
+  C7     partial  (built, waits on tests) The pile loads on its own at the second stop
+  T2.1   missing  no two HUD controls overlap, and none is cut off by the scre
+  T3.1   missing  Back has the same screen rect in the first zoom and at the s
+  T2.2   missing  Harvest, Spin and Sell stay within `button_screen_margin` of
+  T4.1   missing  Back's rect is in the top-right quadrant, and the speed tag 
+  T1.1   missing  the Harvest fill equals the hive fill fraction (± 1%), and t
+  T5.1   missing  the hive's cell size on screen is within 15% of a pile cell'
+  T6.1   missing  no test file appears in `user://recordings` after a full run
+  T7.1   missing  item 7: at the second stop, with a pile waiting, a finished 
+  T.1    missing  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. C1        8.9  2 goal(s) wait on it; designer feature; cost 1.1 (Patricia, Bob)
+   2. C6       7.27  2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia)
+   3. T2.1     5.38  play-test fix; cost 0.62 (Quinn)
+   4. T2.2     5.38  play-test fix; cost 0.62 (Quinn)
+   5. T3.1     5.38  play-test fix; cost 0.62 (Quinn)
+   6. T4.1     5.38  play-test fix; cost 0.62 (Quinn)
+   7. T7.1     5.38  play-test fix; cost 0.62 (Quinn)
+   8. T.1       0.0  waits on C1, C5, C6
+   9. T1.1      0.0  waits on C1
+  10. T5.1      0.0  waits on C5
+  11. T6.1      0.0  waits on C6
+Ambiguous: C5
+gaps.json: game/reports/goal/0.1.4/gaps.json
+0.1.4-ui-placement.md: 1/17 goals done (H)
+  C1     partial  (built, waits on tests) Harvest button is the honey meter
+  C2     partial  (built, waits on tests) Buttons anchored to their props, the same way in every view
+  C3     partial  (built, waits on tests) Back in one fixed place
+  C4     partial  (built, waits on tests) Speed tag clear of the top info
+  C5     missing  Bigger hive frames and combs
+  C6     missing  Housekeeping from 0.1.3:
+  C7     partial  (built, waits on tests) The pile loads on its own at the second stop
+  T2.1   missing  no two HUD controls overlap, and none is cut off by the scre
+  T3.1   missing  Back has the same screen rect in the first zoom and at the s
+  T2.2   missing  Harvest, Spin and Sell stay within `button_screen_margin` of
+  T4.1   missing  Back's rect is in the top-right quadrant, and the speed tag 
+  T1.1   missing  the Harvest fill equals the hive fill fraction (± 1%), and t
+  T5.1   missing  the hive's cell size on screen is within 15% of a pile cell'
+  T6.1   missing  no test file appears in `user://recordings` after a full run
+  T7.1   missing  item 7: at the second stop, with a pile waiting, a finished 
+  T.1    missing  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. C6       7.27  2 goal(s) wait on it; housekeeping/handoff; cost 0.73 (Patricia)
+   2. T2.1     5.38  play-test fix; cost 0.62 (Quinn)
+   3. T2.2     5.38  play-test fix; cost 0.62 (Quinn)
+   4. T3.1     5.38  play-test fix; cost 0.62 (Quinn)
+   5. T4.1     5.38  play-test fix; cost 0.62 (Quinn)
+   6. T7.1     5.38  play-test fix; cost 0.62 (Quinn)
+   7. T1.1     3.38  designer feature; cost 0.62 (Quinn)
+   8. T.1       0.0  waits on C5, C6
+   9. T5.1      0.0  waits on C5
+  10. T6.1      0.0  waits on C6
+Ambiguous: C5
+gaps.json: game/reports/goal/0.1.4/gaps.json
+0.1.4-ui-placement.md: 1/17 goals done (H)
+  C1     partial  (built, waits on tests) Harvest button is the honey meter
+  C2     partial  (built, waits on tests) Buttons anchored to their props, the same way in every view
+  C3     partial  (built, waits on tests) Back in one fixed place
+  C4     partial  (built, waits on tests) Speed tag clear of the top info
+  C5     missing  Bigger hive frames and combs
+  C6     partial  (built, waits on tests) Housekeeping from 0.1.3:
+  C7     partial  (built, waits on tests) The pile loads on its own at the second stop
+  T2.1   missing  no two HUD controls overlap, and none is cut off by the scre
+  T3.1   missing  Back has the same screen rect in the first zoom and at the s
+  T2.2   missing  Harvest, Spin and Sell stay within `button_screen_margin` of
+  T4.1   missing  Back's rect is in the top-right quadrant, and the speed tag 
+  T1.1   missing  the Harvest fill equals the hive fill fraction (± 1%), and t
+  T5.1   missing  the hive's cell size on screen is within 15% of a pile cell'
+  T6.1   missing  no test file appears in `user://recordings` after a full run
+  T7.1   missing  item 7: at the second stop, with a pile waiting, a finished 
+  T.1    missing  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. T2.1     5.38  play-test fix; cost 0.62 (Quinn)
+   2. T2.2     5.38  play-test fix; cost 0.62 (Quinn)
+   3. T3.1     5.38  play-test fix; cost 0.62 (Quinn)
+   4. T4.1     5.38  play-test fix; cost 0.62 (Quinn)
+   5. T7.1     5.38  play-test fix; cost 0.62 (Quinn)
+   6. T1.1     3.38  designer feature; cost 0.62 (Quinn)
+   7. T6.1     1.38  housekeeping/handoff; cost 0.62 (Quinn)
+   8. T.1       0.0  waits on C5
+   9. T5.1      0.0  waits on C5
+Ambiguous: C5
+gaps.json: game/reports/goal/0.1.4/gaps.json
+goal_agent: failed. Blackboard: game/reports/goal/0.1.4/blackboard.md

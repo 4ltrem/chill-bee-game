@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_replay.gd"
+extends "res://tests/test_ui_placement.gd"
 
 
 # Tests that stay at x1 (they read the wall clock on purpose, own Engine.time_scale through the Dev speed row, or measure wall seconds
@@ -83,6 +83,9 @@ func _run() -> void:
 			"t_pan_after_all_frames_uncapped", "t_pan_after_back_then_harvest_again", "t_icons_above_props", "t_spin_icon_in_first_zoom",
 			# input-recorder replay
 			"t_replay_fill_and_back", "t_replay_without_back_stays_in_zoom",
+			# 0.1.4 item 2 (written from game/specs/0.1.4-ui-placement.md before the code)
+			"t_hud_no_overlap_no_cutoff", "t_buttons_at_anchor_or_clamped", "t_buttons_clamped_when_anchor_off_screen",
+			"t_harvest_hidden_at_second_stop", "t_spin_placed_by_scene",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":
