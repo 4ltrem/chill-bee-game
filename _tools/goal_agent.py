@@ -22,16 +22,21 @@ goals (all ready test goals of the same item in one call). Each agent is a fresh
 its spec slice (generate.run_agent). Then contract_check.py, godot_run.py (unit + start), ui_shots.py after
 scene work, mutate.py --since after new tests. Failures go to the folder's owners, at most MAX_FIX_ROUNDS
 rounds, then the run stops for the designer. A green step gets a ledger line and a checkpoint commit on the
-milestone branch (never main, never a push). It stops when nothing is left, when budget_guard denies an agent
+milestone branch (never main, never a push); a step green only because no file changed is held for the
+designer instead, like an open question, until its spec text changes or --accept. It stops when nothing is left, when budget_guard denies an agent
 (the run pauses: run it again to resume), when a goal is ambiguous (Process 1), or after the fix rounds.
 
-The blackboard is game/reports/goal/RUN/blackboard.md (RUN defaults to the spec's version), with gaps.json and
-the briefs beside it; no agent reads it. Agent calls are logged to the run log (table "Goal agent").
+The blackboard is game/reports/goal/RUN/blackboard.md (RUN defaults to the spec's version), in the shared format of
+_templates/blackboard.md: front matter with `result:`, the Request, each pass (in full the first time, then only the
+rows that changed), each step with its briefs linked from briefs/, Waiting for the designer / Resumed, and one Result
+rewritten in place with every call of the run (blackboard.calls.json). Only build runs and --accept write it; --plan
+and --dry-run print to the console (--plan still writes gaps.json). No agent reads it. Agent calls are logged to the run log (table "Goal agent").
 Standard library only.
 """
 import argparse
 import concurrent.futures
 import datetime
+import hashlib
 import json
 import os
 import re
@@ -171,7 +176,7 @@ def match_items(text, changes):
     scores = {n: len(w & words(t)) for n, _, t in changes}
     best = max(scores.values(), default=0)
     top = [n for n, s in scores.items() if s == best]
-    return top if best and len(top) == 1 else [n for n, _, _ in changes]
+    return top if best else [n for n, _, _ in changes]   # a tie covers the tied changes, not every change
 
 
 def value_of(title, text):
@@ -362,7 +367,9 @@ def gaps(spec, found):
             ok = r == "PASS" or (r is None and t in found["x1"])
             ev.append({"kind": "test", "name": t, "ok": ok, "result": r or ("x1, designer plays" if t in found["x1"]
                                                                            else "not run")})
-        built = gid in ledger
+        entry = ledger.get(gid, {})
+        held = entry.get("held") if entry.get("text") == text_hash(goal) else None   # a spec edit lifts the hold
+        built = gid in ledger and "held" not in entry
         if built:
             ev.append({"kind": "ledger", "name": ledger[gid].get("commit") or ledger[gid].get("run", ""), "ok": True})
         present = [e for e in ev if e["ok"] or (e["kind"] == "test")]
@@ -375,12 +382,14 @@ def gaps(spec, found):
             status = "partial"
         else:
             status = "missing"
-        waits = status == "partial" and goal["kind"] == "change" and (built or (code and all(e["ok"] for e in code)))
+        # only the ledger says a change was built: a node it names may predate it (0.1.4 item 8's HintLabel)
+        waits = status == "partial" and goal["kind"] == "change" and built
         asks = [q for q in questions if goal["kind"] == "change" and set(q[0]) & set(goal["items"])
                 and len(q[0]) < len(changes)]
         report[gid] = {"status": status, "evidence": ev, "built": built, "waits_on_tests": waits,
-                       "questions": [q[1] for q in asks],
-                       "ambiguous": (bool(AMBIGUOUS.search(goal["text"])) or bool(asks)) and status != "done"}
+                       "questions": [q[1] for q in asks] + ([held] if held else []),
+                       "ambiguous": (bool(AMBIGUOUS.search(goal["text"])) or bool(asks) or bool(held))
+                                    and status != "done"}
     return report
 
 
@@ -465,9 +474,17 @@ def why(spec, entry):
 
 
 # ---------------------------------------------------------------------------------------------- the blackboard
-def gaps_table(spec, report):
+# The shared format of generate.py (_templates/blackboard.md). --plan and --dry-run never write it (board is None).
+def say(board, text):
+    if board is not None:
+        g.append(board, text)
+
+
+def gaps_table(spec, report, only=None):
     rows = ["| Goal | Kind | Owners | Status | Evidence |", "|---|---|---|---|---|"]
     for gid, goal in spec["goals"].items():
+        if only is not None and gid not in only:
+            continue
         r = report[gid]
         ev = ", ".join(f"{'✓' if e['ok'] else '✗'} {e['kind']} {e['name']}" + (f" ({e['result']})" if e.get("result")
                        and e["result"] != "PASS" else "") for e in r["evidence"]) or "none found"
@@ -480,9 +497,11 @@ def gaps_table(spec, report):
     return "\n".join(rows)
 
 
-def scores_table(spec, ranked):
+def scores_table(spec, ranked, only=None):
     rows = ["| Rank | Goal | Score | unblocks | value | cost | ready | Why |", "|---|---|---|---|---|---|---|---|"]
     for i, e in enumerate(ranked, 1):
+        if only is not None and e["id"] not in only:
+            continue
         f = e["factors"]
         rows.append(f"| {i} | {e['id']} {spec['goals'][e['id']]['title'][:50]} | {e['score']} | {f['unblocks']} | "
                     f"{f['value']} | {f['cost']} | {f['ready']} | {why(spec, e)} |")
@@ -503,26 +522,56 @@ def write_gaps(folder, spec, found, report, ranked, ambiguous):
     (folder / "gaps.json").write_text(json.dumps(data, indent=1, ensure_ascii=False), encoding="utf-8")
 
 
-def board_start(board, spec, run):
-    if not board.is_file():
-        board.parent.mkdir(parents=True, exist_ok=True)
-        board.write_text(f"# Goal agent: {spec['file']} (run {run})\n\nSpec: `game/specs/{spec['file']}` "
-                         f"(version {spec['version']}). Agent: `_tools/goal_agent.py` (spec `game/specs/m3-goal-agent.md`)."
-                         f"\nNo agent reads this file; it is the run's record.\n", encoding="utf-8")
+def board_start(board, spec, run, command):
+    """Open the run's board on its first build (or --accept) invocation; True if it already existed."""
+    if board.is_file():
+        return True
+    g.board_start(board, {"spec": spec["file"], "version": spec["version"], "run": run,
+                          "started": datetime.date.today()}, f"Goal agent: {spec['file']} (run {run})",
+                  f"Build what `game/specs/{spec['file']}` (version {spec['version']}) asks for that the game lacks. "
+                  f"Agent: `_tools/goal_agent.py` (spec `game/specs/m3-goal-agent.md`).\n\nCommand: `{command}`")
+    return False
+
+
+def pass_state(report, ranked):
+    """What a pass row shows, per goal: the diff-only passes compare this with the last pass on the board."""
+    rows = {gid: {"gap": [r["status"], r["waits_on_tests"], r["ambiguous"],
+                          [[e["kind"], e["name"], e["ok"], e.get("result")] for e in r["evidence"]]]}
+            for gid, r in report.items()}
+    for e in ranked:
+        rows[e["id"]]["score"] = [e["score"], e["factors"]]
+    return rows
 
 
 def plan_pass(spec, game, folder, board, costs, n):
-    """One scan-gaps-score pass: returns (report, ranked, ambiguous) and writes it to gaps.json and the blackboard."""
+    """One scan-gaps-score pass: returns (report, ranked, ambiguous) and writes gaps.json. On a build run it also
+    writes the pass to the blackboard: in full the first time, then only the rows that changed since the last pass
+    on the board (kept in blackboard.pass.json, since --plan rewrites gaps.json without touching the board)."""
     found = scan(game)
     report = gaps(spec, found)
     ranked, ambiguous = order(spec, report, costs)
     write_gaps(folder, spec, found, report, ranked, ambiguous)
+    if board is None:
+        return report, ranked, ambiguous
+    state, side = pass_state(report, ranked), board.with_name(f"{board.stem}.pass.json")
+    last = json.loads(side.read_text(encoding="utf-8")) if side.is_file() else None
+    side.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
     done = sum(r["status"] == "done" for r in report.values())
-    g.append(board, f"\n## Pass {n}: scan ({now()})\n\nUnit results from `{found['unit_log']}`. "
-                    f"{done} of {len(report)} goals done.\n\n### Gaps\n\n{gaps_table(spec, report)}\n\n"
-                    f"### Order\n\n{scores_table(spec, ranked) if ranked else 'Nothing left to build.'}\n")
+    head = f"\n## Pass {n}: scan ({now()})\n\nUnit results from `{found['unit_log']}`. {done} of {len(report)} goals done."
+    if last is None:
+        say(board, f"{head}\n\n### Gaps\n\n{gaps_table(spec, report)}\n\n"
+                   f"### Order\n\n{scores_table(spec, ranked) if ranked else 'Nothing left to build.'}\n")
+    else:
+        gap = {gid for gid in state if state[gid]["gap"] != last.get(gid, {}).get("gap")}
+        score = {gid for gid in state if state[gid].get("score") != last.get(gid, {}).get("score")}
+        body = (f"\n\n### Gaps changed ({len(gap)} of {len(report)})\n\n{gaps_table(spec, report, gap)}" if gap
+                else "\n\nNo gap changed.")
+        body += (f"\n\n### Order: new or rescored ({len(score & {e['id'] for e in ranked})} of {len(ranked)})\n\n"
+                 f"{scores_table(spec, ranked, score)}" if score & {e["id"] for e in ranked} else
+                 "\n\nNo score changed." if ranked else "\n\nNothing left to build.")
+        say(board, f"{head} Only what changed since the last pass is shown.{body}\n")
     if ambiguous:
-        g.append(board, "\n### Ambiguous (not scored; built after the designer answers)\n\n" + "\n".join(
+        say(board, "\n### Ambiguous (not scored; built after the designer answers)\n\n" + "\n".join(
             f"- {a}: {spec['goals'][a]['title']}" + "".join(f"\n  - Question: {q}" for q in report[a]["questions"])
             for a in ambiguous) + "\n")
     return report, ranked, ambiguous
@@ -642,6 +691,28 @@ def git(*args):
     return run_cmd(["git", *args])
 
 
+BUILD_PATHS = ["game/scripts", "game/scenes", "game/materials", "game/tests", "game/specs"]
+
+
+def tree_state():
+    """The build folders' uncommitted state; the same before and after a step means the agents changed nothing."""
+    return git("status", "--porcelain", "--", *BUILD_PATHS)[1] + git("diff", "HEAD", "--", *BUILD_PATHS)[1]
+
+
+def text_hash(goal):
+    return hashlib.sha1(goal["text"].encode("utf-8")).hexdigest()[:12]
+
+
+def hold(spec, goal, run, ledger_path, question):
+    """Record a goal the agents left unchanged as held, not built (0.1.4 C7 was committed green with no change).
+    The hold lifts when the goal's spec text changes (the designer's answer) or with --accept."""
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8")) if ledger_path.is_file() else {}
+    ledger.setdefault(spec["file"], {})[goal["id"]] = {"run": run, "at": now(), "held": question,
+                                                         "text": text_hash(goal)}
+    ledger_path.parent.mkdir(parents=True, exist_ok=True)
+    ledger_path.write_text(json.dumps(ledger, indent=1), encoding="utf-8")
+
+
 def checkpoint(spec, batch, run, folder, ledger_path):
     """Record the goals in the ledger and make a checkpoint commit of the game folders (never main, never a push)."""
     code, branch = git("rev-parse", "--abbrev-ref", "HEAD")
@@ -653,8 +724,7 @@ def checkpoint(spec, batch, run, folder, ledger_path):
         ledger.setdefault(spec["file"], {})[b["id"]] = {"run": run, "at": now()}
     ledger_path.parent.mkdir(parents=True, exist_ok=True)
     ledger_path.write_text(json.dumps(ledger, indent=1), encoding="utf-8")
-    paths = ["game/scripts", "game/scenes", "game/materials", "game/tests", "game/specs",
-             ledger_path.relative_to(ROOT).as_posix(), folder.relative_to(ROOT).as_posix()]
+    paths = BUILD_PATHS + [ledger_path.relative_to(ROOT).as_posix(), folder.relative_to(ROOT).as_posix()]
     git("add", "--", *paths)
     ids = ", ".join(b["id"] for b in batch)
     msg = (f"{spec['version']} goal {ids}: {batch[0]['title'][:60]} (goal_agent run {run})\n\n"
@@ -685,51 +755,66 @@ def ensure_branch(version):
 def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     """Build one goal (and its test batch) to green: agents, checks, fix rounds, checkpoint. Returns a result word."""
     ids = ", ".join(b["id"] for b in batch)
-    g.append(board, f"\n### Step: {ids} ({now()})\n\n")
-    bdir = folder / "briefs"
-    bdir.mkdir(parents=True, exist_ok=True)
     plan = briefs(spec, goal, batch, run, branch)
-    for agent, prompt in plan.items():
-        f = bdir / f"{goal['id']}-{g.NAMES[agent].lower()}.md"
-        f.write_text(prompt, encoding="utf-8")
-        g.append(board, f"- Brief for {g.NAMES[agent]}: `{f.relative_to(ROOT).as_posix()}` ({len(prompt)} chars)\n")
     _, base = git("rev-parse", "--short", "HEAD")
     base = base.strip()
     cmds = checks(spec, goal, base, spec["version"]) if goal["kind"] != "handoff" else []
-    if dry:
-        g.append(board, "- Checks: " + "; ".join(f"`{' '.join(c[1][1:])}`" for c in cmds) + "\n- Dry run: no agent called.\n")
+    if dry:   # the console only: no brief files, no board
         print(f"\nStep {ids}: {len(plan)} agent(s) in parallel: {', '.join(g.NAMES[a] for a in plan)}")
         for agent, prompt in plan.items():
             print(f"\n----- brief for {g.NAMES[agent]} ({agent}) -----\n{prompt}")
         print("\n----- checks -----\n" + "\n".join(" ".join(c[1]) + (f"   env {c[2]}" if c[2] else "") for c in cmds))
         return "dry-run"
+    say(board, f"\n### Step: {ids} ({now()})\n\n")
+    keep_briefs(folder, board, plan, goal["id"])
+    before = tree_state()
     if not call_agents(plan, board, usage, run, ids):
         return "paused"
     for rnd in range(MAX_FIX_ROUNDS + 1):
         failed = []
         for label, cmd, env in cmds:
             code, out = run_cmd(cmd, env=env)
-            g.append(board, f"- Check `{label}`: {'PASS' if code == 0 else f'FAIL (exit {code})'}\n")
+            say(board, f"- Check `{label}`: {'PASS' if code == 0 else f'FAIL (exit {code})'}\n")
             if code:
                 failed.append((label, summary_of(out)))
-                g.append(board, "\n```\n" + summary_of(out) + "\n```\n")
+                say(board, "\n```\n" + summary_of(out) + "\n```\n")
                 if label in ("contract", "tests"):
                     break
         if not failed:
             break
         if rnd == MAX_FIX_ROUNDS:
-            g.append(board, f"\n**Stop:** {MAX_FIX_ROUNDS} fix rounds failed on {ids}; the designer decides.\n")
-            return "failed"
+            g.waiting(board, f"{MAX_FIX_ROUNDS} fix rounds failed on {ids}: " + ", ".join(f"`{l}`" for l, _ in failed)
+                      + " still fail (output above). The designer decides: change the spec or the test, or fix it "
+                      f"by hand and record it with `goal_agent.py {spec['file']} --accept {goal['id']} --note "
+                      f"\"<the change>\"`. Then rerun the same command to go on.")
+            return "waiting-designer"
         fix = fix_briefs(spec, goal, batch, failed, run, branch, rnd + 1)
-        g.append(board, f"\n#### Fix round {rnd + 1}: to {', '.join(g.NAMES[a] for a in fix)}\n\n")
+        say(board, f"\n#### Fix round {rnd + 1}: to {', '.join(g.NAMES[a] for a in fix)}\n\n")
+        keep_briefs(folder, board, fix, f"{goal['id']}-fix{rnd + 1}")
         if not call_agents(fix, board, usage, run, f"{ids} fix {rnd + 1}"):
             return "paused"
     if goal["kind"] == "handoff" and not [h for h in scan_handoffs() if h.startswith(spec["version"])]:
-        g.append(board, "\n**Stop:** Patricia's reply came back without the handoff file.\n")
+        say(board, "\n**Stop:** Patricia's reply came back without the handoff file.\n")
         return "failed"
+    if goal["kind"] != "handoff" and tree_state() == before:   # green only because nothing moved: not built
+        question = (f"The agents changed no file for {ids} and the checks were already green, so it is not built. "
+                    f"Their replies on the board (step {ids}, {now()}) say why; answer by editing the spec item.")
+        hold(spec, goal, run, folder.parent / "ledger.json", question)
+        say(board, f"- **Held:** no file changed in {', '.join(BUILD_PATHS)}; not committed. {question}\n")
+        return "held"
     msg = checkpoint(spec, batch, run, folder, folder.parent / "ledger.json")
-    g.append(board, f"- Green: {msg}\n")
+    say(board, f"- Green: {msg}\n")
     return "green"
+
+
+def keep_briefs(folder, board, plan, name):
+    """Save each brief beside the board and link it (inputs go by reference)."""
+    bdir = folder / "briefs"
+    bdir.mkdir(parents=True, exist_ok=True)
+    for agent, prompt in plan.items():
+        f = bdir / f"{name}-{g.NAMES[agent].lower()}.md"
+        f.write_text(prompt, encoding="utf-8")
+        say(board, f"- Brief for {g.NAMES[agent]}: `{f.relative_to(ROOT).as_posix()}` ({len(prompt)} chars)\n")
 
 
 def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
@@ -740,6 +825,8 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
                - {QA}) or [PROGRAMMER]
     if any(l == "contract" for l, _ in failed) and BUILDER not in owners and goal["kind"] == "change":
         owners.append(BUILDER)
+    if [l for l, _ in failed] == ["mutations"]:   # a missed mutation means a test proves too little: Quinn's folder
+        owners = [QA]
     head = (f"Goal agent run `{run}`, fix round {rnd} for goal {', '.join(b['id'] for b in batch)} of "
             f"`game/specs/{spec['file']}`, branch `{branch}`. These checks failed after the last step. Fix what is in "
             f"your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit.\n\n")
@@ -754,15 +841,20 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
     return out
 
 
+def transcripts(run):
+    """Where this run's agent transcripts are kept today (gitignored)."""
+    return ROOT / g.RUNS / f"{datetime.date.today().isoformat()}-goal-{run}"
+
+
 def call_agents(plan, board, usage, run, label):
     """Run the briefs in parallel after the budget check; False when the budget guard pauses the run."""
     for agent in plan:
         ok, msg = budget_ok(agent)
         if not ok:
-            g.append(board, f"\n**Paused:** {msg}\nRun the same command again to resume.\n")
+            say(board, f"\n**Paused:** {msg}\nRun the same command again to resume.\n")
             return False
-        g.append(board, f"- Budget guard for {g.NAMES[agent]}: {msg}\n")
-    rundir = ROOT / g.RUNS / f"{datetime.date.today().isoformat()}-goal-{run}"
+        say(board, f"- Budget guard for {g.NAMES[agent]}: {msg}\n")
+    rundir = transcripts(run)
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(plan)) as pool:
         futures = {pool.submit(run_agent, a, p): a for a, p in plan.items()}
         for fut in concurrent.futures.as_completed(futures):
@@ -770,14 +862,14 @@ def call_agents(plan, board, usage, run, label):
             try:
                 reply, u = fut.result()
             except g.AgentError as e:
-                g.append(board, f"\n**{g.NAMES[agent]} failed:** {e}\n")
+                say(board, f"\n**{g.NAMES[agent]} failed:** {e}\n")
                 raise
             try:
                 g.keep_transcript(u, rundir, f"{label.replace(' ', '-').replace(',', '')}-{g.NAMES[agent].lower()}")
             except Exception:
                 pass
             usage.append((agent, label, u))
-            g.append(board, f"\n**{g.NAMES[agent]}** ({u['tokens']:,} tokens, {u['turns']} turns, {u['seconds']} s):\n\n"
+            say(board, f"\n**{g.NAMES[agent]}** ({u['tokens']:,} tokens, {u['turns']} turns, {u['seconds']} s):\n\n"
                             f"{reply.strip()}\n\n")
     return True
 
@@ -806,7 +898,8 @@ def main(argv=None):
     ap.add_argument("--run", help="run folder name under game/reports/goal/ (default: the spec's version)")
     ap.add_argument("--accept", metavar="GOAL", help="after a stop: record GOAL as green with a manual fix (Process 9), "
                     "checkpoint it, and exit; run the checks first")
-    ap.add_argument("--note", default="", help="with --accept: the manual change, for the blackboard and GOAL_AGENT.md")
+    ap.add_argument("--note", default="", help="with --accept: the manual change, for the blackboard and GOAL_AGENT.md; "
+                    "otherwise: the designer's answer the run resumes on (written under Resumed)")
     a = ap.parse_args(argv)
     path = Path(a.spec)
     if not path.is_file():
@@ -818,26 +911,38 @@ def main(argv=None):
     run = a.run or spec["version"]
     folder = ROOT / "game" / "reports" / "goal" / run
     board = folder / "blackboard.md"
-    board_start(board, spec, run)
     costs = owner_costs(runlog.read(ROOT))
-    n = len(re.findall(r"^## Pass \d+", board.read_text(encoding="utf-8"), re.M)) + 1
-    mode = "plan" if a.plan else "dry run" if a.dry_run else "build"
-    g.append(board, f"\n---\n\nInvocation ({mode}) {now()}: `goal_agent.py {' '.join(argv or sys.argv[1:])}`\n")
+    command = f"goal_agent.py {' '.join(argv or sys.argv[1:])}"
+    if a.accept and (a.accept not in spec["goals"] or not a.note):
+        print("goal_agent: --accept needs a goal of this spec and a --note naming the manual change")
+        return 2
+    if board.is_file() and not board.read_text(encoding="utf-8").startswith("---"):
+        print(f"goal_agent: {board.relative_to(ROOT).as_posix()} is in the old format (no front matter); convert it "
+              f"to _templates/blackboard.md first, or pass a new --run")
+        return 2
+    if a.plan or a.dry_run:   # the console only: the board records what was built, not what was looked at
+        shown, board = board, None
+        n = 1
+    else:
+        if board_start(board, spec, run, command):
+            before = g.get_front(board, "result") or "unknown"
+            g.resumed(board, f"Command: `{command}` (the run had stopped: `{before}`)."
+                      + (f"\n\nDesigner's answer: {a.note}" if a.note and not a.accept else ""))
+        n = len(re.findall(r"^## Pass \d+", board.read_text(encoding="utf-8"), re.M)) + 1
     if a.accept:
-        goal = spec["goals"].get(a.accept)
-        if not goal or not a.note:
-            print("goal_agent: --accept needs a goal of this spec and a --note naming the manual change")
-            return 2
-        g.append(board, f"\n### Manual fix: {goal['id']} ({now()})\n\n- Change (orchestrator, Process 9): {a.note}\n")
+        goal = spec["goals"][a.accept]
+        say(board, f"\n### Manual fix: {goal['id']} ({now()})\n\n- Change (orchestrator, Process 9): {a.note}\n")
         msg = checkpoint(spec, [goal], run, folder, folder.parent / "ledger.json")
-        g.append(board, f"- Accepted: {msg}\n")
+        say(board, f"- Accepted: {msg}\n")
+        g.finish_board(board, [], "stopped", f"{goal['id']} accepted with a manual fix ({msg}). Rerun "
+                       f"`goal_agent.py {spec['file']}` to build the rest.", transcripts(run))
         print(f"goal_agent: {goal['id']} accepted: {msg}")
         return 0
     usage, built, result = [], 0, "done"
     branch = f"milestone/{spec['version']}"
     if not (a.plan or a.dry_run):
         branch, note = ensure_branch(spec["version"])
-        g.append(board, f"Branch `{branch}`: {note}.\n")
+        say(board, f"Branch `{branch}`: {note}.\n")
     try:
         while True:
             report, ranked, ambiguous = plan_pass(spec, ROOT / "game", folder, board, costs, n)
@@ -848,48 +953,56 @@ def main(argv=None):
             ready = [e for e in ranked if e["factors"]["ready"]]
             if ambiguous and not ready:   # the other goals were built first; now only the designer can unblock the rest
                 result = "waiting-designer"
-                g.append(board, "\n**Stop:** ambiguous goal(s); the questions are listed above (Process 1).\n")
+                if board is not None:
+                    g.waiting(board, "Every goal left waits on an open question (Process 1):\n\n" + "\n".join(
+                        f"- {x}: {spec['goals'][x]['title']}" + "".join(f"\n  - {q}" for q in report[x]["questions"])
+                        for x in ambiguous) + "\n\nAnswer each in the spec, or mark it \"(answered: ...)\" in the "
+                        f"handoff, then rerun `goal_agent.py {spec['file']} --note \"<the answer>\"`.")
                 break
             if a.goal and built == 0:
                 ready = [e for e in ranked if e["id"] == a.goal and e["factors"]["ready"]] or []
                 if not ready:
                     print(f"goal_agent: {a.goal} is not a ready, unbuilt goal")
+                    result = "stopped (--goal was not a ready, unbuilt goal)"
                     return 2
             if not ready:
                 left = [gid for gid, r in report.items() if r["status"] != "done"]
                 result = "done" if not left else "waiting-tests" if all(report[x]["waits_on_tests"] for x in left) \
                     else "blocked"
-                g.append(board, f"\n**Stop:** nothing ready to build ({result}); not done: {', '.join(left) or 'none'}.\n")
+                say(board, f"\n**Stop:** nothing ready to build ({result}); not done: {', '.join(left) or 'none'}.\n")
                 break
             top = spec["goals"][ready[0]["id"]]
             batch = [top]
             if top["kind"] == "test":   # one Quinn call per item: its other ready test goals ride along
                 batch += [spec["goals"][e["id"]] for e in ready[1:] if spec["goals"][e["id"]]["kind"] == "test"
                           and set(spec["goals"][e["id"]]["items"]) & set(top["items"])]
-            g.append(board, f"\nNext: **{top['id']}** (score {ready[0]['score']}: {why(spec, ready[0])})" +
+            say(board, f"\nNext: **{top['id']}** (score {ready[0]['score']}: {why(spec, ready[0])})" +
                      (f", with {', '.join(b['id'] for b in batch[1:])}" if batch[1:] else "") + ".\n")
             outcome = step(spec, top, batch, run, folder, board, branch, usage, dry=a.dry_run)
+            if outcome == "held":   # like an open question: the rest is built, then the run waits on the designer
+                continue
             if outcome != "green":
                 result = outcome
                 break
             built += 1
             if a.max_goals and built >= a.max_goals:
                 result = f"stopped after {built} goal(s) (--max-goals)"
-                g.append(board, f"\n**Stop:** {result}.\n")
+                say(board, f"\n**Stop:** {result}.\n")
                 plan_pass(spec, ROOT / "game", folder, board, costs, n)   # the re-scan after the last write
                 break
     except Exception as e:   # an agent or check crashed: never record it as done (generate.py marks `result: failed`)
         result = f"failed ({type(e).__name__}: {e})"
-        g.append(board, f"\n**Stop:** the run crashed: {result}. A rerun re-scans and continues from the ledger.\n")
+        say(board, f"\n**Stop:** the run crashed: {result}. A rerun re-scans and continues from the ledger.\n")
         raise
     finally:
+        if board is not None:   # one Result, rewritten in place, with every call of the run so far
+            word = result.split(" ")[0] if not result.startswith("stopped after") else "stopped"
+            g.finish_board(board, [(f"{g.NAMES[agent]}, {label}", u) for agent, label, u in usage], word,
+                           f"Last invocation ({now()}): {result}.", transcripts(run))
         if usage:
-            total = sum(u["tokens"] for *_, u in usage)
-            g.append(board, f"\n## Result ({now()}): {result}\n\n{len(usage)} agent call(s), {total:,} tokens.\n")
             log_usage(usage, run)
-        elif not a.plan:
-            g.append(board, f"\n## Result ({now()}): {result}\n")
-    print(f"goal_agent: {result}. Blackboard: {board.relative_to(ROOT).as_posix()}")
+    print(f"goal_agent: {result}. Blackboard: {(board or shown).relative_to(ROOT).as_posix()}"
+          + (" (not written: --plan/--dry-run)" if board is None else ""))
     return 0 if result in ("done", "dry-run") or result.startswith("stopped after") else 1
 
 

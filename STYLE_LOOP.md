@@ -41,6 +41,7 @@ The rules are the approved [STYLE_GUIDE.md](STYLE_GUIDE.md): **V1–V15** for th
 | Refiner | Bob, given only the open FAIL rows not held for the designer | William, given only the open FAIL rows |
 | Controller | `_tools/style_loop.py` | `_tools/generate.py` |
 | Shared record | `game/reports/style/<slug>/blackboard.md` | `content/_runs/<slug>/blackboard*.md` |
+| Record format | `_templates/blackboard.md`, shared with the goal agent: inputs linked, outputs inline, one Result | same |
 | Evaluator calibration | `_tools/style_critic_check.py` on `_tools/fixtures/style/` | `_tools/critic_check.py` on `_tools/fixtures/` |
 
 ### What makes it rigorous

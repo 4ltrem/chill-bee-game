@@ -20,7 +20,7 @@ and once the designer has edited STYLE_GUIDE.md or picked an option, `--resume S
 from the next round. A run also stops at PASS, at --max-rounds (counted over the whole run) or
 past --max-tokens (checked after each FAIL).
 
-The blackboard is game/reports/style/SLUG/blackboard.md; no agent reads it. Every agent call is
+The blackboard is game/reports/style/SLUG/blackboard.md (format: _templates/blackboard.md); no agent reads it. Every agent call is
 logged to the run log (table "Style loop") and its transcript kept under _meta/sessions/runs/.
 Tests: python -I _tools/test_generate.py (StyleLoop cases). Standard library only.
 """
@@ -108,13 +108,7 @@ def round_dirs(base):
 
 
 def finish(board, slug, usage, result, summary, run_folder):
-    rows = "\n".join(f"| {g.NAMES[a]}, round {n} | {u['tokens']:,} | {g.fmt(u.get('final'))} | {u['turns']} | "
-                     f"{u['seconds']} s |" for a, n, u in usage)
-    total = sum(u["tokens"] for *_, u in usage)
-    kept = (f"\n\nTranscripts: `{run_folder.relative_to(g.ROOT).as_posix()}/`" if run_folder.is_dir() else "")
-    g.append(board, f"\n## Result\n\n{summary}{kept}\n\n| Call | Total processed | Final context | Turns | Duration |\n"
-                    f"|---|---|---|---|---|\n{rows}\n| **Total** | **{total:,}** | | | |\n")
-    g.set_front(board, result=result)
+    total = g.finish_board(board, [(f"{g.NAMES[a]}, round {n}", u) for a, n, u in usage], result, summary, run_folder)
     g.log_runs(f"style {slug}", usage, table=LOG_TABLE)
     return total
 
@@ -146,20 +140,13 @@ def main(argv=None):
         resumed_changes = diffs[-1] if diffs else None
         if start > a.max_rounds:
             sys.exit(f"round {start} would pass --max-rounds {a.max_rounds}; raise it to resume")
-        g.set_front(board, result="running")
-        g.append(board, f"\n## Resumed {datetime.date.today()}\n\nThe designer has answered the rows "
-                        f"waiting above; the loop goes on from round {start}.\n"
-                        + (f"\nDesigner's decision: {a.note}\n" if a.note else ""))
+        g.resumed(board, f"The designer has answered the rows waiting above; the loop goes on from round {start}.\n"
+                         + (f"\nDesigner's decision: {a.note}\n" if a.note else ""))
     else:
         if board.exists() and g.get_front(board, "result") not in ("failed",):
             sys.exit(f"{rel_board} already exists; use --resume or a new slug")
-        base.mkdir(parents=True, exist_ok=True)
-        board.write_text(
-            f"---\nslug: {a.slug}\nstarted: {datetime.date.today()}\nmax_rounds: {a.max_rounds}\n"
-            f"max_tokens: {a.max_tokens}\nresult: running\n---\n# Style blackboard: {a.slug}\n\n"
-            f"The shared record of this visual style loop. `style_loop.py` writes every section and hands "
-            f"each agent only its slice; no agent reads this file.\n\n## Request\n{a.request}\n",
-            encoding="utf-8", newline="\n")
+        g.board_start(board, {"slug": a.slug, "started": datetime.date.today(), "max_rounds": a.max_rounds,
+                              "max_tokens": a.max_tokens}, f"Style blackboard: {a.slug}", a.request)
         start, resumed_block, resumed_changes = 1, None, None
     run_folder = g.ROOT / g.RUNS / f"{datetime.date.today()}-style-{a.slug}"
     usage, v, n, block, bob_rows, result = [], None, start - 1, None, [], "needs-review"
@@ -206,7 +193,7 @@ def main(argv=None):
             bob_rows, held = open_rows(rows, block)
             previous_block = block
             if held and n < a.max_rounds:  # in the last round, held rows are listed with the others instead
-                g.append(board, "\n## Waiting for the designer\n\nThese rows need a creative choice, so Bob "
+                g.waiting(board, "These rows need a creative choice, so Bob "
                                 "does not get them. Each becomes a question with votes on the Design Votes page "
                                 "(`_tools/compare_page.py add`); "
                                 "its link goes here. Resume with `style_loop.py " + a.slug + " --resume` once "

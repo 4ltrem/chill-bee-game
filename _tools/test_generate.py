@@ -125,6 +125,11 @@ class GenerateTest(Workspace):
         board = self.board()
         self.assertIn("### Critic, round 1\nVERDICT: PASS", board)
         self.assertNotIn("```", board)  # fences and chatter are stripped
+        self.assertNotIn(BAD, board)  # the draft goes by reference (an input), the verdict inline (an output)
+        snap = self.root / "content" / "_runs" / "x" / "blackboard-round-1.md"
+        self.assertIn(BAD, snap.read_text(encoding="utf-8"))
+        self.assertIn("`content/_runs/x/blackboard-round-1.md`", board)
+        self.assertTrue(board.startswith("---\nslug: x\n") and board.count("## Result") == 1)
 
     def test_fail_then_pass_hands_out_slices(self):
         fake = Fake(self.root, ["FAIL", "PASS"])
@@ -726,7 +731,13 @@ class StyleLoop(unittest.TestCase):
         self.assertIn("Your round 1 verdict", prompts[-1])  # Vera's context survives the stop
         self.assertIn("ground_patch", prompts[-1])  # with Bob's meanwhile diff
         self.assertTrue((self.root / "game" / "reports" / "style" / "s" / "round-2").is_dir())
-        self.assertIn("result: pass", self.board())
+        board = self.board()
+        self.assertIn("result: pass", board)
+        self.assertEqual(board.count("## Result"), 1)                    # one Result, rewritten on resume
+        self.assertIn("## Resumed", board)
+        result = board.split("## Result")[1]
+        self.assertTrue(result.endswith("| **Total** | **3** | | | |\n"))  # all three calls of both invocations
+        self.assertLess(board.index("## Resumed"), board.index("## Result"))   # Result stays last
 
     def test_designer_row_in_the_last_round_ends_at_max_rounds(self):
         calls, prompts = self.fake(["FAIL:designer", "FAIL:designer"], fixes=False)

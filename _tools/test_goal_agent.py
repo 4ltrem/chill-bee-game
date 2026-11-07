@@ -74,7 +74,7 @@ class Gaps(unittest.TestCase):
         c3 = {e["name"]: e for e in report["C3"]["evidence"]}
         self.assertFalse(c3["frame_scale"]["ok"])
         self.assertFalse(c3["OldBar"]["ok"])                                # removed by the spec, still in the scene
-        self.assertTrue(report["C2"]["waits_on_tests"])                     # its node is there; its test fails
+        self.assertFalse(report["C2"]["waits_on_tests"])                    # its node may predate it: only the ledger says built
 
     def test_ledger_marks_a_built_goal(self):
         _, report, _, _ = plan(ledger=["H", "C3"])
@@ -99,11 +99,11 @@ class Score(unittest.TestCase):
         self.assertLess(ids.index("H"), ids.index("C3"))
         self.assertLess(ids.index("C3"), ids.index("T3.1"))
         self.assertNotIn("C1", ids)                                         # done
-        self.assertNotIn("C2", ids)                                         # built, waits on its tests
+        self.assertIn("C2", ids)                                            # partial and not in the ledger: still to build
         self.assertEqual(amb, [])
         _, _, ranked, _ = plan(ledger=["H"])
         self.assertEqual(ranked[0]["id"], "C3")
-        _, _, ranked, _ = plan(ledger=["H", "C3"])
+        _, _, ranked, _ = plan(ledger=["H", "C2", "C3"])
         self.assertEqual(ranked[0]["id"], "T3.1")
 
     def test_owner_costs_from_the_run_log(self):
@@ -121,7 +121,7 @@ class Loop(unittest.TestCase):
         shutil.copytree(FIX / "game", self.tmp / "game")
         self.saved = {k: getattr(ga, k) for k in ("ROOT", "run_agent", "run_cmd", "budget_ok", "log_usage")}
         ga.ROOT = self.tmp
-        self.calls, self.cmds, self.check_codes, self.budget = [], [], [], (True, "allow")
+        self.calls, self.cmds, self.check_codes, self.budget, self.idle = [], [], [], (True, "allow"), False
         ga.run_agent = self.fake_agent
         ga.run_cmd = self.fake_cmd
         ga.budget_ok = lambda agent: self.budget
@@ -145,6 +145,8 @@ class Loop(unittest.TestCase):
                 return 0, "milestone/9.9\n"
             if cmd[1:3] == ["rev-parse", "--short"]:
                 return 0, "abc1234\n"
+            if cmd[1] in ("status", "diff"):                               # each agent call changes the tree, unless idle
+                return 0, "" if self.idle else f" M game/scripts/x.gd {len(self.calls)}\n"
             return 0, ""
         return (self.check_codes.pop(0) if self.check_codes else 0), "FAIL  t_x  broken"
 
@@ -152,21 +154,23 @@ class Loop(unittest.TestCase):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
             code = ga.main(["9.9-fixture.md", "--run", "t", *args])
-        return code, out.getvalue(), (self.tmp / "game" / "reports" / "goal" / "t" / "blackboard.md").read_text(
-            encoding="utf-8")
+        board = self.tmp / "game" / "reports" / "goal" / "t" / "blackboard.md"
+        return code, out.getvalue(), board.read_text(encoding="utf-8") if board.is_file() else None
 
     def test_plan_calls_no_agent(self):
         code, out, board = self.run_main("--plan")
         self.assertEqual((code, self.calls), (0, []))
         self.assertIn("1. H", out)
         self.assertTrue((self.tmp / "game" / "reports" / "goal" / "t" / "gaps.json").is_file())
-        self.assertIn("### Order", board)
+        self.assertIsNone(board)                                            # the console only: no board
 
     def test_dry_run_prints_briefs_and_spends_nothing(self):
         code, out, board = self.run_main("--dry-run")
         self.assertEqual((code, self.calls), (0, []))
         self.assertIn("brief for Patricia", out)
         self.assertFalse(any(c[0] == "git" and c[1] in ("commit", "checkout") for c in self.cmds))
+        self.assertIsNone(board)
+        self.assertFalse((self.tmp / "game" / "reports" / "goal" / "t" / "briefs").exists())
 
     def test_one_green_step_commits_and_rescans(self):
         code, out, board = self.run_main("--max-goals", "1")
@@ -197,8 +201,37 @@ class Loop(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertEqual(len(self.calls), 2 + 2 * 2)                        # C3 owners, then two fix rounds (contract: no Quinn)
         self.assertIn("fix round 2", self.calls[-1][1])
-        self.assertIn("**Stop:** 2 fix rounds failed", board)
+        self.assertIn("## Waiting for the designer\n\n2 fix rounds failed on C3", board)
+        self.assertIn("result: waiting-designer", board)
+        self.assertIn("briefs/C3-fix2-patricia.md", board)                  # fix briefs go by reference too
         self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
+
+    def test_green_with_no_change_is_held_not_committed(self):
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        self.idle = True                                                    # 0.1.4 C7: the agents changed nothing
+        code, out, board = self.run_main()
+        self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
+        ledger = json.loads((self.tmp / "game" / "reports" / "goal" / "ledger.json").read_text(encoding="utf-8"))
+        first = next(gid for gid, e in ledger["9.9-fixture.md"].items())
+        self.assertIn("held", ledger["9.9-fixture.md"][first])
+        self.assertIn("**Held:**", board)
+        self.assertIn("result: waiting-designer", board)                    # every change held: the designer answers
+        steps = [l for l in board.splitlines() if l.startswith("### Step:")]
+        self.assertEqual(len(steps), len(set(steps)))                       # a held goal is not retried in the same run
+
+    def test_a_held_goal_waits_until_its_spec_text_changes(self):
+        spec = ga.parse_spec(SPEC)
+        found = ga.scan(FIX / "game", ledger_path=FIX / "none.json")
+        c3 = spec["goals"]["C3"]
+        found["ledger"] = {spec["file"]: {"C3": {"run": "t", "held": "changed nothing", "text": ga.text_hash(c3)}}}
+        report = ga.gaps(spec, found)
+        self.assertTrue(report["C3"]["ambiguous"])
+        self.assertFalse(report["C3"]["built"])
+        self.assertIn("changed nothing", report["C3"]["questions"])
+        found["ledger"][spec["file"]]["C3"]["text"] = "an older text"     # the designer edited the item: build it again
+        report = ga.gaps(spec, found)
+        self.assertFalse(report["C3"]["ambiguous"])
+        self.assertFalse(report["C3"]["built"])
 
     def test_a_failing_old_test_after_a_change_also_goes_to_quinn(self):
         (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
@@ -241,7 +274,8 @@ class Loop(unittest.TestCase):
                         encoding="utf-8")
         code, out, board = self.run_main()
         self.assertEqual(code, 1)
-        self.assertEqual([a for a, _ in self.calls], [ga.PROGRAMMER])        # the handoff is built; C3 never is
+        self.assertEqual([a for a, _ in self.calls][0], ga.PROGRAMMER)       # the handoff first
+        self.assertFalse(any(", goal C3" in p for _, p in self.calls))      # no step ever builds C3
         self.assertIn("Ambiguous", board)
         self.assertIn("## Result", board)
         self.assertIn("waiting-designer", board.split("## Result")[-1])
@@ -255,6 +289,26 @@ class Loop(unittest.TestCase):
         self.assertTrue(report["C3"]["ambiguous"])
         self.assertEqual(len(report["C3"]["questions"]), 1)                  # the answered one no longer holds it
         self.assertFalse(report["C2"]["ambiguous"])
+
+    def test_board_format_one_result_across_invocations(self):
+        self.run_main("--plan")                                             # leaves no trace on the board
+        code, out, board = self.run_main("--max-goals", "1")
+        self.assertTrue(board.startswith("---\nspec: 9.9-fixture.md\n"))
+        self.assertIn("result: stopped", board)
+        self.assertIn("## Request", board)
+        self.assertIn("## Pass 1:", board)
+        self.assertNotIn("## Pass 3", board)                                # the --plan pass was not written
+        pass2 = board.split("## Pass 2")[1].split("\n## ")[0]
+        self.assertIn("Only what changed since the last pass", pass2)
+        self.assertIn("| H Node", pass2)                                     # H is now done: its row changed
+        self.assertNotIn("| T1.1", pass2.split("### Order")[0])             # an unchanged gap is left out
+        code, out, board = self.run_main("--max-goals", "1", "--note", "frames: 1.35x")
+        self.assertIn("## Resumed", board)
+        self.assertIn("Designer's answer: frames: 1.35x", board)
+        self.assertEqual(board.count("## Result"), 1)
+        self.assertGreater(board.index("## Result"), board.index("## Resumed"))
+        result = board.split("## Result")[1]
+        self.assertEqual(result.count("| Patricia, ") + result.count("| Bob, "), len(self.calls))   # both invocations
 
     def test_unapproved_spec_is_refused(self):
         spec = self.tmp / "game" / "specs" / "9.9-fixture.md"
