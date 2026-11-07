@@ -418,7 +418,8 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	var truck: Node = p["Truck"]
 	var tr: Dictionary = _track(hive)
 	_full_hive_frozen(hive)
-	_set_cfg("bottling_seconds_per_jar", 1.5)   # CHEAT (Dev): long enough to open the zoom while bottling, short enough to finish in it
+	# 0.1.4 spec item 2 ("hidden at the second stop"): reopening the zoom now takes a Back-pan to the farm view first, so bottling must outlast it
+	_set_cfg("bottling_seconds_per_jar", 3.0)   # CHEAT (Dev): long enough to open the zoom while bottling, short enough to finish in it
 	await _frames(4)
 	var cpf: int = _cpf()
 	var cap: int = _bucket_cells()
@@ -440,7 +441,9 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	await fi.click_ctl(p["BackButton"] as Control)
 	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + _lid_t())
 	eq(m.get("resume_pending"), true, "Back set resume_pending")
-	ck(_shown(p["ForkIcon"]), "Back: the fork shows (frames 4 and 5 hold Capped cells)")
+	# 0.1.4 spec item 2: Harvest "is hidden at the second stop" (the full bucket pans there after Back); _open_zoom taps Back to the farm view
+	eq(m.call("at_second_stop"), true, "Back: the full bucket panned to the second stop")
+	ck(not _shown(p["ForkIcon"]) and m.call("fork_available"), "Back: the fork is hidden at the second stop (frames 4 and 5 hold Capped cells)")
 	eq(cen.get("state"), _st(cen, "FULL"), "Back: bucket FULL")
 	near(_jars_everywhere(p) + float(truck_jars.call()), jars0, 1e-9, "zoom 1: jars conserved")
 	# ---- spin and bottle
@@ -450,11 +453,11 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	var sent: int = await _crank_done(cen)
 	_ext(cen, "cranked to DONE (%d turns)" % sent)
 	await _frames(3)
-	ck(_shown(p["ForkIcon"]), "DONE: the fork still shows (resume_pending)")
+	ck(not _shown(p["ForkIcon"]) and m.call("fork_available"), "DONE: still at the second stop, the fork hidden (resume_pending keeps it available)")
 	await _frames(3)
 	eq(cen.get("state"), _st(cen, "BOTTLING"), "no Continue: BOTTLING started by itself")
 	await _wait(float(cv("bottling_seconds_per_jar")) * 0.5)
-	ck(_shown(p["ForkIcon"]), "BOTTLING: the fork shows (resume_pending)")
+	ck(not _shown(p["ForkIcon"]) and m.call("fork_available"), "BOTTLING: at the second stop the fork is hidden, still available (resume_pending)")
 	# ---- zoom 2, opened while bottling
 	tr["raised"] = []
 	if not await _open_zoom(m, p, tr):

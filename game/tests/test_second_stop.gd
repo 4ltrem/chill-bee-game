@@ -87,9 +87,10 @@ func t_second_stop_spin_icon_tap() -> void:
 	ck(_shown(spin), "Spin shows at the second stop (bucket FULL)")
 	var r: Rect2 = spin.get_global_rect()
 	ck(_vp().encloses(r), "Spin is wholly on screen (%s)" % str(r))
-	var cen_rect: Rect2 = _screen_of(_obbs(cen), _cam())
-	ck(r.get_center().x < cen_rect.position.x, "Spin sits left of the centrifuge (icon x %.0f, centrifuge from x %.0f)" % [r.get_center().x, cen_rect.position.x])
-	eq(_overlap_area(r, cen_rect) < 1.0, true, "Spin does not cover the centrifuge")
+	# 0.1.4 spec item 2: "Each button follows one anchor point on its prop ... No per-view offsets"; "Spin: just above the centrifuge lid":
+	# the same rule as the farm view, so Spin sits at its CentrifugeAnchor's projection (clamped inside the screen), not left of the centrifuge.
+	var gap: float = _anchor_gap(spin as FloatingIcon)
+	ck(gap <= float(cv("button_screen_margin")), "Spin sits at its anchor's projected point or clamped inside the screen (off by %.0f px)" % gap)
 	eq(_stealers(m, spin, r.get_center()), [], "no other control takes a press at Spin's centre")
 	await fi.tap_at(r.get_center())
 	await _frames(3)
@@ -107,25 +108,45 @@ func t_second_stop_fork_icon_tap() -> void:
 	var p: Dictionary = s["p"]
 	var tr: Dictionary = s["tr"]
 	var fork: Control = p["ForkIcon"]
-	ck(_shown(fork), "Harvest shows at the second stop (Capped frames remain)")
+	# 0.1.4 spec item 2: "[Harvest] is hidden at the second stop, where the lid may be off screen (designer, 2026-11-06: "hide it")"
+	ck(not _shown(fork), "Harvest is hidden at the second stop although Capped frames remain")
+	eq(bool(m.call("fork_available")), true, "precondition: Capped frames remain (Harvest would show on the farm view)")
+	# Back (real tap) to the farm view: Harvest shows again there and a real tap on it opens the zoom
+	await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
+	await _until(func() -> bool: return not bool(m.call("at_second_stop")) and _cam().size > float(cv("pan_zoom_size")) + 0.5, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
+	ck(_shown(fork), "Harvest shows on the farm view after Back")
 	var r: Rect2 = fork.get_global_rect()
 	ck(_vp().encloses(r), "Harvest is wholly on screen (%s)" % str(r))
-	var hive_rect: Rect2 = _screen_of(_obbs(p["Hive"] as Node), _cam()).intersection(_vp())
-	var cen_rect: Rect2 = _screen_of(_obbs(p["Centrifuge"] as Node), _cam())
-	ck(r.get_center().y > hive_rect.end.y, "Harvest sits below the hive (icon y %.0f, hive bottom %.0f)" % [r.get_center().y, hive_rect.end.y])
-	eq(_overlap_area(r, hive_rect) < 1.0 and _overlap_area(r, cen_rect) < 1.0, true, "Harvest covers neither the hive nor the centrifuge")
 	eq(_stealers(m, fork, r.get_center()), [], "no other control takes a press at Harvest's centre")
 	tr["risen"] = -1
 	await fi.tap_at(r.get_center())
 	var raised: bool = await _until(func() -> bool: return int(tr["risen"]) >= 0, 3.0)
-	ck(raised, "a real tap on Harvest at the second stop opens the zoom (a frame rises)")
+	ck(raised, "a real tap on Harvest on the farm view opens the zoom (a frame rises)")
 	await _wait(_zoom_settle())
-	near(_cam().size, float(cv("zoom_size")), 0.05, "the camera went back to the first zoom")
-	eq(bool(m.call("at_second_stop")), false, "the second stop is left")
+	near(_cam().size, float(cv("zoom_size")), 0.05, "the camera went to the first zoom")
 	_fin()
 
 
 # ---------------------------------------------------------------- icons never overlap (0.1.3c, "Icons anchored in the game world")
+
+## Px between an icon's top-left and where its anchor's projection puts it, once clamped inside the screen by button_screen_margin.
+func _anchor_gap(ic: FloatingIcon) -> float:
+	var a: Node3D = ic.get_node(ic.anchor_path) as Node3D
+	var mg: float = float(cv("button_screen_margin"))
+	var view: Vector2 = _vp().size
+	var want: Vector2 = (_cam().unproject_position(a.global_position) - ic.size * 0.5).clamp(Vector2(mg, mg), Vector2(maxf(view.x - mg - ic.size.x, mg), maxf(view.y - mg - ic.size.y, mg)))
+	# spec: "nudged clear" of another control: the wanted spot meeting another visible anchored button, TopInfo or BackButton is allowed to move
+	var wr := Rect2(want, ic.size)
+	for other in _icon_nodes(ic.get_tree().root):
+		if other != ic and (other as Control).is_visible_in_tree() and wr.intersects((other as Control).get_global_rect()):
+			return 0.0
+	for nm in ["TopInfo", "BackButton"]:
+		var c: Control = ic.get_tree().root.find_child(nm, true, false) as Control
+		if c != null and c.is_visible_in_tree() and wr.intersects(c.get_global_rect()):
+			return 0.0
+	return (ic.global_position - want).length()
+
 
 ## Every FloatingIcon of the scene (Fork, Spin, Sell), visible or not.
 func _icon_nodes(m: Node) -> Array:
@@ -151,9 +172,12 @@ func _icons_state(m: Node, p: Dictionary, label: String, second: bool) -> int:
 		if c != null and c.is_visible_in_tree():
 			hud.append(c)
 	var world: Array = []
+	# 0.1.4 spec item 2: buttons sit on their props' anchors ("just above the centrifuge lid"); only other controls are cleared
+	# ("clamped inside the screen with a 16 px margin and nudged clear"), so the 0.1.3c hive/centrifuge rect check no longer applies.
 	if second:
-		world.append(["hive", _screen_of(_obbs(p["Hive"] as Node), _cam()).intersection(_vp())])
-		world.append(["centrifuge", _screen_of(_obbs(p["Centrifuge"] as Node), _cam())])
+		for ic in vis:
+			ck(_anchor_gap(ic as FloatingIcon) <= float(cv("button_screen_margin")), "%s: sits at its anchor's projected point or clamped inside the screen" % ic.name)
+		ck(not (p["ForkIcon"] as Control).is_visible_in_tree(), "second stop: Harvest is hidden")
 	for i in vis.size():
 		var a: Control = vis[i]
 		var ra: Rect2 = a.get_global_rect()
@@ -172,7 +196,7 @@ func _icons_state(m: Node, p: Dictionary, label: String, second: bool) -> int:
 		var fic: FloatingIcon = ic
 		var placed: bool = fic.place()
 		rects.append(fic.get_global_rect() if placed else Rect2())
-		ck(placed or fic.use_fixed_center == false, "%s: %s placed (anchor in front of the camera)" % [label, fic.name])
+		ck(placed, "%s: %s placed (anchor in front of the camera)" % [label, fic.name])
 	for i in all_icons.size():
 		for j in range(i + 1, all_icons.size()):
 			if (rects[i] as Rect2).size != Vector2.ZERO and (rects[j] as Rect2).size != Vector2.ZERO:
@@ -273,8 +297,8 @@ func t_pan_after_back_then_harvest_again() -> void:
 	var p: Dictionary = s["p"]
 	var tr: Dictionary = s["tr"]
 	tr["risen"] = -1
-	await fi.tap_at((p["ForkIcon"] as Control).get_global_rect().get_center())
-	var raised: bool = await _until(func() -> bool: return int(tr["risen"]) >= 0, 3.0)
+	# 0.1.4 spec item 2: Harvest "is hidden at the second stop": _open_zoom taps Back to the farm view, then taps Harvest at its anchor
+	var raised: bool = await _open_zoom(m, p, tr)
 	ck(raised, "Harvest again: a frame rises")
 	var back_in: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("zoom_size"))) < 0.05, _zoom_settle() + 2.0)
 	ck(back_in, "the camera went back to the first zoom")
@@ -291,7 +315,11 @@ func _icon_above(ic: FloatingIcon, prop: Node, label: String) -> void:
 	var r: Rect2 = ic.get_global_rect()
 	var pr: Rect2 = _screen_of(_obbs(prop), _cam())
 	ck(absf(r.get_center().x - pr.get_center().x) <= 40.0, "%s: %s centre x %.0f is within 40 px of %s centre x %.0f" % [label, ic.name, r.get_center().x, prop.name, pr.get_center().x])
-	ck(r.end.y <= pr.position.y + 20.0, "%s: %s bottom %.0f is at or above the %s top %.0f (+20)" % [label, ic.name, r.end.y, prop.name, pr.position.y])
+	# 0.1.4 spec item 2: Harvest "just above the hive lid", Spin "just above the centrifuge lid": the button follows its anchor on the
+	# prop's lid (so it overlaps the prop's rect a little, no longer sits above it); the rule is the anchor's projection, clamped inside the screen.
+	var gap: float = _anchor_gap(ic)
+	ck(gap <= float(cv("button_screen_margin")), "%s: %s sits at its anchor's projected point, off by %.0f px" % [label, ic.name, gap])
+	ck(r.get_center().y <= pr.get_center().y, "%s: %s centre y %.0f is in the upper half of the %s (centre y %.0f)" % [label, ic.name, r.get_center().y, prop.name, pr.get_center().y])
 
 
 ## Fork over the hive and Spin over the centrifuge, on the farm view and in the first zoom.

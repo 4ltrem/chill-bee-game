@@ -155,16 +155,35 @@ func _zoom_settle() -> float:
 	return float(cv("zoom_seconds")) + _lid_t() + float(cv("slide_seconds")) + 0.5
 
 
+## True when the button's rect at its anchor (no nudge) would overlap another visible anchored button or an avoided control,
+## and its actual rect overlaps none of them: the spec's "nudged clear" (0.1.4 item 2).
+func _nudged_clear(icon: Control) -> bool:
+	if not icon.has_method("_blockers") or not bool(icon.get("_anchor_ok")):
+		return false
+	var at_anchor := Rect2((icon.get("_anchor_screen") as Vector2) - icon.size * 0.5, icon.size)
+	var hit: bool = false
+	for r in icon.call("_blockers"):
+		if at_anchor.intersects(r as Rect2):
+			hit = true
+		if icon.get_global_rect().intersects(r as Rect2):
+			return false
+	return hit
+
+
 ## Tap the fork where it floats, wait for the zoom (frame_raised), then for the camera, lid and slide to settle.
 func _open_zoom(m: Node, p: Dictionary, tr: Dictionary) -> bool:
 	var on_anchor: bool = false
 	if m.has_method("at_second_stop") and bool(m.call("at_second_stop")):
-		# 0.1.3c: at the second stop Harvest is placed from the object rects (fixed_center), not at its anchor: tap where it is drawn
-		var icon: Control = p["ForkIcon"] as Control
-		var fc: Vector2 = icon.get("fixed_center") as Vector2
-		on_anchor = bool(icon.get("use_fixed_center")) and icon.get_global_rect().get_center().distance_to(fc) <= 6.0
-		await fi.tap_at(icon.get_global_rect().get_center())
-		ck(on_anchor, "at the second stop the fork icon sits at its placed position (fixed_center %s; click went there)" % str(fc))
+		# 0.1.4 spec item 2: "It [Harvest] is hidden at the second stop": Back (a real tap) to the farm view first, then Harvest at its anchor
+		ck(not (p["ForkIcon"] as Control).is_visible_in_tree(), "at the second stop Harvest is hidden")
+		await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
+		await _until(func() -> bool: return not bool(m.call("at_second_stop")) and absf(root.get_viewport().get_camera_3d().size - float(cv("pan_zoom_size"))) > 0.5, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
+		await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("camera_pan_seconds")))
+		var fork: Control = p["ForkIcon"] as Control
+		var nudged: bool = _nudged_clear(fork)
+		on_anchor = await fi.click_icon(fork)
+		# 0.1.4 spec item 2: "the button is clamped inside the screen with a 16 px margin and nudged clear" (orchestrator fix, goal run 0.1.4 C2)
+		ck(on_anchor or nudged, "back on the farm view the fork icon sits at its anchor's projected position, or was nudged clear of another control (click went there)")
 	else:
 		on_anchor = await fi.click_icon(p["ForkIcon"] as Control)
 		ck(on_anchor, "the fork icon sits at its anchor's projected position (click went there)")
@@ -404,7 +423,8 @@ func _scrape_back_in_pop(to_pile: bool) -> void:
 	eq(cen.get("lid_open"), false, "the zoom ended with cells in the bucket: lid on")
 	eq(cen.get("state"), _st(cen, "FULL"), "FULL, waiting for Spin")
 	ck(_shown(p["CentrifugeIcon"]), "Spin shows")
-	ck(_shown(p["ForkIcon"]), "the fork stays: 34 + 4 x 35 Capped cells remain")
+	# 0.1.4 spec item 2: Harvest "is hidden at the second stop"; on the farm view the fork stays (34 + 4 x 35 Capped cells remain)
+	ck(_shown(p["ForkIcon"]) != bool(m.call("at_second_stop")), "the fork stays on the farm view and is hidden at the second stop: 34 + 4 x 35 Capped cells remain")
 	eq(tr["risen"], -1, "the frame went back down")
 	eq(tr["lid"], [true, false], "the hive lid went on again")
 	# designer, 2026-11-06: closing the zoom with a full bucket (Back included) pans to the second stop; not full -> the farm

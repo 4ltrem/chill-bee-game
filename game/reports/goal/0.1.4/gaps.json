@@ -1,7 +1,7 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T12:16:42-05:00",
+ "at": "2026-11-07T12:19:16-05:00",
  "unit_log": "game/reports/_runs/20261107-120831/unit.log",
  "goals": {
   "H": {
@@ -12,16 +12,22 @@
    ],
    "items": [],
    "depends": [],
-   "status": "missing",
+   "status": "done",
    "evidence": [
     {
      "kind": "handoff",
-     "name": "game/specs/0.1.4-node-handoff.md",
-     "ok": false
+     "name": "0.1.4-node-handoff.md",
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "c31bbb8",
+     "ok": true
     }
    ],
-   "built": false,
+   "built": true,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "C1": {
@@ -41,6 +47,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "C2": {
@@ -81,6 +88,7 @@
    ],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "C3": {
@@ -100,6 +108,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "C4": {
@@ -118,6 +127,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "C5": {
@@ -143,7 +153,11 @@
    ],
    "built": false,
    "waits_on_tests": false,
-   "ambiguous": false
+   "questions": [
+    "A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.",
+    "A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune."
+   ],
+   "ambiguous": true
   },
   "C6": {
    "kind": "change",
@@ -159,6 +173,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "C7": {
@@ -175,6 +190,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "T2.1": {
@@ -193,6 +209,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "T3.1": {
@@ -211,6 +228,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "T2.2": {
@@ -229,6 +247,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "T4.1": {
@@ -247,6 +266,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "T1.1": {
@@ -265,6 +285,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "T5.1": {
@@ -283,6 +304,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "T6.1": {
@@ -301,6 +323,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "T7.1": {
@@ -319,6 +342,7 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   },
   "T.1": {
@@ -349,106 +373,75 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
+   "questions": [],
    "ambiguous": false
   }
  },
  "order": [
   {
-   "id": "H",
-   "score": 16.17,
+   "id": "C2",
+   "score": 13.85,
    "factors": {
-    "unblocks": 5,
-    "value": 1,
-    "cost": 0.83,
+    "unblocks": 3,
+    "value": 3,
+    "cost": 1.15,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C4",
+   "score": 11.64,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.36,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C7",
-   "score": 11.17,
+   "score": 11.21,
    "factors": {
     "unblocks": 2,
     "value": 3,
-    "cost": 0.83,
+    "cost": 0.79,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
-   "id": "C6",
-   "score": 7.17,
+   "id": "C3",
+   "score": 10.85,
    "factors": {
     "unblocks": 2,
-    "value": 1,
-    "cost": 0.83,
+    "value": 3,
+    "cost": 1.15,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C1",
-   "score": 0.0,
+   "score": 8.85,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 1.2,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
+    "cost": 1.15,
+    "ready": 1,
+    "blocked_by": []
    }
   },
   {
-   "id": "C2",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 3,
-    "value": 3,
-    "cost": 1.2,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
-   }
-  },
-  {
-   "id": "C3",
-   "score": 0.0,
+   "id": "C6",
+   "score": 7.21,
    "factors": {
     "unblocks": 2,
-    "value": 3,
-    "cost": 1.2,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
-   }
-  },
-  {
-   "id": "C4",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 2,
-    "value": 3,
-    "cost": 0.36,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
-   }
-  },
-  {
-   "id": "C5",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 1.2,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
+    "value": 1,
+    "cost": 0.79,
+    "ready": 1,
+    "blocked_by": []
    }
   },
   {
@@ -575,5 +568,7 @@
    }
   }
  ],
- "ambiguous": []
+ "ambiguous": [
+  "C5"
+ ]
 }

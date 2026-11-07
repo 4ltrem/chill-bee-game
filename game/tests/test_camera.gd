@@ -407,7 +407,12 @@ func t_camera_second_stop_hud_clear() -> void:
 	ck(int(st["shown"]) > 0, "part of the hive shows (its visible box is the rect no control may cover)")
 	var hive_rect: Rect2 = st["bbox"]
 	var cen_rect: Rect2 = _screen_of(_obbs(p["Centrifuge"] as Node), cam)
-	var controls: Array = _hud_controls(m)
+	var controls: Array = []
+	for c in _hud_controls(m):
+		# 0.1.4 spec item 2: Spin sits "just above the centrifuge lid" on its anchor in every view, so an anchored button may
+		# meet a prop's screen rect; only the other controls (Back, top info, shop) must stay clear. Anchors: t_second_stop_spin_icon_tap.
+		if not (c is FloatingIcon):
+			controls.append(c)
 	ck(controls.size() > 0, "HUD controls are visible at the second stop (%d)" % controls.size())
 	eq(_hud_hits(controls, hive_rect), [], "no HUD control overlaps the hive's visible screen rect %s" % str(hive_rect))
 	eq(_hud_hits(controls, cen_rect), [], "no HUD control overlaps the centrifuge's screen rect %s" % str(cen_rect))

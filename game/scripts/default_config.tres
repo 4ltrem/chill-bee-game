@@ -51,3 +51,7 @@ hive_scale = 1.4
 pan_zoom_size = 9.3
 pan_margin = 0.04
 camera_pan_seconds = 1.2
+harvest_anchor_offset = 0.0
+spin_anchor_offset = 0.0
+sell_anchor_offset = 0.0
+button_screen_margin = 16.0

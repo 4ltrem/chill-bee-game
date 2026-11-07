@@ -65,6 +65,12 @@ extends Resource
 @export var pan_margin: float = 0.04                  # second camera stop: share of the view kept clear around the framed objects
 @export var camera_pan_seconds: float = 1.2            # PLACEHOLDER (slow on purpose): the pan from the first stop to the second
 
+# --- 0.1.4 (game/specs/0.1.4-ui-placement.md, item 2): one anchor-follow rule for Harvest, Spin and Sell ---
+@export var harvest_anchor_offset: float = 0.0         # PLACEHOLDER (0.1.4): px added below the ForkAnchor's projection (negative = up); one value for every view
+@export var spin_anchor_offset: float = 0.0            # PLACEHOLDER (0.1.4): same, for Spin at the CentrifugeAnchor
+@export var sell_anchor_offset: float = 0.0            # PLACEHOLDER (0.1.4): same, for Sell at the SellAnchor
+@export var button_screen_margin: float = 16.0         # spec item 2: px kept clear between an anchored button and the screen edge
+
 const DEFAULT_PATH := "res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.tres"
 const DEV_SETTING := "chill_bee/dev_mode"

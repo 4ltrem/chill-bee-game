@@ -312,7 +312,7 @@ func _make_row(value_name: String) -> Control:
 		var spin := SpinBox.new()
 		var is_int: bool = typeof(current) == TYPE_INT
 		spin.allow_greater = true
-		spin.min_value = 0.0
+		spin.min_value = -100000.0 if value_name.ends_with("_anchor_offset") else 0.0
 		spin.max_value = 100000.0
 		# The step stays fine so no value is rounded; the arrows use a coarser step.
 		spin.step = 1.0 if is_int else 0.01

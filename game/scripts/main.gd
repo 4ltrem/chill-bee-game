@@ -59,9 +59,6 @@ func _ready() -> void:
 	_fork_icon = find_child("ForkIcon", true, false) as FloatingIcon
 	_centrifuge_icon = find_child("CentrifugeIcon", true, false) as FloatingIcon
 	_sell_icon = find_child("SellIcon", true, false) as FloatingIcon
-	if _centrifuge_icon != null and _farm_ui != null and _centrifuge_icon.get_parent() == _farm_ui:
-		# FarmUI is hidden during a zoom; Spin must show in the first zoom, so it lives beside it (it places itself from its anchor)
-		_centrifuge_icon.reparent(_farm_ui.get_parent(), false)
 	if GameConfig.dev_mode_enabled():
 		var panel := DevPanel.new()
 		panel.name = "DevPanel"
@@ -123,7 +120,7 @@ func _refresh_icons() -> void:
 		return
 	var on_farm: bool = zoom == Zoom.NONE
 	if _fork_icon != null:
-		_fork_icon.set_wanted(on_farm and fork_available())
+		_fork_icon.set_wanted(on_farm and not _at_second_stop and fork_available())   # hidden at the second stop (designer 2026-11-06)
 	if _centrifuge_icon != null:
 		# 0.1.3 play-test (c): also shown during the first zoom (not while it closes: the second stop shows it itself)
 		_centrifuge_icon.set_wanted((on_farm or zoom != Zoom.CLOSING) and _centrifuge.state == Centrifuge.State.FULL)
@@ -527,6 +524,7 @@ func _screen_rect(box: AABB, pose: Dictionary) -> Rect2:
 ## centrifuge (every position from the objects' screen rects, so nothing covers either).
 func _enter_second_stop_hud() -> void:
 	_at_second_stop = true
+	_refresh_icons()   # hides Harvest here
 	if _harvest_ui != null:
 		_harvest_ui.show_pan()
 	var pose: Dictionary = second_stop_pose()
@@ -536,15 +534,6 @@ func _enter_second_stop_hud() -> void:
 	var hive_rect: Rect2 = _screen_rect(_mesh_box(_hive), pose).intersection(screen)
 	var cen_rect: Rect2 = _screen_rect(_mesh_box(_centrifuge), pose)
 	_farm_ui.fit_top_info([hive_rect, cen_rect] as Array[Rect2], gap)
-	if _fork_icon != null:
-		var half: Vector2 = _fork_icon.size * 0.5
-		var at := Vector2(clampf(hive_rect.get_center().x, half.x, view.x - half.x), minf(hive_rect.end.y + gap + half.y, view.y - half.y))
-		if Rect2(at - half, half * 2.0).intersects(cen_rect):
-			at.y = minf(cen_rect.end.y + gap + half.y, view.y - half.y)   # the centrifuge reaches under the hive: Harvest goes below both
-		_pin_if_blocked(_fork_icon, at, [hive_rect, cen_rect], screen)
-	if _centrifuge_icon != null:
-		var half: Vector2 = _centrifuge_icon.size * 0.5
-		_pin_if_blocked(_centrifuge_icon, Vector2(maxf(cen_rect.position.x - gap - half.x, half.x), cen_rect.get_center().y), [hive_rect, cen_rect], screen)
 	_move_back_button(pose, [hive_rect, cen_rect], gap, view)
 
 
@@ -598,24 +587,9 @@ func _move_back_button(pose: Dictionary, rects: Array, gap: float, view: Vector2
 		y += step
 
 
-## 0.1.3c: an icon follows its anchor alone; it is pinned to `fallback` (centre, px) only when the anchor puts it off screen
-## or over the hive's or centrifuge's rect.
-func _pin_if_blocked(icon: FloatingIcon, fallback: Vector2, rects: Array, screen: Rect2) -> void:
-	icon.use_fixed_center = false
-	if not icon.place():
-		return
-	var box := Rect2(icon.global_position, icon.size)
-	var blocked: bool = not screen.encloses(box)
-	for r in rects:
-		if box.intersects(r as Rect2):
-			blocked = true
-	if blocked:
-		icon.fixed_center = fallback
-		icon.use_fixed_center = true
-
-
 func _leave_second_stop_hud() -> void:
 	_at_second_stop = false
+	_refresh_icons()   # Harvest was hidden at the second stop; the state table shows it again
 	var back: Control = find_child("BackButton", true, false) as Control
 	if back != null and not _back_saved.is_empty():
 		back.anchor_left = _back_saved["al"]
@@ -626,9 +600,5 @@ func _leave_second_stop_hud() -> void:
 		back.offset_bottom = _back_saved["ob"]
 		back.grow_horizontal = _back_saved["gh"]
 	_back_saved = {}
-	if _fork_icon != null:
-		_fork_icon.use_fixed_center = false
-	if _centrifuge_icon != null:
-		_centrifuge_icon.use_fixed_center = false
 	if _farm_ui != null:
 		_farm_ui.restore_top_info()

@@ -16,11 +16,12 @@ const MIN_TOUCH: Vector2 = Vector2(120.0, 120.0)   # GDD 8 / spec Accessibility
 @export var config: GameConfig = GameConfig.live()
 
 const STYLE_NAMES: Array[String] = ["normal", "hover", "pressed", "disabled", "hover_pressed", "focus"]
+const GROUP: StringName = &"anchored_buttons"
+const OFFSET_KEYS: Dictionary = {"ForkIcon": "harvest_anchor_offset", "CentrifugeIcon": "spin_anchor_offset", "SellIcon": "sell_anchor_offset"}
+const AVOID_NAMES: Array[String] = ["TopInfo", "BackButton"]   # other controls an anchored button is nudged clear of
 
 var _anchor: Node3D
-## 0.1.3c: main.gd pins an icon to a screen point (centre, px) only at the second stop, when its anchor is off screen or over the hive/centrifuge.
-var use_fixed_center: bool = false
-var fixed_center: Vector2 = Vector2.ZERO
+var _avoid_cache: Dictionary = {}
 var _wanted: bool = true   # follows its anchor until main.gd says otherwise
 var _styles: Dictionary = {}
 var _shape: Control
@@ -31,6 +32,7 @@ var _anchor_ok: bool = false
 
 
 func _ready() -> void:
+	add_to_group(GROUP)
 	custom_minimum_size = Vector2(maxf(custom_minimum_size.x, MIN_TOUCH.x), maxf(custom_minimum_size.y, MIN_TOUCH.y))
 	for style_name in STYLE_NAMES:
 		_styles[style_name] = get_theme_stylebox(style_name)
@@ -101,11 +103,54 @@ func place() -> bool:
 	var screen: Vector2 = camera.unproject_position(_anchor.global_position)
 	_anchor_screen = screen
 	_anchor_ok = true
-	if use_fixed_center:
-		global_position = fixed_center - size * 0.5
-		return true
-	global_position = screen - size * 0.5 + screen_offset
+	var want: Vector2 = screen - size * 0.5 + screen_offset + Vector2(0.0, _config_offset())
+	global_position = _clamp_and_nudge(want)
 	return true
+
+
+## 0.1.4: the one px offset this button's config key gives (the same in every view), by node name.
+func _config_offset() -> float:
+	var key: String = OFFSET_KEYS.get(String(name), "")
+	if key == "":
+		return 0.0
+	return float(config.get(key))
+
+
+## 0.1.4: inside the screen with button_screen_margin, then moved the shortest way (up or down) off any other visible
+## anchored button or avoided control; clamped again. No per-view branches.
+func _clamp_and_nudge(pos: Vector2) -> Vector2:
+	var view: Vector2 = get_viewport_rect().size
+	var m: float = config.button_screen_margin
+	var lo := Vector2(m, m)
+	var hi := Vector2(maxf(view.x - m - size.x, m), maxf(view.y - m - size.y, m))
+	pos = pos.clamp(lo, hi)
+	for other in _blockers():
+		var box := Rect2(pos, size)
+		if not box.intersects(other):
+			continue
+		var up: float = other.position.y - size.y
+		var down: float = other.end.y
+		pos.y = up if absf(up - pos.y) <= absf(down - pos.y) else down
+		if pos.y < lo.y or pos.y > hi.y:
+			pos.y = down if pos.y < lo.y else up
+		pos = pos.clamp(lo, hi)
+	return pos
+
+
+func _blockers() -> Array[Rect2]:
+	var rects: Array[Rect2] = []
+	for node in get_tree().get_nodes_in_group(GROUP):
+		var c := node as FloatingIcon
+		if c != null and c != self and c.is_visible_in_tree() and c._wanted:
+			rects.append(c.get_global_rect())
+	for avoid_name in AVOID_NAMES:
+		var c: Control = _avoid_cache.get(avoid_name) as Control
+		if c == null or not is_instance_valid(c):
+			c = get_tree().root.find_child(avoid_name, true, false) as Control
+			_avoid_cache[avoid_name] = c
+		if c != null and c.is_visible_in_tree():
+			rects.append(c.get_global_rect())
+	return rects
 
 
 func _resolve_anchor() -> Node3D:
