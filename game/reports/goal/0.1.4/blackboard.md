@@ -1268,3 +1268,53 @@ I moved `PausedLabel` out of `TopInfo` and put it just above the upgrade section
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `ui shots`: PASS
+- Green: checkpoint `1169483` on `milestone/0.1.4`
+
+## Pass 15: scan (2026-11-07T21:09:38-05:00)
+
+Unit results from `game/reports/_runs/20261107-210529/unit.log`. 5 of 25 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 25)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C9 "Production paused" above the upgrades | change | Bob | partial (built, waits on its tests) | ✓ node PausedLabel, ✓ node TopInfo, ✓ ledger 1169483 |
+
+No score changed.
+
+Next: **C10** (score 8.03: 1 goal(s) wait on it; play-test fix; cost 0.97 (Patricia, Bob)).
+
+### Step: C10 (2026-11-07T21:09:38-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C10-patricia.md` (1132 chars)
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/C10-bob.md` (1065 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Bob** (199,222 tokens, 13 turns, 36 s):
+
+I changed `hive.tscn` so the frames can be seen, but I couldn't render it, so it isn't checked by eye.
+
+The render command was refused: the permission check blocks a Bash command that starts with environment variables. `contract_check.py` passes: 63 lookups, 0 unresolved.
+
+**Files changed:** `game/scenes/props/hive.tscn` only.
+- **Walls:** the `HiveBody/WallXPos` wall is now 0.2 tall (new mesh `Mesh_wallxlow`, y 0.125). It sat in front of the frames, whose faces point along x, so it hid them.
+- **Node names:** no names changed. `Honeycomb` and `FrameSlots/Slot1..5` stay as they were.
+
+**Open questions:**
+1. `hive.gd` sets `Honeycomb.visible = false` at start. Patricia has to show it, with the cells filling as the hive fills, or the combs stay hidden whatever the scene does.
+2. I assumed the camera looks from +x, and the lid (y 0.74) still covers the top of the frames. Someone needs to render this and check, and say if the lid should rise or the wall should go lower.
+3. I did not do the item 5 frame rescale (variant a, `grid_cols` 5).
+
+
+**Patricia** (73,577 tokens, 2 turns, 5 s):
+
+Correction to my last message: the unit run did finish. It passed after 10m31s, with 150 passed and 0 failed. The `start` suite also passed. The run wasn't hung, only slow.
+
+The earlier Godot processes have most likely exited with it. I couldn't confirm that, because `taskkill` was blocked.
+
+Item 10 is built in `hive_comb_view.gd`, `hive.gd` and `honeycomb.gd`. Quinn still needs to add a test for visible frame cells with the frames down, and `frame_rise` is still waiting on Bob's C5 scale. I did not run the windowed `play_loop.gd`.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS

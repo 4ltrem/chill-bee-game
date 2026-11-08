@@ -32,6 +32,8 @@ var _capped: int = 0
 var _empty: int = 0
 var _full_announced: bool = false
 var _honeycomb: Honeycomb
+var _comb_view: HiveCombView
+var _view_hidden: int = -1         # slot the Honeycomb is drawing (raised or still sinking)
 var _lid: Node3D
 var _lid_spot: Node3D
 var _lid_motion: LidMotion
@@ -80,6 +82,16 @@ func _ready() -> void:
 		_honeycomb.slid_out.connect(_on_slid_out)
 		_honeycomb.visible = false
 		_honeycomb.active = false
+	_comb_view = HiveCombView.new()
+	_comb_view.name = "HiveCombView"
+	add_child(_comb_view)
+	_comb_view.setup(self)
+	storage_changed.connect(_refresh_comb_view)
+
+
+func _refresh_comb_view(_storage: float = 0.0, _overflow: float = 0.0) -> void:
+	if _comb_view != null:
+		_comb_view.refresh(_view_hidden)
 
 
 ## Sets the hive node's uniform scale from config.hive_scale (read when used, so a Dev mode edit shows at once). Everything under the hive
@@ -229,6 +241,8 @@ func raise_frame(index: int) -> void:
 		_honeycomb.visible = true
 		_honeycomb.active = true
 		_honeycomb.slide_in()
+		_view_hidden = index
+		_refresh_comb_view()
 	frame_raised.emit(index)
 
 
@@ -250,6 +264,8 @@ func lower_frame() -> void:
 func _on_slid_out() -> void:
 	if risen < 0 and _honeycomb != null:
 		_honeycomb.visible = false
+		_view_hidden = -1
+		_refresh_comb_view()
 
 
 # --- fill internals ---

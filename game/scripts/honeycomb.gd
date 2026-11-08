@@ -268,8 +268,11 @@ func _build_materials() -> void:
 
 
 func _cell_position(index: int) -> Vector3:
-	var cols: int = config.grid_cols
-	var rows: int = config.grid_rows
+	return cell_position(index, config.grid_cols, config.grid_rows, cell_pitch)
+
+
+## A cell's frame-local position (shared with hive_comb_view.gd so the resting frames match the risen one).
+static func cell_position(index: int, cols: int, rows: int, cell_pitch: float) -> Vector3:
 	var col: int = index % cols
 	var row: int = index / cols
 	var x: float = (float(col) - float(cols - 1) * 0.5 + 0.5 * float(row % 2) - 0.25) * cell_pitch
