@@ -1,0 +1,391 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Material" path="res://materials/hive_body.tres" id="1_body"]
+[ext_resource type="Material" path="res://materials/hive_lid.tres" id="2_lid"]
+[ext_resource type="Material" path="res://materials/wood.tres" id="3_wood"]
+[ext_resource type="Material" path="res://materials/cell_capped.tres" id="4_comb"]
+
+[sub_resource type="BoxMesh" id="Mesh_floor"]
+material = ExtResource("1_body")
+size = Vector3(1.3, 0.05, 1.3)
+
+[sub_resource type="BoxMesh" id="Mesh_wallx"]
+material = ExtResource("1_body")
+size = Vector3(0.05, 0.68, 1.3)
+
+[sub_resource type="BoxMesh" id="Mesh_wallz"]
+material = ExtResource("1_body")
+size = Vector3(1.22, 0.68, 0.05)
+
+[sub_resource type="BoxMesh" id="Mesh_lid"]
+material = ExtResource("2_lid")
+size = Vector3(1.4, 0.12, 1.4)
+
+[sub_resource type="BoxMesh" id="Mesh_barback"]
+material = ExtResource("3_wood")
+size = Vector3(9, 0.12, 4.82)
+
+[sub_resource type="BoxMesh" id="Mesh_bartb"]
+material = ExtResource("3_wood")
+size = Vector3(9, 0.7, 0.14)
+
+[sub_resource type="BoxMesh" id="Mesh_barlr"]
+material = ExtResource("3_wood")
+size = Vector3(0.12, 0.7, 4.82)
+
+[sub_resource type="CylinderMesh" id="Mesh_cell"]
+material = ExtResource("4_comb")
+top_radius = 0.14
+bottom_radius = 0.14
+height = 0.05
+radial_segments = 6
+rings = 1
+
+[node name="HiveFrames" type="Node3D"]
+
+[node name="HiveBody" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="HiveBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.015, 0)
+mesh = SubResource("Mesh_floor")
+
+[node name="WallXPos" type="MeshInstance3D" parent="HiveBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.63, 0.34, 0)
+mesh = SubResource("Mesh_wallx")
+
+[node name="WallXNeg" type="MeshInstance3D" parent="HiveBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.63, 0.34, 0)
+mesh = SubResource("Mesh_wallx")
+
+[node name="WallZPos" type="MeshInstance3D" parent="HiveBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34, 0.63)
+mesh = SubResource("Mesh_wallz")
+
+[node name="WallZNeg" type="MeshInstance3D" parent="HiveBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34, -0.63)
+mesh = SubResource("Mesh_wallz")
+
+[node name="HiveLid" type="Node3D" parent="."]
+transform = Transform3D(0.342, -0.9397, 0, 0.9397, 0.342, 0, 0, 0, 1, -0.735, 0.679, 0)
+
+[node name="LidMesh" type="MeshInstance3D" parent="HiveLid"]
+mesh = SubResource("Mesh_lid")
+
+[node name="FrameBars" type="Node3D" parent="."]
+
+[node name="FrameBar1" type="Node3D" parent="FrameBars"]
+transform = Transform3D(0, 0.13, 0, 0, 0, -0.13, -0.13, 0, 0, -0.28, 0.348, 0)
+
+[node name="Back" type="MeshInstance3D" parent="FrameBars/FrameBar1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+mesh = SubResource("Mesh_barback")
+
+[node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="FrameBar2" type="Node3D" parent="FrameBars"]
+transform = Transform3D(0, 0.13, 0, 0, 0, -0.13, -0.13, 0, 0, -0.14, 0.348, 0)
+
+[node name="Back" type="MeshInstance3D" parent="FrameBars/FrameBar2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+mesh = SubResource("Mesh_barback")
+
+[node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="FrameBar3" type="Node3D" parent="FrameBars"]
+transform = Transform3D(0, 0.13, 0, 0, 0, -0.13, -0.13, 0, 0, 0, 0.348, 0)
+
+[node name="Back" type="MeshInstance3D" parent="FrameBars/FrameBar3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+mesh = SubResource("Mesh_barback")
+
+[node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="FrameBar4" type="Node3D" parent="FrameBars"]
+transform = Transform3D(0, 0.13, 0, 0, 0, -0.13, -0.13, 0, 0, 0.14, 0.348, 0)
+
+[node name="Back" type="MeshInstance3D" parent="FrameBars/FrameBar4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+mesh = SubResource("Mesh_barback")
+
+[node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="FrameBar5" type="Node3D" parent="FrameBars"]
+transform = Transform3D(0, 0.13, 0, 0, 0, -0.13, -0.13, 0, 0, 0.28, 0.348, 0)
+
+[node name="Back" type="MeshInstance3D" parent="FrameBars/FrameBar5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+mesh = SubResource("Mesh_barback")
+
+[node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
+mesh = SubResource("Mesh_bartb")
+
+[node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
+mesh = SubResource("Mesh_barlr")
+
+[node name="Honeycomb" type="Node3D" parent="."]
+
+[node name="F1C00" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.17, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F1C01" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.4125, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F1C10" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.291, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F1C11" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.534, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F1C20" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.17, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F1C21" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.4125, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F1C30" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.291, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F1C31" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.534, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F1C40" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.17, 0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F1C41" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.327, 0.4125, 0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C00" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.17, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C01" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.4125, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C10" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.291, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C11" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.534, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C20" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.17, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C21" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.4125, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C30" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.291, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C31" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.534, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C40" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.17, 0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F2C41" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.187, 0.4125, 0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C00" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.17, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C01" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.4125, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C10" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.291, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C11" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.534, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C20" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.17, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C21" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.4125, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C30" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.291, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C31" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.534, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C40" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.17, 0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F3C41" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, -0.047, 0.4125, 0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C00" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.17, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C01" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.4125, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C10" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.291, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C11" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.534, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C20" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.17, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C21" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.4125, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C30" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.291, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C31" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.534, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C40" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.17, 0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F4C41" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.093, 0.4125, 0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C00" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.17, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C01" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.4125, -0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C10" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.291, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C11" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.534, -0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C20" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.17, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C21" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.4125, 0)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C30" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.291, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C31" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.534, 0.21)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C40" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.17, 0.42)
+mesh = SubResource("Mesh_cell")
+
+[node name="F5C41" type="MeshInstance3D" parent="Honeycomb"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 0.233, 0.4125, 0.42)
+mesh = SubResource("Mesh_cell")

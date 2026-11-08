@@ -5,7 +5,7 @@ status: draft
 description: Title-card line and 2–3 guide introduction lines shown when the player unlocks each of the four biomes (Sunny Meadow, Alpine Valley, Enchanted Grove, Cloud Gardens).
 run: content/_runs/biome-intros/blackboard-2.md
 decided: 2026-11-03
-decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Skybloom (Cloud Gardens) added to the GDD; revise the intros to name them
+decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Skybloom (Cloud Gardens) added to the GDD; revise the intros to name them (done: the intros name both; designer 2026-11-07: keep the names)
 ---
 # Biome Unlock Intros
 **Sources:** `GDD.md` (Story Premise & Onboarding, Aesthetic & Tone, Child Safety, Glossary, Progression Tiers & Biomes, Land Grid & Units, Tree C Native Habitat).

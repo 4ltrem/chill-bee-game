@@ -186,7 +186,7 @@ Leaderboards are opt-in: the game is cozy by default, and only players who choos
 
 **Reset Story:** When the player resets, the swarm splits and leaves to restore a new pocket world; the restored world is not destroyed. Each finished world is kept as its own save, which players can load and keep playing separately. Royal Crystals and Royal Jelly belong to the player and carry into each new world. In-game money stays in the world where it was earned. In kept worlds, the Refinery becomes a dormant monument, so old worlds cannot produce more Crystals.
 
-A guide character (e.g., a queen bee; name and personality TBD) walks new players through their first session:
+A guide character walks new players through their first session. Six candidate guides (`content/guides.md`: Melli, Pip, Lady Aura, Miel, Queen Maeve and Lumi, a bee-turned-sprite) share one script and differ in name, personality and signature lines; a playtest chooses one (designer, 2026-11-07). The guide:
 * Explains why the meadow matters and introduces the farm.
 * Guides the first manual harvest (uncapping and centrifuge extraction).
 * Guides the first upgrade purchase.

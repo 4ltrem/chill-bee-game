@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: fa5df4be-6365-415d-bd06-9f0be0bb573b
-  modified: 2026-11-08T00:58:13.015Z
+  modified: 2026-11-08T01:18:33.960Z
 ---
 
 Decided 2026-11-03 (in each file's `decided:` / `decision:`): research/bee-journal-real.md rejected (Haiku brief),
@@ -21,7 +21,7 @@ Also waiting (2026-11-05, M2): `content/biome-intros.md` went back to `draft` af
 
 Follow-ups recorded in the approvals' `decision:` lines, not started:
 - ~~Meadow flower for the bumble bee visitor~~: done 2026-11-07, generic "Meadow flowers" in the GDD and Entry 3.
-- ~~Name Glowbell and Skybloom in biome-intros~~: dropped 2026-11-07, the designer keeps the generic flower names.
+- ~~Name Glowbell and Skybloom in biome-intros~~: done; the intros already name them and the designer keeps the names (2026-11-07).
 - ~~Sweat bee wording~~: done 2026-11-07, now "sweat-y name" (designer's pick).
 - Both onboarding-script and biome-intros wait on a separate guides file ([[guide-playtest]], 2026-11-07).
 

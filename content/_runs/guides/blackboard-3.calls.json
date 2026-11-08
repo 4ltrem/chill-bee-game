@@ -1,0 +1,34 @@
+[
+ {
+  "call": "William, round 1",
+  "tokens": 58880,
+  "final": 25872,
+  "turns": 26,
+  "seconds": 41,
+  "transcripts": "_meta/sessions/runs/2026-11-07-guides-run-3"
+ },
+ {
+  "call": "Critic, round 1",
+  "tokens": 60814,
+  "final": 25481,
+  "turns": 5,
+  "seconds": 20,
+  "transcripts": "_meta/sessions/runs/2026-11-07-guides-run-3"
+ },
+ {
+  "call": "William, round 2",
+  "tokens": 41863,
+  "final": 11180,
+  "turns": 5,
+  "seconds": 8,
+  "transcripts": "_meta/sessions/runs/2026-11-07-guides-run-3"
+ },
+ {
+  "call": "Critic, round 2",
+  "tokens": 13350,
+  "final": 13350,
+  "turns": 1,
+  "seconds": 5,
+  "transcripts": "_meta/sessions/runs/2026-11-07-guides-run-3"
+ }
+]
