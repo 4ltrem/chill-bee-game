@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T23:58:44-05:00",
- "unit_log": "game/reports/_runs/20261107-235505/unit.log",
+ "at": "2026-11-08T00:22:43-05:00",
+ "unit_log": "game/reports/_runs/20261108-002019/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -423,10 +423,15 @@
      "kind": "node",
      "name": "FarmUI",
      "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "b99657c",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -907,17 +912,6 @@
   }
  },
  "order": [
-  {
-   "id": "C13",
-   "score": 8.32,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.68,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T.1",
    "score": 5.42,

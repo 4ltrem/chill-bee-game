@@ -239,3 +239,80 @@ func t_spin_placed_by_scene() -> void:
 		var spin: Node = m.find_child("CentrifugeIcon", true, false)
 		ck(spin != null and spin.get_parent().name == "FarmUIRoot", "live: Spin's parent is FarmUIRoot")
 	_fin()
+
+
+# ---- 0.1.4 items 3, 4, 8 (written from game/specs/0.1.4-ui-placement.md and 0.1.4-node-handoff.md, not from the code) ----
+# T.1: Back has the same screen rect in the first zoom and at the second stop. T.2: Back is in the top-right quadrant; the speed tag sits
+# below the money and bees labels without touching them. T8.1: HintLabel lies wholly below Back and does not touch it, in both views.
+
+## Back's and HintLabel's global rects in the first zoom and at the second stop: {view: {"back": Rect2, "hint": Rect2}}.
+func _back_hint_rects() -> Dictionary:
+	var got: Dictionary = {}
+	await _walk_views(func(m: Node, _p: Dictionary, label: String) -> void:
+		if label == "farm view":
+			return
+		await _frames(3)
+		var b: Control = m.find_child("BackButton", true, false) as Control
+		var h: Label = m.find_child("HintLabel", true, false) as Label
+		ck(b != null and b.is_visible_in_tree(), "%s: Back is visible" % label)
+		if label == "first zoom":
+			ck(h != null and h.is_visible_in_tree() and h.text.strip_edges() != "", "%s: the instruction text is visible and has text" % label)
+		# at the second stop harvest_ui.gd may hide HintLabel; its rect must still lie below Back (the spec names both views), so it is measured anyway
+		if b != null and h != null:
+			got[label] = {"back": b.get_global_rect(), "hint": h.get_global_rect()})
+	return got
+
+
+## True when `a` ends above `b` with a gap (no touching): a.bottom < b.top.
+func _wholly_above(a: Rect2, b: Rect2) -> bool:
+	return a.end.y < b.position.y
+
+
+func t_back_fixed_top_right() -> void:
+	ck(not _wholly_above(Rect2(0, 0, 10, 10), Rect2(0, 10, 10, 10)), "self-check: touching rects are not 'wholly above'")
+	ck(_wholly_above(Rect2(0, 0, 10, 10), Rect2(0, 11, 10, 10)), "self-check: a gap counts as wholly above")
+	var got: Dictionary = await _back_hint_rects()
+	ck(got.has("first zoom") and got.has("second stop"), "Back was measured in both views (%s)" % str(got.keys()))
+	if not (got.has("first zoom") and got.has("second stop")):
+		_fin()
+		return
+	var r1: Rect2 = got["first zoom"]["back"]
+	var r2: Rect2 = got["second stop"]["back"]
+	ck(r1.position.distance_to(r2.position) <= 0.5 and r1.size.distance_to(r2.size) <= 0.5, "T.1: Back's rect is the same in the first zoom %s and at the second stop %s" % [str(r1), str(r2)])
+	var vp: Rect2 = _vp()
+	for k in ["first zoom", "second stop"]:
+		var r: Rect2 = got[k]["back"]
+		var c: Vector2 = r.get_center()
+		ck(c.x > vp.size.x * 0.5 and c.y < vp.size.y * 0.5, "T.2: %s: Back's centre %s is in the top-right quadrant of %s" % [k, str(c), str(vp.size)])
+		ck(vp.encloses(r), "T.2: %s: Back is wholly on screen %s" % [k, str(r)])
+		var h: Rect2 = got[k]["hint"]
+		ck(_wholly_above(r, h), "T8.1: %s: the instruction text %s lies wholly below Back %s and does not touch it" % [k, str(h), str(r)])
+	_fin()
+
+
+## T.2: the speed tag (shown by the Dev speed row) sits under the money and bees labels, not touching them.
+func t_speed_tag_below_labels() -> void:
+	_portrait()
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	await _frames(6)
+	var tag: Label = m.find_child("DevSpeedTag", true, false) as Label
+	var money: Control = m.find_child("MoneyLabel", true, false) as Control
+	var bees: Control = m.find_child("BeeCountLabel", true, false) as Control
+	ck(tag != null and money != null and bees != null, "the tag, money and bees labels exist")
+	if tag == null or money == null or bees == null:
+		_fin()
+		return
+	tag.text = "x5"
+	tag.visible = true
+	await _frames(6)
+	ck(tag.is_visible_in_tree(), "the tag is visible once shown")
+	var rt: Rect2 = tag.get_global_rect()
+	for nm in [money, bees]:
+		var r: Rect2 = (nm as Control).get_global_rect()
+		ck(rt.position.y >= r.end.y, "T.2: the speed tag %s is below %s %s" % [str(rt), nm.name, str(r)])
+		ck(not rt.intersects(r), "T.2: the speed tag does not touch %s" % nm.name)
+	ck(rt.size.x > 0.0 and rt.size.y > 0.0, "the tag has a size %s" % str(rt.size))
+	_fin()

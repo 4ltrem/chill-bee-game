@@ -563,5 +563,35 @@
    "t_spin_placed_by_scene"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.1.4 Back moves to the top-left",
+  "file": "scenes/main.tscn",
+  "find": "offset_left = -144.0\noffset_top = 16.0\noffset_right = -24.0\noffset_bottom = 136.0",
+  "replace": "anchor_left = 0.0\nanchor_right = 0.0\noffset_left = 24.0\noffset_top = 16.0\noffset_right = 144.0\noffset_bottom = 136.0",
+  "expect": [
+   "t_back_fixed_top_right"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 the instruction text rises to touch Back",
+  "file": "scenes/main.tscn",
+  "find": "offset_left = -228.0\noffset_top = 144.0\noffset_right = 200.0\noffset_bottom = 254.0",
+  "replace": "offset_left = -228.0\noffset_top = 100.0\noffset_right = 200.0\noffset_bottom = 254.0",
+  "expect": [
+   "t_back_fixed_top_right"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 the speed tag is pinned over the money label",
+  "file": "scenes/main.tscn",
+  "find": "[node name=\"TopInfo\" type=\"VBoxContainer\" parent=\"FarmUIRoot/FarmUI/Margin/Column\"]\nlayout_mode = 2\nmouse_filter = 2\ntheme_override_constants/separation = 8",
+  "replace": "[node name=\"TopInfo\" type=\"VBoxContainer\" parent=\"FarmUIRoot/FarmUI/Margin/Column\"]\nlayout_mode = 2\nmouse_filter = 2\ntheme_override_constants/separation = -200",
+  "expect": [
+   "t_speed_tag_below_labels"
+  ],
+  "suite": "unit"
  }
 ]

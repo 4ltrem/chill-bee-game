@@ -1889,3 +1889,73 @@ I stopped every Godot process I started.
 
 - Check `contract`: PASS
 - Check `tests`: PASS
+- Green: checkpoint `b99657c` on `milestone/0.1.4`
+
+## Pass 23: scan (2026-11-08T00:22:43-05:00)
+
+Unit results from `game/reports/_runs/20261108-002019/unit.log`. 5 of 32 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 32)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C13 Centrifuge text sits on the centrifuge | change | Patricia | partial (built, waits on its tests) | ✓ node CentrifugeLabel, ✓ node FarmUI, ✓ ledger b99657c |
+
+No score changed.
+
+Next: **T.1** (score 5.42: play-test fix; cost 0.58 (Quinn)), with T.2, T8.1.
+
+### Step: T.1, T.2, T8.1 (2026-11-08T00:22:43-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T.1-quinn.md` (2006 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (477,530 tokens, 24 turns, 77 s):
+
+I wrote two tests and both pass on the current scene. A pass is expected here, because Back is already top-right at offsets (−144, 16, −24, 136). The hint is at y 144, so the contract is already met.
+
+**Files changed**
+- `game/tests/test_ui_placement.gd`: added `t_back_fixed_top_right` (T.1, T.2, T8.1) and `t_speed_tag_below_labels` (T.2).
+- `game/tests/run_tests.gd`: registered both under `# 0.1.4 items 1, 3, 4, 8 (written from game/specs/0.1.4-ui-placement.md before the code)`.
+- `game/tests/mutations.json`: three mutations.
+  - Back moved to the top-left.
+  - Hint raised to y 100.
+  - Speed tag pinned over the money label.
+- I haven't run `mutate.py`, so none of these mutations is proven to fail its test yet.
+
+**Nodes used:** `BackButton`, `HintLabel`, `DevSpeedTag`, `MoneyLabel`, `BeeCountLabel`.
+
+**Open questions**
+- `harvest_ui.gd:50` hides `HintLabel` at the second stop, so a first run failed my "visible" check there. I now require the hint to be visible and have text only in the first zoom. At the second stop I measure its rect even when it is hidden. Is that right?
+- No expected numbers are read from the config, because the contract lines name none. Back's quadrant and the same-rect check come straight from the spec.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 2 of 3 caught
+mutate 1/3: 0.1.4 Back moves to the top-left ... CAUGHT in 13s
+mutate 2/3: 0.1.4 the instruction text rises to touch Back ... CAUGHT in 12s
+mutate 3/3: 0.1.4 the speed tag is pinned over the money label ... MISSED in 1s
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T.1-fix1-quinn.md` (1250 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (165,953 tokens, 12 turns, 28 s):
+
+Mutation 3 was MISSED because of the mutation, not the test. I've rewritten it, but I haven't re-run it.
+
+- **Cause:** the old mutation put `DevSpeedTag` at `layout_mode = 0` with offsets. Its parent `TopInfo` is a `VBoxContainer`, which ignores those offsets, so the scene didn't change and `t_speed_tag_below_labels` still passed.
+- **Fix:** the mutation in `game/tests/mutations.json` now sets `TopInfo`'s separation from 8 to -200. The labels then stack on top of each other, so the tag lands over the money and bee-count labels. The test should fail on its "below" and "does not touch" checks.
+- **Not run:** I wrote it, but running `mutate.py` is Rex's job.
+- **Next step:** Rex re-runs `mutate.py` with `CB_ONLY=t_speed_tag_below_labels`.
+- **Other mutations:** mutations 1 and 2 (Back top-left, text touching Back) were CAUGHT and unchanged.
+- **Game code:** no failures here point outside `tests/`. I changed no game code and made no commit.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS

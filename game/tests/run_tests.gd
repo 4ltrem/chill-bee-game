@@ -86,6 +86,8 @@ func _run() -> void:
 			# 0.1.4 item 2 (written from game/specs/0.1.4-ui-placement.md before the code)
 			"t_hud_no_overlap_no_cutoff", "t_buttons_at_anchor_or_clamped", "t_buttons_clamped_when_anchor_off_screen",
 			"t_harvest_hidden_at_second_stop", "t_spin_placed_by_scene",
+			# 0.1.4 items 1, 3, 4, 8 (written from game/specs/0.1.4-ui-placement.md before the code)
+			"t_back_fixed_top_right", "t_speed_tag_below_labels",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":
