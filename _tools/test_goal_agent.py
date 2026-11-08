@@ -258,6 +258,10 @@ class Loop(unittest.TestCase):
         self.assertIn("fix round 2", self.calls[-1][1])
         self.assertEqual([t for _, t in self.turn_caps], [None] * 2 + [ga.FIX_MAX_TURNS] * 4)   # only fix rounds capped
         self.assertIn("Do not run the test suite", self.calls[-1][1])
+        quinn = ga.briefs(ga.parse_spec(SPEC), ga.parse_spec(SPEC)["goals"]["T3.1"],
+                          [ga.parse_spec(SPEC)["goals"]["T3.1"]], "t", "b")[ga.QA]
+        self.assertIn("Do not run the tests", quinn)                        # Quinn writes; the goal agent runs
+        self.assertNotIn("CB_ONLY=", quinn)
         self.assertIn("turns 1 (cap 15)", board)                            # every call's command and turns logged
         self.assertIn("turns 1 (no cap)", board)
         self.assertIn("**Over the turn cap:** 23", ga.call_line({"turns": 23, "cmd": "claude -p"}, 15))

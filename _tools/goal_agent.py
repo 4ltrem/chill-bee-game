@@ -643,9 +643,9 @@ def briefs(spec, goal, batch, run, branch):
             f"Write the tests for these contract lines, from the spec, not the code (Process 2): every expected "
             f"number read from the config. Register them in `tests/run_tests.gd` under one group comment that starts "
             f"`# {label} (written from game/specs/{spec['file']} before the code)` (the goal agent finds them by it). "
-            f"Add a mutation per new test to `tests/mutations.json`. Run only your tests: "
-            f"`CB_ONLY=<names> CB_TIME_SCALE=6 python -I _tools/godot_run.py unit`. A failing test is a finding: report "
-            f"it, never bend the test to the code. On the line just above each new test function, write "
+            f"Add a mutation per new test to `tests/mutations.json`. Do not run the tests, mutations or shots: the goal "
+            f"agent runs every check right after you (team.md: scripts run on Rex, not Sonnet); a parse check with "
+            f"Godot's `--check-only` is fine. A failing test is a finding: report it, never bend the test to the code. On the line just above each new test function, write "
             f"`# goal <ID>` with the contract line's ID below (the goal agent maps tests to lines by it)."
             + (" A line saying \"shown failing on the current build\" is a bug the designer saw in play: its test "
                "must fail on this build, on the check that shows the bug (a script error does not count); if it "
@@ -997,8 +997,8 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
         # an older test may pin what this change was asked to change (e.g. the removed Hive bar): Quinn's folder
         out[QA] = head + (f"Your folder: {FOLDERS[QA]}. Update only a test whose expectation this change of the "
                           f"spec replaces, and quote the spec line in a comment beside it. Any other failure is a "
-                          f"finding against the code: leave the test and say which. Rerun only the tests you touch "
-                          f"(CB_ONLY).\n\n{report}\n\nSpec text:\n{spec_slice(spec, goal)}\n\nReply in at most 150 words.")
+                          f"finding against the code: leave the test and say which. Do not run the tests: the goal agent "
+                          f"runs them after you.\n\n{report}\n\nSpec text:\n{spec_slice(spec, goal)}\n\nReply in at most 150 words.")
     return out
 
 
