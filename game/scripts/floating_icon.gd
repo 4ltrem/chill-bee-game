@@ -71,6 +71,11 @@ func _draw_shape() -> void:
 	_shape.draw_style_box(style, Rect2((size - shape_size) * 0.5, shape_size))
 
 
+## 0.1.4: the button's own style for a state ("normal", ...), kept here because the Button's styleboxes are emptied.
+func shape_style(style_name: String) -> StyleBox:
+	return _styles.get(style_name) as StyleBox
+
+
 ## Where the anchor projects on screen (valid only after place() succeeded this frame).
 func anchor_screen_point() -> Vector2:
 	return _anchor_screen

@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T15:12:34-05:00",
- "unit_log": "game/reports/_runs/20261107-151024/unit.log",
+ "at": "2026-11-07T20:26:42-05:00",
+ "unit_log": "game/reports/_runs/20261107-195332/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -43,16 +43,10 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
-   "evidence": [
-    {
-     "kind": "ledger",
-     "name": "b431c26",
-     "ok": true
-    }
-   ],
-   "built": true,
-   "waits_on_tests": true,
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -69,7 +63,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -94,32 +88,32 @@
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -128,7 +122,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -206,11 +200,8 @@
    ],
    "built": false,
    "waits_on_tests": false,
-   "questions": [
-    "A full 2.15x frame is about 1.95 wide against a 1.26 body, so it can't fit. Choose one: about 1.35x (5 cols fit with `grid_cols` 7 → 5, a config change) or widen the hive body. Gerard or the designer decides; I read `grid_cols` from config either way.",
-    "A bigger frame changes `frame_rise` (now 0.76) and the first zoom's ≥ 20 px check. Bob should report the final scale so I retune."
-   ],
-   "ambiguous": true
+   "questions": [],
+   "ambiguous": false
   },
   "C6": {
    "kind": "change",
@@ -245,16 +236,10 @@
     7
    ],
    "depends": [],
-   "status": "partial",
-   "evidence": [
-    {
-     "kind": "ledger",
-     "name": "90b18b9",
-     "ok": true
-    }
-   ],
-   "built": true,
-   "waits_on_tests": true,
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -283,6 +268,56 @@
    "questions": [],
    "ambiguous": false
   },
+  "C9": {
+   "kind": "change",
+   "title": "\"Production paused\" above the upgrades",
+   "owners": [
+    "Bob"
+   ],
+   "items": [
+    9
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "PausedLabel",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "TopInfo",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C10": {
+   "kind": "change",
+   "title": "Combs shown in the hive",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    10
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
   "T2.1": {
    "kind": "test",
    "title": "no two HUD controls overlap, and none is cut off by the screen edge;",
@@ -295,37 +330,37 @@
    "depends": [
     "C2"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -371,37 +406,37 @@
    "depends": [
     "C2"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -421,10 +456,12 @@
     "Quinn"
    ],
    "items": [
+    1,
     4,
     8
    ],
    "depends": [
+    "C1",
     "C4",
     "C8"
    ],
@@ -530,6 +567,82 @@
    "questions": [],
    "ambiguous": false
   },
+  "T1.2": {
+   "kind": "test",
+   "title": "item 1 fix: at about half fill, no fill pixel lies outside the button'",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "C1"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T10.1": {
+   "kind": "test",
+   "title": "item 10: with the hive partly full and no frame raised, the frames' co",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    10
+   ],
+   "depends": [
+    "C10"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T9.1": {
+   "kind": "test",
+   "title": "item 9: `PausedLabel` is one line (its height is one line's height), l",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    9
+   ],
+   "depends": [
+    "C9"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T7.2": {
+   "kind": "test",
+   "title": "item 7 (2026-11-07): after a pour with a pile waiting, spin mode stays",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [
+    "C7"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
   "T.3": {
    "kind": "test",
    "title": "mutations in `tests/mutations.json` prove the new tests.",
@@ -544,7 +657,9 @@
     5,
     6,
     7,
-    8
+    8,
+    9,
+    10
    ],
    "depends": [
     "C1",
@@ -554,39 +669,41 @@
     "C5",
     "C6",
     "C7",
-    "C8"
+    "C8",
+    "C9",
+    "C10"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -597,12 +714,67 @@
  },
  "order": [
   {
-   "id": "C8",
-   "score": 15.67,
+   "id": "C1",
+   "score": 14.03,
    "factors": {
-    "unblocks": 4,
+    "unblocks": 3,
+    "value": 3,
+    "cost": 0.97,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C8",
+   "score": 12.67,
+   "factors": {
+    "unblocks": 3,
     "value": 2,
     "cost": 0.33,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C7",
+   "score": 11.36,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.64,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C9",
+   "score": 8.67,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.33,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C10",
+   "score": 8.03,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.97,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C5",
+   "score": 6.03,
+   "factors": {
+    "unblocks": 1,
+    "value": 2,
+    "cost": 0.97,
     "ready": 1,
     "blocked_by": []
    }
@@ -619,55 +791,11 @@
    }
   },
   {
-   "id": "T.2",
+   "id": "T9.1",
    "score": 5.42,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.2",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T7.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T1.1",
-   "score": 3.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
     "cost": 0.58,
     "ready": 1,
     "blocked_by": []
@@ -696,15 +824,54 @@
    }
   },
   {
-   "id": "T.3",
+   "id": "T.2",
    "score": 0.0,
    "factors": {
     "unblocks": 0,
-    "value": 1,
+    "value": 3,
     "cost": 0.58,
     "ready": 0,
     "blocked_by": [
-     "C5"
+     "C1"
+    ]
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 0,
+    "blocked_by": [
+     "C1"
+    ]
+   }
+  },
+  {
+   "id": "T1.2",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 0,
+    "blocked_by": [
+     "C1"
+    ]
+   }
+  },
+  {
+   "id": "T10.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 0,
+    "blocked_by": [
+     "C10"
     ]
    }
   },
@@ -720,9 +887,33 @@
      "C5"
     ]
    }
+  },
+  {
+   "id": "T7.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 0,
+    "blocked_by": [
+     "C7"
+    ]
+   }
+  },
+  {
+   "id": "T7.2",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 0,
+    "blocked_by": [
+     "C7"
+    ]
+   }
   }
  ],
- "ambiguous": [
-  "C5"
- ]
+ "ambiguous": []
 }

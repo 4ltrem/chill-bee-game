@@ -17,6 +17,8 @@ var _fill_bar: ProgressBar   # 0.1.4: removed from the scene (the Harvest button
 var _fork: FloatingIcon
 var _harvest_fill: Control
 var _count_label: Label
+var _fill_shape: Control
+var _fill_inset: Vector4 = Vector4.ZERO
 ## PLACEHOLDER (0.1.4 item 1): px between the hive-count label and the top of the Harvest button's visible shape. No value in the spec.
 @export var count_gap_px: float = 4.0
 var _paused_label: Label
@@ -165,6 +167,35 @@ func _refresh_hive() -> void:
 		_paused_label.visible = _hive.is_paused()
 
 
+## 0.1.4 item 1 rework: the fill is clipped to the button's rounded shape, inside its border. HarvestFill (the Bob node) becomes a
+## transparent clip window; a child draws the button's normal style as a borderless rounded rect in the fill colour, inset by the border.
+func _setup_fill_shape() -> void:
+	if _fill_shape != null:
+		return
+	var cr := _harvest_fill as ColorRect
+	var fill_col: Color = cr.color if cr != null else Color(0.9, 0.7, 0.2)
+	if cr != null:
+		cr.color = Color(0.0, 0.0, 0.0, 0.0)
+	_harvest_fill.clip_contents = true
+	var box := StyleBoxFlat.new()
+	box.bg_color = fill_col
+	box.anti_aliasing = true
+	var src := _fork.shape_style("normal") as StyleBoxFlat
+	if src != null:
+		box.corner_radius_top_left = maxi(src.corner_radius_top_left - src.border_width_left, 0)
+		box.corner_radius_top_right = maxi(src.corner_radius_top_right - src.border_width_right, 0)
+		box.corner_radius_bottom_left = maxi(src.corner_radius_bottom_left - src.border_width_left, 0)
+		box.corner_radius_bottom_right = maxi(src.corner_radius_bottom_right - src.border_width_right, 0)
+		box.content_margin_left = 0.0
+		_fill_inset = Vector4(src.border_width_left, src.border_width_top, src.border_width_right, src.border_width_bottom)
+	_fill_shape = Control.new()
+	_fill_shape.name = "FillShape"
+	_fill_shape.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fill_shape.draw.connect(func() -> void:
+		_fill_shape.draw_style_box(box, Rect2(Vector2(_fill_inset.x, _fill_inset.y), _fill_shape.size - Vector2(_fill_inset.x + _fill_inset.z, _fill_inset.y + _fill_inset.w))))
+	_harvest_fill.add_child(_fill_shape)
+
+
 ## 0.1.4 item 1: the Harvest button's background fills from the bottom with the hive's fill fraction (HarvestFill, a child of ForkIcon),
 ## and HiveCountLabel sits just above the button's visible shape. At full the fill hides and the button's own enabled look shows.
 func _process(_delta: float) -> void:
@@ -177,8 +208,12 @@ func _process(_delta: float) -> void:
 		var show_fill: bool = frac > 0.0 and frac < 1.0
 		_harvest_fill.visible = show_fill
 		if show_fill:
+			_setup_fill_shape()
+			# the fill node is the clip window (bottom `frac` of the shape); its child draws the whole rounded shape
 			_harvest_fill.position = top_left + Vector2(0.0, vs.y * (1.0 - frac))
 			_harvest_fill.size = Vector2(vs.x, vs.y * frac)
+			_fill_shape.position = top_left - _harvest_fill.position
+			_fill_shape.size = vs
 	if _count_label != null:
 		_count_label.visible = _fork.visible
 		if _fork.visible:

@@ -3,7 +3,7 @@ spec: 0.1.4-ui-placement.md
 version: 0.1.4
 run: 0.1.4
 started: 2026-11-07
-result: stopped
+result: running
 ---
 # Goal agent: 0.1.4-ui-placement.md (run 0.1.4)
 
@@ -951,9 +951,73 @@ Command: `goal_agent.py 0.1.4-ui-placement.md --accept T2.2 --note With T2.1 (on
 - Change (orchestrator, Process 9): With T2.1 (one Quinn step).
 - Accepted: checkpoint `2c464bc` on `milestone/0.1.4`
 
+## Resumed 2026-11-07
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `stopped`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 10: scan (2026-11-07T20:24:59-05:00)
+
+Unit results from `game/reports/_runs/20261107-195332/unit.log`. 5 of 25 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (16 of 25)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Harvest button is the honey meter | change | Patricia, Bob | missing | none found |
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | done | 10/10 present: ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_scre ... |
+| C5 Bigger hive frames and combs | change | Patricia, Bob | missing | ✗ config frame_scale |
+| C7 The pile loads on its own at the second stop | change | Patricia | missing | none found |
+| C8 Instruction text below Back | change | Bob | partial | ✓ node HintLabel |
+| C9 "Production paused" above the upgrades | change | Bob | partial | ✓ node PausedLabel, ✓ node TopInfo |
+| C10 Combs shown in the hive | change | Patricia, Bob | missing | none found |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ ledger b65f5e1 |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ ledger 2c464bc |
+| T.2 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | missing | none found |
+| T8.1 item 8: the instruction text's rect lies wholly below Back's | test | Quinn | missing | none found |
+| T1.2 item 1 fix: at about half fill, no fill pixel lies outside t | test | Quinn | missing | none found |
+| T10.1 item 10: with the hive partly full and no frame raised, the  | test | Quinn | missing | none found |
+| T9.1 item 9: `PausedLabel` is one line (its height is one line's  | test | Quinn | missing | none found |
+| T7.2 item 7 (2026-11-07): after a pour with a pile waiting, spin  | test | Quinn | missing | none found |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene |
+
+### Order: new or rescored (17 of 17)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C1 Harvest button is the honey meter | 14.03 | 3 | 3 | 0.97 | 1 | 3 goal(s) wait on it; play-test fix; cost 0.97 (Patricia, Bob) |
+| 2 | C8 Instruction text below Back | 12.67 | 3 | 2 | 0.33 | 1 | 3 goal(s) wait on it; designer feature; cost 0.33 (Bob) |
+| 3 | C7 The pile loads on its own at the second stop | 11.36 | 2 | 3 | 0.64 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.64 (Patricia) |
+| 4 | C9 "Production paused" above the upgrades | 8.67 | 1 | 3 | 0.33 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.33 (Bob) |
+| 5 | C10 Combs shown in the hive | 8.03 | 1 | 3 | 0.97 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.97 (Patricia, Bob) |
+| 6 | C5 Bigger hive frames and combs | 6.03 | 1 | 2 | 0.97 | 1 | 1 goal(s) wait on it; designer feature; cost 0.97 (Patricia, Bob) |
+| 7 | T.1 Back has the same screen rect in the first zoom an | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 8 | T9.1 item 9: `PausedLabel` is one line (its height is o | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 9 | T8.1 item 8: the instruction text's rect lies wholly be | 3.42 | 0 | 2 | 0.58 | 1 | designer feature; cost 0.58 (Quinn) |
+| 10 | T6.1 no test file appears in `user://recordings` after  | 1.42 | 0 | 1 | 0.58 | 1 | housekeeping/handoff; cost 0.58 (Quinn) |
+| 11 | T.2 Back's rect is in the top-right quadrant, and the  | 0.0 | 0 | 3 | 0.58 | 0 | waits on C1 |
+| 12 | T1.1 the Harvest fill equals the hive fill fraction (±  | 0.0 | 0 | 3 | 0.58 | 0 | waits on C1 |
+| 13 | T1.2 item 1 fix: at about half fill, no fill pixel lies | 0.0 | 0 | 3 | 0.58 | 0 | waits on C1 |
+| 14 | T10.1 item 10: with the hive partly full and no frame ra | 0.0 | 0 | 3 | 0.58 | 0 | waits on C10 |
+| 15 | T5.1 the hive's cell size on screen is within 15% of a  | 0.0 | 0 | 2 | 0.58 | 0 | waits on C5 |
+| 16 | T7.1 item 7: at the second stop, with a pile waiting, a | 0.0 | 0 | 3 | 0.58 | 0 | waits on C7 |
+| 17 | T7.2 item 7 (2026-11-07): after a pour with a pile wait | 0.0 | 0 | 3 | 0.58 | 0 | waits on C7 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C1** (score 14.03: 3 goal(s) wait on it; play-test fix; cost 0.97 (Patricia, Bob)).
+
+### Step: C1 (2026-11-07T20:24:59-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C1-patricia.md` (1896 chars)
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/C1-bob.md` (1875 chars)
+
+**Paused:** Budget guard: weekly usage is 19% with 7% of the week gone, more than 10 points ahead of pace, so heavy agents (programmer) wait (reading 0 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
 ## Result
 
-T2.2 accepted with a manual fix (checkpoint `2c464bc` on `milestone/0.1.4`). Rerun `goal_agent.py 0.1.4-ui-placement.md` to build the rest.
+Last invocation (2026-11-07T20:24:59-05:00): paused.
 
 Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`
 
@@ -987,3 +1051,55 @@ Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`
 | Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
 | Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
 | **Total** | **6,110,208** | | | |
+
+## Resumed 2026-11-07
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 11: scan (2026-11-07T20:26:42-05:00)
+
+Unit results from `game/reports/_runs/20261107-195332/unit.log`. 5 of 25 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+Next: **C1** (score 14.03: 3 goal(s) wait on it; play-test fix; cost 0.97 (Patricia, Bob)).
+
+### Step: C1 (2026-11-07T20:26:42-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C1-patricia.md` (1896 chars)
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/C1-bob.md` (1875 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Bob** (232,941 tokens, 14 turns, 40 s):
+
+I changed no files, because `main.tscn` already meets my contract lines. I didn't render the scene.
+
+**Checks:** `contract_check.py` passes (63 lookups, 0 unresolved).
+
+**Nodes in `scenes/main.tscn`:**
+- `FarmUIRoot/FarmUI/ForkIcon/HarvestFill` is a `ColorRect` with the fill colour, `show_behind_parent` true and `mouse_filter` IGNORE. `ForkIcon` also has `normal`, `pressed` and `disabled` styles.
+- `FarmUIRoot/FarmUI/HiveCountLabel` has text "0/10", font 28 with outline, `mouse_filter` IGNORE and centred.
+- `FillBar` and `FillLabel` are gone. `TopInfo` holds `MoneyLabel`, `BeeCountLabel`, `PausedLabel` and `DevSpeedTag`.
+
+**Clipping:** the clip can't come from the scene alone, because Godot 4.2 `clip_contents` only clips to a rectangle. Patricia's `farm_ui.gd` already does it. It makes `HarvestFill` a transparent clip window and draws a rounded fill inside it, inset by the button's border. `floating_icon.gd` draws the button shape first, so the fill sits above the button shape and below the label.
+
+**Open question:** the fill's top corners will be rounded, not cut flat. The script sizes the rounded shape to the fill window, so Patricia should check this in the render. Her code may need a fix.
+
+
+**Patricia** (59,101 tokens, 2 turns, 4 s):
+
+The unit run finished and passed, so no run of mine is still going. The contract check also passes.
+
+- **Unit tests:** 150 passed, 0 failed.
+- **Start check:** passed.
+- **Leftover Godot processes:** the two I flagged earlier (4188 and 10024) were not mine; the background task has exited. If they are still there, they belong to something else.
+
+The windowed playthrough (`play_loop.gd`) was not run, and the fill clipping has not been looked at in a shot. Quinn should shoot the fill at a partial level and at full, and check the corners and border inset.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
