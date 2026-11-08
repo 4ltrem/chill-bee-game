@@ -267,6 +267,9 @@ class Loop(unittest.TestCase):
                           [ga.parse_spec(SPEC)["goals"]["T3.1"]], "t", "b")[ga.QA]
         self.assertIn("Do not run the tests", quinn)                        # Quinn writes; the goal agent runs
         self.assertNotIn("CB_ONLY=", quinn)
+        for step in ("leave mid-way", "come back", "twice", "NOTIFICATION_APPLICATION_PAUSED", "do not guess",
+                     "runs on its own", "automation upgrade", "never that it stopped"):
+            self.assertIn(step, quinn)                                      # Quinn's interaction checklist
         self.assertIn("(cap 15; CLI num_turns 1)", board)                   # every call's command and turns logged
         self.assertIn("(no cap; CLI num_turns 1)", board)
         self.assertIn("**Over the turn cap:** 16", ga.call_line({"turns": 17, "calls": 16, "cmd": "claude -p"}, 15))

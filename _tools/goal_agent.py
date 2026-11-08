@@ -79,6 +79,22 @@ FIX_MAX_TURNS = 15   # approved 2026-11-08: Patricia's T14 fix 1 ran 36 turns, 7
 # fail before any fix counts, and only a script or scene change can fix it (0.1.4 T14.3: the lid test passed on a
 # clipping lid, and the step was committed green with no lid change; approved 2026-11-08, A and B)
 FAIL_FIRST = re.compile(r"shown failing", re.I)
+# Quinn's interaction checklist (designer, 2026-11-08: the crank kept counting after Back because item 12's test only
+# started a crank; spec 0.1.4 item 15). Draft and choices: _meta/drafts/0.1.4/quinn-interaction-checklist.md
+INTERACTION_CHECKLIST = (
+    " Interaction checklist: for a line about something the player starts that keeps running or holds state (crank, "
+    "scrape, lid, pour, zoom, a hold), write one sequence test through real input, each assert naming its step: (1) "
+    "start it from every place the spec allows, and not from places it rules out; (2) leave mid-way by every exit "
+    "(Back, zoom out, another panel, app pause via NOTIFICATION_APPLICATION_PAUSED): the player's input no longer "
+    "counts and nothing the player was driving keeps moving, progress kept or reset as the spec says, but anything "
+    "that runs on its own keeps running and finishes as the spec says: automatic loads and pours (the jar pour, the "
+    "pile loading into the centrifuge: 0.1.4 item 7, every view) and anything an owned automation upgrade does (the "
+    "motor spinning the centrifuge: item 12), so wait for it and assert it finished, never that it stopped; (3) come "
+    "back the way the spec names: it "
+    "resumes or restarts as the spec says, nothing runs twice; (4) do it start to finish twice: the second run matches "
+    "the first. A one-tap action gets only (4). Add two mutations per sequence test: one breaking (2), one breaking "
+    "(4). Where the spec does not say what leaving or coming back does, or whether a step goes on by itself, do not guess: write no test for it and list "
+    "it under open questions (\"Item N: what happens to <x> on <exit> mid-way?\").")
 CODE_PATHS = ["game/scripts", "game/scenes", "game/materials"]
 LOCK = "_meta/usage/goal-run.lock"   # exists while a build run is live; guard_shell reads it (rule C)
 REMOVED = re.compile(r"\b(removed?|retired?|goes away|deleted?)\b", re.I)   # a node in such a sentence must be absent
@@ -647,6 +663,7 @@ def briefs(spec, goal, batch, run, branch):
             f"agent runs every check right after you (team.md: scripts run on Rex, not Sonnet); a parse check with "
             f"Godot's `--check-only` is fine. A failing test is a finding: report it, never bend the test to the code. On the line just above each new test function, write "
             f"`# goal <ID>` with the contract line's ID below (the goal agent maps tests to lines by it)."
+            + INTERACTION_CHECKLIST
             + (" A line saying \"shown failing on the current build\" is a bug the designer saw in play: its test "
                "must fail on this build, on the check that shows the bug (a script error does not count); if it "
                "passes, it does not reproduce the bug. Where the line or spec text says what stays (keep, only, "

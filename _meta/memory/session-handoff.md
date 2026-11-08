@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 472fd463-d58d-41f5-abb3-fb73c957a854
-  modified: 2026-11-08T23:43:27.154Z
+  modified: 2026-11-08T23:54:47.453Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -22,7 +22,7 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 
 **Shots:** `game/reports/_look/lid-before/` (HEAD) and `lid-now/` (fix rounds), contact sheets `before-close.png` / `now-close.png`; Design Votes section "Lid close: before or after?" (version 15).
 
-**Loop fixes (2026-11-08 late, /goal session, uncommitted, see `_meta/learnings.md` L1, L11-L14):** turn cap was never broken (the alarm compared `num_turns`, not model calls; now counted from the transcript); repeated labels no longer overwrite transcripts; fix rounds go to ONE code owner (folder named, else Patricia/Bob alternate) with "change only what a failing row names"; `scope` check after each fix round; Quinn writes keep tests for play-test lines; `mutate.py` baseline + script-error catches are BROKEN; `_tools/checkpoint.py` for WIP; end-of-day adds learnings entries. Still approved, not built: `live.json` for script steps + `_tools/watch.py` + side pane; Quinn's interaction checklist (details not recorded: ask the designer); web smoke real-time wait. (`mutate.py --since` already existed.)
+**Loop fixes (2026-11-08 late, /goal session, uncommitted, see `_meta/learnings.md` L1, L11-L14):** turn cap was never broken (the alarm compared `num_turns`, not model calls; now counted from the transcript); repeated labels no longer overwrite transcripts; fix rounds go to ONE code owner (folder named, else Patricia/Bob alternate) with "change only what a failing row names"; `scope` check after each fix round; Quinn writes keep tests for play-test lines; `mutate.py` baseline + script-error catches are BROKEN; `_tools/checkpoint.py` for WIP; end-of-day adds learnings entries. Still approved, not built: `live.json` for script steps + `_tools/watch.py` + side pane; web smoke real-time wait. **Quinn's interaction checklist: BUILT, checkpoint-committed** (anything automatic, loads, pours and owned automation upgrades, keeps running after leaving; the test asserts it finished): `INTERACTION_CHECKLIST` in `_tools/goal_agent.py` (appended to every Quinn test brief), bullet in `qa-build-engineer.md`, sentence in `game/CONTEXT.md` Process 2, asserted in `test_goal_agent.py` (34/34 OK); choices in `_meta/drafts/0.1.4/quinn-interaction-checklist.md`. (`mutate.py --since` already existed.)
 
 **A5 (due 11/15):** the `720d42d` exe/web zip exist; web smoke shot was black, so the designer browser-checks before the itch upload ([[itch-upload-rule]], [[course-milestones]]).
 
