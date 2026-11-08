@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T20:41:31-05:00",
- "unit_log": "game/reports/_runs/20261107-203733/unit.log",
+ "at": "2026-11-07T20:45:43-05:00",
+ "unit_log": "game/reports/_runs/20261107-204145/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -267,10 +267,15 @@
      "kind": "node",
      "name": "HintLabel",
      "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "485190a",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -719,17 +724,6 @@
   }
  },
  "order": [
-  {
-   "id": "C8",
-   "score": 12.67,
-   "factors": {
-    "unblocks": 3,
-    "value": 2,
-    "cost": 0.33,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "C7",
    "score": 11.36,

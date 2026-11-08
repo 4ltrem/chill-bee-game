@@ -29,6 +29,10 @@ var _summary_jars: Label
 var _summary_value: Label
 var _summary_total: Label
 var _summary_ok: Button
+var keep_spin_text: bool = false:   # 0.1.4 item 7: set by main.gd while spin mode waits for the pile to reload after a pour
+	set(value):
+		keep_spin_text = value
+		_refresh_centrifuge()
 var _top_saved: bool = false
 var _top_flags: int = 0
 var _bar_flags: int = 0
@@ -134,7 +138,7 @@ func _refresh_centrifuge() -> void:
 	if _centrifuge_label == null or _centrifuge == null:
 		return
 	var cranking: bool = _centrifuge.state == Centrifuge.State.CRANKING
-	_centrifuge_label.visible = cranking
+	_centrifuge_label.visible = cranking or (keep_spin_text and _centrifuge_label.text != "")   # 0.1.4 item 7: the text stays while the pile reloads
 	if cranking:
 		var text: String = "Honey: %d / %d" % [floori(_centrifuge.jars_extracted + 1.0e-6), floori(_centrifuge.jars_total + 1.0e-6)]
 		if _centrifuge.turns_counted == 0:

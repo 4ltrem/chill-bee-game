@@ -39,7 +39,9 @@ var _cam_tween: Tween
 var _crate: Node3D
 var _closing_to_second: bool = false   # the zoom now closing ends at the second stop (bucket full) instead of the farm view
 var _at_second_stop: bool = false
-var _spin_pending: bool = false        # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
+var _spin_mode: bool = false          # 0.1.4 item 7: the crank was started and the pile has not run out
+var _auto_spin: bool = false          # the pile is reloading after a pour in spin mode: crank again when the bucket is full
+var _spin_pending: bool = false       # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
 var _filled_in_zoom: bool = false    # the bucket became full while this zoom was open: the zoom ends after its frame and pans to the second stop
 
 
@@ -137,6 +139,12 @@ func _refresh_icons() -> void:
 func _on_centrifuge_state(state_now: int) -> void:
 	if state_now == Centrifuge.State.FULL and zoom != Zoom.NONE and zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING:
 		_filled_in_zoom = true
+	if state_now == Centrifuge.State.CRANKING:
+		_auto_spin = false
+		_set_spin_text_kept(false)
+	elif state_now == Centrifuge.State.FULL and _auto_spin and zoom == Zoom.NONE:
+		_auto_spin = false
+		_centrifuge.begin_crank.call_deferred()   # spin mode: the reloaded bucket spins on its own
 	_refresh_icons()
 
 
@@ -166,7 +174,27 @@ func sell() -> int:
 
 ## Bottling finished: the bucket is empty and open (centrifuge.gd lifted its lid), and the pile loads in.
 func _on_bottling_done(_jars: int) -> void:
+	# 0.1.4 item 7: in spin mode the reloaded bucket spins by itself (no "press Spin" prompt, the spin text stays); with no pile, spin mode exits.
+	if _spin_mode:
+		if _pile != null and not _pile.is_empty() and _centrifuge.room_cells() > 0:
+			_auto_spin = true
+			_set_spin_text_kept(true)
+		else:
+			_exit_spin_mode()
 	load_pile()
+
+
+func _set_spin_text_kept(kept: bool) -> void:
+	if _farm_ui != null:
+		_farm_ui.keep_spin_text = kept
+
+
+func _exit_spin_mode() -> void:
+	_spin_mode = false
+	_auto_spin = false
+	_set_spin_text_kept(false)
+	if _at_second_stop:
+		leave_second_stop()
 
 
 ## Spec step 7: pile cells move into the empty, open bucket by themselves, up to its capacity. If that fills the bucket, or no zoom is
@@ -229,6 +257,7 @@ func open_zoom() -> bool:
 ## uncapped stay), pans to the second stop and starts the crank there (_finish_zoom).
 func spin_tapped() -> void:
 	if zoom == Zoom.NONE:
+		_spin_mode = true
 		_centrifuge.begin_crank()
 	elif zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING and _centrifuge.state == Centrifuge.State.FULL:
 		_spin_pending = true
@@ -358,6 +387,7 @@ func _finish_zoom() -> void:
 	_refresh_icons()
 	if _spin_pending:
 		_spin_pending = false
+		_spin_mode = true
 		_centrifuge.begin_crank()
 
 

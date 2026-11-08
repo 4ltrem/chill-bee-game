@@ -1146,3 +1146,78 @@ I lowered `HintLabel` below Back's rect. I haven't rendered it, so I haven't loo
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `ui shots`: PASS
+- Green: checkpoint `485190a` on `milestone/0.1.4`
+
+## Pass 13: scan (2026-11-07T20:45:43-05:00)
+
+Unit results from `game/reports/_runs/20261107-204145/unit.log`. 5 of 25 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 25)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C8 Instruction text below Back | change | Bob | partial (built, waits on its tests) | ✓ node HintLabel, ✓ ledger 485190a |
+
+No score changed.
+
+Next: **C7** (score 11.36: 2 goal(s) wait on it; play-test fix; cost 0.64 (Patricia)).
+
+### Step: C7 (2026-11-07T20:45:43-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C7-patricia.md` (1983 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (77,917 tokens, 3 turns, 5 s):
+
+The unit run finished and passed, and no Godot processes are left running. I only ran the `start` suite, not the full test suite or the windowed `play_loop.gd` playthrough.
+
+I only ran the `start` suite, and no existing test covers a pour followed by an auto-spin reload. Quinn should add one. It needs two cases: a pour with a pile waiting (auto-spin starts and the spin text stays, with no Spin prompt), and a pour with no pile (spin mode exits).
+
+`contract_check.py` still passes. The changes are in `scripts/main.gd` and `scripts/farm_ui.gd`.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      137 passed, 1 failed  (exit 1, 202 noise lines dropped)  game/reports/_runs/20261107-205657/unit.log
+    FAIL  t_zoom_bucket_lid_pile_flow  round 1: FULL again, Spin shows: expected 2 got 3 | round 2: Spin shows | round 2: ceil(jars x 4) = 16 real clicks: expected 16 got 15 | round 2: FULL again, Spin shows: expected 2 got 3 | round 3: Spin sh
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C7-fix1-patricia.md` (1813 chars)
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/C7-fix1-quinn.md` (2052 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Patricia** (85,201 tokens, 8 turns, 15 s):
+
+The failing check is in the test, not in `scripts/`, so I changed nothing.
+
+`t_zoom_bucket_lid_pile_flow` (`game/tests/test_zoom.gd`, lines 151–154 and 177–179) still expects the old behaviour. After each pour it expects the centrifuge to be FULL with Spin showing, and it taps Spin again every round. The spec for item 7 now says spin mode stays on after a pour and the pile reloads with no "press Spin" prompt. `main.gd` does this: `_on_bottling_done` sets `_auto_spin`, keeps the spin text and calls `begin_crank` on the reloaded bucket. The state is therefore 3 (CRANKING) where the test wants 2 (FULL).
+
+The "16 clicks, got 15" failure in round 2 follows from the same cause, since cranking starts on its own and the test's clicks no longer line up.
+
+**For Quinn:** in rounds 1–2, expect CRANKING straight after the reload and don't tap Spin. Keep the Spin tap for round 1 only. Add a check that the spin text stays through the reload, and that spin mode exits when no pile is waiting.
+
+**Spec ambiguity:** I read "keeps the text while it loads again" as auto-cranking the reloaded bucket. If Gerard meant it to stay FULL with the text kept, the code would need to change instead.
+
+
+**Quinn** (189,175 tokens, 14 turns, 58 s):
+
+`t_zoom_bucket_lid_pile_flow` was the only failing test, and it now passes. I ran it alone with `CB_ONLY`, not the full suite.
+
+**Cause:** the test still expected the old behaviour. After a pour with a pile waiting, it expected the bucket to sit `FULL` and the player to tap Spin again. Spec item 7 replaced that: spin mode stays on, the text stays, and there is no "press Spin" prompt. The game code in `main.gd` `_on_bottling_done` already does this.
+
+**Edits (`game/tests/test_zoom.gd`, each with the spec line in a comment):**
+- Only round 1 taps Spin. Rounds 2 and 3 start already `CRANKING`.
+- The reloaded bucket after rounds 1 and 2 is expected to be `CRANKING`, not `FULL`.
+
+The "16 vs 15" and "8 vs 7" click counts were a knock-on of the extra Spin tap, so they needed no separate change.
+
+**Not tested:** the "no pile waiting, so spin mode exits" branch has no test in this flow. I did not add one.
+
+No other findings, nothing committed, no processes left running.
+
+- Check `contract`: PASS
+- Check `tests`: PASS

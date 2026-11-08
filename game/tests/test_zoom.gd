@@ -148,8 +148,11 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 	for round_i in 3:
 		var cells_now: int = int(cen.get("cells"))
 		eq(cells_now, int(want_cells[round_i]), "round %d: the bucket holds %d cells" % [round_i + 1, int(want_cells[round_i])])
-		ck(_shown(p["CentrifugeIcon"]), "round %d: Spin shows" % (round_i + 1))
-		await fi.click_icon(p["CentrifugeIcon"] as Control)
+		# Spec 0.1.4-ui-placement item 7: "While the pile reloads after a pour, spin mode stays on and its text stays as it was,
+		# with no 'press Spin' prompt." So only round 1 needs the Spin tap; later rounds are already CRANKING.
+		if round_i == 0:
+			ck(_shown(p["CentrifugeIcon"]), "round 1: Spin shows")
+			await fi.click_icon(p["CentrifugeIcon"] as Control)
 		await _frames(3)
 		eq(cen.get("state"), _st(cen, "CRANKING"), "round %d: tapping Spin starts CRANKING" % (round_i + 1))
 		var turns: int = _turns_for(cells_now)
@@ -176,7 +179,8 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 		if round_i < 2:
 			eq(pile.get("cells"), int(want_pile[round_i]), "round %d: the pile loaded into the empty bucket by itself (%d cells left)" % [round_i + 1, int(want_pile[round_i])])
 			eq(cen.get("lid_open"), false, "round %d: the bucket closed after the load (full, or no zoom open)" % (round_i + 1))
-			eq(cen.get("state"), _st(cen, "FULL"), "round %d: FULL again, Spin shows" % (round_i + 1))
+			# spec item 7: "spin mode stays on ... no 'press Spin' prompt" -> the reloaded bucket is CRANKING, not FULL
+			eq(cen.get("state"), _st(cen, "CRANKING"), "round %d: reloaded, spin mode stays on (CRANKING)" % (round_i + 1))
 		else:
 			eq(pile.get("cells"), 0, "round 3: the pile is empty")
 			eq(cen.get("state"), _st(cen, "EMPTY"), "round 3: bucket EMPTY")
