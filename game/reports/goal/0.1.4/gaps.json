@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T21:09:38-05:00",
- "unit_log": "game/reports/_runs/20261107-210529/unit.log",
+ "at": "2026-11-07T22:05:30-05:00",
+ "unit_log": "game/reports/_runs/20261107-213702/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -196,12 +196,12 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
      "name": "frame_scale",
-     "ok": false
+     "ok": true
     }
    ],
    "built": false,
@@ -333,10 +333,16 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "2d2ffb4",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -736,150 +742,135 @@
  },
  "order": [
   {
-   "id": "C10",
-   "score": 8.03,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.97,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C5",
-   "score": 6.03,
+   "score": 5.89,
    "factors": {
     "unblocks": 1,
     "value": 2,
-    "cost": 0.97,
+    "cost": 1.11,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T.1",
-   "score": 5.42,
+   "score": 5.4,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
+    "cost": 0.6,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T.2",
-   "score": 5.42,
+   "score": 5.4,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
+    "cost": 0.6,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T1.1",
-   "score": 5.42,
+   "score": 5.4,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
+    "cost": 0.6,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T1.2",
-   "score": 5.42,
+   "score": 5.4,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T7.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T7.2",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T9.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T8.1",
-   "score": 3.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T6.1",
-   "score": 1.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.58,
+    "cost": 0.6,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T10.1",
-   "score": 0.0,
+   "score": 5.4,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
-    "ready": 0,
-    "blocked_by": [
-     "C10"
-    ]
+    "cost": 0.6,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T7.1",
+   "score": 5.4,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.6,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T7.2",
+   "score": 5.4,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.6,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T9.1",
+   "score": 5.4,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.6,
+    "ready": 1,
+    "blocked_by": []
    }
   },
   {
    "id": "T5.1",
-   "score": 0.0,
+   "score": 3.4,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.58,
-    "ready": 0,
-    "blocked_by": [
-     "C5"
-    ]
+    "cost": 0.6,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T8.1",
+   "score": 3.4,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.6,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T6.1",
+   "score": 1.4,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.6,
+    "ready": 1,
+    "blocked_by": []
    }
   }
  ],

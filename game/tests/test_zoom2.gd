@@ -68,8 +68,8 @@ func t_back_keeps_half_frame() -> void:
 		_fin()
 		return
 	eq(tr["risen"], 0, "frame 0 is on display")
+	# spec 0.1.4 C5 round 9: "`grid_cols` 5 × `grid_rows` 2": a frame has two rows now, so one row is the half frame
 	await fi.drag_row(rws[0])
-	await fi.drag_row(rws[1])
 	await _wait(float(cv("cell_fly_seconds")) + 0.4)
 	var left: int = fi.capped(hive, 0)
 	ck(left > 0 and left < cpf, "half a frame scraped: %d of %d cells still Capped" % [left, cpf])

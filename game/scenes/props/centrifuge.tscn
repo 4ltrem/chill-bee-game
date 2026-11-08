@@ -74,7 +74,7 @@ mesh = SubResource("Mesh_honey")
 visible = false
 
 [node name="HeapRoot" type="Marker3D" parent="Spinner"]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0.17, 0)
+transform = Transform3D(0.3125, 0, 0, 0, 0.3125, 0, 0, 0, 0.3125, 0, 0.17, 0)
 
 [node name="Lid" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.625, 0)

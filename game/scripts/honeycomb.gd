@@ -217,7 +217,7 @@ func _depart(cell: int) -> void:
 	if cell < 0 or cell >= cells.size():
 		return
 	var from: Vector3 = _cell_world_position(cell)
-	var from_scale: float = global_transform.basis.get_scale().x if is_inside_tree() else 1.0
+	var from_scale: float = (global_transform.basis.get_scale().x if is_inside_tree() else 1.0) * config.frame_scale
 	cells[cell] = EXTRACTED
 	_apply_visual(cell)
 	if cell < _cell_meshes.size():
@@ -308,7 +308,7 @@ func _build_cells() -> void:
 func _refresh_all() -> void:
 	for i in _cell_meshes.size():
 		_apply_visual(i)
-		_cell_meshes[i].scale = Vector3.ONE
+		_cell_meshes[i].scale = Vector3.ONE * config.frame_scale
 		_cell_meshes[i].visible = cells[i] != EXTRACTED
 		_set_collider(i, cells[i] == CAPPED)
 
@@ -326,9 +326,10 @@ func _pop(index: int) -> void:
 	if index >= _cell_meshes.size() or not is_inside_tree():
 		return
 	var visual: MeshInstance3D = _cell_meshes[index]
-	visual.scale = Vector3(1.3, 1.0, 1.3)
+	var rest: Vector3 = Vector3.ONE * config.frame_scale
+	visual.scale = Vector3(1.3, 1.0, 1.3) * config.frame_scale
 	var tween: Tween = create_tween()
-	tween.tween_property(visual, "scale", Vector3.ONE, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(visual, "scale", rest, 0.18).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 
 # --- drag input ---

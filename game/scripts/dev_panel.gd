@@ -140,8 +140,9 @@ func set_ui_bounds(on: bool) -> void:
 		_bounds = UiBoundsOverlay.new()
 		var host: Node = get_parent() if get_parent() != null else self
 		host.add_child(_bounds)
-	if _bounds != null:
-		_bounds.visible = on
+	if not on and _bounds != null:
+		_bounds.queue_free()   # a hidden CanvasLayer's Control child still counts as visible in the tree
+		_bounds = null
 
 
 func ui_bounds_shown() -> bool:

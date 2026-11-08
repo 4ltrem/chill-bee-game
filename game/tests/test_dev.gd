@@ -20,11 +20,15 @@ func t_dev_show_ui_bounds() -> void:
 	if btn == null:
 		_fin()
 		return
+	# Counts only the overlay's own drawing (0.1.4 C5, 2026-11-08): a count over the whole tree also caught game nodes
+	# that show by themselves in those frames (meter fill, combs in the hive) and failed 15 -> 17 with the overlay gone.
 	var count_vis: Callable = func() -> int:
 		var k: int = 0
-		for n in root.find_children("*", "CanvasItem", true, false):
-			if (n as CanvasItem).is_visible_in_tree():
-				k += 1
+		for overlay in root.find_children("UiBoundsOverlay", "", true, false):
+			if not (overlay as Node).is_queued_for_deletion():
+				for n in (overlay as Node).find_children("*", "CanvasItem", true, false):
+					if (n as CanvasItem).is_visible_in_tree():
+						k += 1
 		return k
 	await _frames(3)
 	var before: int = count_vis.call()

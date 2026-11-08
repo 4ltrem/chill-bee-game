@@ -263,13 +263,14 @@ func t_leftover_adds_no_turns() -> void:
 	if c == null:
 		_fin()
 		return
-	var n1: int = _cpf() + _cpf() / 2   # 52 cells: 2.97 jars, a carry of 0.97 jars (4 turns' worth if it wrongly counted)
+	# spec 0.1.4 C5 round 9 (grid_cols 5 x grid_rows 2 = 10 cells, 0.2 jar a cell): cpf+3 = 13 cells: 2.6 jars, a carry of 0.6 jars (2 turns' worth if it wrongly counted)
+	var n1: int = _cpf() + 3
 	_to_cranking(c, n1)
 	_crank_done(c)
 	_bottle_out(c)
 	var left: float = float(c.get("leftover_jars"))
 	ck(left > 0.01, "batch 1 left a fractional carry (%.4f jars)" % left)
-	var n2: int = _cpf() - 5   # 30 cells: 1.71 jars, 7 turns by themselves, 11 if the carry counted
+	var n2: int = _cpf() - 2   # 8 cells: 1.6 jars, 7 turns by themselves, 9 if the carry counted
 	_load_bucket(c, n2)
 	c.call("begin_crank")
 	var cranking: int = _st(c, "CRANKING")
@@ -278,10 +279,10 @@ func t_leftover_adds_no_turns() -> void:
 		c.call("tap")
 		c.call("advance", _tap_gap())
 		sent += 1
-	eq(sent, _turns_for(n2), "batch 2 (30 cells, carry %.3f): ceil(jars of its cells x taps_per_jar) = %d turns, the carry added none" % [left, _turns_for(n2)])
+	eq(sent, _turns_for(n2), "batch 2 (8 cells, carry %.3f): ceil(jars of its cells x taps_per_jar) = %d turns, the carry added none" % [left, _turns_for(n2)])
 	eq(c.get("turns_counted"), _turns_for(n2), "turns_counted agrees")
 	var r2: Dictionary = _bottle_out(c)
-	eq(r2["done"], [2], "the carry still counts in the bottled floor(jars): 30 cells + carry = 2.69 jars, floor 2")
+	eq(r2["done"], [2], "the carry still counts in the bottled floor(jars): 8 cells + carry = 2.2 jars, floor 2")
 	_fin()
 
 

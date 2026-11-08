@@ -81,6 +81,15 @@ func cell_scale() -> float:
 	return global_transform.basis.get_scale().x if is_inside_tree() else 1.0
 
 
+## 0.1.4 item 5: draws pile cells at `world_size` (the frame cell size) by setting the Pile's uniform scale.
+func set_cell_world_size(world_size: float) -> void:
+	if world_size <= 0.0:
+		return
+	var parent: Node3D = get_parent_node_3d()
+	var parent_scale: float = parent.global_transform.basis.get_scale().x if parent != null and parent.is_inside_tree() else 1.0
+	scale = Vector3.ONE * (world_size / maxf(parent_scale, 0.0001))
+
+
 func _refresh() -> void:
 	var shown: int = visible_count()
 	while _meshes.size() < shown:

@@ -18,8 +18,9 @@ extends Resource
 @export var base_seconds_per_jar: float = 6.0          # PLACEHOLDER (GDD TBD): 1 jar per 6 s, one frame in 60 s
 @export var sale_value_per_jar: int = 3                # PLACEHOLDER (GDD TBD): $3 per jar
 @export var taps_per_jar: int = 4                      # PLACEHOLDER (GDD TBD): counted crank turns per jar in the bucket (40 per 10 jars as revision 3)
-@export var grid_cols: int = 7                         # PLACEHOLDER (GDD TBD): honeycomb frame width in cells (read when a frame is built)
-@export var grid_rows: int = 5                         # PLACEHOLDER (GDD TBD): honeycomb frame height in cells (read when a frame is built)
+@export var grid_cols: int = 5                         # PLACEHOLDER (GDD TBD; 0.1.4 item 5, round 9 variant a): honeycomb frame width in cells (read when a frame is built)
+@export var grid_rows: int = 2                         # PLACEHOLDER (GDD TBD; 0.1.4 item 5, round 9 variant a): honeycomb frame height in cells (read when a frame is built)
+@export var frame_scale: float = 0.85                  # PLACEHOLDER (0.1.4 item 5; Dev panel): a cell's drawn size inside its pitch (below 1.0 leaves a gap between cells). Pile and bucket cells are drawn at the same world size
 @export var base_bee_count: int = 20                   # PLACEHOLDER (GDD TBD): bees in the swarm at level 0
 @export var bees_per_swarm_level: int = 3              # PLACEHOLDER (GDD TBD): bees added per Worker Swarm Count level (15% of 20)
 @export var visual_bee_cap: int = 60                   # PLACEHOLDER (GDD TBD): most bees drawn; GDD: visual cap TBD after profiling

@@ -225,6 +225,14 @@ func _move_lid(open: bool) -> void:
 	lid_moved.emit(open)
 
 
+## 0.1.4 item 5: the world size of one frame cell (Slot1's scale x frame_scale); 0 without the slot or outside the tree.
+func frame_cell_world_size() -> float:
+	var slot: Node3D = find_child("Slot1", true, false) as Node3D  # contract: optional (inside a prop scene instanced at run time, or numbered)
+	if slot == null or not slot.is_inside_tree():
+		return 0.0
+	return slot.global_transform.basis.get_scale().x * config.frame_scale
+
+
 ## Raises one frame: the Honeycomb shows its cells at that slot and rises by frame_rise. Ignored if a frame is already up.
 func raise_frame(index: int) -> void:
 	if index < 0 or index >= frames.size() or risen >= 0:

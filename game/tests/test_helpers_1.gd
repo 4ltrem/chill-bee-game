@@ -372,9 +372,9 @@ func _scrape_back_in_pop(to_pile: bool) -> void:
 	var cam: Camera3D = root.get_viewport().get_camera_3d()
 	var body: Node3D = null
 	for c in hc.find_children("*", "CollisionObject3D", true, false):
-		if c.has_meta("cell_index") and int(c.get_meta("cell_index")) == 17:
+		if c.has_meta("cell_index") and int(c.get_meta("cell_index")) == 7:   # spec 0.1.4 C5 round 9: 5 x 2 = 10 cells a frame, so cell 17 is gone; 7 is the second row's third cell
 			body = c as Node3D
-	ck(body != null, "cell 17 has a collider with its cell_index")
+	ck(body != null, "cell 7 has a collider with its cell_index")
 	if body == null:
 		_fin()
 		return
@@ -387,7 +387,7 @@ func _scrape_back_in_pop(to_pile: bool) -> void:
 	fi.mouse_button(at, false)
 	await process_frame
 	var capped_after: int = fi.capped(hive, 0)
-	var state17: int = int(hive.call("frame_cells", 0)[17])
+	var state17: int = int(hive.call("frame_cells", 0)[7])
 	await fi.click_ctl(p["BackButton"] as Control)
 	var game_s: float = float(_gms() - t0) / 1000.0   # game clock: already game seconds
 	_restore_scale()
@@ -396,7 +396,7 @@ func _scrape_back_in_pop(to_pile: bool) -> void:
 	eq(state17, 2, "the slot reads Extracted (2) at once, before the pop ends")
 	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + _lid_t() + float(cv("cell_fly_seconds")) + 0.6)
 	var f0: PackedByteArray = hive.call("frame_cells", 0)
-	eq(int(f0[17]), 2, "after Back: the scraped slot is still Extracted")
+	eq(int(f0[7]), 2, "after Back: the scraped slot is still Extracted")
 	var extracted: int = 0
 	var capped: int = 0
 	for b in f0:

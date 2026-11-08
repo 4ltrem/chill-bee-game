@@ -413,7 +413,7 @@ func t_config_values() -> void:
 		"sale_value_per_jar": 3, "truck_capacity_jars": 10, "truck_trip_seconds": 30.0,
 		"bottling_seconds_per_jar": 3.0, "max_tap_rate": 5.0, "hold_ramp_seconds": 1.5,
 		"base_seconds_per_jar": 6.0, "swarm_fill_bonus_per_level": 0.15, "swarm_base_cost": 25.0,
-		"swarm_cost_growth": 1.18, "swarm_max_level": 10, "grid_cols": 7, "grid_rows": 5,
+		"swarm_cost_growth": 1.18, "swarm_max_level": 10, "grid_cols": 5, "grid_rows": 2,  # spec 0.1.4 C5 round 9: "`grid_cols` 5 × `grid_rows` 2"
 		"bees_per_swarm_level": 3, "visual_bee_cap": 60,
 	}
 	for k in table:
@@ -431,7 +431,7 @@ func t_config_values() -> void:
 	eq(e.call("bee_count"), 20, "base swarm of 20 bees at level 0 (assumes no user dev_config override)")
 	# derived numbers the Done-when list quotes, from the config
 	eq(int(c.get("frames_per_hive")) * int(c.get("frame_jars")), 10, "a full hive is 10 jars")
-	eq(int(c.get("grid_cols")) * int(c.get("grid_rows")), 35, "35 cells per frame")
+	eq(int(c.get("grid_cols")) * int(c.get("grid_rows")), 10, "10 cells per frame")  # spec 0.1.4 C5 round 9: grid_cols 5 x grid_rows 2
 	_fin()
 
 

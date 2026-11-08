@@ -21,7 +21,7 @@ signal bottling_done(jars: int)
 signal lid_moved(open: bool)
 
 const EPS: float = 1.0e-6          # float slack for jars x taps and floor(jars)
-const HEAP_RADIUS: float = 3.4     # the heap's layers fill a disc of this radius, in HeapRoot units (inside the glass: 1.0 / HeapRoot's 0.25 = 4.0, less a cell's 0.46)
+const HEAP_RADIUS: float = 3.0     # (0.1.4 fix: was 3.4, outer cells poked past the glass) the heap's layers fill a disc of this radius, in HeapRoot units (inside the glass: 1.0 / HeapRoot's 0.25 = 4.0, less a cell's 0.46)
 const HEAP_LAYER: float = 0.3      # one heap layer's height (a cell's height), in HeapRoot units
 const HEAP_PER_LAYER: int = 40     # cells per layer, spread over the disc (a 5-frame bucket is 5 layers)
 const GOLDEN_ANGLE: float = 2.39996
@@ -68,6 +68,8 @@ var _stop_start: float = 0.0
 var _stop_target: float = 0.0
 var _mouth: Node3D
 var _heap_root: Node3D
+var _heap_scale0: float = 0.0           # HeapRoot's scene scale, the base of the glass radius
+var _heap_radius: float = HEAP_RADIUS   # the disc radius in HeapRoot units (follows the cell size)
 var _heap: Array[Node3D] = []
 var _heap_melting: bool = false
 var _melt_material: StandardMaterial3D
@@ -183,6 +185,26 @@ func bucket_mouth_position() -> Vector3:
 	if _mouth != null and _mouth.is_inside_tree():
 		return _mouth.global_position
 	return global_position + Vector3.UP * 1.5 if is_inside_tree() else position
+
+
+## 0.1.4 item 5: draws heap cells at `world_size` (the frame cell size). The heap still fills the same disc in the glass.
+func set_cell_world_size(world_size: float) -> void:
+	if _heap_root == null or world_size <= 0.0:
+		return
+	if _heap_scale0 <= 0.0:
+		_heap_scale0 = _heap_root.scale.x
+	var parent_scale: float = _heap_root.get_parent_node_3d().global_transform.basis.get_scale().x if _heap_root.get_parent_node_3d() != null else 1.0
+	var local: float = world_size / maxf(parent_scale, 0.0001)
+	_heap_root.scale = Vector3.ONE * local
+	_heap_radius = HEAP_RADIUS * _heap_scale0 / local
+	_last_shown = -1   # redraw the cells already in the heap at the new size
+	for cell in _heap:
+		var i: int = _heap.find(cell)
+		var layer: int = i / HEAP_PER_LAYER
+		var k: int = i % HEAP_PER_LAYER
+		var radius: float = sqrt((float(k) + 0.5) / float(HEAP_PER_LAYER)) * _heap_radius
+		var angle: float = float(k) * GOLDEN_ANGLE + float(layer) * 1.3
+		cell.position = Vector3(cos(angle) * radius, HEAP_LAYER * (float(layer) + 0.5), sin(angle) * radius)
 
 
 ## The drawn size of one heap cell (HeapRoot's scale).
@@ -480,7 +502,7 @@ func _update_heap() -> void:
 		var i: int = _heap.size()
 		var layer: int = i / HEAP_PER_LAYER
 		var k: int = i % HEAP_PER_LAYER
-		var radius: float = sqrt((float(k) + 0.5) / float(HEAP_PER_LAYER)) * HEAP_RADIUS   # even spread over the disc
+		var radius: float = sqrt((float(k) + 0.5) / float(HEAP_PER_LAYER)) * _heap_radius   # even spread over the disc
 		var angle: float = float(k) * GOLDEN_ANGLE + float(layer) * 1.3
 		cell.position = Vector3(cos(angle) * radius, HEAP_LAYER * (float(layer) + 0.5), sin(angle) * radius)
 		_heap_root.add_child(cell)

@@ -99,7 +99,19 @@ func _ready() -> void:
 		_centrifuge_icon.pressed.connect(spin_tapped)
 	if _sell_icon != null:
 		_sell_icon.pressed.connect(sell)
+	_sync_cell_size()
 	_refresh_icons()
+
+
+## 0.1.4 item 5: pile and bucket cells are drawn at the frame cell size (re-read at each zoom, so a Dev panel edit shows).
+func _sync_cell_size() -> void:
+	var size: float = _hive.frame_cell_world_size() if _hive != null else 0.0
+	if size <= 0.0:
+		return
+	if _pile != null:
+		_pile.set_cell_world_size(size)
+	if _centrifuge != null:
+		_centrifuge.set_cell_world_size(size)
 
 
 func _process(delta: float) -> void:
@@ -234,6 +246,7 @@ func open_zoom() -> bool:
 			_queue.append(i)
 	if _queue.is_empty():
 		return false
+	_sync_cell_size()
 	_going_back = false
 	_leave_second_stop_hud()
 	_filled_in_zoom = false
