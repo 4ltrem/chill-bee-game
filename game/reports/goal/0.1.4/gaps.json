@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T20:26:42-05:00",
- "unit_log": "game/reports/_runs/20261107-195332/unit.log",
+ "at": "2026-11-07T20:41:31-05:00",
+ "unit_log": "game/reports/_runs/20261107-203733/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -43,10 +43,16 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "a32b0be",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -714,17 +720,6 @@
  },
  "order": [
   {
-   "id": "C1",
-   "score": 14.03,
-   "factors": {
-    "unblocks": 3,
-    "value": 3,
-    "cost": 0.97,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C8",
    "score": 12.67,
    "factors": {
@@ -791,6 +786,39 @@
    }
   },
   {
+   "id": "T.2",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.2",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T9.1",
    "score": 5.42,
    "factors": {
@@ -821,45 +849,6 @@
     "cost": 0.58,
     "ready": 1,
     "blocked_by": []
-   }
-  },
-  {
-   "id": "T.2",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 0,
-    "blocked_by": [
-     "C1"
-    ]
-   }
-  },
-  {
-   "id": "T1.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 0,
-    "blocked_by": [
-     "C1"
-    ]
-   }
-  },
-  {
-   "id": "T1.2",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 0,
-    "blocked_by": [
-     "C1"
-    ]
    }
   },
   {

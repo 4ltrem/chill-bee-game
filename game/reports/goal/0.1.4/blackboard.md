@@ -1103,3 +1103,46 @@ The windowed playthrough (`play_loop.gd`) was not run, and the fill clipping has
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `ui shots`: PASS
+- Green: checkpoint `a32b0be` on `milestone/0.1.4`
+
+## Pass 12: scan (2026-11-07T20:41:31-05:00)
+
+Unit results from `game/reports/_runs/20261107-203733/unit.log`. 5 of 25 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 25)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Harvest button is the honey meter | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger a32b0be |
+
+### Order: new or rescored (3 of 16)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 7 | T.2 Back's rect is in the top-right quadrant, and the  | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 8 | T1.1 the Harvest fill equals the hive fill fraction (±  | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 9 | T1.2 item 1 fix: at about half fill, no fill pixel lies | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C8** (score 12.67: 3 goal(s) wait on it; designer feature; cost 0.33 (Bob)).
+
+### Step: C8 (2026-11-07T20:41:31-05:00)
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/C8-bob.md` (1072 chars)
+- Budget guard for Bob: override
+
+**Bob** (58,280 tokens, 6 turns, 13 s):
+
+I lowered `HintLabel` below Back's rect. I haven't rendered it, so I haven't looked at the result.
+
+- **File changed:** `game/scenes/main.tscn`, `HarvestUIRoot/HarvestUI/HintLabel`. `offset_top` went from 6 to 144 and `offset_bottom` from 116 to 254. The horizontal offsets are unchanged.
+- **Back:** the handoff puts `BackButton` at y 16–136, so the label now starts 8 px below its bottom edge. I didn't touch `BackButton`; its current offsets in the scene may still be the old ones.
+- **First zoom and second stop:** both use the same `HintLabel` node, so one edit covers both.
+- **Contract check:** `python -I _tools/contract_check.py` found 0 unresolved lookups in 63.
+
+**Open question:** the label now sits 138 px lower. It may crowd the top of the frame rack in the first zoom, and Patricia's `frame_rise` retune should account for that. I don't know whether any script sets the label's position.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
