@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T22:05:30-05:00",
- "unit_log": "game/reports/_runs/20261107-213702/unit.log",
+ "at": "2026-11-07T23:39:37-05:00",
+ "unit_log": "game/reports/_runs/20261107-233607/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -69,7 +69,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -92,34 +92,39 @@
      "ok": true
     },
     {
+     "kind": "node",
+     "name": "CentrifugeLabel",
+     "ok": true
+    },
+    {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -128,7 +133,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -202,10 +207,15 @@
      "kind": "config",
      "name": "frame_scale",
      "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "6a76e7d",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -346,6 +356,68 @@
    "questions": [],
    "ambiguous": false
   },
+  "C11": {
+   "kind": "change",
+   "title": "Spin goes to the second stop",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    11
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C12": {
+   "kind": "change",
+   "title": "No spinning in the farm view without the motor",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    12
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C13": {
+   "kind": "change",
+   "title": "Centrifuge text sits on the centrifuge",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    13
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "CentrifugeLabel",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "FarmUI",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
   "T2.1": {
    "kind": "test",
    "title": "no two HUD controls overlap, and none is cut off by the screen edge;",
@@ -358,37 +430,37 @@
    "depends": [
     "C2"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -434,37 +506,37 @@
    "depends": [
     "C2"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -671,6 +743,82 @@
    "questions": [],
    "ambiguous": false
   },
+  "T5.2": {
+   "kind": "test",
+   "title": "item 5 fix: each frame's comb cells cover at least 90% of the frame's ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "C5"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T11.1": {
+   "kind": "test",
+   "title": "item 11: pressing Spin from the farm view or the first zoom ends at th",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    11
+   ],
+   "depends": [
+    "C11"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T13.1": {
+   "kind": "test",
+   "title": "item 13: while cranking, `CentrifugeLabel`'s rect stays within `button",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    13
+   ],
+   "depends": [
+    "C13"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T12.1": {
+   "kind": "test",
+   "title": "item 12: with no motor owned, the centrifuge never spins while the cam",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    12
+   ],
+   "depends": [
+    "C12"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
   "T.3": {
    "kind": "test",
    "title": "mutations in `tests/mutations.json` prove the new tests.",
@@ -687,7 +835,10 @@
     7,
     8,
     9,
-    10
+    10,
+    11,
+    12,
+    13
    ],
    "depends": [
     "C1",
@@ -699,39 +850,42 @@
     "C7",
     "C8",
     "C9",
-    "C10"
+    "C10",
+    "C11",
+    "C12",
+    "C13"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     }
    ],
    "built": false,
@@ -742,135 +896,241 @@
  },
  "order": [
   {
-   "id": "C5",
-   "score": 5.89,
+   "id": "C11",
+   "score": 11.32,
    "factors": {
-    "unblocks": 1,
-    "value": 2,
-    "cost": 1.11,
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.68,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C12",
+   "score": 11.32,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.68,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C13",
+   "score": 11.32,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.68,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T.1",
-   "score": 5.4,
+   "score": 5.42,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.6,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T.2",
-   "score": 5.4,
+   "score": 5.42,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.6,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T1.1",
-   "score": 5.4,
+   "score": 5.42,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.6,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T1.2",
-   "score": 5.4,
+   "score": 5.42,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.6,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T10.1",
-   "score": 5.4,
+   "score": 5.42,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.6,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T13.1",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.2",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T7.1",
-   "score": 5.4,
+   "score": 5.42,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.6,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T7.2",
-   "score": 5.4,
+   "score": 5.42,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.6,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T9.1",
-   "score": 5.4,
+   "score": 5.42,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.6,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T5.1",
-   "score": 3.4,
+   "score": 3.42,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.6,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T5.2",
+   "score": 3.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T8.1",
-   "score": 3.4,
+   "score": 3.42,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.6,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T6.1",
-   "score": 1.4,
+   "score": 1.42,
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.6,
+    "cost": 0.58,
     "ready": 1,
     "blocked_by": []
+   }
+  },
+  {
+   "id": "T.3",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.58,
+    "ready": 0,
+    "blocked_by": [
+     "C11",
+     "C12"
+    ]
+   }
+  },
+  {
+   "id": "T11.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 0,
+    "blocked_by": [
+     "C11"
+    ]
+   }
+  },
+  {
+   "id": "T12.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 0,
+    "blocked_by": [
+     "C12"
+    ]
    }
   }
  ],

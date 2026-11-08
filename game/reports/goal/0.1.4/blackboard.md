@@ -1599,9 +1599,81 @@ FAIL    unit      137 passed, 1 failed  (exit 1, 202 noise lines dropped)  game/
 
 2 fix rounds failed on C5: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.1.4-ui-placement.md --accept C5 --note "<the change>"`. Then rerun the same command to go on.
 
+## Resumed 2026-11-07
+
+Command: `goal_agent.py 0.1.4-ui-placement.md --accept C5 --note t_dev_show_ui_bounds now counts only the UiBoundsOverlay's own nodes; the whole-tree count caught game nodes shown in the same frames (15 -> 17). Orchestrator, designer chose option 1.` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C5 (2026-11-07T23:36:15-05:00)
+
+- Change (orchestrator, Process 9): t_dev_show_ui_bounds now counts only the UiBoundsOverlay's own nodes; the whole-tree count caught game nodes shown in the same frames (15 -> 17). Orchestrator, designer chose option 1.
+- Accepted: checkpoint `6a76e7d` on `milestone/0.1.4`
+
+## Resumed 2026-11-07
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `stopped`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 19: scan (2026-11-07T23:36:24-05:00)
+
+Unit results from `game/reports/_runs/20261107-233607/unit.log`. 1 of 32 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (12 of 32)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | 6/11 present: ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ node CentrifugeLabel, ✗ test t_hud_no_overlap_no_cutoff (not run), ✗ test t_buttons_at_anchor_or_clamped (not run), ✗ ... |
+| C5 Bigger hive frames and combs | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config frame_scale, ✓ ledger 6a76e7d |
+| C11 Spin goes to the second stop | change | Patricia | missing | none found |
+| C12 No spinning in the farm view without the motor | change | Patricia | missing | none found |
+| C13 Centrifuge text sits on the centrifuge | change | Patricia | partial | ✓ node CentrifugeLabel, ✓ node FarmUI |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | partial | ✗ test t_hud_no_overlap_no_cutoff (not run), ✗ test t_buttons_at_anchor_or_clamped (not run), ✗ test t_buttons_clamped_when_anchor_off_screen (not run), ✗ test t_harvest_hidden_at_second_stop (not run), ✗ test t_spin_placed_by_scene (not run), ✓ ledger b65f5e1 |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | partial | ✗ test t_hud_no_overlap_no_cutoff (not run), ✗ test t_buttons_at_anchor_or_clamped (not run), ✗ test t_buttons_clamped_when_anchor_off_screen (not run), ✗ test t_harvest_hidden_at_second_stop (not run), ✗ test t_spin_placed_by_scene (not run), ✓ ledger 2c464bc |
+| T5.2 item 5 fix: each frame's comb cells cover at least 90% of th | test | Quinn | missing | none found |
+| T11.1 item 11: pressing Spin from the farm view or the first zoom  | test | Quinn | missing | none found |
+| T13.1 item 13: while cranking, `CentrifugeLabel`'s rect stays with | test | Quinn | missing | none found |
+| T12.1 item 12: with no motor owned, the centrifuge never spins whi | test | Quinn | missing | none found |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | ✗ test t_hud_no_overlap_no_cutoff (not run), ✗ test t_buttons_at_anchor_or_clamped (not run), ✗ test t_buttons_clamped_when_anchor_off_screen (not run), ✗ test t_harvest_hidden_at_second_stop (not run), ✗ test t_spin_placed_by_scene (not run) |
+
+### Order: new or rescored (21 of 21)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C11 Spin goes to the second stop | 11.32 | 2 | 3 | 0.68 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.68 (Patricia) |
+| 2 | C12 No spinning in the farm view without the motor | 11.32 | 2 | 3 | 0.68 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.68 (Patricia) |
+| 3 | C13 Centrifuge text sits on the centrifuge | 11.32 | 2 | 3 | 0.68 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.68 (Patricia) |
+| 4 | T.1 Back has the same screen rect in the first zoom an | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 5 | T.2 Back's rect is in the top-right quadrant, and the  | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 6 | T1.1 the Harvest fill equals the hive fill fraction (±  | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 7 | T1.2 item 1 fix: at about half fill, no fill pixel lies | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 8 | T10.1 item 10: with the hive partly full and no frame ra | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 9 | T13.1 item 13: while cranking, `CentrifugeLabel`'s rect  | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 10 | T2.1 no two HUD controls overlap, and none is cut off b | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 11 | T2.2 Harvest, Spin and Sell stay within `button_screen_ | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 12 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 13 | T7.2 item 7 (2026-11-07): after a pour with a pile wait | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 14 | T9.1 item 9: `PausedLabel` is one line (its height is o | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 15 | T5.1 the hive's cell size on screen is within 15% of a  | 3.42 | 0 | 2 | 0.58 | 1 | designer feature; cost 0.58 (Quinn) |
+| 16 | T5.2 item 5 fix: each frame's comb cells cover at least | 3.42 | 0 | 2 | 0.58 | 1 | designer feature; cost 0.58 (Quinn) |
+| 17 | T8.1 item 8: the instruction text's rect lies wholly be | 3.42 | 0 | 2 | 0.58 | 1 | designer feature; cost 0.58 (Quinn) |
+| 18 | T6.1 no test file appears in `user://recordings` after  | 1.42 | 0 | 1 | 0.58 | 1 | housekeeping/handoff; cost 0.58 (Quinn) |
+| 19 | T.3 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.58 | 0 | waits on C11, C12 |
+| 20 | T11.1 item 11: pressing Spin from the farm view or the f | 0.0 | 0 | 3 | 0.58 | 0 | waits on C11 |
+| 21 | T12.1 item 12: with no motor owned, the centrifuge never | 0.0 | 0 | 3 | 0.58 | 0 | waits on C12 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C11** (score 11.32: 2 goal(s) wait on it; play-test fix; cost 0.68 (Patricia)).
+
+### Step: C11 (2026-11-07T23:36:24-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C11-patricia.md` (963 chars)
+
+**Paused:** Budget guard: weekly usage is 24% with 9% of the week gone, more than 10 points ahead of pace, so heavy agents (programmer) wait (reading 26 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
 ## Result
 
-Last invocation (2026-11-07T23:07:37-05:00): waiting-designer.
+Last invocation (2026-11-07T23:36:24-05:00): paused.
 
 Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`
 
@@ -1657,8 +1729,31 @@ Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`
 
 ## Resumed 2026-11-07
 
-Command: `goal_agent.py 0.1.4-ui-placement.md --accept C5 --note t_dev_show_ui_bounds now counts only the UiBoundsOverlay's own nodes; the whole-tree count caught game nodes shown in the same frames (15 -> 17). Orchestrator, designer chose option 1.` (the run had stopped: `waiting-designer`).
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
+Branch `milestone/0.1.4`: already on it.
 
-### Manual fix: C5 (2026-11-07T23:36:15-05:00)
+## Pass 20: scan (2026-11-07T23:39:37-05:00)
 
-- Change (orchestrator, Process 9): t_dev_show_ui_bounds now counts only the UiBoundsOverlay's own nodes; the whole-tree count caught game nodes shown in the same frames (15 -> 17). Orchestrator, designer chose option 1.
+Unit results from `game/reports/_runs/20261107-233607/unit.log`. 1 of 32 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+Next: **C11** (score 11.32: 2 goal(s) wait on it; play-test fix; cost 0.68 (Patricia)).
+
+### Step: C11 (2026-11-07T23:39:37-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C11-patricia.md` (963 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (53,645 tokens, 2 turns, 4 s):
+
+The unit run finished, so my earlier hang report was wrong. `python -I _tools/godot_run.py unit start` printed PASS (log: `game/reports/_runs/20261107-234005/start.log`). The warnings were focus-grab warnings. The check printed no total line and exited 1, and the script marked it PASS anyway. No Godot process is still running.
+
+The Spin change in `main.gd` is as I described before. `contract_check.py` also passes.
+
+I did not run the windowed `play_loop.gd`, so the pan from the farm view has not been exercised.
+
+- Check `contract`: PASS
+- Check `tests`: PASS

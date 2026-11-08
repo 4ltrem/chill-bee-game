@@ -42,6 +42,7 @@ var _at_second_stop: bool = false
 var _spin_mode: bool = false          # 0.1.4 item 7: the crank was started and the pile has not run out
 var _auto_spin: bool = false          # the pile is reloading after a pour in spin mode: crank again when the bucket is full
 var _spin_pending: bool = false       # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
+var _spin_pan_timer: float = 0.0     # 0.1.4 item 11: Spin tapped on the farm view: seconds left of the pan to the second stop
 var _filled_in_zoom: bool = false    # the bucket became full while this zoom was open: the zoom ends after its frame and pans to the second stop
 
 
@@ -251,6 +252,7 @@ func open_zoom() -> bool:
 	_leave_second_stop_hud()
 	_filled_in_zoom = false
 	_spin_pending = false
+	_spin_pan_timer = 0.0
 	zoom = Zoom.OPENING
 	_timer = Economy.config.lid_move_seconds()
 	_farm_ui.visible = false
@@ -270,8 +272,16 @@ func open_zoom() -> bool:
 ## uncapped stay), pans to the second stop and starts the crank there (_finish_zoom).
 func spin_tapped() -> void:
 	if zoom == Zoom.NONE:
-		_spin_mode = true
-		_centrifuge.begin_crank()
+		if _spin_pan_timer > 0.0 or _centrifuge.state != Centrifuge.State.FULL:
+			return
+		if _at_second_stop or _farm_camera == null or not is_inside_tree():
+			_spin_mode = true
+			_centrifuge.begin_crank()
+			return
+		# 0.1.4 item 11: from the farm view the camera pans to the second stop, then the crank starts there
+		_spin_pan_timer = Economy.config.camera_pan_seconds
+		_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)
+		_enter_second_stop_hud()
 	elif zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING and _centrifuge.state == Centrifuge.State.FULL:
 		_spin_pending = true
 		back()   # a zoom already closing on its own (CLOSE_DELAY) needs nothing more: it pans because the bucket is full
@@ -298,6 +308,12 @@ func back() -> void:
 
 ## Timers of the zoom sequence, separate from _process so a headless test can step them.
 func advance(delta: float) -> void:
+	if _spin_pan_timer > 0.0:
+		_spin_pan_timer -= delta
+		if _spin_pan_timer <= 0.0:
+			_spin_pan_timer = 0.0
+			_spin_mode = true
+			_centrifuge.begin_crank()
 	if zoom == Zoom.NONE or zoom == Zoom.WORKING:
 		return
 	_timer -= delta
@@ -477,6 +493,7 @@ func at_second_stop() -> bool:
 func leave_second_stop() -> void:
 	if not _at_second_stop or zoom != Zoom.NONE:
 		return
+	_spin_pan_timer = 0.0
 	_leave_second_stop_hud()
 	if _harvest_ui != null:
 		_harvest_ui.hide_zoom()
