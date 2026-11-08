@@ -366,5 +366,93 @@
   "turns": 4,
   "seconds": 10,
   "transcripts": "_meta/sessions/runs/2026-11-07-goal-0.1.4"
+ },
+ {
+  "call": "Patricia, C11",
+  "tokens": 53645,
+  "final": 27121,
+  "turns": 2,
+  "seconds": 4,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Patricia, C12",
+  "tokens": 101180,
+  "final": 19379,
+  "turns": 11,
+  "seconds": 19,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Patricia, C13",
+  "tokens": 108802,
+  "final": 29158,
+  "turns": 11,
+  "seconds": 24,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Quinn, C13 fix 1",
+  "tokens": 68982,
+  "final": 15264,
+  "turns": 5,
+  "seconds": 36,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Patricia, C13 fix 1",
+  "tokens": 84262,
+  "final": 16319,
+  "turns": 7,
+  "seconds": 1096,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Quinn, T.1, T.2, T8.1",
+  "tokens": 477530,
+  "final": 42043,
+  "turns": 24,
+  "seconds": 77,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Quinn, T.1, T.2, T8.1 fix 1",
+  "tokens": 165953,
+  "final": 21616,
+  "turns": 12,
+  "seconds": 28,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Quinn, T10.1",
+  "tokens": 887316,
+  "final": 67975,
+  "turns": 39,
+  "seconds": 135,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Patricia, T10.1 fix 1",
+  "tokens": 58303,
+  "final": 17199,
+  "turns": 5,
+  "seconds": 10,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Bob, T10.1 fix 1",
+  "tokens": 247235,
+  "final": 37131,
+  "turns": 17,
+  "seconds": 48,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Quinn, T11.1",
+  "tokens": 486034,
+  "final": 40439,
+  "turns": 28,
+  "seconds": 62,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
  }
 ]

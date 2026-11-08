@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_combs.gd"
+extends "res://tests/test_motor.gd"
 
 
 # Tests that stay at x1 (they read the wall clock on purpose, own Engine.time_scale through the Dev speed row, or measure wall seconds
@@ -92,6 +92,9 @@ func _run() -> void:
 				"t_combs_visible_in_hive", "t_combs_fill_frame_and_hive_whole",
 				# 0.1.4 item 11 (written from game/specs/0.1.4-ui-placement.md before the code)
 				"t_spin_from_farm_goes_to_second_stop", "t_spin_from_first_zoom_goes_to_second_stop",
+					# 0.1.4 item 12 (written from game/specs/0.1.4-ui-placement.md before the code)
+					"t_no_motor_in_phase_1", "t_no_spin_farm_view_without_motor", "t_no_spin_after_pour_farm_view",
+					"t_spin_after_pour_farm_view_with_motor", "t_no_spin_first_zoom_without_motor",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

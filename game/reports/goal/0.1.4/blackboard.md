@@ -1671,62 +1671,6 @@ Next: **C11** (score 11.32: 2 goal(s) wait on it; play-test fix; cost 0.68 (Patr
 **Paused:** Budget guard: weekly usage is 24% with 9% of the week gone, more than 10 points ahead of pace, so heavy agents (programmer) wait (reading 26 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
 Run the same command again to resume.
 
-## Result
-
-Last invocation (2026-11-07T23:36:24-05:00): paused.
-
-Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`
-
-| Call | Total processed | Final context | Turns | Duration |
-|---|---|---|---|---|
-| Patricia, H | 221,991 | — | 16 | 42 s |
-| Bob, C2 | 455,025 | — | 22 | 73 s |
-| Patricia, C2 | 533,260 | — | 33 | 695 s |
-| Bob, C2 fix 1 | 137,517 | — | 9 | 20 s |
-| Quinn, C2 fix 1 | 927,906 | — | 34 | 616 s |
-| Patricia, C2 fix 1 | 468,748 | — | 26 | 1831 s |
-| Bob, C2 fix 2 | 46,461 | — | 5 | 11 s |
-| Patricia, C2 fix 2 | 121,927 | — | 7 | 20 s |
-| Quinn, C2 fix 2 | 164,504 | — | 13 | 160 s |
-| Bob, C4 | 100,407 | — | 9 | 18 s |
-| Patricia, C7 | 491,165 | — | 24 | 1213 s |
-| Bob, C3 | 60,321 | — | 4 | 11 s |
-| Patricia, C3 | 106,099 | — | 11 | 22 s |
-| Bob, C3 fix 1 | 49,887 | — | 5 | 9 s |
-| Patricia, C3 fix 1 | 172,138 | — | 9 | 31 s |
-| Quinn, C3 fix 1 | 77,069 | — | 6 | 33 s |
-| Bob, C1 | 127,981 | — | 12 | 28 s |
-| Patricia, C1 | 227,009 | — | 17 | 231 s |
-| Patricia, C1 fix 1 | 30,183 | — | 2 | 6 s |
-| Bob, C1 fix 1 | 96,154 | — | 9 | 19 s |
-| Quinn, C1 fix 1 | 272,339 | — | 19 | 234 s |
-| Patricia, C6 | 154,687 | — | 12 | 568 s |
-| Quinn, T2.1, | 556,555 | — | 24 | 142 s |
-| Bob, T2.1, fix 1 | 92,164 | — | 6 | 13 s |
-| Patricia, T2.1, fix 1 | 244,554 | — | 14 | 1219 s |
-| Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
-| Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
-| Bob, C1 | 232,941 | 35,068 | 14 | 40 s |
-| Patricia, C1 | 59,101 | 29,934 | 2 | 4 s |
-| Bob, C8 | 58,280 | 16,486 | 6 | 13 s |
-| Patricia, C7 | 77,917 | 39,296 | 3 | 5 s |
-| Patricia, C7 fix 1 | 85,201 | 21,581 | 8 | 15 s |
-| Quinn, C7 fix 1 | 189,175 | 22,334 | 14 | 58 s |
-| Bob, C9 | 92,562 | 22,028 | 7 | 14 s |
-| Bob, C10 | 199,222 | 27,385 | 13 | 36 s |
-| Patricia, C10 | 73,577 | 37,182 | 2 | 5 s |
-| Bob, C5 | 699,505 | 56,503 | 38 | 110 s |
-| Patricia, C5 | 688,276 | 54,220 | 42 | 689 s |
-| Bob, C5 | 262,642 | 42,615 | 16 | 43 s |
-| Patricia, C5 | 94,439 | 23,051 | 10 | 608 s |
-| Bob, C5 fix 1 | 26,011 | 13,835 | 2 | 8 s |
-| Quinn, C5 fix 1 | 341,007 | 34,294 | 25 | 92 s |
-| Patricia, C5 fix 1 | 30,575 | 30,575 | 1 | 2 s |
-| Bob, C5 fix 2 | 38,012 | 13,626 | 3 | 8 s |
-| Quinn, C5 fix 2 | 110,717 | 21,051 | 6 | 19 s |
-| Patricia, C5 fix 2 | 114,867 | 30,552 | 4 | 10 s |
-| **Total** | **9,584,235** | | | |
-
 ## Resumed 2026-11-07
 
 Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
@@ -2095,6 +2039,222 @@ Both tap the Spin button with a real mouse event. After the tap, each checks tha
 
 **Open questions**
 - `_spin_mode` is a private variable. The spec has no public accessor for it, so the tests read it directly.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Green: checkpoint `c5e6593` on `milestone/0.1.4`
+
+## Pass 26: scan (2026-11-08T00:43:30-05:00)
+
+Unit results from `game/reports/_runs/20261108-004007/unit.log`. 18 of 32 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 32)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C11 Spin goes to the second stop | change | Patricia | done | ✓ test t_spin_from_farm_goes_to_second_stop, ✓ test t_spin_from_first_zoom_goes_to_second_stop, ✓ ledger 33db081 |
+| T11.1 item 11: pressing Spin from the farm view or the first zoom  | test | Quinn | done | ✓ test t_spin_from_farm_goes_to_second_stop, ✓ test t_spin_from_first_zoom_goes_to_second_stop, ✓ ledger c5e6593 |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 11/11 present: ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_ ... |
+
+No score changed.
+
+Next: **T12.1** (score 5.42: play-test fix; cost 0.58 (Quinn)).
+
+### Step: T12.1 (2026-11-08T00:43:30-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T12.1-quinn.md` (1735 chars)
+
+**Paused:** Budget guard: weekly usage is 26% with 9% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 1 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
+## Result
+
+Last invocation (2026-11-08T00:43:30-05:00): paused.
+
+Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/2026-11-08-goal-0.1.4/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 221,991 | — | 16 | 42 s |
+| Bob, C2 | 455,025 | — | 22 | 73 s |
+| Patricia, C2 | 533,260 | — | 33 | 695 s |
+| Bob, C2 fix 1 | 137,517 | — | 9 | 20 s |
+| Quinn, C2 fix 1 | 927,906 | — | 34 | 616 s |
+| Patricia, C2 fix 1 | 468,748 | — | 26 | 1831 s |
+| Bob, C2 fix 2 | 46,461 | — | 5 | 11 s |
+| Patricia, C2 fix 2 | 121,927 | — | 7 | 20 s |
+| Quinn, C2 fix 2 | 164,504 | — | 13 | 160 s |
+| Bob, C4 | 100,407 | — | 9 | 18 s |
+| Patricia, C7 | 491,165 | — | 24 | 1213 s |
+| Bob, C3 | 60,321 | — | 4 | 11 s |
+| Patricia, C3 | 106,099 | — | 11 | 22 s |
+| Bob, C3 fix 1 | 49,887 | — | 5 | 9 s |
+| Patricia, C3 fix 1 | 172,138 | — | 9 | 31 s |
+| Quinn, C3 fix 1 | 77,069 | — | 6 | 33 s |
+| Bob, C1 | 127,981 | — | 12 | 28 s |
+| Patricia, C1 | 227,009 | — | 17 | 231 s |
+| Patricia, C1 fix 1 | 30,183 | — | 2 | 6 s |
+| Bob, C1 fix 1 | 96,154 | — | 9 | 19 s |
+| Quinn, C1 fix 1 | 272,339 | — | 19 | 234 s |
+| Patricia, C6 | 154,687 | — | 12 | 568 s |
+| Quinn, T2.1, | 556,555 | — | 24 | 142 s |
+| Bob, T2.1, fix 1 | 92,164 | — | 6 | 13 s |
+| Patricia, T2.1, fix 1 | 244,554 | — | 14 | 1219 s |
+| Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
+| Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
+| Bob, C1 | 232,941 | 35,068 | 14 | 40 s |
+| Patricia, C1 | 59,101 | 29,934 | 2 | 4 s |
+| Bob, C8 | 58,280 | 16,486 | 6 | 13 s |
+| Patricia, C7 | 77,917 | 39,296 | 3 | 5 s |
+| Patricia, C7 fix 1 | 85,201 | 21,581 | 8 | 15 s |
+| Quinn, C7 fix 1 | 189,175 | 22,334 | 14 | 58 s |
+| Bob, C9 | 92,562 | 22,028 | 7 | 14 s |
+| Bob, C10 | 199,222 | 27,385 | 13 | 36 s |
+| Patricia, C10 | 73,577 | 37,182 | 2 | 5 s |
+| Bob, C5 | 699,505 | 56,503 | 38 | 110 s |
+| Patricia, C5 | 688,276 | 54,220 | 42 | 689 s |
+| Bob, C5 | 262,642 | 42,615 | 16 | 43 s |
+| Patricia, C5 | 94,439 | 23,051 | 10 | 608 s |
+| Bob, C5 fix 1 | 26,011 | 13,835 | 2 | 8 s |
+| Quinn, C5 fix 1 | 341,007 | 34,294 | 25 | 92 s |
+| Patricia, C5 fix 1 | 30,575 | 30,575 | 1 | 2 s |
+| Bob, C5 fix 2 | 38,012 | 13,626 | 3 | 8 s |
+| Quinn, C5 fix 2 | 110,717 | 21,051 | 6 | 19 s |
+| Patricia, C5 fix 2 | 114,867 | 30,552 | 4 | 10 s |
+| Patricia, C11 | 53,645 | 27,121 | 2 | 4 s |
+| Patricia, C12 | 101,180 | 19,379 | 11 | 19 s |
+| Patricia, C13 | 108,802 | 29,158 | 11 | 24 s |
+| Quinn, C13 fix 1 | 68,982 | 15,264 | 5 | 36 s |
+| Patricia, C13 fix 1 | 84,262 | 16,319 | 7 | 1096 s |
+| Quinn, T.1, T.2, T8.1 | 477,530 | 42,043 | 24 | 77 s |
+| Quinn, T.1, T.2, T8.1 fix 1 | 165,953 | 21,616 | 12 | 28 s |
+| Quinn, T10.1 | 887,316 | 67,975 | 39 | 135 s |
+| Patricia, T10.1 fix 1 | 58,303 | 17,199 | 5 | 10 s |
+| Bob, T10.1 fix 1 | 247,235 | 37,131 | 17 | 48 s |
+| Quinn, T11.1 | 486,034 | 40,439 | 28 | 62 s |
+| **Total** | **12,323,477** | | | |
+
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 27: scan (2026-11-08T00:53:30-05:00)
+
+Unit results from `game/reports/_runs/20261108-004007/unit.log`. 18 of 32 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+### Order: new or rescored (8 of 8)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T12.1 item 12: with no motor owned, the centrifuge never | 5.45 | 0 | 3 | 0.55 | 1 | play-test fix; cost 0.55 (Quinn) |
+| 2 | T13.1 item 13: while cranking, `CentrifugeLabel`'s rect  | 5.45 | 0 | 3 | 0.55 | 1 | play-test fix; cost 0.55 (Quinn) |
+| 3 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.45 | 0 | 3 | 0.55 | 1 | play-test fix; cost 0.55 (Quinn) |
+| 4 | T7.2 item 7 (2026-11-07): after a pour with a pile wait | 5.45 | 0 | 3 | 0.55 | 1 | play-test fix; cost 0.55 (Quinn) |
+| 5 | T9.1 item 9: `PausedLabel` is one line (its height is o | 5.45 | 0 | 3 | 0.55 | 1 | play-test fix; cost 0.55 (Quinn) |
+| 6 | T5.1 the hive's cell size on screen is within 15% of a  | 3.45 | 0 | 2 | 0.55 | 1 | designer feature; cost 0.55 (Quinn) |
+| 7 | T5.2 item 5 fix: each frame's comb cells cover at least | 3.45 | 0 | 2 | 0.55 | 1 | designer feature; cost 0.55 (Quinn) |
+| 8 | T6.1 no test file appears in `user://recordings` after  | 1.45 | 0 | 1 | 0.55 | 1 | housekeeping/handoff; cost 0.55 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T12.1** (score 5.45: play-test fix; cost 0.55 (Quinn)).
+
+### Step: T12.1 (2026-11-08T00:53:30-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T12.1-quinn.md` (1735 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (546,215 tokens, 31 turns, 86 s):
+
+I can't run the tests, because the environment blocks the `CB_ONLY=… CB_TIME_SCALE=6 python …` command. I'm stopping here and not trying to get around the block.
+
+The environment-variable prefix on the command needs approval that isn't available to me. I tried it plain and through `env`, and both were refused.
+
+**Files changed**
+- New `game/tests/test_motor.gd`, which extends `test_combs.gd`.
+- `run_tests.gd` now extends `test_motor.gd`.
+- `run_tests.gd` also has the group comment `# 0.1.4 item 12 (written from game/specs/0.1.4-ui-placement.md before the code)` with 5 tests.
+- `mutations.json` has 5 new mutations.
+
+**Tests**
+- `t_no_motor_in_phase_1`
+- `t_no_spin_farm_view_without_motor`
+- `t_no_spin_after_pour_farm_view`
+- `t_spin_after_pour_farm_view_with_motor` is a control: with the motor owned the same pour does spin, so the no-motor test can fail.
+- `t_no_spin_first_zoom_without_motor`
+
+**Nodes and flags used**
+- `Centrifuge`, `Pile`, `CentrifugeIcon`, `BackButton`.
+- `main.motor_owned`, `_spin_mode`, `_auto_spin`.
+- I added no scene nodes.
+
+**Open questions**
+- Please run the five tests, or approve the env-prefix command. Nothing has run, so I report no pass.
+- I reach "a pour with a pile waiting" by emitting `bottling_done` on the Centrifuge with `_spin_mode` set. Is that acceptable, or do you want it driven by real input?
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 2 of 5 caught
+mutate 1/5: 0.1.4 item 12 the motor is owned from the start ... MISSED in 8s
+mutate 3/5: 0.1.4 item 12 a full bucket in the first zoom is cranked at once ... CAUGHT in 9s
+mutate 4/5: 0.1.4 item 12 the reload after a pour spins in the farm view whatever the motor ... MISSED in 7s
+mutate 5/5: 0.1.4 item 12 the motor never spins the reload (control for the no-motor test) ... CAUGHT in 7s
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T12.1-fix1-quinn.md` (1333 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (162,037 tokens, 11 turns, 43 s):
+
+I changed `game/tests/mutations.json` only. Nothing was run, so neither fix is confirmed. Rex needs to re-run `mutate.py` on item 12.
+
+- **Mutation 1 (motor owned from the start), MISSED:** its expectation was wrong. `t_no_spin_after_pour_farm_view` sets `motor_owned` to false itself, so this mutation can't fail it. I removed that test from the expected list, which now holds only `t_no_motor_in_phase_1`.
+- **Mutation 4 (reload spins in the farm view), MISSED:** it was an equivalent mutant. Removing the gate at `main.gd:161` changed nothing, because `_auto_spin` stays false in the farm view (line 197). The two guards cover each other. I rewrote the mutation as one block that removes both guards. The block runs from line 161 to line 197 and has to match `main.gd` character for character.
+
+The block is brittle: any edit to those lines in `main.gd` will break the match.
+
+I found no problem in the game code or the spec.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 4 of 5 caught
+mutate 1/5: 0.1.4 item 12 the motor is owned from the start ... CAUGHT in 2s
+mutate 3/5: 0.1.4 item 12 a full bucket in the first zoom is cranked at once ... CAUGHT in 8s
+mutate 4/5: 0.1.4 item 12 the reload after a pour spins in the farm view whatever the motor ... CAUGHT in 1s
+mutate 5/5: 0.1.4 item 12 the motor never spins the reload (control for the no-motor test) ... CAUGHT in 7s
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T12.1-fix2-quinn.md` (1333 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (87,109 tokens, 7 turns, 16 s):
+
+Mutation 2/5 never ran, so the count was 4 of 5. This was a bug in my mutation, not a gap in the test.
+
+**Cause:** the `find` string in `game/tests/mutations.json` ("a full bucket in the farm view is cranked at once") matched no text in `main.gd`. It pointed at the end of `_refresh_icons`, not the end of `_on_centrifuge_state`.
+
+**Fix:** I edited that entry in place.
+- `find` now anchors on the `_refresh_icons()` call at the end of `_on_centrifuge_state`, followed by the `## An empty jar flies…` comment.
+- `replace` inserts a `begin_crank` call when the bucket is FULL and `zoom == Zoom.NONE`. It sits before that `_refresh_icons()` call and uses the function's own `state_now` parameter.
+- It still expects `t_no_spin_farm_view_without_motor` to fail.
+
+I did not run `mutate.py`. Rex needs to re-run mutation 2/5 to confirm it's caught. If it survives, `t_no_spin_farm_view_without_motor` is too weak and I'll fix the test.
+
+No other folder or spec problem.
 
 - Check `contract`: PASS
 - Check `tests`: PASS

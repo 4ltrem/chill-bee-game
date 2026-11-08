@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T00:39:03-05:00",
- "unit_log": "game/reports/_runs/20261108-003615/unit.log",
+ "at": "2026-11-08T00:53:30-05:00",
+ "unit_log": "game/reports/_runs/20261108-004007/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -426,8 +426,20 @@
     11
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_spin_from_farm_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_first_zoom_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "33db081",
@@ -435,7 +447,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -949,9 +961,27 @@
    "depends": [
     "C11"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_spin_from_farm_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_first_zoom_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "c5e6593",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1085,6 +1115,18 @@
      "name": "t_combs_fill_frame_and_hive_whole",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_farm_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_first_zoom_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1095,100 +1137,89 @@
  },
  "order": [
   {
-   "id": "T11.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T12.1",
-   "score": 5.42,
+   "score": 5.45,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
+    "cost": 0.55,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T13.1",
-   "score": 5.42,
+   "score": 5.45,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
+    "cost": 0.55,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T7.1",
-   "score": 5.42,
+   "score": 5.45,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
+    "cost": 0.55,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T7.2",
-   "score": 5.42,
+   "score": 5.45,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
+    "cost": 0.55,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T9.1",
-   "score": 5.42,
+   "score": 5.45,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.58,
+    "cost": 0.55,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T5.1",
-   "score": 3.42,
+   "score": 3.45,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.58,
+    "cost": 0.55,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T5.2",
-   "score": 3.42,
+   "score": 3.45,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.58,
+    "cost": 0.55,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T6.1",
-   "score": 1.42,
+   "score": 1.45,
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.58,
+    "cost": 0.55,
     "ready": 1,
     "blocked_by": []
    }

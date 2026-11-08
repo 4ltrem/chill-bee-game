@@ -643,5 +643,55 @@
    "t_spin_from_first_zoom_goes_to_second_stop"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 the motor is owned from the start",
+  "file": "scripts/main.gd",
+  "find": "var motor_owned: bool = false ",
+  "replace": "var motor_owned: bool = true ",
+  "expect": [
+   "t_no_motor_in_phase_1"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 a full bucket in the farm view is cranked at once",
+  "file": "scripts/main.gd",
+  "find": "\t_refresh_icons()\n\n\n## An empty jar flies from the crate to the spigot",
+  "replace": "\tif state_now == Centrifuge.State.FULL and zoom == Zoom.NONE:\n\t\t_centrifuge.begin_crank.call_deferred()\n\t_refresh_icons()\n\n\n## An empty jar flies from the crate to the spigot",
+  "expect": [
+   "t_no_spin_farm_view_without_motor"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 a full bucket in the first zoom is cranked at once",
+  "file": "scripts/main.gd",
+  "find": "\tif state_now == Centrifuge.State.FULL and zoom != Zoom.NONE and zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING:\n\t\t_filled_in_zoom = true\n",
+  "replace": "\tif state_now == Centrifuge.State.FULL and zoom != Zoom.NONE and zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING:\n\t\t_filled_in_zoom = true\n\t\t_centrifuge.begin_crank.call_deferred()\n",
+  "expect": [
+   "t_no_spin_first_zoom_without_motor"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 the reload after a pour spins in the farm view whatever the motor",
+  "file": "scripts/main.gd",
+  "find": "\t\tif not (_at_second_stop or motor_owned):\n\t\t\t_refresh_icons()\n\t\t\treturn\n\t\t_centrifuge.begin_crank.call_deferred()   # spin mode: the reloaded bucket spins on its own\n\t_refresh_icons()\n\n\n## An empty jar flies from the crate to the spigot, fills and gets its lid there (visual; the centrifuge's own timer waits for it).\nfunc _on_jar_requested(delay: float) -> void:\n\tvar config: GameConfig = Economy.config\n\tvar jar: Node3D = JarFlight.fetch(self, _truck.empties_position(), _centrifuge.spigot_position(), config.jar_fly_seconds,\n\t\t\tconfig.cell_fly_arc, delay, _centrifuge.spigot_jar_scale(), maxf(config.bottling_seconds_per_jar - config.jar_fly_seconds, 0.001))\n\tif jar != null:\n\t\t_trips.append(jar)\n\n\n## A jar is bottled: the jar at the spigot flies on to the truck or the crate (the truck counts it at once).\nfunc _on_jar_bottled(_n: int) -> void:\n\tvar carrier: Node3D = _trips.pop_front() if not _trips.is_empty() else null\n\t_truck.receive_jar(_centrifuge.spigot_position(), 0.0, carrier)\n\n\n## Sell (icon): credits the money, sends the truck off, and the summary shows jars sold, price per jar and the total. Returns the total.\nfunc sell() -> int:\n\tvar jars: int = _truck.loaded_jars\n\tvar total: int = _truck.sell()\n\tif total > 0:\n\t\t_farm_ui.show_summary(jars, Economy.jar_value(), total)\n\treturn total\n\n\n## Bottling finished: the bucket is empty and open (centrifuge.gd lifted its lid), and the pile loads in.\nfunc _on_bottling_done(_jars: int) -> void:\n\t# 0.1.4 item 7: in spin mode the reloaded bucket spins by itself (no \"press Spin\" prompt, the spin text stays); with no pile, spin mode exits.\n\tif _spin_mode:\n\t\tif _pile != null and not _pile.is_empty() and _centrifuge.room_cells() > 0:\n\t\t\t_auto_spin = _at_second_stop or motor_owned ",
+  "replace": "\t\t_centrifuge.begin_crank.call_deferred()   # spin mode: the reloaded bucket spins on its own\n\t_refresh_icons()\n\n\n## An empty jar flies from the crate to the spigot, fills and gets its lid there (visual; the centrifuge's own timer waits for it).\nfunc _on_jar_requested(delay: float) -> void:\n\tvar config: GameConfig = Economy.config\n\tvar jar: Node3D = JarFlight.fetch(self, _truck.empties_position(), _centrifuge.spigot_position(), config.jar_fly_seconds,\n\t\t\tconfig.cell_fly_arc, delay, _centrifuge.spigot_jar_scale(), maxf(config.bottling_seconds_per_jar - config.jar_fly_seconds, 0.001))\n\tif jar != null:\n\t\t_trips.append(jar)\n\n\n## A jar is bottled: the jar at the spigot flies on to the truck or the crate (the truck counts it at once).\nfunc _on_jar_bottled(_n: int) -> void:\n\tvar carrier: Node3D = _trips.pop_front() if not _trips.is_empty() else null\n\t_truck.receive_jar(_centrifuge.spigot_position(), 0.0, carrier)\n\n\n## Sell (icon): credits the money, sends the truck off, and the summary shows jars sold, price per jar and the total. Returns the total.\nfunc sell() -> int:\n\tvar jars: int = _truck.loaded_jars\n\tvar total: int = _truck.sell()\n\tif total > 0:\n\t\t_farm_ui.show_summary(jars, Economy.jar_value(), total)\n\treturn total\n\n\n## Bottling finished: the bucket is empty and open (centrifuge.gd lifted its lid), and the pile loads in.\nfunc _on_bottling_done(_jars: int) -> void:\n\t# 0.1.4 item 7: in spin mode the reloaded bucket spins by itself (no \"press Spin\" prompt, the spin text stays); with no pile, spin mode exits.\n\tif _spin_mode:\n\t\tif _pile != null and not _pile.is_empty() and _centrifuge.room_cells() > 0:\n\t\t\t_auto_spin = true ",
+  "expect": [
+   "t_no_spin_after_pour_farm_view"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 the motor never spins the reload (control for the no-motor test)",
+  "file": "scripts/main.gd",
+  "find": "\t\t\t_auto_spin = _at_second_stop or motor_owned ",
+  "replace": "\t\t\t_auto_spin = _at_second_stop ",
+  "expect": [
+   "t_spin_after_pour_farm_view_with_motor"
+  ],
+  "suite": "unit"
  }
 ]
