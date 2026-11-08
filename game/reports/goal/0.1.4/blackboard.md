@@ -2930,3 +2930,115 @@ I didn't render the scene or check the raised-frame comb size against the pick (
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `mutations`: PASS
+- Green: checkpoint `720d42d` on `milestone/0.1.4`
+
+## Pass 35: scan (2026-11-08T03:33:48-05:00)
+
+Unit results from `game/reports/_runs/20261108-032914/unit.log`. 36 of 38 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (5 of 38)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C14 The hive is the round 9 pick | change | Patricia, Bob | done | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✓ ledger 40128c7 |
+| T14.1 item 14: the hive has five frames, each standing upright (it | test | Quinn | done | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✓ ledger 720d42d |
+| T14.2 item 14 fix (play-test 2026-11-08, shown failing on the curr | test | Quinn | done | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✓ ledger 720d42d |
+| T14.3 item 14 lid (play-test 2026-11-08, shown failing on the curr | test | Quinn | done | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✓ ledger 720d42d |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 20/20 present: ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_ ... |
+
+No score changed.
+
+Next: **T15.1** (score 5.54: play-test fix; cost 0.46 (Quinn)).
+
+### Step: T15.1 (2026-11-08T03:33:48-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T15.1-quinn.md` (1648 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (620,622 tokens, 28 turns, 61 s):
+
+I couldn't run the two tests. The shell refuses to run a command that sets `CB_ONLY` and `CB_TIME_SCALE`, so none of this has run. The mutations haven't run either.
+
+**Files changed**
+- `game/tests/test_crank_pause.gd`: new, extends `test_hive_model.gd`.
+- `game/tests/run_tests.gd`: now extends the new file, plus the `# 0.1.4 item 15 (written from game/specs/0.1.4-ui-placement.md before the code)` group.
+- `game/tests/mutations.json`: two new mutations.
+
+**Tests**
+- `t_crank_pauses_on_back_and_resumes_on_spin`
+- `t_paused_crank_never_finishes_in_farm_view`
+- Both use real mouse events only.
+
+**Mutations (T15.1, T15.2)**
+- Both target `scripts/main.gd` and both are expected to fail both tests.
+- I took their find strings from `main.gd` (its `_crank_paused` code already exists), not from the spec alone.
+
+**Node names:** `CentrifugeIcon`, `BackButton`, `Centrifuge`, plus `turns_counted`, `state`, `at_second_stop()`.
+
+**Open questions**
+- Please run these with `CB_ONLY=t_crank_pauses_on_back_and_resumes_on_spin,t_paused_crank_never_finishes_in_farm_view CB_TIME_SCALE=6 python -I _tools/godot_run.py unit`.
+- Please also run the two mutations through `mutate.py`.
+- I read "progress" as `turns_counted` and "paused" as state still `CRANKING`. Confirm both.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+    sys.exit(main())
+  File "C:\Users\mtrem\Desktop\MAIGD\_tools\mutate.py", line 98, in main
+    mutations = json.load(open(args.file, encoding="utf-8"))
+  File "C:\Program Files\Python310\lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+  File "C:\Program Files\Python310\lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "C:\Program Files\Python310\lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "C:\Program Files\Python310\lib\json\decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+json.decoder.JSONDecodeError: Invalid control character at: line 760 column 12 (char 26192)
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T15.1-fix1-quinn.md` (1501 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (53,471 tokens, 5 turns, 10 s):
+
+I fixed the `mutations.json` parse error, but I haven't re-run `mutate.py` or parsed the file. Re-running `mutate.py` goes to Rex.
+
+The cause was in my folder. The T15.1 mutation entry on lines 760–761 had a literal tab character inside its `find` and `replace` strings. JSON doesn't allow raw control characters in strings, which is the "Invalid control character at line 760" error. I changed both to the escaped `\t`.
+
+A grep for any remaining raw tabs in the file found none. I couldn't run a JSON parse check myself because the inline-python hook blocked it.
+
+Rex should re-run `mutate.py`. The T15.1 mutation expects `t_crank_pauses_on_back_and_resumes_on_spin` and `t_paused_crank_never_finishes_in_farm_view` to fail.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 1 of 2 caught
+mutate 1/2: 0.1.4 T15.1 the crank keeps counting turns after Back (crank_enabled ignores the pause) ... MISSED in 36s
+mutate 2/2: 0.1.4 T15.2 Spin is hidden in the farm view while a crank is paused ... CAUGHT in 42s
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T15.1-fix2-quinn.md` (1023 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (85,027 tokens, 8 turns, 15 s):
+
+The mutation was missed because of the mutation entry, not the tests. I fixed the entry in `game/tests/mutations.json`. I haven't run `mutate.py`, so please dispatch Rex to confirm.
+
+**Cause:** the old mutation changed `_finish_zoom` (`main.gd:429`), which Back at the second stop never reaches. Back goes through `leave_second_stop()` (`main.gd:519`), which sets `crank_enabled = false`. The mutation changed a line these flows never use.
+
+**Fix:** the mutation now targets the line that actually pauses the crank. It replaces `_centrifuge.crank_enabled = false` with `= true` in `leave_second_stop()`, and I renamed it to match ("Back leaves crank_enabled on"). With that change, taps in the farm view count turns. `t_crank_pauses_on_back_and_resumes_on_spin` and `t_paused_crank_never_finishes_in_farm_view` should then both fail on their "counted no turn" checks.
+
+**Next:** Rex should run `mutate.py` on the T15.1 entry. The game code and the spec are fine.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS

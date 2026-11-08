@@ -753,5 +753,27 @@
    "t_lid_closes_clear_of_walls"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T15.1 the crank keeps counting turns after Back (Back leaves crank_enabled on)",
+  "file": "scripts/main.gd",
+  "find": "\t\t_crank_paused = true   # 0.1.4 item 15: no turn counts off the second stop; progress is kept\n\t\t_centrifuge.crank_enabled = false",
+  "replace": "\t\t_crank_paused = true   # 0.1.4 item 15: no turn counts off the second stop; progress is kept\n\t\t_centrifuge.crank_enabled = true",
+  "expect": [
+   "t_crank_pauses_on_back_and_resumes_on_spin",
+   "t_paused_crank_never_finishes_in_farm_view"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T15.2 Spin is hidden in the farm view while a crank is paused",
+  "file": "scripts/main.gd",
+  "find": "(_crank_paused and _centrifuge.state == Centrifuge.State.CRANKING)",
+  "replace": "false",
+  "expect": [
+   "t_crank_pauses_on_back_and_resumes_on_spin",
+   "t_paused_crank_never_finishes_in_farm_view"
+  ],
+  "suite": "unit"
  }
 ]

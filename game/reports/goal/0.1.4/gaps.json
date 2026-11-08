@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T02:53:12-05:00",
- "unit_log": "game/reports/_runs/20261108-022320/unit.log",
+ "at": "2026-11-08T03:33:48-05:00",
+ "unit_log": "game/reports/_runs/20261108-032914/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -613,8 +613,26 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "40128c7",
@@ -622,7 +640,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -1360,9 +1378,33 @@
    "depends": [
     "C14"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "720d42d",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1379,9 +1421,33 @@
    "depends": [
     "C14"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "720d42d",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1398,9 +1464,33 @@
    "depends": [
     "C14"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "720d42d",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1634,6 +1724,24 @@
      "name": "t_centrifuge_label_on_centrifuge",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1643,39 +1751,6 @@
   }
  },
  "order": [
-  {
-   "id": "T14.1",
-   "score": 5.54,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T14.2",
-   "score": 5.54,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T14.3",
-   "score": 5.54,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T15.1",
    "score": 5.54,
