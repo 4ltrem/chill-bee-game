@@ -133,7 +133,7 @@ class Loop(unittest.TestCase):
         self.saved = {k: getattr(ga, k) for k in ("ROOT", "run_agent", "run_cmd", "budget_ok", "log_usage")}
         ga.ROOT = self.tmp
         self.calls, self.cmds, self.check_codes, self.budget, self.idle = [], [], [], (True, "allow"), False
-        self.turn_caps = []
+        self.turn_caps, self.logs, self.code_idle = [], [], False
         ga.run_agent = self.fake_agent
         ga.run_cmd = self.fake_cmd
         ga.budget_ok = lambda agent: self.budget
@@ -159,8 +159,14 @@ class Loop(unittest.TestCase):
             if cmd[1:3] == ["rev-parse", "--short"]:
                 return 0, "abc1234\n"
             if cmd[1] in ("status", "diff"):                               # each agent call changes the tree, unless idle
+                if self.code_idle and "game/tests" not in cmd:             # only tests change, never scripts or scenes
+                    return 0, ""
                 return 0, "" if self.idle else f" M game/scripts/x.gd {len(self.calls)}\n"
             return 0, ""
+        if any("godot_run.py" in c for c in cmd) and self.logs:             # each test run writes a newer unit log
+            d = self.tmp / "game" / "reports" / "_runs" / f"2100{len(self.cmds):06d}"
+            d.mkdir(parents=True)
+            (d / "unit.log").write_text(self.logs.pop(0), encoding="utf-8")
         return (self.check_codes.pop(0) if self.check_codes else 0), "FAIL  t_x  broken"
 
     def run_main(self, *args):
@@ -250,6 +256,52 @@ class Loop(unittest.TestCase):
         self.assertIn("result: waiting-designer", board)
         self.assertIn("briefs/C3-fix2-patricia.md", board)                  # fix briefs go by reference too
         self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
+
+    def fail_first_fixture(self):
+        """T3.1 becomes a play-test bug line, C3 and the handoff are built, Quinn's test is marked `# goal T3.1`."""
+        game = self.tmp / "game"
+        (game / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        spec = game / "specs" / "9.9-fixture.md"
+        spec.write_text(spec.read_text(encoding="utf-8").replace(
+            "item 3: the frames scale", "item 3 (shown failing on the current build): the frames scale"), encoding="utf-8")
+        (game / "reports" / "goal").mkdir(parents=True, exist_ok=True)
+        (game / "reports" / "goal" / "ledger.json").write_text(json.dumps(
+            {"9.9-fixture.md": {"H": {"run": "t"}, "C3": {"run": "t"}}}), encoding="utf-8")
+        (game / "tests" / "test_frames.gd").write_text("# goal T3.1\nfunc t_frames_scale() -> void:\n\tpass\n",
+                                                       encoding="utf-8")
+
+    def test_a_bug_test_that_passes_first_goes_back_to_quinn_alone(self):
+        self.fail_first_fixture()
+        self.check_codes = [0, 0, 0, 0, 1, 0, 0, 0]                         # round 0 green, 1 red, 2 green
+        self.logs = ["PASS  t_frames_scale  (3 checks, 5 ms)\n",
+                     "FAIL  t_frames_scale  frames 1.0, expected 2.0  (5 ms)\n",
+                     "PASS  t_frames_scale  (3 checks, 5 ms)\n"]
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        self.assertIn("Check `fail-first`: FAIL (T3.1 not shown failing)", board)
+        fix1 = [a for a, p in self.calls if "fix round 1" in p]
+        self.assertEqual(fix1, [ga.QA])                                     # nothing to fix until the bug shows
+        self.assertIn("does not reproduce it", next(p for a, p in self.calls if "fix round 1" in p))
+        self.assertIn("Check `fail-first`: PASS (T3.1 shown failing)", board)
+        self.assertEqual(sorted(a for a, p in self.calls if "fix round 2" in p), [ga.BUILDER, ga.PROGRAMMER])
+        self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
+
+    def test_a_script_stop_is_not_the_bug_showing(self):
+        self.fail_first_fixture()
+        self.logs = ["FAIL  t_frames_scale  test stopped before its final line (script error)  (5 ms)\n"]
+        self.check_codes = [0, 1]
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        self.assertIn("Check `fail-first`: FAIL", board)
+
+    def test_a_bug_fixed_with_only_test_changes_is_held(self):
+        self.fail_first_fixture()
+        self.code_idle = True                                               # T14.3: the lid test, no lid change
+        self.check_codes = [0, 1, 0, 0, 0]
+        self.logs = ["FAIL  t_frames_scale  frames 1.0, expected 2.0  (5 ms)\n", "PASS  t_frames_scale  (5 ms)\n"]
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        self.assertIn("only tests changed", board)
+        self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
+        ledger = json.loads((self.tmp / "game" / "reports" / "goal" / "ledger.json").read_text(encoding="utf-8"))
+        self.assertIn("held", ledger["9.9-fixture.md"]["T3.1"])
 
     def test_green_with_no_change_is_held_not_committed(self):
         (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")

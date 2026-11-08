@@ -75,6 +75,12 @@ VALUE = {"playtest": 3, "feature": 2, "housekeeping": 1}
 COST_UNIT = 10.0
 MAX_FIX_ROUNDS = 2
 FIX_MAX_TURNS = 15   # approved 2026-11-08: Patricia's T14 fix 1 ran 36 turns, 777k tokens, 25 min
+# a Quinn line saying its test is "shown failing on the current build" reports a bug the designer saw: its tests must
+# fail before any fix counts, and only a script or scene change can fix it (0.1.4 T14.3: the lid test passed on a
+# clipping lid, and the step was committed green with no lid change; approved 2026-11-08, A and B)
+FAIL_FIRST = re.compile(r"shown failing", re.I)
+CODE_PATHS = ["game/scripts", "game/scenes", "game/materials"]
+LOCK = "_meta/usage/goal-run.lock"   # exists while a build run is live; guard_shell reads it (rule C)
 REMOVED = re.compile(r"\b(removed?|retired?|goes away|deleted?)\b", re.I)   # a node in such a sentence must be absent
 AMBIGUOUS = re.compile(r"\bTBD\b|\bto be decided\b|\bopen question", re.I)
 ENV = {"CB_TIME_SCALE": "6", "CB_SKIP_X1": "1"}   # routine runs: x6, the real-time tests are the designer's (D102)
@@ -632,7 +638,12 @@ def briefs(spec, goal, batch, run, branch):
             f"`# {label} (written from game/specs/{spec['file']} before the code)` (the goal agent finds them by it). "
             f"Add a mutation per new test to `tests/mutations.json`. Run only your tests: "
             f"`CB_ONLY=<names> CB_TIME_SCALE=6 python -I _tools/godot_run.py unit`. A failing test is a finding: report "
-            f"it, never bend the test to the code.\n\nContract lines:\n{lines}\n\nSpec text:\n{spec_slice(spec, goal)}\n"
+            f"it, never bend the test to the code. On the line just above each new test function, write "
+            f"`# goal <ID>` with the contract line's ID below (the goal agent maps tests to lines by it)."
+            + (" A line saying \"shown failing on the current build\" is a bug the designer saw in play: its test "
+               "must fail on this build, on the check that shows the bug (a script error does not count); if it "
+               "passes, it does not reproduce the bug." if any(FAIL_FIRST.search(b["text"]) for b in batch) else "")
+            + f"\n\nContract lines:\n{lines}\n\nSpec text:\n{spec_slice(spec, goal)}\n"
             f"{hand_ref}") + tail
         return out
     for owner in goal["owners"]:
@@ -712,9 +723,30 @@ def git(*args):
 BUILD_PATHS = ["game/scripts", "game/scenes", "game/materials", "game/tests", "game/specs"]
 
 
-def tree_state():
+def tree_state(paths=None):
     """The build folders' uncommitted state; the same before and after a step means the agents changed nothing."""
-    return git("status", "--porcelain", "--", *BUILD_PATHS)[1] + git("diff", "HEAD", "--", *BUILD_PATHS)[1]
+    paths = paths or BUILD_PATHS
+    return git("status", "--porcelain", "--", *paths)[1] + git("diff", "HEAD", "--", *paths)[1]
+
+
+def marked_tests(goal_id):
+    """Test functions Quinn marked `# goal <id>` on the line above, in game/tests/*.gd."""
+    out = []
+    for f in sorted((ROOT / "game" / "tests").glob("*.gd")):
+        out += re.findall(rf"^\s*#\s*goal\s+{re.escape(goal_id)}\b.*\n\s*func\s+(t_\w+)",
+                          f.read_text(encoding="utf-8", errors="replace"), re.M)
+    return out
+
+
+def red_tests():
+    """{test: True} for each test the newest unit log shows failing on a real check, not only a script stop."""
+    log, out = newest_unit_log(ROOT / "game"), {}
+    for line in (log.read_text(encoding="utf-8", errors="replace").splitlines() if log else []):
+        m = re.match(r"^FAIL\s+(t_\w+)\s+(.*?)(?:\s+\(\d+ ms\))?$", line)
+        if m:
+            reasons = [r.strip() for r in m.group(2).split(" | ")]
+            out[m.group(1)] = any(r and not r.startswith("test stopped before its final line") for r in reasons)
+    return out
 
 
 def text_hash(goal):
@@ -785,10 +817,13 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         return "dry-run"
     say(board, f"\n### Step: {ids} ({now()})\n\n")
     keep_briefs(folder, board, plan, goal["id"])
-    before = tree_state()
+    before, code_before = tree_state(), tree_state(CODE_PATHS)
+    needs_red = [b["id"] for b in batch if b["kind"] == "test" and FAIL_FIRST.search(b["text"])]
+    seen_red = set()
     if not call_agents(plan, board, usage, run, ids):
         return "paused"
-    for rnd in range(MAX_FIX_ROUNDS + 1):
+    rounds = MAX_FIX_ROUNDS + (1 if needs_red else 0)   # one round may go to Quinn alone, to reproduce the bug
+    for rnd in range(rounds + 1):
         failed = []
         for label, cmd, env in cmds:
             code, out = run_cmd([c.replace("{round}", str(rnd)) for c in cmd], env=env)
@@ -799,7 +834,24 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                 say(board, "\n```\n" + text + "\n```\n")
                 if label in ("contract", "tests"):
                     break
-        if not any(l in ("contract", "tests") for l, _ in failed):
+        if needs_red and not any(l == "contract" for l, _ in failed):   # the tests ran: who has shown the bug
+            red = red_tests()
+            seen_red |= {gid for gid in needs_red if any(red.get(t) for t in marked_tests(gid))}
+            missing = [gid for gid in needs_red if gid not in seen_red]
+            if missing:
+                rows = []
+                for gid in missing:
+                    names = marked_tests(gid)
+                    rows.append(f"- {gid}: " + (f"its tests ({', '.join(f'`{t}`' for t in names)}) did not fail on a "
+                                                f"real check" if names else f"no test is marked `# goal {gid}`")
+                                + (" on the current build" if rnd == 0 else "") + ", but the designer sees this bug "
+                                "in play, so the test does not reproduce it. Rewrite it to fail on the check that "
+                                "shows the bug; change no file outside tests/.")
+                failed.append(("fail-first", "\n".join(rows)))
+                say(board, f"- Check `fail-first`: FAIL ({', '.join(missing)} not shown failing)\n")
+            else:
+                say(board, f"- Check `fail-first`: PASS ({', '.join(needs_red)} shown failing)\n")
+        if not any(l in ("contract", "tests", "fail-first") for l, _ in failed):
             for live, pick in goal.get("picks", []):   # look before done: the live prop beside the designer's pick
                 rows = match_pick(spec, goal, live, pick, folder, rnd, board, usage, run, ids)
                 if rows is None:
@@ -808,8 +860,8 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                     failed.append(("pick match", rows))
         if not failed:
             break
-        if rnd == MAX_FIX_ROUNDS:
-            g.waiting(board, f"{MAX_FIX_ROUNDS} fix rounds failed on {ids}: " + ", ".join(f"`{l}`" for l, _ in failed)
+        if rnd == rounds:
+            g.waiting(board, f"{rounds} fix rounds failed on {ids}: " + ", ".join(f"`{l}`" for l, _ in failed)
                       + " still fail (output above). The designer decides: change the spec or the test, or fix it "
                       f"by hand and record it with `goal_agent.py {spec['file']} --accept {goal['id']} --note "
                       f"\"<the change>\"`. Then rerun the same command to go on.")
@@ -827,6 +879,14 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                     f"Their replies on the board (step {ids}, {now()}) say why; answer by editing the spec item.")
         hold(spec, goal, run, folder.parent / "ledger.json", question)
         say(board, f"- **Held:** no file changed in {', '.join(BUILD_PATHS)}; not committed. {question}\n")
+        return "held"
+    if needs_red and tree_state(CODE_PATHS) == code_before:   # B: a bug is fixed only by a script or scene change
+        question = (f"{', '.join(needs_red)} report a bug the designer saw, but only tests changed: no file in "
+                    f"{', '.join(CODE_PATHS)} moved, so the bug is not fixed. Check the test against the game, "
+                    f"then answer by editing the spec item, or `--accept` with a note if it really was fixed earlier.")
+        for b in batch:
+            hold(spec, b, run, folder.parent / "ledger.json", question)
+        say(board, f"- **Held:** {question}\n")
         return "held"
     msg = checkpoint(spec, batch, run, folder, folder.parent / "ledger.json")
     say(board, f"- Green: {msg}\n")
@@ -893,6 +953,8 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
         owners.append(BUILDER)
     if [l for l, _ in failed] == ["mutations"]:   # a missed mutation means a test proves too little: Quinn's folder
         owners = [QA]
+    if any(l == "fail-first" for l, _ in failed):   # nothing to fix until a test shows the bug: Quinn alone this round
+        owners = [QA]
     if failed and all(l in LOOKS for l, _ in failed):   # how the scene looks: Bob's folder
         owners = [BUILDER]
     head = (f"Goal agent run `{run}`, fix round {rnd} for goal {', '.join(b['id'] for b in batch)} of "
@@ -903,7 +965,10 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
     looks = ("A `pick match` row means the live prop must match the designer's picked variant: open both shots and "
              "the variant's .tscn, and rebuild what differs. A style row whose Fix ends `(designer)` is not yours: "
              "leave it and list it in your reply.\n\n") if any(l in LOOKS for l, _ in failed) else ""
-    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{looks if a == BUILDER else ''}{report}\n\nSpec text:\n"
+    first = ("A `fail-first` row: rewrite only that line's test, keep its `# goal <ID>` mark, and change no script or "
+             "scene; any other failing test is a finding for the code owners in the next round, so leave it.\n\n"
+             ) if any(l == "fail-first" for l, _ in failed) else ""
+    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{looks if a == BUILDER else ''}{first if a == QA else ''}{report}\n\nSpec text:\n"
                      f"{spec_slice(spec, goal)}\n\nReply in at most 150 words." for a in owners}
     if goal["kind"] == "change" and any(l == "tests" for l, _ in failed):
         # an older test may pin what this change was asked to change (e.g. the removed Hive bar): Quinn's folder
@@ -1022,6 +1087,11 @@ def main(argv=None):
     if not (a.plan or a.dry_run):
         branch, note = ensure_branch(spec["version"])
         say(board, f"Branch `{branch}`: {note}.\n")
+    lock = ROOT / LOCK if not (a.plan or a.dry_run) else None
+    if lock:   # guard_shell refuses the main session's edits in the build folders while this exists (rule C)
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.write_text(json.dumps({"spec": spec["file"], "run": run, "pid": os.getpid(), "start": now()}),
+                        encoding="utf-8")
     try:
         while True:
             report, ranked, ambiguous = plan_pass(spec, ROOT / "game", folder, board, costs, n)
@@ -1074,6 +1144,8 @@ def main(argv=None):
         say(board, f"\n**Stop:** the run crashed: {result}. A rerun re-scans and continues from the ledger.\n")
         raise
     finally:
+        if lock:
+            lock.unlink(missing_ok=True)
         if board is not None:   # one Result, rewritten in place, with every call of the run so far
             word = result.split(" ")[0] if not result.startswith("stopped after") else "stopped"
             g.finish_board(board, [(f"{g.NAMES[agent]}, {label}", u) for agent, label, u in usage], word,

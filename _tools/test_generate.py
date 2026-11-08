@@ -657,6 +657,21 @@ class BuildToolsTest(unittest.TestCase):
             self.assertIsNone(art(file_path="game/reports/ui-compare/design-votes.html", url=gs.DESIGN_VOTES))
             self.assertIsNotNone(art(action="open", url=gs.DESIGN_VOTES))
             self.assertIsNone(art(file_path="report.html"))
+            self.assertIsNone(wr("game/tests/t.gd", "Edit"))                     # no goal run: the main session may edit
+            lock = Path(repo) / gs.LOCK
+            lock.parent.mkdir(parents=True)
+            lock.write_text("{}", encoding="utf-8")
+            self.assertIn("goal-run-owns-game", wr("game/tests/t.gd", "Edit"))  # a live run owns the build folders
+            self.assertIn("goal-run-owns-game", wr("game/scripts/new.gd"))
+            self.assertIsNone(wr("game/reports/goal/notes.md", "Edit"))         # its reports stay open
+            self.assertIsNone(wr(".claude/worktrees/fix/game/tests/t.gd", "Edit"))   # the main session's way: a worktree
+            import os, time
+            from unittest import mock
+            with mock.patch.dict(os.environ, {"CHILLBEE_HEADLESS": "1"}):
+                self.assertIsNone(wr("game/tests/t.gd", "Edit"))                 # the run's own agents
+            old = time.time() - gs.STALE - 60
+            os.utime(lock, (old, old))
+            self.assertIsNone(wr("game/tests/t.gd", "Edit"))                     # a stale lock is ignored
 
     def test_spec_lint_catches_the_item_13_contradiction_and_multi_item_lines(self):
         import spec_lint as sl

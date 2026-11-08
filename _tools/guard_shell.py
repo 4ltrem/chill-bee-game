@@ -15,15 +15,25 @@ Each refusal names the rule and the right way to do it, so the caller rewrites t
      Work a later session needs goes in `_meta/drafts/<version>/`; throwaway output in `game/reports/_runs/`.
   5. one Design Votes page: a `game/reports/ui-compare/` page is published only to the Design Votes
      artifact, and that artifact is never opened in the browser (give the link instead).
+  6. goal-run-owns-game: while `_meta/usage/goal-run.lock` exists (goal_agent writes it for a build run and
+     removes it at the end), the main session may not Write or Edit in game/scripts, scenes, materials, tests or
+     specs: every change goes through the run and its record (2026-11-08, approved C; the main session fixed a
+     line of Quinn's test mid-run and the commit credited the goal agent). Such an edit goes in a worktree
+     (`.claude/worktrees/`, whose paths are not under game/), merged after the run. The run's own headless agents
+     (CHILLBEE_HEADLESS=1) are not bound. A lock older than 12 hours is stale and ignored.
 Fails open: a hook input it can't read allows the call. Standard library only.
 """
 import json
 import os
 import re
 import sys
+import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DESIGN_VOTES = "https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa"
+LOCK = "_meta/usage/goal-run.lock"
+RUN_OWNS = ("game/scripts/", "game/scenes/", "game/materials/", "game/tests/", "game/specs/")
+STALE = 12 * 3600
 INTERP = r"(?:python3?|py|node|ruby|perl|bash|sh)(?:\.exe)?"
 FLAGS = r"(?:\s+-[A-Za-z]+)*"
 
@@ -87,6 +97,12 @@ def write(tool, path, repo):
                 "_meta/drafts/<version>/ (linked from the handoff); throwaway output in game/reports/_runs/.")
     if tool == "Write" and rel and os.path.isfile(os.path.join(repo, rel)) and not rel.startswith("_meta/memory/"):
         return f"edit-lines-only: {rel} exists. Change it with Edit on the needed lines; Write is for new files."
+    lock = os.path.join(repo, LOCK)
+    if rel.startswith(RUN_OWNS) and os.environ.get("CHILLBEE_HEADLESS") != "1" and os.path.isfile(lock) \
+            and time.time() - os.path.getmtime(lock) < STALE:
+        return (f"goal-run-owns-game: a goal run is live ({LOCK}), so the main folder's {rel} changes only through "
+                "it. Make this edit in a worktree (EnterWorktree, under .claude/worktrees/), commit it there, and "
+                "merge it after the run; remove the worktree once merged.")
     return None
 
 
