@@ -2461,9 +2461,18 @@ mutate 2/2: 0.1.4 T.2 Back sits at the left edge, not top-right ... MISSED in 12
 
 2 fix rounds failed on T.1, T.2, T8.1, T.3: `mutations` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.1.4-ui-placement.md --accept T.1 --note "<the change>"`. Then rerun the same command to go on.
 
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md --accept T.1 --note Mutation check was a goal_agent bug: mutate.py --since <step base> skipped T.1/T.2/T8.1's mutations, committed in an earlier step (1ee096d), and exited 1 on 'no mutations to run'. Orchestrator ran them by name: 3 of 3 caught (Back top-left, instruction text touching Back, speed tag over money). Removed Quinn's round-2 'Back sits at the left edge' mutation (only moved the left offset, so Back stayed top-right; MISSED by design); kept his caught HintLabel one.` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T.1 (2026-11-08T01:32:02-05:00)
+
+- Change (orchestrator, Process 9): Mutation check was a goal_agent bug: mutate.py --since <step base> skipped T.1/T.2/T8.1's mutations, committed in an earlier step (1ee096d), and exited 1 on 'no mutations to run'. Orchestrator ran them by name: 3 of 3 caught (Back top-left, instruction text touching Back, speed tag over money). Removed Quinn's round-2 'Back sits at the left edge' mutation (only moved the left offset, so Back stayed top-right; MISSED by design); kept his caught HintLabel one.
+- Accepted: checkpoint `928b711` on `milestone/0.1.4`
+
 ## Result
 
-Last invocation (2026-11-08T01:30:30-05:00): waiting-designer.
+T.1 accepted with a manual fix (checkpoint `928b711` on `milestone/0.1.4`). Rerun `goal_agent.py 0.1.4-ui-placement.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/2026-11-08-goal-0.1.4/`
 
@@ -2539,8 +2548,78 @@ Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/
 
 ## Resumed 2026-11-08
 
-Command: `goal_agent.py 0.1.4-ui-placement.md --accept T.1 --note Mutation check was a goal_agent bug: mutate.py --since <step base> skipped T.1/T.2/T8.1's mutations, committed in an earlier step (1ee096d), and exited 1 on 'no mutations to run'. Orchestrator ran them by name: 3 of 3 caught (Back top-left, instruction text touching Back, speed tag over money). Removed Quinn's round-2 'Back sits at the left edge' mutation (only moved the left offset, so Back stayed top-right; MISSED by design); kept his caught HintLabel one.` (the run had stopped: `waiting-designer`).
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `stopped`).
+Branch `milestone/0.1.4`: already on it.
 
-### Manual fix: T.1 (2026-11-08T01:32:02-05:00)
+## Pass 30: scan (2026-11-08T01:38:53-05:00)
 
-- Change (orchestrator, Process 9): Mutation check was a goal_agent bug: mutate.py --since <step base> skipped T.1/T.2/T8.1's mutations, committed in an earlier step (1ee096d), and exited 1 on 'no mutations to run'. Orchestrator ran them by name: 3 of 3 caught (Back top-left, instruction text touching Back, speed tag over money). Removed Quinn's round-2 'Back sits at the left edge' mutation (only moved the left offset, so Back stayed top-right; MISSED by design); kept his caught HintLabel one.
+Unit results from `game/reports/_runs/20261108-012640/unit.log`. 32 of 36 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (35 of 36)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Harvest button is the honey meter | change | Patricia, Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger a32b0be |
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | done | 13/13 present: ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ node CentrifugeLabel, ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clam ... |
+| C3 Back in one fixed place | change | Patricia, Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 747a5a1 |
+| C4 Speed tag clear of the top info | change | Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger fb94e04 |
+| C5 Bigger hive frames and combs | change | Patricia, Bob | done | ✓ config frame_scale, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 6a76e7d |
+| C6 Housekeeping from 0.1.3: | change | Patricia | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 287bdd0 |
+| C7 The pile loads on its own at the second stop | change | Patricia | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger f6f153a |
+| C8 Instruction text below Back | change | Bob | done | ✓ node HintLabel, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 485190a |
+| C9 "Production paused" above the upgrades | change | Bob | done | ✓ node PausedLabel, ✓ node TopInfo, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 1169483 |
+| C10 Combs shown in the hive | change | Patricia, Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_combs_visible_in_hive, ✓ test t_combs_fill_frame_and_hive_whole, ✓ ledger 2d2ffb4 |
+| C11 Spin goes to the second stop | change | Patricia | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_spin_from_farm_goes_to_second_stop, ✓ test t_spin_from_first_zoom_goes_to_second_stop, ✓ ledger 33db081 |
+| C12 No spinning in the farm view without the motor | change | Patricia | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_no_motor_in_phase_1, ✓ test t_no_spin_farm_view_without_motor, ✓ test t_no_spin_after_pour_farm_view, ✓ test t_spin_after_pour_farm_view_with_motor, ✓ test t_no_spin_first_zoom_without_motor, ✓ ledger dbbca01 |
+| C14 The hive is the round 9 pick | change | Patricia, Bob | missing | none found |
+| C15 Leaving the centrifuge stops the crank | change | Patricia | missing | none found |
+| C13 Centrifuge text sits on the centrifuge | change | Patricia | done | ✓ node CentrifugeLabel, ✓ node FarmUI, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_centrifuge_label_on_centrifuge, ✓ ledger b99657c |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger b65f5e1 |
+| T.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 928b711 |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 2c464bc |
+| T.2 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 1ee096d |
+| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T8.1 item 8: the instruction text's rect lies wholly below Back's | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 1ee096d |
+| T1.2 item 1 fix: at about half fill, no fill pixel lies outside t | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T10.1 item 10: with the hive partly full and no frame raised, the  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_combs_visible_in_hive, ✓ test t_combs_fill_frame_and_hive_whole, ✓ ledger 0d5606c |
+| T9.1 item 9: `PausedLabel` is one line (its height is one line's  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T7.2 item 7 (2026-11-07): after a pour with a pile waiting, spin  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T5.2 item 5 fix: each frame's comb cells cover at least 90% of th | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T11.1 item 11: pressing Spin from the farm view or the first zoom  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_spin_from_farm_goes_to_second_stop, ✓ test t_spin_from_first_zoom_goes_to_second_stop, ✓ ledger c5e6593 |
+| T13.1 item 13: while cranking, `CentrifugeLabel`'s rect stays with | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_centrifuge_label_on_centrifuge, ✓ ledger f0768c4 |
+| T14.1 item 14: the hive has five frames, each standing upright (it | test | Quinn | missing | none found |
+| T15.1 item 15: after Back from a crank at the second stop, taps in | test | Quinn | missing | none found |
+| T12.1 item 12: with no motor owned, the centrifuge never spins whi | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_no_motor_in_phase_1, ✓ test t_no_spin_farm_view_without_motor, ✓ test t_no_spin_after_pour_farm_view, ✓ test t_spin_after_pour_farm_view_with_motor, ✓ test t_no_spin_first_zoom_without_motor, ✓ ledger d9533a5 |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 17/17 present: ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_ ... |
+
+### Order: new or rescored (4 of 4)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C15 Leaving the centrifuge stops the crank | 8.4 | 1 | 3 | 0.6 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.6 (Patricia) |
+| 2 | C14 The hive is the round 9 pick | 8.01 | 1 | 3 | 0.99 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.99 (Patricia, Bob) |
+| 3 | T14.1 item 14: the hive has five frames, each standing u | 0.0 | 0 | 3 | 0.46 | 0 | waits on C14 |
+| 4 | T15.1 item 15: after Back from a crank at the second sto | 0.0 | 0 | 3 | 0.46 | 0 | waits on C15 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C15** (score 8.4: 1 goal(s) wait on it; play-test fix; cost 0.6 (Patricia)).
+
+### Step: C15 (2026-11-08T01:38:53-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C15-patricia.md` (1257 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (58,254 tokens, 2 turns, 4 s):
+
+The `unit start` run finished and passed (exit 0), so no Godot process is left running from it. The only output was focus warnings and some `MEASURE` lines.
+
+That run doesn't cover item 15. Nothing exercises the new crank pause and resume path, so Quinn still needs to add a test for it.
+
+My earlier summary stands. I changed only `game/scripts/main.gd` and used no new nodes. The contract check passed.
+
+- Check `contract`: PASS
+- Check `tests`: PASS

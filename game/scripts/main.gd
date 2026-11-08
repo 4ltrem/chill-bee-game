@@ -43,7 +43,8 @@ var motor_owned: bool = false         # 0.1.4 item 12: the electric centrifuge (
 var _spin_mode: bool = false         # 0.1.4 item 7: the crank was started and the pile has not run out
 var _auto_spin: bool = false          # the pile is reloading after a pour in spin mode: crank again when the bucket is full
 var _spin_pending: bool = false       # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
-var _spin_pan_timer: float = 0.0     # 0.1.4 item 11: Spin tapped on the farm view: seconds left of the pan to the second stop
+var _crank_paused: bool = false      # 0.1.4 item 15: Back at the second stop while cranking; Spin on the farm resumes
+var _spin_pan_timer: float = 0.0    # 0.1.4 item 11: Spin tapped on the farm view: seconds left of the pan to the second stop
 var _filled_in_zoom: bool = false    # the bucket became full while this zoom was open: the zoom ends after its frame and pans to the second stop
 
 
@@ -142,7 +143,8 @@ func _refresh_icons() -> void:
 		_fork_icon.disabled = not fork_available()
 	if _centrifuge_icon != null:
 		# 0.1.3 play-test (c): also shown during the first zoom (not while it closes: the second stop shows it itself)
-		_centrifuge_icon.set_wanted((on_farm or zoom != Zoom.CLOSING) and _centrifuge.state == Centrifuge.State.FULL)
+		var spin_ok: bool = _centrifuge.state == Centrifuge.State.FULL or (_crank_paused and _centrifuge.state == Centrifuge.State.CRANKING)
+		_centrifuge_icon.set_wanted((on_farm or zoom != Zoom.CLOSING) and spin_ok and not (_crank_paused and _at_second_stop))
 	if _sell_icon != null:
 		var can_sell: bool = on_farm and _truck.can_sell()
 		_sell_icon.set_wanted(can_sell)
@@ -276,7 +278,17 @@ func open_zoom() -> bool:
 ## uncapped stay), pans to the second stop and starts the crank there (_finish_zoom).
 func spin_tapped() -> void:
 	if zoom == Zoom.NONE:
-		if _spin_pan_timer > 0.0 or _centrifuge.state != Centrifuge.State.FULL:
+		if _spin_pan_timer > 0.0:
+			return
+		if _crank_paused:
+			if _farm_camera == null or not is_inside_tree():
+				_resume_crank()
+				return
+			_spin_pan_timer = Economy.config.camera_pan_seconds   # pan back, then the crank resumes (advance)
+			_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)
+			_enter_second_stop_hud()
+			return
+		if _centrifuge.state != Centrifuge.State.FULL:
 			return
 		if _at_second_stop or _farm_camera == null or not is_inside_tree():
 			_spin_mode = true
@@ -316,8 +328,11 @@ func advance(delta: float) -> void:
 		_spin_pan_timer -= delta
 		if _spin_pan_timer <= 0.0:
 			_spin_pan_timer = 0.0
-			_spin_mode = true
-			_centrifuge.begin_crank()
+			if _crank_paused:
+				_resume_crank()
+			else:
+				_spin_mode = true
+				_centrifuge.begin_crank()
 	if zoom == Zoom.NONE or zoom == Zoom.WORKING:
 		return
 	_timer -= delta
@@ -411,10 +426,11 @@ func _finish_zoom() -> void:
 	_farm_ui.visible = true
 	if _bees != null:
 		_bees.clear_avoid()
-	_centrifuge.crank_enabled = true
+	_centrifuge.crank_enabled = not _crank_paused
 	if _closing_to_second:
 		_closing_to_second = false
 		_enter_second_stop_hud()
+		_resume_crank()
 	elif _harvest_ui != null:
 		_harvest_ui.hide_zoom()
 	_refresh_icons()
@@ -498,10 +514,23 @@ func leave_second_stop() -> void:
 	if not _at_second_stop or zoom != Zoom.NONE:
 		return
 	_spin_pan_timer = 0.0
+	if _centrifuge != null and _centrifuge.state == Centrifuge.State.CRANKING:
+		_crank_paused = true   # 0.1.4 item 15: no turn counts off the second stop; progress is kept
+		_centrifuge.crank_enabled = false
 	_leave_second_stop_hud()
 	if _harvest_ui != null:
 		_harvest_ui.hide_zoom()
 	_move_camera(false)
+	_refresh_icons()
+
+
+## 0.1.4 item 15: the camera is at the second stop again: a paused crank resumes where it stopped.
+func _resume_crank() -> void:
+	if not _crank_paused:
+		return
+	_crank_paused = false
+	_centrifuge.crank_enabled = true
+	_refresh_icons()
 
 
 func _view_px() -> Vector2:
