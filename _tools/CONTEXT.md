@@ -21,10 +21,11 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | Votes | `ui_shots.py` | shoots the same UI moments (`game/tests/ui_compare_shots.gd`) in several worktrees for a versions vote |
 | Godot | `godot_run.py` | runs the Godot test suites and prints a short summary |
 | Godot | `build.py` | exports and zips a version |
-| Godot | `mutate.py` | proves tests catch named mutations |
+| Godot | `mutate.py` | proves tests catch named mutations; a catch by a test already red unmutated (one baseline run) or by a script error is BROKEN |
+| Godot | `checkpoint.py` | commits work in progress on the milestone branch with the last unit run's counts in the message; refused off `milestone/*` or during a goal run |
 | Godot | `contract_check.py` | checks that every node a script looks up exists in the scenes (pre-commit gate) |
 | Godot | `contact_sheet.py` | tiles a shot set into one image |
-| Goal agent | `goal_agent.py` | M3: finds a spec's missing goals, scores and orders them (`priority_score()`), and builds them with Patricia, Bob and Quinn (`--plan`, `--dry-run`); blackboard in `game/reports/goal/` |
+| Goal agent | `goal_agent.py` | M3: finds a spec's missing goals, scores and orders them (`priority_score()`), and builds them with Patricia, Bob and Quinn (`--plan`, `--dry-run`); fix rounds go to one code owner each and a `scope` check lists files changed outside that owner's folder; blackboard in `game/reports/goal/` |
 | Goal agent | `spec_lint.py` | lints a spec: FAIL on a Quinn line naming several items, WARN on keyword ties, REVIEW pairs where one item restricts a view another asserts (`--item N` after a play-test edit; `--staged` in the pre-commit gate; goal_agent refuses a build on FAIL) |
 | Goal agent | `test_goal_agent.py` | tests the reasoning layer on `fixtures/goal/` and the loop with fake agents |
 | Usage | `runlog.py` | keeps the run log (`_meta/agent-runs.csv`) and calibrates usage |

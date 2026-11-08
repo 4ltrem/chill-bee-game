@@ -649,7 +649,10 @@ def briefs(spec, goal, batch, run, branch):
             f"`# goal <ID>` with the contract line's ID below (the goal agent maps tests to lines by it)."
             + (" A line saying \"shown failing on the current build\" is a bug the designer saw in play: its test "
                "must fail on this build, on the check that shows the bug (a script error does not count); if it "
-               "passes, it does not reproduce the bug." if any(FAIL_FIRST.search(b["text"]) for b in batch) else "")
+               "passes, it does not reproduce the bug. Where the line or spec text says what stays (keep, only, "
+               "not, as before), also write a keep test that pins each named thing at its current value, so a fix "
+               "that moves it fails (0.1.4: a lid fix asked to change the end also moved the open pose)."
+               if any(FAIL_FIRST.search(b["text"]) for b in batch) else "")
             + f"\n\nContract lines:\n{lines}\n\nSpec text:\n{spec_slice(spec, goal)}\n"
             f"{hand_ref}") + tail
         return out
@@ -835,8 +838,9 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     elif not call_agents(plan, board, usage, run, ids):
         return "paused"
     rounds = MAX_FIX_ROUNDS + (1 if needs_red else 0)   # one round may go to Quinn alone, to reproduce the bug
+    scope_rows = []   # files the last fix round changed outside its owners' folders
     for rnd in range(rounds + 1):
-        failed = []
+        failed = [("scope", scope_rows.pop())] if scope_rows else []
         for label, cmd, env in cmds:
             code, out = run_cmd([c.replace("{round}", str(rnd)) for c in cmd], env=env)
             say(board, f"- Check `{label}`: {'PASS' if code == 0 else f'FAIL (exit {code})'}\n")
@@ -887,13 +891,22 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
             g.waiting(board, f"{rounds} fix rounds failed on {ids}: " + ", ".join(f"`{l}`" for l, _ in failed)
                       + " still fail (output above). The designer decides: change the spec or the test, or fix it "
                       f"by hand and record it with `goal_agent.py {spec['file']} --accept {goal['id']} --note "
-                      f"\"<the change>\"`. Then rerun the same command to go on.")
+                      f"\"<the change>\"`. Then rerun the same command to go on. The fix rounds' edits are not "
+                      f"committed: keep them with `python -I _tools/checkpoint.py \"{ids} fix-round edits\"`.")
             return "waiting-designer"
         fix = fix_briefs(spec, goal, batch, failed, run, branch, rnd + 1)
         say(board, f"\n#### Fix round {rnd + 1}: to {', '.join(g.NAMES[a] for a in fix)}\n\n")
         keep_briefs(folder, board, fix, f"{goal['id']}-fix{rnd + 1}")
+        states = file_states()
         if not call_agents(fix, board, usage, run, f"{ids} fix {rnd + 1}", max_turns=FIX_MAX_TURNS):
             return "paused"
+        stray = out_of_scope(states, file_states(), fix)
+        say(board, f"- Check `scope`: " + (f"FAIL ({', '.join(f'`{p}`' for p in stray)} changed outside "
+                                           f"{', '.join(FOLDERS[a] for a in fix)})\n" if stray else "PASS\n"))
+        if stray:
+            scope_rows.append(f"Fix round {rnd + 1} ({', '.join(g.NAMES[a] for a in fix)}) changed these files outside "
+                              f"its folder: " + ", ".join(f"`{p}`" for p in stray) + ". If one is in your folder, "
+                              "keep the change only if the spec text asks for it, else undo it, and say which.")
     if goal["kind"] == "handoff" and not [h for h in scan_handoffs() if h.startswith(spec["version"])]:
         say(board, "\n**Stop:** Patricia's reply came back without the handoff file.\n")
         return "failed"
@@ -980,6 +993,9 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
         owners = [QA]
     if failed and all(l in LOOKS for l, _ in failed):   # how the scene looks: Bob's folder
         owners = [BUILDER]
+    if PROGRAMMER in owners and BUILDER in owners:   # one owner per round: the 0.1.4 T14 rounds sent the same report
+        owners = [one_owner(report, rnd)]            # to both, and both removed the same 30° cell turn
+    other = {PROGRAMMER: "Bob (scenes/)", BUILDER: "Patricia (scripts/)"}
     head = (f"Goal agent run `{run}`, fix round {rnd} for goal {', '.join(b['id'] for b in batch)} of "
             f"`game/specs/{spec['file']}`, branch `{branch}`. These checks failed after the last step. Fix what is in "
             f"your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit. "
@@ -991,7 +1007,11 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
     first = ("A `fail-first` row: rewrite only that line's test, keep its `# goal <ID>` mark, and change no script or "
              "scene; any other failing test is a finding for the code owners in the next round, so leave it.\n\n"
              ) if any(l == "fail-first" for l, _ in failed) else ""
-    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{looks if a == BUILDER else ''}{first if a == QA else ''}{report}\n\nSpec text:\n"
+    alone = {a: (f"You alone work this round. If the cause is in {other[a]}'s folder, change nothing and say which "
+                 f"file and line: the next round goes to them. ") if a in other else "" for a in owners}
+    keep = ("Change only what a failing row names; every other value, pose and position stays as it is (0.1.4: a lid "
+            "fix asked to change the end also moved the open pose). ")
+    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{alone[a]}{keep}{looks if a == BUILDER else ''}{first if a == QA else ''}{report}\n\nSpec text:\n"
                      f"{spec_slice(spec, goal)}\n\nReply in at most 150 words." for a in owners}
     if goal["kind"] == "change" and any(l == "tests" for l, _ in failed):
         # an older test may pin what this change was asked to change (e.g. the removed Hive bar): Quinn's folder
@@ -1002,20 +1022,55 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
     return out
 
 
+def one_owner(report, rnd):
+    """Patricia or Bob for a fix round both could take: the folder the failure names, else Patricia on odd rounds and
+    Bob on even ones, so a cause in the other folder reaches its owner next round."""
+    scenes = len(re.findall(r"\.tscn\b|\.tres\b|scenes/|materials/", report))
+    scripts = len(re.findall(r"\.gd\b|scripts/", report))
+    if scenes != scripts:
+        return BUILDER if scenes > scripts else PROGRAMMER
+    return PROGRAMMER if rnd % 2 else BUILDER
+
+
+SCOPE = {PROGRAMMER: ("game/scripts/",), BUILDER: ("game/scenes/", "game/materials/"), QA: ("game/tests/",)}
+
+
+def file_states():
+    """{path: content hash} of every uncommitted file under game/ outside reports/ (the goal agent writes those)."""
+    out = {}
+    for row in git("status", "--porcelain", "-uall", "--", "game")[1].splitlines():
+        path = row[3:].strip().strip('"').split(" -> ")[-1]
+        if path.startswith("game/reports/") or path.endswith((".uid", ".import")):   # Godot writes these itself
+            continue
+        f = ROOT / path
+        out[path] = hashlib.sha1(f.read_bytes()).hexdigest() if f.is_file() else "deleted"
+    return out
+
+
+def out_of_scope(before, after, agents):
+    """Files a fix round changed outside the folders of the agents it went to."""
+    allowed = tuple(p for a in agents for p in SCOPE.get(a, ()))
+    changed = {p for p in set(before) | set(after) if before.get(p) != after.get(p)}
+    return sorted(p for p in changed if not p.startswith(allowed))
+
+
 def transcripts(run):
     """Where this run's agent transcripts are kept today (gitignored)."""
     return ROOT / g.RUNS / f"{datetime.date.today().isoformat()}-goal-{run}"
 
 
 def call_line(u, max_turns):
-    """The board's record of one call: the exact command, the turns the CLI reported against the cap, and its end.
-    The CLI stops at cap + 1 (tested 2026-11-08), so more than that means the cap did not apply (Bob's T14.4 fix 2:
-    23 turns under a 15 cap, not reproduced)."""
-    over = max_turns and u.get("turns", 0) > max_turns + 1
+    """The board's record of one call: the exact command, the model calls counted in its transcript against the cap,
+    and its end. The cap counts model calls; the CLI's num_turns is another count (Bob's 0.1.4 T14.4 fix 1 at 16:46:
+    num_turns 20, 10 model calls, cap 15 never reached; the call that did reach it made 15 and ended
+    `error_max_turns`), so only the transcript count is checked against the cap."""
+    calls = u.get("calls")
+    over = max_turns and calls is not None and calls > max_turns
     cap = f"cap {max_turns}" if max_turns else "no cap"
-    return (f"- Call: `{u.get('cmd', '?')}`; turns {u.get('turns', '?')} ({cap}); end `{u.get('subtype') or '?'}`"
-            + (f"\n- **Over the turn cap:** {u['turns']} turns with --max-turns {max_turns}; the CLI stops at "
-               f"{max_turns + 1}. Check the transcript before trusting the cap.\n" if over else "\n"))
+    return (f"- Call: `{u.get('cmd', '?')}`; model calls {calls if calls is not None else '?'} ({cap}; CLI num_turns "
+            f"{u.get('turns', '?')}); end `{u.get('subtype') or '?'}`"
+            + (f"\n- **Over the turn cap:** {calls} model calls with --max-turns {max_turns}; the cap did not apply. "
+               f"Transcript: `{u.get('transcript', '?')}`.\n" if over else "\n"))
 
 
 def call_agents(plan, board, usage, run, label, max_turns=None):

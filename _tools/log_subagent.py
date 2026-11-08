@@ -60,7 +60,7 @@ def measure(transcript):
     if len(stamps) > 1:
         parse = lambda s: datetime.datetime.fromisoformat(s.replace("Z", "+00:00"))
         seconds = round((parse(stamps[-1]) - parse(stamps[0])).total_seconds())
-    return {"final": per_call[-1] if per_call else 0, "total": sum(per_call), "tools": tools,
+    return {"final": per_call[-1] if per_call else 0, "total": sum(per_call), "tools": tools, "calls": len(per_call),
             "seconds": seconds, "model": model or "?", "start": stamps[0] if stamps else "",
             "end": stamps[-1] if stamps else ""}
 

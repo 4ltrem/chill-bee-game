@@ -20,6 +20,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | `gdd-review/`, `gdd-review-v2/` | multi-agent review rounds of past GDD snapshots (read-only history) |
 | [_meta/team.md](_meta/team.md) | the agent roster: roles, models, and the rules every agent follows |
 | [_meta/agent-runs.md](_meta/agent-runs.md) | summary of every agent run (rows in `agent-runs.csv`), the calibration and the daily budget |
+| [_meta/learnings.md](_meta/learnings.md) | everything that broke, how it was noticed, its cause, fix and the check that now prevents it; read before changing a loop |
 | [_meta/memory/](_meta/memory/MEMORY.md) | Claude Code's project memories, shared across machines through git (each machine's `.claude/settings.local.json` points `autoMemoryDirectory` here) |
 | `_meta/sessions/` | one folder per working session: `decisions.md` and the decision page are committed; transcripts stay local (gitignored) |
 | `_templates/` | blank starters: `proposal.md`, `content.md`, `research-brief.md`, `audio-list.md`, `blackboard.md` (the one run-board format every loop script writes), and `agent.md` for a new agent |

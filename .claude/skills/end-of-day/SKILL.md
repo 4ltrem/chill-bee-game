@@ -35,6 +35,7 @@ In that folder, create `decisions.md` from `_templates/decisions.md` if it does 
 - Use the strict format the template shows: `### D<n> · <YYYY-MM-DD> · <Topic> · <Title>`, then `- Label: text` bullets (`Decided` first, then `Why`, `Rejected`, `Files`, or another label). Reuse an existing topic name when one fits: Workspace & agents, Pipeline design, Critic quality, Cost & structure, Bee Journal rules, Research & blackboard, Models, Records & deliverables.
 - Rewrite `## Still open` as the full current list: carry over unresolved items from the newest previous log, drop resolved ones, add new ones. The page shows only the newest session's list.
 - Write for the designer reading it later: plain sentences, what was decided and why, real file paths.
+- For each decision that fixed something that broke (a "What broke" bullet, a bug, a repeat failure), add an entry to `_meta/learnings.md` if it has none: What broke, How noticed, Cause, How fixed, Prevention (the test, check or rule that now catches it). A fix with no prevention goes under `## Still open`.
 
 ## 3. Rebuild and republish the decision page
 

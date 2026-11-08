@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 472fd463-d58d-41f5-abb3-fb73c957a854
-  modified: 2026-11-08T23:22:52.597Z
+  modified: 2026-11-08T23:43:27.154Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -18,11 +18,11 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 - Regression: `t_icons_above_props` (ForkIcon within 40 px of hive centre in the first zoom).
 - After: Rex runs `godot_run.py unit` and `godot_run.py lid`; compare shots before "done" ([[look-before-done]]).
 
-**Uncommitted:** the fix-round edits (`honeycomb.gd`, `hive_comb_view.gd`, `lid_motion.gd`, `hive.tscn`, `honey_cell.tscn`), Quinn's tests (`test_hive_model.gd`, `test_lid_clip.gd`, `lid_shots.gd`, `run_tests.gd`, `mutations.json`, `test_combs.gd`), goal blackboard files; plus tonight's tooling: `_tools/godot_run.py` new `lid` shot suite (by name only, not in `all`; Rex-verified PASS, test_generate 59/59), `_tools/compare_page.py` vote ids slugified (spaces/% made the db drop votes). Last unit run (17:06): 151 passed, 6 failed (3 lid open-pose tests, 2 comb overshoot, ForkIcon).
+**Committed in `e77235a` (0.1.4 checkpoint, WIP):** the fix-round edits (`honeycomb.gd`, `hive_comb_view.gd`, `lid_motion.gd`, `hive.tscn`, `honey_cell.tscn`), Quinn's tests (`test_hive_model.gd`, `test_lid_clip.gd`, `lid_shots.gd`, `run_tests.gd`, `mutations.json`, `test_combs.gd`), goal blackboard files; plus tonight's tooling: `_tools/godot_run.py` new `lid` shot suite (by name only, not in `all`; Rex-verified PASS, test_generate 59/59), `_tools/compare_page.py` vote ids slugified (spaces/% made the db drop votes). Last unit run (17:06): 151 passed, 6 failed (3 lid open-pose tests, 2 comb overshoot, ForkIcon).
 
 **Shots:** `game/reports/_look/lid-before/` (HEAD) and `lid-now/` (fix rounds), contact sheets `before-close.png` / `now-close.png`; Design Votes section "Lid close: before or after?" (version 15).
 
-**Open tooling issues:** turn cap inconsistent (Bob fix 1 ran 20 turns under `--max-turns 15`; compare fix-1-bob vs fix-3-bob transcripts in `_meta/sessions/runs/2026-11-08-goal-0.1.4/`); fix rounds should go to one owner per failure. Approved, not built: `live.json` + `_tools/watch.py`; Quinn's interaction checklist; `mutate.py --since`; web smoke real-time wait; `checkpoint.py`.
+**Loop fixes (2026-11-08 late, /goal session, uncommitted, see `_meta/learnings.md` L1, L11-L14):** turn cap was never broken (the alarm compared `num_turns`, not model calls; now counted from the transcript); repeated labels no longer overwrite transcripts; fix rounds go to ONE code owner (folder named, else Patricia/Bob alternate) with "change only what a failing row names"; `scope` check after each fix round; Quinn writes keep tests for play-test lines; `mutate.py` baseline + script-error catches are BROKEN; `_tools/checkpoint.py` for WIP; end-of-day adds learnings entries. Still approved, not built: `live.json` for script steps + `_tools/watch.py` + side pane; Quinn's interaction checklist (details not recorded: ask the designer); web smoke real-time wait. (`mutate.py --since` already existed.)
 
 **A5 (due 11/15):** the `720d42d` exe/web zip exist; web smoke shot was black, so the designer browser-checks before the itch upload ([[itch-upload-rule]], [[course-milestones]]).
 

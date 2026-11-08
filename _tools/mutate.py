@@ -45,12 +45,21 @@ def failed_tests(result):
     return names
 
 
-def verdict(mutation, result):
-    """Pure: CAUGHT / MISSED / BROKEN for one mutation's suite result (tested in test_generate.py)."""
+def verdict(mutation, result, red_before=frozenset()):
+    """Pure: CAUGHT / MISSED / BROKEN for one mutation's suite result (tested in test_generate.py).
+    red_before: tests already failing on the unmutated copy; a catch by one of them, or by a script error, proves
+    nothing (D160: tests that prove more)."""
     if result["status"] == "TIMEOUT":
         return "BROKEN", "suite timed out"
     failed = failed_tests(result)
     expect = mutation.get("expect") or []
+    stale = [t for t in expect if t in red_before]
+    if stale:
+        return "BROKEN", f"already failing without the mutation: {', '.join(stale)}"
+    crashed = [t for t in expect if t in failed and all("script error" in l for l in result["fails"]
+                                                        if l.split()[1:2] == [t])]
+    if crashed:
+        return "BROKEN", f"stopped by a script error, not an assertion: {', '.join(crashed)}; make the mutation a valid change"
     if expect:
         missing = [t for t in expect if t not in failed]
         return ("CAUGHT", f"failed: {', '.join(expect)}") if not missing else ("MISSED", f"still passing: {', '.join(missing)}")
@@ -112,6 +121,15 @@ def main(argv=None):
     os.makedirs(logdir, exist_ok=True)
     rows, all_caught = [], True
     try:
+        expected = sorted({t for m in mutations if (args.suite or m.get("suite", "unit")) == "unit"
+                           for t in m.get("expect") or []})
+        red_before = set()
+        if expected:   # the baseline: an expected test that fails unmutated catches every mutation for free
+            base = godot_run.run_suite("unit", copy, logdir, args.timeout, env={"CB_ONLY": ",".join(expected)},
+                                       log_name="unit-0-baseline")
+            red_before = failed_tests(base) if base["status"] != "TIMEOUT" else set(expected)
+            print(f"mutate baseline: {len(expected)} expected tests, {len(red_before)} already failing",
+                  file=sys.stderr, flush=True)
         for i, m in enumerate(mutations, 1):
             path = os.path.join(copy, m["file"])
             original = open(path, encoding="utf-8").read()
@@ -129,7 +147,7 @@ def main(argv=None):
                                              log_name=f"{suite}-{i}-{slug}")
             finally:
                 open(path, "w", encoding="utf-8", newline="").write(original)
-            v, why = verdict(m, result)
+            v, why = verdict(m, result, red_before if suite == "unit" else frozenset())
             print(f"mutate {i}/{len(mutations)}: {m['name']} ... {v} in {int(time.time() - started)}s", file=sys.stderr, flush=True)
             all_caught = all_caught and v == "CAUGHT"
             rows.append((m["name"], v, why))

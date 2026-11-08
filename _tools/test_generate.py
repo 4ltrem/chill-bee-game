@@ -260,6 +260,21 @@ class GenerateTest(Workspace):
         william = next(r for r in runlog.read(self.root) if r["agent"] == "William" and r["run"] == "x, round 1")
         self.assertEqual((william["total_processed"], william["final_context"]), ("1", "701"))
 
+    def test_a_repeated_label_never_overwrites_a_kept_transcript(self):
+        projects, dest = self.root / "projects", self.root / "runs"
+        projects.mkdir()
+        saved, g.projects_dir = g.projects_dir, (lambda: projects)
+        try:
+            for n in (1, 2):   # 0.1.4: "T14.4 fix 1" ran at 15:25 and again at 16:46
+                (projects / f"s{n}.jsonl").write_text('{"type":"assistant","message":{"id":"m%d","usage":{}}}\n' % n,
+                                                      encoding="utf-8")
+                u = {"session_id": f"s{n}"}
+                g.keep_transcript(u, dest, "fix-1-bob")
+                self.assertEqual(u["calls"], 1)
+        finally:
+            g.projects_dir = saved
+        self.assertEqual(sorted(p.name for p in dest.iterdir()), ["fix-1-bob-2.jsonl", "fix-1-bob.jsonl"])
+
 
 class CriticCheckTest(Workspace):
     """critic_check.py: the critic must FAIL the known-bad fixture with every expected finding."""
@@ -596,6 +611,10 @@ class BuildToolsTest(unittest.TestCase):
         self.assertEqual(self.mu.verdict({"expect": ["t_pop", "t_missing"]}, fail)[0], "MISSED")
         self.assertEqual(self.mu.verdict({"expect": []}, ok)[0], "MISSED")
         self.assertEqual(self.mu.verdict({}, {"status": "TIMEOUT", "fails": []})[0], "BROKEN")
+        # D160, tests that prove more: a catch by a test already red, or by a script error, proves nothing
+        self.assertEqual(self.mu.verdict({"expect": ["t_pop"]}, fail, {"t_pop"})[0], "BROKEN")
+        crash = {"status": "FAIL", "fails": ["FAIL  t_pop  test stopped before its final line (script error)  (5 ms)"]}
+        self.assertEqual(self.mu.verdict({"expect": ["t_pop"]}, crash)[0], "BROKEN")
 
     def test_mutation_env_runs_only_expected_unit_tests(self):
         self.assertEqual(self.mu.mutation_env({"expect": ["a", "b"]}, "unit"), {"CB_ONLY": "a,b"})

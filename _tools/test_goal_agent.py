@@ -139,7 +139,7 @@ class Loop(unittest.TestCase):
         self.saved = {k: getattr(ga, k) for k in ("ROOT", "run_agent", "run_cmd", "budget_ok", "log_usage")}
         ga.ROOT = self.tmp
         self.calls, self.cmds, self.check_codes, self.budget, self.idle = [], [], [], (True, "allow"), False
-        self.turn_caps, self.logs, self.code_idle = [], [], False
+        self.turn_caps, self.logs, self.code_idle, self.scope_rows = [], [], False, []
         ga.run_agent = self.fake_agent
         ga.run_cmd = self.fake_cmd
         ga.budget_ok = lambda agent: self.budget
@@ -164,6 +164,8 @@ class Loop(unittest.TestCase):
                 return 0, "milestone/9.9\n"
             if cmd[1:3] == ["rev-parse", "--short"]:
                 return 0, "abc1234\n"
+            if "-uall" in cmd:                                              # file_states: the scope check's view
+                return 0, self.scope_rows.pop(0) if self.scope_rows else ""
             if cmd[1] in ("status", "diff"):                               # each agent call changes the tree, unless idle
                 if self.code_idle and "game/tests" not in cmd:             # only tests change, never scripts or scenes
                     return 0, ""
@@ -254,21 +256,26 @@ class Loop(unittest.TestCase):
         self.check_codes = [1, 1, 1]                                        # the contract check fails every round
         code, out, board = self.run_main()
         self.assertEqual(code, 1)
-        self.assertEqual(len(self.calls), 2 + 2 * 2)                        # C3 owners, then two fix rounds (contract: no Quinn)
+        self.assertEqual(len(self.calls), 2 + 2 * 1)                        # C3 owners, then two fix rounds of one owner each
         self.assertIn("fix round 2", self.calls[-1][1])
-        self.assertEqual([t for _, t in self.turn_caps], [None] * 2 + [ga.FIX_MAX_TURNS] * 4)   # only fix rounds capped
+        self.assertNotEqual(self.calls[-2][0], self.calls[-1][0])           # round 2 goes to the other owner
+        self.assertIn("You alone work this round", self.calls[-1][1])
+        self.assertIn("Change only what a failing row names", self.calls[-1][1])
+        self.assertEqual([t for _, t in self.turn_caps], [None] * 2 + [ga.FIX_MAX_TURNS] * 2)   # only fix rounds capped
         self.assertIn("Do not run the test suite", self.calls[-1][1])
         quinn = ga.briefs(ga.parse_spec(SPEC), ga.parse_spec(SPEC)["goals"]["T3.1"],
                           [ga.parse_spec(SPEC)["goals"]["T3.1"]], "t", "b")[ga.QA]
         self.assertIn("Do not run the tests", quinn)                        # Quinn writes; the goal agent runs
         self.assertNotIn("CB_ONLY=", quinn)
-        self.assertIn("turns 1 (cap 15)", board)                            # every call's command and turns logged
-        self.assertIn("turns 1 (no cap)", board)
-        self.assertIn("**Over the turn cap:** 23", ga.call_line({"turns": 23, "cmd": "claude -p"}, 15))
-        self.assertNotIn("Over", ga.call_line({"turns": 16, "cmd": "claude -p"}, 15))
+        self.assertIn("(cap 15; CLI num_turns 1)", board)                   # every call's command and turns logged
+        self.assertIn("(no cap; CLI num_turns 1)", board)
+        self.assertIn("**Over the turn cap:** 16", ga.call_line({"turns": 17, "calls": 16, "cmd": "claude -p"}, 15))
+        self.assertNotIn("Over", ga.call_line({"turns": 20, "calls": 10, "cmd": "claude -p"}, 15))  # num_turns isn't the cap's unit
+        self.assertNotIn("Over", ga.call_line({"turns": 20, "cmd": "claude -p"}, 15))   # no transcript: no claim
         self.assertIn("## Waiting for the designer\n\n2 fix rounds failed on C3", board)
         self.assertIn("result: waiting-designer", board)
-        self.assertIn("briefs/C3-fix2-patricia.md", board)                  # fix briefs go by reference too
+        self.assertIn("_tools/checkpoint.py \"C3 fix-round edits\"", board)   # the edits are kept, not lost (L1)
+        self.assertIn("briefs/C3-fix2-", board)                            # fix briefs go by reference too
         self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
 
     def fail_first_fixture(self):
@@ -296,7 +303,7 @@ class Loop(unittest.TestCase):
         self.assertEqual(fix1, [ga.QA])                                     # nothing to fix until the bug shows
         self.assertIn("does not reproduce it", next(p for a, p in self.calls if "fix round 1" in p))
         self.assertIn("Check `fail-first`: PASS (T3.1 shown failing)", board)
-        self.assertEqual(sorted(a for a, p in self.calls if "fix round 2" in p), [ga.BUILDER, ga.PROGRAMMER])
+        self.assertEqual(len([a for a, p in self.calls if "fix round 2" in p]), 1)   # one code owner per round
         self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
 
     def test_a_real_time_bug_test_is_run_alone_at_x1(self):
@@ -317,7 +324,7 @@ class Loop(unittest.TestCase):
         self.assertIn({"CB_ONLY": "t_meter_wall_clock", "CB_TIME_SCALE": "1"}, envs)
         self.assertIn("Check `x1 tests` (t_meter_wall_clock): FAIL", board)
         self.assertIn("Check `fail-first`: PASS (T3.1 shown failing)", board)
-        self.assertEqual(sorted(a for a, p in self.calls if "fix round 1" in p), [ga.BUILDER, ga.PROGRAMMER])
+        self.assertEqual([a for a, p in self.calls if "fix round 1" in p], [ga.PROGRAMMER])   # odd round, no file named
         self.assertIn("Check `x1 tests` (t_meter_wall_clock): PASS", board)
         self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
         newest = ga.newest_unit_log(self.tmp / "game")                      # the scan skips the x1 check's log
@@ -331,7 +338,7 @@ class Loop(unittest.TestCase):
         code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
         self.assertIn("Quinn's step skipped", board)
         self.assertNotIn(ga.QA, [a for a, _ in self.calls])
-        self.assertEqual(sorted(a for a, _ in self.calls), [ga.BUILDER, ga.PROGRAMMER])
+        self.assertEqual([a for a, _ in self.calls], [ga.PROGRAMMER])         # one owner per fix round
         self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
 
     def test_a_script_stop_is_not_the_bug_showing(self):
@@ -385,8 +392,53 @@ class Loop(unittest.TestCase):
         code, out, board = self.run_main("--max-goals", "1")
         self.assertEqual(code, 0)
         fix = [a for a, p in self.calls if "fix round 1" in p]
-        self.assertEqual(sorted(fix), sorted([ga.PROGRAMMER, ga.BUILDER, ga.QA]))
+        self.assertEqual(sorted(fix), sorted([ga.PROGRAMMER, ga.QA]))      # one code owner, plus Quinn's own folder
         self.assertIn("quote the spec line", next(p for a, p in self.calls if a == ga.QA))
+
+    def test_checkpoint_commits_wip_on_a_milestone_branch_only(self):
+        import checkpoint, subprocess
+        repo = self.tmp / "repo"
+        (repo / "game" / "scripts").mkdir(parents=True)
+        run = lambda *a: subprocess.run(["git", *a], cwd=repo, capture_output=True, text=True)
+        run("init", "-q"); run("symbolic-ref", "HEAD", "refs/heads/main")   # `init -b` needs git 2.28+
+        run("config", "user.email", "t@t"); run("config", "user.name", "t")
+        (repo / "README.md").write_text("r\n", encoding="utf-8")
+        run("add", "README.md"); run("commit", "-q", "-m", "first")           # a branch needs a commit to leave
+        (repo / "game" / "scripts" / "a.gd").write_text("x\n", encoding="utf-8")
+        said = io.StringIO()
+        with contextlib.redirect_stdout(said):
+            self.assertEqual(checkpoint.main(["wip"], root=repo), 2)               # main: refused
+            run("checkout", "-q", "-b", "milestone/9.9")
+            log = repo / "game" / "reports" / "_runs" / "1" / "unit.log"
+            log.parent.mkdir(parents=True)
+            log.write_text("PASS  t_a  (1 ms)\nFAIL  t_b  no  (1 ms)\n", encoding="utf-8")
+            code = checkpoint.main(["lid edits"], root=repo)
+        self.assertEqual(code, 0, said.getvalue())
+        subject = run("log", "-1", "--format=%s").stdout.strip()
+        self.assertEqual(subject, "9.9 checkpoint: lid edits (WIP, 1 unit fails)")
+        self.assertNotIn("reports", run("show", "--name-only", "--format=").stdout)  # reports stay out
+
+    def test_one_owner_follows_the_folder_the_failure_names(self):
+        self.assertEqual(ga.one_owner("FAIL lid clips; see scenes/props/hive.tscn", 1), ga.BUILDER)
+        self.assertEqual(ga.one_owner("error at scripts/lid_motion.gd:40", 2), ga.PROGRAMMER)
+        self.assertEqual([ga.one_owner("FAIL t_x broken", r) for r in (1, 2, 3)],
+                         [ga.PROGRAMMER, ga.BUILDER, ga.PROGRAMMER])        # no folder named: they take turns
+
+    def test_out_of_scope_names_files_outside_the_round_owners_folders(self):
+        before = {"game/scripts/lid_motion.gd": "a", "game/scenes/hive.tscn": "b"}
+        after = {"game/scripts/lid_motion.gd": "c", "game/scenes/hive.tscn": "d", "game/tests/t.gd": "e"}
+        self.assertEqual(ga.out_of_scope(before, after, [ga.BUILDER]),
+                         ["game/scripts/lid_motion.gd", "game/tests/t.gd"])
+        self.assertEqual(ga.out_of_scope(before, after, [ga.PROGRAMMER, ga.QA]), ["game/scenes/hive.tscn"])
+
+    def test_a_fix_round_that_strays_gets_a_scope_row_next_round(self):
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        self.check_codes = [1, 0, 0, 0]                                     # contract fails once, then green
+        self.scope_rows = ["", " M game/tests/test_frames.gd\n"]            # before and after fix round 1
+        code, out, board = self.run_main("--max-goals", "1")
+        self.assertIn("Check `scope`: FAIL (`game/tests/test_frames.gd` changed outside", board)
+        fix2 = next(p for a, p in self.calls if "fix round 2" in p)
+        self.assertIn("changed these files outside its folder: `game/tests/test_frames.gd`", fix2)
 
     def test_a_crashed_agent_is_recorded_as_failed(self):
         def crash(agent, prompt, **_):

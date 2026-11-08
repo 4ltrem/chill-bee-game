@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 472d224a-a84f-4a66-bfff-00b669226a91
-  modified: 2026-11-08T05:23:13.492Z
+  modified: 2026-11-08T23:43:11.035Z
 ---
 
 TBD items the designer named on 2026-11-01, not started:
@@ -19,7 +19,7 @@ TBD items the designer named on 2026-11-01, not started:
 3. **Sync transcripts between machines** (desktop PC and laptop). Transcripts stay out of git (designer's
    decision, 2026-11-01: they hold the account email, my reasoning and everything read, and add 2-4 MB per
    session), so they need another route.
-4. **Learnings file** (added 2026-11-05, D92). One file listing everything that broke, how it was noticed and how
+4. **Learnings file** (added 2026-11-05, D92; BUILT 2026-11-08 as `_meta/learnings.md`, kept by end-of-day step 2). One file listing everything that broke, how it was noticed and how
    it was fixed. Seed it from the decision logs, the memories and the QA reports. Examples: Quinn's hour-long
    mutate run (D89), the agent run that hit the 5-hour limit (which led to the budget guard), and the red 0.1.3
    step b.

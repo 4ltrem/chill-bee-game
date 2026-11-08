@@ -149,11 +149,16 @@ def keep_transcript(usage, dest, name):
     if not src or not src.is_file():
         return
     dest.mkdir(parents=True, exist_ok=True)
+    n = 1   # a label can repeat in a later step of the same run (0.1.4 T14.4 fix 1 at 15:25 and 16:46): never overwrite
+    while (dest / f"{name}{'' if n == 1 else f'-{n}'}.jsonl").exists():
+        n += 1
+    name = name if n == 1 else f"{name}-{n}"
     target = dest / f"{name}.jsonl"
     shutil.move(str(src), str(target))
     if (src_dir / sid).is_dir():  # tool results the call saved beside its transcript
         shutil.move(str(src_dir / sid), str(dest / name))
-    usage["final"] = measure(target)["final"]
+    m = measure(target)
+    usage["final"], usage["calls"], usage["transcript"] = m["final"], m["calls"], target.as_posix()
 
 
 def append(path, text):
