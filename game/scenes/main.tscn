@@ -291,16 +291,6 @@ theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 32
 text = "Bees: 20"
 
-[node name="PausedLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
-visible = false
-layout_mode = 2
-mouse_filter = 2
-theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 28
-text = "Hive full, production paused"
-autowrap_mode = 3
-
 [node name="DevSpeedTag" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 visible = false
 layout_mode = 2
@@ -316,6 +306,16 @@ horizontal_alignment = 0
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
+
+[node name="PausedLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "Hive full, production paused"
+horizontal_alignment = 1
 
 [node name="ShopPanel" type="PanelContainer" parent="FarmUIRoot/FarmUI/Margin/Column"]
 layout_mode = 2

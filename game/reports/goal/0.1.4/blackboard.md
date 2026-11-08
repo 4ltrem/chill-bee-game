@@ -1221,3 +1221,50 @@ No other findings, nothing committed, no processes left running.
 
 - Check `contract`: PASS
 - Check `tests`: PASS
+- Green: checkpoint `f6f153a` on `milestone/0.1.4`
+
+## Pass 14: scan (2026-11-07T21:05:13-05:00)
+
+Unit results from `game/reports/_runs/20261107-210136/unit.log`. 5 of 25 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 25)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C7 The pile loads on its own at the second stop | change | Patricia | partial (built, waits on its tests) | ✓ ledger f6f153a |
+
+### Order: new or rescored (2 of 14)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 8 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+| 9 | T7.2 item 7 (2026-11-07): after a pour with a pile wait | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C9** (score 8.67: 1 goal(s) wait on it; play-test fix; cost 0.33 (Bob)).
+
+### Step: C9 (2026-11-07T21:05:13-05:00)
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/C9-bob.md` (1120 chars)
+- Budget guard for Bob: override
+
+**Bob** (92,562 tokens, 7 turns, 14 s):
+
+I moved `PausedLabel` out of `TopInfo` and put it just above the upgrade section. I did not render the scene, so the one-line result and the overlap checks are unconfirmed. `python -I _tools/contract_check.py` passed: 63 lookups, 0 unresolved.
+
+**File changed:** `game/scenes/main.tscn`
+
+**Node names used:**
+- `PausedLabel` is now a child of `FarmUIRoot/FarmUI/Margin/Column`, between `Spacer` and `ShopPanel`. The old path was `.../Column/TopInfo/PausedLabel`.
+- I removed autowrap and centred the text (`horizontal_alignment = 1`). The text, font size, outline and `visible = false` are unchanged.
+- The label is part of the `Column` layout, so it sits above the upgrade section in every view, spin included. It also no longer sits in `TopInfo`.
+
+**Open questions:**
+- `farm_ui.gd` finds the label by `find_child("PausedLabel", true, false)`, so the move needs no script change.
+- The "Fork icon vs PausedLabel" clearance measured in the old report no longer applies, because the label left the top-left.
+- Quinn's item-9 test needs a render to confirm the label is one line and clear of `ShopPanel`.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
