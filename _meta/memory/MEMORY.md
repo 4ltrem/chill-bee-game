@@ -5,7 +5,7 @@
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
 - [0.1.3 play-test](playtest-0-1-3.md) — 11/6: UI broken (Back inconsistent, Spin/Harvest move, x5 tag overlaps); noted, not fixing yet
-- [Session handoff](session-handoff.md) — read first: lid votes read; Patricia→Bob lid+comb brief waits for the usage reset; fix edits + godot_run lid suite uncommitted
+- [Session handoff](session-handoff.md) — read first: Quinn's interaction checklist built (c2bfdc5); Patricia→Bob lid+comb brief waits for the usage reset; end-of-day not run
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
 - [A/B comparison page](ab-comparison-page.md) — every creative A/B choice AND every numerical visual change (scale, offset, size) becomes a new section of the one Design Votes artifact, built by script; never a new artifact or browser tab
