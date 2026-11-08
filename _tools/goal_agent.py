@@ -838,6 +838,17 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                     break
         if needs_red and not any(l == "contract" for l, _ in failed):   # the tests ran: who has shown the bug
             red = red_tests()
+            # a marked real-time test is skipped by the x6 run (CB_SKIP_X1): run it alone at x1, or it can never
+            # fail nor pass (0.1.4 T14.5: three Quinn rounds on a test that never ran)
+            x1 = sorted({t for gid in needs_red for t in marked_tests(gid)} & scan(ROOT / "game")["x1"])
+            if x1:
+                code, out = run_cmd([sys.executable, "-I", "_tools/godot_run.py", "unit", "start"],
+                                    env={"CB_ONLY": ",".join(x1), "CB_TIME_SCALE": "1"})
+                say(board, f"- Check `x1 tests` ({', '.join(x1)}): {'PASS' if code == 0 else f'FAIL (exit {code})'}\n")
+                red.update({t: r for t, r in red_tests().items() if t in x1})
+                if code:
+                    failed.append(("tests", summary_of(out)))
+                    say(board, "\n```\n" + summary_of(out) + "\n```\n")
             seen_red |= {gid for gid in needs_red if any(red.get(t) for t in marked_tests(gid))}
             missing = [gid for gid in needs_red if gid not in seen_red]
             if missing:

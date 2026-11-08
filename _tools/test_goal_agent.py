@@ -295,6 +295,27 @@ class Loop(unittest.TestCase):
         self.assertEqual(sorted(a for a, p in self.calls if "fix round 2" in p), [ga.BUILDER, ga.PROGRAMMER])
         self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
 
+    def test_a_real_time_bug_test_is_run_alone_at_x1(self):
+        self.fail_first_fixture()                                           # T14.5: an X1 test the x6 run skips
+        (self.tmp / "game" / "tests" / "test_frames.gd").write_text(
+            "# goal T3.1\nfunc t_meter_wall_clock() -> void:\n\tpass\n", encoding="utf-8")
+        envs = []
+        fake = self.fake_cmd
+        def cmd(c, env=None, timeout=0):
+            envs.append(env)
+            return fake(c, env, timeout)
+        ga.run_cmd = cmd
+        self.check_codes = [0, 0, 0, 1, 0, 0, 0, 0]                         # x1 red in round 0, green after the fix
+        self.logs = ["PASS  t_meter_fill  (5 ms)\n", "FAIL  t_meter_wall_clock  lid sinks 0.015  (5 ms)\n",
+                     "PASS  t_meter_fill  (5 ms)\n", "PASS  t_meter_wall_clock  (5 ms)\n"]
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        self.assertIn({"CB_ONLY": "t_meter_wall_clock", "CB_TIME_SCALE": "1"}, envs)
+        self.assertIn("Check `x1 tests` (t_meter_wall_clock): FAIL", board)
+        self.assertIn("Check `fail-first`: PASS (T3.1 shown failing)", board)
+        self.assertEqual(sorted(a for a, p in self.calls if "fix round 1" in p), [ga.BUILDER, ga.PROGRAMMER])
+        self.assertIn("Check `x1 tests` (t_meter_wall_clock): PASS", board)
+        self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
+
     def test_a_script_stop_is_not_the_bug_showing(self):
         self.fail_first_fixture()
         self.logs = ["FAIL  t_frames_scale  test stopped before its final line (script error)  (5 ms)\n"]
