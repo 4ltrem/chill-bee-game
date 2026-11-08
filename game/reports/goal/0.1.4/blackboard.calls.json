@@ -526,5 +526,53 @@
   "turns": 15,
   "seconds": 29,
   "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Patricia, C15",
+  "tokens": 58254,
+  "final": 29403,
+  "turns": 2,
+  "seconds": 4,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Bob, C14",
+  "tokens": 331448,
+  "final": 43658,
+  "turns": 30,
+  "seconds": 54,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Patricia, C14",
+  "tokens": 95525,
+  "final": 48570,
+  "turns": 3,
+  "seconds": 7,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Bob, C14 fix 1",
+  "tokens": 523290,
+  "final": 56605,
+  "turns": 25,
+  "seconds": 69,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Quinn, C14 fix 1",
+  "tokens": 594421,
+  "final": 42742,
+  "turns": 27,
+  "seconds": 88,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Patricia, C14 fix 1",
+  "tokens": 135715,
+  "final": 46293,
+  "turns": 3,
+  "seconds": 8,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
  }
 ]

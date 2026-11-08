@@ -6,9 +6,14 @@
 # close: centred on that variant and fitted to its bounds with a small margin (designer, 2026-11-05: same grid to save time, close shots).
 # --size= > 0 sets a fixed ortho size instead of the fit. Saves <prop>-a.png etc. (the file name's suffix). Exit 0 only after "COMPLETED";
 # nothing found or a failed save exits 1.
+# --scenes=res://a.tscn,res://b.tscn instead of --prop: the same staging for any scenes, saved as <stem>.png (pick match,
+# _tools/pick_match.py: the live prop beside the designer's picked variant, one load, one camera rule).
+# --hide=Name,Name hides those nodes in the first --scenes entry only (a closed lid that would hide what's inside).
 extends SceneTree
 
 var prop: String = ""
+var scenes_arg: String = ""
+var hide_arg: String = ""
 var out_dir: String = ""
 var size_arg: float = 0.0
 
@@ -21,6 +26,10 @@ func _initialize() -> void:
 			out_dir = a.substr(6)
 		elif a.begins_with("--size="):
 			size_arg = float(a.substr(7))
+		elif a.begins_with("--scenes="):
+			scenes_arg = a.substr(9)
+		elif a.begins_with("--hide="):
+			hide_arg = a.substr(7)
 	_run()
 
 
@@ -37,7 +46,7 @@ func _bounds(node: Node, xf: Transform3D) -> AABB:
 		box = xf * (node as VisualInstance3D).get_aabb()
 		first = false
 	for ch in node.get_children():
-		if ch is Node3D:
+		if ch is Node3D and (ch as Node3D).visible:   # hidden parts (a --hide lid, a script's off-screen helper) don't widen the fit
 			var b: AABB = _bounds(ch, xf * (ch as Node3D).transform)
 			if b.size != Vector3.ZERO or b.position != Vector3.ZERO:
 				box = b if first else box.merge(b)
@@ -71,17 +80,21 @@ func _lines(parent: Node3D, hx: float, hz: float) -> void:
 
 
 func _run() -> void:
-	if prop == "" or out_dir == "":
-		_fail("usage: -- --prop=<name> --out=<ABSOLUTE dir> [--size=<ortho>]")
+	if (prop == "" and scenes_arg == "") or out_dir == "":
+		_fail("usage: -- --prop=<name> | --scenes=<res://a.tscn,...> --out=<ABSOLUTE dir> [--size=<ortho>]")
 		return
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	var dir := "res://scenes/variants/%s/" % prop
-	var files: Array = []
-	for f in DirAccess.get_files_at(dir):
-		var fn: String = f.trim_suffix(".remap")
-		if fn.begins_with(prop + "-") and fn.ends_with(".tscn") and not files.has(fn):
-			files.append(fn)
-	files.sort()
+	var files: Array = []   # full res:// paths
+	if scenes_arg != "":
+		for s in scenes_arg.split(",", false):
+			files.append(s.strip_edges())
+	else:
+		for f in DirAccess.get_files_at(dir):
+			var fn: String = f.trim_suffix(".remap")
+			if fn.begins_with(prop + "-") and fn.ends_with(".tscn") and not files.has(dir + fn):
+				files.append(dir + fn)
+		files.sort()
 	if files.is_empty():
 		_fail("no %s-*.tscn in %s" % [prop, dir])
 		return
@@ -116,7 +129,7 @@ func _run() -> void:
 	var row: float = 0.0
 	var depth: int = 1
 	for fn in files:
-		var v := (load(dir + fn) as PackedScene).instantiate() as Node3D
+		var v := (load(fn) as PackedScene).instantiate() as Node3D
 		var box: AABB = _bounds(v, Transform3D.IDENTITY)
 		var w: int = maxi(1, int(ceil(maxf(box.size.x, 2.0 * maxf(absf(box.position.x), absf(box.end.x))) / 2.0 - 0.001)))
 		depth = maxi(depth, int(ceil(maxf(absf(box.position.z), absf(box.end.z)) / 2.0 - 0.001)) * 2 + 1)
@@ -142,6 +155,14 @@ func _run() -> void:
 	cam.current = true
 	scene.add_child(cam)
 	root.add_child(scene)
+	for f in 3:   # a live prop's script may rescale it on _ready (hive.gd: hive_scale): fit after it settles
+		await process_frame
+	if scenes_arg != "" and hide_arg != "":   # --hide: nodes of the FIRST scene only (the live prop's lid, to show inside)
+		for n in hide_arg.split(",", false):
+			var h: Node = variants[0][0].find_child(n.strip_edges(), true, false)
+			if h is Node3D:
+				(h as Node3D).visible = false
+				print("hidden ", n)
 	var aspect: float = 1280.0 / 720.0   # ortho size is the visible height; the portrait width is size / aspect
 	var written: int = 0
 	for i in files.size():
@@ -164,9 +185,7 @@ func _run() -> void:
 			await process_frame
 		await RenderingServer.frame_post_draw
 		var img: Image = root.get_texture().get_image()
-		var fn: String = files[i]
-		var suffix: String = fn.trim_suffix(".tscn").trim_prefix(prop + "-")
-		var path: String = out_dir.path_join("%s-%s.png" % [prop, suffix])
+		var path: String = out_dir.path_join((files[i] as String).get_file().trim_suffix(".tscn") + ".png")   # <prop>-a.png as before
 		var err: int = img.save_png(path)
 		print("shot ", path, " ", img.get_size(), " ortho ", cam.size, " err=", err)
 		if err == OK and img.get_size() == Vector2i(720, 1280):

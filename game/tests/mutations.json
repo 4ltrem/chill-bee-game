@@ -723,5 +723,35 @@
    "t_back_fixed_top_right"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.1 the hive's WallXNeg is not drawn",
+  "file": "scenes/props/hive.tscn",
+  "find": "[node name=\"WallXNeg\" type=\"MeshInstance3D\" parent=\"HiveBody\"]\n",
+  "replace": "[node name=\"WallXNeg\" type=\"MeshInstance3D\" parent=\"HiveBody\"]\nvisible = false\n",
+  "expect": [
+   "t_hive_five_upright_frames_four_walls"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.2 one grid column fewer, so the cells no longer fill the frame",
+  "file": "scripts/default_config.tres",
+  "find": "grid_cols = 5",
+  "replace": "grid_cols = 4",
+  "expect": [
+   "t_raised_frame_cells_fill_and_size"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.3 the closed lid sinks 0.1 into the walls",
+  "file": "scenes/props/hive.tscn",
+  "find": "[node name=\"HiveLid\" type=\"Node3D\" parent=\".\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74, 0)",
+  "replace": "[node name=\"HiveLid\" type=\"Node3D\" parent=\".\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0)",
+  "expect": [
+   "t_lid_closes_clear_of_walls"
+  ],
+  "suite": "unit"
  }
 ]

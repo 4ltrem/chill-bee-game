@@ -2470,82 +2470,6 @@ Command: `goal_agent.py 0.1.4-ui-placement.md --accept T.1 --note Mutation check
 - Change (orchestrator, Process 9): Mutation check was a goal_agent bug: mutate.py --since <step base> skipped T.1/T.2/T8.1's mutations, committed in an earlier step (1ee096d), and exited 1 on 'no mutations to run'. Orchestrator ran them by name: 3 of 3 caught (Back top-left, instruction text touching Back, speed tag over money). Removed Quinn's round-2 'Back sits at the left edge' mutation (only moved the left offset, so Back stayed top-right; MISSED by design); kept his caught HintLabel one.
 - Accepted: checkpoint `928b711` on `milestone/0.1.4`
 
-## Result
-
-T.1 accepted with a manual fix (checkpoint `928b711` on `milestone/0.1.4`). Rerun `goal_agent.py 0.1.4-ui-placement.md` to build the rest.
-
-Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/2026-11-08-goal-0.1.4/`
-
-| Call | Total processed | Final context | Turns | Duration |
-|---|---|---|---|---|
-| Patricia, H | 221,991 | — | 16 | 42 s |
-| Bob, C2 | 455,025 | — | 22 | 73 s |
-| Patricia, C2 | 533,260 | — | 33 | 695 s |
-| Bob, C2 fix 1 | 137,517 | — | 9 | 20 s |
-| Quinn, C2 fix 1 | 927,906 | — | 34 | 616 s |
-| Patricia, C2 fix 1 | 468,748 | — | 26 | 1831 s |
-| Bob, C2 fix 2 | 46,461 | — | 5 | 11 s |
-| Patricia, C2 fix 2 | 121,927 | — | 7 | 20 s |
-| Quinn, C2 fix 2 | 164,504 | — | 13 | 160 s |
-| Bob, C4 | 100,407 | — | 9 | 18 s |
-| Patricia, C7 | 491,165 | — | 24 | 1213 s |
-| Bob, C3 | 60,321 | — | 4 | 11 s |
-| Patricia, C3 | 106,099 | — | 11 | 22 s |
-| Bob, C3 fix 1 | 49,887 | — | 5 | 9 s |
-| Patricia, C3 fix 1 | 172,138 | — | 9 | 31 s |
-| Quinn, C3 fix 1 | 77,069 | — | 6 | 33 s |
-| Bob, C1 | 127,981 | — | 12 | 28 s |
-| Patricia, C1 | 227,009 | — | 17 | 231 s |
-| Patricia, C1 fix 1 | 30,183 | — | 2 | 6 s |
-| Bob, C1 fix 1 | 96,154 | — | 9 | 19 s |
-| Quinn, C1 fix 1 | 272,339 | — | 19 | 234 s |
-| Patricia, C6 | 154,687 | — | 12 | 568 s |
-| Quinn, T2.1, | 556,555 | — | 24 | 142 s |
-| Bob, T2.1, fix 1 | 92,164 | — | 6 | 13 s |
-| Patricia, T2.1, fix 1 | 244,554 | — | 14 | 1219 s |
-| Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
-| Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
-| Bob, C1 | 232,941 | 35,068 | 14 | 40 s |
-| Patricia, C1 | 59,101 | 29,934 | 2 | 4 s |
-| Bob, C8 | 58,280 | 16,486 | 6 | 13 s |
-| Patricia, C7 | 77,917 | 39,296 | 3 | 5 s |
-| Patricia, C7 fix 1 | 85,201 | 21,581 | 8 | 15 s |
-| Quinn, C7 fix 1 | 189,175 | 22,334 | 14 | 58 s |
-| Bob, C9 | 92,562 | 22,028 | 7 | 14 s |
-| Bob, C10 | 199,222 | 27,385 | 13 | 36 s |
-| Patricia, C10 | 73,577 | 37,182 | 2 | 5 s |
-| Bob, C5 | 699,505 | 56,503 | 38 | 110 s |
-| Patricia, C5 | 688,276 | 54,220 | 42 | 689 s |
-| Bob, C5 | 262,642 | 42,615 | 16 | 43 s |
-| Patricia, C5 | 94,439 | 23,051 | 10 | 608 s |
-| Bob, C5 fix 1 | 26,011 | 13,835 | 2 | 8 s |
-| Quinn, C5 fix 1 | 341,007 | 34,294 | 25 | 92 s |
-| Patricia, C5 fix 1 | 30,575 | 30,575 | 1 | 2 s |
-| Bob, C5 fix 2 | 38,012 | 13,626 | 3 | 8 s |
-| Quinn, C5 fix 2 | 110,717 | 21,051 | 6 | 19 s |
-| Patricia, C5 fix 2 | 114,867 | 30,552 | 4 | 10 s |
-| Patricia, C11 | 53,645 | 27,121 | 2 | 4 s |
-| Patricia, C12 | 101,180 | 19,379 | 11 | 19 s |
-| Patricia, C13 | 108,802 | 29,158 | 11 | 24 s |
-| Quinn, C13 fix 1 | 68,982 | 15,264 | 5 | 36 s |
-| Patricia, C13 fix 1 | 84,262 | 16,319 | 7 | 1096 s |
-| Quinn, T.1, T.2, T8.1 | 477,530 | 42,043 | 24 | 77 s |
-| Quinn, T.1, T.2, T8.1 fix 1 | 165,953 | 21,616 | 12 | 28 s |
-| Quinn, T10.1 | 887,316 | 67,975 | 39 | 135 s |
-| Patricia, T10.1 fix 1 | 58,303 | 17,199 | 5 | 10 s |
-| Bob, T10.1 fix 1 | 247,235 | 37,131 | 17 | 48 s |
-| Quinn, T11.1 | 486,034 | 40,439 | 28 | 62 s |
-| Quinn, T12.1 | 546,215 | 53,233 | 31 | 86 s |
-| Quinn, T12.1 fix 1 | 162,037 | 25,923 | 11 | 43 s |
-| Quinn, T12.1 fix 2 | 87,109 | 16,180 | 7 | 16 s |
-| Quinn, T13.1 | 436,447 | 47,703 | 20 | 52 s |
-| Patricia, T13.1 fix 1 | 60,949 | 19,912 | 4 | 11 s |
-| Patricia, T13.1 fix 2 | 31,013 | 19,819 | 2 | 6 s |
-| Quinn, T.1, T.2, T8.1, T.3 | 225,023 | 34,000 | 12 | 26 s |
-| Quinn, T.1, T.2, T8.1, T.3 fix 1 | 162,171 | 24,125 | 9 | 24 s |
-| Quinn, T.1, T.2, T8.1, T.3 fix 2 | 170,516 | 24,690 | 15 | 29 s |
-| **Total** | **14,204,957** | | | |
-
 ## Resumed 2026-11-08
 
 Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `stopped`).
@@ -2742,3 +2666,267 @@ I changed `frame_rise` to 0.92 in `game_config.gd` and `default_config.tres`. I 
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `ui shots`: PASS
+- Green: checkpoint `40128c7` on `milestone/0.1.4`
+
+## Pass 32: scan (2026-11-08T02:27:36-05:00)
+
+Unit results from `game/reports/_runs/20261108-022320/unit.log`. 32 of 36 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 36)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C14 The hive is the round 9 pick | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger 40128c7 |
+
+### Order: new or rescored (1 of 2)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T14.1 item 14: the hive has five frames, each standing u | 5.54 | 0 | 3 | 0.46 | 1 | play-test fix; cost 0.46 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T14.1** (score 5.54: play-test fix; cost 0.46 (Quinn)).
+
+### Step: T14.1 (2026-11-08T02:27:36-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.1-quinn.md` (1767 chars)
+
+**Paused:** Budget guard: weekly usage is 29% with 10% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 1 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 33: scan (2026-11-08T02:50:43-05:00)
+
+Unit results from `game/reports/_runs/20261108-022320/unit.log`. 32 of 38 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (2 of 38)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T14.2 item 14 fix (play-test 2026-11-08, shown failing on the curr | test | Quinn | missing | none found |
+| T14.3 item 14 lid (play-test 2026-11-08, shown failing on the curr | test | Quinn | missing | none found |
+
+### Order: new or rescored (2 of 4)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 2 | T14.2 item 14 fix (play-test 2026-11-08, shown failing o | 5.54 | 0 | 3 | 0.46 | 1 | play-test fix; cost 0.46 (Quinn) |
+| 3 | T14.3 item 14 lid (play-test 2026-11-08, shown failing o | 5.54 | 0 | 3 | 0.46 | 1 | play-test fix; cost 0.46 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T14.1** (score 5.54: play-test fix; cost 0.46 (Quinn)), with T14.2, T14.3.
+
+### Step: T14.1, T14.2, T14.3 (2026-11-08T02:50:43-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.1-quinn.md` (3208 chars)
+
+**Paused:** Budget guard: weekly usage is 31% with 11% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 0 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
+## Result
+
+Last invocation (2026-11-08T02:50:43-05:00): paused.
+
+Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/2026-11-08-goal-0.1.4/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 221,991 | — | 16 | 42 s |
+| Bob, C2 | 455,025 | — | 22 | 73 s |
+| Patricia, C2 | 533,260 | — | 33 | 695 s |
+| Bob, C2 fix 1 | 137,517 | — | 9 | 20 s |
+| Quinn, C2 fix 1 | 927,906 | — | 34 | 616 s |
+| Patricia, C2 fix 1 | 468,748 | — | 26 | 1831 s |
+| Bob, C2 fix 2 | 46,461 | — | 5 | 11 s |
+| Patricia, C2 fix 2 | 121,927 | — | 7 | 20 s |
+| Quinn, C2 fix 2 | 164,504 | — | 13 | 160 s |
+| Bob, C4 | 100,407 | — | 9 | 18 s |
+| Patricia, C7 | 491,165 | — | 24 | 1213 s |
+| Bob, C3 | 60,321 | — | 4 | 11 s |
+| Patricia, C3 | 106,099 | — | 11 | 22 s |
+| Bob, C3 fix 1 | 49,887 | — | 5 | 9 s |
+| Patricia, C3 fix 1 | 172,138 | — | 9 | 31 s |
+| Quinn, C3 fix 1 | 77,069 | — | 6 | 33 s |
+| Bob, C1 | 127,981 | — | 12 | 28 s |
+| Patricia, C1 | 227,009 | — | 17 | 231 s |
+| Patricia, C1 fix 1 | 30,183 | — | 2 | 6 s |
+| Bob, C1 fix 1 | 96,154 | — | 9 | 19 s |
+| Quinn, C1 fix 1 | 272,339 | — | 19 | 234 s |
+| Patricia, C6 | 154,687 | — | 12 | 568 s |
+| Quinn, T2.1, | 556,555 | — | 24 | 142 s |
+| Bob, T2.1, fix 1 | 92,164 | — | 6 | 13 s |
+| Patricia, T2.1, fix 1 | 244,554 | — | 14 | 1219 s |
+| Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
+| Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
+| Bob, C1 | 232,941 | 35,068 | 14 | 40 s |
+| Patricia, C1 | 59,101 | 29,934 | 2 | 4 s |
+| Bob, C8 | 58,280 | 16,486 | 6 | 13 s |
+| Patricia, C7 | 77,917 | 39,296 | 3 | 5 s |
+| Patricia, C7 fix 1 | 85,201 | 21,581 | 8 | 15 s |
+| Quinn, C7 fix 1 | 189,175 | 22,334 | 14 | 58 s |
+| Bob, C9 | 92,562 | 22,028 | 7 | 14 s |
+| Bob, C10 | 199,222 | 27,385 | 13 | 36 s |
+| Patricia, C10 | 73,577 | 37,182 | 2 | 5 s |
+| Bob, C5 | 699,505 | 56,503 | 38 | 110 s |
+| Patricia, C5 | 688,276 | 54,220 | 42 | 689 s |
+| Bob, C5 | 262,642 | 42,615 | 16 | 43 s |
+| Patricia, C5 | 94,439 | 23,051 | 10 | 608 s |
+| Bob, C5 fix 1 | 26,011 | 13,835 | 2 | 8 s |
+| Quinn, C5 fix 1 | 341,007 | 34,294 | 25 | 92 s |
+| Patricia, C5 fix 1 | 30,575 | 30,575 | 1 | 2 s |
+| Bob, C5 fix 2 | 38,012 | 13,626 | 3 | 8 s |
+| Quinn, C5 fix 2 | 110,717 | 21,051 | 6 | 19 s |
+| Patricia, C5 fix 2 | 114,867 | 30,552 | 4 | 10 s |
+| Patricia, C11 | 53,645 | 27,121 | 2 | 4 s |
+| Patricia, C12 | 101,180 | 19,379 | 11 | 19 s |
+| Patricia, C13 | 108,802 | 29,158 | 11 | 24 s |
+| Quinn, C13 fix 1 | 68,982 | 15,264 | 5 | 36 s |
+| Patricia, C13 fix 1 | 84,262 | 16,319 | 7 | 1096 s |
+| Quinn, T.1, T.2, T8.1 | 477,530 | 42,043 | 24 | 77 s |
+| Quinn, T.1, T.2, T8.1 fix 1 | 165,953 | 21,616 | 12 | 28 s |
+| Quinn, T10.1 | 887,316 | 67,975 | 39 | 135 s |
+| Patricia, T10.1 fix 1 | 58,303 | 17,199 | 5 | 10 s |
+| Bob, T10.1 fix 1 | 247,235 | 37,131 | 17 | 48 s |
+| Quinn, T11.1 | 486,034 | 40,439 | 28 | 62 s |
+| Quinn, T12.1 | 546,215 | 53,233 | 31 | 86 s |
+| Quinn, T12.1 fix 1 | 162,037 | 25,923 | 11 | 43 s |
+| Quinn, T12.1 fix 2 | 87,109 | 16,180 | 7 | 16 s |
+| Quinn, T13.1 | 436,447 | 47,703 | 20 | 52 s |
+| Patricia, T13.1 fix 1 | 60,949 | 19,912 | 4 | 11 s |
+| Patricia, T13.1 fix 2 | 31,013 | 19,819 | 2 | 6 s |
+| Quinn, T.1, T.2, T8.1, T.3 | 225,023 | 34,000 | 12 | 26 s |
+| Quinn, T.1, T.2, T8.1, T.3 fix 1 | 162,171 | 24,125 | 9 | 24 s |
+| Quinn, T.1, T.2, T8.1, T.3 fix 2 | 170,516 | 24,690 | 15 | 29 s |
+| Patricia, C15 | 58,254 | 29,403 | 2 | 4 s |
+| Bob, C14 | 331,448 | 43,658 | 30 | 54 s |
+| Patricia, C14 | 95,525 | 48,570 | 3 | 7 s |
+| Bob, C14 fix 1 | 523,290 | 56,605 | 25 | 69 s |
+| Quinn, C14 fix 1 | 594,421 | 42,742 | 27 | 88 s |
+| Patricia, C14 fix 1 | 135,715 | 46,293 | 3 | 8 s |
+| **Total** | **15,943,610** | | | |
+
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 34: scan (2026-11-08T02:53:12-05:00)
+
+Unit results from `game/reports/_runs/20261108-022320/unit.log`. 32 of 38 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+Next: **T14.1** (score 5.54: play-test fix; cost 0.46 (Quinn)), with T14.2, T14.3.
+
+### Step: T14.1, T14.2, T14.3 (2026-11-08T02:53:12-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.1-quinn.md` (3208 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (1,467,021 tokens, 38 turns, 181 s):
+
+I wrote the three item 14 tests and registered them, but I haven't run any of them. The Bash tool refused both `CB_ONLY=... python -I _tools/godot_run.py unit` and the `env CB_ONLY=...` form. It blocks any environment-variable assignment outside its safe list. I didn't try to get around the block. The tests have not been parse-checked and the three mutations have not been proven, so please dispatch Rex to run them.
+
+**Files changed:**
+- New `game/tests/test_hive_model.gd` (extends `test_motor.gd`).
+- `game/tests/run_tests.gd`: now extends `test_hive_model.gd`, and the three tests sit under the `# 0.1.4 item 14 (written from game/specs/0.1.4-ui-placement.md before the code)` comment.
+- `game/tests/mutations.json`: three new entries, one per test.
+
+**Tests:**
+- T14.1: `t_hive_five_upright_frames_four_walls`.
+- T14.2: `t_raised_frame_cells_fill_and_size`.
+- T14.3: `t_lid_closes_clear_of_walls`.
+
+**Node names used:** `Hive`, `HiveBody` (with `Floor` and the wall children), `HiveLid`, `FrameBars/FrameBarN/Back`, `FrameSlots/SlotN`, `Honeycomb`, and the pick's `F1C00` and `FrameBar1/Back`.
+
+**Open questions:**
+1. By my arithmetic the pick's two-row cells span only about 77% of its Back panel's height. T14.2's 90% check measures against that Back panel, as T10.2 does. It may fail on a correct build, in which case the spec should name the inner rect.
+2. The mutations match strings in the current `hive.tscn`, so they need re-checking once Bob rewrites it.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      152 passed, 1 failed  (exit 1, 230 noise lines dropped)  game/reports/_runs/20261108-025615/unit.log
+    FAIL  t_raised_frame_cells_fill_and_size  the cells cover 84% of the frame's inner rect on screen (need 90%) | test stopped before its final line (script error or missing method; see the engine error above)  (1174 ms)
+```
+
+#### Fix round 1: to Bob, Patricia
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/T14.1-fix1-bob.md` (2167 chars)
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T14.1-fix1-patricia.md` (2153 chars)
+- Budget guard for Bob: override
+- Budget guard for Patricia: override
+
+**Bob** (139,855 tokens, 9 turns, 22 s):
+
+I changed nothing. The failure isn't in `scenes/` or `materials/`.
+
+- **Cast error:** `t_raised_frame_cells_fill_and_size` stopped at `game/tests/test_hive_model.gd:229` with "Invalid cast: could not convert value to 'Array'". The test does `bb[0] as Array`, but `_back_box` returns a different type. That is Quinn's folder and needs a fix there.
+- **84% coverage:** the raised frame's cells come from `game/scripts/honeycomb.gd` and `hive.gd`, not from `hive.tscn`. Their size and spacing come from `cell_radius = 0.46`, `DEFAULT_CELL_PITCH`, `frame_scale` and `grid_cols`/`grid_rows`. `hive.tscn` only holds a bare `Honeycomb` node with the script attached. The pick's cells (5×2, radius 0.14) are separate scene meshes in `hive-frames-a.tscn`. Patricia's scripts need to set the cell pitch and scale so the cells fill the raised frame's inner rect.
+- **Scene side:** I haven't confirmed the Back panel's size in `hive.tscn` against the pick. If Patricia's fix still falls short, I can match the panel to `hive-frames-a.tscn`.
+
+
+**Patricia** (777,166 tokens, 36 turns, 1471 s):
+
+Cell fill is fixed, but the unit suite still has 3 failures: two come from the cell-size fix and one is a bug in the test.
+
+- **Fix (scripts/):** the cells covered 84% of the raised frame, so I widened them to fill it.
+  - `frame_scale` went from 2.6 to 2.7 in `game_config.gd` and `default_config.tres`.
+  - `DEFAULT_CELL_PITCH` went from 1.865 to 1.95 in `honeycomb.gd`.
+  - Both are still placeholders. The 90% check no longer fails.
+- **Still failing: `t_raised_frame_cells_fill_and_size`.** `test_hive_model.gd` line 229 does `_inner_width(bb[0] as Array)`, but `bb[0]` is a `Vector3`. It should be `_inner_width(bb)`. This is in Quinn's folder and stops the test before its last line.
+- **Newly failing: `t_replay_fill_and_back` and `t_replay_without_back_stays_in_zoom`.** The bucket ends with 16–17 cells instead of 70. They passed in the earlier run and fail after my layout change, so the recorded fixture's drags probably no longer line up with the cell positions. I did not confirm this by reverting. Quinn should re-record it.
+
+I ran the unit suite only, not `play_loop.gd`. No Godot processes of mine are still running, and I did not commit.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      152 passed, 1 failed  (exit 1, 230 noise lines dropped)  game/reports/_runs/20261108-032447/unit.log
+    FAIL  t_raised_frame_cells_fill_and_size  test stopped before its final line (script error or missing method; see the engine error above)  (1244 ms)
+```
+
+#### Fix round 2: to Bob, Patricia
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/T14.1-fix2-bob.md` (2098 chars)
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T14.1-fix2-patricia.md` (2084 chars)
+- Budget guard for Bob: override
+- Budget guard for Patricia: override
+
+**Patricia** (32,884 tokens, 2 turns, 7 s):
+
+I changed nothing, because the remaining failure is in `tests/`, not `scripts/`.
+
+`t_raised_frame_cells_fill_and_size` stops at `game/tests/test_hive_model.gd:229`: `_inner_width(bb[0] as Array)`. `bb` is the panel's 3-element array and `bb[0]` is a `Vector3`, so the cast to `Array` fails. The line should be `_inner_width(bb)`.
+
+The 90% cover check on line 228 no longer fails after round 1's cell-size change in `scripts/`. That change set `frame_scale` to 2.7 and `DEFAULT_CELL_PITCH` to 1.95, both still placeholders.
+
+Quinn needs to fix line 229. Quinn should also re-record the replay fixture for `t_replay_fill_and_back` and `t_replay_without_back_stays_in_zoom`, which round 1 reported failing after the layout change. This round's run showed only 1 failure, so check whether they still fail.
+
+I ran no Godot processes and did not commit.
+
+
+**Bob** (76,375 tokens, 7 turns, 15 s):
+
+I made no changes. This failure is in the test file, not in `scenes/` or `materials/`.
+
+`game/tests/test_hive_model.gd:229` is the line that fails. The log shows `Invalid cast: could not convert value to 'Array'` at that line. It stops the test before its final check.
+
+- **Cause:** `bb` there is a single box, the 3-element array returned by `_back_box`. The line casts `bb[0]`, which is the box's centre Vector3, to `Array`.
+- **Fix (Quinn/Patricia):** pass `bb` instead of `bb[0] as Array`, so it reads `_inner_width(bb)`. `_pick_ratio` is different. It takes `_obbs(back)`, which is a list of boxes, so its `bb[0]` is correct.
+
+I didn't render the scene or check the raised-frame comb size against the pick (`hive-frames-r9-a.png`). Once the cast is fixed, any ratio or cover failure it shows will be a scene problem for me.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS

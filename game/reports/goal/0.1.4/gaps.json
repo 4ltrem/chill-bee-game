@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T01:54:11-05:00",
- "unit_log": "game/reports/_runs/20261108-015041/unit.log",
+ "at": "2026-11-08T02:53:12-05:00",
+ "unit_log": "game/reports/_runs/20261108-022320/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -613,10 +613,16 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "40128c7",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -1361,6 +1367,44 @@
    "questions": [],
    "ambiguous": false
   },
+  "T14.2": {
+   "kind": "test",
+   "title": "item 14 fix (play-test 2026-11-08, shown failing on the current build ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T14.3": {
+   "kind": "test",
+   "title": "item 14 lid (play-test 2026-11-08, shown failing on the current build ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
   "T15.1": {
    "kind": "test",
    "title": "item 15: after Back from a crank at the second stop, taps in the farm ",
@@ -1600,12 +1644,34 @@
  },
  "order": [
   {
-   "id": "C14",
-   "score": 8.01,
+   "id": "T14.1",
+   "score": 5.54,
    "factors": {
-    "unblocks": 1,
+    "unblocks": 0,
     "value": 3,
-    "cost": 0.99,
+    "cost": 0.46,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T14.2",
+   "score": 5.54,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.46,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T14.3",
+   "score": 5.54,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.46,
     "ready": 1,
     "blocked_by": []
    }
@@ -1619,19 +1685,6 @@
     "cost": 0.46,
     "ready": 1,
     "blocked_by": []
-   }
-  },
-  {
-   "id": "T14.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 0,
-    "blocked_by": [
-     "C14"
-    ]
    }
   }
  ],

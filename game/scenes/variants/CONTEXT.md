@@ -12,13 +12,13 @@ Do NOT load: `GDD.md` unless the request names a prop the style guide cannot pla
 ## Process
 1. Check the request names a prop, a footprint and a variant count. If one is missing, stop and ask.
 2. Read the style reference scene and the palette materials you need.
-3. Write each variant as `<prop>/<prop>-a.tscn`, `-b`, `-c`: a root `Node3D` with primitive `MeshInstance3D` parts (Box, Cylinder, Sphere, Prism), palette materials only, origin at the footprint centre on the ground (y = 0).
+3. Write each variant as `<prop>-r<N>/<prop>-r<N>-a.tscn`, `-b`, `-c` (N = the vote round; a new folder every round, never an earlier round's, so each voted round survives until it is committed; `model_shots.py` refuses a folder without `-r<N>`): a root `Node3D` with primitive `MeshInstance3D` parts (Box, Cylinder, Sphere, Prism), palette materials only, origin at the footprint centre on the ground (y = 0).
 4. Make the variants different takes on the same prop, with the same footprint.
 5. Hand back the list of files and any palette token that had no material file.
 
 ## Outputs
-- `game/scenes/variants/<prop>/<prop>-a.tscn`, `-b.tscn`, `-c.tscn` (only these)
+- `game/scenes/variants/<prop>-r<N>/<prop>-r<N>-a.tscn`, `-b.tscn`, `-c.tscn` (only these; the older unnumbered folders, e.g. `hive-frames/` = round 9, stay as they are)
 
 ## Check
-- Shots and judgement are not this shelf's job. `_tools/model_shots.py <prop>` loads all the variants once, side by side on one shared test grid, shoots each close up, and runs `_tools/style_check.py`; `_tools/compare_page.py` builds the vote page (yes / maybe / no).
+- Shots and judgement are not this shelf's job. `_tools/model_shots.py <prop>-r<N>` loads all the variants once, side by side on one shared test grid, shoots each close up, and runs `_tools/style_check.py`; `_tools/compare_page.py` builds the vote page (yes / maybe / no).
 - The designer's pick on the compare page ends the run. Bob then promotes the picked variant into `game/scenes/props/`.
