@@ -755,6 +755,37 @@
   "suite": "unit"
  },
  {
+  "name": "0.1.4 T14.4 the raised frame's cells are shifted 0.5 sideways (off centre, past the bars)",
+  "file": "scripts/honeycomb.gd",
+  "find": "\t\troot.position = _cell_position(i)",
+  "replace": "\t\troot.position = _cell_position(i) + Vector3(0.5, 0.0, 0.0)",
+  "expect": [
+   "t_raised_frame_cells_aligned"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.4 the in-hive cells are shifted 0.5 sideways",
+  "file": "scripts/hive_comb_view.gd",
+  "find": "instance.position = Honeycomb.cell_position(c, cols, rows, Honeycomb.DEFAULT_CELL_PITCH)",
+  "replace": "instance.position = Honeycomb.cell_position(c, cols, rows, Honeycomb.DEFAULT_CELL_PITCH) + Vector3(0.5, 0.0, 0.0)",
+  "expect": [
+   "t_hive_frames_cells_aligned"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.4 odd columns are no longer offset, so neighbours meet along a line through corners",
+  "file": "scripts/honeycomb.gd",
+  "find": "+ 0.5 * float(col % 2) - 0.25)",
+  "replace": "+ 0.0 * float(col % 2) - 0.25)",
+  "expect": [
+   "t_raised_frame_cells_aligned",
+   "t_hive_frames_cells_aligned"
+  ],
+  "suite": "unit"
+ },
+ {
   "name": "0.1.4 T15.1 the crank keeps counting turns after Back (Back leaves crank_enabled on)",
   "file": "scripts/main.gd",
   "find": "\t\t_crank_paused = true   # 0.1.4 item 15: no turn counts off the second stop; progress is kept\n\t\t_centrifuge.crank_enabled = false",
@@ -773,6 +804,16 @@
   "expect": [
    "t_crank_pauses_on_back_and_resumes_on_spin",
    "t_paused_crank_never_finishes_in_farm_view"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.5 the hive lid rests 0.1 too low, so the whole close ends sunk into the walls",
+  "file": "scenes/props/hive.tscn",
+  "find": "[node name=\"HiveLid\" type=\"Node3D\" parent=\".\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74, 0)",
+  "replace": "[node name=\"HiveLid\" type=\"Node3D\" parent=\".\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0)",
+  "expect": [
+   "t_lid_close_never_clips_hive"
   ],
   "suite": "unit"
  }

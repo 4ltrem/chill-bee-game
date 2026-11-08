@@ -1,0 +1,200 @@
+diff --git a/game/scenes/props/hive.tscn b/game/scenes/props/hive.tscn
+index 794203a..4814e89 100644
+--- a/game/scenes/props/hive.tscn
++++ b/game/scenes/props/hive.tscn
+@@ -24,15 +24,15 @@ size = Vector3(1.4, 0.12, 1.4)
+ 
+ [sub_resource type="BoxMesh" id="Mesh_barback"]
+ material = ExtResource("5_wood")
+-size = Vector3(9, 0.12, 4.82)
++size = Vector3(9.24, 0.12, 5.52)
+ 
+ [sub_resource type="BoxMesh" id="Mesh_bartb"]
+ material = ExtResource("5_wood")
+-size = Vector3(9, 0.7, 0.14)
++size = Vector3(9.24, 0.7, 0.14)
+ 
+ [sub_resource type="BoxMesh" id="Mesh_barlr"]
+ material = ExtResource("5_wood")
+-size = Vector3(0.12, 0.7, 4.82)
++size = Vector3(0.12, 0.7, 5.52)
+ 
+ [node name="Hive" type="Node3D" groups=["bee_home"]]
+ script = ExtResource("1_hive")
+@@ -98,19 +98,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+ mesh = SubResource("Mesh_barback")
+ 
+ [node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar1"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar1"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar1"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar1"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="FrameBar2" type="Node3D" parent="FrameBars"]
+@@ -121,19 +121,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+ mesh = SubResource("Mesh_barback")
+ 
+ [node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar2"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar2"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar2"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar2"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="FrameBar3" type="Node3D" parent="FrameBars"]
+@@ -144,19 +144,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+ mesh = SubResource("Mesh_barback")
+ 
+ [node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar3"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar3"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar3"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar3"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="FrameBar4" type="Node3D" parent="FrameBars"]
+@@ -167,19 +167,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+ mesh = SubResource("Mesh_barback")
+ 
+ [node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar4"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar4"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar4"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar4"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="FrameBar5" type="Node3D" parent="FrameBars"]
+@@ -190,19 +190,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+ mesh = SubResource("Mesh_barback")
+ 
+ [node name="Top" type="MeshInstance3D" parent="FrameBars/FrameBar5"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Bottom" type="MeshInstance3D" parent="FrameBars/FrameBar5"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.34)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 2.69)
+ mesh = SubResource("Mesh_bartb")
+ 
+ [node name="Left" type="MeshInstance3D" parent="FrameBars/FrameBar5"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="Right" type="MeshInstance3D" parent="FrameBars/FrameBar5"]
+-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.44, -0.07, 0)
++transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.56, -0.07, 0)
+ mesh = SubResource("Mesh_barlr")
+ 
+ [node name="Honeycomb" type="Node3D" parent="."]
+diff --git a/game/scenes/props/honey_cell.tscn b/game/scenes/props/honey_cell.tscn
+index 2cc43a5..0d4b78f 100644
+--- a/game/scenes/props/honey_cell.tscn
++++ b/game/scenes/props/honey_cell.tscn
+@@ -1,15 +1,15 @@
+ [gd_scene load_steps=3 format=3]
+ 
+ [sub_resource type="CylinderMesh" id="Mesh_cell"]
+-top_radius = 0.38
+-bottom_radius = 0.38
++top_radius = 0.32
++bottom_radius = 0.32
+ height = 0.3
+ radial_segments = 6
+ rings = 1
+ 
+ [sub_resource type="CylinderShape3D" id="Shape_cell"]
+ height = 0.6
+-radius = 0.38
++radius = 0.32
+ 
+ [node name="HoneyCell" type="Node3D"]
+ 
+diff --git a/game/scripts/hive_comb_view.gd b/game/scripts/hive_comb_view.gd
+index 657eee1..a0e67f9 100644
+--- a/game/scripts/hive_comb_view.gd
++++ b/game/scripts/hive_comb_view.gd
+@@ -46,6 +46,7 @@ func setup(hive: Hive) -> void:
+ 			var instance := MeshInstance3D.new()
+ 			instance.mesh = mesh
+ 			instance.position = Honeycomb.cell_position(c, cols, rows, Honeycomb.DEFAULT_CELL_PITCH)
++			instance.rotation.y = Honeycomb.CELL_YAW
+ 			instance.scale = Vector3.ONE * hive.config.frame_scale
+ 			holder.add_child(instance)
+ 			row.append(instance)
+diff --git a/game/scripts/honeycomb.gd b/game/scripts/honeycomb.gd
+index 0c67739..30c4867 100644
+--- a/game/scripts/honeycomb.gd
++++ b/game/scripts/honeycomb.gd
+@@ -18,7 +18,8 @@ const UNCAPPED: int = 1
+ const EXTRACTED: int = 2
+ 
+ const CELL_HEIGHT: float = 0.3
+-const DEFAULT_CELL_PITCH: float = 1.95   # PLACEHOLDER: widened from 1.865 so 5 x 2 cells fill the 9 x 4.82 frame edge to edge on screen (T14.2)
++const CELL_YAW: float = 0.0   # honey_cell.tscn's Mesh already carries a 30 deg turn (corners on +-X, sides toward the column); adding another put corners back on +-Z
++const DEFAULT_CELL_PITCH: float = 1.83   # PLACEHOLDER: 5 x 2 cells (radius 0.38 x 2.7) fit the inner rect 8.76 x 4.54 with a visible gap (T14.4)
+ const STATE_Y: Array[float] = [0.12, 0.0, -0.12]   # capped raised, uncapped flush, extracted recessed
+ const SWEEP_STEP_PX: float = 16.0                   # fast drags are sampled at this screen spacing
+ const RAY_LENGTH: float = 200.0
+@@ -297,6 +298,7 @@ func _build_cells() -> void:
+ 		var root: Node3D = packed.instantiate() as Node3D
+ 		root.name = "Cell_%d" % i
+ 		root.position = _cell_position(i)
++		root.rotation.y = CELL_YAW   # flat sides face the neighbours (never corner to corner)
+ 		var body: Node = root.find_child("Body", true, false)  # contract: optional (inside a prop scene instanced at run time, or numbered)
+ 		if body != null:
+ 			body.set_meta("cell_index", i)

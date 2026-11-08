@@ -5,7 +5,9 @@
 
 Suites: unit (run_tests.gd, headless), start (a headless start, errors only), play (play_loop.gd),
 measure (r4_measure.gd), snapshot (snapshot_pop.gd), ui (ui_bounds_pixels.gd), touch (touch_windowed.gd);
-the windowed ones open a 720x1280 window. `all` runs every suite; no suite means `unit start`.
+the windowed ones open a 720x1280 window. `all` runs every test suite; no suite means `unit start`.
+Shot runs (by name only, not in `all`; PASS = exit 0 + COMPLETED): lid (lid_shots.gd, the hive lid's close shot every
+10% plus per-node penetration, into ROOT/../game/reports/_look/lid/).
 
 Why: agents used to read Godot's raw output, hundreds of lines a run, much of it engine noise (the
 headless dummy renderer's `mesh_get_surface_count` errors). Each raw log now goes to
@@ -39,8 +41,10 @@ SUITES = {
     "snapshot": {"script": "res://tests/snapshot_pop.gd", "headless": False},
     "ui": {"script": "res://tests/ui_bounds_pixels.gd", "headless": False},
     "touch": {"script": "res://tests/touch_windowed.gd", "headless": False},
+    # shot runs: no pass/fail total; PASS = exit 0 + COMPLETED. --out is relative to the checkout root (the folder above game/)
+    "lid": {"script": "res://tests/lid_shots.gd", "headless": False, "shots": True, "args": ["--out=game/reports/_look/lid"]},
 }
-ALL = list(SUITES)
+ALL = [s for s in SUITES if not SUITES[s].get("shots")]   # `all` = the test suites; shot runs are asked for by name
 
 # Engine noise: printed by Godot 4.2.1's headless dummy renderer when meshes are freed (0.1 report).
 NOISE = [re.compile(p) for p in (
@@ -63,6 +67,8 @@ def command(suite, root):
         if not spec["headless"]:
             cmd += WINDOW
         cmd += ["-s", spec["script"]]
+        if spec.get("args"):
+            cmd += ["--"] + spec["args"]
     else:
         cmd += ["--quit-after", "300"]
     return cmd
@@ -93,6 +99,8 @@ def summarise(suite, text, code):
     if suite == "start":
         ok = code == 0 or (code == 1 and not errors)   # 4.2.1 exits 1 even for an empty project (0.1 report)
         status = "PASS" if ok and not errors else "FAIL"
+    elif SUITES[suite].get("shots"):
+        status = "PASS" if code == 0 and completed else ("TIMEOUT" if code is None else "FAIL")
     else:
         ok = code == 0 and not fails and total is not None and total["failed"] == 0
         if not SUITES[suite]["headless"]:

@@ -63,6 +63,7 @@ func apply(s: float) -> void:
 		var k: float = progress / split
 		var rise: float = minf(k / LIFT_RISE_PART, 1.0)   # the rise ends early and the lid dwells at the full height before any sideways move
 		_lid.position = _closed_pos.lerp(lifted, rise * rise * (3.0 - 2.0 * rise))   # smoothstep: a gentle start and a gentle top
+		_lid.quaternion = _closed_quat   # the lift never turns the lid: closing arrives flat (a tilt left from the open pose clipped the walls)
 		return
 	var f: float = (progress - split) / (1.0 - split) if split < 1.0 else 1.0
 	var sf: float = minf(f / SIDE_PART, 1.0)
@@ -71,7 +72,7 @@ func apply(s: float) -> void:
 	var down: float = df * df                            # then down
 	_lid.position = Vector3(lerpf(lifted.x, open_pos.x, across), lerpf(lifted.y, open_pos.y, down), lerpf(lifted.z, open_pos.z, across))
 	if _spot != null:   # every lid lands at the spot's rotation (the centrifuge lid's spin ends flat); the lift never turns it
-		_lid.quaternion = _closed_quat.slerp(_spot.quaternion, clampf((f - SIDE_PART) / 0.2, 0.0, 1.0) if _tip_late else f)
+		_lid.quaternion = _closed_quat.slerp(_spot.quaternion, clampf((f - SIDE_PART) / 0.2, 0.0, 1.0) if _tip_late else minf(f / (SIDE_PART * 0.85), 1.0))   # turned before the drop starts, so closing arrives flat
 
 
 ## Plays the path to open or closed, starting after `delay` seconds. Without a tree the lid jumps there.

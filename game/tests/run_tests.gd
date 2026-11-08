@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_crank_pause.gd"
+extends "res://tests/test_lid_clip.gd"
 
 
 # Tests that stay at x1 (they read the wall clock on purpose, own Engine.time_scale through the Dev speed row, or measure wall seconds
@@ -12,6 +12,7 @@ const X1_TESTS: Array[String] = [
 	"t_dev_actions",                      # presses the Dev speed button and reads Engine.time_scale
 	"t_pop_tween_unchanged",              # samples a 0.18 s tween: too few frames at x6 (0.042 vs 0.04 tolerance)
 	"t_jar_fills_then_lid",               # samples a 1.0 s honey rise per frame: missed at x6
+	"t_lid_close_never_clips_hive",       # T14.5: the real Back press, sampled at every rendered frame at time scale 1
 	"t_replay_fill_and_back", "t_replay_without_back_stays_in_zoom",   # a replay feeds one drag motion per frame: at x6 each frame is 0.1 s of game time
 ]
 
@@ -86,7 +87,7 @@ func _run() -> void:
 			# 0.1.4 item 2 (written from game/specs/0.1.4-ui-placement.md before the code)
 			"t_hud_no_overlap_no_cutoff", "t_buttons_at_anchor_or_clamped", "t_buttons_clamped_when_anchor_off_screen",
 			"t_harvest_hidden_at_second_stop", "t_spin_placed_by_scene",
-			# 0.1.4 items 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 (written from game/specs/0.1.4-ui-placement.md before the code)
+			# 0.1.4 items 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 (written from game/specs/0.1.4-ui-placement.md before the code)
 			"t_back_fixed_top_right", "t_speed_tag_below_labels",
 				# 0.1.4 item 10 (written from game/specs/0.1.4-ui-placement.md before the code)
 				"t_combs_visible_in_hive", "t_combs_fill_frame_and_hive_whole",
@@ -99,6 +100,7 @@ func _run() -> void:
 					"t_centrifuge_label_on_centrifuge",
 					# 0.1.4 item 14 (written from game/specs/0.1.4-ui-placement.md before the code)
 					"t_hive_five_upright_frames_four_walls", "t_raised_frame_cells_fill_and_size", "t_lid_closes_clear_of_walls",
+						"t_raised_frame_cells_aligned", "t_hive_frames_cells_aligned", "t_lid_close_never_clips_hive",
 						# 0.1.4 item 15 (written from game/specs/0.1.4-ui-placement.md before the code)
 						"t_crank_pauses_on_back_and_resumes_on_spin", "t_paused_crank_never_finishes_in_farm_view",
 	]

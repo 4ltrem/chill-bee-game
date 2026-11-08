@@ -7,8 +7,6 @@ extends "res://tests/test_ui_placement.gd"
 # Black box: a "comb cell" is any visible MeshInstance3D under the Hive, outside the one Honeycomb, drawn with the shared cell_capped or
 # cell_uncapped material; its frame is the nearest Slot marker. Expected counts come from Hive.frames (0 Capped, 1 Uncapped, 2 Extracted).
 
-const _COVER_MIN: float = 0.9   # the cells' span is at least this share of the frame's Back panel span, on both axes ("edge to edge")
-const _COVER_MAX: float = 1.1   # and no more than this (cells must not spill out of the frame)
 
 
 ## [[MeshInstance3D, state]] of the comb cells drawn in the hive now (the Honeycomb's own cells are the risen frame's, not counted).
@@ -191,14 +189,9 @@ func t_combs_fill_frame_and_hive_whole() -> void:
 		ck(mine.size() == _cpf() and bb.size() == 1, "frame %d: %d cells and its Back panel were measured" % [f + 1, mine.size()])
 		if mine.size() != _cpf() or bb.size() != 1:
 			continue
-		for axis in [0, 2]:
-			var cs: Vector2 = _span_in(slot, mine, axis)
-			var bs: Vector2 = _span_in(slot, bb, axis)
-			# the panel's thin axis (depth) is skipped: only the two with a real width are compared
-			var ratio: float = (cs.y - cs.x) / maxf(bs.y - bs.x, 1.0e-6)
-			ck(ratio >= _COVER_MIN and ratio <= _COVER_MAX, "frame %d, slot axis %d: the cells span %.0f%% of the frame's inner area (%.2f to %.2f)" % [f + 1, axis, ratio * 100.0, _COVER_MIN, _COVER_MAX])
-			checked += 1
-	ck(checked >= 2, "frame coverage was measured (%d axis checks)" % checked)
+		# the 90-110% cover check was dropped (designer, 2026-11-08); placement is T14.4's (test_hive_model.gd)
+		checked += 1
+	ck(checked >= 2, "frames with their cells were measured (%d)" % checked)
 	# the hive body is whole
 	var body: Node = hive.find_child("HiveBody", true, false)
 	var floor_n: Node = body.find_child("Floor", true, false) if body != null else null

@@ -3,7 +3,7 @@ spec: 0.1.4-ui-placement.md
 version: 0.1.4
 run: 0.1.4
 started: 2026-11-07
-result: done
+result: waiting-designer
 ---
 # Goal agent: 0.1.4-ui-placement.md (run 0.1.4)
 
@@ -2978,9 +2978,639 @@ Nothing left to build.
 
 **Stop:** nothing ready to build (done); not done: none.
 
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `done`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 37: scan (2026-11-08T14:39:53-05:00)
+
+Unit results from `game/reports/_runs/20261108-034533/unit.log`. 38 of 39 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 39)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T14.4 item 14 align (play-test 2026-11-08, shown failing on the cu | test | Quinn | partial | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ ledger not built: its item's tests predate this line |
+
+### Order: new or rescored (1 of 1)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T14.4 item 14 align (play-test 2026-11-08, shown failing | 5.57 | 0 | 3 | 0.43 | 1 | play-test fix; cost 0.43 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T14.4** (score 5.57: play-test fix; cost 0.43 (Quinn)).
+
+### Step: T14.4 (2026-11-08T14:39:53-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.4-quinn.md` (4080 chars)
+
+**Paused:** Budget guard: weekly usage is 35% with 18% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 1 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 38: scan (2026-11-08T14:41:51-05:00)
+
+Unit results from `game/reports/_runs/20261108-034533/unit.log`. 38 of 39 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+Next: **T14.4** (score 5.57: play-test fix; cost 0.43 (Quinn)).
+
+### Step: T14.4 (2026-11-08T14:41:51-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.4-quinn.md` (4080 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (661,595 tokens, 27 turns, 122 s):
+
+I wrote the tests but could not run them. The shell blocked the `CB_ONLY=… CB_TIME_SCALE=6 python -I _tools/godot_run.py unit` command (an env-var prefix outside its safe list, with or without `env`). So the tests are unproven, and so are the mutations: no run shows the tests fail on the current build.
+
+**Files changed**
+- `tests/test_hive_model.gd`: removed `_PICK_COVER` and its cover checks from `t_raised_frame_cells_fill_and_size`. Added `t_raised_frame_cells_aligned` and `t_hive_frames_cells_aligned`. Each checks:
+  - cell boxes lie inside the Back panel rect;
+  - no cell box intersects a Top, Bottom, Left or Right bar;
+  - the grid centre is within 5% of the frame width;
+  - neighbours meet side to side, at least 25° from a corner direction (the corner angle is read from the cell mesh).
+- `tests/run_tests.gd`: both names added to the existing item 14 group line.
+- `tests/mutations.json`: three T14.4 mutations, unverified.
+
+**Node names used:** `FrameBarN/Back`, `Top`, `Bottom`, `Left`, `Right`, `SlotN`, `Honeycomb`.
+
+**Open questions**
+- The old `grid_cols` mutation for `t_raised_frame_cells_fill_and_size` may no longer fail now that the cover check is gone.
+- Rex should run the three tests, and `mutate.py` on the new mutations.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      155 passed, 2 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-144356/unit.log
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | raised frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | raised frame 1: neighbours meet sid
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | hive frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | hive frame 1: neighbours meet side to si
+```
+
+#### Fix round 1: to Bob, Patricia
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/T14.4-fix1-bob.md` (3658 chars)
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T14.4-fix1-patricia.md` (3644 chars)
+- Budget guard for Bob: override
+- Budget guard for Patricia: override
+
+**Patricia** (111,887 tokens, 12 turns, 28 s):
+
+I rotated the cells 30° to fix the touching corners, but I haven't run any checks, so none of it is confirmed.
+
+- **Changes:** `honeycomb.gd` now has a `CELL_YAW` constant (30°), applied to each cell in `_build_cells`. `hive_comb_view.gd` applies the same rotation to the cells on the resting hive frames.
+- **Side-to-side failure:** this is the one the rotation targets. The log showed neighbouring cells 0° from a corner, so they met point to point.
+- **Overshoot and bar-penetration failures:** these should also clear. I assumed the overshoot of 0.0143 and the bar penetration of 0.0398 came from the cell corners sticking out along the frame's long axis.
+- **If they persist:** after the rotation the cells are wider along x than before, so the x edge could become the limit. `DEFAULT_CELL_PITCH` (1.95) is then the value to trim. A cut of up to about 15% stays within the spec's proportion limit.
+- **Tests and placeholders:** I ran no tests, as instructed. No placeholders were added.
+
+
+**Bob** (148,150 tokens, 12 turns, 28 s):
+
+I rotated the cell mesh 30° about its axis in `scenes/props/honey_cell.tscn`. I haven't run the tests or a render, so none of this is confirmed yet.
+
+- **Side-to-side contact:** the 6-segment hex had its corners on ±Z, and `honeycomb.gd` stacks each column along Z. After the rotation the flat sides face the column direction, so neighbours meet side to side. Columns still tile hex-style along X.
+- **Overshoot (0.0143) and bar penetration (0.0398):** these look like the same cause. The hex's corner stuck out along the frame's short axis (the Top and Bottom bars). The flat side now faces them, which cuts that extent to about 87% of the radius. I haven't checked this against the actual cell sizes.
+
+If `t_raised_frame_cells_aligned` and `t_hive_frames_cells_aligned` still fail on overshoot or penetration, the remaining fix is probably `cell_pitch` or `frame_scale`. That's `scripts/honeycomb.gd` or config, not my folder.
+
+No other scene or material files were changed.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      154 passed, 3 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-144930/unit.log
+    FAIL  t_combs_fill_frame_and_hive_whole  frame 1, slot axis 2: the cells span 116% of the frame's inner area (0.90 to 1.10) | frame 2, slot axis 2: the cells span 116% of the frame's inner area (0.90 to 1.10) | frame 3, slot axis 2: the cel
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: every cell box lies inside the inner rect (worst overshoot 0.0610) | raised frame 1: no cell box intersects a frame bar box (worst penetration 0.0865) | raised frame 1: neighbours meet sid
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: every cell box lies inside the inner rect (worst overshoot 0.0701) | hive frame 1: no cell box intersects a frame bar box (worst penetration 0.0956) | hive frame 2: every cell box lies inside
+```
+
+#### Fix round 2: to Bob, Patricia
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/T14.4-fix2-bob.md` (3903 chars)
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T14.4-fix2-patricia.md` (3889 chars)
+- Budget guard for Bob: override
+- Budget guard for Patricia: override
+
+**Patricia** (195,121 tokens, 11 turns, 35 s):
+
+I changed two lines in `game/scripts/honeycomb.gd`. I did not run any checks, so none of this is confirmed. The change might not clear all three failing tests, and `test_combs.gd` will still fail either way (see below).
+
+- **Cell rotation:** `CELL_YAW` is now `0.0`. `honey_cell.tscn`'s Mesh already has a 30° turn, so adding `CELL_YAW` = 30° made 60°, which put the corners back on ±Z. With the extra turn gone, the corners sit on ±X and neighbouring cells should meet side to side.
+- **Cell pitch:** `DEFAULT_CELL_PITCH` is now `1.83` (was 1.95). The inner rect is about 8.76 × 4.54, and the old pitch overshot it. At 1.83 the cells should fit inside with a small gap between hexes. This is still a placeholder.
+
+**`test_combs.gd` (Quinn's folder):** it still enforces the old 90–110% cover rule (`_COVER_MIN`/`_COVER_MAX`). The designer dropped that rule, and the check will probably fail anyway. Quinn should update or remove it.
+
+I did not check the 15%-of-r9-a proportion.
+
+
+**Bob** (269,800 tokens, 23 turns, 98 s):
+
+I edited `scenes/props/honey_cell.tscn` and `scenes/props/hive.tscn`. I have not run any checks or renders, so none of this is verified.
+
+- **Points touching:** the cell's mesh already had a 30° turn, and `honeycomb.gd` adds another 30° through `CELL_YAW`. Together that is 60°, which puts the corners back on ±Z. I removed the mesh's own turn, so the net turn is 30° and neighbours should meet flat side to flat side.
+- **Cells past the frame:** the cell radius is now 0.32 (was 0.38). I enlarged the hive frame bars to an outer 9.24 × 5.52 (was 9 × 4.82), with the cells' bounding boxes calculated to sit inside the inner rect.
+- **Likely side effects:** the enlarged frame stands about 0.02 above the hive walls, which should be hidden under the lid. The cell-to-frame proportion is about 16% smaller in x and 24% in z, which is outside the spec's 15%.
+
+**Outside my folder:** `test_combs.gd` still enforces `_COVER_MIN` 0.9 and `_COVER_MAX` 1.1, which is the 90% rule the designer dropped. Patricia or Quinn should update it. A smaller `frame_scale` in `game_config.gd` or a smaller `cell_pitch` in `honeycomb.gd` would keep the proportion closer to r9-a than my frame change does.
+
+The `hive-frames` variant scenes are untouched.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      152 passed, 5 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-145548/unit.log
+    FAIL  t_hive_lid_close_path  hive lid, closing: the lid box never overlaps the body or a frame: worst penetration 0.038 at sample 377 of 580 (contact allowed up to 0.03)  (8890 ms)
+    FAIL  t_combs_fill_frame_and_hive_whole  frame 1, slot axis 0: the cells span 85% of the frame's inner area (0.90 to 1.10) | frame 1, slot axis 2: the cells span 81% of the frame's inner area (0.90 to 1.10) | frame 2, slot axis 0: the cells
+    FAIL  t_raised_frame_cells_fill_and_size  cell width over inner width is 0.187, the pick's is 0.239 (within 15%: 22% off)  (1387 ms)
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: neighbours meet side to side: the worst neighbour line is 0.0 deg from a corner (need >= 25)  (1325 ms)
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: neighbours meet side to side: the worst neighbour line is 0.0 deg from a corner (need >= 25) | hive frame 2: neighbours meet side to side: the worst neighbour line is 0.0 deg from a corner (n
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T14.4: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.1.4-ui-placement.md --accept T14.4 --note "<the change>"`. Then rerun the same command to go on.
+
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `waiting-designer`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 39: scan (2026-11-08T15:25:11-05:00)
+
+Unit results from `game/reports/_runs/20261108-151918/unit.log`. 33 of 40 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (7 of 40)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C14 The hive is the round 9 pick | change | Patricia, Bob | partial (built, waits on its tests) | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test t_hive_frames_cells_aligned (FAIL), ✓ ledger 40128c7 |
+| T14.1 item 14: the hive has five frames, each standing upright (it | test | Quinn | partial (built, waits on its tests) | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test t_hive_frames_cells_aligned (FAIL), ✓ ledger 720d42d |
+| T14.2 item 14 fix (play-test 2026-11-08, shown failing on the curr | test | Quinn | partial (built, waits on its tests) | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test t_hive_frames_cells_aligned (FAIL), ✓ ledger 720d42d |
+| T14.3 item 14 lid (play-test 2026-11-08, shown failing on the curr | test | Quinn | partial (built, waits on its tests) | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test t_hive_frames_cells_aligned (FAIL), ✓ ledger 720d42d |
+| T14.4 item 14 align (play-test 2026-11-08, shown failing on the cu | test | Quinn | partial | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test t_hive_frames_cells_aligned (FAIL) |
+| T14.5 item 14 lid fix (play-test 2026-11-08, shown failing on the  | test | Quinn | partial | ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test t_hive_frames_cells_aligned (FAIL) |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | 22/24 present: ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_ ... |
+
+### Order: new or rescored (2 of 3)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 2 | T14.5 item 14 lid fix (play-test 2026-11-08, shown faili | 5.57 | 0 | 3 | 0.43 | 1 | play-test fix; cost 0.43 (Quinn) |
+| 3 | T.3 mutations in `tests/mutations.json` prove the new  | 1.57 | 0 | 1 | 0.43 | 1 | housekeeping/handoff; cost 0.43 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T14.4** (score 5.57: play-test fix; cost 0.43 (Quinn)), with T14.5, T.3.
+
+### Step: T14.4, T14.5, T.3 (2026-11-08T15:25:11-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.4-quinn.md` (5261 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (974,908 tokens, 38 turns, 100 s):
+
+I wrote the tests and the mutation, but I couldn't run any of them. The sandbox blocked every `CB_ONLY=… CB_TIME_SCALE=6 python -I _tools/godot_run.py unit` form I tried. So nothing is verified, including that `t_lid_close_never_clips_hive` fails on this build.
+
+**Files changed**
+- `tests/test_lid_clip.gd` (new): `t_lid_close_never_clips_hive`, marked `# goal T14.5`.
+  - It presses Back with a real mouse click in the first zoom.
+  - At every rendered frame it checks the lid against every visible hive mesh, MultiMesh included, with a 0.005 limit.
+  - It also checks the closed pose: tilt within 2°, resting on the wall tops.
+  - It has its own can-fail self-check.
+- `tests/run_tests.gd`:
+  - `extends` now points at `test_lid_clip.gd`.
+  - The test is registered in the item-14 group and in `X1_TESTS` (time scale 1).
+  - The group comment now reads "items 1…15".
+- `tests/test_combs.gd`: removed `_COVER_MIN`, `_COVER_MAX` and the cover check.
+- `tests/test_hive_model.gd`: added `# goal T14.4` above both alignment tests. They and `_PICK_COVER` removal were already in place.
+- `tests/mutations.json`: added a T14.5 mutation that lowers the hive lid by 0.1.
+
+The T14.5 mutation depends on `hive.tscn`'s HiveLid line being unchanged. The T14.4 mutations were already in the file.
+
+**Open question:** please approve the `CB_ONLY` run, or dispatch Rex for it.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      155 passed, 2 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-152652/unit.log
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | raised frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | raised frame 1: neighbours meet sid
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | hive frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | hive frame 1: neighbours meet side to si
+```
+- Check `fail-first`: FAIL (T14.4, T14.5 not shown failing)
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.4-fix1-quinn.md` (4311 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (93,007 tokens, 8 turns, 18 s):
+
+I changed only test comment placement, in two files. I ran nothing, as instructed.
+
+**Cause of the fail-first rows (T14.4, T14.5):** `goal_agent.py:735` reads the `# goal <ID>` mark from the line directly above the `func`. In all three tests a `##` doc comment sat between the mark and the `func`, so the goal agent found no marked test. The tests themselves already failed for the right reasons.
+
+**Fix:** I moved the `# goal` mark directly above the `func` line.
+- `t_raised_frame_cells_aligned` and `t_hive_frames_cells_aligned` in `test_hive_model.gd`: `# goal T14.4`.
+- `t_lid_close_never_clips_hive` in `test_lid_clip.gd`: `# goal T14.5`.
+
+**The two failing tests:** these are the T14.4 tests above. They fail with worst overshoot 0.0143 and worst bar penetration 0.0398 on frame 1, plus the neighbour check. That is a finding for Patricia and Bob (cell layout and cell size), not a test defect, so I left it.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      155 passed, 2 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-153158/unit.log
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | raised frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | raised frame 1: neighbours meet sid
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | hive frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | hive frame 1: neighbours meet side to si
+```
+- Check `fail-first`: FAIL (T14.5 not shown failing)
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.4-fix2-quinn.md` (4107 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (459,141 tokens, 19 turns, 103 s):
+
+I changed `t_lid_close_never_clips_hive` in `game/tests/test_lid_clip.gd`, but I could not find the lid clip, so it may still pass on the buggy code. I ran nothing, as instructed.
+
+- **T14.5 (not reproduced):** the per-frame check was already sound. I traced the lid path in `lid_motion.gd` and `hive.tscn` by hand and found no geometric sink into the walls, floor or frames. I added the whole hive body as one solid that the lid must not enter, so a dip between the walls now counts. If the fail-first run still passes, the clip is not in the lid-versus-hive geometry. My guess is it comes from the lid turning about its centre rather than the back hinge, which this test does not measure, so the spec needs a decision.
+- **T14.4 (`t_raised_frame_cells_aligned`, `t_hive_frames_cells_aligned`):** these fail on real code defects, so I left them for the code owners. Cells overshoot the inner rect by 0.0143 and penetrate the frame bars by 0.0398. Neighbours do not meet side to side. That points to `honey_cell.tscn`, `honeycomb.gd` `cell_position` and the frame layout.
+
+I started no processes and committed nothing.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      no total line  (exit 1, 0 noise lines dropped)  game/reports/_runs/20261108-153830/unit.log
+    SCRIPT ERROR: Parse Error: Could not resolve class "res://tests/test_lid_clip.gd".
+    ERROR: Failed to load script "res://tests/run_tests.gd" with error "Parse error".
+```
+- Check `fail-first`: FAIL (T14.5 not shown failing)
+
+#### Fix round 3: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.4-fix3-quinn.md` (3781 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (259,049 tokens, 15 turns, 55 s):
+
+I fixed the parse error, and I rewrote `t_lid_close_never_clips_hive` to add a second check. I haven't run the test or the suite, so I don't know yet whether the new check fails on the bug. `--check-only` on `run_tests.gd` now parses with no errors.
+
+- **Parse error:** `test_lid_clip.gd` called `Vector3.min` and `Vector3.max`, which Godot 4.2 doesn't have. I replaced them with per-component `minf` and `maxf` in `_body_volume`.
+- **T14.5 fail-first:** the old check only measured the smallest overlap between lid boxes and hive boxes. A lid corner poking into a wall at an angle can read as a small overlap, so I think it hid the clip. I kept the real Back press and the per-frame check, and added a sweep of the lid's own path. The sweep replays the lid motion at 401 progress steps from open to closed. At each step it measures how deep any lid-box corner sits inside the body solid, and it fails if that exceeds 0.005. The test keeps its `# goal T14.5` mark. No file outside `tests/` changed.
+- **Likely cause, not confirmed:** `lid_motion.gd` turns the lid through its tilt at the same time as it moves sideways. On close, the lid is still tilted over the walls while it comes down.
+- **New dependency:** the sweep reads `hive._lid_motion` directly, so it will fail if that field is renamed.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      155 passed, 2 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-153930/unit.log
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | raised frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | raised frame 1: neighbours meet sid
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | hive frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | hive frame 1: neighbours meet side to si
+```
+- Check `fail-first`: FAIL (T14.5 not shown failing)
+
+## Waiting for the designer
+
+3 fix rounds failed on T14.4, T14.5, T.3: `tests`, `fail-first` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.1.4-ui-placement.md --accept T14.4 --note "<the change>"`. Then rerun the same command to go on.
+
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `waiting-designer`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 40: scan (2026-11-08T16:42:47-05:00)
+
+Unit results from `game/reports/_runs/20261108-164223/unit.log`. 1 of 40 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (39 of 40)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Harvest button is the honey meter | change | Patricia, Bob | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger a32b0be |
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | partial (built, waits on its tests) | 6/13 present: ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ node CentrifugeLabel, ✗ test t_hud_no_overlap_no_cutoff (not run), ✗ test t_buttons_at_anchor_or_clamped (not run), ✗ ... |
+| C3 Back in one fixed place | change | Patricia, Bob | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger 747a5a1 |
+| C4 Speed tag clear of the top info | change | Bob | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger fb94e04 |
+| C5 Bigger hive frames and combs | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config frame_scale, ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger 6a76e7d |
+| C6 Housekeeping from 0.1.3: | change | Patricia | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger 287bdd0 |
+| C7 The pile loads on its own at the second stop | change | Patricia | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger f6f153a |
+| C8 Instruction text below Back | change | Bob | partial (built, waits on its tests) | ✓ node HintLabel, ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger 485190a |
+| C9 "Production paused" above the upgrades | change | Bob | partial (built, waits on its tests) | ✓ node PausedLabel, ✓ node TopInfo, ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger 1169483 |
+| C10 Combs shown in the hive | change | Patricia, Bob | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_combs_visible_in_hive (not run), ✗ test t_combs_fill_frame_and_hive_whole (not run), ✓ ledger 2d2ffb4 |
+| C11 Spin goes to the second stop | change | Patricia | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_spin_from_farm_goes_to_second_stop (not run), ✗ test t_spin_from_first_zoom_goes_to_second_stop (not run), ✓ ledger 33db081 |
+| C12 No spinning in the farm view without the motor | change | Patricia | partial (built, waits on its tests) | 1/8 present: ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_no_motor_in_phase_1 (not run), ✗ test t_no_spin_farm_view_without_motor (not run), ✗ test t_no_spin_after_pour_farm_view (not run), ✗ test t_spin_a ... |
+| C14 The hive is the round 9 pick | change | Patricia, Bob | partial (built, waits on its tests) | 1/9 present: ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_hive_five_upright_frames_four_walls (not run), ✗ test t_raised_frame_cells_fill_and_size (not run), ✗ test t_lid_closes_clear_of_walls (not run), ✗ ... |
+| C15 Leaving the centrifuge stops the crank | change | Patricia | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_crank_pauses_on_back_and_resumes_on_spin (not run), ✗ test t_paused_crank_never_finishes_in_farm_view (not run), ✓ ledger d8f210a |
+| C13 Centrifuge text sits on the centrifuge | change | Patricia | partial (built, waits on its tests) | ✓ node CentrifugeLabel, ✓ node FarmUI, ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_centrifuge_label_on_centrifuge (not run), ✓ ledger b99657c |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | partial (built, waits on its tests) | 1/8 present: ✗ test t_hud_no_overlap_no_cutoff (not run), ✗ test t_buttons_at_anchor_or_clamped (not run), ✗ test t_buttons_clamped_when_anchor_off_screen (not run), ✗ test t_harvest_hidden_at_second_stop (not run), ✗ test t_spin_placed_by_scene (not ru ... |
+| T.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger 928b711 |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | partial (built, waits on its tests) | 1/8 present: ✗ test t_hud_no_overlap_no_cutoff (not run), ✗ test t_buttons_at_anchor_or_clamped (not run), ✗ test t_buttons_clamped_when_anchor_off_screen (not run), ✗ test t_harvest_hidden_at_second_stop (not run), ✗ test t_spin_placed_by_scene (not ru ... |
+| T.2 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger 1ee096d |
+| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | partial | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run) |
+| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | partial | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run) |
+| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | partial | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run) |
+| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | partial | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run) |
+| T8.1 item 8: the instruction text's rect lies wholly below Back's | test | Quinn | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✓ ledger 1ee096d |
+| T1.2 item 1 fix: at about half fill, no fill pixel lies outside t | test | Quinn | partial | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run) |
+| T10.1 item 10: with the hive partly full and no frame raised, the  | test | Quinn | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_combs_visible_in_hive (not run), ✗ test t_combs_fill_frame_and_hive_whole (not run), ✓ ledger 0d5606c |
+| T9.1 item 9: `PausedLabel` is one line (its height is one line's  | test | Quinn | partial | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run) |
+| T7.2 item 7 (2026-11-07): after a pour with a pile waiting, spin  | test | Quinn | partial | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run) |
+| T5.2 item 5 fix: each frame's comb cells lie inside the frame's i | test | Quinn | partial | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run) |
+| T11.1 item 11: pressing Spin from the farm view or the first zoom  | test | Quinn | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_spin_from_farm_goes_to_second_stop (not run), ✗ test t_spin_from_first_zoom_goes_to_second_stop (not run), ✓ ledger c5e6593 |
+| T13.1 item 13: while cranking, `CentrifugeLabel`'s rect stays with | test | Quinn | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_centrifuge_label_on_centrifuge (not run), ✓ ledger f0768c4 |
+| T14.1 item 14: the hive has five frames, each standing upright (it | test | Quinn | partial (built, waits on its tests) | 1/9 present: ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_hive_five_upright_frames_four_walls (not run), ✗ test t_raised_frame_cells_fill_and_size (not run), ✗ test t_lid_closes_clear_of_walls (not run), ✗ ... |
+| T14.2 item 14 fix (play-test 2026-11-08, shown failing on the curr | test | Quinn | partial (built, waits on its tests) | 1/9 present: ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_hive_five_upright_frames_four_walls (not run), ✗ test t_raised_frame_cells_fill_and_size (not run), ✗ test t_lid_closes_clear_of_walls (not run), ✗ ... |
+| T14.3 item 14 lid (play-test 2026-11-08, shown failing on the curr | test | Quinn | partial (built, waits on its tests) | 1/9 present: ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_hive_five_upright_frames_four_walls (not run), ✗ test t_raised_frame_cells_fill_and_size (not run), ✗ test t_lid_closes_clear_of_walls (not run), ✗ ... |
+| T14.4 item 14 align (play-test 2026-11-08, shown failing on the cu | test | Quinn | partial | 0/8 present: ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_hive_five_upright_frames_four_walls (not run), ✗ test t_raised_frame_cells_fill_and_size (not run), ✗ test t_lid_closes_clear_of_walls (not run), ✗ ... |
+| T14.5 item 14 lid fix (play-test 2026-11-08, shown failing on the  | test | Quinn | partial | 0/8 present: ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_hive_five_upright_frames_four_walls (not run), ✗ test t_raised_frame_cells_fill_and_size (not run), ✗ test t_lid_closes_clear_of_walls (not run), ✗ ... |
+| T15.1 item 15: after Back from a crank at the second stop, taps in | test | Quinn | partial (built, waits on its tests) | ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_crank_pauses_on_back_and_resumes_on_spin (not run), ✗ test t_paused_crank_never_finishes_in_farm_view (not run), ✓ ledger d2d3b57 |
+| T12.1 item 12: with no motor owned, the centrifuge never spins whi | test | Quinn | partial (built, waits on its tests) | 1/8 present: ✗ test t_back_fixed_top_right (not run), ✗ test t_speed_tag_below_labels (not run), ✗ test t_no_motor_in_phase_1 (not run), ✗ test t_no_spin_farm_view_without_motor (not run), ✗ test t_no_spin_after_pour_farm_view (not run), ✗ test t_spin_a ... |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | 0/25 present: ✗ test t_hud_no_overlap_no_cutoff (not run), ✗ test t_buttons_at_anchor_or_clamped (not run), ✗ test t_buttons_clamped_when_anchor_off_screen (not run), ✗ test t_harvest_hidden_at_second_stop (not run), ✗ test t_spin_placed_by_scene (not ru ... |
+
+### Order: new or rescored (11 of 11)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T1.1 the Harvest fill equals the hive fill fraction (±  | 5.59 | 0 | 3 | 0.41 | 1 | play-test fix; cost 0.41 (Quinn) |
+| 2 | T1.2 item 1 fix: at about half fill, no fill pixel lies | 5.59 | 0 | 3 | 0.41 | 1 | play-test fix; cost 0.41 (Quinn) |
+| 3 | T14.4 item 14 align (play-test 2026-11-08, shown failing | 5.59 | 0 | 3 | 0.41 | 1 | play-test fix; cost 0.41 (Quinn) |
+| 4 | T14.5 item 14 lid fix (play-test 2026-11-08, shown faili | 5.59 | 0 | 3 | 0.41 | 1 | play-test fix; cost 0.41 (Quinn) |
+| 5 | T7.1 item 7: at the second stop, with a pile waiting, a | 5.59 | 0 | 3 | 0.41 | 1 | play-test fix; cost 0.41 (Quinn) |
+| 6 | T7.2 item 7 (2026-11-07): after a pour with a pile wait | 5.59 | 0 | 3 | 0.41 | 1 | play-test fix; cost 0.41 (Quinn) |
+| 7 | T9.1 item 9: `PausedLabel` is one line (its height is o | 5.59 | 0 | 3 | 0.41 | 1 | play-test fix; cost 0.41 (Quinn) |
+| 8 | T5.1 the hive's cell size on screen is within 15% of a  | 3.59 | 0 | 2 | 0.41 | 1 | designer feature; cost 0.41 (Quinn) |
+| 9 | T5.2 item 5 fix: each frame's comb cells lie inside the | 3.59 | 0 | 2 | 0.41 | 1 | designer feature; cost 0.41 (Quinn) |
+| 10 | T.3 mutations in `tests/mutations.json` prove the new  | 1.59 | 0 | 1 | 0.41 | 1 | housekeeping/handoff; cost 0.41 (Quinn) |
+| 11 | T6.1 no test file appears in `user://recordings` after  | 1.59 | 0 | 1 | 0.41 | 1 | housekeeping/handoff; cost 0.41 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T1.1** (score 5.59: play-test fix; cost 0.41 (Quinn)), with T1.2, T.3.
+
+### Step: T1.1, T1.2, T.3 (2026-11-08T16:42:47-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T1.1-quinn.md` (2556 chars)
+
+**Paused:** Budget guard: weekly usage is 41% with 19% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 0 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
+Branch `milestone/0.1.4`: already on it.
+
+## Pass 41: scan (2026-11-08T16:46:38-05:00)
+
+Unit results from `game/reports/_runs/20261108-153930/unit.log`. 33 of 40 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (39 of 40)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Harvest button is the honey meter | change | Patricia, Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger a32b0be |
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | done | 13/13 present: ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ node CentrifugeLabel, ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clam ... |
+| C3 Back in one fixed place | change | Patricia, Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 747a5a1 |
+| C4 Speed tag clear of the top info | change | Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger fb94e04 |
+| C5 Bigger hive frames and combs | change | Patricia, Bob | done | ✓ config frame_scale, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 6a76e7d |
+| C6 Housekeeping from 0.1.3: | change | Patricia | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 287bdd0 |
+| C7 The pile loads on its own at the second stop | change | Patricia | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger f6f153a |
+| C8 Instruction text below Back | change | Bob | done | ✓ node HintLabel, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 485190a |
+| C9 "Production paused" above the upgrades | change | Bob | done | ✓ node PausedLabel, ✓ node TopInfo, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 1169483 |
+| C10 Combs shown in the hive | change | Patricia, Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_combs_visible_in_hive, ✓ test t_combs_fill_frame_and_hive_whole, ✓ ledger 2d2ffb4 |
+| C11 Spin goes to the second stop | change | Patricia | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_spin_from_farm_goes_to_second_stop, ✓ test t_spin_from_first_zoom_goes_to_second_stop, ✓ ledger 33db081 |
+| C12 No spinning in the farm view without the motor | change | Patricia | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_no_motor_in_phase_1, ✓ test t_no_spin_farm_view_without_motor, ✓ test t_no_spin_after_pour_farm_view, ✓ test t_spin_after_pour_farm_view_with_motor, ✓ test t_no_spin_first_zoom_without_motor, ✓ ledger dbbca01 |
+| C14 The hive is the round 9 pick | change | Patricia, Bob | partial (built, waits on its tests) | 7/9 present: ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test  ... |
+| C15 Leaving the centrifuge stops the crank | change | Patricia | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_crank_pauses_on_back_and_resumes_on_spin, ✓ test t_paused_crank_never_finishes_in_farm_view, ✓ ledger d8f210a |
+| C13 Centrifuge text sits on the centrifuge | change | Patricia | done | ✓ node CentrifugeLabel, ✓ node FarmUI, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_centrifuge_label_on_centrifuge, ✓ ledger b99657c |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger b65f5e1 |
+| T.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 928b711 |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 2c464bc |
+| T.2 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 1ee096d |
+| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T5.1 the hive's cell size on screen is within 15% of a pile cell' | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T6.1 no test file appears in `user://recordings` after a full run | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T7.1 item 7: at the second stop, with a pile waiting, a finished  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T8.1 item 8: the instruction text's rect lies wholly below Back's | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 1ee096d |
+| T1.2 item 1 fix: at about half fill, no fill pixel lies outside t | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T10.1 item 10: with the hive partly full and no frame raised, the  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_combs_visible_in_hive, ✓ test t_combs_fill_frame_and_hive_whole, ✓ ledger 0d5606c |
+| T9.1 item 9: `PausedLabel` is one line (its height is one line's  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T7.2 item 7 (2026-11-07): after a pour with a pile waiting, spin  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T5.2 item 5 fix: each frame's comb cells lie inside the frame's i | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T11.1 item 11: pressing Spin from the farm view or the first zoom  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_spin_from_farm_goes_to_second_stop, ✓ test t_spin_from_first_zoom_goes_to_second_stop, ✓ ledger c5e6593 |
+| T13.1 item 13: while cranking, `CentrifugeLabel`'s rect stays with | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_centrifuge_label_on_centrifuge, ✓ ledger f0768c4 |
+| T14.1 item 14: the hive has five frames, each standing upright (it | test | Quinn | partial (built, waits on its tests) | 7/9 present: ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test  ... |
+| T14.2 item 14 fix (play-test 2026-11-08, shown failing on the curr | test | Quinn | partial (built, waits on its tests) | 7/9 present: ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test  ... |
+| T14.3 item 14 lid (play-test 2026-11-08, shown failing on the curr | test | Quinn | partial (built, waits on its tests) | 7/9 present: ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test  ... |
+| T14.4 item 14 align (play-test 2026-11-08, shown failing on the cu | test | Quinn | partial | 6/8 present: ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test  ... |
+| T14.5 item 14 lid fix (play-test 2026-11-08, shown failing on the  | test | Quinn | partial | 6/8 present: ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_hive_five_upright_frames_four_walls, ✓ test t_raised_frame_cells_fill_and_size, ✓ test t_lid_closes_clear_of_walls, ✗ test t_raised_frame_cells_aligned (FAIL), ✗ test  ... |
+| T15.1 item 15: after Back from a crank at the second stop, taps in | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_crank_pauses_on_back_and_resumes_on_spin, ✓ test t_paused_crank_never_finishes_in_farm_view, ✓ ledger d2d3b57 |
+| T12.1 item 12: with no motor owned, the centrifuge never spins whi | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ test t_no_motor_in_phase_1, ✓ test t_no_spin_farm_view_without_motor, ✓ test t_no_spin_after_pour_farm_view, ✓ test t_spin_after_pour_farm_view_with_motor, ✓ test t_no_spin_first_zoom_without_motor, ✓ ledger d9533a5 |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | 23/25 present: ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_ ... |
+
+No score changed.
+
+Next: **T14.4** (score 5.59: play-test fix; cost 0.41 (Quinn)), with T14.5, T.3.
+
+### Step: T14.4, T14.5, T.3 (2026-11-08T16:46:38-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T14.4-quinn.md` (5354 chars)
+- Quinn's step skipped: every line already has its marked test (T14.4: t_raised_frame_cells_aligned, t_hive_frames_cells_aligned, T14.5: t_lid_close_never_clips_hive)
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      155 passed, 2 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-164639/unit.log
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | raised frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | raised frame 1: neighbours meet sid
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: every cell box lies inside the inner rect (worst overshoot 0.0143) | hive frame 1: no cell box intersects a frame bar box (worst penetration 0.0398) | hive frame 1: neighbours meet side to si
+```
+- Check `x1 tests` (t_lid_close_never_clips_hive): FAIL (exit 1)
+
+```
+FAIL    unit      0 passed, 1 failed  (exit 1, 6 noise lines dropped)  game/reports/_runs/20261108-165132/unit.log
+    FAIL  t_lid_close_never_clips_hive  at every rendered frame of the close no lid box sinks more than 0.005 into a hive mesh: worst 0.0178 into WallXNeg at frame 139 of 159  (5259 ms)
+```
+- Check `fail-first`: PASS (T14.4, T14.5 shown failing)
+
+#### Fix round 1: to Bob, Patricia
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/T14.4-fix1-bob.md` (3979 chars)
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T14.4-fix1-patricia.md` (3965 chars)
+- Budget guard for Bob: override
+- Budget guard for Patricia: override
+
+**Patricia** (114,533 tokens, 15 turns, 26 s):
+
+I made two fixes in `scripts/`. I haven't run any checks, so neither is confirmed.
+
+**Lid clipping (`t_lid_close_never_clips_hive`):** `lid_motion.gd` never reset the lid's rotation during the lift phase. On close, the lid kept the open tilt while it came down onto the walls, which matches the `WallXNeg` clip at frame 139. I now set the closed rotation throughout the lift.
+
+**Comb corners touching:** I added `CELL_YAW`, a 30° turn about the cell's vertical axis, in `honeycomb.gd`. It is applied to the cells in `honeycomb.gd` (raised frame) and in `hive_comb_view.gd` (frames in the hive). Neighbouring hexes should now meet side to side.
+
+**Comb alignment (`t_raised_frame_cells_aligned`, `t_hive_frames_cells_aligned`):** Overshoot 0.0143 and bar penetration 0.0398 may change with the turn. The turn moves each hex's extent between the X and Z axes. If they still fail, `cell_pitch` (1.95) and `cell_radius` (0.46) need retuning.
+
+If those two tests still fail after the turn, the frame mesh in `hive.tscn` or `hive-frames-a.tscn` may be at fault. That is Bob's folder, not mine.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; turns 15 (cap 15); end `success`
+
+
+**Bob** (323,442 tokens, 20 turns, 80 s):
+
+I edited `hive.tscn` and `honey_cell.tscn`. I ran no tests or renders, as instructed, so none of this is verified.
+
+- **Cells (`honey_cell.tscn`):**
+  - **Side to side:** I turned the mesh 30° about Y. `honeycomb.gd` stacks each column along Z, so neighbours now meet flat side to flat side.
+  - **Overshoot and bar clash:** I cut the cell radius and its collider from 0.38 to 0.34. By my arithmetic the cells then fit inside the bars. This is 10.5% below the old radius, inside the 15% limit.
+  - **Cell ratio:** I did not check it against the r9 pick.
+- **Lid (`hive.tscn`):**
+  - **Cause:** `lid_motion.gd` turns the lid about its own centre, so its corners swung into `WallXNeg` near the end of the close.
+  - **Fix:** I moved the `HiveLid` pivot to the back edge at (-0.7, 0.68, 0) and offset `LidMesh` to match. The lid now hinges at the back and stays above the wall tops.
+  - **Open pose:** `HiveLidSpot` is now at the hinge, rotated 100°, so the open lid stands tilted outward on the -x side.
+  - **Risk:** `test_lids.gd` and the lid shots may expect the old open pose, so the goal agent should watch them.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; turns 20 (cap 15); end `success`
+- **Over the turn cap:** 20 turns with --max-turns 15; the CLI stops at 16. Check the transcript before trusting the cap.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      150 passed, 7 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-165303/unit.log
+    FAIL  t_hive_lid_open_path  the open pose differs from the closed one  (4991 ms)
+    FAIL  t_hive_lid_leaning_pose  the open lid leans about 60-70 degrees from flat (measured 80.0, accepted 55 to 75) | the lid's lower edge is on the ground (lowest corner 0.923, ground -0.014)  (1293 ms)
+    FAIL  t_camera_lid_lean_matches_hive  an EMPTY centrifuge's lid leans 70.0 deg; the hive lid 80.0 deg (+- 1 deg) | after bottling the centrifuge lid leans 70.0 deg; the hive lid 80.0 deg (+- 1 deg)  (2877 ms)
+    FAIL  t_icons_above_props  first zoom: ForkIcon centre x 486 is within 40 px of Hive centre x 444  (1794 ms)
+    FAIL  t_lid_closes_clear_of_walls  the lid is open before closing  (8991 ms)
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: every cell box lies inside the inner rect (worst overshoot 0.0364) | raised frame 1: no cell box intersects a frame bar box (worst penetration 0.0619) | raised frame 1: neighbours meet sid
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: every cell box lies inside the inner rect (worst overshoot 0.0446) | hive frame 1: no cell box intersects a frame bar box (worst penetration 0.0701) | hive frame 2: every cell box lies inside
+```
+- Check `x1 tests` (t_lid_close_never_clips_hive): FAIL (exit 1)
+
+```
+FAIL    unit      0 passed, 1 failed  (exit 1, 6 noise lines dropped)  game/reports/_runs/20261108-165759/unit.log
+    FAIL  t_lid_close_never_clips_hive  at every rendered frame of the close no lid box sinks more than 0.005 into a hive mesh: worst 0.0184 into @MeshInstance3D@2 at frame 139 of 159  (5269 ms)
+```
+- Check `fail-first`: PASS (T14.4, T14.5 shown failing)
+
+#### Fix round 2: to Bob, Patricia
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/T14.4-fix2-bob.md` (4687 chars)
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T14.4-fix2-patricia.md` (4673 chars)
+- Budget guard for Bob: override
+- Budget guard for Patricia: override
+
+**Patricia** (122,949 tokens, 10 turns, 23 s):
+
+I made one fix in `scripts/`. I haven't run any checks.
+
+- **Fix:** `honey_cell.tscn` already rotates its mesh 30°, and `honeycomb.gd` rotated each cell root another 30°. Together that is 60°, which puts the corners back on Z. I removed the script rotation in `honeycomb.gd`. This should fix `t_raised_frame_cells_aligned`. I kept the rotation in `hive_comb_view.gd`, which uses the bare mesh without the scene's rotation. `t_hive_frames_cells_aligned` may still fail if the cell size is off, since that test uses the hive view.
+- **Not in `scripts/`:**
+  - **Lid lean:** `HiveLidSpot` in `hive.tscn` measures 80°, and the spec accepts 55–75° (the centrifuge lid is 70°). Its rotation needs to be 70°, so this is Bob's.
+  - **Other lid failures:** `t_hive_lid_open_path`, `t_lid_closes_clear_of_walls`, `t_lid_close_never_clips_hive` and `t_hive_lid_leaning_pose` probably follow from that spot and the moved lid pivot. Re-check them after Bob's fix.
+  - **`t_icons_above_props`:** the ForkIcon is 42 px off the hive centre, and the cause is probably the scene.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; turns 10 (cap 15); end `success`
+
+
+**Bob** (98,413 tokens, 7 turns, 31 s):
+
+I made one fix in `scenes/` and `materials/`. I did not run any checks, as instructed.
+
+**Fixed:** in `hive.tscn`, `HiveLidSpot` was rotated 100°, so the open lid leaned 80°. I changed it to 110°, which leans 70° and matches the centrifuge lid.
+- This should fix `t_hive_lid_leaning_pose` and `t_camera_lid_lean_matches_hive`.
+- It may also fix `t_hive_lid_open_path` and `t_lid_closes_clear_of_walls`, both of which failed on the lid not reaching its open pose.
+
+**Not in my folder:**
+- **`t_lid_close_never_clips_hive`:** the lid path comes from `LidMotion` in `scripts/`. The 0.0184 sink is into a script-built mesh, probably a comb cell, not a scene wall. The scene's lid and walls don't overlap, so check the path there.
+- **Frame and hive cell alignment:** this is `honeycomb.gd` cell placement and scale. `honey_cell.tscn` already has its 30° rotation, so it is not the cause.
+- **`t_icons_above_props`:** the ForkIcon is 42 px off the Hive centre against a 40 px limit. That is camera or icon logic in `scripts/`.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; turns 7 (cap 15); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      151 passed, 6 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-165841/unit.log
+    FAIL  t_hive_lid_open_path  the open pose differs from the closed one  (5006 ms)
+    FAIL  t_hive_lid_leaning_pose  the lid's lower edge is on the ground (lowest corner 0.895, ground -0.014)  (1270 ms)
+    FAIL  t_icons_above_props  first zoom: ForkIcon centre x 486 is within 40 px of Hive centre x 423  (1890 ms)
+    FAIL  t_lid_closes_clear_of_walls  the lid is open before closing  (9011 ms)
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: every cell box lies inside the inner rect (worst overshoot 0.0446) | raised frame 1: no cell box intersects a frame bar box (worst penetration 0.0701)  (1506 ms)
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: every cell box lies inside the inner rect (worst overshoot 0.0446) | hive frame 1: no cell box intersects a frame bar box (worst penetration 0.0701) | hive frame 2: every cell box lies inside
+```
+- Check `x1 tests` (t_lid_close_never_clips_hive): FAIL (exit 1)
+
+```
+FAIL    unit      0 passed, 1 failed  (exit 1, 6 noise lines dropped)  game/reports/_runs/20261108-170341/unit.log
+    FAIL  t_lid_close_never_clips_hive  at every rendered frame of the close no lid box sinks more than 0.005 into a hive mesh: worst 0.0184 into @MeshInstance3D@2 at frame 139 of 159  (5281 ms)
+```
+- Check `fail-first`: PASS (T14.4, T14.5 shown failing)
+
+#### Fix round 3: to Bob, Patricia
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/T14.4-fix3-bob.md` (4361 chars)
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T14.4-fix3-patricia.md` (4347 chars)
+- Budget guard for Bob: override
+- Budget guard for Patricia: override
+
+**Patricia** (177,312 tokens, 12 turns, 36 s):
+
+I made two edits in `scripts/` and ran no checks, so none of the six failures is confirmed fixed. Two of them look like they need a change outside `scripts/`.
+
+- **`honeycomb.gd`:** I cut `DEFAULT_CELL_PITCH` from 1.95 to 1.85. This is a guess at fixing the `t_raised_frame_cells_aligned` and `t_hive_frames_cells_aligned` overshoot (0.0446) and bar penetration (0.0701). 1.85 is about 5% below the old value, so it stays within the 15% proportion limit. If the cells still touch the bars, the frame size in `hive.tscn` may be the cause.
+- **`lid_motion.gd`:** the lid now finishes turning before its drop starts, so closing arrives flat. This targets `t_lid_close_never_clips_hive`.
+- **Not mine, `scenes/props/hive.tscn`** (Bob; it also has uncommitted changes): the `HiveLidSpot` pose and lid pivot probably cause `t_hive_lid_open_path`, `t_hive_lid_leaning_pose` and `t_lid_closes_clear_of_walls`. The open lid's lowest corner is 0.895 above ground at -0.014, which is a scene problem.
+- **Not mine, fork icon:** `t_icons_above_props` fails because the ForkIcon is 63 px off the Hive's centre x (486 vs 423). That is scene layout or the camera, not `scripts/`.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; turns 12 (cap 15); end `success`
+
+
+**Bob** (557,107 tokens, 16 turns, 143 s):
+
+(stopped at the 15-turn cap before a reply)
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; turns 16 (cap 15); end `error_max_turns`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      151 passed, 6 failed  (exit 1, 238 noise lines dropped)  game/reports/_runs/20261108-170615/unit.log
+    FAIL  t_hive_lid_open_path  the open pose differs from the closed one  (5033 ms)
+    FAIL  t_hive_lid_leaning_pose  the lid's lower edge is on the ground (lowest corner 0.895, ground -0.014)  (1339 ms)
+    FAIL  t_icons_above_props  first zoom: ForkIcon centre x 486 is within 40 px of Hive centre x 423  (1908 ms)
+    FAIL  t_lid_closes_clear_of_walls  the lid is open before closing  (9025 ms)
+    FAIL  t_raised_frame_cells_aligned  raised frame 1: every cell box lies inside the inner rect (worst overshoot 0.0309) | raised frame 1: no cell box intersects a frame bar box (worst penetration 0.0564)  (1481 ms)
+    FAIL  t_hive_frames_cells_aligned  hive frame 1: every cell box lies inside the inner rect (worst overshoot 0.0309) | hive frame 1: no cell box intersects a frame bar box (worst penetration 0.0564) | hive frame 2: every cell box lies inside
+```
+- Check `x1 tests` (t_lid_close_never_clips_hive): PASS
+- Check `fail-first`: PASS (T14.4, T14.5 shown failing)
+
+## Waiting for the designer
+
+3 fix rounds failed on T14.4, T14.5, T.3: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.1.4-ui-placement.md --accept T14.4 --note "<the change>"`. Then rerun the same command to go on.
+
 ## Result
 
-Last invocation (2026-11-08T03:51:27-05:00): done.
+Last invocation (2026-11-08T17:11:25-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/2026-11-08-goal-0.1.4/`
 
@@ -3066,4 +3696,19 @@ Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/
 | Quinn, T15.1 | 620,622 | 53,197 | 28 | 61 s |
 | Quinn, T15.1 fix 1 | 53,471 | 14,179 | 5 | 10 s |
 | Quinn, T15.1 fix 2 | 85,027 | 20,831 | 8 | 15 s |
-| **Total** | **19,196,031** | | | |
+| Quinn, T14.4 | 661,595 | 60,543 | 27 | 122 s |
+| Patricia, T14.4 fix 1 | 111,887 | 23,163 | 12 | 28 s |
+| Bob, T14.4 fix 1 | 148,150 | 32,086 | 12 | 28 s |
+| Patricia, T14.4 fix 2 | 195,121 | 37,621 | 11 | 35 s |
+| Bob, T14.4 fix 2 | 269,800 | 37,431 | 23 | 98 s |
+| Quinn, T14.4, T14.5, T.3 | 974,908 | 73,235 | 38 | 100 s |
+| Quinn, T14.4, T14.5, T.3 fix 1 | 93,007 | 22,727 | 8 | 18 s |
+| Quinn, T14.4, T14.5, T.3 fix 2 | 459,141 | 53,585 | 19 | 103 s |
+| Quinn, T14.4, T14.5, T.3 fix 3 | 259,049 | 32,259 | 15 | 55 s |
+| Patricia, T14.4, T14.5, T.3 fix 1 | 114,533 | 23,033 | 15 | 26 s |
+| Bob, T14.4, T14.5, T.3 fix 1 | 323,442 | 44,768 | 20 | 80 s |
+| Patricia, T14.4, T14.5, T.3 fix 2 | 122,949 | 24,714 | 10 | 23 s |
+| Bob, T14.4, T14.5, T.3 fix 2 | 98,413 | 23,586 | 7 | 31 s |
+| Patricia, T14.4, T14.5, T.3 fix 3 | 177,312 | 26,789 | 12 | 36 s |
+| Bob, T14.4, T14.5, T.3 fix 3 | 557,107 | 57,808 | 16 | 143 s |
+| **Total** | **23,762,445** | | | |

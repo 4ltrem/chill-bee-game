@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T03:56:14-05:00",
- "unit_log": "game/reports/_runs/20261108-034533/unit.log",
+ "at": "2026-11-08T16:46:38-05:00",
+ "unit_log": "game/reports/_runs/20261108-153930/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -613,8 +613,20 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "test",
      "name": "t_hive_five_upright_frames_four_walls",
@@ -634,13 +646,31 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
      "kind": "ledger",
      "name": "40128c7",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -656,6 +686,18 @@
    "depends": [],
    "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "test",
      "name": "t_crank_pauses_on_back_and_resumes_on_spin",
@@ -1390,8 +1432,20 @@
    "depends": [
     "C14"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "test",
      "name": "t_hive_five_upright_frames_four_walls",
@@ -1411,13 +1465,31 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
      "kind": "ledger",
      "name": "720d42d",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -1433,8 +1505,20 @@
    "depends": [
     "C14"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "test",
      "name": "t_hive_five_upright_frames_four_walls",
@@ -1454,13 +1538,31 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
      "kind": "ledger",
      "name": "720d42d",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -1476,8 +1578,20 @@
    "depends": [
     "C14"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "test",
      "name": "t_hive_five_upright_frames_four_walls",
@@ -1497,13 +1611,31 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
      "kind": "ledger",
      "name": "720d42d",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -1519,8 +1651,20 @@
    "depends": [
     "C14"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "test",
      "name": "t_hive_five_upright_frames_four_walls",
@@ -1538,6 +1682,92 @@
      "name": "t_lid_closes_clear_of_walls",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T14.5": {
+   "kind": "test",
+   "title": "item 14 lid fix (play-test 2026-11-08, shown failing on the current bu",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
     }
    ],
    "built": false,
@@ -1559,6 +1789,18 @@
    ],
    "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "test",
      "name": "t_crank_pauses_on_back_and_resumes_on_spin",
@@ -1689,7 +1931,7 @@
     "C15",
     "C13"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -1813,6 +2055,24 @@
     },
     {
      "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
+     "kind": "test",
      "name": "t_crank_pauses_on_back_and_resumes_on_spin",
      "ok": true,
      "result": "PASS"
@@ -1830,6 +2090,40 @@
    "ambiguous": false
   }
  },
- "order": [],
+ "order": [
+  {
+   "id": "T14.4",
+   "score": 5.59,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.41,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T14.5",
+   "score": 5.59,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.41,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.3",
+   "score": 1.59,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.41,
+    "ready": 1,
+    "blocked_by": []
+   }
+  }
+ ],
  "ambiguous": []
 }

@@ -2,15 +2,19 @@ extends "res://tests/test_motor.gd"
 
 # Quinn: 0.1.4 item 14 tests, written from game/specs/0.1.4-ui-placement.md (item 14) and game/specs/0.1.4-node-handoff.md, not from the code.
 # T14.1: five frames, each upright (comb face vertical); the hive body has four walls whose rects enclose every frame in the farm view.
-# T14.2: on a raised frame in the first zoom the comb cells cover >= 90% of the frame's inner rect on screen, and one cell's width over
-#        the frame's inner width is within 15% of the round 9 pick's (hive-frames-a.tscn, cell radius 0.14).
+# T14.2: on a raised frame in the first zoom one cell's width over the frame's inner width is within 15% of the round 9 pick's
+#        (hive-frames-a.tscn, cell radius 0.14). The 90% cover check was dropped (designer, 2026-11-08).
+# T14.4: on a raised frame and on every frame in the hive: each cell's mesh box lies inside the Back panel's rect and meets no bar box
+#        (Top, Bottom, Left, Right), the grid's centre is within 5% of the frame width of the rect's centre, and neighbouring cells meet side to side.
 # T14.3: at every 10% of the lid's close animation the lid's box meets no wall's box; closed, it rests flat on the top of the four walls.
 # Black box: "frame" = FrameBars/FrameBarN (its Back panel is the inner rect, as in T10.2), "wall" = a MeshInstance3D of HiveBody that is not
 # the Floor, "cell" = a visible mesh under Honeycomb. Numbers come from the config or from the spec text (0.14, 90%, 15%, 10%).
 
 const _PICK_SCENE: String = "res://scenes/variants/hive-frames/hive-frames-a.tscn"
 const _PICK_CELL_RADIUS: float = 0.14   # spec item 14: round 9 variant a
-const _PICK_COVER: float = 0.9          # spec T14.2: cells cover at least 90% of the inner rect
+const _CENTRE_TOL: float = 0.05         # spec T14.4: the grid's centre is within 5% of the frame width of the inner rect's centre
+const _SIDE_MIN_DEG: float = 25.0       # T14.4: a neighbour's direction is >= 25 deg from every corner direction (a flat side is 30 deg from them)
+const _TOUCH_EPS: float = 0.0005        # world units a cell box may touch a bar box (T14.4: touching is not intersecting)
 const _PICK_RATIO_TOL: float = 0.15     # spec T14.2: within 15% of the pick's cell width / frame inner width
 const _UPRIGHT_MAX_DEG: float = 5.0     # a comb face normal is horizontal within this (upright = face vertical)
 const _WALL_EPS: float = 0.01           # world units a lid box may sink into a wall box (touching is fine)
@@ -221,11 +225,6 @@ func t_raised_frame_cells_fill_and_size() -> void:
 	if cells.is_empty() or first == null:
 		_fin()
 		return
-	var share: float = _cover_share(cells, [bb], cam)
-	# self-checks: the measure can fail (half the cells cover less; no cells cover nothing; the panel covers itself)
-	ck(_cover_share(cells.slice(0, cells.size() / 2), [bb], cam) < _PICK_COVER, "self-check: half the cells do not cover 90%% of the inner rect")
-	ck(_cover_share([bb], [bb], cam) >= 0.99, "self-check: the panel covers itself")
-	ck(share >= _PICK_COVER, "the cells cover %.0f%% of the frame's inner rect on screen (need %.0f%%)" % [share * 100.0, _PICK_COVER * 100.0])
 	var ratio: float = _cell_diam(first) / _inner_width(bb)
 	ck(absf(ratio / pick - 1.0) <= _PICK_RATIO_TOL, "cell width over inner width is %.3f, the pick's is %.3f (within %.0f%%: %.0f%% off)" % [ratio, pick, _PICK_RATIO_TOL * 100.0, absf(ratio / pick - 1.0) * 100.0])
 	ck(absf(0.5 * pick / pick - 1.0) > _PICK_RATIO_TOL, "self-check: half the pick's ratio would fail the 15% rule")
@@ -290,4 +289,179 @@ func t_lid_closes_clear_of_walls() -> void:
 	var wr: Rect2 = _hive_xz(inv, wall_boxes)
 	var lr: Rect2 = _hive_xz(inv, _obbs(lid))
 	ck(lr.grow(_REST_EPS).encloses(wr), "closed, the lid's plan %s covers the plan of all four walls %s" % [str(lr), str(wr)])
+	_fin()
+
+
+## A frame's measuring frame from its Back panel box: centre, unit wide axes u (longer) and v, and the panel's half extents along them.
+func _frame_uv(bb: Array) -> Dictionary:
+	var ax: Array = bb[1]
+	var order: Array = [0, 1, 2]
+	order.sort_custom(func(a: int, b: int) -> bool: return (ax[a] as Vector3).length() > (ax[b] as Vector3).length())
+	var u: Vector3 = (ax[order[0]] as Vector3).normalized()
+	var v: Vector3 = (ax[order[1]] as Vector3).normalized()
+	return {"c": bb[0], "u": u, "v": v, "hu": (ax[order[0]] as Vector3).length(), "hv": (ax[order[1]] as Vector3).length()}
+
+
+## Span [lo, hi] of boxes' corners along unit axis `a`.
+func _span_along(boxes: Array, a: Vector3) -> Vector2:
+	var lo: float = 1.0e9
+	var hi: float = -1.0e9
+	for bx in boxes:
+		var c: Vector3 = (bx as Array)[0]
+		var ax: Array = (bx as Array)[1]
+		var ext: float = absf((ax[0] as Vector3).dot(a)) + absf((ax[1] as Vector3).dot(a)) + absf((ax[2] as Vector3).dot(a))
+		lo = minf(lo, c.dot(a) - ext)
+		hi = maxf(hi, c.dot(a) + ext)
+	return Vector2(lo, hi)
+
+
+## Measure cell boxes against a frame's inner rect: outside = worst overshoot past the rect; off = grid centre offset from the rect centre as a share of `width`.
+func _grid_stats(cells: Array, fr: Dictionary, width: float) -> Dictionary:
+	var worst: float = 0.0
+	var c: Vector3 = fr["c"]
+	var offs: Array = []
+	for k in 2:
+		var ax: Vector3 = fr["u"] if k == 0 else fr["v"]
+		var half: float = fr["hu"] if k == 0 else fr["hv"]
+		var mid: float = c.dot(ax)
+		for bx in cells:
+			var s: Vector2 = _span_along([bx], ax)
+			worst = maxf(worst, maxf(s.y - (mid + half), (mid - half) - s.x))
+		var g: Vector2 = _span_along(cells, ax)
+		offs.append(absf((g.x + g.y) * 0.5 - mid))
+	return {"outside": worst, "off": maxf(offs[0], offs[1]) / maxf(width, 1.0e-6)}
+
+
+## The angle (deg, in the mesh's own x/z plane) of a hex cell's first corner, from its mesh vertices; -1000 when unreadable.
+func _corner_deg(mi: MeshInstance3D) -> float:
+	var arr: Array = mi.mesh.get_mesh_arrays()
+	if arr.is_empty() or arr[Mesh.ARRAY_VERTEX] == null:
+		return -1000.0
+	var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
+	var top: float = -1.0e9
+	var rmax: float = 0.0
+	for p in vs:
+		top = maxf(top, p.y)
+		rmax = maxf(rmax, Vector2(p.x, p.z).length())
+	for p in vs:
+		if absf(p.y - top) < 1.0e-5 and Vector2(p.x, p.z).length() > rmax * 0.99:
+			return rad_to_deg(atan2(p.z, p.x))
+	return -1000.0
+
+
+## Smallest angle (deg) between direction `a` and any corner direction (corners every 60 deg from `a0`).
+func _from_corner_deg(a: float, a0: float) -> float:
+	var m: float = fposmod(a - a0, 60.0)
+	return minf(m, 60.0 - m)
+
+
+## Check one frame's cells (MeshInstance3D array): inside the rect, off the bars, centred, neighbours side to side.
+func _check_frame_cells(hive: Node, i: int, cells: Array, tag: String) -> void:
+	var bb: Array = _back_box(hive, i)
+	var fb: Node = hive.find_child("FrameBar%d" % (i + 1), true, false)
+	ck(bb.size() == 3 and fb != null, "%s: the frame's Back panel exists" % tag)
+	eq(cells.size(), _cpf(), "%s: %d cells (grid_cols x grid_rows)" % [tag, _cpf()])
+	if bb.size() != 3 or fb == null or cells.size() != _cpf():
+		return
+	var boxes: Array = []
+	for mi in cells:
+		boxes.append_array(_obbs(mi as Node))
+	var bars: Array = []
+	for nm in ["Top", "Bottom", "Left", "Right"]:
+		var b: Node = fb.find_child(nm, true, false)
+		ck(b != null, "%s: the frame has a %s bar" % [tag, nm])
+		if b != null:
+			bars.append_array(_obbs(b))
+	var fr: Dictionary = _frame_uv(bb)
+	var fspan: Vector2 = _span_along(_obbs(fb), fr["u"])
+	var width: float = fspan.y - fspan.x
+	var st: Dictionary = _grid_stats(boxes, fr, width)
+	# self-checks: the measures can fail (a grid moved a fifth of the width sideways leaves the rect and loses its centre)
+	var moved: Array = []
+	for bx in boxes:
+		moved.append([(bx[0] as Vector3) + (fr["u"] as Vector3) * width * 0.2, bx[1], bx[2]])
+	var bad: Dictionary = _grid_stats(moved, fr, width)
+	ck(float(bad["outside"]) > 0.001 and float(bad["off"]) > _CENTRE_TOL, "self-check: a grid moved by 20%% of the width reads as outside (%.3f) and off centre (%.2f)" % [bad["outside"], bad["off"]])
+	if not bars.is_empty():
+		var on_bar: Array = [bars[0][0], boxes[0][1], boxes[0][2]]
+		ck(_max_pen([on_bar], bars) > _TOUCH_EPS, "self-check: a cell box centred on a bar reads as intersecting it")
+	ck(float(st["outside"]) <= _TOUCH_EPS, "%s: every cell box lies inside the inner rect (worst overshoot %.4f)" % [tag, st["outside"]])
+	var worst: float = -1.0e9
+	for bx in boxes:
+		worst = maxf(worst, _max_pen([bx], bars))
+	ck(worst <= _TOUCH_EPS, "%s: no cell box intersects a frame bar box (worst penetration %.4f)" % [tag, worst])
+	ck(float(st["off"]) <= _CENTRE_TOL, "%s: the grid's centre is %.1f%% of the frame width off the rect's centre (max %.0f%%)" % [tag, float(st["off"]) * 100.0, _CENTRE_TOL * 100.0])
+	_check_sides(cells, tag)
+
+
+## Neighbouring cells (centre distance within 15% of the closest pair's) meet side to side: the line between their centres is >= 25 deg from a corner direction.
+func _check_sides(cells: Array, tag: String) -> void:
+	var a0: float = _corner_deg(cells[0] as MeshInstance3D)
+	ck(a0 > -999.0, "%s: the cell mesh's corner direction is readable" % tag)
+	if a0 < -999.0:
+		return
+	ck(_from_corner_deg(a0, a0) < 1.0 and _from_corner_deg(a0 + 60.0, a0) < 1.0 and _from_corner_deg(a0 + 30.0, a0) > _SIDE_MIN_DEG, "self-check: a corner direction is 0 deg from a corner and a side normal is 30")
+	var dmin: float = 1.0e9
+	for i in cells.size():
+		for j in range(i + 1, cells.size()):
+			dmin = minf(dmin, (cells[i] as Node3D).global_position.distance_to((cells[j] as Node3D).global_position))
+	var pairs: int = 0
+	var worst: float = 1000.0
+	for i in cells.size():
+		for j in range(i + 1, cells.size()):
+			var mi: MeshInstance3D = cells[i] as MeshInstance3D
+			var dw: Vector3 = (cells[j] as Node3D).global_position - mi.global_position
+			if dw.length() > dmin * 1.15:
+				continue
+			var d: Vector3 = mi.global_transform.basis.inverse() * dw
+			pairs += 1
+			worst = minf(worst, _from_corner_deg(rad_to_deg(atan2(d.z, d.x)), a0))
+	ck(pairs >= 5, "%s: neighbouring pairs were found (%d)" % [tag, pairs])
+	ck(worst >= _SIDE_MIN_DEG, "%s: neighbours meet side to side: the worst neighbour line is %.1f deg from a corner (need >= %.0f)" % [tag, worst, _SIDE_MIN_DEG])
+
+
+## T14.4 raised frame: the Honeycomb's cells are inside the inner rect, off the bars, centred, and meet side to side.
+# goal T14.4
+func t_raised_frame_cells_aligned() -> void:
+	var z: Dictionary = await _zoom_open_main()
+	if z.is_empty():
+		_fin()
+		return
+	var tr: Dictionary = z["tr"]
+	var risen: int = int(tr["risen"])
+	ck(risen >= 0, "a frame is raised in the first zoom (%d)" % risen)
+	var hc: Node = (z["m"] as Node).find_child("Honeycomb", true, false)
+	if risen < 0 or hc == null:
+		_fin()
+		return
+	var cells: Array = []
+	for n in hc.find_children("*", "MeshInstance3D", true, false):
+		if (n as MeshInstance3D).mesh != null and (n as MeshInstance3D).is_visible_in_tree():
+			cells.append(n)
+	_check_frame_cells((z["p"] as Dictionary)["Hive"], risen, cells, "raised frame %d" % (risen + 1))
+	_fin()
+
+
+## T14.4 hive frames: with the hive full and nothing raised, every frame's cells are inside its rect, off its bars, centred, and meet side to side.
+# goal T14.4
+func t_hive_frames_cells_aligned() -> void:
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var hive: Node = _nn(m, "Hive")
+	if hive == null:
+		_fin()
+		return
+	_set_cfg("base_seconds_per_jar", 1.0e9)
+	hive.call("fill_now")
+	await _frames(4)
+	var all: Array = _hive_cells(hive)
+	for f in int(hive.call("frame_count")):
+		var mine: Array = []
+		for c in all:
+			var mi: MeshInstance3D = (c as Array)[0] as MeshInstance3D
+			if _nearest_slot(hive, mi.global_position) == f:
+				mine.append(mi)
+		_check_frame_cells(hive, f, mine, "hive frame %d" % (f + 1))
 	_fin()

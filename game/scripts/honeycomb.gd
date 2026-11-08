@@ -18,7 +18,8 @@ const UNCAPPED: int = 1
 const EXTRACTED: int = 2
 
 const CELL_HEIGHT: float = 0.3
-const DEFAULT_CELL_PITCH: float = 1.95   # PLACEHOLDER: widened from 1.865 so 5 x 2 cells fill the 9 x 4.82 frame edge to edge on screen (T14.2)
+const CELL_YAW: float = PI / 6.0   # 30 degrees: the 6-segment cell has corners on Z, columns stack along Z
+const DEFAULT_CELL_PITCH: float = 1.85   # PLACEHOLDER: 1.95 overshot the inner rect and touched the bars (T14.4); within 15% of r9-a's proportion
 const STATE_Y: Array[float] = [0.12, 0.0, -0.12]   # capped raised, uncapped flush, extracted recessed
 const SWEEP_STEP_PX: float = 16.0                   # fast drags are sampled at this screen spacing
 const RAY_LENGTH: float = 200.0

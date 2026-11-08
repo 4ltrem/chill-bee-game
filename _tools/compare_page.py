@@ -378,6 +378,7 @@ def cmd_variants(shots_dir, out, title, checks=None):
 def vote_card(sid, title, shot, lines=(), pill=None, meta=None, wide=False):
     """One votable card (yes / maybe / no + note), the same markup the votes SCRIPT binds to.
     wide: keep the image's own proportions (a contact sheet) instead of the head's 9:16 phone box."""
+    sid = re.sub(r"[^A-Za-z0-9_\-.~:@+]+", "-", sid).strip("-")  # the db refuses other characters, so a vote would never save
     meta = dict(meta or {}, file=os.path.basename(shot))
     pill_html = f'<span class="pill {"ok" if pill[1] else "low"}">{esc(pill[0])}</span>' if pill else ""
     body = "".join(f'<p class="small">{l}</p>' for l in lines)
