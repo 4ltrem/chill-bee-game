@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 81c6a13d-f79a-4428-bc66-986f58e5b2ff
-  modified: 2026-11-08T01:18:50.260Z
+  modified: 2026-11-08T01:37:02.977Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -23,7 +23,7 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 
 **Next session, first: rerun the goal agent** (`goal_agent.py 0.1.4-ui-placement.md`, background). Round 8 and 9 votes are applied and in the spec (answers section, item 5); all suites green after the test fixes (unit 138, play 237). Left to build: C8, C5 (round 9 variant a: 5×2, more hex spacing, pile cells match frame cells), item 9, item 10, and rebuilds of C1 (meter clipping) and C7 (prompt). C1 and C7 are in the ledger as built: make the run redo them (spec text changed, or clear their ledger rows). The Design Votes page is v13 at https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (`game/reports/ui-compare/design-votes.html`); round 9 renders are in `game/reports/variants/hive-frames-r9/` (ids must be new per round).
 
-**Content (2026-11-07):** `content/guides.md` holds six guides (Melli, Pip, Lady Aura, Miel, Queen Maeve, Lumi) with 60 signature lines, waiting for approval. GDD guide line and Meadow flowers applied. `ONBOARDING.md` (another session's team-onboarding page) is left untracked on purpose. `compare_page.py add` now takes per-stop `--stop/--option/--ref/--shot/--prefix` groups and refuses to write duplicate ids. Uncommitted: `compare_page.py`, `ui_shots.py --set`, `ui_compare_shots.gd`, the `vote-*` renders, `design-votes.md/.html`, the drafts, and the memory files. Bash: no `cd` prefix (the cwd is already the repo) and chain listed commands only ([[repo-only]]).
+**Content (2026-11-07):** `content/guides.md` holds six guides (Melli, Pip, Lady Aura, Miel, Queen Maeve, Lumi) with 60 signature lines and every voice filled, approved 2026-11-07. To do: briefs for Patricia (guide switch) and Gerard (playtest design) ([[guide-playtest]]). Clara has a 7th check, Completeness (whole draft, EN = FR, no placeholders). GDD guide line and Meadow flowers applied. `ONBOARDING.md` (another session's team-onboarding page) is left untracked on purpose. `compare_page.py add` now takes per-stop `--stop/--option/--ref/--shot/--prefix` groups and refuses to write duplicate ids. Uncommitted: `compare_page.py`, `ui_shots.py --set`, `ui_compare_shots.gd`, the `vote-*` renders, `design-votes.md/.html`, the drafts, and the memory files. Bash: no `cd` prefix (the cwd is already the repo) and chain listed commands only ([[repo-only]]).
 
 **Blackboard format (decided 2026-11-07, committed 037a1a2):** all three boards (content, style, goal) follow one format, `_templates/blackboard.md`. It has front matter `result:`, a Request, the first round or pass in full and then changes only, inputs linked and outputs inline, Waiting/Resumed sections, and one Result rewritten in place from `<board>.calls.json`. `--plan` and `--dry-run` write nothing to the board. The shared helpers are in `generate.py` (`board_start`, `waiting`, `resumed`, `finish_board`), with tests in both suites. The 0.1.4 board was converted once after its run ended. Old content and style boards stay as history.
 

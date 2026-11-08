@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: fa5df4be-6365-415d-bd06-9f0be0bb573b
-  modified: 2026-11-08T01:16:32.108Z
+  modified: 2026-11-08T01:37:02.896Z
 ---
 
 The designer wants to keep several guide characters and let playtests pick (2026-11-03). Parked until after the
@@ -18,6 +18,8 @@ Miel (poetic elder drone, name works in French; v2 only). v1 options are in
 their own signature lines (welcome, first harvest, first sale, first upgrade, hand-off, EN + FR).
 
 **Six guides (designer, 2026-11-07):** Pip stays the scout bee; the bee-turned-sprite (biome-intros' "Pip") joins as its own guide, named Lumi (approved); Queen Maeve is "Reine Maëve" in French; Queen Maeve joins; Lady Aura is "Dame Aura" in French. GDD Story Premise names the six. Wren is out.
+
+**`content/guides.md` approved (2026-11-07).** To do: prepare two briefs, for Patricia (a guide switch in the build so playtesters meet each guide) and Gerard (the playtest design). Not started; D46 puts the playtest after the first prototype, so raise it when onboarding work starts or the designer asks.
 
 **Characters in their own file (designer, 2026-11-07):** "the characters should be put in a separate file to make it
 easier to compare". The four guides and their signature lines go side by side in one content file (e.g.
