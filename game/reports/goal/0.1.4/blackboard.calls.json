@@ -502,5 +502,29 @@
   "turns": 2,
   "seconds": 6,
   "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Quinn, T.1, T.2, T8.1, T.3",
+  "tokens": 225023,
+  "final": 34000,
+  "turns": 12,
+  "seconds": 26,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Quinn, T.1, T.2, T8.1, T.3 fix 1",
+  "tokens": 162171,
+  "final": 24125,
+  "turns": 9,
+  "seconds": 24,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
+ },
+ {
+  "call": "Quinn, T.1, T.2, T8.1, T.3 fix 2",
+  "tokens": 170516,
+  "final": 24690,
+  "turns": 15,
+  "seconds": 29,
+  "transcripts": "_meta/sessions/runs/2026-11-08-goal-0.1.4"
  }
 ]

@@ -1,7 +1,7 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T01:18:26-05:00",
+ "at": "2026-11-08T01:18:37-05:00",
  "unit_log": "game/reports/_runs/20261108-011753/unit.log",
  "goals": {
   "H": {
@@ -1041,9 +1041,14 @@
      "name": "t_centrifuge_label_on_centrifuge",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "f0768c4",
+     "ok": true
     }
    ],
-   "built": false,
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false

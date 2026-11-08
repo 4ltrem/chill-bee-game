@@ -713,5 +713,15 @@
    "t_centrifuge_label_on_centrifuge"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T8.1 HintLabel sits level with Back, not below it",
+  "file": "scenes/main.tscn",
+  "find": "offset_top = 144.0",
+  "replace": "offset_top = 60.0",
+  "expect": [
+   "t_back_fixed_top_right"
+  ],
+  "suite": "unit"
  }
 ]

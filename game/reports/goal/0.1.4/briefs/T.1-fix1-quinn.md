@@ -1,12 +1,9 @@
-Goal agent run `0.1.4`, fix round 1 for goal T.1, T.2, T8.1 of `game/specs/0.1.4-ui-placement.md`, branch `milestone/0.1.4`. These checks failed after the last step. Fix what is in your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit.
+Goal agent run `0.1.4`, fix round 1 for goal T.1, T.2, T8.1, T.3 of `game/specs/0.1.4-ui-placement.md`, branch `milestone/0.1.4`. These checks failed after the last step. Fix what is in your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit.
 
 Your folder: tests/
 
 mutations:
-mutate: 2 of 3 caught
-mutate 1/3: 0.1.4 Back moves to the top-left ... CAUGHT in 13s
-mutate 2/3: 0.1.4 the instruction text rises to touch Back ... CAUGHT in 12s
-mutate 3/3: 0.1.4 the speed tag is pinned over the money label ... MISSED in 1s
+mutate: no mutations to run
 
 Spec text:
 3. **Back in one fixed place** (play-test: "the back button isn't consistent"). It is a screen-space button in the **top-right** corner in the first zoom and at the second stop, not found by a scan (designer, 2026-11-06: "top right to not interfear with the labels").
