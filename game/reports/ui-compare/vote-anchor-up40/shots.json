@@ -1,0 +1,12 @@
+{
+	"1-farm-start": "the farm at launch (fresh state, shipped defaults)",
+	"2-farm-hive-full": "hive full, Harvest (fork) button showing",
+	"3-zoom-hive": "first zoom on the hive, rack risen and settled, Back visible",
+	"4-zoom-scraping": "rack risen, a row scraped, cells flying to the bucket (slowed 0.1x for the shot)",
+	"5-bucket-full": "bucket full during the zoom, as the player sees it (Spin shows in the zoom)",
+	"6-centrifuge-stop": "the second camera stop after Back (centrifuge, crate, truck), Spin visible",
+	"7-bottling": "bottling: jars filling at the spigot (truck capacity set to 4 for shot 8)",
+	"8-sell": "crate and truck, Sell visible",
+	"9-dev-speed-x5": "Dev mode open, speed x5 chosen, tag at the top-left (time_scale 5)",
+	"overrides": "harvest_anchor_offset=-40, spin_anchor_offset=-40, sell_anchor_offset=-40"
+}

@@ -59,16 +59,16 @@ extends Resource
 
 # --- 0.1.3 (game/specs/0.1.3-next-revision.md, item 2): the bigger hive and the two camera stops ---
 @export var hive_scale: float = 1.4                    # the hive node's uniform scale (round 4, layout C); read when used, live in Dev mode
-@export var pan_zoom_size: float = 9.3                 # second camera stop: ortho size framing the centrifuge, crate and truck (round 5 pan-quarter)
+@export var pan_zoom_size: float = 9.54                # second camera stop: ortho size framing the centrifuge, crate and truck (round 5 pan-quarter; 9.54 = smallest that fits, Design Votes round 8)
 @export var rng_seed: int = 0                         # GameRng seed; 0 = the engine picks one (the seed used is saved in recordings)
 @export var record_from_launch: bool = true           # Dev mode: the input recorder starts at game start (F8 stops / starts a new file)
 @export var pan_margin: float = 0.04                  # second camera stop: share of the view kept clear around the framed objects
 @export var camera_pan_seconds: float = 1.2            # PLACEHOLDER (slow on purpose): the pan from the first stop to the second
 
 # --- 0.1.4 (game/specs/0.1.4-ui-placement.md, item 2): one anchor-follow rule for Harvest, Spin and Sell ---
-@export var harvest_anchor_offset: float = 0.0         # PLACEHOLDER (0.1.4): px added below the ForkAnchor's projection (negative = up); one value for every view
-@export var spin_anchor_offset: float = 0.0            # PLACEHOLDER (0.1.4): same, for Spin at the CentrifugeAnchor
-@export var sell_anchor_offset: float = 0.0            # PLACEHOLDER (0.1.4): same, for Sell at the SellAnchor
+@export var harvest_anchor_offset: float = -40.0       # px added below the ForkAnchor's projection (negative = up); one value for every view (Design Votes round 8: A, -40)
+@export var spin_anchor_offset: float = -40.0          # same, for Spin at the CentrifugeAnchor
+@export var sell_anchor_offset: float = -40.0          # same, for Sell at the SellAnchor
 @export var button_screen_margin: float = 16.0         # spec item 2: px kept clear between an anchored button and the screen edge
 
 const DEFAULT_PATH := "res://scripts/default_config.tres"

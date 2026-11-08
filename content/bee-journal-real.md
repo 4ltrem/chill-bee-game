@@ -5,7 +5,7 @@ status: approved
 run: content/_runs/bee-journal-real/blackboard-3.md
 description: Bee Journal entries for five real native bee species (sweat bees, leafcutter bees, bumble bees, mason bees, mining bees) from GDD Tree C Native Bee Species table; appears in the Bee Journal in-game.
 decided: 2026-11-03
-decision: approved with the designer's corrections ('sweat name'); follow-up: the bumble bee visitor appears in Sunny Meadow, so the GDD needs a Meadow flower for it, then Entry 3 revised
+decision: approved with the designer's corrections ('sweat name', changed to 'sweat-y name' 2026-11-07); Meadow flower follow-up done 2026-11-07 (GDD: 'Meadow flowers', generic; Entry 3 names it)
 ---
 # Bee Journal — Real Native Bee Species
 **Sources:** `GDD.md` (Tree C: Native Habitat — Native Bee Species table; Story Premise & Onboarding; Aesthetic & Tone; Child Safety; Glossary), `content/CONTEXT.md`, `_templates/content.md`.
@@ -18,7 +18,7 @@ decision: approved with the designer's corrections ('sweat name'); follow-up: th
 **Biome:** Sunny Meadow
 **Attracted by:** Black-eyed Susan, goldenrod
 
-Many sweat bees shimmer with brilliant metallic green.¹ Canada is home to around 170 sweat bee species, most of them nesting underground.² Some sweat bees gently land on people to sip the salt from their perspiration — that is exactly how they got their sweat name!²
+Many sweat bees shimmer with brilliant metallic green.¹ Canada is home to around 170 sweat bee species, most of them nesting underground.² Some sweat bees gently land on people to sip the salt from their perspiration — that is exactly how they got their sweat-y name!²
 
 *Keep your wildflower patches blooming and these tiny glittering bees will always find their way back to the meadow.*
 
@@ -36,6 +36,7 @@ Leafcutter bees make their nests in dead trees and branches.³ Unlike most bees,
 
 ### Entry 3 — Bumble Bees *(Bombus* spp.*)*
 **Biomes:** Sunny Meadow (visitor) · Alpine Valley
+**Attracted by (Sunny Meadow):** Meadow flowers
 **Attracted by (Alpine Valley):** Fireweed, alpine wildflowers
 
 Canada is home to 41 bumble bee species — fuzzy, sturdy flyers that forage even in cold, cloudy weather when other bees stay tucked in.⁵ They "buzz pollinate"⁵ by contracting their flight muscles to produce strong vibrations that shake pollen loose from flowers.⁵ᵇ Yellow-banded bumble bees, found in every province and territory except Nunavut, are often spotted visiting fireweed blooms.⁶
@@ -88,6 +89,7 @@ Les abeilles coupeuses de feuilles nichent dans les arbres morts et les branches
 
 ### Entrée 3 — Bourdons *(Bombus* spp.*)*
 **Biomes :** Prairie ensoleillée (visiteur) · Vallée alpine
+**Attirés par (Prairie ensoleillée) :** Fleurs des prés
 **Attirés par (Vallée alpine) :** Épilobe en épi, fleurs sauvages alpines
 
 Le Canada abrite 41 espèces de bourdons — des butineuses robustes et duveteuses qui s'activent même par temps froid et nuageux, quand les autres abeilles restent bien à l'abri.⁵ Elles pratiquent la « pollinisation par vibration »⁵ : elles contractent leurs muscles de vol pour produire de fortes vibrations qui libèrent le pollen des fleurs.⁵ᵇ Les bourdons à bandes jaunes, présents partout au pays sauf au Nunavut, sont souvent aperçus sur les épilobes en fleur.⁶

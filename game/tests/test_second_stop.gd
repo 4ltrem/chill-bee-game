@@ -132,10 +132,9 @@ func t_second_stop_fork_icon_tap() -> void:
 
 ## Px between an icon's top-left and where its anchor's projection puts it, once clamped inside the screen by button_screen_margin.
 func _anchor_gap(ic: FloatingIcon) -> float:
-	var a: Node3D = ic.get_node(ic.anchor_path) as Node3D
 	var mg: float = float(cv("button_screen_margin"))
 	var view: Vector2 = _vp().size
-	var want: Vector2 = (_cam().unproject_position(a.global_position) - ic.size * 0.5).clamp(Vector2(mg, mg), Vector2(maxf(view.x - mg - ic.size.x, mg), maxf(view.y - mg - ic.size.y, mg)))
+	var want: Vector2 = (_icon_target(ic) - ic.size * 0.5).clamp(Vector2(mg, mg), Vector2(maxf(view.x - mg - ic.size.x, mg), maxf(view.y - mg - ic.size.y, mg)))
 	# spec: "nudged clear" of another control: the wanted spot meeting another visible anchored button, TopInfo or BackButton is allowed to move
 	var wr := Rect2(want, ic.size)
 	for other in _icon_nodes(ic.get_tree().root):

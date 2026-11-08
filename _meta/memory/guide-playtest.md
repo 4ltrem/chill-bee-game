@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: fa5df4be-6365-415d-bd06-9f0be0bb573b
-  modified: 2026-11-03T21:26:35.308Z
+  modified: 2026-11-08T00:55:08.504Z
 ---
 
 The designer wants to keep several guide characters and let playtests pick (2026-11-03). Parked until after the
@@ -17,7 +17,12 @@ Miel (poetic elder drone, name works in French; v2 only). v1 options are in
 **Why:** both drafts share one `[GUIDE]` script, so the characters only differ by name; a playtest needs each to have
 their own signature lines (welcome, first harvest, first sale, first upgrade, hand-off, EN + FR).
 
-**How to apply:** when the designer returns to onboarding, offer: a `generate.py onboarding-script --revise` run for
+**Characters in their own file (designer, 2026-11-07):** "the characters should be put in a separate file to make it
+easier to compare". The four guides and their signature lines go side by side in one content file (e.g.
+`content/guides.md`); `onboarding-script.md` and `biome-intros.md` keep the `[GUIDE]` placeholder and both wait on it
+for approval.
+
+**How to apply:** when the designer returns to onboarding, offer: a William run writing the guides file with the
 signature lines (~250-400k tokens), a GDD line "four candidate guides, chosen by playtest" (designer's call), a
 guide switch in the build (Patricia), and optionally Gerard for the playtest design. Approve the onboarding script
 only after that revision. Related: [[pending-approvals]].

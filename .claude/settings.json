@@ -3,6 +3,25 @@
     "type": "command",
     "command": "python -I \"${CLAUDE_PROJECT_DIR:-.}/_tools/statusline.py\""
   },
+  "permissions": {
+    "allow": [
+      "Bash(python -I _tools/links.py)",
+      "Bash(python -I _tools/test_generate.py)",
+      "Bash(python -I _tools/consistency.py)",
+      "Bash(python -I _tools/test_goal_agent.py)",
+      "Bash(python -I _tools/links.py *)",
+      "Bash(python -I _tools/test_generate.py *)",
+      "Bash(python -I _tools/consistency.py *)",
+      "Bash(python -I _tools/test_goal_agent.py *)",
+      "Bash(python -I _tools/godot_run.py *)",
+      "Bash(CB_TIME_SCALE=* python -I _tools/godot_run.py *)",
+      "Bash(CB_SKIP_X1=* python -I _tools/godot_run.py *)",
+      "Bash(CB_TIME_SCALE=* CB_SKIP_X1=* python -I _tools/godot_run.py *)",
+      "Bash(CB_TIME_SCALE=6 CB_SKIP_X1=1 python -I _tools/godot_run.py *)",
+      "Bash(CB_TIME_SCALE=6 python -I _tools/godot_run.py *)",
+      "Bash(CB_SKIP_X1=1 python -I _tools/godot_run.py *)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Capture the standard UI moments of the game in one or more worktrees, for side-by-side comparison.
 
-    python -I _tools/ui_shots.py LABEL=WORKTREE [LABEL=WORKTREE ...] [--script game/tests/ui_compare_shots.gd]
+    python -I _tools/ui_shots.py LABEL=WORKTREE [LABEL=WORKTREE ...] [--script game/tests/ui_compare_shots.gd] [--set KEY=VALUE ...]
                                  [--collect DIR] [--timeout 600]
 
 Each WORKTREE is a checkout's root (the folder holding game/). The moment list lives in one place, the
@@ -29,7 +29,7 @@ from godot_run import GODOT  # noqa: E402
 REL_SCRIPT = os.path.join("game", "tests", "ui_compare_shots.gd")
 
 
-def shoot(label, tree, script, timeout):
+def shoot(label, tree, script, timeout, sets=()):
     game = os.path.join(tree, "game")
     if not os.path.isfile(os.path.join(game, "project.godot")):
         return f"{label}: no game/project.godot under {tree}"
@@ -39,7 +39,7 @@ def shoot(label, tree, script, timeout):
     out = os.path.join(game, "reports", "ui-compare", label)
     os.makedirs(out, exist_ok=True)
     cmd = [GODOT, "--path", game, "--resolution", "720x1280", "--position", "0,0",
-           "-s", "res://tests/ui_compare_shots.gd", "--", label]
+           "-s", "res://tests/ui_compare_shots.gd", "--", label, *sets]
     print(f"ui_shots: {label} ...", file=sys.stderr, flush=True)
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout)
@@ -71,6 +71,8 @@ def main(argv=None):
     ap.add_argument("--script", default=os.path.join(REPO, REL_SCRIPT))
     ap.add_argument("--collect")
     ap.add_argument("--timeout", type=int, default=600)
+    ap.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
+                    help="a Design Votes option: config key=value, or Node.prop=value / Node.prop*=value (a scene mock); repeatable")
     a = ap.parse_args(argv)
     if not os.path.isfile(a.script):
         sys.exit(f"ui_shots: no shot script at {a.script}")
@@ -79,7 +81,7 @@ def main(argv=None):
         label, _, tree = t.partition("=")
         if not tree:
             sys.exit(f"ui_shots: expected LABEL=WORKTREE, got {t}")
-        lines.append(shoot(label, os.path.abspath(tree), os.path.abspath(a.script), a.timeout))
+        lines.append(shoot(label, os.path.abspath(tree), os.path.abspath(a.script), a.timeout, a.set))
         if a.collect:
             src = os.path.join(tree, "game", "reports", "ui-compare", label)
             if os.path.isdir(src):

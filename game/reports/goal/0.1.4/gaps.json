@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T14:25:29-05:00",
- "unit_log": "game/reports/_runs/20261107-142237/unit.log",
+ "at": "2026-11-07T15:12:34-05:00",
+ "unit_log": "game/reports/_runs/20261107-151024/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -90,6 +90,36 @@
      "kind": "config",
      "name": "button_screen_margin",
      "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_hud_no_overlap_no_cutoff",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_at_anchor_or_clamped",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_clamped_when_anchor_off_screen",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_harvest_hidden_at_second_stop",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_placed_by_scene",
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -228,6 +258,31 @@
    "questions": [],
    "ambiguous": false
   },
+  "C8": {
+   "kind": "change",
+   "title": "Instruction text below Back",
+   "owners": [
+    "Bob"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "HintLabel",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
   "T2.1": {
    "kind": "test",
    "title": "no two HUD controls overlap, and none is cut off by the screen edge;",
@@ -240,24 +295,62 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hud_no_overlap_no_cutoff",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_at_anchor_or_clamped",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_clamped_when_anchor_off_screen",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_harvest_hidden_at_second_stop",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_placed_by_scene",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "ledger",
+     "name": "b65f5e1",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
-  "T3.1": {
+  "T.1": {
    "kind": "test",
    "title": "Back has the same screen rect in the first zoom and at the second stop",
    "owners": [
     "Quinn"
    ],
    "items": [
-    3
+    3,
+    8
    ],
    "depends": [
-    "C3"
+    "C3",
+    "C8"
    ],
    "status": "missing",
    "evidence": [],
@@ -278,24 +371,62 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hud_no_overlap_no_cutoff",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_at_anchor_or_clamped",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_clamped_when_anchor_off_screen",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_harvest_hidden_at_second_stop",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_placed_by_scene",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "ledger",
+     "name": "2c464bc",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
-  "T4.1": {
+  "T.2": {
    "kind": "test",
    "title": "Back's rect is in the top-right quadrant, and the speed tag is below t",
    "owners": [
     "Quinn"
    ],
    "items": [
-    4
+    4,
+    8
    ],
    "depends": [
-    "C4"
+    "C4",
+    "C8"
    ],
    "status": "missing",
    "evidence": [],
@@ -380,7 +511,26 @@
    "questions": [],
    "ambiguous": false
   },
-  "T.1": {
+  "T8.1": {
+   "kind": "test",
+   "title": "item 8: the instruction text's rect lies wholly below Back's rect and ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [
+    "C8"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T.3": {
    "kind": "test",
    "title": "mutations in `tests/mutations.json` prove the new tests.",
    "owners": [
@@ -393,7 +543,8 @@
     4,
     5,
     6,
-    7
+    7,
+    8
    ],
    "depends": [
     "C1",
@@ -402,10 +553,42 @@
     "C4",
     "C5",
     "C6",
-    "C7"
+    "C7",
+    "C8"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hud_no_overlap_no_cutoff",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_at_anchor_or_clamped",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_clamped_when_anchor_off_screen",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_harvest_hidden_at_second_stop",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_placed_by_scene",
+     "ok": false,
+     "result": "not run"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -414,89 +597,111 @@
  },
  "order": [
   {
-   "id": "T2.1",
-   "score": 5.38,
+   "id": "C8",
+   "score": 15.67,
    "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.62,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.2",
-   "score": 5.38,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.62,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T3.1",
-   "score": 5.38,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.62,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T4.1",
-   "score": 5.38,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.62,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T7.1",
-   "score": 5.38,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.62,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T1.1",
-   "score": 3.38,
-   "factors": {
-    "unblocks": 0,
+    "unblocks": 4,
     "value": 2,
-    "cost": 0.62,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T6.1",
-   "score": 1.38,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.62,
+    "cost": 0.33,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T.1",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.2",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.2",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T7.1",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 3.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T8.1",
+   "score": 3.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T6.1",
+   "score": 1.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.3",
    "score": 0.0,
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.62,
+    "cost": 0.58,
     "ready": 0,
     "blocked_by": [
      "C5"
@@ -509,7 +714,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.62,
+    "cost": 0.58,
     "ready": 0,
     "blocked_by": [
      "C5"

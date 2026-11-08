@@ -134,6 +134,35 @@ func _scrape_until_full() -> void:
 		await _gwait(0.3)
 
 
+## Design Votes options (orchestrator, 2026-11-07): after the label, `key=value` sets a config value and `Node.prop=value`
+## (or `Node.prop*=value`, a multiply) sets a property of the first node of that name: a mock of a scene change, for a vote only.
+## Values are Godot literals (str_to_var): 1.35, -40, Vector3(1.7, 1, 1.7). Written into shots.json as "overrides".
+func _apply_overrides(args: PackedStringArray, nodes: bool) -> void:
+	var done: Array[String] = []
+	for i in range(1, args.size()):
+		var a: String = args[i]
+		var mul: bool = a.contains("*=")
+		var kv: PackedStringArray = a.split("*=" if mul else "=", false, 1)
+		if kv.size() != 2:
+			continue
+		var val: Variant = str_to_var(kv[1])
+		if kv[0].contains(".") != nodes:
+			continue
+		if nodes:
+			var parts: PackedStringArray = kv[0].split(".", false, 1)
+			var n: Node = main if parts[0] == main.name else main.find_child(parts[0], true, false)
+			if n == null:
+				push_warning("override: no node " + parts[0])
+				continue
+			n.set(parts[1], n.get(parts[1]) * val if mul else val)
+		else:
+			cfg.set(kv[0], cfg.get(kv[0]) * val if mul else val)
+		done.append(a)
+	if not done.is_empty():
+		manifest["overrides"] = (str(manifest.get("overrides", "")) + ", " if manifest.has("overrides") else "") + ", ".join(done)
+		print("overrides: ", done)
+
+
 func _run() -> void:
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	if args.size() > 0:
@@ -147,9 +176,11 @@ func _run() -> void:
 	if "record_from_launch" in cfg:
 		cfg.set("record_from_launch", false)   # the input recorder would write user://recordings
 	root.get_node("Economy").call("reset")
+	_apply_overrides(args, false)   # config values first: some are read when the scene is built (grid_cols)
 	main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
 	await _frames(10)
+	_apply_overrides(args, true)
 	cen = main.find_child("Centrifuge", true, false)
 	hive = main.find_child("Hive", true, false)
 	var zfb: Node3D = main.find_child("ZoomFramingB", true, false) as Node3D

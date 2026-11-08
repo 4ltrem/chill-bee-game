@@ -39,6 +39,15 @@ func _cam() -> Camera3D:
 	return root.get_viewport().get_camera_3d()
 
 
+## Where a floating icon's centre should sit: its anchor's projection plus screen_offset and its config offset
+## (`harvest/spin/sell_anchor_offset`, px, negative = up; Design Votes round 8 set them to -40).
+func _icon_target(ic: FloatingIcon) -> Vector2:
+	var a: Node3D = ic.get_node(ic.anchor_path) as Node3D
+	var key: String = FloatingIcon.OFFSET_KEYS.get(String(ic.name), "")
+	var off: float = float(cv(key)) if key != "" else 0.0
+	return _cam().unproject_position(a.global_position) + ic.screen_offset + Vector2(0.0, off)
+
+
 func _vp() -> Rect2:
 	return Rect2(Vector2.ZERO, root.get_visible_rect().size)
 

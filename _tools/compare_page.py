@@ -413,7 +413,12 @@ def add_sections(page, sections, h1, brief, title=None):
 
 def cmd_add(page_path, out, sections, h1, brief, title=None):
     page = open(page_path, encoding="utf-8").read()
-    open(out, "w", encoding="utf-8").write(add_sections(page, sections, h1, brief, title))
+    new = add_sections(page, sections, h1, brief, title)
+    ids = re.findall(r'data-id="([^"]+)"', new)
+    dups = sorted({i for i in ids if ids.count(i) > 1})
+    if dups:  # a shared id makes one card's buttons toggle another's
+        sys.exit("duplicate vote ids, nothing written: " + ", ".join(dups))
+    open(out, "w", encoding="utf-8").write(new)
 
 
 def stop_section(blackboard, row, options, ref, shot, prefix):
@@ -427,7 +432,8 @@ def stop_section(blackboard, row, options, ref, shot, prefix):
                                os.path.join(folder, shot), [esc(texts.get(letter, ""))], meta={"question": prefix, "option": letter}))
     cards.append(vote_card(f"{prefix}-ref", "Current build (reference)", os.path.join(ref, shot),
                            ["The build as it is now; nothing changes until you pick."], meta={"question": prefix, "option": "ref"}))
-    return {"eyebrow": f"Style loop &middot; designer stop &middot; {esc(rule)}", "h2": f"{rule}: {finding}",
+    loop = "Goal run" if "/goal/" in blackboard.replace("\\", "/") else "Style loop"
+    return {"eyebrow": f"{loop} &middot; designer stop &middot; {esc(rule)}", "h2": f"{rule}: {finding}",
             "text": f"<code>{esc(where)}</code>. Vote yes on the option to apply.", "cards": cards}
 
 
@@ -455,6 +461,28 @@ def versions_section(prefix, title, versions, text=""):
                             "Vote yes on the version that places things right, and say in the note which moment.", "cards": cards}
 
 
+class StopAction(argparse.Action):
+    """--stop BLACKBOARD ROW opens a group; the --option/--ref/--shot/--prefix after it fill that group."""
+    def __call__(self, parser, ns, values, option_string=None):
+        stops = list(getattr(ns, self.dest) or [])
+        stops.append({"bb": values[0], "row": values[1], "option": [], "ref": None, "shot": None, "prefix": None})
+        setattr(ns, self.dest, stops)
+
+
+class StopPart(argparse.Action):
+    def __call__(self, parser, ns, values, option_string=None):
+        stops = getattr(ns, "stops", None)
+        if not stops:
+            parser.error(f"{option_string} must come after a --stop")
+        key = self.dest
+        if key == "option":
+            stops[-1]["option"].append(values)
+        elif stops[-1][key] is not None:
+            parser.error(f"{option_string} given twice for --stop {stops[-1]['row']}")
+        else:
+            stops[-1][key] = values
+
+
 def main(argv):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -469,14 +497,14 @@ def main(argv):
     s.add_argument("--h1", required=True)
     s.add_argument("--brief", default="")
     s.add_argument("--title")
-    s.add_argument("--stop", nargs=2, metavar=("BLACKBOARD", "ROW"), action="append", default=[],
-                   help="a designer-stop row; with --option, --ref, --shot, --prefix")
-    s.add_argument("--option", action="append", default=[], metavar="LETTER=DIR")
-    s.add_argument("--ref")
-    s.add_argument("--shot")
+    s.add_argument("--stop", nargs=2, metavar=("BLACKBOARD", "ROW"), action=StopAction, dest="stops", default=[],
+                   help="a designer-stop row; the --option, --ref, --shot, --prefix after it belong to it")
+    s.add_argument("--option", action=StopPart, metavar="LETTER=DIR")
+    s.add_argument("--ref", action=StopPart)
+    s.add_argument("--shot", action=StopPart)
     s.add_argument("--variants", nargs=3, metavar=("SHOTS_DIR", "PREFIX", "TITLE"), action="append", default=[])
     s.add_argument("--checks", action="append", default=[], help="checks.json per --variants, in order")
-    s.add_argument("--prefix", action="append", default=[], help="vote id prefix per --stop, in order")
+    s.add_argument("--prefix", action=StopPart, help="vote id prefix of the --stop before it")
     s.add_argument("--versions", nargs=2, metavar=("PREFIX", "TITLE"), help="a versions section; with --version")
     s.add_argument("--version", action="append", default=[], metavar="LABEL=PNG[=CAPTION]")
     s.add_argument("--versions-text", default="")
@@ -500,7 +528,10 @@ def main(argv):
     elif a.cmd == "votes":
         cmd_votes(a.shots_dir, a.shots_json, a.prev_page, a.out)
     elif a.cmd == "add":
-        secs = [stop_section(b, int(r), a.option, a.ref, a.shot, a.prefix[n]) for n, (b, r) in enumerate(a.stop)]
+        for st in a.stops:
+            if not (st["option"] and st["ref"] and st["shot"] and st["prefix"]):
+                sys.exit(f"--stop {st['row']}: needs its own --option, --ref, --shot and --prefix after it")
+        secs = [stop_section(st["bb"], int(st["row"]), st["option"], st["ref"], st["shot"], st["prefix"]) for st in a.stops]
         secs += [variants_section(d, pre, t, a.checks[n] if n < len(a.checks) else None) for n, (d, pre, t) in enumerate(a.variants)]
         if a.versions:
             vs = [(v.split("=", 2) + [""])[:3] for v in a.version]

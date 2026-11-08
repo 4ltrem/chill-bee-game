@@ -122,7 +122,7 @@ Progression is split across three synergizing upgrade paths using an exponential
     |---|---|---|---|
     | Sunny Meadow | Sweat bees | Faster pollination (+25%) | Black-eyed Susan, goldenrod |
     | Sunny Meadow | Leafcutter bees | Better honey quality (+10% sale value) | Wild bergamot, New England aster |
-    | Sunny Meadow | Bumble bees (visitor) | None; Bee Journal entry only | — |
+    | Sunny Meadow | Bumble bees (visitor) | None; Bee Journal entry only | Meadow flowers |
     | Alpine Valley | Bumble bees | Faster hive fill rate (+20%) | Fireweed, alpine wildflowers (TBD) |
     | Alpine Valley | Mason bees | Faster pollination (+25%) | Fireweed, alpine wildflowers (TBD) |
     | Alpine Valley | Mining bees | Better honey quality (+10% sale value) | Fireweed, alpine wildflowers (TBD) |

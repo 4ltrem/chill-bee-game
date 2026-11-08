@@ -77,6 +77,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Honey sale value for each biome
 - [ ] Automation upgrade costs (motor, auto-scraper, Faster Delivery)
 - [ ] Upgrade mode UI: opening an automated unit's zoom screen (with the rest of the UI)
+- [ ] Back button as an arrow, its size set in the UI mockups (Design Votes round 8, 2026-11-07)
 - [ ] Overflow Storage capacity and costs (free buffer is 1 extra frame)
 - [ ] Land expansion costs
 - [ ] Hive and flower unit tiers: costs, production and space per tier

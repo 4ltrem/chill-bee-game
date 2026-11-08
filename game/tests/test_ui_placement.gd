@@ -24,6 +24,18 @@ func _hud_rects(m: Node) -> Array:
 	return out
 
 
+## Pairs allowed to touch or overlap. The count label sits on the Harvest button by design: the designer kept the 4 px gap
+## (Design Votes round 8, C1 count gap: "these are all the same"; ref chosen), so this pair is not an overlap failure.
+const _ALLOWED_PAIRS: Array = [["HiveCountLabel", "ForkIcon"]]
+
+
+func _pair_allowed(a: String, b: String) -> bool:
+	for pr in _ALLOWED_PAIRS:
+		if (pr[0] == a and pr[1] == b) or (pr[0] == b and pr[1] == a):
+			return true
+	return false
+
+
 ## Strings naming each overlapping pair and each rect not wholly inside the viewport `view`.
 func _hud_violations(rects: Array, view: Rect2) -> Array:
 	var bad: Array = []
@@ -33,7 +45,7 @@ func _hud_violations(rects: Array, view: Rect2) -> Array:
 			bad.append("%s is cut off by the screen edge %s" % [rects[i][0], str(ra)])
 		for j in range(i + 1, rects.size()):
 			var rb: Rect2 = rects[j][1]
-			if ra.intersects(rb):
+			if ra.intersects(rb) and not _pair_allowed(rects[i][0], rects[j][0]):
 				bad.append("%s %s overlaps %s %s" % [rects[i][0], str(ra), rects[j][0], str(rb)])
 	return bad
 
@@ -77,6 +89,8 @@ func t_hud_no_overlap_no_cutoff() -> void:
 	ck(_hud_violations([["A", Rect2(0, 0, 100, 100)], ["B", Rect2(50, 50, 100, 100)]], view).size() == 1, "self-check: two overlapping rects are reported")
 	ck(_hud_violations([["A", Rect2(1000, 0, 100, 100)]], view).size() == 1, "self-check: a rect past the screen edge is reported")
 	ck(_hud_violations([["A", Rect2(0, 0, 100, 100)], ["B", Rect2(100, 0, 100, 100)]], view).is_empty(), "self-check: touching, clear rects are not reported")
+	ck(_hud_violations([["HiveCountLabel", Rect2(0, 0, 100, 100)], ["ForkIcon", Rect2(50, 50, 100, 100)]], view).is_empty(), "self-check: the allowed count/Harvest pair is not reported")
+	ck(_hud_violations([["HiveCountLabel", Rect2(0, 0, 100, 100)], ["SellIcon", Rect2(50, 50, 100, 100)]], view).size() == 1, "self-check: the count label over another button is still reported")
 	var seen: Array = [0]
 	await _walk_views(func(m: Node, _p: Dictionary, label: String) -> void:
 		await _frames(3)
@@ -88,10 +102,9 @@ func t_hud_no_overlap_no_cutoff() -> void:
 	_fin()
 
 
-## Px between an icon's rect centre and its anchor's projected point.
+## Px between an icon's rect centre and its target (the anchor's projection plus its config offset).
 func _centre_gap(ic: FloatingIcon) -> float:
-	var a: Node3D = ic.get_node(ic.anchor_path) as Node3D
-	return (ic.get_global_rect().get_center() - _cam().unproject_position(a.global_position)).length()
+	return (ic.get_global_rect().get_center() - _icon_target(ic)).length()
 
 
 ## True when the rect lies inside the viewport shrunk by button_screen_margin (1 px tolerance).
@@ -113,8 +126,7 @@ func t_buttons_at_anchor_or_clamped() -> void:
 				continue
 			shown[0] += 1
 			var r: Rect2 = ic.get_global_rect()
-			var a: Node3D = ic.get_node(ic.anchor_path) as Node3D
-			var proj: Vector2 = _cam().unproject_position(a.global_position)
+			var proj: Vector2 = _icon_target(ic)
 			var gap: float = _centre_gap(ic)
 			var mg: float = float(cv("button_screen_margin"))
 			if gap <= mg:

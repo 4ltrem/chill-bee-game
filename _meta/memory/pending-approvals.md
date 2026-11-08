@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: fa5df4be-6365-415d-bd06-9f0be0bb573b
-  modified: 2026-11-05T18:52:24.010Z
+  modified: 2026-11-08T00:58:13.015Z
 ---
 
 Decided 2026-11-03 (in each file's `decided:` / `decision:`): research/bee-journal-real.md rejected (Haiku brief),
@@ -20,12 +20,10 @@ Also waiting (2026-11-05, M2): `content/biome-intros.md` went back to `draft` af
 (`content/_runs/biome-intros/blackboard-2.md`) and needs re-approval. `STYLE_LOOP.md` (the A6 write-up) was approved 2026-11-05 (second shift).
 
 Follow-ups recorded in the approvals' `decision:` lines, not started:
-- The Sunny Meadow bumble bee visitor appears in the world, so the GDD species table needs a Meadow flower for it
-  (currently "—"); then revise Entry 3 of content/bee-journal-real.md.
-- Glowbell (Enchanted Grove) and Skybloom (Cloud Gardens) are now in the GDD flower table; revise
-  content/biome-intros.md to name them.
-- The designer changed "sweet name" to "sweat name" in the sweat bee entry; the original was likely a pun, and the
-  corrected sentence reads oddly. Offer "that's how they got their name!" when that entry is next touched.
+- ~~Meadow flower for the bumble bee visitor~~: done 2026-11-07, generic "Meadow flowers" in the GDD and Entry 3.
+- ~~Name Glowbell and Skybloom in biome-intros~~: dropped 2026-11-07, the designer keeps the generic flower names.
+- ~~Sweat bee wording~~: done 2026-11-07, now "sweat-y name" (designer's pick).
+- Both onboarding-script and biome-intros wait on a separate guides file ([[guide-playtest]], 2026-11-07).
 
 **Why:** a content draft citing a research brief cannot be approved before its briefs (content/CONTEXT.md, Check).
 

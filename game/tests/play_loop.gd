@@ -330,7 +330,7 @@ func _run() -> void:
 	root.add_child(main)
 	await _frames(10)
 	for nm in ["Hive", "Centrifuge", "Pile", "Truck", "ForkIcon", "CentrifugeIcon", "SellIcon", "UpgradeButton",
-			"BackButton", "HintLabel", "SummaryModal", "SummaryOkButton", "CentrifugeLabel", "MoneyLabel", "FillLabel", "BeeCountLabel", "Bees"]:
+			"BackButton", "HintLabel", "SummaryModal", "SummaryOkButton", "CentrifugeLabel", "MoneyLabel", "HiveCountLabel", "BeeCountLabel", "Bees"]:
 		P[nm] = _n(nm)
 		if P[nm] == null:
 			_abort("a required node is missing; see the lines above")
@@ -359,7 +359,9 @@ func _run() -> void:
 
 	# ---- start state; focus item 7: the disabled UpgradeButton renders its disabled style even when told to take focus
 	ck(main.find_child("Harvest", true, false) == null, "no Harvest close-up root (harvest.tscn retired)")
-	ck(not _vis(P["ForkIcon"]) and not _vis(P["CentrifugeIcon"]) and not _vis(P["SellIcon"]) and not _vis(P["SummaryModal"]), "no icon or summary at start")
+	# 0.1.4 item 1: "The Harvest button is always shown ... pressable only when full", so at start it shows, disabled
+	ck(_vis(P["ForkIcon"]) and (P["ForkIcon"] as Button).disabled, "Harvest shows at start, disabled (hive not full)")
+	ck(not _vis(P["CentrifugeIcon"]) and not _vis(P["SellIcon"]) and not _vis(P["SummaryModal"]), "no Spin, Sell or summary at start")
 	ck(main.find_child("ContinueButton", true, false) == null, "0.1.2 change 6: there is no ContinueButton node")
 	ck(main.find_child("SummaryBonusLabel", true, false) == null, "0.1.2 change 7: there is no SummaryBonusLabel node")
 	eq((P["MoneyLabel"] as Label).text, "$0", "MoneyLabel at start")
@@ -455,7 +457,7 @@ func _run() -> void:
 		eq(fi.capped_total(hive, NF), 0, "%s: no Capped cell left" % T)
 		eq(pile.get("cells"), TOTAL - in_bucket, "%s: every later cell piled up (%d)" % [T, TOTAL - in_bucket])
 		eq(cen.get("cells"), in_bucket, "%s: the cranking bucket took no cell" % T)
-		ck(_vis(P["MoneyLabel"]) and not _vis(P["ForkIcon"]), "%s: the zoom ended on its own: farm UI back, fork gone" % T)
+		ck(_vis(P["MoneyLabel"]) and (P["ForkIcon"] as Button).disabled, "%s: the zoom ended on its own: farm UI back, Harvest disabled (0.1.4 item 1: always shown)" % T)
 		if rnd == 1:
 			await _shot("r4-6-farm-pile-while-cranking")
 		eq(cen.get("state"), _st(cen, "CRANKING"), "%s: still CRANKING after the zoom" % T)
