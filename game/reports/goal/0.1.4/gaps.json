@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T23:39:37-05:00",
- "unit_log": "game/reports/_runs/20261107-233607/unit.log",
+ "at": "2026-11-07T23:54:44-05:00",
+ "unit_log": "game/reports/_runs/20261107-235038/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -69,7 +69,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -99,32 +99,32 @@
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -133,7 +133,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -366,10 +366,16 @@
     11
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "33db081",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -430,37 +436,37 @@
    "depends": [
     "C2"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -506,37 +512,37 @@
    "depends": [
     "C2"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -855,37 +861,37 @@
     "C12",
     "C13"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -896,21 +902,10 @@
  },
  "order": [
   {
-   "id": "C11",
-   "score": 11.32,
-   "factors": {
-    "unblocks": 2,
-    "value": 3,
-    "cost": 0.68,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C12",
-   "score": 11.32,
+   "score": 8.32,
    "factors": {
-    "unblocks": 2,
+    "unblocks": 1,
     "value": 3,
     "cost": 0.68,
     "ready": 1,
@@ -919,9 +914,9 @@
   },
   {
    "id": "C13",
-   "score": 11.32,
+   "score": 8.32,
    "factors": {
-    "unblocks": 2,
+    "unblocks": 1,
     "value": 3,
     "cost": 0.68,
     "ready": 1,
@@ -984,29 +979,18 @@
    }
   },
   {
+   "id": "T11.1",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T13.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.2",
    "score": 5.42,
    "factors": {
     "unblocks": 0,
@@ -1091,33 +1075,6 @@
     "cost": 0.58,
     "ready": 1,
     "blocked_by": []
-   }
-  },
-  {
-   "id": "T.3",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.58,
-    "ready": 0,
-    "blocked_by": [
-     "C11",
-     "C12"
-    ]
-   }
-  },
-  {
-   "id": "T11.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 0,
-    "blocked_by": [
-     "C11"
-    ]
    }
   },
   {

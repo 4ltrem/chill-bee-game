@@ -39,7 +39,8 @@ var _cam_tween: Tween
 var _crate: Node3D
 var _closing_to_second: bool = false   # the zoom now closing ends at the second stop (bucket full) instead of the farm view
 var _at_second_stop: bool = false
-var _spin_mode: bool = false          # 0.1.4 item 7: the crank was started and the pile has not run out
+var motor_owned: bool = false         # 0.1.4 item 12: the electric centrifuge (GDD Automation) is owned; never true in Phase 1, no upgrade sets it yet
+var _spin_mode: bool = false         # 0.1.4 item 7: the crank was started and the pile has not run out
 var _auto_spin: bool = false          # the pile is reloading after a pour in spin mode: crank again when the bucket is full
 var _spin_pending: bool = false       # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
 var _spin_pan_timer: float = 0.0     # 0.1.4 item 11: Spin tapped on the farm view: seconds left of the pan to the second stop
@@ -157,6 +158,9 @@ func _on_centrifuge_state(state_now: int) -> void:
 		_set_spin_text_kept(false)
 	elif state_now == Centrifuge.State.FULL and _auto_spin and zoom == Zoom.NONE:
 		_auto_spin = false
+		if not (_at_second_stop or motor_owned):
+			_refresh_icons()
+			return
 		_centrifuge.begin_crank.call_deferred()   # spin mode: the reloaded bucket spins on its own
 	_refresh_icons()
 
@@ -190,8 +194,8 @@ func _on_bottling_done(_jars: int) -> void:
 	# 0.1.4 item 7: in spin mode the reloaded bucket spins by itself (no "press Spin" prompt, the spin text stays); with no pile, spin mode exits.
 	if _spin_mode:
 		if _pile != null and not _pile.is_empty() and _centrifuge.room_cells() > 0:
-			_auto_spin = true
-			_set_spin_text_kept(true)
+			_auto_spin = _at_second_stop or motor_owned   # 0.1.4 item 12: the farm view never spins without the motor
+			_set_spin_text_kept(_auto_spin)
 		else:
 			_exit_spin_mode()
 	load_pile()

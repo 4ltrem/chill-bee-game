@@ -1757,3 +1757,53 @@ I did not run the windowed `play_loop.gd`, so the pan from the farm view has not
 
 - Check `contract`: PASS
 - Check `tests`: PASS
+- Green: checkpoint `33db081` on `milestone/0.1.4`
+
+## Pass 21: scan (2026-11-07T23:54:44-05:00)
+
+Unit results from `game/reports/_runs/20261107-235038/unit.log`. 5 of 32 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (5 of 32)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C2 Buttons anchored to their props, the same way in every view | change | Patricia, Bob | done | 11/11 present: ✓ config harvest_anchor_offset, ✓ config spin_anchor_offset, ✓ config sell_anchor_offset, ✓ config button_screen_margin, ✓ node CentrifugeLabel, ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clam ... |
+| C11 Spin goes to the second stop | change | Patricia | partial (built, waits on its tests) | ✓ ledger 33db081 |
+| T2.1 no two HUD controls overlap, and none is cut off by the scre | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ ledger b65f5e1 |
+| T2.2 Harvest, Spin and Sell stay within `button_screen_margin` of | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ ledger 2c464bc |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene |
+
+### Order: new or rescored (3 of 17)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C12 No spinning in the farm view without the motor | 8.32 | 1 | 3 | 0.68 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.68 (Patricia) |
+| 2 | C13 Centrifuge text sits on the centrifuge | 8.32 | 1 | 3 | 0.68 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.68 (Patricia) |
+| 8 | T11.1 item 11: pressing Spin from the farm view or the f | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C12** (score 8.32: 1 goal(s) wait on it; play-test fix; cost 0.68 (Patricia)).
+
+### Step: C12 (2026-11-07T23:54:44-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C12-patricia.md` (1361 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (101,180 tokens, 11 turns, 19 s):
+
+Item 12 is in `main.gd`. `contract_check.py` passes (0 unresolved). I haven't run the unit tests or `play_loop.gd`.
+
+- **Motor flag:** I added `motor_owned`, default `false`, with a comment marking it as set by no upgrade yet. No motor or upgrade system exists in the scripts, so nothing sets it. It stays false in Phase 1.
+- **Auto-reload after a pour:** `_on_bottling_done` now turns `_auto_spin` on only at the second stop or with the motor owned. The `FULL` handler checks the same condition before it calls `begin_crank`.
+- **Farm view:** if neither holds, the reloaded bucket waits for the player.
+- **Spin mode:** `_spin_mode` is still set in that case. It isn't cleared when the reload doesn't auto-spin, so check that a manual Spin tap afterwards still behaves.
+
+No node names used.
+
+**For Quinn:** a test for a pour in the farm view that leaves the bucket `FULL` and uncranked. There's no test for this input path yet.
+
+**Open question:** where the motor ownership should live once the Automation upgrade is built, e.g. in `Economy`.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
