@@ -623,5 +623,25 @@
    "t_combs_fill_frame_and_hive_whole"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 11 Spin from the farm view cranks in place instead of panning to the second stop",
+  "file": "scripts/main.gd",
+  "find": "if _at_second_stop or _farm_camera == null or not is_inside_tree():",
+  "replace": "if true:",
+  "expect": [
+   "t_spin_from_farm_goes_to_second_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 11 Spin from the first zoom starts the crank without spin mode",
+  "file": "scripts/main.gd",
+  "find": "\tif _spin_pending:\n\t\t_spin_pending = false\n\t\t_spin_mode = true\n",
+  "replace": "\tif _spin_pending:\n\t\t_spin_pending = false\n",
+  "expect": [
+   "t_spin_from_first_zoom_goes_to_second_stop"
+  ],
+  "suite": "unit"
  }
 ]

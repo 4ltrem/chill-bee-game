@@ -2053,3 +2053,49 @@ I resized the frame pieces in `scenes/props/hive.tscn`, but I haven't run `t_com
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `mutations`: PASS
+- Green: checkpoint `0d5606c` on `milestone/0.1.4`
+
+## Pass 25: scan (2026-11-08T00:39:03-05:00)
+
+Unit results from `game/reports/_runs/20261108-003615/unit.log`. 16 of 32 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 32)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C10 Combs shown in the hive | change | Patricia, Bob | done | ✓ test t_combs_visible_in_hive, ✓ test t_combs_fill_frame_and_hive_whole, ✓ ledger 2d2ffb4 |
+| T10.1 item 10: with the hive partly full and no frame raised, the  | test | Quinn | done | ✓ test t_combs_visible_in_hive, ✓ test t_combs_fill_frame_and_hive_whole, ✓ ledger 0d5606c |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 9/9 present: ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_ ... |
+
+No score changed.
+
+Next: **T11.1** (score 5.42: play-test fix; cost 0.58 (Quinn)).
+
+### Step: T11.1 (2026-11-08T00:39:03-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T11.1-quinn.md` (1350 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (486,034 tokens, 28 turns, 62 s):
+
+I wrote the two tests, but I couldn't run them. The sandbox blocks any command that sets `CB_ONLY` or `CB_TIME_SCALE`, including `env` and `export`, so nothing has been proved to fail or pass. Rex needs to run them, along with the two mutations.
+
+**Files changed**
+- `game/tests/test_second_stop.gd`: appended the two tests and a shared helper. The file is now about 450 lines, over the ~400 guideline.
+- `game/tests/run_tests.gd`: registered both under the `# 0.1.4 item 11 (written from game/specs/0.1.4-ui-placement.md before the code)` comment.
+- `game/tests/mutations.json`: two new mutations on `scripts/main.gd`, one per test.
+
+**Tests (T11.1)**
+- `t_spin_from_farm_goes_to_second_stop`
+- `t_spin_from_first_zoom_goes_to_second_stop`
+
+Both tap the Spin button with a real mouse event. After the tap, each checks that the camera size is `pan_zoom_size`, `at_second_stop()` is true, `_spin_mode` is true and the centrifuge state is CRANKING. Expected values come from the config.
+
+**Nodes used:** `CentrifugeIcon`, `BackButton`, `Centrifuge`, `Hive`, `ForkIcon`.
+
+**Open questions**
+- `_spin_mode` is a private variable. The spec has no public accessor for it, so the tests read it directly.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS

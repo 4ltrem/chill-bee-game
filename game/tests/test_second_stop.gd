@@ -388,3 +388,63 @@ func t_spin_icon_in_first_zoom() -> void:
 		var mp: Vector2 = _cam().unproject_position(mouth.global_position)
 		ck(not r.has_point(mp), "Spin does not cover the BucketMouth (mouth %s, spin %s)" % [str(mp), str(r)])
 	_fin()
+
+
+## 0.1.4 item 11 (spec: "Pressing Spin from any view moves the camera to the second stop and enters spin mode there"): the end state.
+func _ck_spin_ended_at_second_stop(m: Node, cen: Node, where: String) -> void:
+	var secs: float = float(cv("camera_pan_seconds"))
+	var reached: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01, secs + _zoom_settle() + float(cv("zoom_seconds")) + 4.0)
+	await _wait(0.4)
+	ck(reached, "%s: Spin ends with the camera at the second stop's size %s (size %s)" % [where, str(cv("pan_zoom_size")), str(_cam().size)])
+	eq(bool(m.call("at_second_stop")), true, "%s: at_second_stop is true after Spin" % where)
+	eq(bool(m.get("_spin_mode")), true, "%s: spin mode is on after Spin" % where)
+	eq(cen.get("state"), _st(cen, "CRANKING"), "%s: the crank is running at the second stop" % where)
+
+
+## From the farm view with the bucket FULL (Back from the second stop first): a real tap on Spin pans to the second stop and spins there.
+func t_spin_from_farm_goes_to_second_stop() -> void:
+	var s: Dictionary = await _second_stop_with_capped()
+	if s.is_empty():
+		_fin()
+		return
+	var m: Node = s["m"]
+	var p: Dictionary = s["p"]
+	var cen: Node = p["Centrifuge"]
+	await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
+	await _until(func() -> bool: return not bool(m.call("at_second_stop")) and _cam().size > float(cv("pan_zoom_size")) + 0.5, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
+	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
+	var spin: Control = p["CentrifugeIcon"]
+	eq(bool(m.call("at_second_stop")), false, "precondition: back on the farm view")
+	ck(_cam().size > float(cv("pan_zoom_size")) + 0.5, "precondition: the camera is on the farm view (size %.3f)" % _cam().size)
+	eq(cen.get("state"), _st(cen, "FULL"), "precondition: the bucket is still FULL")
+	eq(bool(m.get("_spin_mode")), false, "precondition: spin mode is off")
+	ck(_shown(spin), "Spin shows on the farm view")
+	await fi.tap_at(spin.get_global_rect().get_center())
+	await _ck_spin_ended_at_second_stop(m, cen, "farm view")
+	_fin()
+
+
+## From the first zoom with the bucket FULL (frames still Capped): a real tap on Spin ends the zoom at the second stop and spins there.
+func t_spin_from_first_zoom_goes_to_second_stop() -> void:
+	_portrait()
+	var z: Dictionary = await _zoom_open_main()
+	if z.is_empty():
+		_fin()
+		return
+	var m: Node = z["m"]
+	var p: Dictionary = z["p"]
+	var tr: Dictionary = z["tr"]
+	var cen: Node = p["Centrifuge"]
+	var frames: int = int(ceil(float(_bucket_cells()) / float(_cpf())))
+	for k in frames:
+		var f: int = await _scrape_risen(m, p["Hive"], tr)
+		ck(await _next_frame(tr, f), "frame %d done: the next frame rose" % f)
+	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.3)
+	eq(cen.get("state"), _st(cen, "FULL"), "precondition: the bucket is full")
+	near(_cam().size, float(cv("zoom_size")), 0.05, "precondition: still in the first zoom")
+	eq(bool(m.get("_spin_mode")), false, "precondition: spin mode is off")
+	var spin: Control = p["CentrifugeIcon"]
+	ck(_shown(spin), "Spin shows in the first zoom")
+	await fi.tap_at(spin.get_global_rect().get_center())
+	await _ck_spin_ended_at_second_stop(m, cen, "first zoom")
+	_fin()

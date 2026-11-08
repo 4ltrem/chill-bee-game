@@ -90,6 +90,8 @@ func _run() -> void:
 			"t_back_fixed_top_right", "t_speed_tag_below_labels",
 				# 0.1.4 item 10 (written from game/specs/0.1.4-ui-placement.md before the code)
 				"t_combs_visible_in_hive", "t_combs_fill_frame_and_hive_whole",
+				# 0.1.4 item 11 (written from game/specs/0.1.4-ui-placement.md before the code)
+				"t_spin_from_farm_goes_to_second_stop", "t_spin_from_first_zoom_goes_to_second_stop",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

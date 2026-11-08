@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T00:30:32-05:00",
- "unit_log": "game/reports/_runs/20261108-002731/unit.log",
+ "at": "2026-11-08T00:39:03-05:00",
+ "unit_log": "game/reports/_runs/20261108-003615/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -391,8 +391,20 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_combs_visible_in_hive",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_fill_frame_and_hive_whole",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "2d2ffb4",
@@ -400,7 +412,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -843,9 +855,27 @@
    "depends": [
     "C10"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_combs_visible_in_hive",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_fill_frame_and_hive_whole",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "0d5606c",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1043,6 +1073,18 @@
      "name": "t_speed_tag_below_labels",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_visible_in_hive",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_fill_frame_and_hive_whole",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1052,17 +1094,6 @@
   }
  },
  "order": [
-  {
-   "id": "T10.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T11.1",
    "score": 5.42,
