@@ -127,6 +127,8 @@ def run_agent(agent, prompt, tools="WebFetch,WebSearch", max_turns=None):
     tokens = sum(u.get(k, 0) for k in ("input_tokens", "output_tokens",
                                        "cache_creation_input_tokens", "cache_read_input_tokens"))
     return out.get("result", ""), {"tokens": tokens, "turns": out.get("num_turns", 0),
+                                   "cmd": " ".join(["claude"] + cmd[1:]), "max_turns": max_turns,
+                                   "subtype": out.get("subtype", ""),
                                    "seconds": round(out.get("duration_ms", 0) / 1000),
                                    "session_id": out.get("session_id"), "start": started, "end": ended,
                                    "model": out.get("modelUsage") and " ".join(out["modelUsage"]) or ""}

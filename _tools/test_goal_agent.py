@@ -258,6 +258,10 @@ class Loop(unittest.TestCase):
         self.assertIn("fix round 2", self.calls[-1][1])
         self.assertEqual([t for _, t in self.turn_caps], [None] * 2 + [ga.FIX_MAX_TURNS] * 4)   # only fix rounds capped
         self.assertIn("Do not run the test suite", self.calls[-1][1])
+        self.assertIn("turns 1 (cap 15)", board)                            # every call's command and turns logged
+        self.assertIn("turns 1 (no cap)", board)
+        self.assertIn("**Over the turn cap:** 23", ga.call_line({"turns": 23, "cmd": "claude -p"}, 15))
+        self.assertNotIn("Over", ga.call_line({"turns": 16, "cmd": "claude -p"}, 15))
         self.assertIn("## Waiting for the designer\n\n2 fix rounds failed on C3", board)
         self.assertIn("result: waiting-designer", board)
         self.assertIn("briefs/C3-fix2-patricia.md", board)                  # fix briefs go by reference too

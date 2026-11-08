@@ -986,6 +986,17 @@ def transcripts(run):
     return ROOT / g.RUNS / f"{datetime.date.today().isoformat()}-goal-{run}"
 
 
+def call_line(u, max_turns):
+    """The board's record of one call: the exact command, the turns the CLI reported against the cap, and its end.
+    The CLI stops at cap + 1 (tested 2026-11-08), so more than that means the cap did not apply (Bob's T14.4 fix 2:
+    23 turns under a 15 cap, not reproduced)."""
+    over = max_turns and u.get("turns", 0) > max_turns + 1
+    cap = f"cap {max_turns}" if max_turns else "no cap"
+    return (f"- Call: `{u.get('cmd', '?')}`; turns {u.get('turns', '?')} ({cap}); end `{u.get('subtype') or '?'}`"
+            + (f"\n- **Over the turn cap:** {u['turns']} turns with --max-turns {max_turns}; the CLI stops at "
+               f"{max_turns + 1}. Check the transcript before trusting the cap.\n" if over else "\n"))
+
+
 def call_agents(plan, board, usage, run, label, max_turns=None):
     """Run the briefs in parallel after the budget check; False when the budget guard pauses the run."""
     for agent in plan:
@@ -1012,7 +1023,7 @@ def call_agents(plan, board, usage, run, label, max_turns=None):
                 pass
             usage.append((agent, label, u))
             say(board, f"\n**{g.NAMES[agent]}** ({u['tokens']:,} tokens, {u['turns']} turns, {u['seconds']} s):\n\n"
-                            f"{reply.strip()}\n\n")
+                            f"{reply.strip()}\n\n{call_line(u, max_turns)}\n")
     return True
 
 
