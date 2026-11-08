@@ -96,14 +96,16 @@ def live_update(key, entry=None, path=None):
             pass
 
 
-def run_agent(agent, prompt, tools="WebFetch,WebSearch"):
+def run_agent(agent, prompt, tools="WebFetch,WebSearch", max_turns=None):
     """Run one agent headless with the prompt on stdin; return (reply text, usage summary).
-    tools: the --allowedTools list (goal_agent.py passes Bash and the file tools for Patricia, Bob and Quinn)."""
+    tools: the --allowedTools list (goal_agent.py passes Bash and the file tools for Patricia, Bob and Quinn).
+    max_turns: a turn cap (goal_agent's fix rounds; one ran 36 turns and 777k tokens on 2026-11-08)."""
     claude = shutil.which("claude")
     if not claude:
         raise AgentError("claude CLI not found on PATH")
     cmd = [claude, "-p", "--agent", agent, "--output-format", "json",
-           "--permission-mode", "acceptEdits", "--allowedTools", tools]
+           "--permission-mode", "acceptEdits", "--allowedTools", tools] \
+        + (["--max-turns", str(max_turns)] if max_turns else [])
     started = now_iso()
     key = f"{os.getpid()}-{threading.get_ident()}-{agent}"
     live_update(key, {"agent": NAMES.get(agent, agent), "tag": _live_tag[0], "start": started})
@@ -117,7 +119,9 @@ def run_agent(agent, prompt, tools="WebFetch,WebSearch"):
         out = json.loads(proc.stdout)
     except ValueError:
         raise AgentError(f"{agent} failed (exit {proc.returncode}): {proc.stderr or proc.stdout}")
-    if out.get("is_error"):
+    if out.get("subtype") == "error_max_turns":   # the cap is a stop, not a crash: the caller's checks decide
+        out["result"] = f"(stopped at the {max_turns}-turn cap before a reply) " + (out.get("result") or "")
+    elif out.get("is_error"):
         raise AgentError(f"{agent} reported an error: {out.get('result')}")
     u = out.get("usage", {})
     tokens = sum(u.get(k, 0) for k in ("input_tokens", "output_tokens",

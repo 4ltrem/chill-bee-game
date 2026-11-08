@@ -74,6 +74,7 @@ WEIGHTS = {
 VALUE = {"playtest": 3, "feature": 2, "housekeeping": 1}
 COST_UNIT = 10.0
 MAX_FIX_ROUNDS = 2
+FIX_MAX_TURNS = 15   # approved 2026-11-08: Patricia's T14 fix 1 ran 36 turns, 777k tokens, 25 min
 REMOVED = re.compile(r"\b(removed?|retired?|goes away|deleted?)\b", re.I)   # a node in such a sentence must be absent
 AMBIGUOUS = re.compile(r"\bTBD\b|\bto be decided\b|\bopen question", re.I)
 ENV = {"CB_TIME_SCALE": "6", "CB_SKIP_X1": "1"}   # routine runs: x6, the real-time tests are the designer's (D102)
@@ -386,6 +387,14 @@ def gaps(spec, found):
             status = "partial"
         else:
             status = "missing"
+        # a Quinn line added after the spec's tests were built (0.1.4 T14.4) shares its item's green tests: once
+        # the ledger holds a test goal of the same single item, this one is done only when it is in the ledger too
+        # (lines Quinn built before the goal agent, and spec-wide mutation lines, keep the old evidence rule)
+        siblings = [g for g in ledger if g != gid and spec["goals"].get(g, {}).get("kind") == "test"
+                    and spec["goals"][g]["items"] == goal["items"]]
+        if goal["kind"] == "test" and status == "done" and not built and len(goal["items"]) == 1 and siblings:
+            status = "partial"
+            ev.append({"kind": "ledger", "name": "not built: its item's tests predate this line", "ok": False})
         # only the ledger says a change was built: a node it names may predate it (0.1.4 item 8's HintLabel)
         waits = status == "partial" and goal["kind"] == "change" and built
         asks = [q for q in questions if goal["kind"] == "change" and set(q[0]) & set(goal["items"])
@@ -646,9 +655,9 @@ def scan_handoffs(game=None):
     return sorted(p.name for p in ((game or ROOT / "game") / "specs").glob("*handoff*.md"))
 
 
-def run_agent(agent, prompt):
+def run_agent(agent, prompt, max_turns=None):
     """One fresh headless agent (generate.run_agent with file and shell tools; Vera reads only). Replaced by a fake in the tests."""
-    return g.run_agent(agent, prompt, tools="Read,Grep,Glob" if agent == CRITIC else TOOLS)
+    return g.run_agent(agent, prompt, tools="Read,Grep,Glob" if agent == CRITIC else TOOLS, max_turns=max_turns)
 
 
 def run_cmd(cmd, env=None, timeout=3600):
@@ -808,7 +817,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         fix = fix_briefs(spec, goal, batch, failed, run, branch, rnd + 1)
         say(board, f"\n#### Fix round {rnd + 1}: to {', '.join(g.NAMES[a] for a in fix)}\n\n")
         keep_briefs(folder, board, fix, f"{goal['id']}-fix{rnd + 1}")
-        if not call_agents(fix, board, usage, run, f"{ids} fix {rnd + 1}"):
+        if not call_agents(fix, board, usage, run, f"{ids} fix {rnd + 1}", max_turns=FIX_MAX_TURNS):
             return "paused"
     if goal["kind"] == "handoff" and not [h for h in scan_handoffs() if h.startswith(spec["version"])]:
         say(board, "\n**Stop:** Patricia's reply came back without the handoff file.\n")
@@ -888,7 +897,9 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
         owners = [BUILDER]
     head = (f"Goal agent run `{run}`, fix round {rnd} for goal {', '.join(b['id'] for b in batch)} of "
             f"`game/specs/{spec['file']}`, branch `{branch}`. These checks failed after the last step. Fix what is in "
-            f"your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit.\n\n")
+            f"your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit. "
+            f"Do not run the test suite, mutations or shots: the goal agent runs every check after you. You have "
+            f"{FIX_MAX_TURNS} turns.\n\n")
     looks = ("A `pick match` row means the live prop must match the designer's picked variant: open both shots and "
              "the variant's .tscn, and rebuild what differs. A style row whose Fix ends `(designer)` is not yours: "
              "leave it and list it in your reply.\n\n") if any(l in LOOKS for l, _ in failed) else ""
@@ -908,7 +919,7 @@ def transcripts(run):
     return ROOT / g.RUNS / f"{datetime.date.today().isoformat()}-goal-{run}"
 
 
-def call_agents(plan, board, usage, run, label):
+def call_agents(plan, board, usage, run, label, max_turns=None):
     """Run the briefs in parallel after the budget check; False when the budget guard pauses the run."""
     for agent in plan:
         ok, msg = budget_ok(agent)
@@ -919,7 +930,8 @@ def call_agents(plan, board, usage, run, label):
     rundir = transcripts(run)
     g.set_live_tag(f"goal {run} · {label}")
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(plan)) as pool:
-        futures = {pool.submit(run_agent, a, p): a for a, p in plan.items()}
+        cap = {"max_turns": max_turns} if max_turns else {}
+        futures = {pool.submit(run_agent, a, p, **cap): a for a, p in plan.items()}
         for fut in concurrent.futures.as_completed(futures):
             agent = futures[fut]
             try:

@@ -82,6 +82,17 @@ class Gaps(unittest.TestCase):
         self.assertEqual(report["C3"]["status"], "partial")
         self.assertTrue(report["C3"]["waits_on_tests"])
 
+    def test_new_quinn_line_is_not_done_on_its_items_old_tests(self):
+        spec = ga.parse_spec(SPEC)
+        found = ga.scan(FIX / "game", ledger_path=FIX / "none.json")
+        new = dict(spec["goals"]["T1.1"], id="T1.2")                        # a later Quinn line on the same item
+        spec["goals"]["T1.2"] = new
+        found["ledger"] = {spec["file"]: {"T1.1": {"run": "t"}}}             # its sibling was built by the agent
+        report = ga.gaps(spec, found)
+        self.assertEqual(report["T1.2"]["status"], "partial")               # green item tests, but never built
+        self.assertEqual(report["T1.1"]["status"], "done")
+        self.assertEqual(plan(ledger=["T3.1"])[1]["T1.1"]["status"], "done")   # no ledgered sibling: old rule
+
 
 class Score(unittest.TestCase):
     def test_weighted_sum_and_ready(self):
@@ -122,6 +133,7 @@ class Loop(unittest.TestCase):
         self.saved = {k: getattr(ga, k) for k in ("ROOT", "run_agent", "run_cmd", "budget_ok", "log_usage")}
         ga.ROOT = self.tmp
         self.calls, self.cmds, self.check_codes, self.budget, self.idle = [], [], [], (True, "allow"), False
+        self.turn_caps = []
         ga.run_agent = self.fake_agent
         ga.run_cmd = self.fake_cmd
         ga.budget_ok = lambda agent: self.budget
@@ -132,8 +144,9 @@ class Loop(unittest.TestCase):
             setattr(ga, k, v)
         shutil.rmtree(self.tmp, ignore_errors=True)
 
-    def fake_agent(self, agent, prompt):
+    def fake_agent(self, agent, prompt, max_turns=None):
         self.calls.append((agent, prompt))
+        self.turn_caps.append((agent, max_turns))
         if agent == ga.PROGRAMMER and "node handoff" in prompt:
             (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
         return "done", {"tokens": 10, "turns": 1, "seconds": 1, "start": None, "end": None}
@@ -206,7 +219,7 @@ class Loop(unittest.TestCase):
                     "| 1 | pick | hive.png | pick has 5 upright frames, live has 2 flat | rebuild the frames |",
                     "### Critic, round 1\nVERDICT: PASS\n| # | Rule | Shot | Finding | Fix |\n|---|---|---|---|---|"]
         fake = self.fake_agent
-        def agent(a, prompt):
+        def agent(a, prompt, **_):
             if a == ga.CRITIC:
                 self.calls.append((a, prompt))
                 return verdicts.pop(0), {"tokens": 5, "turns": 1, "seconds": 1, "start": None, "end": None}
@@ -231,6 +244,8 @@ class Loop(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertEqual(len(self.calls), 2 + 2 * 2)                        # C3 owners, then two fix rounds (contract: no Quinn)
         self.assertIn("fix round 2", self.calls[-1][1])
+        self.assertEqual([t for _, t in self.turn_caps], [None] * 2 + [ga.FIX_MAX_TURNS] * 4)   # only fix rounds capped
+        self.assertIn("Do not run the test suite", self.calls[-1][1])
         self.assertIn("## Waiting for the designer\n\n2 fix rounds failed on C3", board)
         self.assertIn("result: waiting-designer", board)
         self.assertIn("briefs/C3-fix2-patricia.md", board)                  # fix briefs go by reference too
@@ -273,7 +288,7 @@ class Loop(unittest.TestCase):
         self.assertIn("quote the spec line", next(p for a, p in self.calls if a == ga.QA))
 
     def test_a_crashed_agent_is_recorded_as_failed(self):
-        def crash(agent, prompt):
+        def crash(agent, prompt, **_):
             raise ga.g.AgentError("simulated CLI failure")
         ga.run_agent = crash
         with self.assertRaises(ga.g.AgentError), contextlib.redirect_stdout(io.StringIO()):
