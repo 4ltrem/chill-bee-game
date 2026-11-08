@@ -402,7 +402,9 @@ def gaps(spec, found):
             status = "partial"
             ev.append({"kind": "ledger", "name": "not built: its item's tests predate this line", "ok": False})
         # only the ledger says a change was built: a node it names may predate it (0.1.4 item 8's HintLabel)
-        waits = status == "partial" and goal["kind"] == "change" and built
+        # a built test goal whose item is red waits too: the failing tests are a newer line's (0.1.4 T14.4 made
+        # T14.1-T14.3 partial), and rebuilding them would send Quinn back over tests already written
+        waits = status == "partial" and goal["kind"] in ("change", "test") and built
         asks = [q for q in questions if goal["kind"] == "change" and set(q[0]) & set(goal["items"])
                 and len(q[0]) < len(changes)]
         report[gid] = {"status": status, "evidence": ev, "built": built, "waits_on_tests": waits,

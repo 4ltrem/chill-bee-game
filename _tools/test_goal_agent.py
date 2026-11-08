@@ -93,6 +93,12 @@ class Gaps(unittest.TestCase):
         self.assertEqual(report["T1.1"]["status"], "done")
         self.assertEqual(plan(ledger=["T3.1"])[1]["T1.1"]["status"], "done")   # no ledgered sibling: old rule
 
+    def test_a_built_test_goal_on_a_red_item_waits_instead_of_rebuilding(self):
+        spec, report, ranked, _ = plan(ledger=["H", "C2", "T.1"])           # T.1's evidence has C2's failing test
+        self.assertEqual(report["T.1"]["status"], "partial")
+        self.assertTrue(report["T.1"]["waits_on_tests"])
+        self.assertNotIn("T.1", [e["id"] for e in ranked])
+
 
 class Score(unittest.TestCase):
     def test_weighted_sum_and_ready(self):
