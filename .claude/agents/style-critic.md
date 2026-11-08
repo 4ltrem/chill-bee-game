@@ -36,6 +36,7 @@ Scores
 ```
 
   Rows are numbered from 1. Score rows start with the asset name, never a number, so the script does not read them as findings. PASS means no blocking row is open and the FAIL table is empty. If the shots show nothing wrong, reply PASS with the header rows only.
+- **Pick match** (designer, 2026-11-08): when the prompt starts `Pick match`, it is not a style round. You get two shots, the live prop and the designer's picked variant, and judge only whether the live prop has the pick's parts, counts, orientation, proportions and layout. Skip the V rules and the Scores table; one row per difference, Rule `pick`. The block keeps the same `### Critic, round 1` / `VERDICT:` lines.
 - You are read-only: you have no Write or Edit tool, and you change no file.
 - Stay in scope. You judge the screens against the rules; Bob makes the fixes; Quinn renders the shots; the designer owns the palette and the rules, so a new token or a rule change is a `(designer)` row, never your decision. Clara judges voice text, and Connie's domain is compliance.
 

@@ -154,6 +154,7 @@ def main(argv=None):
     try:
         for n in range(start, a.max_rounds + 1):
             g.append(board, f"\n## Round {n}\n")
+            g.set_live_tag(f"style {a.slug} · r{n}")
             if bob_rows:
                 print(f"round {n}: Bob fixing {len(bob_rows)} row(s)...", flush=True)
                 before = snapshot(game)

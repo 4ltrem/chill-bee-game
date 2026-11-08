@@ -15,6 +15,10 @@ python -I _tools/contract_check.py || {
     echo "pre-commit: a script looks up a node no scene has (above): Patricia and Bob's contract" >&2
     exit 1
 }
+python -I _tools/spec_lint.py --staged || {
+    echo "pre-commit: a staged spec has a Quinn line naming several items (above): one item per line" >&2
+    exit 1
+}
 python -I _tools/links.py > /dev/null || {
     python -I _tools/links.py >&2
     echo "pre-commit: broken links (above)" >&2

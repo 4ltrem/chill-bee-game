@@ -43,6 +43,7 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script's folder off sys.path
@@ -67,6 +68,34 @@ class AgentError(Exception):
     pass
 
 
+LIVE_FILE = ROOT / "_meta" / "usage" / "live.json"   # local (gitignored); statusline.py shows what runs now
+_live_lock = threading.Lock()
+_live_tag = [""]   # what the running loop is on, e.g. "goal 0.1.4 · C5"; set by each loop with set_live_tag
+
+
+def set_live_tag(tag):
+    _live_tag[0] = tag
+
+
+def live_update(key, entry=None, path=None):
+    """Add (entry) or remove (None) one running agent in live.json. Never fails a run."""
+    path = path or LIVE_FILE
+    with _live_lock:
+        try:
+            cur = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+        except (OSError, ValueError):
+            cur = {}
+        if entry is None:
+            cur.pop(key, None)
+        else:
+            cur[key] = entry
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(cur), encoding="utf-8")
+        except OSError:
+            pass
+
+
 def run_agent(agent, prompt, tools="WebFetch,WebSearch"):
     """Run one agent headless with the prompt on stdin; return (reply text, usage summary).
     tools: the --allowedTools list (goal_agent.py passes Bash and the file tools for Patricia, Bob and Quinn)."""
@@ -76,8 +105,13 @@ def run_agent(agent, prompt, tools="WebFetch,WebSearch"):
     cmd = [claude, "-p", "--agent", agent, "--output-format", "json",
            "--permission-mode", "acceptEdits", "--allowedTools", tools]
     started = now_iso()
-    proc = subprocess.run(cmd, cwd=ROOT, input=prompt, capture_output=True, text=True, encoding="utf-8",
-                          env={**os.environ, "CHILLBEE_HEADLESS": "1"})  # log_session.py skips these
+    key = f"{os.getpid()}-{threading.get_ident()}-{agent}"
+    live_update(key, {"agent": NAMES.get(agent, agent), "tag": _live_tag[0], "start": started})
+    try:
+        proc = subprocess.run(cmd, cwd=ROOT, input=prompt, capture_output=True, text=True, encoding="utf-8",
+                              env={**os.environ, "CHILLBEE_HEADLESS": "1"})  # log_session.py skips these
+    finally:
+        live_update(key)
     ended = now_iso()
     try:
         out = json.loads(proc.stdout)
@@ -339,7 +373,8 @@ def main(argv=None):
                 if old.is_file():
                     old.rename(run_dir / old.name.replace("blackboard", f"blackboard-failed-{n}"))
         request = a.request
-    use_research = a.type == "journal" and not a.no_research
+    set_live_tag(f"content {a.slug}")
+    use_research =a.type == "journal" and not a.no_research
     rel_board = board.relative_to(ROOT).as_posix()
     run_folder = ROOT / RUNS / f"{datetime.date.today()}-{a.slug}-{board.stem.replace('blackboard', 'run')}"
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -356,6 +391,7 @@ def main(argv=None):
             append(board, f"\n## Research\n\nBrief: `{research(a.slug, 1, task, usage, run_folder).relative_to(ROOT).as_posix()}`\n")
 
         for n in range(1, a.max_rounds + 1):
+            set_live_tag(f"content {a.slug} · r{n}")
             rows = fail_rows(block) if n > 1 else []
             if n > 1 and use_research:
                 asks = [r for r in rows if "Facts" in r and ASKS_FOR_SOURCE.search(r)]

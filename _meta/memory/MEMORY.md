@@ -5,7 +5,7 @@
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
 - [0.1.3 play-test](playtest-0-1-3.md) — 11/6: UI broken (Back inconsistent, Spin/Harvest move, x5 tag overlaps); noted, not fixing yet
-- [Session handoff](session-handoff.md) — read first: goal run 2 built C1, C7–C10; paused at C5's fix round; resume after the reset, then tests, then the A5 demo
+- [Session handoff](session-handoff.md) — read first: rules systemized (guard_shell, spec_lint, pick_match); next = goal agent on item 14 fixes (raised-frame combs, lid), then smoke build + A5
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
 - [A/B comparison page](ab-comparison-page.md) — every creative A/B choice AND every numerical visual change (scale, offset, size) becomes a new section of the one Design Votes artifact, built by script; never a new artifact or browser tab
@@ -19,4 +19,7 @@
 - [Demo link submissions](demo-link-submissions.md) — every assignment is a demo link, resubmitted after each milestone
 - [Model routing](model-routing.md) — small admin tasks go to a cheap-model subagent, never a /model switch
 - [Drafts folder](drafts-folder.md) — unfinished work for a later session goes in _meta/drafts/<version>/, never temp; the handoff links it
+- [No inline python](no-inline-python.md) — the read block prompts on `python -c`/heredoc code; run scripts by path instead
+- [Look before done](look-before-done.md) — never call a model change done on tests alone; compare fresh shots with the picked variant
+- [Spec consistency](spec-consistency.md) — before adding a play-test item, grep the spec for the same object/view and fix contradictions in the same edit
 - [Repo only](repo-only.md) — read/run only inside the repo; explain before touching ~/.claude or tool-results copies

@@ -194,6 +194,36 @@ class Loop(unittest.TestCase):
         self.assertNotIn("Speed tag moved", pat)                            # only its own change's slice
         self.assertTrue(any("ui_shots.py" in " ".join(c) for c in self.cmds))
 
+    def test_a_picked_variant_is_matched_by_vera_and_a_mismatch_goes_to_bob(self):
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        spec = self.tmp / "game" / "specs" / "9.9-fixture.md"
+        spec.write_text(spec.read_text(encoding="utf-8").replace(
+            "The frames scale up;", "The frames scale up; `scenes/props/hive.tscn` must match "
+            "`scenes/variants/hive-frames/hive-frames-a.tscn`;"), encoding="utf-8")
+        self.assertEqual(ga.parse_spec(spec)["goals"]["C3"]["picks"],
+                         [("game/scenes/props/hive.tscn", "game/scenes/variants/hive-frames/hive-frames-a.tscn")])
+        verdicts = ["### Critic, round 1\nVERDICT: FAIL\n| # | Rule | Shot | Finding | Fix |\n|---|---|---|---|---|\n"
+                    "| 1 | pick | hive.png | pick has 5 upright frames, live has 2 flat | rebuild the frames |",
+                    "### Critic, round 1\nVERDICT: PASS\n| # | Rule | Shot | Finding | Fix |\n|---|---|---|---|---|"]
+        fake = self.fake_agent
+        def agent(a, prompt):
+            if a == ga.CRITIC:
+                self.calls.append((a, prompt))
+                return verdicts.pop(0), {"tokens": 5, "turns": 1, "seconds": 1, "start": None, "end": None}
+            return fake(a, prompt)
+        ga.run_agent = agent
+        code, out, board = self.run_main("--max-goals", "1")
+        who = [a for a, _ in self.calls]
+        self.assertEqual(who.count(ga.CRITIC), 2)
+        self.assertEqual(who[who.index(ga.CRITIC) + 1], ga.BUILDER)          # the FAIL goes to Bob alone
+        self.assertNotIn(ga.PROGRAMMER, who[who.index(ga.CRITIC):])
+        bob_fix = [p for a, p in self.calls if a == ga.BUILDER][-1]
+        self.assertIn("5 upright frames", bob_fix)
+        self.assertIn("pick/C3-r0/hive.png", bob_fix)
+        self.assertTrue(any("style_loop.py" in " ".join(c) and "goal-9-9-c3-r1" in c for c in self.cmds))
+        self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))  # PASS in fix round 1: committed
+        self.assertIn("Check `pick match`: PASS", board)
+
     def test_failed_checks_get_two_fix_rounds_then_stop(self):
         (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
         self.check_codes = [1, 1, 1]                                        # the contract check fails every round

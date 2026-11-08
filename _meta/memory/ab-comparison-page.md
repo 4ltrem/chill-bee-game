@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: e0d1da16-c10b-4153-9084-bbcd654fdb0b
-  modified: 2026-11-07T19:17:49.272Z
+  modified: 2026-11-08T07:19:16.671Z
 ---
 
 Any creative A/B test (layout, framing, colour or token, look options; any choice with two or more acceptable answers)
@@ -19,7 +19,7 @@ The designer wants real screenshots (not just text/ASCII) and at most 9 images p
 yes / maybe / no buttons and a note, saved in the artifact's db collection `votes` (capability `db`). On "read my votes",
 read it with ArtifactData `list` and write the result to a decisions JSON next to the shots in the repo. Builder scripts:
 `_tools/compare_page.py` (subcommands `page` = option cards, `round`/`votes` = vote grids, `stop` = one designer-stop row of a blackboard; layout in `_tools/compare_page_head.html`).
-Current page: https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (grid zoom votes, 2026-11-05).
+Current page: https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (grid zoom votes, 2026-11-05). Since 2026-11-08 `_tools/guard_shell.py` refuses publishing a `game/reports/ui-compare/` page anywhere else and refuses `open` on it (the URL is `DESIGN_VOTES` there; update both if the page moves).
 
 **Numerical visual changes too** (designer, 2026-11-07): any visual change that comes down to a number (a scale, an
 offset, a margin, a size: e.g. 0.1.4's frame scale 1.35× vs a wider hive, or the anchor offsets) gets its own section on

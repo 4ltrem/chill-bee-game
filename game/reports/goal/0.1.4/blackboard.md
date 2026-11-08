@@ -3,7 +3,7 @@ spec: 0.1.4-ui-placement.md
 version: 0.1.4
 run: 0.1.4
 started: 2026-11-07
-result: running
+result: done
 ---
 # Goal agent: 0.1.4-ui-placement.md (run 0.1.4)
 
@@ -2729,88 +2729,6 @@ Next: **T14.1** (score 5.54: play-test fix; cost 0.46 (Quinn)), with T14.2, T14.
 **Paused:** Budget guard: weekly usage is 31% with 11% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 0 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
 Run the same command again to resume.
 
-## Result
-
-Last invocation (2026-11-08T02:50:43-05:00): paused.
-
-Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/2026-11-08-goal-0.1.4/`
-
-| Call | Total processed | Final context | Turns | Duration |
-|---|---|---|---|---|
-| Patricia, H | 221,991 | — | 16 | 42 s |
-| Bob, C2 | 455,025 | — | 22 | 73 s |
-| Patricia, C2 | 533,260 | — | 33 | 695 s |
-| Bob, C2 fix 1 | 137,517 | — | 9 | 20 s |
-| Quinn, C2 fix 1 | 927,906 | — | 34 | 616 s |
-| Patricia, C2 fix 1 | 468,748 | — | 26 | 1831 s |
-| Bob, C2 fix 2 | 46,461 | — | 5 | 11 s |
-| Patricia, C2 fix 2 | 121,927 | — | 7 | 20 s |
-| Quinn, C2 fix 2 | 164,504 | — | 13 | 160 s |
-| Bob, C4 | 100,407 | — | 9 | 18 s |
-| Patricia, C7 | 491,165 | — | 24 | 1213 s |
-| Bob, C3 | 60,321 | — | 4 | 11 s |
-| Patricia, C3 | 106,099 | — | 11 | 22 s |
-| Bob, C3 fix 1 | 49,887 | — | 5 | 9 s |
-| Patricia, C3 fix 1 | 172,138 | — | 9 | 31 s |
-| Quinn, C3 fix 1 | 77,069 | — | 6 | 33 s |
-| Bob, C1 | 127,981 | — | 12 | 28 s |
-| Patricia, C1 | 227,009 | — | 17 | 231 s |
-| Patricia, C1 fix 1 | 30,183 | — | 2 | 6 s |
-| Bob, C1 fix 1 | 96,154 | — | 9 | 19 s |
-| Quinn, C1 fix 1 | 272,339 | — | 19 | 234 s |
-| Patricia, C6 | 154,687 | — | 12 | 568 s |
-| Quinn, T2.1, | 556,555 | — | 24 | 142 s |
-| Bob, T2.1, fix 1 | 92,164 | — | 6 | 13 s |
-| Patricia, T2.1, fix 1 | 244,554 | — | 14 | 1219 s |
-| Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
-| Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
-| Bob, C1 | 232,941 | 35,068 | 14 | 40 s |
-| Patricia, C1 | 59,101 | 29,934 | 2 | 4 s |
-| Bob, C8 | 58,280 | 16,486 | 6 | 13 s |
-| Patricia, C7 | 77,917 | 39,296 | 3 | 5 s |
-| Patricia, C7 fix 1 | 85,201 | 21,581 | 8 | 15 s |
-| Quinn, C7 fix 1 | 189,175 | 22,334 | 14 | 58 s |
-| Bob, C9 | 92,562 | 22,028 | 7 | 14 s |
-| Bob, C10 | 199,222 | 27,385 | 13 | 36 s |
-| Patricia, C10 | 73,577 | 37,182 | 2 | 5 s |
-| Bob, C5 | 699,505 | 56,503 | 38 | 110 s |
-| Patricia, C5 | 688,276 | 54,220 | 42 | 689 s |
-| Bob, C5 | 262,642 | 42,615 | 16 | 43 s |
-| Patricia, C5 | 94,439 | 23,051 | 10 | 608 s |
-| Bob, C5 fix 1 | 26,011 | 13,835 | 2 | 8 s |
-| Quinn, C5 fix 1 | 341,007 | 34,294 | 25 | 92 s |
-| Patricia, C5 fix 1 | 30,575 | 30,575 | 1 | 2 s |
-| Bob, C5 fix 2 | 38,012 | 13,626 | 3 | 8 s |
-| Quinn, C5 fix 2 | 110,717 | 21,051 | 6 | 19 s |
-| Patricia, C5 fix 2 | 114,867 | 30,552 | 4 | 10 s |
-| Patricia, C11 | 53,645 | 27,121 | 2 | 4 s |
-| Patricia, C12 | 101,180 | 19,379 | 11 | 19 s |
-| Patricia, C13 | 108,802 | 29,158 | 11 | 24 s |
-| Quinn, C13 fix 1 | 68,982 | 15,264 | 5 | 36 s |
-| Patricia, C13 fix 1 | 84,262 | 16,319 | 7 | 1096 s |
-| Quinn, T.1, T.2, T8.1 | 477,530 | 42,043 | 24 | 77 s |
-| Quinn, T.1, T.2, T8.1 fix 1 | 165,953 | 21,616 | 12 | 28 s |
-| Quinn, T10.1 | 887,316 | 67,975 | 39 | 135 s |
-| Patricia, T10.1 fix 1 | 58,303 | 17,199 | 5 | 10 s |
-| Bob, T10.1 fix 1 | 247,235 | 37,131 | 17 | 48 s |
-| Quinn, T11.1 | 486,034 | 40,439 | 28 | 62 s |
-| Quinn, T12.1 | 546,215 | 53,233 | 31 | 86 s |
-| Quinn, T12.1 fix 1 | 162,037 | 25,923 | 11 | 43 s |
-| Quinn, T12.1 fix 2 | 87,109 | 16,180 | 7 | 16 s |
-| Quinn, T13.1 | 436,447 | 47,703 | 20 | 52 s |
-| Patricia, T13.1 fix 1 | 60,949 | 19,912 | 4 | 11 s |
-| Patricia, T13.1 fix 2 | 31,013 | 19,819 | 2 | 6 s |
-| Quinn, T.1, T.2, T8.1, T.3 | 225,023 | 34,000 | 12 | 26 s |
-| Quinn, T.1, T.2, T8.1, T.3 fix 1 | 162,171 | 24,125 | 9 | 24 s |
-| Quinn, T.1, T.2, T8.1, T.3 fix 2 | 170,516 | 24,690 | 15 | 29 s |
-| Patricia, C15 | 58,254 | 29,403 | 2 | 4 s |
-| Bob, C14 | 331,448 | 43,658 | 30 | 54 s |
-| Patricia, C14 | 95,525 | 48,570 | 3 | 7 s |
-| Bob, C14 fix 1 | 523,290 | 56,605 | 25 | 69 s |
-| Quinn, C14 fix 1 | 594,421 | 42,742 | 27 | 88 s |
-| Patricia, C14 fix 1 | 135,715 | 46,293 | 3 | 8 s |
-| **Total** | **15,943,610** | | | |
-
 ## Resumed 2026-11-08
 
 Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
@@ -3042,3 +2960,110 @@ The mutation was missed because of the mutation entry, not the tests. I fixed th
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `mutations`: PASS
+- Green: checkpoint `d2d3b57` on `milestone/0.1.4`
+
+## Pass 36: scan (2026-11-08T03:51:27-05:00)
+
+Unit results from `game/reports/_runs/20261108-034533/unit.log`. 38 of 38 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 38)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C15 Leaving the centrifuge stops the crank | change | Patricia | done | ✓ test t_crank_pauses_on_back_and_resumes_on_spin, ✓ test t_paused_crank_never_finishes_in_farm_view, ✓ ledger d8f210a |
+| T15.1 item 15: after Back from a crank at the second stop, taps in | test | Quinn | done | ✓ test t_crank_pauses_on_back_and_resumes_on_spin, ✓ test t_paused_crank_never_finishes_in_farm_view, ✓ ledger d2d3b57 |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 22/22 present: ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_ ... |
+
+Nothing left to build.
+
+**Stop:** nothing ready to build (done); not done: none.
+
+## Result
+
+Last invocation (2026-11-08T03:51:27-05:00): done.
+
+Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/2026-11-08-goal-0.1.4/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 221,991 | — | 16 | 42 s |
+| Bob, C2 | 455,025 | — | 22 | 73 s |
+| Patricia, C2 | 533,260 | — | 33 | 695 s |
+| Bob, C2 fix 1 | 137,517 | — | 9 | 20 s |
+| Quinn, C2 fix 1 | 927,906 | — | 34 | 616 s |
+| Patricia, C2 fix 1 | 468,748 | — | 26 | 1831 s |
+| Bob, C2 fix 2 | 46,461 | — | 5 | 11 s |
+| Patricia, C2 fix 2 | 121,927 | — | 7 | 20 s |
+| Quinn, C2 fix 2 | 164,504 | — | 13 | 160 s |
+| Bob, C4 | 100,407 | — | 9 | 18 s |
+| Patricia, C7 | 491,165 | — | 24 | 1213 s |
+| Bob, C3 | 60,321 | — | 4 | 11 s |
+| Patricia, C3 | 106,099 | — | 11 | 22 s |
+| Bob, C3 fix 1 | 49,887 | — | 5 | 9 s |
+| Patricia, C3 fix 1 | 172,138 | — | 9 | 31 s |
+| Quinn, C3 fix 1 | 77,069 | — | 6 | 33 s |
+| Bob, C1 | 127,981 | — | 12 | 28 s |
+| Patricia, C1 | 227,009 | — | 17 | 231 s |
+| Patricia, C1 fix 1 | 30,183 | — | 2 | 6 s |
+| Bob, C1 fix 1 | 96,154 | — | 9 | 19 s |
+| Quinn, C1 fix 1 | 272,339 | — | 19 | 234 s |
+| Patricia, C6 | 154,687 | — | 12 | 568 s |
+| Quinn, T2.1, | 556,555 | — | 24 | 142 s |
+| Bob, T2.1, fix 1 | 92,164 | — | 6 | 13 s |
+| Patricia, T2.1, fix 1 | 244,554 | — | 14 | 1219 s |
+| Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
+| Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
+| Bob, C1 | 232,941 | 35,068 | 14 | 40 s |
+| Patricia, C1 | 59,101 | 29,934 | 2 | 4 s |
+| Bob, C8 | 58,280 | 16,486 | 6 | 13 s |
+| Patricia, C7 | 77,917 | 39,296 | 3 | 5 s |
+| Patricia, C7 fix 1 | 85,201 | 21,581 | 8 | 15 s |
+| Quinn, C7 fix 1 | 189,175 | 22,334 | 14 | 58 s |
+| Bob, C9 | 92,562 | 22,028 | 7 | 14 s |
+| Bob, C10 | 199,222 | 27,385 | 13 | 36 s |
+| Patricia, C10 | 73,577 | 37,182 | 2 | 5 s |
+| Bob, C5 | 699,505 | 56,503 | 38 | 110 s |
+| Patricia, C5 | 688,276 | 54,220 | 42 | 689 s |
+| Bob, C5 | 262,642 | 42,615 | 16 | 43 s |
+| Patricia, C5 | 94,439 | 23,051 | 10 | 608 s |
+| Bob, C5 fix 1 | 26,011 | 13,835 | 2 | 8 s |
+| Quinn, C5 fix 1 | 341,007 | 34,294 | 25 | 92 s |
+| Patricia, C5 fix 1 | 30,575 | 30,575 | 1 | 2 s |
+| Bob, C5 fix 2 | 38,012 | 13,626 | 3 | 8 s |
+| Quinn, C5 fix 2 | 110,717 | 21,051 | 6 | 19 s |
+| Patricia, C5 fix 2 | 114,867 | 30,552 | 4 | 10 s |
+| Patricia, C11 | 53,645 | 27,121 | 2 | 4 s |
+| Patricia, C12 | 101,180 | 19,379 | 11 | 19 s |
+| Patricia, C13 | 108,802 | 29,158 | 11 | 24 s |
+| Quinn, C13 fix 1 | 68,982 | 15,264 | 5 | 36 s |
+| Patricia, C13 fix 1 | 84,262 | 16,319 | 7 | 1096 s |
+| Quinn, T.1, T.2, T8.1 | 477,530 | 42,043 | 24 | 77 s |
+| Quinn, T.1, T.2, T8.1 fix 1 | 165,953 | 21,616 | 12 | 28 s |
+| Quinn, T10.1 | 887,316 | 67,975 | 39 | 135 s |
+| Patricia, T10.1 fix 1 | 58,303 | 17,199 | 5 | 10 s |
+| Bob, T10.1 fix 1 | 247,235 | 37,131 | 17 | 48 s |
+| Quinn, T11.1 | 486,034 | 40,439 | 28 | 62 s |
+| Quinn, T12.1 | 546,215 | 53,233 | 31 | 86 s |
+| Quinn, T12.1 fix 1 | 162,037 | 25,923 | 11 | 43 s |
+| Quinn, T12.1 fix 2 | 87,109 | 16,180 | 7 | 16 s |
+| Quinn, T13.1 | 436,447 | 47,703 | 20 | 52 s |
+| Patricia, T13.1 fix 1 | 60,949 | 19,912 | 4 | 11 s |
+| Patricia, T13.1 fix 2 | 31,013 | 19,819 | 2 | 6 s |
+| Quinn, T.1, T.2, T8.1, T.3 | 225,023 | 34,000 | 12 | 26 s |
+| Quinn, T.1, T.2, T8.1, T.3 fix 1 | 162,171 | 24,125 | 9 | 24 s |
+| Quinn, T.1, T.2, T8.1, T.3 fix 2 | 170,516 | 24,690 | 15 | 29 s |
+| Patricia, C15 | 58,254 | 29,403 | 2 | 4 s |
+| Bob, C14 | 331,448 | 43,658 | 30 | 54 s |
+| Patricia, C14 | 95,525 | 48,570 | 3 | 7 s |
+| Bob, C14 fix 1 | 523,290 | 56,605 | 25 | 69 s |
+| Quinn, C14 fix 1 | 594,421 | 42,742 | 27 | 88 s |
+| Patricia, C14 fix 1 | 135,715 | 46,293 | 3 | 8 s |
+| Quinn, T14.1, T14.2, T14.3 | 1,467,021 | 99,569 | 38 | 181 s |
+| Bob, T14.1, T14.2, T14.3 fix 1 | 139,855 | 26,812 | 9 | 22 s |
+| Patricia, T14.1, T14.2, T14.3 fix 1 | 777,166 | 46,202 | 36 | 1471 s |
+| Patricia, T14.1, T14.2, T14.3 fix 2 | 32,884 | 21,237 | 2 | 7 s |
+| Bob, T14.1, T14.2, T14.3 fix 2 | 76,375 | 19,043 | 7 | 15 s |
+| Quinn, T15.1 | 620,622 | 53,197 | 28 | 61 s |
+| Quinn, T15.1 fix 1 | 53,471 | 14,179 | 5 | 10 s |
+| Quinn, T15.1 fix 2 | 85,027 | 20,831 | 8 | 15 s |
+| **Total** | **19,196,031** | | | |

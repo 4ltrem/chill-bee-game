@@ -431,6 +431,20 @@ class LogSubagentTest(unittest.TestCase):
         self.assertEqual([json.loads(l)["five_hour"] for l in saved], [12, 13])
         self.assertEqual(statusline.main("{}", self.root), "usage: no reading yet")
 
+    def test_live_agents_shown_while_running(self):
+        import datetime, statusline
+        live = self.root / "_meta" / "usage" / "live.json"
+        g.set_live_tag("goal 0.1.4 · C5")
+        g.live_update("a", {"agent": "Patricia", "tag": "goal 0.1.4 · C5", "start": "2026-11-07T20:00:00Z"}, live)
+        g.live_update("b", {"agent": "Bob", "tag": "goal 0.1.4 · C5", "start": "2026-11-07T20:02:00Z"}, live)
+        g.live_update("c", {"agent": "Old", "tag": "x", "start": "2026-11-07T10:00:00Z"}, live)  # killed run: hidden
+        at = datetime.datetime(2026, 11, 7, 20, 4, tzinfo=datetime.timezone.utc)
+        self.assertEqual(statusline.live(self.root, at), "▶ goal 0.1.4 · C5 · Patricia 4m · Bob 2m")
+        g.live_update("a", None, live)
+        self.assertEqual(statusline.live(self.root, at), "▶ goal 0.1.4 · C5 · Bob 2m")
+        live.write_text("not json", encoding="utf-8")
+        self.assertEqual(statusline.live(self.root, at), "")
+
     def run_hook(self, payload):
         import subprocess
         return subprocess.run([sys.executable, "-I", str(TOOLS / "log_subagent.py")], input=payload,
@@ -611,6 +625,58 @@ class BuildToolsTest(unittest.TestCase):
         self.assertEqual(dec(r(99, 50, 120), "builder"), "allow")        # stale reading
         self.assertEqual(dec(None, "builder"), "allow")
         self.assertAlmostEqual(b.week_pace(t, d.datetime(2026, 10, 24, 13, 59, tzinfo=d.timezone.utc)), 65.5, delta=0.5)
+
+    def test_guard_shell_refuses_the_standing_rules_and_lets_normal_calls_through(self):
+        import guard_shell as gs
+        with tempfile.TemporaryDirectory() as d:
+            repo = str(Path(d) / "Repo")
+            (Path(repo) / "_meta" / "memory").mkdir(parents=True)
+            (Path(repo) / "GDD.md").write_text("x", encoding="utf-8")
+            (Path(repo) / "_meta" / "memory" / "m.md").write_text("x", encoding="utf-8")
+            sh = lambda c, tool="Bash": gs.decide(tool, {"command": c}, repo)
+            wr = lambda p, tool="Write": gs.decide(tool, {"file_path": p}, repo)
+            for bad in ['python -c "print(1)"', "python -I -c 'x'", "node -e 1", "python - <<'EOF'\nx\nEOF",
+                        "cat a.py | python", "sed -i 's/a/b/' GDD.md", "echo x >> GDD.md", "echo x | tee GDD.md",
+                        "cd _tools && ls", f'cd "{repo}" && git status', f"cat {repo}/GDD.md"]:
+                self.assertIsNotNone(sh(bad), bad)
+            self.assertIsNotNone(sh("'x' | Set-Content GDD.md", "PowerShell"))
+            self.assertIsNotNone(sh("@'\nx\n'@ | python -", "PowerShell"))
+            for ok in ["python -I _tools/links.py", "git commit -m \"$(cat <<'EOF'\nmsg\nEOF\n)\"",
+                       "grep -n x GDD.md 2>&1 | head", "python -I _tools/godot_run.py all > /dev/null",
+                       "echo x > new.txt", "sed -n '1,5p' GDD.md", "git log --oneline | head -5",
+                       '& "C:\\Users\\me\\Godot.exe" --path game']:
+                self.assertIsNone(sh(ok), ok)
+            self.assertIsNotNone(wr("GDD.md"))                                   # overwrite: use Edit
+            self.assertIsNone(wr("GDD.md", "Edit"))
+            self.assertIsNone(wr(str(Path(repo) / "new.md")))
+            self.assertIsNone(wr("_meta/memory/m.md"))                           # memories are replaced whole
+            self.assertIsNotNone(wr("C:/Users/x/AppData/Local/Temp/draft.md"))   # drafts live in the repo
+            self.assertIsNone(wr("C:/Users/x/.claude/plans/p.md"))
+            art = lambda **k: gs.decide("Artifact", k, repo)
+            self.assertIsNotNone(art(file_path="game/reports/ui-compare/design-votes.html"))
+            self.assertIsNone(art(file_path="game/reports/ui-compare/design-votes.html", url=gs.DESIGN_VOTES))
+            self.assertIsNotNone(art(action="open", url=gs.DESIGN_VOTES))
+            self.assertIsNone(art(file_path="report.html"))
+
+    def test_spec_lint_catches_the_item_13_contradiction_and_multi_item_lines(self):
+        import spec_lint as sl
+        spec = ("---\nversion: 9.9\n---\n# 9.9\n\n## Changes\n\n"
+                "1. **Spin goes to the second stop** Pressing Spin moves the camera there. So the farm view never cranks.\n\n"
+                "2. **Centrifuge text sits on the centrifuge** `CentrifugeLabel` follows the lid anchor.\n\n"
+                "## Contract\n\n- **Quinn (`tests/`):**\n"
+                "  - item 1: pressing Spin from the farm view ends at the second stop;\n"
+                "  - item 2: while cranking, `CentrifugeLabel` stays on the anchor in the farm view and at the second stop;\n"
+                "  - items 1 and 2: the label and Spin never overlap;\n"
+                "  - mutations: items 1 and 2 each catch one mutation.\n")
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "9.9-x.md"
+            p.write_text(spec, encoding="utf-8")
+            fails, warns = sl.check_lines(p)
+            self.assertEqual(len(fails), 1)                       # "items 1 and 2", not the mutations line
+            self.assertIn("names items 1, 2", fails[0])
+            pairs = sl.review(p, only=2)
+            self.assertTrue(any(a[0] == 1 and b[0] == 2 and "crank" in shared for a, b, _, shared in pairs))
+            self.assertEqual(sl.lint(p, out=lambda line: None), 1)
 
     def test_build_sets_version_and_zips_web_at_root(self):
         with tempfile.TemporaryDirectory() as d:

@@ -47,6 +47,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script's folder off sys.path
 import budget_guard  # noqa: E402
 import generate as g  # noqa: E402
+import pick_match  # noqa: E402
 import runlog  # noqa: E402
 
 try:
@@ -57,7 +58,9 @@ except Exception:
 ROOT = Path(__file__).resolve().parent.parent
 PROGRAMMER, BUILDER, QA = "programmer", "builder", "qa-build-engineer"
 OWNERS = {"Patricia": PROGRAMMER, "Bob": BUILDER, "Quinn": QA}
-g.NAMES.update({PROGRAMMER: "Patricia", BUILDER: "Bob", QA: "Quinn"})
+CRITIC = "style-critic"   # Vera: the style check and the pick match on every Bob scene change (designer, 2026-11-08)
+g.NAMES.update({PROGRAMMER: "Patricia", BUILDER: "Bob", QA: "Quinn", CRITIC: "Vera"})
+LOOKS = ("pick match", "style")   # checks whose failures are Bob's alone
 FOLDERS = {PROGRAMMER: "scripts/", BUILDER: "scenes/ and materials/", QA: "tests/"}
 LOG_TABLE = "Goal agent"
 TOOLS = "Bash,Read,Grep,Glob,Write,Edit"   # Patricia, Bob and Quinn run contract_check and Godot
@@ -245,6 +248,7 @@ def parse_spec(path):
         gone = {t for s in re.split(r"(?<=[.;])\s", own) if REMOVED.search(s) for t in backticked(s) if is_node(t)}
         goal["nodes"] = sorted({t for t in backticked(own) if is_node(t)} - gone)
         goal["removed"] = sorted(gone)
+        goal["picks"] = pick_match.pairs(own) if goal["kind"] == "change" else []   # (live prop, picked variant)
     if handoff:
         goals = {"H": {"id": "H", "kind": "handoff", "items": [], "title": "Node handoff (Patricia to Bob)",
                        "text": "She writes any node-name changes first, as a handoff (Process 5).",
@@ -643,8 +647,8 @@ def scan_handoffs(game=None):
 
 
 def run_agent(agent, prompt):
-    """One fresh headless agent (generate.run_agent with file and shell tools). Replaced by a fake in the tests."""
-    return g.run_agent(agent, prompt, tools=TOOLS)
+    """One fresh headless agent (generate.run_agent with file and shell tools; Vera reads only). Replaced by a fake in the tests."""
+    return g.run_agent(agent, prompt, tools="Read,Grep,Glob" if agent == CRITIC else TOOLS)
 
 
 def run_cmd(cmd, env=None, timeout=3600):
@@ -676,6 +680,11 @@ def checks(spec, goal, base, version):
            ("tests", py + ["_tools/godot_run.py", "unit", "start"], ENV)]
     if goal["kind"] == "change" and "Bob" in goal["owners"]:
         out.append(("ui shots", py + ["_tools/ui_shots.py", f"{version}={ROOT}"], None))
+        # one style-loop round (render, style_check, Vera; no Bob): a FAIL goes to Bob in the fix round. {round} is
+        # filled per round, since a style board can't be reused.
+        slug = f"goal-{version}-{goal['id']}-r{{round}}".lower().replace(".", "-")
+        out.append(("style", py + ["_tools/style_loop.py", slug, "--max-rounds", "1", "--request",
+                                   f"goal_agent {version} {goal['id']}: check Bob's change against STYLE_GUIDE.md"], None))
     if goal["kind"] == "test":
         out.append(("mutations", py + ["_tools/mutate.py", "--since", base], None))
     return out
@@ -773,13 +782,21 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     for rnd in range(MAX_FIX_ROUNDS + 1):
         failed = []
         for label, cmd, env in cmds:
-            code, out = run_cmd(cmd, env=env)
+            code, out = run_cmd([c.replace("{round}", str(rnd)) for c in cmd], env=env)
             say(board, f"- Check `{label}`: {'PASS' if code == 0 else f'FAIL (exit {code})'}\n")
             if code:
-                failed.append((label, summary_of(out)))
-                say(board, "\n```\n" + summary_of(out) + "\n```\n")
+                text = style_report(out) if label == "style" else summary_of(out)
+                failed.append((label, text))
+                say(board, "\n```\n" + text + "\n```\n")
                 if label in ("contract", "tests"):
                     break
+        if not any(l in ("contract", "tests") for l, _ in failed):
+            for live, pick in goal.get("picks", []):   # look before done: the live prop beside the designer's pick
+                rows = match_pick(spec, goal, live, pick, folder, rnd, board, usage, run, ids)
+                if rows is None:
+                    return "paused"
+                if rows:
+                    failed.append(("pick match", rows))
         if not failed:
             break
         if rnd == MAX_FIX_ROUNDS:
@@ -807,6 +824,46 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     return "green"
 
 
+def style_report(out):
+    """The Result of the style board a failed `style` check names (its open rows), else the output's tail."""
+    m = re.search(r"game/reports/style/[\w-]+/blackboard\.md", out)
+    board = ROOT / m.group(0) if m else None
+    if board and board.is_file():
+        result = board.read_text(encoding="utf-8").split("\n## Result", 1)
+        if len(result) == 2:
+            return f"Style board `{m.group(0)}`, Result:{result[1].rstrip()}"
+    return summary_of(out)
+
+
+def match_pick(spec, goal, live, pick, folder, rnd, board, usage, run, ids):
+    """Render the live prop beside the pick and ask Vera whether they match. "" on PASS, the rows on FAIL,
+    None when the budget guard pauses the run."""
+    out = folder / "pick" / f"{goal['id']}-r{rnd}"
+    code, text = run_cmd(pick_match.render_cmd(live, pick, out))
+    say(board, f"- Check `pick match` render ({live} beside {pick}): {'done' if code == 0 else f'FAIL (exit {code})'}\n")
+    if code:
+        return "The pick-match render failed:\n" + summary_of(text)
+    ok, msg = budget_ok(CRITIC)
+    if not ok:
+        say(board, f"\n**Paused:** {msg}\nRun the same command again to resume.\n")
+        return None
+    g.set_live_tag(f"goal {run} · {ids} pick match")
+    prompt = pick_match.prompt(live, pick, out, spec_slice(spec, goal))
+    verdict, rows = None, []
+    for attempt in range(2):
+        reply, u = run_agent(CRITIC, prompt if not attempt else prompt + " Your last reply had no such block with a VERDICT line.")
+        usage.append((CRITIC, f"{ids} pick match", u))
+        say(board, f"\n**Vera, pick match** ({u['tokens']:,} tokens):\n\n{reply.strip()}\n\n")
+        verdict, rows = pick_match.judge(reply)
+        if verdict:
+            break
+    if verdict is None:
+        raise g.AgentError("Vera returned no pick-match verdict")
+    say(board, f"- Check `pick match`: {verdict}\n")
+    shots = ", ".join(f"`{s.relative_to(ROOT).as_posix()}`" for s in pick_match.shots(live, pick, out))
+    return "" if verdict == "PASS" else f"Shots (live, pick): {shots}\n" + "\n".join(rows)
+
+
 def keep_briefs(folder, board, plan, name):
     """Save each brief beside the board and link it (inputs go by reference)."""
     bdir = folder / "briefs"
@@ -827,11 +884,16 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
         owners.append(BUILDER)
     if [l for l, _ in failed] == ["mutations"]:   # a missed mutation means a test proves too little: Quinn's folder
         owners = [QA]
+    if failed and all(l in LOOKS for l, _ in failed):   # how the scene looks: Bob's folder
+        owners = [BUILDER]
     head = (f"Goal agent run `{run}`, fix round {rnd} for goal {', '.join(b['id'] for b in batch)} of "
             f"`game/specs/{spec['file']}`, branch `{branch}`. These checks failed after the last step. Fix what is in "
             f"your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit.\n\n")
-    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{report}\n\nSpec text:\n{spec_slice(spec, goal)}\n\n"
-                     f"Reply in at most 150 words." for a in owners}
+    looks = ("A `pick match` row means the live prop must match the designer's picked variant: open both shots and "
+             "the variant's .tscn, and rebuild what differs. A style row whose Fix ends `(designer)` is not yours: "
+             "leave it and list it in your reply.\n\n") if any(l in LOOKS for l, _ in failed) else ""
+    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{looks if a == BUILDER else ''}{report}\n\nSpec text:\n"
+                     f"{spec_slice(spec, goal)}\n\nReply in at most 150 words." for a in owners}
     if goal["kind"] == "change" and any(l == "tests" for l, _ in failed):
         # an older test may pin what this change was asked to change (e.g. the removed Hive bar): Quinn's folder
         out[QA] = head + (f"Your folder: {FOLDERS[QA]}. Update only a test whose expectation this change of the "
@@ -855,6 +917,7 @@ def call_agents(plan, board, usage, run, label):
             return False
         say(board, f"- Budget guard for {g.NAMES[agent]}: {msg}\n")
     rundir = transcripts(run)
+    g.set_live_tag(f"goal {run} · {label}")
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(plan)) as pool:
         futures = {pool.submit(run_agent, a, p): a for a, p in plan.items()}
         for fut in concurrent.futures.as_completed(futures):
@@ -907,6 +970,10 @@ def main(argv=None):
     spec = parse_spec(path)
     if spec["status"] != "approved":
         print(f"goal_agent: {spec['file']} is `{spec['status'] or 'no status'}`, not approved; nothing is built.")
+        return 2
+    import spec_lint   # the spec-consistency rule: a FAIL stops a build run; --plan/--dry-run only print it
+    if spec_lint.lint(path, out=lambda line: print("goal_agent: " + line)) and not (a.plan or a.dry_run):
+        print("goal_agent: fix the FAIL lines in the spec first (python -I _tools/spec_lint.py SPEC)")
         return 2
     run = a.run or spec["version"]
     folder = ROOT / "game" / "reports" / "goal" / run

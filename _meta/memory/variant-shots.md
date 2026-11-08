@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: cbb6da0e-d437-4e4a-8094-be94d2d136c8
-  modified: 2026-11-05T23:23:03.820Z
+  modified: 2026-11-08T07:48:18.160Z
 ---
 
 When a run makes several variants of a model, put them all on the same grid (one Godot load, side by side) and zoom
@@ -14,6 +14,8 @@ ortho size fitted to the variant's bounds; `model_shots.py --size N` still force
 
 **Why:** the designer wants it faster (one load instead of one per variant) and the old whole-grid shots (size 12)
 showed the prop too small to judge.
+
+**One folder per vote round** (2026-11-08): Milo writes `game/scenes/variants/<prop>-r<N>/`, and `model_shots.py` refuses a name without `-r<N>` (`--unnumbered` for old folders), because round 9 overwrote round 8's hive scenes before any commit.
 
 **How to apply:** keep it this way in any new shot tool (Bob's comparison shots too); Milo only writes the `.tscn`
 files, so the change lives in the renderer, not in his definition. Related: [[ab-comparison-page]].

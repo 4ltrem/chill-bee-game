@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 472d224a-a84f-4a66-bfff-00b669226a91
-  modified: 2026-11-07T22:07:55.806Z
+  modified: 2026-11-08T05:23:13.492Z
 ---
 
 TBD items the designer named on 2026-11-01, not started:
@@ -23,7 +23,7 @@ TBD items the designer named on 2026-11-01, not started:
    it was fixed. Seed it from the decision logs, the memories and the QA reports. Examples: Quinn's hour-long
    mutate run (D89), the agent run that hit the 5-hour limit (which led to the budget guard), and the red 0.1.3
    step b.
-5. **See the headless agents again** (added 2026-11-07). The script loops (`goal_agent.py`, `generate.py`,
+5. **See the headless agents again** (added 2026-11-07; (a) built 2026-11-07 late, uncommitted, see [[session-handoff]]; **(b) `watch.py` and (c) the live side pane both approved 2026-11-08, build next session** (designer: "I need everything visible, also the live pane"; the status line alone isn't enough). Also: live.json must cover the scripts' own steps, not only agents: unit/contract checks, mutate, shots, commits (on 2026-11-08 the status line showed nothing while goal_agent ran `godot_run.py unit` itself, and the designer thought it had stalled). The script loops (`goal_agent.py`, `generate.py`,
    `style_loop.py`) run agents as `claude -p`, so they don't show in Claude Code's agent list as Agent-tool
    subagents did ("I can't see as clearly which sub agents are running"). Recommended, in order:
    (a) `generate.run_agent` writes `_meta/usage/live.json` on each agent start and end (agent, loop, run, goal or

@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: d82fcc79-9cc5-4d4c-a928-3c60ef6b12e5
-  modified: 2026-11-06T04:58:10.136Z
+  modified: 2026-11-08T07:19:11.656Z
 ---
 
 Modify only the lines that need changing, with the Edit tool. Do not use Python or sed scripts that read a whole file
@@ -17,4 +17,4 @@ STYLE_GUIDE edits. Whole-file rewrites hide what changed, can flip line endings,
 
 **How to apply:** use Edit (old/new string) for every doc and spec change, one call per change, in parallel when they're independent.
 No `sed -i` or `cat >>` either (I slipped on 2026-11-05). Since 2026-11-05 the rule is also rule 5 in `_meta/team.md` and in the definitions of Bob, Patricia, Quinn, Milo and Martin; `.gitattributes` forces LF so tools stop flipping files to CRLF. Brief agents with line ranges to read.
-Generated files are rebuilt by their own scripts (`index.py`, `sync_docs.py`) as before. Related: [[session-handoff]].
+Enforced since 2026-11-08 by `_tools/guard_shell.py` (refuses `sed -i`, redirects/tee/Set-Content onto existing files, and Write over an existing file outside `_meta/memory/`). Generated files are rebuilt by their own scripts (`index.py`, `sync_docs.py`) as before. Related: [[session-handoff]].

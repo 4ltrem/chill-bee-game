@@ -40,13 +40,33 @@ def save(reading, path):
             f.write(json.dumps(reading) + "\n")
 
 
-def line(data):
+def live(root=None, at=None):
+    """The headless agents running now (from _meta/usage/live.json, written by generate.run_agent), grouped by
+    what their loop is on: '▶ goal 0.1.4 · C5 · Patricia 4m · Bob 2m'. Entries over 3 h old (a killed run) are left out."""
+    try:
+        runs = json.loads(((root or ROOT) / "_meta" / "usage" / "live.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return ""
+    at = at or datetime.datetime.now(datetime.timezone.utc)
+    groups = {}
+    for r in sorted(runs.values(), key=lambda r: r.get("start", "")):
+        try:
+            mins = int((at - datetime.datetime.fromisoformat(r["start"].replace("Z", "+00:00"))).total_seconds() // 60)
+        except (KeyError, ValueError, AttributeError):
+            continue
+        if 0 <= mins < 180:
+            groups.setdefault(r.get("tag") or "agent", []).append(f"{r.get('agent', '?')} {mins}m")
+    return " | ".join(f"▶ {tag} · " + " · ".join(names) for tag, names in groups.items())
+
+
+def line(data, root=None):
     five, week = pct(data, "five_hour"), pct(data, "seven_day")
     model = ((data.get("model") or {}).get("display_name")) or ""
+    running = live(root)
     if five is None and week is None:
-        return f"{model} · usage: no reading yet".strip(" ·")
+        return " · ".join(x for x in (model, "usage: no reading yet", running) if x)
     show = lambda v: "?" if v is None else f"{v:g}%"
-    return f"{model} · 5h {show(five)} · week {show(week)}".strip(" ·")
+    return " · ".join(x for x in (model, f"5h {show(five)}", f"week {show(week)}", running) if x)
 
 
 def main(raw, root=None):
@@ -61,7 +81,7 @@ def main(raw, root=None):
         if isinstance(resets, str) and resets:
             reading["week_resets"] = resets
         save(reading, (root or ROOT) / "_meta" / "usage" / "readings.jsonl")
-    return line(data)
+    return line(data, root)
 
 
 if __name__ == "__main__":

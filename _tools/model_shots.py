@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Render a prop's colorbox variants, check each against STYLE_GUIDE.md, and build their vote page. No agent.
 
-    python -I _tools/model_shots.py PROP [--size N] [--no-render]
+    python -I _tools/model_shots.py PROP-rN [--size N] [--no-render] [--unnumbered]
 
-Milo writes game/scenes/variants/PROP/PROP-a.tscn, -b, -c. This script then:
+Milo writes game/scenes/variants/PROP-rN/PROP-rN-a.tscn, -b, -c, a new folder per vote round (a name without -rN is
+refused unless --unnumbered, so one round can't overwrite another). This script then:
   1. loads all the variants once, side by side on one shared test grid (cell 2.0), and shoots each
      close up (the others hidden) with the farm's light and camera angle at 720 × 1280 (game/tests/model_shots.gd) into game/reports/variants/PROP/;
   2. runs style_check.py on each variant alone (its scene and the materials it uses), and writes
@@ -18,6 +19,7 @@ promotion. Standard library only.
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -44,7 +46,11 @@ def main(argv=None):
     ap.add_argument("prop")
     ap.add_argument("--size", type=float, default=0.0, help="fixed camera orthographic size (default 0: fit each variant close)")
     ap.add_argument("--no-render", action="store_true", help="reuse the shots already in the folder")
+    ap.add_argument("--unnumbered", action="store_true", help="re-render an old folder without -r<N> (hive-frames, flower-patch)")
     a = ap.parse_args(argv)
+    if not re.search(r"-r\d+$", a.prop) and not a.unnumbered:
+        sys.exit(f"'{a.prop}' has no round number: Milo writes each round to game/scenes/variants/<prop>-r<N>/ so no "
+                 f"round overwrites another (game/scenes/variants/CONTEXT.md). Use --unnumbered for an old folder.")
     variants = sorted((ROOT / "game" / "scenes" / "variants" / a.prop).glob(f"{a.prop}-*.tscn"))
     if not variants:
         sys.exit(f"no variants in game/scenes/variants/{a.prop}/ (Milo writes {a.prop}-a.tscn, -b, -c)")

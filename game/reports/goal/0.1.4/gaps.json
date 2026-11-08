@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T03:33:48-05:00",
- "unit_log": "game/reports/_runs/20261108-032914/unit.log",
+ "at": "2026-11-08T03:56:14-05:00",
+ "unit_log": "game/reports/_runs/20261108-034533/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -654,8 +654,20 @@
     15
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_crank_pauses_on_back_and_resumes_on_spin",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_paused_crank_never_finishes_in_farm_view",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "d8f210a",
@@ -663,7 +675,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -1244,7 +1256,7 @@
   },
   "T5.2": {
    "kind": "test",
-   "title": "item 5 fix: each frame's comb cells cover at least 90% of the frame's ",
+   "title": "item 5 fix: each frame's comb cells lie inside the frame's inner rect ",
    "owners": [
     "Quinn"
    ],
@@ -1495,6 +1507,44 @@
    "questions": [],
    "ambiguous": false
   },
+  "T14.4": {
+   "kind": "test",
+   "title": "item 14 align (play-test 2026-11-08, shown failing on the current buil",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
   "T15.1": {
    "kind": "test",
    "title": "item 15: after Back from a crank at the second stop, taps in the farm ",
@@ -1507,9 +1557,27 @@
    "depends": [
     "C15"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_crank_pauses_on_back_and_resumes_on_spin",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_paused_crank_never_finishes_in_farm_view",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "d2d3b57",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1742,6 +1810,18 @@
      "name": "t_lid_closes_clear_of_walls",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_crank_pauses_on_back_and_resumes_on_spin",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_paused_crank_never_finishes_in_farm_view",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1750,18 +1830,6 @@
    "ambiguous": false
   }
  },
- "order": [
-  {
-   "id": "T15.1",
-   "score": 5.54,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  }
- ],
+ "order": [],
  "ambiguous": []
 }
