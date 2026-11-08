@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-07T23:54:44-05:00",
- "unit_log": "game/reports/_runs/20261107-235038/unit.log",
+ "at": "2026-11-07T23:58:44-05:00",
+ "unit_log": "game/reports/_runs/20261107-235505/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -389,10 +389,16 @@
     12
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "dbbca01",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -902,17 +908,6 @@
  },
  "order": [
   {
-   "id": "C12",
-   "score": 8.32,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.68,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C13",
    "score": 8.32,
    "factors": {
@@ -980,6 +975,17 @@
   },
   {
    "id": "T11.1",
+   "score": 5.42,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T12.1",
    "score": 5.42,
    "factors": {
     "unblocks": 0,
@@ -1075,19 +1081,6 @@
     "cost": 0.58,
     "ready": 1,
     "blocked_by": []
-   }
-  },
-  {
-   "id": "T12.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 0,
-    "blocked_by": [
-     "C12"
-    ]
    }
   }
  ],

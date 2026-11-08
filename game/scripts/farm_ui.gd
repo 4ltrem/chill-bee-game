@@ -24,6 +24,7 @@ var _fill_inset: Vector4 = Vector4.ZERO
 var _paused_label: Label
 var _bee_label: Label
 var _centrifuge_label: Label
+var _label_anchor: Node3D
 var _summary: Control
 var _summary_jars: Label
 var _summary_value: Label
@@ -146,6 +147,41 @@ func _refresh_centrifuge() -> void:
 		_centrifuge_label.text = text
 
 
+## 0.1.4 item 13: CentrifugeLabel sits above the centrifuge's lid anchor in every view (no per-view branches), clamped inside the screen
+## by the same margin as the buttons, and moved up (or down if it hits the top) off the visible Spin button and Back.
+func _place_centrifuge_label() -> void:
+	if _centrifuge_label == null or not _centrifuge_label.visible or _centrifuge == null:
+		return
+	if _label_anchor == null or not is_instance_valid(_label_anchor):
+		_label_anchor = _centrifuge.find_child("CentrifugeAnchor", true, false) as Node3D
+		if _label_anchor == null:
+			_label_anchor = _centrifuge
+	var camera: Camera3D = get_viewport().get_camera_3d()
+	if camera == null or camera.is_position_behind(_label_anchor.global_position):
+		return
+	var cfg: GameConfig = GameConfig.live()
+	var sz: Vector2 = _centrifuge_label.get_combined_minimum_size()
+	_centrifuge_label.size = sz
+	var pt: Vector2 = camera.unproject_position(_label_anchor.global_position)
+	var m: float = cfg.button_screen_margin
+	var view: Vector2 = get_viewport_rect().size
+	var lo := Vector2(m, m)
+	var hi := Vector2(maxf(view.x - m - sz.x, m), maxf(view.y - m - sz.y, m))
+	var pos: Vector2 = Vector2(pt.x - sz.x * 0.5, pt.y - sz.y).clamp(lo, hi)
+	for nm in ["CentrifugeIcon", "BackButton"]:
+		var c: Control = get_tree().root.find_child(nm, true, false) as Control
+		if c == null or not c.is_visible_in_tree():
+			continue
+		var r: Rect2 = c.get_global_rect()
+		if not Rect2(pos, sz).intersects(r):
+			continue
+		var up: float = r.position.y - sz.y
+		var down: float = r.end.y
+		pos.y = up if up >= lo.y and (absf(up - pos.y) <= absf(down - pos.y) or down > hi.y) else down
+		pos = pos.clamp(lo, hi)
+	_centrifuge_label.global_position = pos
+
+
 func _refresh_money() -> void:
 	if _money_label != null:
 		_money_label.text = "$%d" % Economy.money
@@ -203,6 +239,7 @@ func _setup_fill_shape() -> void:
 ## 0.1.4 item 1: the Harvest button's background fills from the bottom with the hive's fill fraction (HarvestFill, a child of ForkIcon),
 ## and HiveCountLabel sits just above the button's visible shape. At full the fill hides and the button's own enabled look shows.
 func _process(_delta: float) -> void:
+	_place_centrifuge_label()
 	if _hive == null or _fork == null:
 		return
 	var frac: float = 1.0 if _hive.is_full() else clampf(_hive.storage / maxf(float(_hive.capacity), 1.0), 0.0, 1.0)

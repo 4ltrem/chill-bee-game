@@ -1807,3 +1807,85 @@ No node names used.
 
 - Check `contract`: PASS
 - Check `tests`: PASS
+- Green: checkpoint `dbbca01` on `milestone/0.1.4`
+
+## Pass 22: scan (2026-11-07T23:58:44-05:00)
+
+Unit results from `game/reports/_runs/20261107-235505/unit.log`. 5 of 32 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 32)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C12 No spinning in the farm view without the motor | change | Patricia | partial (built, waits on its tests) | ✓ ledger dbbca01 |
+
+### Order: new or rescored (1 of 16)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 8 | T12.1 item 12: with no motor owned, the centrifuge never | 5.42 | 0 | 3 | 0.58 | 1 | play-test fix; cost 0.58 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C13** (score 8.32: 1 goal(s) wait on it; play-test fix; cost 0.68 (Patricia)).
+
+### Step: C13 (2026-11-07T23:58:44-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C13-patricia.md` (1278 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (108,802 tokens, 11 turns, 24 s):
+
+I changed one file, `game/scripts/farm_ui.gd`. `contract_check.py` passes (64 lookups, 0 unresolved). I did not run the unit tests, `play_loop.gd` or any other Godot run, so the placement logic has not run.
+
+- **How it works:** I did not reuse `FloatingIcon`, which is a Button, so `FarmUI` places the label itself in a new `_place_centrifuge_label()`, called every frame from `_process`.
+  - It projects the centrifuge's `CentrifugeAnchor` to the screen, with a fallback to the `Centrifuge` node.
+  - It sets the label's bottom edge at that point, centred, with no per-view branches.
+  - It clamps the label inside the screen by `button_screen_margin`.
+  - It moves the label up, or down if that hits the screen edge, to clear the visible `CentrifugeIcon` (Spin) and `BackButton`.
+- **Node names:** `CentrifugeLabel`, `CentrifugeAnchor`, `CentrifugeIcon`, `BackButton`. Placement is by global position, so Bob can leave the label where it is under `FarmUI`; it just needs its fixed offsets removed.
+- **Placeholders:** none added.
+- **Open questions:** none.
+
+Quinn should run T13.1: the label stays near the anchor and overlaps neither Spin nor Back, in the farm view and at the second stop.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      137 passed, 1 failed  (exit 1, 202 noise lines dropped)  game/reports/_runs/20261107-235910/unit.log
+    FAIL  t_camera_pan_seconds  after a live change to 2.5 the pan took 2.444 s +- 0.053 s  (6113 ms)
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C13-fix1-patricia.md` (1065 chars)
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/C13-fix1-quinn.md` (1304 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (68,982 tokens, 5 turns, 36 s):
+
+`t_camera_pan_seconds` passes when I run it alone, so I changed no test.
+
+- **Result:** `CB_ONLY=t_camera_pan_seconds python -I _tools/godot_run.py unit` gave 1 passed, 0 failed (exit 0). Log: `game/reports/_runs/20261108-000209/unit.log`.
+- **Cause:** timing flake, not a spec-13 change. The pan took 2.444 s against 2.5 s. That is 0.056 s off, just outside the 0.053 s tolerance. The tolerance is one measured worst frame plus 0.01 s, so a slow frame during the full suite widens the gap but not the tolerance.
+- **Finding:** this is not a defect in game code or in the spec. The tolerance in `test_camera.gd` (line 479 and line 490) is tight under full-suite load. I'd widen it, for example to two frames, if the flake recurs. I left it unchanged because you asked for edits only where the spec replaces an expectation.
+- **Spec 13:** nothing in `tests/` conflicts with it, so no expectation needed updating.
+
+
+**Patricia** (84,262 tokens, 7 turns, 1096 s):
+
+Still checking, and I haven't edited anything. The pan failure doesn't reproduce. `t_camera_pan_seconds` passed on my rerun, and the failures that remain are different ones.
+
+- **Cause:** The test measures the pan in wall-clock time from sampled frames. The first run missed by 0.056 s against a tolerance of 0.053 s, which looks like a frame hitch or machine load. No `scripts/` code is involved. `main.gd` passes `camera_pan_seconds` straight to `_move_camera_to`.
+- **Rerun:** The unit suite gave 148 passed, 2 failed:
+  - `t_replay_fill_and_back` (the states ended at farm → zoom, not second stop).
+  - `t_replay_without_back_stays_in_zoom` (the bucket held 26 cells, expected 70).
+- **Likely cause:** Those two look like replay timing under load, again in the tests (`game/tests/`), not in the centrifuge label work. I haven't confirmed that.
+- **For Quinn:** Widen the pan tolerance in `test_camera.gd` to allow for the eased tail and CPU load. Check whether the replay tests also depend on wall-clock time.
+
+I stopped every Godot process I started.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
