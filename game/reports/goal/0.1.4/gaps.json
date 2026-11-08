@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T01:38:53-05:00",
- "unit_log": "game/reports/_runs/20261108-012640/unit.log",
+ "at": "2026-11-08T01:54:11-05:00",
+ "unit_log": "game/reports/_runs/20261108-015041/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -630,10 +630,16 @@
     15
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "d8f210a",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -1594,23 +1600,23 @@
  },
  "order": [
   {
-   "id": "C15",
-   "score": 8.4,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.6,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C14",
    "score": 8.01,
    "factors": {
     "unblocks": 1,
     "value": 3,
     "cost": 0.99,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T15.1",
+   "score": 5.54,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.46,
     "ready": 1,
     "blocked_by": []
    }
@@ -1625,19 +1631,6 @@
     "ready": 0,
     "blocked_by": [
      "C14"
-    ]
-   }
-  },
-  {
-   "id": "T15.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 0,
-    "blocked_by": [
-     "C15"
     ]
    }
   }

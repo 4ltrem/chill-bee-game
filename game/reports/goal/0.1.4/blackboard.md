@@ -2623,3 +2623,122 @@ My earlier summary stands. I changed only `game/scripts/main.gd` and used no new
 
 - Check `contract`: PASS
 - Check `tests`: PASS
+- Green: checkpoint `d8f210a` on `milestone/0.1.4`
+
+## Pass 31: scan (2026-11-08T01:54:11-05:00)
+
+Unit results from `game/reports/_runs/20261108-015041/unit.log`. 32 of 36 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 36)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C15 Leaving the centrifuge stops the crank | change | Patricia | partial (built, waits on its tests) | ✓ ledger d8f210a |
+
+### Order: new or rescored (1 of 3)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 2 | T15.1 item 15: after Back from a crank at the second sto | 5.54 | 0 | 3 | 0.46 | 1 | play-test fix; cost 0.46 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C14** (score 8.01: 1 goal(s) wait on it; play-test fix; cost 0.99 (Patricia, Bob)).
+
+### Step: C14 (2026-11-08T01:54:11-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C14-patricia.md` (1323 chars)
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/C14-bob.md` (1492 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Bob** (331,448 tokens, 30 turns, 54 s):
+
+I rebuilt `scenes/props/hive.tscn` to match variant a, but I couldn't render it. The sandbox blocked the render command (the `SCENE=… OUT=…` prefix) and nobody was there to approve it. So I haven't compared it with `hive-frames-r9-a.png`. `contract_check.py` passes: 0 unresolved.
+
+**Changes (all edits to existing lines):**
+- `WallXPos` is now the full-height wall, so all four walls are 0.68 tall. I removed the `Mesh_wallxlow` resource.
+- The frame bar meshes now use the variant's sizes: 9 wide by 4.82 deep, with the rails at ±4.44 and ±2.34.
+- `FrameBar1..5` scale is 0.13, with the same x positions as before.
+- `Slot1..5` scale is 0.21 (was 0.2). That gives a 0.21 cell pitch, as in the variant, and 5 columns × 2 rows fit the 1.26 inner width.
+
+**Node names:** unchanged, so scripts and the `Slot1..5` lookup keep working. `HiveLid` stays closed at y 0.74.
+
+**Open question:** `frame_rise` needs retuning for the Slot scale of 0.21.
+
+**Next step:** render the scene and check it against the reference.
+
+
+**Patricia** (95,525 tokens, 3 turns, 7 s):
+
+The unit run finished with 157 passed and 5 failed. No Godot processes are left running. I have not fixed any of the five failures.
+
+- **`t_combs_fill_frame_and_hive_whole`:** the cells span 147% and 160% of the frame's inner area. My new pitch assumes Bob's variant a slot scale of 0.13, but `hive.tscn` is still at the old 0.2 scale. This should clear once Bob's scene lands.
+- **`t_hive_lid_leaning_pose`:** it reports body top 0.952 against a lowest frame point of 0.843, so `frame_rise` 0.76 is too low for the current `hive.tscn`. I tuned `frame_rise` for variant a's walls (top 0.68). I'll recheck it after Bob's scene.
+- **`t_spin_icon_in_first_zoom`:** Spin does not cover the rack. This is probably the UI and scene change in progress (Spin moving out of `FarmUI`).
+- **`t_replay_fill_and_back` and `t_replay_without_back_stays_in_zoom`:** the bucket holds 8 cells where the tests expect 70. I changed the cell index mapping, so a test or script that assumes the old `row * cols + col` order could be involved. I haven't isolated the cause.
+
+Please rerun the suite after Bob's `hive.tscn` lands. I did not run `play_loop.gd`.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      146 passed, 4 failed  (exit 1, 224 noise lines dropped)  game/reports/_runs/20261108-020656/unit.log
+    FAIL  t_hive_lid_leaning_pose  the risen frame clears the body with a visible gap (lowest frame point 0.843, body top 0.952; frame_rise 0.76)  (962 ms)
+    FAIL  t_layout_hive_scale_follows_config  a live change down to 0.7 shrinks it: expected 0.7 (+-0.02) got 0.77901034498144  (638 ms)
+    FAIL  t_spin_icon_in_first_zoom  Spin does not cover the rack (spin [P: (145.9278, 388.4834), S: (160, 160)], rack [P: (297.847, 272.9299), S: (370.5362, 426.5263)]): expected true got false  (2291 ms)
+    FAIL  t_combs_fill_frame_and_hive_whole  frame 1, slot axis 0: the cells span 147% of the frame's inner area (0.90 to 1.10) | frame 1, slot axis 2: the cells span 160% of the frame's inner area (0.90 to 1.10) | frame 2, slot axis 0: the cel
+```
+
+#### Fix round 1: to Patricia, Bob, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/C14-fix1-patricia.md` (1805 chars)
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/C14-fix1-bob.md` (1819 chars)
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/C14-fix1-quinn.md` (2044 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+- Budget guard for Quinn: override
+
+**Bob** (523,290 tokens, 25 turns, 69 s):
+
+I changed the hive scene to fix the rise, hive-scale and comb failures, but I couldn't render or re-run the tests. The render command needed an approval I didn't have. Nothing has been checked against the four failing tests.
+
+**Cause:** in `scenes/props/hive.tscn`, `Slot1`–`Slot5` were scaled 0.21 while `FrameBar1`–`FrameBar5` are 0.13. `hive.gd` copies the slot transform onto the bar, so the frames drew about 60% too big. That fits three of the four failures:
+- **Risen frame:** the frame hung too low, with its lowest point at 0.84 against the body top at 0.95.
+- **Comb coverage:** the cells measured 147% and 160% of the frame.
+- **Hive scale:** the extent didn't track the 0.7 setting.
+
+**Fix:** I set all five slot scales to 0.13, matching the bars and `hive-frames-a.tscn`, with `cell_pitch` 1.865.
+
+**Not confirmed:** `t_spin_icon_in_first_zoom` (Spin icon covers the rack) may clear now that the rack is smaller. If it doesn't, the fault is in the layout or UI, which isn't in my folder.
+
+I wrote no probe files.
+
+
+**Quinn** (594,421 tokens, 27 turns, 88 s):
+
+No test edits and nothing else changed. Three of the four failures are findings against the code. The fourth passed on rerun. I did not write a report file.
+
+I reran with `CB_ONLY` (all four together, and the scale test alone). The log is `game/reports/_runs/20261108-021118/unit.log`.
+
+- **`t_combs_fill_frame_and_hive_whole`**: finding for Patricia or Bob. Spec line 14 says the cells fill each frame "edge to edge". The cells span 147% to 160% of the frame's `Back` panel, so they overflow it. The comb cell layout in `scripts/honeycomb.gd` or `hive_comb_view.gd` doesn't fit the new frames in `hive.tscn`.
+- **`t_hive_lid_leaning_pose`**: finding for Patricia. The risen frame's lowest point is 0.843 and the body top is 0.952, so the frame doesn't clear the body. The test read `frame_rise` as 0.76, but `default_config.tres` says 0.92. Something is overriding the config value in the test run, and I didn't find what. If 0.92 applied, the frame would sit at about 1.02 against a body top of 0.952.
+- **`t_spin_icon_in_first_zoom`**: finding for Bob. The Spin icon overlaps the rack by about 8 px in x. The rack moved with the new hive, so the icon needs to move left.
+- **`t_layout_hive_scale_follows_config`**: it passed when I ran it alone and failed in the full run, so it is order-dependent. The cause is unknown.
+
+
+**Patricia** (135,715 tokens, 3 turns, 8 s):
+
+The unit run now shows 160 passed and 2 failed. The four earlier failures are gone, and the `frame_rise` change and Bob's scene fix are in. Both remaining failures are outside `scripts/`. I stopped the process, and nothing is left running.
+
+- **`t_replay_fill_and_back`:** Fails. The replay never reaches the second stop.
+- **`t_replay_without_back_stays_in_zoom`:** Fails. The bucket ends at 17 cells where the test expects 70.
+
+Both replay a recorded drag fixture (`FIXTURE` in `game/tests/test_replay.gd`). The item 14 layout moved the cells, so the recorded drags no longer hit them. Quinn needs to re-record the fixture for the new frame layout.
+
+I changed `frame_rise` to 0.92 in `game_config.gd` and `default_config.tres`. I didn't commit.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS

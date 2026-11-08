@@ -45,7 +45,7 @@ func setup(hive: Hive) -> void:
 		for c in per_frame:
 			var instance := MeshInstance3D.new()
 			instance.mesh = mesh
-			instance.position = Honeycomb.cell_position(c, cols, rows, 1.0)
+			instance.position = Honeycomb.cell_position(c, cols, rows, Honeycomb.DEFAULT_CELL_PITCH)
 			instance.scale = Vector3.ONE * hive.config.frame_scale
 			holder.add_child(instance)
 			row.append(instance)

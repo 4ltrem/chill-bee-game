@@ -20,7 +20,7 @@ extends Resource
 @export var taps_per_jar: int = 4                      # PLACEHOLDER (GDD TBD): counted crank turns per jar in the bucket (40 per 10 jars as revision 3)
 @export var grid_cols: int = 5                         # PLACEHOLDER (GDD TBD; 0.1.4 item 5, round 9 variant a): honeycomb frame width in cells (read when a frame is built)
 @export var grid_rows: int = 2                         # PLACEHOLDER (GDD TBD; 0.1.4 item 5, round 9 variant a): honeycomb frame height in cells (read when a frame is built)
-@export var frame_scale: float = 0.85                  # PLACEHOLDER (0.1.4 item 5; Dev panel): a cell's drawn size inside its pitch (below 1.0 leaves a gap between cells). Pile and bucket cells are drawn at the same world size
+@export var frame_scale: float = 2.6                 # PLACEHOLDER (0.1.4 item 5; Dev panel): a cell's drawn size inside its pitch (below 1.0 leaves a gap between cells). Pile and bucket cells are drawn at the same world size
 @export var base_bee_count: int = 20                   # PLACEHOLDER (GDD TBD): bees in the swarm at level 0
 @export var bees_per_swarm_level: int = 3              # PLACEHOLDER (GDD TBD): bees added per Worker Swarm Count level (15% of 20)
 @export var visual_bee_cap: int = 60                   # PLACEHOLDER (GDD TBD): most bees drawn; GDD: visual cap TBD after profiling
@@ -50,7 +50,7 @@ extends Resource
 @export var lid_lift_height: float = 0.6               # PLACEHOLDER (GDD TBD; 0.1.1): how far a lid rises straight up before it falls (parent-space units)
 @export var lid_lift_seconds: float = 0.25             # PLACEHOLDER (GDD TBD; 0.1.1): the lift
 @export var lid_drop_seconds: float = 0.4              # PLACEHOLDER (GDD TBD): the fall after the lift, hive lid and centrifuge lid, off or on (closing plays backwards)
-@export var frame_rise: float = 0.76                   # PLACEHOLDER (GDD TBD; 0.1.1: Bob's new value to come): how far a frame rises above the body (hive root units)
+@export var frame_rise: float = 0.92                   # PLACEHOLDER (GDD TBD; 0.1.4 item 14: the deeper round 9 body needs a higher rise): how far a frame rises above the body (hive root units)
 @export var cell_fly_seconds: float = 0.5              # PLACEHOLDER (GDD TBD): a scraped cell's flight after its pop
 @export var cell_fly_arc: float = 1.5                  # PLACEHOLDER (GDD TBD; Patricia): arc height of a cell's flight, in units
 @export var pile_load_stagger_seconds: float = 0.03    # PLACEHOLDER (GDD TBD; Patricia): delay between pile cells flying into the bucket

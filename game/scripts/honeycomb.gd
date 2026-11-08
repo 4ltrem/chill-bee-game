@@ -18,6 +18,7 @@ const UNCAPPED: int = 1
 const EXTRACTED: int = 2
 
 const CELL_HEIGHT: float = 0.3
+const DEFAULT_CELL_PITCH: float = 1.865   # PLACEHOLDER: from Bob's variant a (world 0.2425 at slot scale 0.13)
 const STATE_Y: Array[float] = [0.12, 0.0, -0.12]   # capped raised, uncapped flush, extracted recessed
 const SWEEP_STEP_PX: float = 16.0                   # fast drags are sampled at this screen spacing
 const RAY_LENGTH: float = 200.0
@@ -26,7 +27,7 @@ const POP_SECONDS: float = 0.18
 
 @export var config: GameConfig = GameConfig.live()
 @export var cell_radius: float = 0.46
-@export var cell_pitch: float = 1.0
+@export var cell_pitch: float = DEFAULT_CELL_PITCH   # frame-local units; 1.865 fills Bob's 9 x 4.82 frame edge to edge (item 14)
 ## Drags only uncap while true (hive.gd turns it on while a frame is risen).
 @export var active: bool = true
 
@@ -273,10 +274,12 @@ func _cell_position(index: int) -> Vector3:
 
 ## A cell's frame-local position (shared with hive_comb_view.gd so the resting frames match the risen one).
 static func cell_position(index: int, cols: int, rows: int, cell_pitch: float) -> Vector3:
-	var col: int = index % cols
-	var row: int = index / cols
-	var x: float = (float(col) - float(cols - 1) * 0.5 + 0.5 * float(row % 2) - 0.25) * cell_pitch
-	var z: float = (float(row) - float(rows - 1) * 0.5) * cell_pitch * 0.9
+	# 0.1.4 item 14 (round 9 variant a): columns run across the frame, each with `rows` cells; odd columns sit half a cell higher
+	# (hex tiling). cell_pitch is the spacing within a column; columns are 0.866 of it apart. Index = col * rows + row.
+	var col: int = index / rows
+	var row: int = index % rows
+	var x: float = (float(col) - float(cols - 1) * 0.5) * cell_pitch * 0.866
+	var z: float = (float(row) - float(rows - 1) * 0.5 + 0.5 * float(col % 2) - 0.25) * cell_pitch
 	return Vector3(x, 0.0, z)
 
 
