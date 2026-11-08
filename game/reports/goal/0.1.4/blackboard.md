@@ -1959,3 +1959,97 @@ Mutation 3 was MISSED because of the mutation, not the test. I've rewritten it, 
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `mutations`: PASS
+- Green: checkpoint `1ee096d` on `milestone/0.1.4`
+
+## Pass 24: scan (2026-11-08T00:30:32-05:00)
+
+Unit results from `game/reports/_runs/20261108-002731/unit.log`. 14 of 32 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (10 of 32)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Harvest button is the honey meter | change | Patricia, Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger a32b0be |
+| C3 Back in one fixed place | change | Patricia, Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 747a5a1 |
+| C4 Speed tag clear of the top info | change | Bob | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger fb94e04 |
+| C8 Instruction text below Back | change | Bob | done | ✓ node HintLabel, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 485190a |
+| T.1 Back has the same screen rect in the first zoom and at the s | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 1ee096d |
+| T.2 Back's rect is in the top-right quadrant, and the speed tag  | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 1ee096d |
+| T1.1 the Harvest fill equals the hive fill fraction (± 1%), and t | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T8.1 item 8: the instruction text's rect lies wholly below Back's | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels, ✓ ledger 1ee096d |
+| T1.2 item 1 fix: at about half fill, no fill pixel lies outside t | test | Quinn | done | ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_tag_below_labels |
+
+No score changed.
+
+Next: **T10.1** (score 5.42: play-test fix; cost 0.58 (Quinn)).
+
+### Step: T10.1 (2026-11-08T00:30:32-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T10.1-quinn.md` (1848 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (887,316 tokens, 39 turns, 135 s):
+
+I wrote two tests for item 10 and ran only those two. `t_combs_visible_in_hive` passed. `t_combs_fill_frame_and_hive_whole` failed, which is a finding. The mutations are added but not run, because `mutate.py` goes through Rex.
+
+**Files changed**
+- `tests/test_combs.gd` (new). It extends `test_ui_placement.gd`.
+- `tests/run_tests.gd`: now extends `test_combs`, with the new group registered under the required comment.
+- `tests/mutations.json`: 3 mutations added.
+
+**Finding:** `t_combs_fill_frame_and_hive_whole` fails on coverage. The comb cells span about 86% of each frame's inner width and 49% of its height.
+- **Cause:** `hive.tscn` `Mesh_barback` is 5.85 × 3.13 in slot units, which is still the old frame size, not 5 cols × 2 rows.
+- **Fix owner:** Bob. The Back panel and the other bar pieces need resizing to the 5 × 2 comb.
+
+**Node names used:** `Hive`, `HiveBody` (`Floor`, four walls), `FrameBar1..5/Back`, `FrameSlots/Slot1..5`, `Honeycomb`, `ForkIcon`, `BackButton`. Cells are found by the `cell_capped` and `cell_uncapped` materials.
+
+**Open questions**
+- I read "first zoom at empty, half and full" as the farm view at all three levels, plus the first zoom at full only. I did not test the first zoom at half because I'm unsure the Harvest button is enabled then.
+- The tolerance `_COVER_MIN` (0.9) is my choice, not from the spec.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      141 passed, 1 failed  (exit 1, 210 noise lines dropped)  game/reports/_runs/20261108-003249/unit.log
+    FAIL  t_combs_fill_frame_and_hive_whole  frame 1, slot axis 0: the cells span 86% of the frame's inner area (0.90 to 1.10) | frame 1, slot axis 2: the cells span 49% of the frame's inner area (0.90 to 1.10) | frame 2, slot axis 0: the cells
+```
+
+#### Fix round 1: to Bob, Patricia
+
+- Brief for Bob: `game/reports/goal/0.1.4/briefs/T10.1-fix1-bob.md` (1428 chars)
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T10.1-fix1-patricia.md` (1414 chars)
+- Budget guard for Bob: override
+- Budget guard for Patricia: override
+
+**Patricia** (58,303 tokens, 5 turns, 10 s):
+
+No change made in `scripts/`. This failure is in Bob's folder (`scenes/`), not mine.
+
+`t_combs_fill_frame_and_hive_whole` fails because the cells cover only part of each frame's Back panel: 86% of the width and 49% of the height. `hive_comb_view.gd` lays the cells out as `grid_cols` × `grid_rows` in slot units, which is the 5 × 2 comb the spec asks for. The Back panel is the part that's wrong. `Mesh_barback` in `hive.tscn` is still 5.85 × 3.13, the old frame size. That matches Quinn's finding in the blackboard.
+
+**Fix for Bob:** resize `Mesh_barback` and the other frame-bar pieces in `hive.tscn` to fit the 5 × 2 comb. Quinn's test then compares the cell span to the Back panel's inner area, with a pass range of 0.90 to 1.10.
+
+I did not re-run the tests, since I changed nothing. The 0.90 tolerance in the test is Quinn's choice, not from the spec.
+
+
+**Bob** (247,235 tokens, 17 turns, 48 s):
+
+I resized the frame pieces in `scenes/props/hive.tscn`, but I haven't run `t_combs_fill_frame_and_hive_whole` or rendered the scene, so the fix is unverified.
+
+**Cause:** the frame's back panel and bars were still the old size, 5.85 × 3.13 in slot units. The cells span about 5.03 × 1.53, which matches the 86% and 49% in the failure.
+
+**Fix:**
+- `Mesh_barback` is now 5.05 × 1.55.
+- `Mesh_bartb` is 5.05 wide and `Mesh_barlr` is 1.55 deep.
+- In all five `FrameBar` nodes, Top and Bottom moved to z ±0.705, and Left and Right moved to x ±2.465.
+- That should put the cell span at about 100% of the panel on both axes.
+
+**Hive body:** I didn't change it. The scene still has the floor and all four walls, and none are hidden. The test's wall check wasn't in the failure output.
+
+**Still to do:** Quinn or Rex should rerun the unit suite. I didn't touch `materials/`.
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS

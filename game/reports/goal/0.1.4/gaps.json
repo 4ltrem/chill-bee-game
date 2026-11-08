@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T00:22:43-05:00",
- "unit_log": "game/reports/_runs/20261108-002019/unit.log",
+ "at": "2026-11-08T00:30:32-05:00",
+ "unit_log": "game/reports/_runs/20261108-002731/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -43,8 +43,20 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "a32b0be",
@@ -52,7 +64,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -150,8 +162,20 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "747a5a1",
@@ -159,7 +183,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -175,8 +199,20 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "fb94e04",
@@ -184,7 +220,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -277,12 +313,24 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
      "name": "HintLabel",
      "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -291,7 +339,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -504,9 +552,27 @@
     "C3",
     "C8"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "1ee096d",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -582,9 +648,27 @@
     "C4",
     "C8"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "1ee096d",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -601,8 +685,21 @@
    "depends": [
     "C1"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -677,9 +774,27 @@
    "depends": [
     "C8"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "1ee096d",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -696,8 +811,21 @@
    "depends": [
     "C1"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -903,6 +1031,18 @@
      "name": "t_spin_placed_by_scene",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -912,50 +1052,6 @@
   }
  },
  "order": [
-  {
-   "id": "T.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T.2",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T1.1",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T1.2",
-   "score": 5.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T10.1",
    "score": 5.42,
@@ -1046,17 +1142,6 @@
   },
   {
    "id": "T5.2",
-   "score": 3.42,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.58,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T8.1",
    "score": 3.42,
    "factors": {
     "unblocks": 0,
