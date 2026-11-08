@@ -19,7 +19,9 @@
       "Bash(CB_TIME_SCALE=* CB_SKIP_X1=* python -I _tools/godot_run.py *)",
       "Bash(CB_TIME_SCALE=6 CB_SKIP_X1=1 python -I _tools/godot_run.py *)",
       "Bash(CB_TIME_SCALE=6 python -I _tools/godot_run.py *)",
-      "Bash(CB_SKIP_X1=1 python -I _tools/godot_run.py *)"
+      "Bash(CB_SKIP_X1=1 python -I _tools/godot_run.py *)",
+      "Bash(SCENE=* OUT=* C:/Users/mtrem/Desktop/Godot_v4.2.1-stable_win64_console.exe --path game --script res://tests/render.gd)",
+      "Bash(SCENE=* OUT=* C:/Users/mtrem/Desktop/Godot_v4.2.1-stable_win64_console.exe --path game --script res://tests/render.gd *)"
     ]
   },
   "hooks": {

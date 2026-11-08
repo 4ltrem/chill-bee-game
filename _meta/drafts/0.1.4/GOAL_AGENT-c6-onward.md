@@ -1,4 +1,4 @@
-# GOAL_AGENT.md: edits from C6 onward (draft, to apply after the run exits)
+# GOAL_AGENT.md: edits from C6 onward (APPLIED: first run in c782135, second run 2026-11-07 evening; kept as history)
 
 Drafted 2026-11-07 14:40 from the blackboard (Pass 10, Step C6; Pass 11, Step T2.1/T2.2 in progress). Each block below says
 where it goes. The test-line rows still need filling once the run ends.

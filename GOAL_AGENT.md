@@ -59,7 +59,7 @@ The tests (`python -I _tools/test_goal_agent.py`, 17 cases) pin all of this on a
 
 ## What it built, and why
 
-_As of 2026-11-07 15:09, when the run stopped. Still to build: C8, Quinn's other test lines, and C5 after the designer's vote._
+_The first run is rows 1–8 (it stopped at 15:09). The second run (20:24–21:40) is rows 9–14. It was started after the designer play-tested the build, answered the C5 question (Design Votes round 9) and added items 9 and 10, and it paused at C5's fix round. Still to build: C5's fix round and Quinn's ten test lines._
 
 | # | Goal | Why it came next (score) | Agents | Outcome | Checkpoint |
 |---|---|---|---|---|---|
@@ -71,7 +71,13 @@ _As of 2026-11-07 15:09, when the run stopped. Still to build: C8, Quinn's other
 | 6 | C1 Harvest button is the honey meter | designer feature (8.9) | Patricia, Bob; Quinn in fix round 1 | 12 tests still named the removed `FillLabel`. Quinn updated them, quoting the spec | `b431c26` |
 | 7 | C6 Housekeeping (test recordings out of `user://recordings`) | housekeeping, the last change ready (7.27) | Patricia | green first try | `287bdd0` |
 | 8 | T2.1 + T2.2 Quinn's item 2 tests (one call for both) | the first test lines, now that C2 was built (5.38) | Quinn; Bob and Patricia in 2 fix rounds | 5 new tests. The overlap test found 2 real bugs: the count label sat 12 px over Harvest, and Back sat over the instruction text, which the designer had reported the same hour. Tests green after 2 rounds (138/138), but one of the 5 mutations was missed, so the run stopped. Accepted by hand (see below) | `b65f5e1`, `2c464bc` |
-| - | C5 Bigger frames | not scored: ambiguous | - | held for the designer: 2.15× frames don't fit the hive body (1.35× with 5 columns, or a wider body) | - |
+| - | C5 Bigger frames (first run) | not scored: ambiguous | - | held for the designer: 2.15× frames don't fit the hive body (1.35× with 5 columns, or a wider body) | - |
+| 9 | C1 rebuild: the meter fill clipped to the button | play-test fix; the orchestrator cleared C1's ledger row so it would be redone | Bob, Patricia | Bob changed nothing, since the scene already matched. Patricia's `farm_ui.gd` clips the fill inside the button's border. Green (150/150), but nobody looked at the fill in a shot | `a32b0be` |
+| 10 | C8 Instruction text below Back | designer feature from the first run (item 8) | Bob | `HintLabel` moved 138 px down, 8 px below Back. Not rendered | `485190a` |
+| 11 | C7 rebuild: spin mode stays on while the pile reloads | play-test fix, with the designer's answer in the spec | Patricia; Patricia and Quinn in fix round 1 | One test still expected the old "tap Spin again". Quinn updated it to the new spec. The "no pile, so spin exits" branch has no test yet | `f6f153a` |
+| 12 | C9 "Production paused" above the upgrades | new play-test item 9, Bob only | Bob | `PausedLabel` moved out of the top info, above the shop. Not rendered | `1169483` |
+| 13 | C10 Combs shown in the hive | new play-test item 10 | Bob, Patricia | Bob lowered the hive's front wall. Patricia shows the comb cells before a frame rises (hidden since 0.1). Green (150/150) | `2d2ffb4` |
+| 14 | C5 Bigger frames (round 9 variant a: 5×2) | unheld by the designer's answer; 1 test line waits on it (6.03) | Bob, Patricia | Bigger frames and smaller hexes, and the pile and bucket cells now match the frame cells. 7 unit tests still assume 7×5 (cell 17, 35 cells per frame). **Paused** by the budget guard before fix round 1 (5-hour usage 74%) | - |
 
 What the order shows:
 - **The handoff went first** because every scene change waited on it (unblocks).
@@ -79,6 +85,8 @@ What the order shows:
 - **Among equal-value goals, the cheaper ones went first.** C4 (Bob only) beat C7 and C3.
 - **Changes before their tests.** No test line was ready until its change was built (ready = 0), so the test goals came last.
 - **C5 was held, not guessed.** The question in the node handoff kept it out of the scoring, and the rest was built around it.
+- **In the second run, the cheap changes went before C5.** C1, C8, C7, C9 and C10 cost 1.1M tokens together. C5 alone cost 1.4M before its fix round. With the question answered, C5 was scored like any other goal.
+- **The budget guard paused the run twice.** The first pause came at the start (weekly usage ahead of pace) and the designer allowed 60 minutes. The second came before C5's fix round (5-hour usage). Each time the run stopped cleanly and can resume.
 
 ## Manual changes before accepting the code
 
@@ -90,6 +98,8 @@ What the order shows:
    - **C8:** Bob already narrowed `HintLabel` in T2's fix round, so C8 may need no further change; its test T8.1 will tell.
    - **Two gap-detection fixes after the designer's item 8:** a node that already exists (`HintLabel`) made C8 look built, so now only the ledger marks a change built. A test line whose words tie between changes now covers only the tied changes, not all of them.
    - **C7:** committed with no code change, and Patricia's two questions are unanswered. "Green with nothing changed" counted as built. **Fixed after this run:** the agent now compares the game folders before and after a step. If nothing changed, it holds the goal like an open question instead of committing it, builds the rest, and then waits. The hold lifts when the spec item is edited, or with `--accept` (tests: `test_green_with_no_change_is_held_not_committed`, `test_a_held_goal_waits_until_its_spec_text_changes`).
+5. **Second run, before starting:** the orchestrator removed C1 and C7 from `ledger.json` so the play-test rebuilds would run. It also marked the node handoff's two C5 questions answered (round 9 variant a) and fixed four unit tests and the play suite for the Round 8 offsets (`578b761`).
+6. **Second run, to review:** Bob never saw his scenes. The render command starts with environment variables (`SCENE=… OUT=…`), and the permission check blocked it in C10 and in C5. C1, C8, C9, C10 and C5 are all checked by tests and the contract only, with no shot. Quinn's test lines and `ui_shots.py` have to cover that.
 
 ## Cost
 
@@ -105,6 +115,13 @@ _The whole run so far, from the blackboard and `_meta/agent-runs.csv` (table "Go
 | C1 | 5 (1 fix round) | 753,666 | 9 min |
 | C6 | 1 | 154,687 | 9.5 min |
 | T2.1 + T2.2 | 5 (2 fix rounds) | 1,067,430 | 33.5 min |
-| **Total** | **27** | **6,110,208** | |
+| *First run* | *27* | *6,110,208* | |
+| C1 rebuild | 2 | 292,042 | 44 s |
+| C8 | 1 | 58,280 | 13 s |
+| C7 rebuild | 3 (1 fix round) | 352,293 | 78 s |
+| C9 | 1 | 92,562 | 14 s |
+| C10 | 2 | 272,799 | 41 s |
+| C5 (paused before its fix round) | 2 | 1,387,781 | 13 min |
+| **Total** | **38** | **8,565,965** | |
 
-The reasoning layer (scan, gaps, scores) costs no tokens; every token above is an agent writing or fixing code. C2 alone is 47% of the tokens. Most of it is Quinn's first fix round (928k) and Patricia's first build (533k), spent untangling tests that pinned the 0.1.3 layout. Plan-usage % per call is in `_meta/agent-runs.csv`.
+The reasoning layer (scan, gaps, scores) costs no tokens; every token above is an agent writing or fixing code. In the first run, C2 alone is 47% of the tokens. Most of it is Quinn's first fix round (928k) and Patricia's first build (533k), spent untangling tests that pinned the 0.1.3 layout. In the second run, C5 is 57% of the tokens (1.39M of 2.46M): Bob and Patricia each took around 40 turns rescaling the hive, the pile and the bucket. Plan-usage % per call is in `_meta/agent-runs.csv`.
