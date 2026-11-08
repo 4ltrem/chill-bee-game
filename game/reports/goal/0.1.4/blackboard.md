@@ -2068,73 +2068,6 @@ Next: **T12.1** (score 5.42: play-test fix; cost 0.58 (Quinn)).
 **Paused:** Budget guard: weekly usage is 26% with 9% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 1 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
 Run the same command again to resume.
 
-## Result
-
-Last invocation (2026-11-08T00:43:30-05:00): paused.
-
-Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/2026-11-08-goal-0.1.4/`
-
-| Call | Total processed | Final context | Turns | Duration |
-|---|---|---|---|---|
-| Patricia, H | 221,991 | — | 16 | 42 s |
-| Bob, C2 | 455,025 | — | 22 | 73 s |
-| Patricia, C2 | 533,260 | — | 33 | 695 s |
-| Bob, C2 fix 1 | 137,517 | — | 9 | 20 s |
-| Quinn, C2 fix 1 | 927,906 | — | 34 | 616 s |
-| Patricia, C2 fix 1 | 468,748 | — | 26 | 1831 s |
-| Bob, C2 fix 2 | 46,461 | — | 5 | 11 s |
-| Patricia, C2 fix 2 | 121,927 | — | 7 | 20 s |
-| Quinn, C2 fix 2 | 164,504 | — | 13 | 160 s |
-| Bob, C4 | 100,407 | — | 9 | 18 s |
-| Patricia, C7 | 491,165 | — | 24 | 1213 s |
-| Bob, C3 | 60,321 | — | 4 | 11 s |
-| Patricia, C3 | 106,099 | — | 11 | 22 s |
-| Bob, C3 fix 1 | 49,887 | — | 5 | 9 s |
-| Patricia, C3 fix 1 | 172,138 | — | 9 | 31 s |
-| Quinn, C3 fix 1 | 77,069 | — | 6 | 33 s |
-| Bob, C1 | 127,981 | — | 12 | 28 s |
-| Patricia, C1 | 227,009 | — | 17 | 231 s |
-| Patricia, C1 fix 1 | 30,183 | — | 2 | 6 s |
-| Bob, C1 fix 1 | 96,154 | — | 9 | 19 s |
-| Quinn, C1 fix 1 | 272,339 | — | 19 | 234 s |
-| Patricia, C6 | 154,687 | — | 12 | 568 s |
-| Quinn, T2.1, | 556,555 | — | 24 | 142 s |
-| Bob, T2.1, fix 1 | 92,164 | — | 6 | 13 s |
-| Patricia, T2.1, fix 1 | 244,554 | — | 14 | 1219 s |
-| Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
-| Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
-| Bob, C1 | 232,941 | 35,068 | 14 | 40 s |
-| Patricia, C1 | 59,101 | 29,934 | 2 | 4 s |
-| Bob, C8 | 58,280 | 16,486 | 6 | 13 s |
-| Patricia, C7 | 77,917 | 39,296 | 3 | 5 s |
-| Patricia, C7 fix 1 | 85,201 | 21,581 | 8 | 15 s |
-| Quinn, C7 fix 1 | 189,175 | 22,334 | 14 | 58 s |
-| Bob, C9 | 92,562 | 22,028 | 7 | 14 s |
-| Bob, C10 | 199,222 | 27,385 | 13 | 36 s |
-| Patricia, C10 | 73,577 | 37,182 | 2 | 5 s |
-| Bob, C5 | 699,505 | 56,503 | 38 | 110 s |
-| Patricia, C5 | 688,276 | 54,220 | 42 | 689 s |
-| Bob, C5 | 262,642 | 42,615 | 16 | 43 s |
-| Patricia, C5 | 94,439 | 23,051 | 10 | 608 s |
-| Bob, C5 fix 1 | 26,011 | 13,835 | 2 | 8 s |
-| Quinn, C5 fix 1 | 341,007 | 34,294 | 25 | 92 s |
-| Patricia, C5 fix 1 | 30,575 | 30,575 | 1 | 2 s |
-| Bob, C5 fix 2 | 38,012 | 13,626 | 3 | 8 s |
-| Quinn, C5 fix 2 | 110,717 | 21,051 | 6 | 19 s |
-| Patricia, C5 fix 2 | 114,867 | 30,552 | 4 | 10 s |
-| Patricia, C11 | 53,645 | 27,121 | 2 | 4 s |
-| Patricia, C12 | 101,180 | 19,379 | 11 | 19 s |
-| Patricia, C13 | 108,802 | 29,158 | 11 | 24 s |
-| Quinn, C13 fix 1 | 68,982 | 15,264 | 5 | 36 s |
-| Patricia, C13 fix 1 | 84,262 | 16,319 | 7 | 1096 s |
-| Quinn, T.1, T.2, T8.1 | 477,530 | 42,043 | 24 | 77 s |
-| Quinn, T.1, T.2, T8.1 fix 1 | 165,953 | 21,616 | 12 | 28 s |
-| Quinn, T10.1 | 887,316 | 67,975 | 39 | 135 s |
-| Patricia, T10.1 fix 1 | 58,303 | 17,199 | 5 | 10 s |
-| Bob, T10.1 fix 1 | 247,235 | 37,131 | 17 | 48 s |
-| Quinn, T11.1 | 486,034 | 40,439 | 28 | 62 s |
-| **Total** | **12,323,477** | | | |
-
 ## Resumed 2026-11-08
 
 Command: `goal_agent.py 0.1.4-ui-placement.md` (the run had stopped: `paused`).
@@ -2259,3 +2192,188 @@ No other folder or spec problem.
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `mutations`: PASS
+- Green: checkpoint `d9533a5` on `milestone/0.1.4`
+
+## Pass 28: scan (2026-11-08T01:06:21-05:00)
+
+Unit results from `game/reports/_runs/20261108-010252/unit.log`. 20 of 32 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 32)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C12 No spinning in the farm view without the motor | change | Patricia | done | ✓ test t_no_motor_in_phase_1, ✓ test t_no_spin_farm_view_without_motor, ✓ test t_no_spin_after_pour_farm_view, ✓ test t_spin_after_pour_farm_view_with_motor, ✓ test t_no_spin_first_zoom_without_motor, ✓ ledger dbbca01 |
+| T12.1 item 12: with no motor owned, the centrifuge never spins whi | test | Quinn | done | ✓ test t_no_motor_in_phase_1, ✓ test t_no_spin_farm_view_without_motor, ✓ test t_no_spin_after_pour_farm_view, ✓ test t_spin_after_pour_farm_view_with_motor, ✓ test t_no_spin_first_zoom_without_motor, ✓ ledger d9533a5 |
+| T.3 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 16/16 present: ✓ test t_hud_no_overlap_no_cutoff, ✓ test t_buttons_at_anchor_or_clamped, ✓ test t_buttons_clamped_when_anchor_off_screen, ✓ test t_harvest_hidden_at_second_stop, ✓ test t_spin_placed_by_scene, ✓ test t_back_fixed_top_right, ✓ test t_speed_ ... |
+
+No score changed.
+
+Next: **T13.1** (score 5.45: play-test fix; cost 0.55 (Quinn)).
+
+### Step: T13.1 (2026-11-08T01:06:21-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.1.4/briefs/T13.1-quinn.md` (1740 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (436,447 tokens, 20 turns, 52 s):
+
+I couldn't run the test, so none of it is proven. The sandbox blocks the `CB_ONLY=… CB_TIME_SCALE=6` environment prefix on the run command. I'm stopping here rather than working around it.
+
+**Files changed**
+- `game/tests/test_ui_placement.gd`: added `t_centrifuge_label_on_centrifuge`, `_label_violations` and `_measure_label`.
+- `game/tests/run_tests.gd`: registered the test under the `# 0.1.4 item 13 (written from …)` comment.
+- `game/tests/mutations.json`: added two mutations, both expecting that test to fail. One pins the label back to screen (24, 245). The other removes the move off Spin and Back.
+
+**Node names used**
+- `CentrifugeLabel`, `CentrifugeAnchor`, `CentrifugeIcon`, `BackButton`, `Centrifuge`.
+
+**What the test does**
+It cranks at the second stop, measures the label, taps Back, then measures again on the farm view. It reads `button_screen_margin` from the config. It also runs self-checks to show the helper can fail.
+
+**Open questions**
+1. Please run `CB_ONLY=t_centrifuge_label_on_centrifuge CB_TIME_SCALE=6 python -I _tools/godot_run.py unit`, or approve that prefix. Then run `mutate.py` through Rex.
+2. I assumed the crank survives a Back tap to the farm view. If it doesn't, the farm-view half of the test will fail on that.
+3. A label moved clear of Spin or Back may sit farther than the margin from the anchor point. I accept that, as the spec does for the buttons.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      149 passed, 1 failed  (exit 1, 224 noise lines dropped)  game/reports/_runs/20261108-010715/unit.log
+    FAIL  t_centrifuge_label_on_centrifuge  farm view: Spin or Back is on screen to keep clear of (0)  (2923 ms)
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T13.1-fix1-patricia.md` (1078 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (60,949 tokens, 4 turns, 11 s):
+
+The failure is in the test, which is outside `scripts/`, so I changed nothing.
+
+The failing line is `test_ui_placement.gd:286`: `ck(blockers.size() >= 1, "... Spin or Back is on screen to keep clear of ...")`. On the farm view while the crank runs, the code hides both blockers:
+- Spin is shown only when `_centrifuge.state == FULL` (`main.gd:145`), and the crank has already moved it to CRANKING.
+- Back is shown only in the zoomed views.
+
+So no blockers are on screen, and the label has nothing to avoid. `farm_ui.gd:171` already skips hidden blockers. The second stop passes because Back is visible there.
+
+Quinn should change that check so it is required only at the second stop. In the farm view it should accept zero blockers and still run the position check. A farm-view blocker check that can pass only when something is on screen proves nothing.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      149 passed, 1 failed  (exit 1, 224 noise lines dropped)  game/reports/_runs/20261108-011036/unit.log
+    FAIL  t_centrifuge_label_on_centrifuge  farm view: Spin or Back is on screen to keep clear of (0)  (2946 ms)
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.1.4/briefs/T13.1-fix2-patricia.md` (1078 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (31,013 tokens, 2 turns, 6 s):
+
+The failure is in the test, not in `scripts/`, so I changed nothing. This is the same diagnosis as fix round 1.
+
+The failing check is at `game/tests/test_ui_placement.gd:286`. It requires at least one blocker (Spin or Back) on screen in the farm view. The code correctly shows neither there:
+- Spin appears only when the centrifuge is FULL (`main.gd:145`). The crank has already moved it to CRANKING.
+- Back appears only in the zoomed views.
+
+`farm_ui.gd:171` already skips hidden blockers, so there is nothing for the label to avoid.
+
+Quinn should require the blocker only at the second stop. In the farm view, zero blockers should be accepted and the position check should still run.
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      149 passed, 1 failed  (exit 1, 224 noise lines dropped)  game/reports/_runs/20261108-011355/unit.log
+    FAIL  t_centrifuge_label_on_centrifuge  farm view: Spin or Back is on screen to keep clear of (0)  (2966 ms)
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T13.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.1.4-ui-placement.md --accept T13.1 --note "<the change>"`. Then rerun the same command to go on.
+
+## Result
+
+Last invocation (2026-11-08T01:17:09-05:00): waiting-designer.
+
+Transcripts: `_meta/sessions/runs/2026-11-07-goal-0.1.4/`, `_meta/sessions/runs/2026-11-08-goal-0.1.4/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 221,991 | — | 16 | 42 s |
+| Bob, C2 | 455,025 | — | 22 | 73 s |
+| Patricia, C2 | 533,260 | — | 33 | 695 s |
+| Bob, C2 fix 1 | 137,517 | — | 9 | 20 s |
+| Quinn, C2 fix 1 | 927,906 | — | 34 | 616 s |
+| Patricia, C2 fix 1 | 468,748 | — | 26 | 1831 s |
+| Bob, C2 fix 2 | 46,461 | — | 5 | 11 s |
+| Patricia, C2 fix 2 | 121,927 | — | 7 | 20 s |
+| Quinn, C2 fix 2 | 164,504 | — | 13 | 160 s |
+| Bob, C4 | 100,407 | — | 9 | 18 s |
+| Patricia, C7 | 491,165 | — | 24 | 1213 s |
+| Bob, C3 | 60,321 | — | 4 | 11 s |
+| Patricia, C3 | 106,099 | — | 11 | 22 s |
+| Bob, C3 fix 1 | 49,887 | — | 5 | 9 s |
+| Patricia, C3 fix 1 | 172,138 | — | 9 | 31 s |
+| Quinn, C3 fix 1 | 77,069 | — | 6 | 33 s |
+| Bob, C1 | 127,981 | — | 12 | 28 s |
+| Patricia, C1 | 227,009 | — | 17 | 231 s |
+| Patricia, C1 fix 1 | 30,183 | — | 2 | 6 s |
+| Bob, C1 fix 1 | 96,154 | — | 9 | 19 s |
+| Quinn, C1 fix 1 | 272,339 | — | 19 | 234 s |
+| Patricia, C6 | 154,687 | — | 12 | 568 s |
+| Quinn, T2.1, | 556,555 | — | 24 | 142 s |
+| Bob, T2.1, fix 1 | 92,164 | — | 6 | 13 s |
+| Patricia, T2.1, fix 1 | 244,554 | — | 14 | 1219 s |
+| Bob, T2.1, fix 2 | 57,209 | — | 5 | 12 s |
+| Patricia, T2.1, fix 2 | 116,948 | — | 8 | 620 s |
+| Bob, C1 | 232,941 | 35,068 | 14 | 40 s |
+| Patricia, C1 | 59,101 | 29,934 | 2 | 4 s |
+| Bob, C8 | 58,280 | 16,486 | 6 | 13 s |
+| Patricia, C7 | 77,917 | 39,296 | 3 | 5 s |
+| Patricia, C7 fix 1 | 85,201 | 21,581 | 8 | 15 s |
+| Quinn, C7 fix 1 | 189,175 | 22,334 | 14 | 58 s |
+| Bob, C9 | 92,562 | 22,028 | 7 | 14 s |
+| Bob, C10 | 199,222 | 27,385 | 13 | 36 s |
+| Patricia, C10 | 73,577 | 37,182 | 2 | 5 s |
+| Bob, C5 | 699,505 | 56,503 | 38 | 110 s |
+| Patricia, C5 | 688,276 | 54,220 | 42 | 689 s |
+| Bob, C5 | 262,642 | 42,615 | 16 | 43 s |
+| Patricia, C5 | 94,439 | 23,051 | 10 | 608 s |
+| Bob, C5 fix 1 | 26,011 | 13,835 | 2 | 8 s |
+| Quinn, C5 fix 1 | 341,007 | 34,294 | 25 | 92 s |
+| Patricia, C5 fix 1 | 30,575 | 30,575 | 1 | 2 s |
+| Bob, C5 fix 2 | 38,012 | 13,626 | 3 | 8 s |
+| Quinn, C5 fix 2 | 110,717 | 21,051 | 6 | 19 s |
+| Patricia, C5 fix 2 | 114,867 | 30,552 | 4 | 10 s |
+| Patricia, C11 | 53,645 | 27,121 | 2 | 4 s |
+| Patricia, C12 | 101,180 | 19,379 | 11 | 19 s |
+| Patricia, C13 | 108,802 | 29,158 | 11 | 24 s |
+| Quinn, C13 fix 1 | 68,982 | 15,264 | 5 | 36 s |
+| Patricia, C13 fix 1 | 84,262 | 16,319 | 7 | 1096 s |
+| Quinn, T.1, T.2, T8.1 | 477,530 | 42,043 | 24 | 77 s |
+| Quinn, T.1, T.2, T8.1 fix 1 | 165,953 | 21,616 | 12 | 28 s |
+| Quinn, T10.1 | 887,316 | 67,975 | 39 | 135 s |
+| Patricia, T10.1 fix 1 | 58,303 | 17,199 | 5 | 10 s |
+| Bob, T10.1 fix 1 | 247,235 | 37,131 | 17 | 48 s |
+| Quinn, T11.1 | 486,034 | 40,439 | 28 | 62 s |
+| Quinn, T12.1 | 546,215 | 53,233 | 31 | 86 s |
+| Quinn, T12.1 fix 1 | 162,037 | 25,923 | 11 | 43 s |
+| Quinn, T12.1 fix 2 | 87,109 | 16,180 | 7 | 16 s |
+| Quinn, T13.1 | 436,447 | 47,703 | 20 | 52 s |
+| Patricia, T13.1 fix 1 | 60,949 | 19,912 | 4 | 11 s |
+| Patricia, T13.1 fix 2 | 31,013 | 19,819 | 2 | 6 s |
+| **Total** | **13,647,247** | | | |
+
+## Resumed 2026-11-08
+
+Command: `goal_agent.py 0.1.4-ui-placement.md --accept T13.1 --note Spec line corrected: no farm-view case for CentrifugeLabel, since items 11-12 (designer-confirmed 2026-11-08) mean no cranking in the farm view in Phase 1. Orchestrator removed the farm-view half of t_centrifuge_label_on_centrifuge; the second-stop half passes.` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T13.1 (2026-11-08T01:18:32-05:00)
+
+- Change (orchestrator, Process 9): Spec line corrected: no farm-view case for CentrifugeLabel, since items 11-12 (designer-confirmed 2026-11-08) mean no cranking in the farm view in Phase 1. Orchestrator removed the farm-view half of t_centrifuge_label_on_centrifuge; the second-stop half passes.

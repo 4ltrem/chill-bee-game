@@ -1,8 +1,8 @@
 {
  "spec": "0.1.4-ui-placement.md",
  "version": "0.1.4",
- "at": "2026-11-08T00:53:30-05:00",
- "unit_log": "game/reports/_runs/20261108-004007/unit.log",
+ "at": "2026-11-08T01:18:26-05:00",
+ "unit_log": "game/reports/_runs/20261108-011753/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -43,19 +43,19 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -64,7 +64,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -81,7 +81,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -111,32 +111,32 @@
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -145,7 +145,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -162,19 +162,19 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -183,7 +183,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -199,19 +199,19 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -220,7 +220,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -313,7 +313,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "node",
@@ -323,14 +323,14 @@
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -339,7 +339,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -391,19 +391,19 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_combs_visible_in_hive",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_combs_fill_frame_and_hive_whole",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -412,7 +412,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -426,19 +426,19 @@
     11
    ],
    "depends": [],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_spin_from_farm_goes_to_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_from_first_zoom_goes_to_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -447,7 +447,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -463,6 +463,36 @@
    "depends": [],
    "status": "partial",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_no_motor_in_phase_1",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_farm_view_without_motor",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_after_pour_farm_view",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_after_pour_farm_view_with_motor",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_first_zoom_without_motor",
+     "ok": false,
+     "result": "not run"
+    },
     {
      "kind": "ledger",
      "name": "dbbca01",
@@ -484,7 +514,7 @@
     13
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
@@ -497,13 +527,19 @@
      "ok": true
     },
     {
+     "kind": "test",
+     "name": "t_centrifuge_label_on_centrifuge",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "b99657c",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -519,37 +555,37 @@
    "depends": [
     "C2"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -576,19 +612,19 @@
     "C3",
     "C8"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -613,37 +649,37 @@
    "depends": [
     "C2"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -672,19 +708,19 @@
     "C4",
     "C8"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -709,19 +745,19 @@
    "depends": [
     "C1"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     }
    ],
    "built": false,
@@ -798,19 +834,19 @@
    "depends": [
     "C8"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -835,19 +871,19 @@
    "depends": [
     "C1"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     }
    ],
    "built": false,
@@ -867,19 +903,19 @@
    "depends": [
     "C10"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_combs_visible_in_hive",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_combs_fill_frame_and_hive_whole",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -961,19 +997,19 @@
    "depends": [
     "C11"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_spin_from_farm_goes_to_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_from_first_zoom_goes_to_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -998,8 +1034,15 @@
    "depends": [
     "C13"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_centrifuge_label_on_centrifuge",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -1017,9 +1060,45 @@
    "depends": [
     "C12"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_no_motor_in_phase_1",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_farm_view_without_motor",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_after_pour_farm_view",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_after_pour_farm_view_with_motor",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_first_zoom_without_motor",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "ledger",
+     "name": "d9533a5",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1060,71 +1139,107 @@
     "C12",
     "C13"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hud_no_overlap_no_cutoff",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_at_anchor_or_clamped",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_buttons_clamped_when_anchor_off_screen",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_harvest_hidden_at_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_placed_by_scene",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_back_fixed_top_right",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_speed_tag_below_labels",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_combs_visible_in_hive",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_combs_fill_frame_and_hive_whole",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_from_farm_goes_to_second_stop",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_spin_from_first_zoom_goes_to_second_stop",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_motor_in_phase_1",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_farm_view_without_motor",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_after_pour_farm_view",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_after_pour_farm_view_with_motor",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_first_zoom_without_motor",
+     "ok": false,
+     "result": "not run"
+    },
+    {
+     "kind": "test",
+     "name": "t_centrifuge_label_on_centrifuge",
      "ok": true,
      "result": "PASS"
     }
@@ -1137,89 +1252,188 @@
  },
  "order": [
   {
-   "id": "T12.1",
-   "score": 5.45,
+   "id": "T.1",
+   "score": 5.51,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.55,
+    "cost": 0.49,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
-   "id": "T13.1",
-   "score": 5.45,
+   "id": "T.2",
+   "score": 5.51,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.55,
+    "cost": 0.49,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 5.51,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.49,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.2",
+   "score": 5.51,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.49,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T10.1",
+   "score": 5.51,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.49,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T11.1",
+   "score": 5.51,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.49,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T12.1",
+   "score": 5.51,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.49,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 5.51,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.49,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.2",
+   "score": 5.51,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.49,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T7.1",
-   "score": 5.45,
+   "score": 5.51,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.55,
+    "cost": 0.49,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T7.2",
-   "score": 5.45,
+   "score": 5.51,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.55,
+    "cost": 0.49,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T9.1",
-   "score": 5.45,
+   "score": 5.51,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.55,
+    "cost": 0.49,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T5.1",
-   "score": 3.45,
+   "score": 3.51,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.55,
+    "cost": 0.49,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T5.2",
-   "score": 3.45,
+   "score": 3.51,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.55,
+    "cost": 0.49,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T8.1",
+   "score": 3.51,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.49,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.3",
+   "score": 1.51,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.49,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T6.1",
-   "score": 1.45,
+   "score": 1.51,
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.55,
+    "cost": 0.49,
     "ready": 1,
     "blocked_by": []
    }

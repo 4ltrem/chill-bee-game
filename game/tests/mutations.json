@@ -693,5 +693,25 @@
    "t_spin_after_pour_farm_view_with_motor"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 13 CentrifugeLabel is pinned to screen (24, 245) again",
+  "file": "scripts/farm_ui.gd",
+  "find": "\t_centrifuge_label.global_position = pos\n",
+  "replace": "\t_centrifuge_label.global_position = Vector2(24.0, 245.0)\n",
+  "expect": [
+   "t_centrifuge_label_on_centrifuge"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 13 CentrifugeLabel is not moved off Spin and Back",
+  "file": "scripts/farm_ui.gd",
+  "find": "\t\tif not Rect2(pos, sz).intersects(r):\n\t\t\tcontinue\n",
+  "replace": "\t\tcontinue\n",
+  "expect": [
+   "t_centrifuge_label_on_centrifuge"
+  ],
+  "suite": "unit"
  }
 ]

@@ -95,6 +95,8 @@ func _run() -> void:
 					# 0.1.4 item 12 (written from game/specs/0.1.4-ui-placement.md before the code)
 					"t_no_motor_in_phase_1", "t_no_spin_farm_view_without_motor", "t_no_spin_after_pour_farm_view",
 					"t_spin_after_pour_farm_view_with_motor", "t_no_spin_first_zoom_without_motor",
+					# 0.1.4 item 13 (written from game/specs/0.1.4-ui-placement.md before the code)
+					"t_centrifuge_label_on_centrifuge",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

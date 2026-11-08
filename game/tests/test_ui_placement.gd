@@ -241,6 +241,76 @@ func t_spin_placed_by_scene() -> void:
 	_fin()
 
 
+# ---- 0.1.4 item 13 (written from game/specs/0.1.4-ui-placement.md, not from the code) ----
+# T13.1: while cranking, CentrifugeLabel's rect is within button_screen_margin of the centrifuge anchor's projected point (or clamped
+# inside the screen, or moved clear because the point-based spot meets Spin/Back), and overlaps neither Spin nor Back; farm view and second stop.
+
+## Strings naming what is wrong with `lab` (the label rect) for anchor projection `pt`; `blockers` is [[name, Rect2], ...] (Spin, Back).
+func _label_violations(lab: Rect2, pt: Vector2, blockers: Array, view: Rect2, mg: float) -> Array:
+	var bad: Array = []
+	for b in blockers:
+		if lab.intersects(b[1] as Rect2):
+			bad.append("the label %s overlaps %s %s" % [str(lab), b[0], str(b[1])])
+	if not view.grow(-(mg - 1.0)).encloses(lab):
+		bad.append("the label %s is not inside the screen with the %d px margin" % [str(lab), int(mg)])
+	if not lab.grow(mg).has_point(pt):
+		var want := Rect2(Vector2(pt.x - lab.size.x * 0.5, pt.y - lab.size.y), lab.size)
+		var clamped: Rect2 = Rect2(want.position.clamp(Vector2(mg, mg), Vector2(maxf(view.size.x - mg - lab.size.x, mg), maxf(view.size.y - mg - lab.size.y, mg))), lab.size)
+		var moved_clear: bool = false
+		for b in blockers:
+			if clamped.intersects(b[1] as Rect2):
+				moved_clear = true
+		if not moved_clear and (lab.position - clamped.position).length() > mg:
+			bad.append("the label %s is far from the anchor point %s (wanted spot %s) and was not clamped or moved clear" % [str(lab), str(pt), str(clamped)])
+	return bad
+
+
+func _measure_label(m: Node, p: Dictionary, label: String) -> void:
+	await _frames(4)
+	var lab: Label = m.find_child("CentrifugeLabel", true, false) as Label
+	var cen: Node = p["Centrifuge"]
+	eq(cen.get("state"), _st(cen, "CRANKING"), "%s: the centrifuge is cranking" % label)
+	ck(lab != null and lab.is_visible_in_tree() and lab.text.strip_edges() != "", "%s: CentrifugeLabel shows text while cranking" % label)
+	if lab == null or not lab.is_visible_in_tree():
+		return
+	var anchor: Node3D = cen.find_child("CentrifugeAnchor", true, false) as Node3D
+	ck(anchor != null, "%s: the centrifuge has a CentrifugeAnchor" % label)
+	if anchor == null:
+		return
+	var pt: Vector2 = _cam().unproject_position(anchor.global_position)
+	var blockers: Array = []
+	for nm in ["CentrifugeIcon", "BackButton"]:
+		var c: Control = m.find_child(nm, true, false) as Control
+		if c != null and c.is_visible_in_tree():
+			blockers.append([nm, c.get_global_rect()])
+	ck(blockers.size() >= 1, "%s: Spin or Back is on screen to keep clear of (%d)" % [label, blockers.size()])
+	eq(_label_violations(lab.get_global_rect(), pt, blockers, _vp(), float(cv("button_screen_margin"))), [], "%s: CentrifugeLabel sits at the anchor's point, inside the screen, clear of Spin and Back" % label)
+
+
+func t_centrifuge_label_on_centrifuge() -> void:
+	var mg: float = float(cv("button_screen_margin"))
+	var view := Rect2(Vector2.ZERO, Vector2(1080.0, 1920.0))
+	var bl: Array = [["CentrifugeIcon", Rect2(100, 100, 50, 50)]]
+	ck(_label_violations(Rect2(500, 900, 200, 60), Vector2(600, 960), [], view, mg).is_empty(), "self-check: a label on its point is fine")
+	ck(not _label_violations(Rect2(120, 120, 20, 20), Vector2(130, 130), bl, view, mg).is_empty(), "self-check: a label over Spin is reported")
+	ck(not _label_violations(Rect2(500, 900, 200, 60), Vector2(100, 1500), [], view, mg).is_empty(), "self-check: a label far from its point (not clamped) is reported")
+	ck(not _label_violations(Rect2(0, 900, 200, 60), Vector2(0, 960), [], view, mg).is_empty(), "self-check: a label cut off by the screen edge is reported")
+	var s: Dictionary = await _second_stop_with_capped()
+	if s.is_empty():
+		_fin()
+		return
+	var m: Node = s["m"]
+	var p: Dictionary = s["p"]
+	var spin: Control = p["CentrifugeIcon"]
+	ck(_shown(spin), "Spin shows at the second stop")
+	await fi.tap_at(spin.get_global_rect().get_center())
+	await _wait(0.6)
+	await _measure_label(m, p, "second stop")
+	# No farm-view case (orchestrator, 2026-11-08): items 11 and 12 mean the centrifuge never cranks in the farm view in Phase 1,
+	# so CentrifugeLabel only shows at the second stop. T12.1 covers "no cranking in the farm view".
+	_fin()
+
+
 # ---- 0.1.4 items 3, 4, 8 (written from game/specs/0.1.4-ui-placement.md and 0.1.4-node-handoff.md, not from the code) ----
 # T.1: Back has the same screen rect in the first zoom and at the second stop. T.2: Back is in the top-right quadrant; the speed tag sits
 # below the money and bees labels without touching them. T8.1: HintLabel lies wholly below Back and does not touch it, in both views.
