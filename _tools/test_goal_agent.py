@@ -306,14 +306,28 @@ class Loop(unittest.TestCase):
             return fake(c, env, timeout)
         ga.run_cmd = cmd
         self.check_codes = [0, 0, 0, 1, 0, 0, 0, 0]                         # x1 red in round 0, green after the fix
-        self.logs = ["PASS  t_meter_fill  (5 ms)\n", "FAIL  t_meter_wall_clock  lid sinks 0.015  (5 ms)\n",
-                     "PASS  t_meter_fill  (5 ms)\n", "PASS  t_meter_wall_clock  (5 ms)\n"]
+        only = "CB_ONLY: running 1 test(s): [t_meter_wall_clock]\n"
+        self.logs = ["PASS  t_meter_fill  (5 ms)\n", only + "FAIL  t_meter_wall_clock  lid sinks 0.015  (5 ms)\n",
+                     "PASS  t_meter_fill  (5 ms)\n", only + "PASS  t_meter_wall_clock  (5 ms)\n"]
         code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
         self.assertIn({"CB_ONLY": "t_meter_wall_clock", "CB_TIME_SCALE": "1"}, envs)
         self.assertIn("Check `x1 tests` (t_meter_wall_clock): FAIL", board)
         self.assertIn("Check `fail-first`: PASS (T3.1 shown failing)", board)
         self.assertEqual(sorted(a for a, p in self.calls if "fix round 1" in p), [ga.BUILDER, ga.PROGRAMMER])
         self.assertIn("Check `x1 tests` (t_meter_wall_clock): PASS", board)
+        self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
+        newest = ga.newest_unit_log(self.tmp / "game")                      # the scan skips the x1 check's log
+        self.assertNotIn("CB_ONLY", newest.read_text(encoding="utf-8"))
+        self.assertIn("CB_ONLY", ga.newest_unit_log(self.tmp / "game", partial=True).read_text(encoding="utf-8"))
+
+    def test_tests_already_written_skip_quinn_and_go_to_the_code_owners(self):
+        self.fail_first_fixture()                                           # test_frames.gd marks T3.1 already
+        self.check_codes = [0, 1, 0, 0, 0]
+        self.logs = ["FAIL  t_frames_scale  frames 1.0, expected 2.0  (5 ms)\n", "PASS  t_frames_scale  (5 ms)\n"]
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        self.assertIn("Quinn's step skipped", board)
+        self.assertNotIn(ga.QA, [a for a, _ in self.calls])
+        self.assertEqual(sorted(a for a, _ in self.calls), [ga.BUILDER, ga.PROGRAMMER])
         self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
 
     def test_a_script_stop_is_not_the_bug_showing(self):

@@ -289,9 +289,14 @@ def parse_spec(path):
 
 
 # ---------------------------------------------------------------------------------------------- the scan
-def newest_unit_log(game):
+def newest_unit_log(game, partial=False):
+    """The newest full-suite unit log. A CB_ONLY run's log holds a few tests only (Quinn's own runs, the x1 check),
+    so the scan skips it; the x1 check asks for it with partial=True."""
     logs = sorted((game / "reports" / "_runs").glob("*/unit.log"), key=lambda p: p.parent.name)
-    return logs[-1] if logs else None
+    for log in reversed(logs):
+        if partial or "CB_ONLY: running" not in log.read_text(encoding="utf-8", errors="replace"):
+            return log
+    return None
 
 
 def scan(game, ledger_path=None):
@@ -740,9 +745,9 @@ def marked_tests(goal_id):
     return out
 
 
-def red_tests():
+def red_tests(partial=False):
     """{test: True} for each test the newest unit log shows failing on a real check, not only a script stop."""
-    log, out = newest_unit_log(ROOT / "game"), {}
+    log, out = newest_unit_log(ROOT / "game", partial), {}
     for line in (log.read_text(encoding="utf-8", errors="replace").splitlines() if log else []):
         m = re.match(r"^FAIL\s+(t_\w+)\s+(.*?)(?:\s+\(\d+ ms\))?$", line)
         if m:
@@ -822,7 +827,12 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     before, code_before = tree_state(), tree_state(CODE_PATHS)
     needs_red = [b["id"] for b in batch if b["kind"] == "test" and FAIL_FIRST.search(b["text"])]
     seen_red = set()
-    if not call_agents(plan, board, usage, run, ids):
+    lines = [b for b in batch if b["kind"] == "test" and not re.search(r"\bmutations?\b", b["text"], re.I)]
+    written = goal["kind"] == "test" and lines and all(marked_tests(b["id"]) for b in lines)
+    if written:   # Quinn's tests exist (marked `# goal <ID>`): go straight to the checks; a red test goes to the code
+        say(board, "- Quinn's step skipped: every line already has its marked test ("   # owners (0.1.4 T14.4/T14.5:
+                   + ", ".join(f"{b['id']}: {', '.join(marked_tests(b['id']))}" for b in lines) + ")\n")   # ~800k saved)
+    elif not call_agents(plan, board, usage, run, ids):
         return "paused"
     rounds = MAX_FIX_ROUNDS + (1 if needs_red else 0)   # one round may go to Quinn alone, to reproduce the bug
     for rnd in range(rounds + 1):
@@ -845,7 +855,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                 code, out = run_cmd([sys.executable, "-I", "_tools/godot_run.py", "unit", "start"],
                                     env={"CB_ONLY": ",".join(x1), "CB_TIME_SCALE": "1"})
                 say(board, f"- Check `x1 tests` ({', '.join(x1)}): {'PASS' if code == 0 else f'FAIL (exit {code})'}\n")
-                red.update({t: r for t, r in red_tests().items() if t in x1})
+                red.update({t: r for t, r in red_tests(partial=True).items() if t in x1})
                 if code:
                     failed.append(("tests", summary_of(out)))
                     say(board, "\n```\n" + summary_of(out) + "\n```\n")
