@@ -91,6 +91,15 @@ python -I _tools/test_generate.py
 
 Token figures are *total processed*. Every run's full record is in `content/_runs/`; every agent call is in [_meta/agent-runs.md](_meta/agent-runs.md).
 
+## Does it sound like the game?
+
+Mostly yes, because nothing is written from a blank page. William reads the GDD's Story Premise & Onboarding, Aesthetic & Tone, Child Safety and Glossary sections, plus the ones the request touches, before every draft. Clara checks each line against those same sections. The text uses the game's own world, objects and words, not generic fantasy-farm filler:
+
+- **The game's own places and honeys.** Each biome intro names the hive and honey the GDD gives that biome: *"Your classic wooden Langstroth hive is ready and waiting"* (Sunny Meadow), *"cosy chalet hives"* (Alpine Valley), *"hanging hives that sway gently"* (Enchanted Grove), and the honeys *Wildflower Gold Honey*, *Frosted Fireweed Honey* and *Moonlight Nectar*. Clara's Tone & Glossary check confirmed each honey name against the Glossary and the biome table ([blackboard](content/_runs/biome-intros/blackboard.md)).
+- **The "playful, whimsical, and cozy" tone the GDD sets (Aesthetic & Tone).** Title cards like *"A tiny pocket world, a hive full of possibility, and a meadow just waiting to hum."* keep to the GDD's pocket-world premise, and Clara checked the register of every guide line.
+- **Fictional lore that fits the magic biomes.** *"Lantern bees carry a tiny ember of Moonlight Nectar inside their thorax, casting a warm amber glow…"* ties the invented species to the Enchanted Grove's honey and its glowing mushrooms. The real species, by contrast, say only what a cited source says.
+- **Where the designer still stepped in.** The onboarding script passed Clara, but its *"honey money"* line didn't sound right to the designer and was replaced in a revision run. The Bee Journal wording got the designer's corrections before approval. The critic keeps the text consistent with the GDD; the designer still has the final say on voice.
+
 ## What the critic caught
 
 - **Fictional Journal, round 1** ([blackboard](content/_runs/bee-journal-magic/blackboard.md)): two French errors. *"spores bioluminescent**s**"* (spore is feminine), and a French sentence that said *"the magic of pollination"* where the English said *"the grove's magic"*. Round 2's diff changed only that paragraph, and Clara passed it.
