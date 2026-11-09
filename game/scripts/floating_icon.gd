@@ -29,6 +29,13 @@ var _last_mode: int = -1
 var _last_px: int = -1
 var _anchor_screen: Vector2 = Vector2.ZERO
 var _anchor_ok: bool = false
+## 0.1.4 item 22: per-view values main.gd sets (Spin only): the drawn size (-1 = config.icon_visual_px) and extra px down.
+var view_visual_px: int = -1:
+	set(value):
+		if value != view_visual_px and _shape != null:
+			_shape.queue_redraw()
+		view_visual_px = value
+var view_offset_y: float = 0.0
 
 
 func _ready() -> void:
@@ -51,7 +58,8 @@ func _ready() -> void:
 
 ## The visible shape's size: the Button's size minus (120 - icon_visual_px) in each dimension, never below 1.
 func visible_size() -> Vector2:
-	var shrink: float = maxf(MIN_TOUCH.x - float(config.icon_visual_px), 0.0)
+	var px: int = view_visual_px if view_visual_px >= 0 else config.icon_visual_px
+	var shrink: float = maxf(MIN_TOUCH.x - float(px), 0.0)
 	return Vector2(maxf(size.x - shrink, 1.0), maxf(size.y - shrink, 1.0))
 
 
@@ -111,7 +119,7 @@ func place() -> bool:
 	var screen: Vector2 = camera.unproject_position(_anchor.global_position)
 	_anchor_screen = screen
 	_anchor_ok = true
-	var want: Vector2 = screen - size * 0.5 + screen_offset + Vector2(0.0, _config_offset())
+	var want: Vector2 = screen - size * 0.5 + screen_offset + Vector2(0.0, _config_offset() + view_offset_y)
 	global_position = _clamp_and_nudge(want)
 	return true
 

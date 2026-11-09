@@ -121,6 +121,10 @@ func _process(delta: float) -> void:
 	advance(delta)
 	if _fork_icon != null:
 		_fork_icon.disabled = not fork_available()   # the hive fills between state changes
+	if _centrifuge_icon != null:   # 0.1.4 item 22: Spin's per-view size (farm view) and offset (first zoom), live in Dev mode
+		var cfg: GameConfig = Economy.config
+		_centrifuge_icon.view_visual_px = cfg.spin_farm_visual_px if zoom == Zoom.NONE and not _at_second_stop else -1
+		_centrifuge_icon.view_offset_y = cfg.spin_zoom_offset if zoom != Zoom.NONE else 0.0
 
 
 # --- the state table: which floating icons show right now ---

@@ -22,6 +22,7 @@ const MOMENTS: Array = [
 	{"name": "4-zoom-scraping", "caption": "rack risen, a row scraped, cells flying to the bucket (slowed 0.1x for the shot)", "step": "_step_zoom_scraping"},
 	{"name": "5-bucket-full", "caption": "bucket full during the zoom", "step": "_step_bucket_full"},
 	{"name": "6-centrifuge-stop", "caption": "the centrifuge stop, Spin visible", "step": "_step_centrifuge_stop"},
+	{"name": "6b-farm-spin", "caption": "Back from the centrifuge stop with a full bucket: the farm view, Spin visible", "step": "_step_farm_spin"},
 	{"name": "7-bottling", "caption": "bottling: jars filling at the spigot (truck capacity set to 4 for shot 8)", "step": "_step_bottling"},
 	{"name": "8-sell", "caption": "crate and truck, Sell visible", "step": "_step_sell"},
 	{"name": "9-dev-speed-x5", "caption": "Dev mode open, speed x5 chosen, tag at the top-left", "step": "_step_dev_speed"},
@@ -268,6 +269,18 @@ func _step_centrifuge_stop() -> Dictionary:
 	await _gwait(1.0)
 	var cap6: String = "the second camera stop after Back (centrifuge, crate, truck), Spin visible" if has_second_stop else "no second stop in this version: the farm view after Back, Spin visible"
 	return {"caption": cap6, "expect": ["CentrifugeIcon"]}
+
+
+## 0.1.4 item 22: Spin in the farm view (full bucket, Back from the second stop). Step 7's Spin tap pans back to the second stop.
+func _step_farm_spin() -> Dictionary:
+	if not has_second_stop:
+		return {"missing": "no second stop in this version: shot 6 is already the farm view"}
+	await fi.click_ctl(main.find_child("BackButton", true, false) as Control)
+	await _until(func() -> bool: return not bool(main.call("at_second_stop")), 5.0)
+	await _gwait(float(cfg.get("camera_pan_seconds")) + 1.0)
+	if not _visible("CentrifugeIcon"):
+		return {"missing": "Spin did not show in the farm view"}
+	return {"expect": ["CentrifugeIcon"]}
 
 
 func _step_bottling() -> Dictionary:

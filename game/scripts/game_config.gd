@@ -72,6 +72,8 @@ extends Resource
 @export var sell_anchor_offset: float = -40.0          # same, for Sell at the SellAnchor
 @export var button_gap_px: float = 8.0                 # PLACEHOLDER (0.1.4 item 20): px Spin keeps clear below Harvest when it yields downward
 @export var button_screen_margin: float = 16.0        # spec item 2: px kept clear between an anchored button and the screen edge
+@export var spin_farm_visual_px: int = 60             # 0.1.4 item 22 (Design Votes spin-r1: C): Spin's drawn size in the farm view only; touch area stays 120
+@export var spin_zoom_offset: float = 80.0            # 0.1.4 item 22 (Design Votes spin-r1: C): extra px Spin sits lower in the first zoom only
 
 const DEFAULT_PATH := "res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read

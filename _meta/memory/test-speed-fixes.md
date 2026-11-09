@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 4297b6fb-4f37-489e-a81b-e6e820fcf5da
-  modified: 2026-11-08T03:48:53.742Z
+  modified: 2026-11-09T03:34:24.056Z
 ---
 
 On 2026-11-05 the designer found test runs slow and Quinn's latest revision took over an hour, most of it waiting on `_tools/mutate.py`. The tests do NOT read .md files (only comments name the specs); values already come from `scripts/default_config.tres`. The time is real-time gameplay: animations, 3 s/jar bottling, `_until` timeouts up to 40 s.
@@ -22,6 +22,8 @@ Fixes (1 and 2 DONE 2026-11-05, commit f5a0cbd: mutate run ~1 h -> ~36 s; 3 stil
 **2026-11-06, done; designer: "anything that needs to be tested in real time I can do, I do not want to wait an hour for tests".** Standard checkpoint run (Rex): `CB_TIME_SCALE=6 CB_SKIP_X1=1 python -I _tools/godot_run.py all` plus `python -I _tools/mutate.py --since <last checkpoint>` (only new or changed mutations; ~1 min for 11). The 10 X1_TESTS (real-time) are played by the designer instead. The hour-long mutate run came from a worktree holding an old mutate.py without per-mutation CB_ONLY: a milestone worktree must take `_tools/` fixes from its parent branch (`git checkout milestone/m2 -- _tools/<file>`).
 
 **2026-11-08, designer approved (backlog, after the 0.1.4 goal run): parallel test runs** ("why arent the tests running in parallel like multiple game windows"). Today `godot_run.py` runs suites one after another (line 186) and `mutate.py` runs mutations one at a time in one copy. To run them in parallel: give each windowed suite its own `--position`, give each run its own `user://` folder (saves and recordings collide; T6.1 checks recordings), give each parallel mutation its own game copy, and keep real-time/FPS-sensitive suites alone. The gain is modest now that mutations run only their `expect` tests (~1 min): mainly the 6–7 min `all` run. Don't change these scripts mid goal-agent run (Quinn's lines call them).
+
+**2026-11-08, missed:** the orchestrator sent Rex plain `godot_run.py unit start` three times (15 min each) instead of the fast run; designer asked why tests take 15 min and said yes to using time_scale + CB_ONLY. Every Rex brief names the env vars: `CB_ONLY=<tests>` while iterating, `CB_TIME_SCALE=6 CB_SKIP_X1=1 ... all` at checkpoints.
 
 **Why:** agent runs block on the tests; see [[cost-rules]] (godot_run/mutate were cost cuts).
 **How to apply:** start tomorrow with 1 and 2 (tool changes); test with `python -I _tools/test_generate.py` and one `mutate.py` run.

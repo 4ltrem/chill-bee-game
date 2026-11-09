@@ -45,6 +45,9 @@ func _icon_target(ic: FloatingIcon) -> Vector2:
 	var a: Node3D = ic.get_node(ic.anchor_path) as Node3D
 	var key: String = FloatingIcon.OFFSET_KEYS.get(String(ic.name), "")
 	var off: float = float(cv(key)) if key != "" else 0.0
+	# 0.1.4 item 22: the one per-view exception: Spin sits spin_zoom_offset px lower in the first zoom (main.zoom != NONE)
+	if ic.name == &"CentrifugeIcon" and ic.owner != null and int(ic.owner.get("zoom")) != 0:
+		off += float(cv("spin_zoom_offset"))
 	return _cam().unproject_position(a.global_position) + ic.screen_offset + Vector2(0.0, off)
 
 

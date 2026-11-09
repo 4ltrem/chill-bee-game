@@ -69,6 +69,10 @@ func t_crank_pauses_on_back_and_resumes_on_spin() -> void:
 	eq(int(cen.get("turns_counted")), progress, "a hold in the farm view counts no turn")
 	# Spin shows while the crank is paused
 	ck(_shown(spin), "Spin shows in the farm view while a crank is paused")
+	# item 22: in the farm view Spin is drawn at spin_farm_visual_px, its touch rect stays at least 120 x 120
+	var vs: Vector2 = spin.call("visible_size")
+	eq(int(round(vs.x)), int(cv("spin_farm_visual_px")) + int(spin.size.x) - 120, "item 22: Spin's drawn size in the farm view is spin_farm_visual_px (%s)" % str(vs))
+	ck(spin.size.x >= 120.0 and spin.size.y >= 120.0, "item 22: Spin's touch rect stays at least 120 x 120 (%s)" % str(spin.size))
 	# tapping it returns to the second stop, where turns count again
 	await fi.tap_at(spin.get_global_rect().get_center())
 	var back: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01 and bool(m.call("at_second_stop")), float(cv("camera_pan_seconds")) + _zoom_settle() + float(cv("zoom_seconds")) + 4.0)
@@ -77,6 +81,8 @@ func t_crank_pauses_on_back_and_resumes_on_spin() -> void:
 	eq(cen.get("state"), _st(cen, "CRANKING"), "the crank is still the same crank: CRANKING at the second stop")
 	eq(int(cen.get("turns_counted")), progress, "resuming kept the progress (no turn lost or added by the pan)")
 	ck(lab != null and lab.is_visible_in_tree(), "the centrifuge text shows again at the second stop")
+	var vs2: Vector2 = spin.call("visible_size")
+	eq(int(round(vs2.x)), int(cv("icon_visual_px")) + int(spin.size.x) - 120, "item 22: at the second stop Spin is drawn at icon_visual_px again (%s)" % str(vs2))
 	await _wait(_tap_gap())
 	await _tap_free(m)
 	eq(int(cen.get("turns_counted")), progress + 1, "at the second stop again a real tap counts a turn from where it stopped")

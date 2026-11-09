@@ -12,7 +12,7 @@
 - [Cost rules](cost-rules.md) — 9 approved token cuts: godot_run/build/mutate scripts, split tests, sliced briefs, 150-word replies, fresh session per milestone
 - [Edit lines only](edit-lines-only.md) — change only the needed lines with Edit; no whole-file rewrite scripts
 - [itch upload rule](itch-upload-rule.md) — itch only at a new milestone number (0.2.0, 0.3.0), or when the build is an assignment demo (0.1.4 = A5)
-- [Test speed fixes](test-speed-fixes.md) — mutate.py CB_ONLY + progress lines done 11/5 (D89-90); left: time_scale speed-up via Quinn, budget guard threshold
+- [Test speed fixes](test-speed-fixes.md) — always brief Rex with CB_ONLY=<tests> (iterating) or CB_TIME_SCALE=6 CB_SKIP_X1=1 … all (checkpoint); plain runs take 15 min
 - [One folder rule](one-folder-rule.md) — main folder on the milestone branch; worktree only for parallel work, removed when merged
 - [Commit to main](commit-to-main.md) — worktree inside the repo, `-c core.hooksPath=.githooks`, push with GCM_INTERACTIVE=never
 - [Scripted shots](scripted-shots.md) — same moments = `_tools/ui_shots.py`; agent only when a new screen/phase/menu is added; gradual animations shot at several points
