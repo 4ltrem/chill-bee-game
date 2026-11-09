@@ -5,12 +5,12 @@ metadata:
   node_type: memory
   type: project
   originSessionId: f6f4c6c0-43ee-4483-9665-cc6335d16443
-  modified: 2026-11-09T19:30:34.084Z
+  modified: 2026-11-09T19:46:01.699Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
 
-**Setup:** main folder on `milestone/0.2`, branched from `origin/main` `6e22681` (local `main` is stale at `ad1cae9`; fast-forward it before the next merge). The 2026-11-09 work is committed there as `dbd1c3b`. End-of-day for 2026-11-09 has NOT run. No worktrees. Terry's `first-automation-values` is applied to the GDD (`3436b67`; designer: truck-only scope, Gearing doesn't speed bottling, spigot upgrades later, Heated +4%, Auto-Sell before scraper). `game/specs/0.2-first-automation.md` is written, **status proposed**, with 4 open questions at the bottom; once the designer approves it, the `/goal` + `goal_agent.py` build runs **in a separate session** (designer, 2026-11-09), not this one.
+**Setup:** main folder on `milestone/0.2`, branched from `origin/main` `6e22681` (local `main` is stale at `ad1cae9`; fast-forward it before the next merge). The 2026-11-09 work is committed there as `dbd1c3b`. End-of-day for 2026-11-09 has NOT run. No worktrees. Terry's `first-automation-values` is applied to the GDD (`3436b67`; designer: truck-only scope, Gearing doesn't speed bottling, spigot upgrades later, Heated +4%, Auto-Sell before scraper). `game/specs/0.2-first-automation.md` is written, **status proposed**, with 4 open questions at the bottom; questions answered. 0.2 runs in **two separate sessions** (designer, 2026-11-09): (1) models session: Milo makes 3–5 variants each of `fork-r1` (uncapping fork, heated blade pulses orange) and `gearing-r1` (extra gear at the crank-lid joint), Design Votes section per model, designer votes; (2) implementation session: write the picks into spec items 3–4, designer approves, `/goal` + `goal_agent.py` builds. Spec stays `proposed` until after the vote.
 
 **UI design (2026-11-09, this session):** read `UI_DESIGN.md` first ([[ui-design-prefs]]). Canvas https://claude.ai/artifact/ErtHvkxYUpDQHRM8RLRLca, 7 pages; proposal `proposals/design/ui-screens.md` (status proposed, Gerard's run was stopped, so the orchestrator wrote it). Decided by the designer: icons over the spin-c shots, no nav bar; Harvest = white fork icon with honey meter behind; icons bee/wrench/gear/green leaf; Royal Jelly = variant K (60°, crown drop 1.8, lift −2.6). Open: bottom slot A–D by play-test; palette/biome skins; K big-preview slider fix unconfirmed (L28); the proposal's 7 decisions. The UI work is not yet in any spec or the game. Unclear: whether UI A/B choices should move to the Design Votes page ([[ab-comparison-page]]); the designer has been choosing on this canvas instead. Ask before the next UI round.
 
