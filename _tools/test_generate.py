@@ -627,6 +627,16 @@ class BuildToolsTest(unittest.TestCase):
         self.assertEqual([m["name"] for m in self.mu.changed_since(new, old)], ["b", "c"])
         self.assertEqual(len(self.mu.changed_since(new, [])), 3)
 
+    def test_mutations_file_is_valid_json_with_named_entries(self):
+        # 2026-11-08: Quinn wrote raw tabs into two "find"/"replace" strings and mutate.py crashed on json.load
+        path = Path(__file__).resolve().parent.parent / "game" / "tests" / "mutations.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        entries = data if isinstance(data, list) else data.get("mutations", [])
+        self.assertTrue(entries)
+        names = [e.get("name") for e in entries]
+        self.assertTrue(all(names), "every mutation has a name")
+        self.assertEqual(len(names), len(set(names)), "mutation names are unique")
+
     def test_budget_guard_blocks_warns_and_ignores_stale_readings(self):
         import budget_guard as b
         import datetime as d

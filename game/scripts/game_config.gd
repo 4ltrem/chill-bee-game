@@ -70,7 +70,8 @@ extends Resource
 @export var harvest_anchor_offset: float = -40.0       # px added below the ForkAnchor's projection (negative = up); one value for every view (Design Votes round 8: A, -40)
 @export var spin_anchor_offset: float = -40.0          # same, for Spin at the CentrifugeAnchor
 @export var sell_anchor_offset: float = -40.0          # same, for Sell at the SellAnchor
-@export var button_screen_margin: float = 16.0         # spec item 2: px kept clear between an anchored button and the screen edge
+@export var button_gap_px: float = 8.0                 # PLACEHOLDER (0.1.4 item 20): px Spin keeps clear below Harvest when it yields downward
+@export var button_screen_margin: float = 16.0        # spec item 2: px kept clear between an anchored button and the screen edge
 
 const DEFAULT_PATH := "res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read

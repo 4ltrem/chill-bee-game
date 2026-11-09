@@ -4,6 +4,20 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L16 · 2026-11-08 · A mutation passed because button placement depends on order
+- **What broke:** the item 20 mutation (Harvest treats Spin as a blocker again) survived `t_harvest_holds_anchor_spin_below`.
+- **How noticed:** Rex's `mutate.py` run reported MISSED.
+- **Cause:** `floating_icon.gd` nudges each icon against the others' current rects, so the result depends on which icon updates first. The test placed Spin first, where the old and new rules agree; in play Harvest went first and moved up.
+- **How fixed:** the test places the icons in both orders (Harvest first included).
+- **Prevention:** the mutation itself: it is caught only when the Harvest-first order is tested. Rule for Quinn's placement tests: any nudge between two controls is tested in both update orders.
+
+## L15 · 2026-11-08 · Raw tabs in mutations.json crashed mutate.py
+- **What broke:** `mutate.py` died on `json.load` ("Invalid control character", line 853); then the item 21 mutation matched nothing (`find` occurs 0 times).
+- **How noticed:** Rex's run of the items 19–21 mutations.
+- **Cause:** Quinn wrote GDScript indentation as literal tab characters inside JSON strings; when they were escaped by hand, one got three tabs where `truck.gd` has two.
+- **How fixed:** the strings use `\t`, matched to the file's real indentation.
+- **Prevention:** `test_generate.test_mutations_file_is_valid_json_with_named_entries` parses the file and checks names are unique; a `find` that matches 0 times shows as BROKEN in `mutate.py`.
+
 ## L14 · 2026-11-08 · Turn-cap alarm compared two different counters
 - **What broke:** the goal board flagged "20 turns with --max-turns 15" on Bob's 0.1.4 T14.4 fix 1 (16:46), so the cap looked broken.
 - **How noticed:** the session handoff listed it as an open tooling issue.

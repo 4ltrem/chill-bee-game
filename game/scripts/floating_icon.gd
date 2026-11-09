@@ -33,6 +33,8 @@ var _anchor_ok: bool = false
 
 func _ready() -> void:
 	add_to_group(GROUP)
+	if name == &"CentrifugeIcon":
+		process_priority = 1   # item 20: Spin places after Harvest, so it nudges against Harvest's current rect, not last frame's
 	custom_minimum_size = Vector2(maxf(custom_minimum_size.x, MIN_TOUCH.x), maxf(custom_minimum_size.y, MIN_TOUCH.y))
 	for style_name in STYLE_NAMES:
 		_styles[style_name] = get_theme_stylebox(style_name)
@@ -130,16 +132,24 @@ func _clamp_and_nudge(pos: Vector2) -> Vector2:
 	var lo := Vector2(m, m)
 	var hi := Vector2(maxf(view.x - m - size.x, m), maxf(view.y - m - size.y, m))
 	pos = pos.clamp(lo, hi)
-	for other in _blockers():
-		var box := Rect2(pos, size)
-		if not box.intersects(other):
-			continue
-		var up: float = other.position.y - size.y
-		var down: float = other.end.y
-		pos.y = up if absf(up - pos.y) <= absf(down - pos.y) else down
-		if pos.y < lo.y or pos.y > hi.y:
-			pos.y = down if pos.y < lo.y else up
-		pos = pos.clamp(lo, hi)
+	var blockers: Array[Rect2] = _blockers()
+	for _pass in 4:   # a nudge for one blocker can land on another: repeat until nothing overlaps (bounded)
+		var moved: bool = false
+		for other in blockers:
+			var box := Rect2(pos, size)
+			if not box.intersects(other):
+				continue
+			moved = true
+			var up: float = other.position.y - size.y
+			var down: float = other.end.y
+			pos.y = up if absf(up - pos.y) <= absf(down - pos.y) else down
+			if name == &"CentrifugeIcon":
+				pos.y = down + config.button_gap_px   # 0.1.4 item 20: Spin yields downward, clear of Harvest by button_gap_px
+			if pos.y < lo.y or pos.y > hi.y:
+				pos.y = down if pos.y < lo.y else up
+			pos = pos.clamp(lo, hi)
+		if not moved:
+			break
 	return pos
 
 
@@ -147,6 +157,8 @@ func _blockers() -> Array[Rect2]:
 	var rects: Array[Rect2] = []
 	for node in get_tree().get_nodes_in_group(GROUP):
 		var c := node as FloatingIcon
+		if name == &"ForkIcon" and c != null and c.name == &"CentrifugeIcon":
+			continue   # item 20: Harvest never yields to Spin
 		if c != null and c != self and c.is_visible_in_tree() and c._wanted:
 			rects.append(c.get_global_rect())
 	for avoid_name in AVOID_NAMES:

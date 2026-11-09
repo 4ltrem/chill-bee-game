@@ -198,6 +198,10 @@ func _icons_state(m: Node, p: Dictionary, label: String, second: bool) -> int:
 		ck(placed, "%s: %s placed (anchor in front of the camera)" % [label, fic.name])
 	for i in all_icons.size():
 		for j in range(i + 1, all_icons.size()):
+			# spec 0.1.4 item 20: a hidden Harvest is not a blocker, so Spin may share its spot: skip that pair when ForkIcon is hidden
+			var pair: Array = [str(all_icons[i].name), str(all_icons[j].name)]
+			if pair.has("ForkIcon") and pair.has("CentrifugeIcon") and not (m.find_child("ForkIcon", true, false) as Control).is_visible_in_tree():
+				continue
 			if (rects[i] as Rect2).size != Vector2.ZERO and (rects[j] as Rect2).size != Vector2.ZERO:
 				eq((rects[i] as Rect2).intersects(rects[j] as Rect2), false, "%s: all icons: %s and %s anchored apart (%s, %s)" % [label, all_icons[i].name, all_icons[j].name, str(rects[i]), str(rects[j])])
 	return vis.size()

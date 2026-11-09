@@ -150,6 +150,11 @@ func reset_home() -> void:
 ## Per-frame logic, separate from _process so it can be tested headless.
 func advance(delta: float) -> void:
 	if not away:
+		# 0.1.4 item 21: a home truck with room takes every waiting crate jar (Dev reset_home or a raised capacity left them behind)
+		var room: int = mini(crate_jars, maxi(capacity - loaded_jars, 0))
+		if room > 0:
+			_load_crate_jars(room)
+			_changed()
 		return
 	trip_elapsed += delta
 	if trip_elapsed >= config.truck_trip_seconds:

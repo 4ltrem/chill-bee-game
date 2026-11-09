@@ -35,6 +35,7 @@ func _run() -> void:
 		"t_fill_time_level0", "t_fill_time_with_levels", "t_hive_rate_is_live", "t_fill_in_order_slot_by_slot",
 		"t_risen_frame_never_fills", "t_overflow_one_hive_then_pause", "t_became_full_once_while_filling",
 		"t_became_full_count_full_overflow", "t_scrape_value", "t_scrape_rules", "t_next_frame_to_harvest",
+		"t_lowered_frame_comes_back_empty_then_fills", "t_harvest_holds_anchor_spin_below",
 		# centrifuge: bucket, lid, turns, floor bottling
 		"t_bucket_capacity_and_states", "t_lid_close_and_signal", "t_turns_per_jar", "t_crank_enabled_flag",
 		"t_hold_at_cap", "t_hold_ramp_is_visual_only", "t_hold_never_slower", "t_hold_release_stops",
@@ -44,7 +45,7 @@ func _run() -> void:
 		"t_bottling_35_single_cells_is_2_jars", "t_pile_unit",
 		# truck (unchanged) and the wheels
 		"t_truck_full_and_can_sell", "t_truck_sell_credits_at_once", "t_truck_crate_while_away",
-		"t_truck_return_loads_crate", "t_truck_trip_time_is_live", "t_truck_wheels_roll_with_travel",
+		"t_truck_return_loads_crate", "t_truck_home_loads_crate_without_trip","t_truck_trip_time_is_live", "t_truck_wheels_roll_with_travel",
 		# the zoom, through real input
 		"t_zoom_ui_and_camera", "t_zoom_bucket_lid_pile_flow", "t_back_after_one_frame", "t_back_keeps_half_frame",
 		"t_fork_rules", "t_fork_shows_while_cranking_and_state_table", "t_no_crank_during_zoom",

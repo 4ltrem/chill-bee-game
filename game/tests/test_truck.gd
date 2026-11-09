@@ -446,3 +446,34 @@ func t_summary_after_sell() -> void:
 		await _frames(3)
 		ck(not _shown(modal), "OK closes the summary")
 	_fin()
+
+
+# 0.1.4 item 21: a truck that is home with room takes every filled jar on the crate, without a trip; a full truck leaves them waiting.
+func t_truck_home_loads_crate_without_trip() -> void:
+	var t: Object = await _mk_truck()
+	if t == null:
+		_fin()
+		return
+	var cap: int = int(cv("truck_capacity_jars"))
+	for i in cap:
+		t.call("receive_jar")
+	t.call("sell")
+	for i in 3:
+		t.call("receive_jar")
+	eq(t.get("crate_jars"), 3, "step crate: jars bottled while away wait on the crate")
+	t.call("reset_home")   # the truck is home and empty, the crate kept: filled jars on the crate with room on the truck
+	_counter = 0
+	t.connect("returned", _bump)
+	eq(t.get("crate_jars"), 3, "step home: still on the crate before the truck's next advance")
+	t.call("advance", 0.01)
+	eq(t.get("loaded_jars"), 3, "step load: all three crate jars moved into the truck at home, no trip")
+	eq(t.get("crate_jars"), 0, "step load: the crate is empty")
+	eq(_counter, 0, "no trip return was needed")
+	for i in cap:
+		t.call("receive_jar")
+	eq(t.get("loaded_jars"), cap, "step full: truck full")
+	eq(t.get("crate_jars"), 3, "step full: the extra jars are on the crate")
+	t.call("advance", 0.5)
+	eq(t.get("loaded_jars"), cap, "step full: a full truck takes no more")
+	eq(t.get("crate_jars"), 3, "step full: the extra jars wait on the crate")
+	_fin()

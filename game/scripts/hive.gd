@@ -27,7 +27,8 @@ var overflow: float = 0.0
 var risen: int = -1
 var lid_open: bool = false
 
-var _pending: float = 0.0          # honey waiting to become the next cell
+var _pour_credit: float = 0.0      # honey the overflow may pour back this step (rate-limited, item 19)
+var _pending: float = 0.0         # honey waiting to become the next cell
 var _capped: int = 0
 var _empty: int = 0
 var _full_announced: bool = false
@@ -162,14 +163,13 @@ func scrape(frame: int, cell: int) -> float:
 	_capped -= 1
 	_empty += 1
 	_full_announced = false
-	_pour()   # overflow honey pours back at once (never into the risen frame)
 	storage_changed.emit(storage, overflow)
 	return config.cell_value()
 
 
 ## Production by delta seconds at the given fill-rate multiplier.
 func advance(delta: float, multiplier: float = 1.0) -> void:
-	var changed: bool = _pour()
+	var changed: bool = _pour(delta, multiplier)
 	if is_paused():
 		if changed:
 			storage_changed.emit(storage, overflow)
@@ -263,10 +263,7 @@ func lower_frame() -> void:
 	if _honeycomb != null:
 		_honeycomb.active = false
 		_honeycomb.slide_out()
-	frame_lowered.emit(index)
-	if _pour():
-		_announce_if_full()
-		storage_changed.emit(storage, overflow)
+	frame_lowered.emit(index)   # 0.1.4 item 19: overflow no longer pours into it at once; it pours at the fill rate (see _pour)
 
 
 func _on_slid_out() -> void:
@@ -297,16 +294,23 @@ func _fill_slot(slot: Vector2i) -> void:
 	_empty -= 1
 
 
-## Overflow honey pours back into empty slots. Returns true if anything moved.
-func _pour() -> bool:
+## Overflow honey pours back into empty slots at the fill rate (0.1.4 item 19: a frame just lowered after a harvest shows empty and
+## then fills, instead of refilling from the overflow in one step). Returns true if anything moved.
+func _pour(delta: float, multiplier: float) -> bool:
 	var moved: bool = false
 	var value: float = config.cell_value()
-	while overflow > 0.0 and overflow + EPS >= value:
+	if overflow + EPS < value:
+		_pour_credit = 0.0
+	else:
+		_pour_credit += delta / config.base_seconds_per_jar * multiplier
+	while overflow > 0.0 and overflow + EPS >= value and _pour_credit + EPS >= value:
 		var slot: Vector2i = _next_empty()
 		if slot.x < 0:
+			_pour_credit = 0.0
 			break
 		_fill_slot(slot)
 		overflow = maxf(overflow - value, 0.0)
+		_pour_credit = maxf(_pour_credit - value, 0.0)
 		moved = true
 	if overflow < EPS:
 		overflow = 0.0

@@ -386,3 +386,59 @@ func t_speed_tag_below_labels() -> void:
 		ck(not rt.intersects(r), "T.2: the speed tag does not touch %s" % nm.name)
 	ck(rt.size.x > 0.0 and rt.size.y > 0.0, "the tag has a size %s" % str(rt.size))
 	_fin()
+
+
+## 0.1.4 item 20: with Harvest and Spin both shown, Harvest holds its lid anchor (within button_screen_margin of the projected point),
+## Spin lies wholly below Harvest with a gap (no touch), and neither overlaps another HUD control or leaves the screen margin.
+func t_harvest_holds_anchor_spin_below() -> void:
+	ck(_wholly_above(Rect2(0, 0, 10, 10), Rect2(0, 11, 10, 10)) and not _wholly_above(Rect2(0, 0, 10, 10), Rect2(0, 10, 10, 10)), "self-check: touching is not 'below with a gap'")
+	var seen: Array = [0]
+	var in_farm: Array = [false]
+	_portrait()
+	var mm: Node = await _mk_main()
+	if mm == null:
+		_fin()
+		return
+	var pp: Dictionary = _parts(mm)
+	if pp.is_empty():
+		_fin()
+		return
+	_full_hive_frozen(pp["Hive"])   # Harvest is pressable at a full hive (and always shown on the farm view)
+	_load_bucket(pp["Centrifuge"])   # a full bucket, lid on: state FULL, so Spin shows
+	await _frames(8)
+	var visit: Callable = func(m: Node, p: Dictionary, label: String) -> void:
+		await _frames(3)
+		var fork: FloatingIcon = p["ForkIcon"]
+		var spin: FloatingIcon = p["CentrifugeIcon"]
+		if not (fork.is_visible_in_tree() and spin.is_visible_in_tree()):
+			return
+		seen[0] += 1
+		if label.begins_with("farm view"):
+			in_farm[0] = true
+		# placement is order-dependent: cover both orders explicitly, with no frame between the placing and the measuring
+		if label.ends_with("Harvest placed first"):
+			spin.global_position = _icon_target(spin) - spin.size * 0.5   # Spin still at its un-nudged anchor rect
+			ck(fork.place(), "%s: Harvest placed" % label)
+			ck(spin.place(), "%s: Spin placed" % label)
+		elif label.ends_with("Spin placed first"):
+			ck(spin.place(), "%s: Spin placed" % label)
+			ck(fork.place(), "%s: Harvest placed" % label)
+		var rf: Rect2 = fork.get_global_rect()
+		var rs: Rect2 = spin.get_global_rect()
+		var mg: float = float(cv("button_screen_margin"))
+		ck(_centre_gap(fork) <= mg, "%s: Harvest is %.0f px from its anchor's projected point (limit %.0f; it did not move for Spin)" % [label, _centre_gap(fork), mg])
+		ck(_wholly_above(rf, rs), "%s: Spin %s lies wholly below Harvest %s with no touch" % [label, str(rs), str(rf)])
+		ck(_inside_margin(rf) and _inside_margin(rs), "%s: both keep the screen margin (%s, %s)" % [label, str(rf), str(rs)])
+		var others: Array = []
+		for pr in _hud_rects(m):
+			if pr[0] != "ForkIcon" and pr[0] != "CentrifugeIcon":
+				others.append(pr)
+		for pr in others:
+			if pr[0] != "HiveCountLabel":
+				ck(not rf.intersects(pr[1] as Rect2), "%s: Harvest does not overlap %s" % [label, pr[0]])
+			ck(not rs.intersects(pr[1] as Rect2), "%s: Spin does not overlap %s %s" % [label, pr[0], str(pr[1])])
+	await visit.call(mm, pp, "farm view")
+	await visit.call(mm, pp, "farm view, Harvest placed first")
+	await visit.call(mm, pp, "farm view, Spin placed first")
+	ck(bool(in_farm[0]), "Harvest and Spin were both shown in the farm view (%d views measured)" % int(seen[0]))
+	_fin()

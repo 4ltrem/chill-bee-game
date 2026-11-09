@@ -361,4 +361,35 @@ func t_hive_size_vs_truck() -> void:
 	_fin()
 
 
+# 0.1.4 item 19: after a harvest, a frame lowered back shows the hive's post-harvest fill (empty), not the full comb it was raised with;
+# the overflow built up during the harvest then pours in at the fill rate, never in one step.
+func t_lowered_frame_comes_back_empty_then_fills() -> void:
+	var h: Object = await _mk_hive()
+	if h == null:
+		_fin()
+		return
+	var cpf: int = _cpf()
+	var nf: int = _frames_n()
+	var cap: float = _hive_jars()
+	var ocap: float = cap * float(cv("overflow_hives"))
+	h.call("advance", _secs_for_jars(cap + ocap) + _cell_secs() * 0.5, 1.0)   # full hive and a full overflow (one hive's worth)
+	near(float(h.get("overflow")), ocap, "precondition: overflow built up", _cell_value() * 1.5)
+	for f in nf:
+		h.call("raise_frame", f)
+		for c in cpf:
+			h.call("scrape", f, c)
+		eq(fi.capped(h as Node, f), 0, "frame %d scraped empty" % f)
+		h.call("lower_frame")
+		eq(fi.capped(h as Node, f), 0, "step lower, frame %d: right after lowering it shows empty, not the overflow poured in at once" % f)
+	near(float(h.get("storage")), 0.0, "all frames lowered: storage is the post-harvest fill (empty)", _cell_value() * 0.5)
+	ck(float(h.get("overflow")) > ocap - _cell_value() * 1.5, "the overflow is still waiting (%s)" % str(h.get("overflow")))
+	var secs1: float = _secs_for_jars(1.0)
+	h.call("advance", secs1, 1.0)
+	near(float(h.get("storage")), 2.0, "step fill: after one jar's time the frames hold two jars (overflow pours at the fill rate on top of normal production, item 19)", _cell_value() * 1.5)
+	ck(float(h.get("storage")) < cap * 0.5, "not poured back in a step (%s of %s jars)" % [str(h.get("storage")), str(cap)])
+	h.call("advance", secs1 * 3.0, 1.0)
+	near(float(h.get("storage")), 8.0, "step fill: eight jars after four jars' time while overflow lasts (2 x base)", _cell_value() * 2.5)
+	_fin()
+
+
 # ---------------------------------------------------------------- the centrifuge lid rests clear (spec change 3)

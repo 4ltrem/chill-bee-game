@@ -846,5 +846,35 @@
    "t_dev_physical_key_toggles"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 19 lowering a frame pours the overflow in at once",
+  "file": "scripts/hive.gd",
+  "find": "\tframe_lowered.emit(index)   # 0.1.4 item 19",
+  "replace": "\t_pour(1000000.0, 1.0)\n\tframe_lowered.emit(index)   # 0.1.4 item 19",
+  "expect": [
+   "t_lowered_frame_comes_back_empty_then_fills"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 20 Harvest treats Spin as a blocker again",
+  "file": "scripts/floating_icon.gd",
+  "find": "if name == &\"ForkIcon\" and c != null and c.name == &\"CentrifugeIcon\":",
+  "replace": "if false and c != null:",
+  "expect": [
+   "t_harvest_holds_anchor_spin_below"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 21 crate loads only on a trip return",
+  "file": "scripts/truck.gd",
+  "find": "\t\tif room > 0:",
+  "replace": "\t\tif room > 0 and false:",
+  "expect": [
+   "t_truck_home_loads_crate_without_trip"
+  ],
+  "suite": "unit"
  }
 ]
