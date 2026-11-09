@@ -1,0 +1,17 @@
+{
+ "question": "truck-flames-r2",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": {"faster_delivery_4": "truck-flames-r2-d's roof flames, without exhaust flames"},
+ "votes": {
+  "truck-flames-r2-a": "no",
+  "truck-flames-r2-b": "no",
+  "truck-flames-r2-c": "no",
+  "truck-flames-r2-d": "yes"
+ },
+ "notes": {
+  "truck-flames-r2-d": "like the flames, no flames allowed from exhaust"
+ },
+ "answers": "designer, 2026-11-09: no exhaust flames at any level; the pipes stay. L1 = r1-c's pipes without flames; L2 = r1-a; L3 = r1-b; L4 = r1-b's decals + pipes (no flames) + r2-d's roof flames",
+ "next": "truck-flames-r3: L1 and L4 rebuilt without exhaust flames, for a last look"
+}

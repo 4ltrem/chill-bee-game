@@ -1,0 +1,18 @@
+{
+ "question": "fork-r1",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": null,
+ "votes": {
+  "fork-r1-a": "no", "fork-r1-a-hot": "no",
+  "fork-r1-b": "maybe", "fork-r1-b-hot": "maybe",
+  "fork-r1-c": "maybe", "fork-r1-c-hot": "maybe",
+  "fork-r1-d": "no", "fork-r1-d-hot": "no"
+ },
+ "notes": {
+  "fork-r1-b": "close to what I want check the ui icon for the fork and base it on that",
+  "fork-r1-c": "could be an interesting wider fork upgrade, mark tbd upgrade"
+ },
+ "answers": "designer, 2026-11-09: hot state stays a full orange blade",
+ "next": "round 2 (fork-r2): variants of b based on the Harvest button's fork icon (UI_DESIGN.md decision 4); c logged as a TBD wider-fork upgrade look"
+}

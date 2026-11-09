@@ -1,0 +1,42 @@
+{
+ "fork-r2-a-hot.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r2-a.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r2-b-hot.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r2-b.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r2-c-hot.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r2-c.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r2-d-hot.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r2-d.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ }
+}

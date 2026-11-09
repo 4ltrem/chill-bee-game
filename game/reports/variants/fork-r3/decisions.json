@@ -1,0 +1,9 @@
+{
+ "question": "fork-r3",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": "fork-r3-a (keeps the ferrule), handle backed up a little",
+ "votes": {"fork-r3-a": "maybe", "fork-r3-a-hot": "maybe", "fork-r3-b-hot": "no"},
+ "notes": {"fork-r3-a-hot": "almost there it's too much into the blade back up just a bit"},
+ "next": "fork-r4: three handle heights (compose_variant.py --move on Pose/Handle*), cold and hot"
+}

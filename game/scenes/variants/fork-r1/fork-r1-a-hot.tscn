@@ -1,0 +1,58 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Material" path="res://materials/crank_handle.tres" id="m_handle"]
+[ext_resource type="Material" path="res://materials/wood.tres" id="m_wood"]
+[ext_resource type="Material" path="res://materials/steel_dark.tres" id="m_dark"]
+
+[sub_resource type="BoxMesh" id="Mesh_head"]
+material = ExtResource("m_handle")
+size = Vector3(0.74, 0.18, 0.16)
+
+[sub_resource type="BoxMesh" id="Mesh_tine"]
+material = ExtResource("m_handle")
+size = Vector3(0.1, 0.6, 0.1)
+
+[sub_resource type="CylinderMesh" id="Mesh_collar"]
+material = ExtResource("m_dark")
+top_radius = 0.12
+bottom_radius = 0.12
+height = 0.16
+
+[sub_resource type="CylinderMesh" id="Mesh_handle"]
+material = ExtResource("m_wood")
+top_radius = 0.08
+bottom_radius = 0.08
+height = 0.76
+
+[node name="Fork" type="Node3D"]
+
+[node name="Pose" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.866, 0.5, 0, -0.5, 0.866, 0, 0.08, 0)
+
+[node name="Head" type="MeshInstance3D" parent="Pose"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69, 0)
+mesh = SubResource("Mesh_head")
+
+[node name="Tine1" type="MeshInstance3D" parent="Pose"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 0.3, 0)
+mesh = SubResource("Mesh_tine")
+
+[node name="Tine2" type="MeshInstance3D" parent="Pose"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0.3, 0)
+mesh = SubResource("Mesh_tine")
+
+[node name="Tine3" type="MeshInstance3D" parent="Pose"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0.3, 0)
+mesh = SubResource("Mesh_tine")
+
+[node name="Tine4" type="MeshInstance3D" parent="Pose"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 0.3, 0)
+mesh = SubResource("Mesh_tine")
+
+[node name="Collar" type="MeshInstance3D" parent="Pose"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.86, 0)
+mesh = SubResource("Mesh_collar")
+
+[node name="Handle" type="MeshInstance3D" parent="Pose"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.32, 0)
+mesh = SubResource("Mesh_handle")

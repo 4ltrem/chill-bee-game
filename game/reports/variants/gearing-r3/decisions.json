@@ -1,0 +1,9 @@
+{
+ "question": "gearing-r3",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": "gearing-r3-a (gearing-r3-a1.tscn at Gearing 1, gearing-r3-a5.tscn at Gearing 5): final",
+ "votes": {"gearing-r3-a1": "yes", "gearing-r3-a5": "yes", "gearing-r3-b1": "no", "gearing-r3-b5": "no"},
+ "notes": {"gearing-r3-b5": "not enough contrast"},
+ "next": "implementation session: spec item 4 names game/scenes/variants/gearing-r3/gearing-r3-a5.tscn; Bob promotes its Gears group into scenes/props/centrifuge.tscn"
+}

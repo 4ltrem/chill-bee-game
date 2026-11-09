@@ -1,0 +1,15 @@
+{
+ "question": "truck-flames-r3",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": {
+  "faster_delivery_1": "game/scenes/variants/truck-flames-r3/truck-flames-r3-l1.tscn",
+  "faster_delivery_2": "game/scenes/variants/truck-flames-r1/truck-flames-r1-a.tscn",
+  "faster_delivery_3": "game/scenes/variants/truck-flames-r1/truck-flames-r1-b.tscn",
+  "faster_delivery_4": "game/scenes/variants/truck-flames-r3/truck-flames-r3-l4.tscn"
+ },
+ "votes": {"truck-flames-r3-l1": "yes", "truck-flames-r3-l4": "yes"},
+ "notes": {},
+ "rule": "no exhaust flames at any level; the pipes stay (designer, 2026-11-09)",
+ "next": "implementation session: spec item 5 gets one look per Faster Delivery level and a Quinn test per level"
+}

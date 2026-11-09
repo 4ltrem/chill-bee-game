@@ -4,6 +4,20 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L32 · 2026-11-09 · Recombination rounds cost a full Milo run each
+- **What broke:** 0.2 models rounds 2 and 3 were mostly "take A's part, add it to B, drop C, swap a material", yet each was a Milo run (34k–112k tokens) that re-read and rewrote whole centrifuge and truck copies.
+- **How noticed:** the designer asked how to cut tokens on permutation runs.
+- **Cause:** the only way to change a variant was an agent writing `.tscn` text.
+- **How fixed:** `_tools/compose_variant.py` (graft, drop, material, move on node paths; prunes resources, recounts `load_steps`, writes only a new round file); Milo's parts convention (one named group per feature).
+- **Prevention:** `game/scenes/variants/CONTEXT.md` Process: a round that only recombines seen parts is a recipe, not a Milo run; tested by an exact round-trip of three variants and a byte-identical rebuild of Milo's `truck-flames-r3-l4`.
+
+## L31 · 2026-11-09 · A Milo round came back with parts not touching
+- **What broke:** all four `fork-r1` forks had the handle beside the head, not on it; `truck-flames-r1` a, b, e failed V6 (0.02 decals).
+- **How noticed:** the orchestrator looked at the shots before publishing ([[look-before-done]]); style_check caught the decals.
+- **Cause:** each part was tilted on its own, so their ends drifted apart; the brief allowed decals thinner than V6.
+- **How fixed:** Milo rebuilt the fork upright inside one tilted `Pose` node; the decals went to 0.05.
+- **Prevention:** the parts convention in `.claude/agents/modeler.md`: a tilt or pose lives on one parent node, parts are built untilted; briefs never relax a V rule.
+
 ## L30 · 2026-11-09 · The `/goal` stop hook kept firing after the designer said "stop"
 - **What broke:** the designer stopped the UI work mid-turn; the goal judge re-sent "condition not met" six times while the session stayed paused.
 - **How noticed:** six identical hook messages in a row.

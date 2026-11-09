@@ -17,6 +17,7 @@
 - [Commit to main](commit-to-main.md) — worktree inside the repo, `-c core.hooksPath=.githooks`, push with GCM_INTERACTIVE=never
 - [Scripted shots](scripted-shots.md) — same moments = `_tools/ui_shots.py`; agent only when a new screen/phase/menu is added; gradual animations shot at several points
 - [Variant shots](variant-shots.md) — Milo's variants: one shared grid, one load, close-up shot of each
+- [Compose variants](compose-variants.md) — recombination rounds = `compose_variant.py` recipes; Milo only for new shapes, features as named groups
 - [Demo link submissions](demo-link-submissions.md) — every assignment is a demo link, resubmitted after each milestone
 - [Model routing](model-routing.md) — small admin tasks go to a cheap-model subagent, never a /model switch
 - [Drafts folder](drafts-folder.md) — unfinished work for a later session goes in _meta/drafts/<version>/, never temp; the handoff links it
