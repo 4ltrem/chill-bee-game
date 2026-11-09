@@ -56,7 +56,8 @@ func _run() -> void:
 		# dev mode
 		"t_dev_mode_setting", "t_dev_no_panel_when_off",
 		"t_dev_panel_when_on", "t_dev_max_tap_rate", "t_dev_bottling_seconds", "t_dev_save_reset_roundtrip",
-		"t_dev_user_file_ignored_when_off", "t_dev_backquote_opens", "t_dev_three_finger_opens", "t_dev_actions",
+		"t_dev_save_only_edited_values", "t_dev_user_file_ignored_when_off", "t_dev_backquote_opens", "t_dev_three_finger_opens", "t_dev_actions",
+		"t_dev_physical_key_toggles", "t_dev_button_opens_panel", "t_dev_button_clear_of_hud",
 		"t_dev_show_ui_bounds",
 		# 0.1.1 play-test fixes
 		"t_dev_ui_bounds_collects_controls", "t_overlap_helper_can_fail", "t_rim_measure_can_fail", "t_config_011", "t_dev_panel_has_lid_values",
@@ -101,6 +102,7 @@ func _run() -> void:
 					# 0.1.4 item 14 (written from game/specs/0.1.4-ui-placement.md before the code)
 					"t_hive_five_upright_frames_four_walls", "t_raised_frame_cells_fill_and_size", "t_lid_closes_clear_of_walls",
 						"t_raised_frame_cells_aligned", "t_hive_frames_cells_aligned", "t_lid_close_never_clips_hive",
+						"t_raised_frame_collider_covers_drawn_cell",
 						# 0.1.4 item 15 (written from game/specs/0.1.4-ui-placement.md before the code)
 						"t_crank_pauses_on_back_and_resumes_on_spin", "t_paused_crank_never_finishes_in_farm_view",
 	]

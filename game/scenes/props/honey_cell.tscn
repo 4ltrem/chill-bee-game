@@ -6,8 +6,8 @@
 script = ExtResource("1_hex")
 
 [sub_resource type="CylinderShape3D" id="Shape_cell"]
-height = 0.6
-radius = 0.34
+height = 0.1
+radius = 0.29
 
 [node name="HoneyCell" type="Node3D"]
 

@@ -313,6 +313,9 @@ func _refresh_all() -> void:
 	for i in _cell_meshes.size():
 		_apply_visual(i)
 		_cell_meshes[i].scale = Vector3.ONE * config.frame_scale
+		var body: Node3D = _cell_roots[i].find_child("Body", true, false) as Node3D  # contract: optional (inside a prop scene instanced at run time, or numbered)
+		if body != null:
+			body.scale = Vector3.ONE * config.frame_scale   # collider covers the drawn hex (uniform scale; the shared shape is untouched)
 		_cell_meshes[i].visible = cells[i] != EXTRACTED
 		_set_collider(i, cells[i] == CAPPED)
 

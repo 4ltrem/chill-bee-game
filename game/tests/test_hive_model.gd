@@ -334,7 +334,7 @@ func _grid_stats(cells: Array, fr: Dictionary, width: float) -> Dictionary:
 
 ## The angle (deg, in the mesh's own x/z plane) of a hex cell's first corner, from its mesh vertices; -1000 when unreadable.
 func _corner_deg(mi: MeshInstance3D) -> float:
-	var arr: Array = mi.mesh.get_mesh_arrays()
+	var arr: Array = mi.mesh.surface_get_arrays(0) if mi.mesh.get_surface_count() > 0 else []
 	if arr.is_empty() or arr[Mesh.ARRAY_VERTEX] == null:
 		return -1000.0
 	var vs: PackedVector3Array = arr[Mesh.ARRAY_VERTEX]
@@ -439,6 +439,64 @@ func t_raised_frame_cells_aligned() -> void:
 		if (n as MeshInstance3D).mesh != null and (n as MeshInstance3D).is_visible_in_tree():
 			cells.append(n)
 	_check_frame_cells((z["p"] as Dictionary)["Hive"], risen, cells, "raised frame %d" % (risen + 1))
+	_fin()
+
+
+## Item 17: the scrape ray hits the cell it is drawn over. At 80% of a cell's drawn (inscribed) radius from its centre, toward a neighbour and toward a free side, the game's own ray query returns that cell.
+# goal T14.4
+func t_raised_frame_collider_covers_drawn_cell() -> void:
+	var z: Dictionary = await _zoom_open_main()
+	if z.is_empty():
+		_fin()
+		return
+	var hc: Node = (z["m"] as Node).find_child("Honeycomb", true, false)
+	ck(int((z["tr"] as Dictionary)["risen"]) >= 0 and hc != null, "a frame is raised in the first zoom and has a Honeycomb")
+	if hc == null:
+		_fin()
+		return
+	await _frames(3)
+	var meshes: Array = hc.get("_cell_meshes")
+	var cam: Camera3D = hc.get_viewport().get_camera_3d()
+	ck(cam != null and meshes.size() >= 10, "the camera and the cells are there (%d cells)" % meshes.size())
+	if cam == null or meshes.size() < 10:
+		_fin()
+		return
+	var space: PhysicsDirectSpaceState3D = (hc as Node3D).get_world_3d().direct_space_state
+	var picks: Array = [0, meshes.size() - 1, meshes.size() / 2, meshes.size() / 2 + 1]
+	var tested: int = 0
+	for ci in picks:
+		var mi: MeshInstance3D = meshes[ci] as MeshInstance3D
+		if mi == null or not mi.is_visible_in_tree():
+			continue
+		var c: Vector3 = mi.global_position
+		var r: float = minf(mi.mesh.get_aabb().size.x, mi.mesh.get_aabb().size.z) * 0.5 * mi.global_transform.basis.get_scale().x
+		var dmin: float = 1.0e9
+		for j in meshes.size():
+			if j != ci and meshes[j] != null:
+				dmin = minf(dmin, c.distance_to((meshes[j] as Node3D).global_position))
+		var toward: Vector3 = Vector3.ZERO
+		var mean: Vector3 = Vector3.ZERO
+		for j in meshes.size():
+			if j != ci and meshes[j] != null:
+				var d: Vector3 = (meshes[j] as Node3D).global_position - c
+				if d.length() < dmin * 1.15:
+					mean += d.normalized()
+					if toward == Vector3.ZERO:
+						toward = d.normalized()
+		var free_dir: Vector3 = -mean.normalized() if mean.length() > 0.01 else -toward
+		var dirs: Dictionary = {"toward a neighbour": toward, "toward a free side": free_dir}
+		for k in dirs:
+			var dv: Vector3 = dirs[k]
+			var pt: Vector3 = c + dv * r * 0.8
+			var sp: Vector2 = cam.unproject_position(pt)
+			var from: Vector3 = cam.project_ray_origin(sp)
+			var hit: Dictionary = space.intersect_ray(PhysicsRayQueryParameters3D.create(from, from + cam.project_ray_normal(sp) * 100.0))
+			var got: int = -1
+			if not hit.is_empty() and (hit["collider"] as Object).has_meta("cell_index"):
+				got = int((hit["collider"] as Object).get_meta("cell_index"))
+			ck(got == ci, "cell %d: a ray at 80%% of its drawn radius %s hits that cell (got %d)" % [ci, k, got])
+			tested += 1
+	ck(tested >= 6, "enough rays were cast (%d)" % tested)
 	_fin()
 
 

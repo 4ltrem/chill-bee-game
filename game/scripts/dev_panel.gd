@@ -26,6 +26,7 @@ var _speed_group := ButtonGroup.new()
 var _speed_tag: Control
 var recorder: InputRecorder          # the input recorder (0.1.3 spec); F8 or the Record button toggles it
 var _recording_label: Label
+var _button_layer: CanvasLayer
 
 
 func _init() -> void:
@@ -51,12 +52,37 @@ func _ready() -> void:
 	recorder.config = config
 	add_child(recorder)
 	_build()
+	_add_dev_button.call_deferred()
 	recorder.recording_changed.connect(_on_recording_changed)
 	if config.record_from_launch:
 		recorder.start()
 
 
+## 0.1.4 item 18: a touch/web way to open the panel (the backtick is unreliable in browsers). Lives in its own sibling
+## CanvasLayer so the hidden panel layer does not hide it. Left edge, mid-height: rect (8, 600, 80x80) at 720x1280.
+func _add_dev_button() -> void:
+	var host: Node = get_parent()
+	if host == null or not is_inside_tree():
+		return
+	_button_layer = CanvasLayer.new()
+	_button_layer.name = "DevButtonLayer"
+	_button_layer.layer = 50
+	var b := Button.new()
+	b.name = "DevButton"
+	b.text = "Dev"
+	b.position = Vector2(8.0, 600.0)
+	b.size = Vector2(80.0, 80.0)
+	b.custom_minimum_size = Vector2(80.0, 80.0)
+	b.focus_mode = Control.FOCUS_NONE
+	b.modulate = Color(1.0, 1.0, 1.0, 0.6)
+	b.pressed.connect(toggle)
+	_button_layer.add_child(b)
+	host.add_child(_button_layer)
+
+
 func _exit_tree() -> void:
+	if _button_layer != null and is_instance_valid(_button_layer):
+		_button_layer.queue_free()
 	Engine.time_scale = 1.0
 	if _speed_tag != null and is_instance_valid(_speed_tag):
 		_speed_tag.visible = false
@@ -78,10 +104,18 @@ func set_value(value_name: String, value: Variant) -> void:
 	_building = false
 
 
-## Writes the edited values to user://dev_config.tres; they load over the defaults at the next start.
+## Writes only the values that differ from the defaults to user://dev_config.json (name -> value); they load over the
+## defaults at the next start, so later default changes still reach the player for every value left alone.
 func save_values() -> void:
-	var copy: GameConfig = config.duplicate() as GameConfig
-	ResourceSaver.save(copy, GameConfig.DEV_PATH)
+	var diff: Dictionary = {}
+	for value_name in GameConfig.value_names(config):
+		var v: Variant = config.get(value_name)
+		if (v is bool or v is int or v is float) and v != _defaults.get(value_name):
+			diff[value_name] = v
+	var f := FileAccess.open(GameConfig.DEV_PATH, FileAccess.WRITE)
+	if f != null:
+		f.store_string(JSON.stringify(diff, "\t"))
+		f.close()
 
 
 ## Deletes the saved file and puts every value back to its default.
@@ -194,7 +228,7 @@ static func _speed_text(scale: float) -> String:
 # --- input ---
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == OPEN_KEY:
+	if event is InputEventKey and event.pressed and not event.echo and (event.keycode == OPEN_KEY or event.physical_keycode == OPEN_KEY):
 		var focus: Control = get_viewport().gui_get_focus_owner()
 		if not (focus is LineEdit):
 			toggle()

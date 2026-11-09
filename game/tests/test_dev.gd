@@ -164,28 +164,71 @@ func t_dev_save_reset_roundtrip() -> void:
 	var edited: float = rate_default * 3.0
 	spin.value = edited
 	save.pressed.emit()
-	ck(FileAccess.file_exists(USER_CFG), "Save wrote user://dev_config.tres")
+	ck(FileAccess.file_exists(USER_CFG), "Save wrote user://dev_config.json")
 	var fresh: Variant = _load_script_static("game_config.gd", "load_default")
 	ck(fresh != null, "GameConfig.load_default() returned null")
 	if fresh != null:
 		near(float(fresh.get("max_tap_rate")), edited, "a new config load carries the saved value over the default")
 		near(float(fresh.get("taps_per_jar")), float(def.get("taps_per_jar")), "an unedited value stays at its default")
 	reset.pressed.emit()
-	ck(not FileAccess.file_exists(USER_CFG), "Reset to defaults deleted user://dev_config.tres")
+	ck(not FileAccess.file_exists(USER_CFG), "Reset to defaults deleted user://dev_config.json")
 	var fresh2: Variant = _load_script_static("game_config.gd", "load_default")
 	if fresh2 != null:
 		near(float(fresh2.get("max_tap_rate")), rate_default, "after Reset a new config load is the default again")
 	_fin()
 
 
+# 0.1.4 item 16 (play-test bug: a saved full snapshot froze every old default): Save keeps only the edited values, so an unedited
+# value keeps following the shipped default; an old full dev_config.tres is never applied.
+func t_dev_save_only_edited_values() -> void:
+	_set_dev_mode(true)
+	var panel: Node = await _mk_panel()
+	if panel == null:
+		_fin()
+		return
+	var def: Variant = load(DEFAULT_CFG)
+	var rate_default: float = float(def.get("max_tap_rate"))
+	var taps_default: float = float(def.get("taps_per_jar"))
+	_cfg_saved["max_tap_rate"] = float(cv("max_tap_rate"))
+	panel.call("set_value", "max_tap_rate", rate_default * 3.0)
+	panel.call("save_values")
+	ck(FileAccess.file_exists(USER_CFG), "save_values wrote user://dev_config.json")
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(USER_CFG)) if FileAccess.file_exists(USER_CFG) else null
+	ck(parsed is Dictionary, "the saved file is a JSON dictionary")
+	if parsed is Dictionary:
+		var d: Dictionary = parsed
+		eq(d.size(), 1, "the saved file holds only the one edited key (%s)" % str(d.keys()))
+		ck(d.has("max_tap_rate"), "the saved file holds max_tap_rate")
+		ck(not d.has("taps_per_jar"), "an unedited key (taps_per_jar) is absent from the saved file")
+	var reloaded: Variant = _load_script_static("game_config.gd", "reload_live")
+	ck(reloaded != null, "GameConfig.reload_live() returned a config")
+	if reloaded != null:
+		near(float(reloaded.get("max_tap_rate")), rate_default * 3.0, "after a reload the edited value is the saved one")
+		near(float(reloaded.get("taps_per_jar")), taps_default, "after a reload the unedited value is the shipped default")
+	# an old full snapshot is not applied (Dev mode on, new file absent)
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(USER_CFG))
+	var old: Variant = def.duplicate()
+	old.set("taps_per_jar", int(taps_default) + 7)
+	eq(ResourceSaver.save(old, OLD_USER_CFG), OK, "test wrote an old-format user://dev_config.tres")
+	var after: Variant = _load_script_static("game_config.gd", "load_default")
+	ck(after != null, "load_default() returned a config with an old .tres present")
+	if after != null:
+		near(float(after.get("taps_per_jar")), taps_default, "an old full dev_config.tres is not applied")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(OLD_USER_CFG))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(USER_CFG))
+	_load_script_static("game_config.gd", "reload_live")
+	_fin()
+
+
 # L213: with dev mode off, user://dev_config.tres is ignored.
 func t_dev_user_file_ignored_when_off() -> void:
 	var def: Variant = load(DEFAULT_CFG)
-	var tweaked: Variant = def.duplicate()
 	var rate_default: float = float(def.get("max_tap_rate"))
-	tweaked.set("max_tap_rate", rate_default * 3.0)
-	var err: int = ResourceSaver.save(tweaked, USER_CFG)
-	eq(err, OK, "test wrote a user://dev_config.tres")
+	var wf := FileAccess.open(USER_CFG, FileAccess.WRITE)
+	ck(wf != null, "test wrote a user://dev_config.json")
+	if wf != null:
+		wf.store_string(JSON.stringify({"max_tap_rate": rate_default * 3.0}))
+		wf.close()
 	_set_dev_mode(true)
 	var on_cfg: Variant = _load_script_static("game_config.gd", "load_default")
 	if on_cfg != null:
@@ -226,6 +269,102 @@ func t_dev_backquote_opens() -> void:
 	root.push_input(k2)
 	await _frames(3)
 	ck(_panel_open(p), "the backquote key opened the dev panel")
+	_fin()
+
+
+func _dev_key(physical_only: bool, pressed: bool) -> InputEventKey:
+	var k := InputEventKey.new()
+	k.keycode = KEY_NONE if physical_only else KEY_QUOTELEFT
+	k.physical_keycode = KEY_QUOTELEFT
+	k.pressed = pressed
+	return k
+
+
+# 0.1.4 item 18: a keyboard layout whose backquote key reports another keycode (physical_keycode only) still opens, then closes the panel.
+func t_dev_physical_key_toggles() -> void:
+	_set_dev_mode(true)
+	var m: Node = await _mk_main()
+	var p: Node = _find_dev_panel(m) if m != null else null
+	ck(p != null, "dev panel exists")
+	if p == null or _panel_open(p):
+		ck(p != null, "panel starts closed")
+		_fin()
+		return
+	root.push_input(_dev_key(true, true))
+	root.push_input(_dev_key(true, false))
+	await _frames(3)
+	ck(_panel_open(p), "a key event with only physical_keycode = KEY_QUOTELEFT opened the panel")
+	root.push_input(_dev_key(true, true))
+	root.push_input(_dev_key(true, false))
+	await _frames(3)
+	ck(not _panel_open(p), "a second physical-only key event closed the panel")
+	_fin()
+
+
+# 0.1.4 item 18: with Dev mode on a DevButton shows with the panel closed and a real tap on it opens the panel; with Dev mode off there is none.
+func t_dev_button_opens_panel() -> void:
+	_set_dev_mode(false)
+	var m0: Node = await _mk_main()
+	if m0 != null:
+		await _frames(6)
+		ck(root.find_child("DevButton", true, false) == null, "Dev mode off: no DevButton")
+	if m0 != null:
+		_to_free.erase(m0)
+		root.remove_child(m0)
+		m0.free()
+	await _frames(2)
+	_set_dev_mode(true)
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	await _frames(6)
+	var p: Node = _find_dev_panel(m)
+	var b: Button = root.find_child("DevButton", true, false) as Button
+	ck(b != null, "Dev mode on: a DevButton exists")
+	if p == null or b == null:
+		_fin()
+		return
+	ck(not _panel_open(p), "the panel starts closed")
+	ck(b.is_visible_in_tree(), "the DevButton is visible with the panel closed")
+	_real_click(b.get_global_rect().get_center())
+	await _frames(3)
+	ck(_panel_open(p), "a real tap at the DevButton's centre opened the panel")
+	_fin()
+
+
+# 0.1.4 item 18: the DevButton is inside the 720 x 1280 screen and covers no HUD control in the farm view, the first zoom and the second stop.
+func t_dev_button_clear_of_hud() -> void:
+	_set_dev_mode(true)
+	self.call("_portrait")
+	var views: Array = ["farm", "first zoom", "second stop"]
+	for v in views:
+		var m: Node = null
+		if v == "farm":
+			m = await _mk_main()
+			await _frames(6)
+		elif v == "first zoom":
+			var z: Dictionary = await self.call("_first_zoom_setup")
+			m = z.get("m", null)
+		else:
+			var s: Dictionary = await self.call("_go_second_stop")
+			m = s.get("m", null)
+		if m == null:
+			ck(false, "%s: the view could not be set up" % v)
+			continue
+		var b: Button = root.find_child("DevButton", true, false) as Button
+		ck(b != null, "%s: DevButton exists" % v)
+		if b == null:
+			continue
+		var r: Rect2 = b.get_global_rect()
+		ck(Rect2(0.0, 0.0, 720.0, 1280.0).encloses(r), "%s: DevButton %s lies inside the 720 x 1280 screen" % [v, str(r)])
+		var controls: Array = self.call("_hud_controls", m)
+		ck(controls.size() > 0, "%s: HUD controls are visible (%d)" % [v, controls.size()])
+		eq(self.call("_hud_hits", controls, r), [], "%s: no HUD control overlaps the DevButton %s" % [v, str(r)])
+		_to_free.erase(m)   # one main at a time, so find_child("DevButton") finds this view's button
+		root.remove_child(m)
+		m.free()
+		await _frames(2)
 	_fin()
 
 

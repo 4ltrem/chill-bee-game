@@ -73,7 +73,7 @@ extends Resource
 @export var button_screen_margin: float = 16.0         # spec item 2: px kept clear between an anchored button and the screen edge
 
 const DEFAULT_PATH := "res://scripts/default_config.tres"
-const DEV_PATH := "user://dev_config.tres"
+const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read
 const DEV_SETTING := "chill_bee/dev_mode"
 
 static var _live: GameConfig
@@ -109,9 +109,21 @@ static func dev_mode_enabled() -> bool:
 static func load_default() -> GameConfig:
 	var cfg: GameConfig = fresh_default()
 	if dev_mode_enabled() and FileAccess.file_exists(DEV_PATH):
-		var saved: GameConfig = ResourceLoader.load(DEV_PATH, "", ResourceLoader.CACHE_MODE_IGNORE) as GameConfig
-		if saved != null:
-			apply_from(cfg, saved)
+		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(DEV_PATH))
+		if parsed is Dictionary:
+			var names: PackedStringArray = value_names(cfg)
+			for key: Variant in (parsed as Dictionary):
+				var n: String = str(key)
+				if not names.has(n):
+					continue
+				var cur: Variant = cfg.get(n)
+				var v: Variant = (parsed as Dictionary)[key]
+				if cur is bool:
+					cfg.set(n, bool(v))
+				elif cur is int:
+					cfg.set(n, int(v))
+				elif cur is float:
+					cfg.set(n, float(v))
 	return cfg
 
 

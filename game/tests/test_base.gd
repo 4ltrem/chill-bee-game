@@ -48,7 +48,8 @@ var _wall_clock: bool = false
 var _clk_us: float = 0.0
 var _clk_last: int = -1
 
-const USER_CFG := "user://dev_config.tres"
+const USER_CFG := GameConfig.DEV_PATH
+const OLD_USER_CFG := "user://dev_config.tres"   # the retired full-snapshot format: never read
 const DEFAULT_CFG := "res://scripts/default_config.tres"
 const DEV_SETTING := "chill_bee/dev_mode"
 

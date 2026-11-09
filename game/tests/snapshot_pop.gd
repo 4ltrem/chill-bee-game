@@ -177,9 +177,9 @@ func _run() -> void:
 	_out = OS.get_environment("CB_OUT") if OS.get_environment("CB_OUT") != "" else ProjectSettings.globalize_path("res://reports/_runs/snapshots/%s/" % _tag)
 	DirAccess.make_dir_recursive_absolute(_out)
 	# Reset to defaults equivalent (a stale user://dev_config.tres would override the default values)
-	if FileAccess.file_exists("user://dev_config.tres"):
-		print("a stale user://dev_config.tres was FOUND and removed")
-		DirAccess.remove_absolute(ProjectSettings.globalize_path("user://dev_config.tres"))
+	if FileAccess.file_exists(GameConfig.DEV_PATH):
+		print("a stale %s was FOUND and removed" % GameConfig.DEV_PATH)
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(GameConfig.DEV_PATH))
 	root.get_node("Economy").call("reset")
 	main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)

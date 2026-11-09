@@ -786,6 +786,16 @@
   "suite": "unit"
  },
  {
+  "name": "0.1.4 T17 the cell collider is not scaled with the drawn cell (Body scale line removed)",
+  "file": "scripts/honeycomb.gd",
+  "find": "\t\t\tbody.scale = Vector3.ONE * config.frame_scale   # collider covers",
+  "replace": "\t\t\tpass   # collider covers",
+  "expect": [
+   "t_raised_frame_collider_covers_drawn_cell"
+  ],
+  "suite": "unit"
+ },
+ {
   "name": "0.1.4 T15.1 the crank keeps counting turns after Back (Back leaves crank_enabled on)",
   "file": "scripts/main.gd",
   "find": "\t\t_crank_paused = true   # 0.1.4 item 15: no turn counts off the second stop; progress is kept\n\t\t_centrifuge.crank_enabled = false",
@@ -814,6 +824,26 @@
   "replace": "[node name=\"HiveLid\" type=\"Node3D\" parent=\".\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0)",
   "expect": [
    "t_lid_close_never_clips_hive"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 16 Save writes every value, not only the edited ones",
+  "file": "scripts/dev_panel.gd",
+  "find": "and v != _defaults.get(value_name):",
+  "replace": "and true:",
+  "expect": [
+   "t_dev_save_only_edited_values"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "dev panel ignores physical_keycode",
+  "file": "scripts/dev_panel.gd",
+  "find": "(event.keycode == OPEN_KEY or event.physical_keycode == OPEN_KEY)",
+  "replace": "(event.keycode == OPEN_KEY)",
+  "expect": [
+   "t_dev_physical_key_toggles"
   ],
   "suite": "unit"
  }
