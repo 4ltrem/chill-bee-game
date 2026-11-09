@@ -97,6 +97,7 @@ Measures: **total processed**, and from 2026-11-01 evening also **final context*
 | Ruth: bee-journal-real, round 2 (Sonnet) | post-ICM | 193,098 | — | 11 | 109 s |
 | William: bee-journal-real, round 2 (Sonnet) | post-ICM | 372,765 | — | 16 | 144 s |
 | Critic: bee-journal-real, round 2 (Sonnet) | post-ICM | 64,572 | — | 7 | 84 s |
+| Critic: critic check onboarding-bad, round 1 (Sonnet) | post-ICM | 66,952 | — | 5 | 31 s |
 
 Notes on the rows above:
 - **Rows before `biome-intros`** were logged by hand; from `biome-intros` on, `generate.py` and `critic_check.py` append them.
