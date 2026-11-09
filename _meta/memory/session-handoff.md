@@ -5,12 +5,12 @@ metadata:
   node_type: memory
   type: project
   originSessionId: f6f4c6c0-43ee-4483-9665-cc6335d16443
-  modified: 2026-11-09T19:07:16.542Z
+  modified: 2026-11-09T19:10:41.418Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
 
-**Setup:** main folder on `milestone/0.1.4` (already merged into `main` as `6e22681`, pushed). End-of-day for 2026-11-08 ran (`fe23e98`); end-of-day for 2026-11-09 has NOT run. No worktrees. Uncommitted: `GOAL_AGENT.md`, `_meta/agent-runs.csv/.md`, `ONBOARDING.md`, `game/reports/_look/votes/`, memory files, and today's UI work: `UI_DESIGN.md` (new), `AGENTS.md` (row for it), `_meta/learnings.md` (L25–L30), `proposals/design/ui-screens.md` + `_index.md`, `proposals/design/ui-screens-mockup/` (canvas source). (`game/reports/_runs/sample_px.py`, a pixel sampler, is gitignored scratch.) Carry them onto the new branch and commit there, not on 0.1.4. `main` alone has the `goal_agent.py` `parse_spec` fix: **branch from `main`**.
+**Setup:** main folder on `milestone/0.2`, branched from `origin/main` `6e22681` (local `main` is stale at `ad1cae9`; fast-forward it before the next merge). The 2026-11-09 work is committed there as `dbd1c3b`. End-of-day for 2026-11-09 has NOT run. No worktrees. Terry launched 2026-11-09 for `proposals/balance/first-automation-values.md`.
 
 **UI design (2026-11-09, this session):** read `UI_DESIGN.md` first ([[ui-design-prefs]]). Canvas https://claude.ai/artifact/ErtHvkxYUpDQHRM8RLRLca, 7 pages; proposal `proposals/design/ui-screens.md` (status proposed, Gerard's run was stopped, so the orchestrator wrote it). Decided by the designer: icons over the spin-c shots, no nav bar; Harvest = white fork icon with honey meter behind; icons bee/wrench/gear/green leaf; Royal Jelly = variant K (60°, crown drop 1.8, lift −2.6). Open: bottom slot A–D by play-test; palette/biome skins; K big-preview slider fix unconfirmed (L28); the proposal's 7 decisions. The UI work is not yet in any spec or the game. Unclear: whether UI A/B choices should move to the Design Votes page ([[ab-comparison-page]]); the designer has been choosing on this canvas instead. Ask before the next UI round.
 

@@ -75,18 +75,19 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Income side of the economy: base jar price, bee fill rate, harvest cycle time
 - [ ] Habitat Health values (multipliers, costs, levels) and how much hive count lowers it
 - [ ] Honey sale value for each biome
-- [ ] Automation upgrade costs (motor, auto-scraper, Faster Delivery)
+- [x] Automation upgrade costs (motor, auto-scraper, Faster Delivery): provisional, first-automation-values
+- [ ] Spigot flow-rate upgrades (bottling speed): levels and costs, after 0.2
 - [ ] Upgrade mode UI: opening an automated unit's zoom screen (with the rest of the UI)
 - [ ] Back button as an arrow, its size set in the UI mockups (Design Votes round 8, 2026-11-07)
 - [ ] Overflow Storage capacity and costs (free buffer is 1 extra frame)
 - [ ] Land expansion costs
 - [ ] Hive and flower unit tiers: costs, production and space per tier
 - [ ] Research values (genetics multipliers and unit-tier unlocks)
-- [ ] Tool-upgrade flat bonuses after automation
-- [ ] Auto-Sell costs (no discount: the truck leaves when full and sells at full price)
+- [x] Tool-upgrade flat bonuses after automation: provisional, first-automation-values
+- [x] Auto-Sell costs (no discount: the truck leaves when full and sells at full price): provisional, first-automation-values
 - [ ] Jar crate tiers: jars waiting and truck load per tier, upgrade costs
 - [ ] Harvest logistics: centrifuge capacity (frames), truck capacity (jars) and truck trip time
-- [ ] Long Fork: unlock condition, cost, and how it leads into automated uncapping
+- [x] Long Fork: unlock condition, cost, and how it leads into automated uncapping: provisional, first-automation-values
 - [ ] Royal Jelly prices, time-skip costs, and Patron daily stipend amount
 - [ ] Impact Pass and Patron Pass prices
 
