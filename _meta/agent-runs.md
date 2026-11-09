@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-371 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+374 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -96,11 +96,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Rex (script-runner) | post-ICM | 38 | 17,168 | 125,813 | 452 s |
 | **All** | | **143** | **59,381** | **1,282,791** | 651 s |
 
-**Orchestrator** (35 runs)
+**Orchestrator** (38 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 35 | — | 20,498,329 | 16,096 s |
+| Orchestrator (main session) | post-ICM | 38 | — | 20,337,113 | 15,069 s |
 
 **Style loop** (7 runs)
 
@@ -130,7 +130,7 @@ Notes on the Content generation runs:
 - **Rows before `biome-intros`** were logged by hand; from `biome-intros` on, `generate.py` and `critic_check.py` append them.
 - **William's 720,124-token `bee-journal-real` call** is research, not writing: 34 turns of WebSearch and WebFetch. It is why research moved to Ruth; leave it out of William's writing average.
 - **Ruth's Haiku brief** (339,442 tokens) overclaimed and ignored the template; she is back on Sonnet (see [team.md](team.md), Model reviews).
-- **Critic checks** (`_tools/critic_check.py` on `_tools/fixtures/onboarding-bad.md`, 3 known errors): the first (153,734) missed the false bloom fact; the second (72,423) missed the "cheapest" upgrade. Each caught 2 of 3; Clara's Lore check was then extended to game facts in tables and notes. The third (66,952, on main 2026-11-08) caught all three.
+- **Critic checks** (`_tools/critic_check.py` on `_tools/fixtures/onboarding-bad.md`, 3 known errors): the first (153,734) missed the false bloom fact; the second (72,423) missed the "cheapest" upgrade. Each caught 2 of 3; Clara's Lore check was then extended to game facts in tables and notes.
 - **Before 2026-11-01** (rows down to the regression run), Clara read the whole blackboard herself and later rounds copied the full draft; afterwards she gets only her slice, and later rounds a diff.
 
 A full design review (Round 1 + Round 2, 12 agent runs) used about 586k subagent tokens the first time and 634k the second. The orchestrator's synthesis is not included.

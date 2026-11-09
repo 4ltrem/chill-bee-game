@@ -4,6 +4,48 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L30 · 2026-11-09 · The `/goal` stop hook kept firing after the designer said "stop"
+- **What broke:** the designer stopped the UI work mid-turn; the goal judge re-sent "condition not met" six times while the session stayed paused.
+- **How noticed:** six identical hook messages in a row.
+- **Cause:** the `/goal` condition ("design created for the UI…") was still false, and the hook has no notion of a stop request.
+- **How fixed:** the session kept honouring the stop and pointed to `/goal clear`; the designer then set a new direction.
+- **Prevention:** when the designer says stop under an active `/goal`, say once that the hook will loop until `/goal clear` or "continue", then answer each hook message in one line (L23 is the same family: conditions holding human steps).
+
+## L29 · 2026-11-09 · Icon geometry took many rounds when described in words
+- **What broke:** the Royal Jelly icon went through drop → dipper → dipper rotated → rotated 180° → nine variants → G+H mixes before it settled; the designer also named "H" when meaning "K" once.
+- **How noticed:** the designer's comments on the canvas, one geometry change per round.
+- **Cause:** angles, positions and "on top of" were guessed from words; each guess cost a full round.
+- **How fixed:** a variants board with letters and live sliders (angle, crown drop, lift) on the candidate; the designer set the numbers by hand (K: 60°, 1.8, −2.6).
+- **Prevention:** `UI_DESIGN.md` working rules: for any shape, angle, offset or size, show 3+ lettered variants and expose sliders; restate the chosen letter and values before applying it everywhere.
+
+## L28 · 2026-11-09 · A variant's large preview ignored the sliders its pill followed
+- **What broke:** on the Royal Jelly variants board, K's pill moved with the Tweaks sliders but the 120 px preview did not, though both used the same markup.
+- **How noticed:** the designer: "the tweaks work to the pill but not the big icon".
+- **Cause:** not confirmed; most likely the canvas dropped `{{hole}}` values interpolated inside an SVG `transform` string.
+- **How fixed:** both previews now bind the whole `transform` value, computed in `renderVals()` (`kRotT`, `kCrownT`, `kLiftT`). Not yet confirmed by the designer.
+- **Prevention:** `UI_DESIGN.md` canvas rule: bind whole attribute values from `renderVals()`, never interpolate inside SVG attribute strings (Still open until confirmed).
+
+## L27 · 2026-11-09 · Publishes raced the designer's own page edits
+- **What broke:** two publishes were refused and four warned that a page save had landed minutes earlier; the designer was moving sliders and nudging elements while the orchestrator edited the same files.
+- **How noticed:** the Artifact tool's refusal and "saved from the artifact's page" warnings.
+- **Cause:** editing local copies read several minutes earlier.
+- **How fixed:** read the live file right before each edit, diff it against the local copy, re-apply the change on the live version, then publish.
+- **Prevention:** `UI_DESIGN.md` canvas rule: read → edit → publish in one step per change; never resend an older copy.
+
+## L26 · 2026-11-09 · The "12" in the Jelly pill could not be selected on the canvas
+- **What broke:** the designer could not swap the number and the icon, because the "12" had no element of its own.
+- **How noticed:** "can't find the element for 12".
+- **Cause:** the number was a bare text node inside the button.
+- **How fixed:** every variant pill puts the 12, the icon and the + in separate elements.
+- **Prevention:** `UI_DESIGN.md` canvas rule: every piece of text is its own element.
+
+## L25 · 2026-11-09 · The first UI mockups redrew the harvest loop instead of using the game's shots
+- **What broke:** the first boards were drawn from scratch, including the harvest screens the game already has, with a bottom navigation bar.
+- **How noticed:** the designer: "screens were being invented for the harvest loop which we already know, use the screenshots we already have and build the UI on top, icons over the screen are preferred over a navigation bar". The designer also said "stop" mid-run.
+- **Cause:** the brief started from the GDD's screen list, not from what the build already shows.
+- **How fixed:** the canvas was rebuilt on `game/reports/ui-compare/spin-c/` shots with floating icons; the invented boards were deleted.
+- **Prevention:** `UI_DESIGN.md` rule 1: start every UI design from the latest scripted shots (`_tools/ui_shots.py`) and draw only the new UI on top.
+
 ## L24 · 2026-11-08 · A commit to `main` from a worktree failed the hooks and the push hung
 - **What broke:** the first commit on a worktree from `origin/main` ran the milestone branch's pre-commit check, which calls `contract_check.py` that `main` does not have; `git push` hung over two minutes on a hidden login prompt.
 - **How noticed:** the commit was rejected and the push never returned; the designer logged in and the retry went through.

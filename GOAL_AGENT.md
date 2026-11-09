@@ -1,7 +1,8 @@
 ---
 author: orchestrator
 type: write-up
-status: draft
+status: final
+decided: 2026-11-09, designer ("mark as final")
 milestone: M3 (Assignment 5)
 description: The goal-oriented coding agent (goal_agent.py): how it finds what the 0.1.4 spec asks for that the game lacks, why it built each feature in the order it did, and the manual changes made before accepting the code
 ---
@@ -10,6 +11,8 @@ description: The goal-oriented coding agent (goal_agent.py): how it finds what t
 **The assignment:** "build a goal-oriented coding agent that reads a Game Design Document (GDD), scans your existing codebase, and automatically generates missing features. [...] your primary objective is to build and understand the reasoning layer—how the agent decides what to build and in what order."
 
 **The agent:** [`_tools/goal_agent.py`](_tools/goal_agent.py), tests in [`_tools/test_goal_agent.py`](_tools/test_goal_agent.py), plan in [game/specs/m3-goal-agent.md](game/specs/m3-goal-agent.md). Its demo run built **0.1.4** from [game/specs/0.1.4-ui-placement.md](game/specs/0.1.4-ui-placement.md), the designer's play-test fixes to the UI. The run's record is the blackboard [game/reports/goal/0.1.4/blackboard.md](game/reports/goal/0.1.4/blackboard.md).
+
+**Play it:** [4ltrem.itch.io/chill-bee-game](https://4ltrem.itch.io/chill-bee-game) (0.1.4, web build, play-tested by the designer 2026-11-08).
 
 ## How it decides: the reasoning layer is code
 
@@ -59,7 +62,7 @@ The tests (`python -I _tools/test_goal_agent.py`, 17 cases) pin all of this on a
 
 ## What it built, and why
 
-_The first run is rows 1–8 (it stopped at 15:09). The second run (20:24–21:40) is rows 9–14. It was started after the designer play-tested the build, answered the C5 question (Design Votes round 9) and added items 9 and 10, and it paused at C5's fix round. Still to build: C5's fix round and Quinn's ten test lines._
+_The first run is rows 1–8 (it stopped at 15:09). The second run (20:24–21:40) is rows 9–14. It was started after the designer play-tested the build, answered the C5 question (Design Votes round 9) and added items 9 and 10, and it paused at C5's fix round. C5's fix round, Quinn's test lines and the designer's later play-test items 14–22 were finished in a `/goal` session (see "Compared with Claude Code's `/goal`"); 0.1.4 ended at unit 178/178 and was merged into `main` (`6e22681`)._
 
 | # | Goal | Why it came next (score) | Agents | Outcome | Checkpoint |
 |---|---|---|---|---|---|
@@ -125,7 +128,7 @@ The lesson: a `/goal` condition has to be something the agent can make true on i
 | Records | The transcript only | A blackboard, briefs, a ledger, checkpoint commits and run-log rows |
 | Cost record | The orchestrator's context is paid on every turn and is not logged in `agent-runs.csv` | Every call is logged per agent; fix rounds are capped at 15 turns |
 
-**What it shows.** The designer found `/goal` more intuitive, because one session sees everything and can be steered. What it lacks is what this assignment asks for: a reasoning layer that can be checked. It has no scored order, it can't be reproduced, and its stop test is a model reading a transcript. Next step: run both together. `/goal` stays the outer loop, and its condition is something that can be checked, such as "`goal_agent.py SPEC --plan` reports nothing left to build and the latest unit run is green". The script's gaps decide when the work is done, and the designer keeps the native, visible experience.
+**What it shows.** The designer found `/goal` more intuitive, because one session sees everything and can be steered. What it lacks is what this assignment asks for: a reasoning layer that can be checked. It has no scored order, it can't be reproduced, and its stop test is a model reading a transcript. Next step, **adopted for 0.2** (designer, 2026-11-09): run both together. `/goal` stays the outer loop, and its condition is one the agent can check on its own: "`goal_agent.py SPEC --plan` reports nothing left to build and the latest unit run is green". The script's gaps decide when the work is done, and the designer keeps the native, visible experience.
 
 ## Cost
 

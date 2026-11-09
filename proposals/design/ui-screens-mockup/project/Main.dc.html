@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Farm View</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.ph{width:360px;height:640px;position:relative;overflow:hidden;font-family:'Nunito',system-ui,sans-serif;color:#331F05;background:#C9E8F5}
+.ol{color:#FFF5DB;font-weight:800;text-shadow:-1.5px -1.5px 0 #331F05,1.5px -1.5px 0 #331F05,-1.5px 1.5px 0 #331F05,1.5px 1.5px 0 #331F05,0 2px 0 #331F05}
+.btn{box-sizing:border-box;min-height:60px;min-width:60px;padding:0 14px;border-radius:16px;border:3px solid #59380D;background:#FFC21F;color:#331F05;font:800 16px 'Nunito',system-ui,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.btn.c{background:#FFF5DB}
+.bar{position:absolute;left:0;right:0;bottom:0;height:68px;background:#4D381A;border-top:3px solid #59380D;display:flex}
+.tab{flex:1;background:none;border:0;color:#FFF5DB;font:800 16px 'Nunito',system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+.abs{position:absolute}
+</style>
+</helmet>
+<div class="ph">
+  <img src="/_blob/8069b78a7bfc41a499f9caab5e3b3d10" alt="0.1.4 farm view with a full hive" style="position: absolute; left: 0; top: 0; width: 360px; height: 640px">
+  <div aria-hidden="true" style="position: absolute; left: 170px; top: 185px; width: 112px; height: 51px; background: #ACDF7F"></div>
+  <button aria-label="Harvest: the hive is full, 10 of 10" style="position: absolute; left: 196px; top: 181px; width: 60px; height: 60px; border-radius: 50%; background: #FFFFFF; border: 3px solid #59380D; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; overflow: hidden"><span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 100%; background: #FFBF1A"></span><svg style="position: relative" width="40" height="40" viewBox="0 0 24 24" stroke="#331F05" stroke-linejoin="round" aria-hidden="true"><g transform="translate(12 12) rotate(35) scale(0.85)"><path d="M-4.2-1.5V-11M-2.5-1.5V-11M-.8-1.5V-11M.8-1.5V-11M2.5-1.5V-11M4.2-1.5V-11" stroke="#545459" stroke-width="1.3" stroke-linecap="round"/><rect x="-5" y="-1.8" width="10" height="3" rx=".8" fill="#99A8BD" stroke-width="1.3"/><rect x="-2.2" y="1.2" width="4.4" height="2.2" rx=".6" fill="#99A8BD" stroke-width="1.2"/><rect x="-1.7" y="3.4" width="3.4" height="9" rx="1.7" fill="#997347" stroke-width="1.3"/></g></svg></button>
+  <div class="abs" style="left: 0; top: 0"><dc-import name="Icons" hint-size="360px,640px"></dc-import></div>
+  <button class="btn c abs" style="left: 104px; top: 196px; width: 8px; padding: 0; border-radius: 30px; border-style: none; height: 8px; min-width: 30px; min-height: 30px" aria-label="Wild nectar drop, tap to collect">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFBF1A" stroke="#331F05" stroke-width="2" aria-hidden="true"><path d="M12 3c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z"></path></svg>
+  </button>
+  <button class="btn c abs" style="left: 238px; top: 466px; width: 110px; flex-direction: column; gap: 0; line-height: 1.05; padding: 4px 6px" aria-label="Watch an ad for a 2x boost that funds habitat">
+    <span>2× boost</span><span style="font: 700 14px 'Nunito'">funds habitat</span>
+  </button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

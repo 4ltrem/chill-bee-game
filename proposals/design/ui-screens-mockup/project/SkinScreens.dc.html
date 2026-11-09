@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UI skins</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 1992px; box-sizing: border-box; padding: 32px; background: #FFFFFF; font-family: 'Nunito', system-ui, sans-serif; color: #331F05; display: flex; flex-direction: column; gap: 20px">
+  <h1 style="margin: 0; font: 800 40px 'Nunito'">{{title}}</h1>
+  <p style="margin: 0; font: 700 18px 'Nunito'; color: #61574C">{{intro}}</p>
+  <div style="display: flex; gap: 32px">
+    <sc-for list="{{skins}}" as="k" hint-placeholder-count="5">
+      <div style="width: 360px; display: flex; flex-direction: column; gap: 12px">
+        <div style="font: 800 24px 'Nunito'">{{k.name}}</div>
+        <div style="font: 700 15px 'Nunito'; color: #61574C; min-height: 40px">{{k.note}}</div>
+        <div style="display: flex; gap: 6px">
+          <sc-for list="{{k.chips}}" as="c" hint-placeholder-count="5">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 2px; align-items: center">
+              <div style="width: 100%; height: 44px; border-radius: 10px; border: 2px solid #59380D; background: {{c.hex}}"></div>
+              <span style="font: 700 13px 'Nunito'">{{c.role}}</span>
+              <span style="font: 600 12px 'Nunito'; color: #61574C">{{c.hex}}</span>
+            </div>
+          </sc-for>
+        </div>
+        <dc-import name="SkinPhone" skin="{{k.key}}" screen="farm" hint-size="360px,640px"></dc-import>
+        <dc-import name="SkinPhone" skin="{{k.key}}" screen="shop" hint-size="360px,640px"></dc-import>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"set":{"editor":"enum","options":["palettes","levels"],"default":"palettes"},"$preview":{"width":1992,"height":1720}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const C = {
+      honey:   ['#FFF5DB', '#FFC21F', '#59380D', '#331F05', '#61574C'],
+      mint:    ['#EEF8E6', '#9ED685', '#2F5A24', '#1E3A16', '#4A6440'],
+      blossom: ['#F7F0FC', '#C7B3ED', '#4B3870', '#2E2240', '#5E5274'],
+      sky:     ['#EEF7FC', '#8ECDF0', '#1F4F70', '#12324A', '#3E5D73'],
+      brass:   ['#3A2A14', '#FFC21F', '#D1940D', '#FFF5DB', '#E8D9B5'],
+      alpine:  ['#F2F6FA', '#F4A7C4', '#2C4459', '#1B2B3A', '#4F6272'],
+      grove:   ['#231B33', '#99E6F2', '#7FD3E0', '#F3EEFF', '#C9BEDF'],
+      cloud:   ['#FFF9F2', '#F2C879', '#9C7A3C', '#3A2A20', '#6A5A4C']
+    };
+    const roles = ['panel', 'accent', 'border', 'text', 'sub-text'];
+    const mk = (key, name, note) => ({ key, name, note, chips: C[key].map((hex, i) => ({ hex, role: roles[i] })) });
+    const levels = this.props.set === 'levels';
+    return levels ? {
+      title: 'One skin per level (biome)',
+      intro: 'Each biome gets its own UI skin, changing as the player moves biome. The farm shot is the Sunny Meadow one with a mood tint, standing in until each biome is built.',
+      skins: [
+        mk('honey', 'Sunny Meadow', 'Honey Classic: the approved tokens, warm and golden.'),
+        mk('alpine', 'Alpine Valley', 'Frost panels, slate text, fireweed-pink accent.'),
+        mk('grove', 'Enchanted Grove', 'Night panels, lantern-cyan accent from the mushroom glow token; soft, never scary.'),
+        mk('cloud', 'Cloud Gardens', 'Pale cream panels with brass borders, for the brass solar hives.')
+      ]
+    } : {
+      title: 'UI skins: five palettes',
+      intro: 'The same farm view and Shop in each palette. Honey Classic is the approved STYLE_GUIDE set; the others are proposals (new tokens are added to the guide only by the designer). Text on every panel and button keeps 4.5:1 contrast (V10).',
+      skins: [
+        mk('honey', 'Honey Classic', 'Today’s tokens: cream, gold and ink.'),
+        mk('mint', 'Meadow Mint', 'Soft green panels, meadow-green accent.'),
+        mk('blossom', 'Wildflower', 'Lilac panels from the Blossom tokens.'),
+        mk('sky', 'Sky Glass', 'Cool sky panels, airy and light.'),
+        mk('brass', 'Wood & Brass', 'Dark wood panels, gold accent: cosy, high contrast.')
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

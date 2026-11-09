@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Royal Crystal and reset</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.fx{font:700 14px 'Nunito';color:#61574C}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:60px;padding:0 12px;border-radius:14px;border:3px solid #59380D;background:#FFFFFF;font:800 16px 'Nunito';color:#331F05;cursor:pointer;text-align:left;width:100%;box-sizing:border-box}
+.opt.on{background:#FFC21F}
+</style>
+</helmet>
+<div style="width: 360px; height: 640px; position: relative; overflow: hidden; font-family: 'Nunito', system-ui, sans-serif; color: #331F05">
+  <img src="/_blob/307f54ef490d522affb7cf7eba22cf25" alt="0.1.4 farm view" style="position: absolute; left: 0; top: 0; width: 360px; height: 640px">
+  <div style="position: absolute; inset: 0; background: rgba(51,31,5,0.6)"></div>
+  <section aria-label="Royal Crystal" style="position: absolute; left: 0; right: 0; top: 40px; bottom: 0; background: #FFF5DB; border: 3px solid #59380D; border-bottom: 0; border-radius: 22px 22px 0 0; padding: 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; align-items: center; gap: 12px">
+      <svg width="54" height="60" viewBox="0 0 54 60" aria-hidden="true"><path d="M27 3 L50 20 L41 56 H13 L4 20 Z" fill="#FFC21F" stroke="#59380D" stroke-width="3"/><path d="M4 20 H50 M27 3 L19 20 L27 56 L35 20 Z" fill="none" stroke="#59380D" stroke-width="2"/></svg>
+      <div><h2 style="margin: 0; font: 800 22px 'Nunito'">A Royal Crystal formed!</h2><span class="fx">3 Crystals · +45% production in every world</span></div>
+    </div>
+    <div style="font: 800 16px 'Nunito'">Pick a head start for your next world</div>
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <button class="opt"><span>Bigger starting frames</span><span class="fx">Lv 0/[TBD]</span></button>
+      <button class="opt"><span>Extra starting hive</span><span class="fx">Habitat −</span></button>
+      <button class="opt on"><span>Starting wildflower plot</span><span style="font: 700 14px 'Nunito'">Habitat +</span></button>
+    </div>
+    <div style="border: 3px solid #59380D; border-radius: 14px; padding: 6px 10px; background: #FFFFFF">
+      <div style="display: flex; justify-content: space-between; font: 800 14px 'Nunito'"><span>Starting Habitat Health</span><span>Lv 0 → Lv 1</span></div>
+      <span class="fx">Capped at Habitat Synergy Lv 3</span>
+    </div>
+    <p style="margin: 0; font: 700 14px 'Nunito'">The swarm splits and flies off to restore a new pocket world. This world stays saved, and its Refinery rests as a monument.</p>
+    <div style="display: flex; gap: 8px; margin-top: auto">
+      <button style="flex: 1; min-height: 60px; border-radius: 16px; border: 3px solid #59380D; background: #FFF5DB; font: 800 16px 'Nunito'; color: #331F05; cursor: pointer">Stay here</button>
+      <button style="flex: 1.4; min-height: 60px; border-radius: 16px; border: 3px solid #59380D; background: #FFC21F; font: 800 16px 'Nunito'; color: #331F05; cursor: pointer">Split the swarm</button>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

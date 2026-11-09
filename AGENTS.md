@@ -8,6 +8,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 |---|---|
 | [GDD.md](GDD.md) | the game design document: the single source of truth for every decision |
 | [STYLE_GUIDE.md](STYLE_GUIDE.md) | the approved look and voice rules (V1–V15, T1–T6) and palette tokens that scenes and text are checked against |
+| [UI_DESIGN.md](UI_DESIGN.md) | the designer's UI preferences (icons over the shots, no nav bar, Harvest fork meter, Royal Jelly icon K) and the UI canvas map; read before any UI work |
 | [STYLE_LOOP.md](STYLE_LOOP.md) | how the two style loops (visual: Bob, `style_check.py`, Vera; voice: William, Clara) enforce the guide, with the demo runs and their cost |
 | [MILESTONES.md](MILESTONES.md) | build stages, version numbers and the milestones, fitted to the course deadlines |
 | [README.md](README.md) | public overview and the Outstanding TBDs checklist |

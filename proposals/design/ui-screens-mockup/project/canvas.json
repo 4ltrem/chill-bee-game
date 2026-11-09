@@ -1,0 +1,346 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Build.dc.html": {
+      "h": 640,
+      "page": "page-screens",
+      "title": "6 Build mode",
+      "w": 360,
+      "x": 440,
+      "y": 0
+    },
+    "Centrifuge.dc.html": {
+      "h": 640,
+      "title": "3 Second stop: rail hidden, Tools icon",
+      "w": 360,
+      "x": 1320,
+      "y": 0
+    },
+    "Coverage.dc.html": {
+      "h": 1500,
+      "page": "page-ref",
+      "title": "GDD function → icon / screen coverage",
+      "w": 1240,
+      "x": 0,
+      "y": 0
+    },
+    "Crystal.dc.html": {
+      "h": 640,
+      "page": "page-screens",
+      "title": "8 Royal Crystal & reset",
+      "w": 360,
+      "x": 1320,
+      "y": 0
+    },
+    "FirstLaunch.dc.html": {
+      "h": 640,
+      "page": "page-meta",
+      "title": "14 First launch: age gate & guide",
+      "w": 360,
+      "x": 1760,
+      "y": 0
+    },
+    "Habitat.dc.html": {
+      "h": 640,
+      "page": "page-screens",
+      "title": "7 Habitat & Refinery",
+      "w": 360,
+      "x": 880,
+      "y": 0
+    },
+    "Icons.dc.html": {
+      "h": 640,
+      "title": "Icon overlay (shared component)",
+      "w": 360,
+      "x": 440,
+      "y": 0
+    },
+    "Impact.dc.html": {
+      "h": 640,
+      "page": "page-meta",
+      "title": "11 Impact & Leaderboards",
+      "w": 360,
+      "x": 440,
+      "y": 0
+    },
+    "JellyVariants.dc.html": {
+      "h": 2250,
+      "page": "page-ref",
+      "title": "Royal Jelly icon variants",
+      "w": 1000,
+      "x": 2200,
+      "y": 0
+    },
+    "Journal.dc.html": {
+      "h": 640,
+      "page": "page-screens",
+      "title": "9 Bee Journal",
+      "w": 360,
+      "x": 1760,
+      "y": 0
+    },
+    "Legend.dc.html": {
+      "h": 1500,
+      "page": "page-ref",
+      "title": "Icon legend",
+      "w": 800,
+      "x": 1320,
+      "y": 0
+    },
+    "LevelSkins.dc.html": {
+      "h": 1720,
+      "page": "page-279hfu",
+      "title": "UI skins: one per level (biome)",
+      "w": 1992,
+      "x": 0,
+      "y": 2760
+    },
+    "Main.dc.html": {
+      "h": 640,
+      "title": "1 Farm View + icons (bottom slot A: quick-buy + Shop icon)",
+      "w": 360,
+      "x": 0,
+      "y": 0
+    },
+    "OptB.dc.html": {
+      "h": 640,
+      "page": "page-slot",
+      "title": "Bottom slot B: next-unlock goal",
+      "w": 360,
+      "x": 0,
+      "y": 0
+    },
+    "OptC.dc.html": {
+      "h": 640,
+      "page": "page-slot",
+      "title": "Bottom slot C: Habitat & Refinery strip",
+      "w": 360,
+      "x": 440,
+      "y": 0
+    },
+    "OptD.dc.html": {
+      "h": 640,
+      "page": "page-slot",
+      "title": "Bottom slot D: guide task strip",
+      "w": 360,
+      "x": 880,
+      "y": 0
+    },
+    "Prototype-yshc.dc.html": {
+      "h": 640,
+      "is_interactive": true,
+      "page": "page-atiwlr",
+      "title": "Prototype: fork meter + Shop sheet (press Play) copy",
+      "w": 360,
+      "x": -18,
+      "y": -194
+    },
+    "Settings.dc.html": {
+      "h": 640,
+      "page": "page-meta",
+      "title": "13 Settings",
+      "w": 360,
+      "x": 1320,
+      "y": 0
+    },
+    "Shop.dc.html": {
+      "h": 640,
+      "page": "page-screens",
+      "title": "5 Upgrade Shop",
+      "w": 360,
+      "x": 0,
+      "y": 0
+    },
+    "SkinPhone.dc.html": {
+      "h": 640,
+      "page": "page-279hfu",
+      "title": "Skinned phone (shared component)",
+      "w": 360,
+      "x": 2100,
+      "y": 800
+    },
+    "SkinScreens.dc.html": {
+      "h": 1720,
+      "page": "page-279hfu",
+      "title": "UI skins: five palettes",
+      "w": 1992,
+      "x": 0,
+      "y": 800
+    },
+    "Store.dc.html": {
+      "h": 640,
+      "page": "page-meta",
+      "title": "12 Store",
+      "w": 360,
+      "x": 880,
+      "y": 0
+    },
+    "WelcomeBack.dc.html": {
+      "h": 640,
+      "title": "4 Welcome back (offline earnings)",
+      "w": 360,
+      "x": 1760,
+      "y": 0
+    },
+    "Worlds.dc.html": {
+      "h": 640,
+      "page": "page-meta",
+      "title": "10 Worlds",
+      "w": 360,
+      "x": 0,
+      "y": 0
+    },
+    "Zoom.dc.html": {
+      "h": 640,
+      "title": "2 First zoom: rail hidden, Tools icon",
+      "w": 360,
+      "x": 880,
+      "y": 0
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-11-09T18:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "noteOrder": [
+    "t1",
+    "t2",
+    "t3",
+    "t4",
+    "t5",
+    "n1",
+    "n2",
+    "n3"
+  ],
+  "notes": {
+    "n1": {
+      "fill": "orange",
+      "text": "Backgrounds are the real 0.1.4 shots (game/reports/ui-compare/spin-c, the spin-r1 pick), untouched. Only the new UI is drawn on top. Each phone is 360×640 = half of 720×1280, so a 60 px icon here is the 120 px target of V11.",
+      "w": 340,
+      "x": 2200,
+      "y": 0
+    },
+    "n2": {
+      "fill": "blue",
+      "text": "No navigation bar: round icons float over the farm, in the free sky and edges, clear of the top info and the Harvest/Spin/Sell anchors (V13). Icons may overlap props. Zooms hide the rail: Back is the only exit, as approved in 0.1.4.",
+      "w": 340,
+      "x": 2200,
+      "y": 420
+    },
+    "n3": {
+      "fill": "green",
+      "page": "page-slot",
+      "text": "Bottom slot is decided by play-test (designer, 2026-11-09). A = today's quick-buy panel kept, plus the Shop icon (board 1 on the Farm & harvest page). B, C, D replace the panel; the Shop icon stays in all four.",
+      "w": 400,
+      "x": 1320,
+      "y": 0
+    },
+    "t1": {
+      "kind": "title1",
+      "maxW": 2120,
+      "text": "The 0.1.4 game with icons on top",
+      "w": 240,
+      "x": 0,
+      "y": -280
+    },
+    "t2": {
+      "kind": "title1",
+      "maxW": 2120,
+      "page": "page-slot",
+      "text": "Bottom slot: play-test options (A is board 1)",
+      "w": 240,
+      "x": 0,
+      "y": -280
+    },
+    "t3": {
+      "kind": "title1",
+      "maxW": 2120,
+      "page": "page-screens",
+      "text": "Screens opened by the icons",
+      "w": 240,
+      "x": 0,
+      "y": -280
+    },
+    "t4": {
+      "kind": "title1",
+      "maxW": 2120,
+      "page": "page-meta",
+      "text": "Meta screens",
+      "w": 240,
+      "x": 0,
+      "y": -280
+    },
+    "t5": {
+      "kind": "title1",
+      "maxW": 3200,
+      "page": "page-ref",
+      "text": "Coverage, legend and icon variants",
+      "w": 240,
+      "x": 0,
+      "y": -280
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Icons.dc.html",
+    "Zoom.dc.html",
+    "Centrifuge.dc.html",
+    "WelcomeBack.dc.html",
+    "OptB.dc.html",
+    "OptC.dc.html",
+    "OptD.dc.html",
+    "Shop.dc.html",
+    "Build.dc.html",
+    "Habitat.dc.html",
+    "Crystal.dc.html",
+    "Journal.dc.html",
+    "Worlds.dc.html",
+    "Impact.dc.html",
+    "Store.dc.html",
+    "Settings.dc.html",
+    "FirstLaunch.dc.html",
+    "Coverage.dc.html",
+    "Legend.dc.html",
+    "JellyVariants.dc.html",
+    "SkinScreens.dc.html",
+    "LevelSkins.dc.html",
+    "SkinPhone.dc.html",
+    "Prototype-yshc.dc.html"
+  ],
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "1 Farm & harvest"
+    },
+    {
+      "id": "page-slot",
+      "name": "2 Bottom slot options"
+    },
+    {
+      "id": "page-screens",
+      "name": "3 Icon screens"
+    },
+    {
+      "id": "page-meta",
+      "name": "4 Meta screens"
+    },
+    {
+      "id": "page-ref",
+      "name": "5 Coverage & legend"
+    },
+    {
+      "id": "page-279hfu",
+      "name": "6 Skins"
+    },
+    {
+      "id": "page-atiwlr",
+      "name": "0 Prototype"
+    }
+  ],
+  "title": "Chill Bee UI Screens"
+}

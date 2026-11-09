@@ -3,3 +3,4 @@
 
 - [Capstone Concept Proposal: Royal Crystal Chamber](capstone-machine.md) - Royal Honey Refinery capstone concept (applied; decided 2026-10-26: adopted as the capstone in the GDD Capstone section)
 - [Native Bee Species: Biome Effects Proposal](native-species.md) - Native bee species effects per biome (applied; decided 2026-10-26: adopted into the GDD Tree C species table and per-biome native-bee bonus)
+- [UI Screens: icons over the farm](ui-screens.md) - UI for every player-facing GDD function - floating icons over the 0.1.4 farm (no navigation bar), sheets for each screen, and four bottom-slot options for the play-test (proposed)

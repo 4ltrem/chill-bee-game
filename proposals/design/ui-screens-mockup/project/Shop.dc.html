@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Upgrade Shop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:2px dashed #D1940D}
+.nm{font:800 16px 'Nunito';line-height:1.15}
+.fx{font:700 14px 'Nunito';color:#61574C}
+.buy{flex:none;width:84px;min-height:60px;border-radius:14px;border:3px solid #59380D;background:#FFC21F;font:800 16px 'Nunito';color:#331F05;cursor:pointer}
+.buy.off{background:#FFF5DB;border-color:#61574C;color:#61574C}
+.tab{flex:none;min-height:60px;padding:0 14px;border-radius:14px;border:3px solid #59380D;background:#FFF5DB;font:800 16px 'Nunito';color:#331F05;cursor:pointer}
+.tab.on{background:#FFC21F}
+</style>
+</helmet>
+<div style="width: 360px; height: 640px; position: relative; overflow: hidden; font-family: 'Nunito', system-ui, sans-serif; color: #331F05">
+  <img src="/_blob/307f54ef490d522affb7cf7eba22cf25" alt="0.1.4 farm view" style="position: absolute; left: 0; top: 0; width: 360px; height: 640px">
+  <div style="position: absolute; inset: 0; background: rgba(51,31,5,0.6)"></div>
+  <section aria-label="Upgrade Shop" style="position: absolute; left: 0; right: 0; top: 84px; bottom: 0; background: #FFF5DB; border: 3px solid #59380D; border-bottom: 0; border-radius: 22px 22px 0 0; padding: 12px 14px 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <div><h2 style="margin: 0; font: 800 24px 'Nunito'">Shop</h2><span class="fx">You have $1,240</span></div>
+      <button aria-label="Close Shop" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #59380D; background: #FFF5DB; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#331F05" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div style="display: flex; gap: 6px; overflow: hidden">
+      <button class="tab">Bees</button><button class="tab on">Hive</button><button class="tab">Habitat</button><button class="tab">Research</button><button class="tab">Refinery</button>
+    </div>
+    <div style="display: flex; flex-direction: column; overflow: hidden">
+      <div class="row"><div style="flex: 1"><div class="nm">Heated Uncapping Fork</div><div class="fx">+12% swipe radius · Lv 1/5</div></div><button class="buy">$49</button></div>
+      <div class="row"><div style="flex: 1"><div class="nm">Centrifuge Gearing</div><div class="fx">−15% crank time · Lv 0/5</div></div><button class="buy">$35</button></div>
+      <div class="row"><div style="flex: 1"><div class="nm">Deep Frame</div><div class="fx">2 → 5 jars per frame · Lv 0/3</div></div><button class="buy off">$150</button></div>
+      <div class="row"><div style="flex: 1"><div class="nm">Long Fork</div><div class="fx">Uncap a whole frame in one sweep · unlock [TBD]</div></div><button class="buy off" aria-label="Long Fork locked"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#61574C" stroke-width="2.5" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button></div>
+      <div class="row"><div style="flex: 1"><div class="nm">Artisanal Branding</div><div class="fx">+$2.50 per jar · Lv 0/10</div></div><button class="buy">$60</button></div>
+      <div style="font: 800 16px 'Nunito'; padding: 10px 0 4px">Automation</div>
+      <div class="row"><div style="flex: 1"><div class="nm">Centrifuge Motor</div><div class="fx">The centrifuge spins by itself</div></div><button class="buy off">[TBD]</button></div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

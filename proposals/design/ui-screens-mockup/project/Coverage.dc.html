@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>GDD coverage</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+th,td{text-align:left;padding:7px 10px;border-bottom:2px dashed #D1940D;vertical-align:top}
+th{font:800 16px 'Nunito';background:#4D381A;color:#FFF5DB}
+td{font:700 15px 'Nunito'}
+</style>
+</helmet>
+<div style="width: 1240px; min-height: 1500px; box-sizing: border-box; padding: 32px; background: #FFF5DB; font-family: 'Nunito', system-ui, sans-serif; color: #331F05">
+  <h1 style="margin: 0 0 4px; font: 800 34px 'Nunito'">Every player-facing GDD function, and where it lives</h1>
+  <p style="margin: 0 0 16px; font: 700 16px 'Nunito'; color: #61574C">“0.1.4” = already in the game (shown on the real shots, unchanged). “New” = proposed on this canvas. Board numbers match the artboard titles. Proposal: proposals/design/ui-screens.md</p>
+  <table style="width: 100%; border-collapse: collapse">
+    <thead><tr><th style="width: 40px">#</th><th style="width: 380px">Function</th><th style="width: 230px">GDD section</th><th>Where (icon → board)</th><th style="width: 90px">Status</th></tr></thead>
+    <tbody>
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="37">
+        <tr><td>{{ r.n }}</td><td>{{ r.f }}</td><td>{{ r.g }}</td><td>{{ r.w }}</td><td style="font-weight: 800">{{ r.s }}</td></tr>
+      </sc-for>
+    </tbody>
+  </table>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1240,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const R = [
+      ['Money', '§6 Currencies', 'Top-left HUD', '0.1.4'],
+      ['Bee count (swarm counter)', 'Technical Constraints, Bee Rendering Plan', 'Top-left HUD', '0.1.4'],
+      ['Royal Jelly balance', '§6 Currencies', 'Jelly pill, top-right → Store (12)', 'New'],
+      ['Harvest: hive meter and n/10', '§2 Start', 'Button over the hive (1)', '0.1.4'],
+      ['Uncapping: fork, frames, Back', '§2 Stage 1', 'First zoom (2)', '0.1.4'],
+      ['Crank: tap or hold anywhere', '§2 Stage 2, §8 Hold Instead of Tapping', 'Second stop (3)', '0.1.4'],
+      ['Bottling and truck loading', '§2 Stage 3', 'Farm view', '0.1.4'],
+      ['Sell ($X) and sale summary', '§2 Stage 3', 'Button over the truck', '0.1.4'],
+      ['Capacity pause notice', '§2 (overflow buffer)', 'Line above the bottom slot', '0.1.4'],
+      ['Pests and wild nectar drops', '§1 Pests & Wild Nectar Drops', 'Floating tap icons on the farm (1)', 'New'],
+      ['Rewarded-ad 2× boost, funds habitat', 'Monetization: Non-Predatory Rewarded Ads', 'Farm chip (1), Welcome back (4)', 'New'],
+      ['Offline earnings and cap (4/12/24 h)', '§6 Offline Earnings', 'Welcome back (4)', 'New'],
+      ['Trees A, B, C: effect, level/max, cost, locks', '§3 Progression Trees', 'Shop icon → Shop (5); quick-buy in bottom slot A (1)', 'New'],
+      ['Automation: motor, auto-scraper, Faster Delivery, Auto-Sell', '§3 Tree B, §1 Phase 2', 'Shop › Hive › Automation (5)', 'New'],
+      ['Tool upgrades from the manual screens; automated unit opens its zoom', '§1 Phase 2 (“UI TBD”)', 'Tools icon in the zooms (2, 3); Build › select unit › Open (6)', 'New'],
+      ['Research: genetics, unit tiers, Refinery upgrades', '§1 Phase 3, §4 Unlocking Tiers', 'Shop › Research tab (5)', 'New'],
+      ['Buy land, place, move, upgrade in place; unit and crate tiers', '§4 Land, Grid & Units', 'Build icon → Build mode (6)', 'New'],
+      ['Build and place the Refinery', 'Capstone: Build', 'Shop › Refinery tab (5), Build › Refinery (6)', 'New'],
+      ['Refinery charge, divert slider, habitat lock', 'Capstone: Charge, Habitat lock', 'Habitat (7); bottom slot C', 'New'],
+      ['Habitat Health, Synergy level, Hive Balance, next-biome unlock', '§3 Tree C', 'Habitat icon → Habitat (7); bottom slot C', 'New'],
+      ['Native bees here or missing; per-biome bonus and cap', '§3 Tree C: Native Bees, Species', 'Habitat (7)', 'New'],
+      ['Switch between biomes', 'Progression Tiers & Biomes', 'Habitat ‹ › arrows (7); the farm pans', 'New'],
+      ['Bee Journal: found / not found, real or fictional, EN/FR', '§3 Tree C: Bee Journal', 'Journal icon → Journal (9)', 'New'],
+      ['Royal Crystal, starting upgrade, Habitat preview, reset', '§1 Phase 3, §7 Reset Story', 'Opens when the Crystal forms → (8)', 'New'],
+      ['Saved worlds: load and switch; dormant Refinery', '§7 Reset Story, §9 Worlds', 'Worlds icon → Worlds (10)', 'New'],
+      ['Impact totals and donation percentages', 'Conservation Partnerships', 'Impact icon → Impact (11)', 'New'],
+      ['Personal-best run times; ranked boards later', '§5 Leaderboards', 'Impact › My best runs / Ranked (11)', 'New'],
+      ['Opt-in ranking, word-list names, kid mode has no name', '§5 Leaderboards, Child Safety', 'Settings (13)', 'New'],
+      ['Royal Jelly, Impact Pass, Patron Pass, Jelly time skips', '§6, Monetization Architecture', 'Jelly pill → Store (12)', 'New'],
+      ['Parental gate before purchases (kid mode)', 'Child Safety', 'Store (12): gate screen still to draw', 'New'],
+      ['Age gate at first launch', 'Child Safety', 'First launch (14)', 'New'],
+      ['Guide onboarding: meadow, first harvest, first upgrade', '§7 Story Premise & Onboarding', 'First launch (14); bottom slot D', 'New'],
+      ['Vibration, sound, music toggles; text size; language', '§8 Accessibility, §9 Settings', 'Settings icon → Settings (13)', 'New'],
+      ['One-thumb reach', '§8 Text Size & One-Handed Play', 'Sheets rise from the bottom; tapping the dimmed farm closes them', 'New'],
+      ['Information never by colour alone', '§8 Colour-Blind Support', 'Locked = dashed + lock or “?”; affordable = “!” badge; bars also in text', 'New'],
+      ['Dev mode: speed tag, Dev button', 'spec 0.1.4 items 4, 18', 'Unchanged', '0.1.4'],
+      ['Patron Golden Drone, Patron hive skin', 'Monetization: Patron Pass', 'Post-launch, no UI yet', 'Later']
+    ];
+    return { rows: R.map((r, i) => ({ n: i + 1, f: r[0], g: r[1], w: r[2], s: r[3] })) };
+  }
+}
+</script>
+</body>
+</html>

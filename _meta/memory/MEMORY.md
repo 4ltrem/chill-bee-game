@@ -5,7 +5,7 @@
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
 - [0.1.3 play-test](playtest-0-1-3.md) — 11/6: UI broken (Back inconsistent, Spin/Harvest move, x5 tag overlaps); noted, not fixing yet
-- [Session handoff](session-handoff.md) — read first: 0.1.4 items 1-21 done (948a49e), unit 178/178, both builds rebuilt; waits on designer play-test + itch upload; end-of-day not run
+- [Session handoff](session-handoff.md) — read first: UI design session done (UI_DESIGN.md, uncommitted); next: branch milestone/0.2 from main and commit, Terry, 0.2 spec, /goal + goal_agent; A6 fixes in parallel
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
 - [A/B comparison page](ab-comparison-page.md) — every creative A/B choice AND every numerical visual change (scale, offset, size) becomes a new section of the one Design Votes artifact, built by script; never a new artifact or browser tab
@@ -27,4 +27,5 @@
 - [Fix needs commit](fix-needs-commit.md) — never say "fixed" without the commit that changed the bug's code; a green test isn't a fix
 - [Look before done](look-before-done.md) — never call a model change done on tests alone; compare fresh shots with the picked variant
 - [Spec consistency](spec-consistency.md) — before adding a play-test item, grep the spec for the same object/view and fix contradictions in the same edit
+- [UI design prefs](ui-design-prefs.md) — read UI_DESIGN.md before UI work: real shots + icons, no nav bar, fork meter, Jelly icon K, variants with sliders
 - [Repo only](repo-only.md) — write only inside the repo (hook-enforced); reading outside is fine; moving/deleting outside files needs a yes
