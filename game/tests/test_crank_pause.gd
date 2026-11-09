@@ -52,6 +52,9 @@ func t_crank_pauses_on_back_and_resumes_on_spin() -> void:
 	ck(_cam().size > float(cv("pan_zoom_size")) + 0.5, "the camera is on the farm view (size %.3f)" % _cam().size)
 	var kept: int = int(cen.get("turns_counted"))
 	eq(kept, progress, "Back itself counted no turn and progress is kept")
+	# later-fix 1 (designer, 2026-11-08): the centrifuge text shows only on the spin screen, so Back from a started spin hides it
+	var lab: Control = m.find_child("CentrifugeLabel", true, false) as Control
+	ck(lab != null and not lab.is_visible_in_tree(), "the centrifuge text is hidden in the farm view while a crank is paused")
 	# taps in the farm view count no turns
 	for i in 5:
 		await _tap_free(m)
@@ -73,6 +76,7 @@ func t_crank_pauses_on_back_and_resumes_on_spin() -> void:
 	ck(back, "tapping Spin pans back to the second stop (size %s)" % str(_cam().size))
 	eq(cen.get("state"), _st(cen, "CRANKING"), "the crank is still the same crank: CRANKING at the second stop")
 	eq(int(cen.get("turns_counted")), progress, "resuming kept the progress (no turn lost or added by the pan)")
+	ck(lab != null and lab.is_visible_in_tree(), "the centrifuge text shows again at the second stop")
 	await _wait(_tap_gap())
 	await _tap_free(m)
 	eq(int(cen.get("turns_counted")), progress + 1, "at the second stop again a real tap counts a turn from where it stopped")

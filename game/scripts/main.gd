@@ -620,6 +620,7 @@ func _screen_rect(box: AABB, pose: Dictionary) -> Rect2:
 ## centrifuge (every position from the objects' screen rects, so nothing covers either).
 func _enter_second_stop_hud() -> void:
 	_at_second_stop = true
+	_farm_ui.on_spin_screen = true
 	_refresh_icons()   # hides Harvest here
 	if _harvest_ui != null:
 		_harvest_ui.show_pan()
@@ -637,4 +638,5 @@ func _leave_second_stop_hud() -> void:
 	_at_second_stop = false
 	_refresh_icons()   # Harvest was hidden at the second stop; the state table shows it again
 	if _farm_ui != null:
+		_farm_ui.on_spin_screen = false
 		_farm_ui.restore_top_info()
