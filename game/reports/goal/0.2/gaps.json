@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T16:27:25-05:00",
- "unit_log": "game/reports/_runs/20261109-162100/unit.log",
+ "at": "2026-11-09T17:02:58-05:00",
+ "unit_log": "game/reports/_runs/20261109-165359/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -142,36 +142,41 @@
     {
      "kind": "config",
      "name": "heated_fork_radius_bonus_per_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "fork_pulse_seconds",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "heated_fork_max_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "heated_fork_post_auto_yield_bonus_per_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "uncap_radius",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "ForkIcon",
      "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "d71df5c",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -179,12 +184,15 @@
    "kind": "change",
    "title": "Centrifuge Gearing",
    "owners": [
-    "Patricia"
+    "Patricia",
+    "Bob"
    ],
    "items": [
     4
    ],
-   "depends": [],
+   "depends": [
+    "H"
+   ],
    "status": "partial",
    "evidence": [
     {
@@ -231,7 +239,7 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -246,17 +254,17 @@
     {
      "kind": "node",
      "name": "DecalsBold",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "DecalsSmall",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "FlamesTop",
-     "ok": false
+     "ok": true
     }
    ],
    "built": false,
@@ -575,17 +583,6 @@
  },
  "order": [
   {
-   "id": "C3",
-   "score": 12.12,
-   "factors": {
-    "unblocks": 3,
-    "value": 2,
-    "cost": 0.88,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C5",
    "score": 12.12,
    "factors": {
@@ -696,6 +693,28 @@
    }
   },
   {
+   "id": "T5.1",
+   "score": 3.61,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T5.2",
+   "score": 3.61,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T.1",
    "score": 0.0,
    "factors": {
@@ -706,7 +725,6 @@
     "blocked_by": [
      "C1",
      "C2",
-     "C5",
      "C6",
      "C7",
      "C8"
@@ -736,32 +754,6 @@
     "ready": 0,
     "blocked_by": [
      "C2"
-    ]
-   }
-  },
-  {
-   "id": "T5.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.39,
-    "ready": 0,
-    "blocked_by": [
-     "C5"
-    ]
-   }
-  },
-  {
-   "id": "T5.2",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.39,
-    "ready": 0,
-    "blocked_by": [
-     "C5"
     ]
    }
   },

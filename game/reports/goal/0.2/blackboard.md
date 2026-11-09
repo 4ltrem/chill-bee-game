@@ -432,9 +432,18 @@ FAIL    unit      163 passed, 2 failed  (exit 1, 260 noise lines dropped)  game/
 
 2 fix rounds failed on C3: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept C3 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C3 fix-round edits"`.
 
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept C3 --note Reverted Bob's out-of-scope fix-round edits: honey_cell.tscn (hex_cell_mesh ArrayMesh swapped for a 6-sided CylinderMesh after a pre-existing V4 style row; broke t_raised_frame_cells_aligned and t_hive_frames_cells_aligned) and glass.tres alpha 0.28->0.35. Kept uncapping_fork.tscn, fork_head.tres, main.gd wiring, honeycomb.gd reach, truck groups. unit 165/165, start same as baseline, contract 0 unresolved (20261109-165359)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C3 (2026-11-09T16:58:18-05:00)
+
+- Change (orchestrator, Process 9): Reverted Bob's out-of-scope fix-round edits: honey_cell.tscn (hex_cell_mesh ArrayMesh swapped for a 6-sided CylinderMesh after a pre-existing V4 style row; broke t_raised_frame_cells_aligned and t_hive_frames_cells_aligned) and glass.tres alpha 0.28->0.35. Kept uncapping_fork.tscn, fork_head.tres, main.gd wiring, honeycomb.gd reach, truck groups. unit 165/165, start same as baseline, contract 0 unresolved (20261109-165359)
+- Accepted: checkpoint `d71df5c` on `milestone/0.2`
+
 ## Result
 
-Last invocation (2026-11-09T16:53:29-05:00): waiting-designer.
+C3 accepted with a manual fix (checkpoint `d71df5c` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
 
@@ -452,8 +461,69 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
 
 ## Resumed 2026-11-09
 
-Command: `goal_agent.py game/specs/0.2-first-automation.md --accept C3 --note Reverted Bob's out-of-scope fix-round edits: honey_cell.tscn (hex_cell_mesh ArrayMesh swapped for a 6-sided CylinderMesh after a pre-existing V4 style row; broke t_raised_frame_cells_aligned and t_hive_frames_cells_aligned) and glass.tres alpha 0.28->0.35. Kept uncapping_fork.tscn, fork_head.tres, main.gd wiring, honeycomb.gd reach, truck groups. unit 165/165, start same as baseline, contract 0 unresolved (20261109-165359)` (the run had stopped: `waiting-designer`).
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: already on it.
 
-### Manual fix: C3 (2026-11-09T16:58:18-05:00)
+## Pass 5: scan (2026-11-09T17:02:58-05:00)
 
-- Change (orchestrator, Process 9): Reverted Bob's out-of-scope fix-round edits: honey_cell.tscn (hex_cell_mesh ArrayMesh swapped for a 6-sided CylinderMesh after a pre-existing V4 style row; broke t_raised_frame_cells_aligned and t_hive_frames_cells_aligned) and glass.tres alpha 0.28->0.35. Kept uncapping_fork.tscn, fork_head.tres, main.gd wiring, honeycomb.gd reach, truck groups. unit 165/165, start same as baseline, contract 0 unresolved (20261109-165359)
+Unit results from `game/reports/_runs/20261109-165359/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (2 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C3 Heated Uncapping Fork | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config heated_fork_radius_bonus_per_level, ✓ config fork_pulse_seconds, ✓ config heated_fork_max_level, ✓ config heated_fork_post_auto_yield_bonus_per_level, ✓ config uncap_radius, ✓ node ForkIcon, ✓ ledger d71df5c |
+| C5 Faster Delivery | change | Patricia, Bob | partial | ✗ config faster_delivery_max_level, ✗ config faster_delivery_trip_cut_per_level, ✓ node DecalsBold, ✓ node DecalsSmall, ✓ node FlamesTop |
+
+### Order: new or rescored (3 of 18)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 11 | T5.1 item 5 look: at each Faster Delivery level 0..4 ex | 3.61 | 0 | 2 | 0.39 | 1 | designer feature; cost 0.39 (Quinn) |
+| 12 | T5.2 item 5: trip time at Faster Delivery 0..4 is 30, 2 | 3.61 | 0 | 2 | 0.39 | 1 | designer feature; cost 0.39 (Quinn) |
+| 13 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.39 | 0 | waits on C1, C2, C6, C7, C8 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C5** (score 12.12: 3 goal(s) wait on it; designer feature; cost 0.88 (Patricia, Bob)).
+
+### Step: C5 (2026-11-09T17:02:58-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C5-patricia.md` (2460 chars)
+- Brief for Bob: `game/reports/goal/0.2/briefs/C5-bob.md` (1941 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Bob** (600,512 tokens, 25 turns, 65 s):
+
+Truck groups were already in `scenes/props/truck.tscn` from an earlier pass, so I changed no files. I checked them against the picks instead.
+
+**Nodes under `Truck`** (all `visible = false`):
+- `Stacks`: `StackL`, `CollarL`, `StackR`, `CollarR`
+- `DecalsSmall`: `DecalLongL`, `DecalShortL`, `DecalLongR`, `DecalShortR`
+- `DecalsBold`: `DecalLongL`, `DecalMidL`, `DecalTopL`, `DecalLongR`, `DecalMidR`, `DecalTopR`
+- `FlamesTop`: `RoofCentre`, `RoofSideL`, `RoofSideR`, `RoofOuterL`, `RoofOuterR`
+
+`BedJars` and `SellAnchor` are kept, and there are no exhaust flames.
+
+**Render:** I rendered the truck with Stacks, DecalsBold and FlamesTop shown, beside `truck-flames-r3-l4`. The two matched. I did not render the Level 1–3 combinations or `DecalsSmall`. With `truck.gd` attached, the groups stayed hidden because the script hid them. I removed the probe files afterwards. `contract_check.py` reports 0 unresolved lookups.
+
+**Open questions:**
+- Items 3 and 4 (`uncapping_fork.tscn`, centrifuge `Gear1`–`Gear6`) and items 1, 6, 7, 8 (shop list, `AutoTag`, `PhaseToast`, Journal) were not in my contract lines. I left them untouched.
+- `truck.gd` had a parse error earlier (`trip_seconds()` not found). That is Patricia's file.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 19 (cap 30; CLI num_turns 25); end `success`
+
+
+**Patricia** (69,224 tokens, 2 turns, 4 s):
+
+The unit run finished after all: 178 passed, 0 failed, and the start check also passed. That corrects my earlier note about an unfinished run. No Godot process is listed now, so nothing of mine is left running.
+
+The only open item from the contract check is the 3 `_probe.tscn` lookups, which were there before my change. I did not run `play_loop.gd`. Quinn still needs to add tests for the trip times (30 / 25.5 / 21 / 16.5 / 12 s) and for Auto-Sell leaving on a full bed.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 13 (cap 30; CLI num_turns 2); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: PASS (open rows only on files this step did not change)

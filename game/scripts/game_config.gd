@@ -88,7 +88,9 @@ extends Resource
 @export var heated_fork_max_level: int = 5             # spec 0.2: Heated Fork's highest level
 @export var heated_fork_post_auto_yield_bonus_per_level: float = 0.04   # spec 0.2: yield bonus per level, only with the auto-scraper owned (no effect in 0.2)
 @export var fork_pulse_seconds: float = 1.0            # PLACEHOLDER (spec 0.2): one steel -> crank orange -> steel head pulse
-@export var dev_own_auto_scraper: bool = false         # Dev toggle "own auto-scraper": acts as if the auto-scraper were owned (it arrives after 0.2)
+@export var faster_delivery_max_level: int = 4          # PLACEHOLDER (spec 0.2 item 5): Faster Delivery's highest level
+@export var faster_delivery_trip_cut_per_level: float = 0.15   # PLACEHOLDER (spec 0.2 item 5): trip time x (1 - this x level): 30 -> 25.5 -> 21 -> 16.5 -> 12 s
+@export var dev_own_auto_scraper: bool = false        # Dev toggle "own auto-scraper": acts as if the auto-scraper were owned (it arrives after 0.2)
 
 const DEFAULT_PATH :="res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read

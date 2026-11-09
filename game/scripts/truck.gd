@@ -155,9 +155,11 @@ func advance(delta: float) -> void:
 		if room > 0:
 			_load_crate_jars(room)
 			_changed()
+		if auto_sell_owned() and can_sell():
+			sell()   # 0.2 item 6: leaves by itself when the bed is full, full price, exactly as a Sell press
 		return
 	trip_elapsed += delta
-	if trip_elapsed >= config.truck_trip_seconds:
+	if trip_elapsed >= trip_seconds():
 		away = false
 		trip_elapsed = 0.0
 		var moved: int = mini(crate_jars, maxi(capacity - loaded_jars, 0))
@@ -170,7 +172,7 @@ func advance(delta: float) -> void:
 func away_fraction() -> float:
 	if not away:
 		return 0.0
-	var trip: float = maxf(config.truck_trip_seconds, 0.001)
+	var trip: float = maxf(trip_seconds(), 0.001)
 	var slice: float = clampf(config.truck_slide_fraction, 0.01, 0.5)
 	var p: float = clampf(trip_elapsed / trip, 0.0, 1.0)
 	if p < slice:
@@ -237,6 +239,23 @@ var _look_level: int = -1
 
 func delivery_level() -> int:
 	return delivery_level_override if delivery_level_override >= 0 else UpgradeLevel.of("faster_delivery")
+
+
+## 0.2 item 5: trip time = truck_trip_seconds x (1 - faster_delivery_trip_cut_per_level x level), level clamped to the max.
+func trip_seconds() -> float:
+	var level: int = clampi(delivery_level(), 0, config.faster_delivery_max_level)
+	return config.truck_trip_seconds * maxf(1.0 - config.faster_delivery_trip_cut_per_level * float(level), 0.0)
+
+
+## Test hook: 1 or 0 replaces the Economy's Auto-Sell ownership (-1 = ask Economy).
+var auto_sell_override: int = -1
+
+
+## 0.2 item 6: Auto-Sell is owned (Economy level of "auto_sell" >= 1).
+func auto_sell_owned() -> bool:
+	if auto_sell_override >= 0:
+		return auto_sell_override > 0
+	return UpgradeLevel.of("auto_sell") >= 1
 
 
 ## Shows the groups for the current level (cheap: only touches nodes when the level changed).

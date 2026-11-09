@@ -69,4 +69,6 @@ heated_fork_radius_bonus_per_level = 1.0
 heated_fork_max_level = 5
 heated_fork_post_auto_yield_bonus_per_level = 0.04
 fork_pulse_seconds = 1.0
+faster_delivery_max_level = 4
+faster_delivery_trip_cut_per_level = 0.15
 dev_own_auto_scraper = false
