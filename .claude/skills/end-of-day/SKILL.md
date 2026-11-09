@@ -20,20 +20,22 @@ Project memories live in `_meta/memory/` and travel with git. Each machine point
 ## 1. Export the session
 
 ```
-python -I _tools/export_session.py
+python -I _tools/export_session.py --all
 ```
 
-It copies this session's transcript (the most recently updated one for this workspace) and its subagents' transcripts into `_meta/sessions/<date>-<first 8 of session id>/`, with a `manifest.json`. Note the folder it prints. Transcripts, subagent folders, manifests and `_meta/sessions/runs/` are gitignored: they hold the account email and everything read. `generate.py` already moved its own agents' transcripts into `_meta/sessions/runs/`.
+It copies every transcript that is not yet exported, or has changed since its export, and their subagents' transcripts. That includes sessions closed with `/clear` (each `/clear` starts a new session id) and sessions run in a second terminal. The day's decision log (step 2) covers every session it exported today, not only this one. Each goes into `_meta/sessions/<date>-<first 8 of session id>/`, with a `manifest.json`. Note the folder it prints. Transcripts, subagent folders, manifests and `_meta/sessions/runs/` are gitignored: they hold the account email and everything read. `generate.py` already moved its own agents' transcripts into `_meta/sessions/runs/`.
 
 ## 2. Log the day's decisions
 
 In that folder, create `decisions.md` from `_templates/decisions.md` if it does not exist yet; otherwise update it (the routine may run twice in one session).
 
 - Add every decision made in this session that is not logged yet: process, architecture, model, rule and tooling decisions, and anything the designer explicitly decided or deferred. Decisions about a single draft or proposal belong in that file's `decided:` / `decision:` frontmatter, not here, but a deferral or a rule change that came with them does belong here.
-- Number them after the highest `D<n>` in any `_meta/sessions/*/decisions.md` (IDs are global across sessions and machines).
+- Number them after the highest `D<n>` in any `_meta/sessions/*/decisions.md` (IDs are global across sessions and machines), in the order they were made, not the order you write them: find each one's first decision moment in the transcript and list them by it, so IDs and dates rise together.
+- Dates are the designer's local date in Toronto (America/Toronto), never UTC: transcript timestamps are UTC, so a decision at 02:51Z on 11/6 is dated 11/5 (21:51 Toronto). A session past midnight gets both dates.
 - Use the strict format the template shows: `### D<n> · <YYYY-MM-DD> · <Topic> · <Title>`, then `- Label: text` bullets (`Decided` first, then `Why`, `Rejected`, `Files`, or another label). Reuse an existing topic name when one fits: Workspace & agents, Pipeline design, Critic quality, Cost & structure, Bee Journal rules, Research & blackboard, Models, Records & deliverables.
 - Rewrite `## Still open` as the full current list: carry over unresolved items from the newest previous log, drop resolved ones, add new ones. The page shows only the newest session's list.
 - Write for the designer reading it later: plain sentences, what was decided and why, real file paths.
+- For each decision that fixed something that broke (a "What broke" bullet, a bug, a repeat failure), add an entry to `_meta/learnings.md` if it has none: What broke, How noticed, Cause, How fixed, Prevention (the test, check or rule that now catches it). A fix with no prevention goes under `## Still open`.
 
 ## 3. Rebuild and republish the decision page
 
@@ -70,6 +72,7 @@ All must pass. `consistency.py` checks that docs agree with code and config (the
 
 - `git status`, and confirm nothing gitignored is staged: `git check-ignore` any `_meta/sessions/` path you are unsure of. Never stage `session.jsonl`, `subagents/`, `manifest.json` or `_meta/sessions/runs/`.
 - Stage the day's work, including `_meta/memory/` and the session's `decisions.md`, and commit on the current branch with a message that summarises the day in a short subject line and a body listing the main changes and the decision IDs added. End the message with any attribution lines the session's instructions give.
+- **Milestone branches** (`game/CONTEXT.md`, Process 4): during a milestone the day is committed on its `milestone/<version>` branch, on top of the step checkpoints. Merge it into `main` (`git switch main && git merge --no-ff milestone/<version>`) only when Quinn's report for the milestone passes and the designer has played it; otherwise leave the branch open and say so in the report.
 - Do not push unless the designer asks.
 
 ## 7. Report

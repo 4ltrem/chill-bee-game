@@ -1,0 +1,48 @@
+goal_agent: WARN   0.1.4-ui-placement.md: T.1 ties on keywords between items [3, 8]: name its item: Back has the same screen rect in the first zoom and at the second stop;
+goal_agent: WARN   0.1.4-ui-placement.md: T.2 ties on keywords between items [1, 4, 8]: name its item: Back's rect is in the top-right quadrant, and the speed tag is below the money and bees la
+goal_agent: REVIEW 0.1.4-ui-placement.md: item 11 restricts, item 15 asserts, on farm view (spin)
+goal_agent:          11 [Changes] "you shouldn't be able to spin from farm view
+goal_agent:          15 [Changes] Spin shows again in the farm view while a crank is paused, and tapping it pans back to the second stop, where the crank resumes from where it stopped.
+goal_agent: REVIEW 0.1.4-ui-placement.md: item 12 restricts, item 15 asserts, on farm view (spin)
+goal_agent:          12 [Changes] "centrifuge shouldn't spin in farm view without the electric centrifuge upgrade
+goal_agent:          15 [Changes] Spin shows again in the farm view while a crank is paused, and tapping it pans back to the second stop, where the crank resumes from where it stopped.
+goal_agent: REVIEW 0.1.4-ui-placement.md: item 12 restricts, item 11 asserts, on farm view (spin)
+goal_agent:          12 [Changes] "centrifuge shouldn't spin in farm view without the electric centrifuge upgrade
+goal_agent:          11 [Contract/Quinn] item 11: pressing Spin from the farm view or the first zoom ends at the second stop with spin mode on;
+goal_agent: REVIEW 0.1.4-ui-placement.md: item 12 restricts, item 11 asserts, on second stop (spin)
+goal_agent:          12 [Changes] The centrifuge spins only at the second stop
+goal_agent:          11 [Changes] 11. **Spin goes to the second stop** (designer's play-test of 0.1.4, 2026-11-08: "the spin button should bring it to zoom 2 view").
+goal_agent: REVIEW 0.1.4-ui-placement.md: item 12 restricts, item 15 asserts, on second stop (spin)
+goal_agent:          12 [Changes] The centrifuge spins only at the second stop
+goal_agent:          15 [Changes] Spin shows again in the farm view while a crank is paused, and tapping it pans back to the second stop, where the crank resumes from where it stopped.
+goal_agent: REVIEW 0.1.4-ui-placement.md: item 13 restricts, item 15 asserts, on farm view (crank)
+goal_agent:          13 [Contract/Quinn] since the farm view never cranks in Phase 1
+goal_agent:          15 [Changes] Spin shows again in the farm view while a crank is paused, and tapping it pans back to the second stop, where the crank resumes from where it stopped.
+goal_agent: REVIEW 0.1.4-ui-placement.md: item 12 restricts, item 5 asserts, on first zoom (centrifuge)
+goal_agent:          12 [Contract/Quinn] the centrifuge never spins while the camera is in the farm view or the first zoom
+goal_agent:          5 [Changes] The rack stays inside the hive body; the first zoom's ≥ 20 px rule and "hive + centrifuge whole" still hold. - **Design Votes round 8 (2026-11-07): all three va
+goal_agent: REVIEW 0.1.4-ui-placement.md: item 12 restricts, item 11 asserts, on farm view, first zoom (spin)
+goal_agent:          12 [Contract/Quinn] the centrifuge never spins while the camera is in the farm view or the first zoom
+goal_agent:          11 [Contract/Quinn] item 11: pressing Spin from the farm view or the first zoom ends at the second stop with spin mode on;
+0.1.4-ui-placement.md: 32/38 goals done (H, C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, T2.1, T.1, T2.2, T.2, T1.1, T5.1, T6.1, T7.1, T8.1, T1.2, T10.1, T9.1, T7.2, T5.2, T11.1, T13.1, T12.1, T.3)
+  C14    partial  (built, waits on tests) The hive is the round 9 pick
+  C15    partial  (built, waits on tests) Leaving the centrifuge stops the crank
+  T14.1  missing  item 14: the hive has five frames, each standing upright (it
+  T14.2  missing  item 14 fix (play-test 2026-11-08, shown failing on the curr
+  T14.3  missing  item 14 lid (play-test 2026-11-08, shown failing on the curr
+  T15.1  missing  item 15: after Back from a crank at the second stop, taps in
+Order:
+   1. T14.1    5.54  play-test fix; cost 0.46 (Quinn)
+   2. T14.2    5.54  play-test fix; cost 0.46 (Quinn)
+   3. T14.3    5.54  play-test fix; cost 0.46 (Quinn)
+   4. T15.1    5.54  play-test fix; cost 0.46 (Quinn)
+gaps.json: game/reports/goal/0.1.4/gaps.json
+0.1.4-ui-placement.md: 36/38 goals done (H, C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C14, C13, T2.1, T.1, T2.2, T.2, T1.1, T5.1, T6.1, T7.1, T8.1, T1.2, T10.1, T9.1, T7.2, T5.2, T11.1, T13.1, T14.1, T14.2, T14.3, T12.1, T.3)
+  C15    partial  (built, waits on tests) Leaving the centrifuge stops the crank
+  T15.1  missing  item 15: after Back from a crank at the second stop, taps in
+Order:
+   1. T15.1    5.54  play-test fix; cost 0.46 (Quinn)
+gaps.json: game/reports/goal/0.1.4/gaps.json
+0.1.4-ui-placement.md: 38/38 goals done (H, C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C14, C15, C13, T2.1, T.1, T2.2, T.2, T1.1, T5.1, T6.1, T7.1, T8.1, T1.2, T10.1, T9.1, T7.2, T5.2, T11.1, T13.1, T14.1, T14.2, T14.3, T15.1, T12.1, T.3)
+gaps.json: game/reports/goal/0.1.4/gaps.json
+goal_agent: done. Blackboard: game/reports/goal/0.1.4/blackboard.md

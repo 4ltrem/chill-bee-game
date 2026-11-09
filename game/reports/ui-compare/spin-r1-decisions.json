@@ -1,0 +1,14 @@
+{
+  "question": "spin-r1",
+  "read": "2026-11-08",
+  "source": "Design Votes artifact db, collection votes, docs spin-r1-*",
+  "votes": {
+    "A farm: 88 px (today)": "no",
+    "B farm: 72 px": null,
+    "C farm: 60 px": "yes",
+    "A zoom: +0 px (today)": "no",
+    "B zoom: +40 px lower": "no",
+    "C zoom: +80 px lower": "yes"
+  },
+  "picked": {"spin_farm_visual_px": 60, "spin_zoom_offset": 80.0}
+}

@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/hex_cell_mesh.gd" id="1_hex"]
+
+[sub_resource type="ArrayMesh" id="Mesh_cell"]
+script = ExtResource("1_hex")
+
+[sub_resource type="CylinderShape3D" id="Shape_cell"]
+height = 0.1
+radius = 0.29
+
+[node name="HoneyCell" type="Node3D"]
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh =SubResource("Mesh_cell")
+
+[node name="Body" type="StaticBody3D" parent="."]
+
+[node name="Shape" type="CollisionShape3D" parent="Body"]
+shape = SubResource("Shape_cell")

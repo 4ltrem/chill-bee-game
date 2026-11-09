@@ -1,11 +1,11 @@
 ---
 session: fa5df4be-6365-415d-bd06-9f0be0bb573b
-dates: 2026-10-31 to 2026-11-01
+dates: 2026-10-31 to 2026-11-03
 transcript: session.jsonl (this folder)
 description: Every decision made in the session that built the content crew, with why, what was rejected, and the files changed
 ---
 
-# Decisions: session fa5df4be (2026-10-31 to 2026-11-01)
+# Decisions: session fa5df4be (2026-10-31 to 2026-11-03)
 
 Paths are from the repository root. "Designer" is the user; "Claude" is the main session. Each decision has an id for reference (D01...). Decisions about a single proposal or draft also live in that file's `decided:` / `decision:` frontmatter (the ledger); this log holds the process and architecture decisions that have no file of their own.
 
@@ -208,14 +208,67 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 - Why: the designer found Doris's run misfiled (the shared logger always wrote to Content generation) and her estimate still saying "Not yet run".
 - Files: `_tools/generate.py`, `_tools/doc_audit.py`, `_tools/consistency.py`, `_meta/agent-runs.md`
 
+### D45 · 2026-11-03 · Records & deliverables · Ask before every push
+- Decided: pushing to GitHub needs the designer's yes each time; an earlier approval covers only that push.
+- Why: Claude pushed 88c0bac on the strength of the 2026-11-01 approval (D43), which was meant for that one push.
+
+### D46 · 2026-11-03 · Workspace & agents · Keep all four guide characters for a playtest
+- Decided: Melli, Pip, Lady Aura and Miel all stay; players' preference decides, in a playtest after the first prototype. The guide's signature lines are revised first, then `content/onboarding-script.md` can be approved.
+- Why: the designer liked the v1 characters that the later onboarding run had changed.
+- Deferred: until after Prototype 0.
+
+### D47 · 2026-11-03 · Pipeline design · Prototype 0: a colorbox core loop
+- Decided: the first playable build is the manual core loop in Sunny Meadow (hive fills, uncap, centrifuge, sell, Worker Swarm Count), built from primitive shapes and flat colours, with no sound. Its work order is `game/specs/prototype-0.md`; Patricia writes the scripts, Bob the scenes, Quinn the tests, report and Windows build.
+- Files: `game/specs/prototype-0.md`, `game/scripts/`, `game/scenes/`, `game/tests/`, `game/reports/2026-11-03-prototype-0.md`
+
+### D48 · 2026-11-03 · Workspace & agents · Owners fix their own work; every fix is counted
+- Decided: a defect goes back to the agent who made it. The orchestrator may make only small, certain fixes, and every fix, whoever makes it, is recorded in the report's Fixes section and the Rework tally in `_meta/team.md`, against its owner. Quinn re-runs before any export.
+- Why: the designer asked why the orchestrator had fixed Patricia's and Quinn's bugs; review signals and reporting come first, and a fix the owner never sees teaches the roster nothing.
+- Rejected: a dedicated fixer agent (Martin's assessment). Revisit if cross-domain bugs appear in 3 of the next 5 features, or Quinn names the wrong owner in 2 of 5 runs.
+- Files: `game/CONTEXT.md` (rule 4), `_meta/team.md`
+
+### D49 · 2026-11-03 · Pipeline design · Tests drive real input; Bob looks at what he builds
+- Decided: every input path is tested through real input events in window pixels, and a test must be shown to fail for the right reason before it counts. Patricia runs Quinn's tests before handing back. Bob renders each scene and reads the screenshot. Every agent stops the processes it starts. Quinn diagnoses failures read-only and names the owner, file, line and fix.
+- Why: the first build passed its checks, yet dragging could not uncap a cell (a misspelled camera call no check had exercised).
+- Files: `.claude/agents/programmer.md`, `.claude/agents/builder.md`, `.claude/agents/qa-build-engineer.md`, `game/tests/render.gd`
+
+### D50 · 2026-11-03 · Pipeline design · Prototype 0 revision 2
+- Decided: uncapping ends on an "Extract honey" button instead of jumping straight to the centrifuge; Worker Swarm Count adds bees (+3 a level, shown as a counter and a visibly larger flock), not speed.
+- Result: revision 2 passed (26 unit tests, 104 real-input checks), but the designer found the uncapping pop no longer visible. The cause is a light Bob added to the harvest scene, washing capped cells to the uncapped yellow; it is counted against Bob, and Quinn's missed screenshot check against Quinn.
+- Files: `game/reports/2026-11-03-prototype-0.md` (Revision 2, Open for revision 3), `_meta/team.md`
+
+### D51 · 2026-11-03 · Game design · A new harvest flow
+- Decided: when the hive is full a fork icon floats above it. Uncapping is a close-up: a frame slides out of the hive, scraped cells pop and fly into the centrifuge, and the next frame slides up until the centrifuge is full. The centrifuge is spun by tapping or holding its physical crank, or the screen around it; holding ramps up to the fastest tap rate. Continue opens the spigot, jars load onto a truck, and a Sell ($X) icon sends the truck off to sell. Everything after uncapping plays on the farm.
+- Also decided: the truck replaces the Market Stand (in Phase 2 it leaves by itself); hold-to-spin is built in for everyone, replacing the No-Rapid-Tap toggle; everyone starts with the basic fork, and a new Tree B upgrade, the Long Fork, uncaps a whole frame in one sweep and leads into automated uncapping.
+- TBD: centrifuge and truck capacity, the truck's trip time, and the Long Fork's unlock and cost. For the prototype, 1 frame fills the centrifuge and the truck holds 10 jars.
+- Files: `GDD.md` (§1, §2, Tree B, §8, §9), `README.md`
+
+### D52 · 2026-11-03 · Cost & structure · Log usage and the orchestrator with every run; the run log becomes a CSV
+- Decided: every agent run records plan usage before and after it, and the orchestrator's own tokens are logged too. Runs are rows in `_meta/agent-runs.csv`, written by the hooks and scripts; `_meta/agent-runs.md` keeps the method, the budget and a generated summary. A status line saves the usage readings, and `runlog.py --calibrate` works out tokens per 1% of plan usage.
+- Why: the daily budget rested on one whole-percent reading, and the log left out the orchestrator, which had processed about 162M tokens against about 11M for every agent run combined. The CSV is cheaper to keep and lets a script do the calibration.
+- Files: `_tools/runlog.py`, `_tools/log_session.py`, `_tools/log_subagent.py`, `_tools/statusline.py`, `.claude/settings.json`, `_meta/agent-runs.csv`, `_meta/agent-runs.md`
+
+### D53 · 2026-11-03 · Cost & structure · The plan is Claude Team
+- Decided: the designer is on the Claude Team plan for the duration of a course, and was already on it at the first calibration (2026-10-26). `_meta/agent-runs.md` said Pro; corrected.
+
+### D54 · 2026-11-03 · Workspace & agents · Work moves from the VS Code extension to the terminal CLI
+- Decided: the designer works in the terminal `claude` CLI, run in VS Code's integrated terminal and connected with `/ide`, starting a fresh session after this one's end-of-day routine. Long output (tables, reports, specs) goes into Markdown files to read in VS Code's preview.
+- Why: the extension does not run the status line, so usage could not be recorded automatically; a fresh session also cuts the cost of every orchestrator call.
+- Files: `_meta/memory/session-handoff.md`
+
 ## Still open
 
-- Approve or reject, briefs first: `research/bee-journal-real.md` (the Haiku brief: wrong frontmatter, overclaiming summary; rejecting it is reasonable), `research/bee-journal-real-2.md`, then `content/bee-journal-real.md`, `content/bee-journal-magic.md`, `content/biome-intros.md`, `content/onboarding-script.md`.
-- Guide character: Melli, Pip, Lady Aura or Miel (TBD in the GDD).
+- `content/onboarding-script.md`: approve after the guide signature-lines revision, which must also follow the new harvest flow (no crank button, No-Rapid-Tap branch or Market Stand).
+- Guide character playtest: Melli, Pip, Lady Aura or Miel (D46).
+- Prototype 0 revision 3: the spec from the new harvest flow and the five open items in `game/reports/2026-11-03-prototype-0.md`; the designer reviews the spec before any agent builds.
+- Second usage calibration: nudge the status line before and after the revision 3 batch, then `python -I _tools/runlog.py --calibrate`.
+- Harvest TBDs: centrifuge and truck capacity, truck trip time, Long Fork unlock and cost (Terry).
+- Content follow-ups: a Sunny Meadow flower for the bumble bee visitor (then Journal Entry 3); name Glowbell and Skybloom in `content/biome-intros.md`; the "sweat name" wording.
 - First upgrade to recommend in onboarding (Worker Swarm Count vs Flight Endurance).
 - Gendered French ("petit apiculteur"); emoji in dialogue bubbles.
 - Sunny Meadow intro overlaps onboarding: skip it, or show it only after a reset.
 - French honey names (*Miel d'Or Sauvage*, ...) as canon in the GDD.
 - Android package name (placeholder `com.chillbeegame.app`).
 - Finish the backlog note "sync transcripts f..." (the message was cut off).
-- On the laptop: `git pull`, then the first "end of work day" there sets up its memory folder and the commit gate.
+- Push: `main` is ahead of GitHub; push only when the designer says so (D45).
+- On the laptop: `git pull`, install or update the `claude` CLI, then the first "end of work day" there sets up its memory folder and the commit gate.

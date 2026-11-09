@@ -1,0 +1,16 @@
+Goal agent run `0.1.4`, spec `game/specs/0.1.4-ui-placement.md`, goal C5. Work in the main folder on branch `milestone/0.1.4`; do not commit, switch branch or edit outside your folder. Follow `game/CONTEXT.md` (Process 2-5, 8). Read only the spec text below, not the whole spec.
+
+Build your part (scripts/) of this change. Bob works on the scenes in parallel; the handoff is your contract. Run `python -I _tools/contract_check.py` before you finish.
+Config keys of this goal (Process 3: in `scripts/game_config.gd` and `default_config.tres`, marked PLACEHOLDER, live in the Dev panel): frame_scale.
+Node handoff: `game/specs/0.1.4-node-handoff.md` (read it first).
+
+Your contract lines:
+- Item 5: `grid_cols` 5, `grid_rows` 2 (round 9, variant a); retune `frame_rise` to Bob's scale; pile and bucket cells take the frame cell size.
+- The config keys above, in the Dev panel.
+
+Spec text:
+5. **Bigger hive frames and combs** (designer: "hive frames and combs can be bigger to match the pile size"). The frames and their cells scale up so a cell reads at about the size of a cell in the bucket pile. The rack stays inside the hive body; the first zoom's ≥ 20 px rule and "hive + centrifuge whole" still hold.
+   - **Design Votes round 8 (2026-11-07): all three variants rejected.** a: "frame model changed, frames too small"; b: "too small but close"; c: "hex are right size but again frame and hive model changed, unacceptable". The redo keeps the current hive and frame models exactly as they are and changes only sizes: variant c's hex cell size, frames bigger than b's. Milo renders new variants for a new Design Votes section; C5 is built from the pick. Fewer cells per row are allowed (designer, 2026-11-07: "fewer cells are ok"), e.g. Patricia's `grid_cols` 7 → 5 at about 1.35×, so the bigger frames fit the unchanged hive body.
+   - **Design Votes round 9 (2026-11-07): variant a** (`game/scenes/variants/hive-frames/hive-frames-a.tscn`: real hive, lid and bars; frames 1.18× wider, 1.17 × 0.63; `grid_cols` 5 × `grid_rows` 2; cell radius 0.14). Note: "closest one, just needs more spacing between hexs, ok if pile hexs are smaller too so they should match the frame hex sizes". So: build a with more gap between cells (smaller cells are fine), and the pile and bucket cells take the same size as the frame cells. b and c (4×2, 3×2): "too empty".
+
+Reply in at most 150 words: files changed, node names used, open questions.

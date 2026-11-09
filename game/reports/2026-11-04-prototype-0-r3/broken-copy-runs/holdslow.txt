@@ -1,0 +1,8 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+ 
+FAIL  t_hold_at_cap  hold finish time (taps_per_frame - 1) / max_tap_rate: expected 7.8 (+-0.01866666666667) got 15.616666666667
+FAIL  t_hold_ramp_is_visual_only  hold finish time with a long ramp: expected 7.8 (+-0.01866666666667) got 15.616666666667
+FAIL  t_hold_never_slower  held frame (15.617 s) finishes no later than the same frame tapped at max_tap_rate (7.800 s, 40 taps)
+FAIL  t_real_mouse_hold_cranks  real hold finish time: expected 7.8 (+-0.01866666666667) got 15.616666666667 | the real hold made progress before release (0 jars)
+---- 56 passed, 4 failed
+RAN 60 of 60

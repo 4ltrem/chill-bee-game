@@ -1,0 +1,880 @@
+[
+ {
+  "name": "hive lid lifts only half the height",
+  "file": "scripts/lid_motion.gd",
+  "find": "Vector3.UP * (config.lid_lift_height / _parent_scale_y())",
+  "replace": "Vector3.UP * (config.lid_lift_height * 0.5 / _parent_scale_y())",
+  "expect": [
+   "t_hive_lid_open_path"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "heap draws one cell too few",
+  "file": "scripts/centrifuge.gd",
+  "find": "var shown: int = _landed ",
+  "replace": "var shown: int = maxi(_landed - 1, 0) ",
+  "expect": [
+   "t_heap_shows_every_cell"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "jar cycle is 1.5 x bottling_seconds_per_jar",
+  "file": "scripts/centrifuge.gd",
+  "find": "while jars_bottled < _bottle_count and _bottle_timer >= per_jar:",
+  "replace": "while jars_bottled < _bottle_count and _bottle_timer >= per_jar * 1.5:",
+  "expect": [
+   "t_bottling_timing"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "wheels turn at half speed",
+  "file": "scripts/truck.gd",
+  "find": "roll.dot(axle) / maxf(radius, 0.001)",
+  "replace": "roll.dot(axle) * 0.5 / maxf(radius, 0.001)",
+  "expect": [
+   "t_truck_wheels_roll_with_travel"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "wheels turn backwards",
+  "file": "scripts/truck.gd",
+  "find": "roll.dot(axle) / maxf(radius, 0.001)",
+  "replace": "-roll.dot(axle) / maxf(radius, 0.001)",
+  "expect": [
+   "t_truck_wheels_roll_with_travel"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "no summary after Sell",
+  "file": "scripts/main.gd",
+  "find": "_farm_ui.show_summary(jars, Economy.jar_value(), total)",
+  "replace": "pass",
+  "expect": [
+   "t_summary_after_sell"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "summary button reads Continue",
+  "file": "scenes/main.tscn",
+  "find": "text = \"OK\"",
+  "replace": "text = \"Continue\"",
+  "expect": [
+   "t_no_continue_button"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "zoom camera too tight (option A)",
+  "file": "scripts/default_config.tres",
+  "find": "zoom_size = 2.4",
+  "replace": "zoom_size = 1.0",
+  "expect": [
+   "t_zoom_view_option_a"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "cell flight ignores the game speed",
+  "file": "scripts/cell_flight.gd",
+  "find": "tween.tween_callback(cell.show)",
+  "replace": "tween.set_ignore_time_scale(true)\n\ttween.tween_callback(cell.show)",
+  "expect": [
+   "t_speed_cell_flight"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hive lid tween ignores the game speed",
+  "file": "scripts/lid_motion.gd",
+  "find": "_tween = _lid.create_tween()",
+  "replace": "_tween = _lid.create_tween().set_ignore_time_scale(true)",
+  "expect": [
+   "t_speed_lid_lift"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "jar cycle timer reads the wall clock",
+  "file": "scripts/centrifuge.gd",
+  "find": "_bottle_timer += delta ",
+  "replace": "_bottle_timer += delta / maxf(Engine.time_scale, 0.001) ",
+  "expect": [
+   "t_speed_jar_cycle"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hotkeys wrap around at the ends",
+  "file": "scripts/dev_panel.gd",
+  "find": "clampi(index + direction, 0, SPEEDS.size() - 1)",
+  "replace": "posmod(index + direction, SPEEDS.size())",
+  "expect": [
+   "t_speed_hotkeys"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "speed tag always shown",
+  "file": "scripts/dev_panel.gd",
+  "find": "_speed_tag.visible = not is_equal_approx(Engine.time_scale, 1.0)",
+  "replace": "_speed_tag.visible = true",
+  "expect": [
+   "t_speed_tag",
+   "t_speed_reset"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Reset to defaults keeps the speed",
+  "file": "scripts/dev_panel.gd",
+  "find": "\t_set_speed(1.0)\n\tfor value_name in _rows:",
+  "replace": "\tfor value_name in _rows:",
+  "expect": [
+   "t_speed_reset"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "a script reads Time.get_ticks_msec",
+  "file": "scripts/cell_flight.gd",
+  "find": "static var _warned: Dictionary = {}",
+  "replace": "static var _warned: Dictionary = {}\nstatic var _born: int = Time.get_ticks_msec()",
+  "expect": [
+   "t_no_wall_clock_in_scripts"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "crate box is only 1.0 long, jars hang off",
+  "file": "scenes/props/jar_crate.tscn",
+  "find": "size = Vector3(2.8, 0.45, 1.4)",
+  "replace": "size = Vector3(1.0, 0.45, 1.4)",
+  "expect": [
+   "t_layout_no_jar_outside_crate"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "truck hovers 0.3 above the ground",
+  "file": "scenes/main.tscn",
+  "find": "0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 3.8, 0, 5.2",
+  "replace": "0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 3.8, 0.3, 5.2",
+  "expect": [
+   "t_layout_truck_wheels_on_ground"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "ground stops short of the truck",
+  "file": "scenes/main.tscn",
+  "find": "size = Vector2(13, 13)",
+  "replace": "size = Vector2(8, 8)",
+  "expect": [
+   "t_layout_truck_wheels_on_ground"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hive ignores config hive_scale (fixed 1.4)",
+  "file": "scripts/hive.gd",
+  "find": "var target := Vector3.ONE * maxf(config.hive_scale, 0.01)",
+  "replace": "var target := Vector3.ONE * maxf(1.4, 0.01)",
+  "expect": [
+   "t_layout_hive_scale_follows_config"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "default hive_scale is 1.0",
+  "file": "scripts/default_config.tres",
+  "find": "hive_scale = 1.4",
+  "replace": "hive_scale = 1.0",
+  "expect": [
+   "t_layout_hive_scale_follows_config",
+   "t_config_values"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hive moved 1.25 off its layout cell",
+  "file": "scenes/main.tscn",
+  "find": "1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)",
+  "replace": "1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.25)",
+  "expect": [
+   "t_layout_objects_on_cells"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "centrifuge one cell right of layout C",
+  "file": "scenes/main.tscn",
+  "find": "0.64, 0, 0, 0, 0.64, 0, 0, 0, 0.64, 0, 0, 0)",
+  "replace": "0.64, 0, 0, 0, 0.64, 0, 0, 0, 0.64, 2, 0, 0)",
+  "expect": [
+   "t_layout_objects_on_cells"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "min_cell_px 200 is not met at the zoom",
+  "file": "scripts/default_config.tres",
+  "find": "min_cell_px = 20",
+  "replace": "min_cell_px = 200",
+  "expect": [
+   "t_cell_width_at_zoom"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "zoom_size 12 shrinks the cells below 20 px",
+  "file": "scripts/default_config.tres",
+  "find": "zoom_size = 6.966",
+  "replace": "zoom_size = 12.0",
+  "expect": [
+   "t_cell_width_at_zoom"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "first zoom too far out: cells under min_cell_px",
+  "file": "scripts/default_config.tres",
+  "find": "\nzoom_size = ",
+  "replace": "\nzoom_size = 9.5 #",
+  "expect": [
+   "t_camera_first_zoom_cells"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "first zoom too close: risen rack cut by the frame",
+  "file": "scripts/default_config.tres",
+  "find": "\nzoom_size = ",
+  "replace": "\nzoom_size = 4.0 #",
+  "expect": [
+   "t_camera_first_zoom_in_frame"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "second stop too wide: hive wholly shown",
+  "file": "scripts/default_config.tres",
+  "find": "pan_zoom_size = 9.54",
+  "replace": "pan_zoom_size = 30.0",
+  "expect": [
+   "t_camera_second_stop_hive_share"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "second stop too tight: truck cut off",
+  "file": "scripts/default_config.tres",
+  "find": "pan_zoom_size = 9.54",
+  "replace": "pan_zoom_size = 6.5",
+  "expect": [
+   "t_camera_second_stop_in_frame"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "centrifuge lid leans at 45 degrees",
+  "file": "scenes/props/centrifuge.tscn",
+  "find": "Transform3D(0.342, -0.9397, 0, 0.9397, 0.342, 0, 0, 0, 1, -1.2755, 1.013, 0)",
+  "replace": "Transform3D(0.7071, -0.7071, 0, 0.7071, 0.7071, 0, 0, 0, 1, -1.2755, 1.013, 0)",
+  "expect": [
+   "t_camera_lid_lean_matches_hive"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "camera pan takes half the seconds",
+  "file": "scripts/main.gd",
+  "find": "_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)",
+  "replace": "_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds * 0.5)",
+  "expect": [
+   "t_camera_pan_seconds"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "camera tween ignores the game speed",
+  "file": "scripts/main.gd",
+  "find": "_cam_tween = create_tween().set_parallel(true)",
+  "replace": "_cam_tween = create_tween().set_ignore_time_scale(true).set_parallel(true)",
+  "expect": [
+   "t_camera_pan_follows_time_scale"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "first zoom framed 3 units right (V7: wood cut at the left edge)",
+  "file": "scripts/main.gd",
+  "find": "return _zoom_framing.global_position - forward * distance",
+  "replace": "return _zoom_framing.global_position - forward * distance + _farm_camera.global_transform.basis.x * 3.0",
+  "expect": [
+   "t_camera_first_zoom_v7"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "second stop HUD: top info not fitted around hive",
+  "file": "scripts/main.gd",
+  "find": "_farm_ui.fit_top_info([hive_rect, cen_rect] as Array[Rect2], gap)",
+  "replace": "pass",
+  "expect": [
+   "t_camera_second_stop_hud_clear"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "centrifuge lid has its own tween",
+  "file": "scripts/centrifuge.gd",
+  "find": "_lid_spot = find_child(\"LidLeanSpot\", true, false) as Node3D",
+  "replace": "_lid_spot = find_child(\"LidLeanSpot\", true, false) as Node3D\n\tvar _own_lid_tween: Tween = create_tween()",
+  "expect": [
+   "t_camera_lid_component_shared"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Harvest icon not moved at the second stop",
+  "file": "scripts/main.gd",
+  "find": "_fork_icon.use_fixed_center = true",
+  "replace": "_fork_icon.use_fixed_center = false",
+  "expect": [
+   "t_second_stop_fork_icon_tap"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Spin icon not moved at the second stop",
+  "file": "scripts/main.gd",
+  "find": "_centrifuge_icon.use_fixed_center = true",
+  "replace": "_centrifuge_icon.use_fixed_center = false",
+  "expect": [
+   "t_second_stop_spin_icon_tap"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Back does nothing at the second stop",
+  "file": "scripts/main.gd",
+  "find": "\tif not _at_second_stop or zoom != Zoom.NONE:\n\t\treturn\n\t_leave_second_stop_hud()",
+  "replace": "\treturn\n\t_leave_second_stop_hud()",
+  "expect": [
+   "t_second_stop_back_tap",
+   "t_camera_back_from_second_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "hive lid rests toward the centrifuge",
+  "file": "scenes/props/hive.tscn",
+  "find": "Transform3D(0.342, -0.9397, 0, 0.9397, 0.342, 0, 0, 0, 1, -0.735, 0.679, 0)",
+  "replace": "Transform3D(0.342, 0.9397, 0, -0.9397, 0.342, 0, 0, 0, 1, 0.735, 0.679, 0)",
+  "expect": [
+   "t_hive_lid_leaning_pose"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "ground shrunk back to 13 x 13 (truck floats off the land)",
+  "file": "scenes/main.tscn",
+  "find": "size = Vector2(18, 18)",
+  "replace": "size = Vector2(13, 13)",
+  "expect": [
+   "t_layout_truck_wheels_on_ground"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "first zoom so close the BucketMouth leaves the screen",
+  "file": "scripts/default_config.tres",
+  "find": "\nzoom_size = ",
+  "replace": "\nzoom_size = 2.0 #",
+  "expect": [
+   "t_camera_first_zoom_in_frame"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "second stop so tight the hive is off screen",
+  "file": "scripts/default_config.tres",
+  "find": "pan_zoom_size = 9.54",
+  "replace": "pan_zoom_size = 3.0",
+  "expect": [
+   "t_camera_second_stop_hive_share"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "barrel stops instantly (no ease)",
+  "file": "scripts/centrifuge.gd",
+  "find": "if spin_speed > 0.01 and stop_s > 0.0 and _spinner != null:",
+  "replace": "if false and stop_s > 0.0 and _spinner != null:",
+  "expect": [
+   "t_barrel_eases_to_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "lid opens before the barrel rests",
+  "file": "scripts/centrifuge.gd",
+  "find": "\t\tdelay = _stop_total\n",
+  "replace": "\t\tdelay = 0.0\n",
+  "expect": [
+   "t_barrel_eases_to_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "barrel rests off a quarter turn",
+  "file": "scripts/centrifuge.gd",
+  "find": "_stop_target = turns * quarter",
+  "replace": "_stop_target = ang + spin_speed * stop_s * 0.5 + 0.4",
+  "expect": [
+   "t_barrel_eases_to_stop"
+  ],
+ "suite": "unit"
+ },
+ {
+  "name": "Spin anchored on the Fork's anchor",
+  "file": "scenes/main.tscn",
+  "find": "NodePath(\"../../../FarmWorld/Centrifuge/CentrifugeAnchor\")",
+  "replace": "NodePath(\"../../../FarmWorld/Hive/ForkAnchor\")",
+  "expect": [
+   "t_icons_never_overlap"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Spin screen_offset put back",
+  "file": "scenes/main.tscn",
+  "find": "CentrifugeAnchor\")\nscreen_offset = Vector2(0, 0)",
+  "replace": "CentrifugeAnchor\")\nscreen_offset = Vector2(50, -60)",
+  "expect": [
+   "t_icons_never_overlap"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "no pan after the last frame",
+  "file": "scripts/main.gd",
+  "find": "_closing_to_second = _bucket_is_full() or _spin_pending",
+  "replace": "_closing_to_second = false",
+  "expect": [
+   "t_pan_after_all_frames_uncapped",
+   "t_pan_after_back_then_harvest_again"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Fork icon pushed beside the hive",
+  "file": "scenes/main.tscn",
+  "find": "Hive/ForkAnchor\")\nscreen_offset = Vector2(0, 0)",
+  "replace": "Hive/ForkAnchor\")\nscreen_offset = Vector2(120, 0)",
+  "expect": [
+   "t_icons_above_props"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Spin hidden in the first zoom",
+  "file": "scripts/main.gd",
+  "find": "_centrifuge_icon.set_wanted((on_farm or zoom != Zoom.CLOSING) and _centrifuge.state == Centrifuge.State.FULL)",
+  "replace": "_centrifuge_icon.set_wanted(on_farm and _centrifuge.state == Centrifuge.State.FULL)",
+  "expect": [
+   "t_spin_icon_in_first_zoom"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "Closing the zoom with a full bucket does not pan",
+  "file": "scripts/main.gd",
+  "find": "_closing_to_second = _bucket_is_full() or _spin_pending",
+  "replace": "_closing_to_second = _spin_pending",
+  "expect": [
+   "t_scrape_then_back_in_pop_window_pile",
+   "t_replay_fill_and_back"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "flower patch skips the colour override",
+  "file": "scripts/flower_patch.gd",
+  "find": "head.material_override = material",
+  "replace": "head.material_override = null",
+  "expect": [
+   "t_flower_patch_b"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 buttons ignore the screen margin",
+  "file": "scripts/floating_icon.gd",
+  "find": "var m: float = config.button_screen_margin\n\tvar lo",
+  "replace": "var m: float = 0.0\n\tvar lo",
+  "expect": [
+   "t_buttons_clamped_when_anchor_off_screen"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 a per-view offset moves the buttons off their anchors",
+  "file": "scripts/floating_icon.gd",
+  "find": "screen_offset + Vector2(0.0, _config_offset())",
+  "replace": "screen_offset + Vector2(0.0, _config_offset() + camera.size * 6.0)",
+  "expect": [
+   "t_buttons_at_anchor_or_clamped"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 buttons are not nudged clear of each other",
+  "file": "scripts/floating_icon.gd",
+  "find": "\t\tif not box.intersects(other):\n\t\t\tcontinue\n",
+  "replace": "\t\tif true:\n\t\t\tcontinue\n",
+  "expect": [
+   "t_hud_no_overlap_no_cutoff"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 Harvest shows at the second stop",
+  "file": "scripts/main.gd",
+  "find": "_fork_icon.set_wanted(on_farm and not _at_second_stop)",
+  "replace": "_fork_icon.set_wanted(on_farm)",
+  "expect": [
+   "t_harvest_hidden_at_second_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 Spin is declared under FarmUI again",
+  "file": "scenes/main.tscn",
+  "find": "[node name=\"CentrifugeIcon\" type=\"Button\" parent=\"FarmUIRoot\"]",
+  "replace": "[node name=\"CentrifugeIcon\" type=\"Button\" parent=\"FarmUIRoot/FarmUI\"]",
+  "expect": [
+   "t_spin_placed_by_scene"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 Back moves to the top-left",
+  "file": "scenes/main.tscn",
+  "find": "offset_left = -144.0\noffset_top = 16.0\noffset_right = -24.0\noffset_bottom = 136.0",
+  "replace": "anchor_left = 0.0\nanchor_right = 0.0\noffset_left = 24.0\noffset_top = 16.0\noffset_right = 144.0\noffset_bottom = 136.0",
+  "expect": [
+   "t_back_fixed_top_right"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 the instruction text rises to touch Back",
+  "file": "scenes/main.tscn",
+  "find": "offset_left = -228.0\noffset_top = 144.0\noffset_right = 200.0\noffset_bottom = 254.0",
+  "replace": "offset_left = -228.0\noffset_top = 100.0\noffset_right = 200.0\noffset_bottom = 254.0",
+  "expect": [
+   "t_back_fixed_top_right"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 the speed tag is pinned over the money label",
+  "file": "scenes/main.tscn",
+  "find": "[node name=\"TopInfo\" type=\"VBoxContainer\" parent=\"FarmUIRoot/FarmUI/Margin/Column\"]\nlayout_mode = 2\nmouse_filter = 2\ntheme_override_constants/separation = 8",
+  "replace": "[node name=\"TopInfo\" type=\"VBoxContainer\" parent=\"FarmUIRoot/FarmUI/Margin/Column\"]\nlayout_mode = 2\nmouse_filter = 2\ntheme_override_constants/separation = -200",
+  "expect": [
+   "t_speed_tag_below_labels"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 10 the in-hive comb cells are never shown",
+  "file": "scripts/hive_comb_view.gd",
+  "find": "holder.visible = f != _hidden",
+  "replace": "holder.visible = false",
+  "expect": [
+   "t_combs_visible_in_hive"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 10 the in-hive comb cells are packed at 0.7 pitch, not edge to edge",
+  "file": "scripts/hive_comb_view.gd",
+  "find": "instance.position = Honeycomb.cell_position(c, cols, rows, 1.0)",
+  "replace": "instance.position = Honeycomb.cell_position(c, cols, rows, 0.7)",
+  "expect": [
+   "t_combs_fill_frame_and_hive_whole"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 10 one wall of the hive body is not drawn",
+  "file": "scenes/props/hive.tscn",
+  "find": "[node name=\"WallZNeg\" type=\"MeshInstance3D\" parent=\"HiveBody\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34, -0.63)\nmesh = SubResource(\"Mesh_wallz\")",
+  "replace": "[node name=\"WallZNeg\" type=\"MeshInstance3D\" parent=\"HiveBody\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.34, -0.63)\nvisible = false\nmesh = SubResource(\"Mesh_wallz\")",
+  "expect": [
+   "t_combs_fill_frame_and_hive_whole"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 11 Spin from the farm view cranks in place instead of panning to the second stop",
+  "file": "scripts/main.gd",
+  "find": "if _at_second_stop or _farm_camera == null or not is_inside_tree():",
+  "replace": "if true:",
+  "expect": [
+   "t_spin_from_farm_goes_to_second_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 11 Spin from the first zoom starts the crank without spin mode",
+  "file": "scripts/main.gd",
+  "find": "\tif _spin_pending:\n\t\t_spin_pending = false\n\t\t_spin_mode = true\n",
+  "replace": "\tif _spin_pending:\n\t\t_spin_pending = false\n",
+  "expect": [
+   "t_spin_from_first_zoom_goes_to_second_stop"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 the motor is owned from the start",
+  "file": "scripts/main.gd",
+  "find": "var motor_owned: bool = false ",
+  "replace": "var motor_owned: bool = true ",
+  "expect": [
+   "t_no_motor_in_phase_1"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 a full bucket in the farm view is cranked at once",
+  "file": "scripts/main.gd",
+  "find": "\t_refresh_icons()\n\n\n## An empty jar flies from the crate to the spigot",
+  "replace": "\tif state_now == Centrifuge.State.FULL and zoom == Zoom.NONE:\n\t\t_centrifuge.begin_crank.call_deferred()\n\t_refresh_icons()\n\n\n## An empty jar flies from the crate to the spigot",
+  "expect": [
+   "t_no_spin_farm_view_without_motor"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 a full bucket in the first zoom is cranked at once",
+  "file": "scripts/main.gd",
+  "find": "\tif state_now == Centrifuge.State.FULL and zoom != Zoom.NONE and zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING:\n\t\t_filled_in_zoom = true\n",
+  "replace": "\tif state_now == Centrifuge.State.FULL and zoom != Zoom.NONE and zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING:\n\t\t_filled_in_zoom = true\n\t\t_centrifuge.begin_crank.call_deferred()\n",
+  "expect": [
+   "t_no_spin_first_zoom_without_motor"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 the reload after a pour spins in the farm view whatever the motor",
+  "file": "scripts/main.gd",
+  "find": "\t\tif not (_at_second_stop or motor_owned):\n\t\t\t_refresh_icons()\n\t\t\treturn\n\t\t_centrifuge.begin_crank.call_deferred()   # spin mode: the reloaded bucket spins on its own\n\t_refresh_icons()\n\n\n## An empty jar flies from the crate to the spigot, fills and gets its lid there (visual; the centrifuge's own timer waits for it).\nfunc _on_jar_requested(delay: float) -> void:\n\tvar config: GameConfig = Economy.config\n\tvar jar: Node3D = JarFlight.fetch(self, _truck.empties_position(), _centrifuge.spigot_position(), config.jar_fly_seconds,\n\t\t\tconfig.cell_fly_arc, delay, _centrifuge.spigot_jar_scale(), maxf(config.bottling_seconds_per_jar - config.jar_fly_seconds, 0.001))\n\tif jar != null:\n\t\t_trips.append(jar)\n\n\n## A jar is bottled: the jar at the spigot flies on to the truck or the crate (the truck counts it at once).\nfunc _on_jar_bottled(_n: int) -> void:\n\tvar carrier: Node3D = _trips.pop_front() if not _trips.is_empty() else null\n\t_truck.receive_jar(_centrifuge.spigot_position(), 0.0, carrier)\n\n\n## Sell (icon): credits the money, sends the truck off, and the summary shows jars sold, price per jar and the total. Returns the total.\nfunc sell() -> int:\n\tvar jars: int = _truck.loaded_jars\n\tvar total: int = _truck.sell()\n\tif total > 0:\n\t\t_farm_ui.show_summary(jars, Economy.jar_value(), total)\n\treturn total\n\n\n## Bottling finished: the bucket is empty and open (centrifuge.gd lifted its lid), and the pile loads in.\nfunc _on_bottling_done(_jars: int) -> void:\n\t# 0.1.4 item 7: in spin mode the reloaded bucket spins by itself (no \"press Spin\" prompt, the spin text stays); with no pile, spin mode exits.\n\tif _spin_mode:\n\t\tif _pile != null and not _pile.is_empty() and _centrifuge.room_cells() > 0:\n\t\t\t_auto_spin = _at_second_stop or motor_owned ",
+  "replace": "\t\t_centrifuge.begin_crank.call_deferred()   # spin mode: the reloaded bucket spins on its own\n\t_refresh_icons()\n\n\n## An empty jar flies from the crate to the spigot, fills and gets its lid there (visual; the centrifuge's own timer waits for it).\nfunc _on_jar_requested(delay: float) -> void:\n\tvar config: GameConfig = Economy.config\n\tvar jar: Node3D = JarFlight.fetch(self, _truck.empties_position(), _centrifuge.spigot_position(), config.jar_fly_seconds,\n\t\t\tconfig.cell_fly_arc, delay, _centrifuge.spigot_jar_scale(), maxf(config.bottling_seconds_per_jar - config.jar_fly_seconds, 0.001))\n\tif jar != null:\n\t\t_trips.append(jar)\n\n\n## A jar is bottled: the jar at the spigot flies on to the truck or the crate (the truck counts it at once).\nfunc _on_jar_bottled(_n: int) -> void:\n\tvar carrier: Node3D = _trips.pop_front() if not _trips.is_empty() else null\n\t_truck.receive_jar(_centrifuge.spigot_position(), 0.0, carrier)\n\n\n## Sell (icon): credits the money, sends the truck off, and the summary shows jars sold, price per jar and the total. Returns the total.\nfunc sell() -> int:\n\tvar jars: int = _truck.loaded_jars\n\tvar total: int = _truck.sell()\n\tif total > 0:\n\t\t_farm_ui.show_summary(jars, Economy.jar_value(), total)\n\treturn total\n\n\n## Bottling finished: the bucket is empty and open (centrifuge.gd lifted its lid), and the pile loads in.\nfunc _on_bottling_done(_jars: int) -> void:\n\t# 0.1.4 item 7: in spin mode the reloaded bucket spins by itself (no \"press Spin\" prompt, the spin text stays); with no pile, spin mode exits.\n\tif _spin_mode:\n\t\tif _pile != null and not _pile.is_empty() and _centrifuge.room_cells() > 0:\n\t\t\t_auto_spin = true ",
+  "expect": [
+   "t_no_spin_after_pour_farm_view"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 12 the motor never spins the reload (control for the no-motor test)",
+  "file": "scripts/main.gd",
+  "find": "\t\t\t_auto_spin = _at_second_stop or motor_owned ",
+  "replace": "\t\t\t_auto_spin = _at_second_stop ",
+  "expect": [
+   "t_spin_after_pour_farm_view_with_motor"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 13 CentrifugeLabel is pinned to screen (24, 245) again",
+  "file": "scripts/farm_ui.gd",
+  "find": "\t_centrifuge_label.global_position = pos\n",
+  "replace": "\t_centrifuge_label.global_position = Vector2(24.0, 245.0)\n",
+  "expect": [
+   "t_centrifuge_label_on_centrifuge"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 13 CentrifugeLabel is not moved off Spin and Back",
+  "file": "scripts/farm_ui.gd",
+  "find": "\t\tif not Rect2(pos, sz).intersects(r):\n\t\t\tcontinue\n",
+  "replace": "\t\tcontinue\n",
+  "expect": [
+   "t_centrifuge_label_on_centrifuge"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T8.1 HintLabel sits level with Back, not below it",
+  "file": "scenes/main.tscn",
+  "find": "offset_top = 144.0",
+  "replace": "offset_top = 60.0",
+  "expect": [
+   "t_back_fixed_top_right"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.1 the hive's WallXNeg is not drawn",
+  "file": "scenes/props/hive.tscn",
+  "find": "[node name=\"WallXNeg\" type=\"MeshInstance3D\" parent=\"HiveBody\"]\n",
+  "replace": "[node name=\"WallXNeg\" type=\"MeshInstance3D\" parent=\"HiveBody\"]\nvisible = false\n",
+  "expect": [
+   "t_hive_five_upright_frames_four_walls"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.2 one grid column fewer, so the cells no longer fill the frame",
+  "file": "scripts/default_config.tres",
+  "find": "grid_cols = 5",
+  "replace": "grid_cols = 4",
+  "expect": [
+   "t_raised_frame_cells_fill_and_size"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.3 the closed lid sinks 0.1 into the walls",
+  "file": "scenes/props/hive.tscn",
+  "find": "[node name=\"HiveLid\" type=\"Node3D\" parent=\".\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74, 0)",
+  "replace": "[node name=\"HiveLid\" type=\"Node3D\" parent=\".\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0)",
+  "expect": [
+   "t_lid_closes_clear_of_walls"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.4 the raised frame's cells are shifted 0.5 sideways (off centre, past the bars)",
+  "file": "scripts/honeycomb.gd",
+  "find": "\t\troot.position = _cell_position(i)",
+  "replace": "\t\troot.position = _cell_position(i) + Vector3(0.5, 0.0, 0.0)",
+  "expect": [
+   "t_raised_frame_cells_aligned"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.4 the in-hive cells are shifted 0.5 sideways",
+  "file": "scripts/hive_comb_view.gd",
+  "find": "instance.position = Honeycomb.cell_position(c, cols, rows, Honeycomb.DEFAULT_CELL_PITCH)",
+  "replace": "instance.position = Honeycomb.cell_position(c, cols, rows, Honeycomb.DEFAULT_CELL_PITCH) + Vector3(0.5, 0.0, 0.0)",
+  "expect": [
+   "t_hive_frames_cells_aligned"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.4 odd columns are no longer offset, so neighbours meet along a line through corners",
+  "file": "scripts/honeycomb.gd",
+  "find": "+ 0.5 * float(col % 2) - 0.25)",
+  "replace": "+ 0.0 * float(col % 2) - 0.25)",
+  "expect": [
+   "t_raised_frame_cells_aligned",
+   "t_hive_frames_cells_aligned"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T17 the cell collider is not scaled with the drawn cell (Body scale line removed)",
+  "file": "scripts/honeycomb.gd",
+  "find": "\t\t\tbody.scale = Vector3.ONE * config.frame_scale   # collider covers",
+  "replace": "\t\t\tpass   # collider covers",
+  "expect": [
+   "t_raised_frame_collider_covers_drawn_cell"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T15.1 the crank keeps counting turns after Back (Back leaves crank_enabled on)",
+  "file": "scripts/main.gd",
+  "find": "\t\t_crank_paused = true   # 0.1.4 item 15: no turn counts off the second stop; progress is kept\n\t\t_centrifuge.crank_enabled = false",
+  "replace": "\t\t_crank_paused = true   # 0.1.4 item 15: no turn counts off the second stop; progress is kept\n\t\t_centrifuge.crank_enabled = true",
+  "expect": [
+   "t_crank_pauses_on_back_and_resumes_on_spin",
+   "t_paused_crank_never_finishes_in_farm_view"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T15.2 Spin is hidden in the farm view while a crank is paused",
+  "file": "scripts/main.gd",
+  "find": "(_crank_paused and _centrifuge.state == Centrifuge.State.CRANKING)",
+  "replace": "false",
+  "expect": [
+   "t_crank_pauses_on_back_and_resumes_on_spin",
+   "t_paused_crank_never_finishes_in_farm_view"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 T14.5 the hive lid rests 0.1 too low, so the whole close ends sunk into the walls",
+  "file": "scenes/props/hive.tscn",
+  "find": "[node name=\"HiveLid\" type=\"Node3D\" parent=\".\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.74, 0)",
+  "replace": "[node name=\"HiveLid\" type=\"Node3D\" parent=\".\"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.64, 0)",
+  "expect": [
+   "t_lid_close_never_clips_hive"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 16 Save writes every value, not only the edited ones",
+  "file": "scripts/dev_panel.gd",
+  "find": "and v != _defaults.get(value_name):",
+  "replace": "and true:",
+  "expect": [
+   "t_dev_save_only_edited_values"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "dev panel ignores physical_keycode",
+  "file": "scripts/dev_panel.gd",
+  "find": "(event.keycode == OPEN_KEY or event.physical_keycode == OPEN_KEY)",
+  "replace": "(event.keycode == OPEN_KEY)",
+  "expect": [
+   "t_dev_physical_key_toggles"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 19 lowering a frame pours the overflow in at once",
+  "file": "scripts/hive.gd",
+  "find": "\tframe_lowered.emit(index)   # 0.1.4 item 19",
+  "replace": "\t_pour(1000000.0, 1.0)\n\tframe_lowered.emit(index)   # 0.1.4 item 19",
+  "expect": [
+   "t_lowered_frame_comes_back_empty_then_fills"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 20 Harvest treats Spin as a blocker again",
+  "file": "scripts/floating_icon.gd",
+  "find": "if name == &\"ForkIcon\" and c != null and c.name == &\"CentrifugeIcon\":",
+  "replace": "if false and c != null:",
+  "expect": [
+   "t_harvest_holds_anchor_spin_below"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.1.4 item 21 crate loads only on a trip return",
+  "file": "scripts/truck.gd",
+  "find": "\t\tif room > 0:",
+  "replace": "\t\tif room > 0 and false:",
+  "expect": [
+   "t_truck_home_loads_crate_without_trip"
+  ],
+  "suite": "unit"
+ }
+]

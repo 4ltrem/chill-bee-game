@@ -1,0 +1,5 @@
+# raw play_loop output
+farm avg=142.3 min_sample=142.0
+stage1 avg=142.3 min_sample=142.0
+stage2 avg=142.5 min_sample=142.0
+summary avg=142.1 min_sample=142.0

@@ -2,8 +2,21 @@
 # Refuse a commit whose docs contradict the code and config they describe, or whose links break.
 # Enabled per machine with: git config core.hooksPath .githooks  (the end-of-day skill sets it up)
 cd "$(git rev-parse --show-toplevel)" || exit 1
+# a syntax error in a tool (the SubagentStop hook included) would fail silently at run time
+python -I -c "import py_compile, glob, sys; [py_compile.compile(f, doraise=True) for f in glob.glob('_tools/*.py')]" || {
+    echo "pre-commit: a script in _tools/ does not compile (above)" >&2
+    exit 1
+}
 python -I _tools/consistency.py || {
     echo "pre-commit: docs disagree with code (above). Generated sections: python -I _tools/sync_docs.py" >&2
+    exit 1
+}
+python -I _tools/contract_check.py || {
+    echo "pre-commit: a script looks up a node no scene has (above): Patricia and Bob's contract" >&2
+    exit 1
+}
+python -I _tools/spec_lint.py --staged || {
+    echo "pre-commit: a staged spec has a Quinn line naming several items (above): one item per line" >&2
     exit 1
 }
 python -I _tools/links.py > /dev/null || {

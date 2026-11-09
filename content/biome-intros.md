@@ -1,11 +1,11 @@
 ---
 author: william
 type: story
-status: approved
+status: draft
 description: Title-card line and 2–3 guide introduction lines shown when the player unlocks each of the four biomes (Sunny Meadow, Alpine Valley, Enchanted Grove, Cloud Gardens).
-run: content/_runs/biome-intros/blackboard.md
+run: content/_runs/biome-intros/blackboard-2.md
 decided: 2026-11-03
-decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Skybloom (Cloud Gardens) added to the GDD; revise the intros to name them
+decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Skybloom (Cloud Gardens) added to the GDD; revise the intros to name them (done: the intros name both; designer 2026-11-07: keep the names)
 ---
 # Biome Unlock Intros
 **Sources:** `GDD.md` (Story Premise & Onboarding, Aesthetic & Tone, Child Safety, Glossary, Progression Tiers & Biomes, Land Grid & Units, Tree C Native Habitat).
@@ -30,11 +30,11 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 > **Title card:** *Cool mountain air, the blush of fireweed, and a whole new horizon for your hive.*
 
-**[GUIDE]:** Oh, breathe that in! Pine trees reaching up to the clouds, and whole hillsides of fireweed painted in violet and rose. Your bees are going to love it up here.
+**[GUIDE]:** Oh, breathe that in! Pine trees reaching up to the clouds, and whole hillsides painted in soft violet and rose. Your bees are going to love it up here.
 
 **[GUIDE]:** In Alpine Valley, your hives settle into cosy chalet hives — sturdy, Swiss-style, and perfectly at home on the mountain slopes.
 
-**[GUIDE]:** The crisp altitude gives your honey a character all its own. This is *Frosted Fireweed Honey*, and trust me — it's something rather special.
+**[GUIDE]:** In this pocket world, the mountain air gives your honey a character all its own. This is *Frosted Fireweed Honey*, and trust me — it's something rather special.
 
 ---
 
@@ -42,7 +42,7 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 > **Title card:** *A glowing world beyond the treeline — not every beekeeper finds their way here.*
 
-**[GUIDE]:** Oh my stars, just look at this place! Those mushrooms are enormous — glowing softly in the dark like little suns. And those night-blooming flowers? They only open here, in this one magical corner of your pocket world.
+**[GUIDE]:** Oh my stars, just look at this place! Those mushrooms are enormous — glowing softly in the dark like little suns. And those night-blooming flowers? Those are Glowbells, a make-believe flower that only opens here, in this one magical corner of your pocket world.
 
 **[GUIDE]:** Your hives in the Enchanted Grove take the shape of lanterns — hanging hives that sway gently and fill the grove with a warm amber light.
 
@@ -54,7 +54,7 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 > **Title card:** *Floating islands, rainbow blossoms, and the highest honey your pocket world has ever tasted.*
 
-**[GUIDE]:** We made it to the very top! Sky islands drift by on every side, crowned with rainbow blossoms that grow in no other world but this one — your own little corner of the sky.
+**[GUIDE]:** We made it to the very top! Sky islands drift by on every side, crowned with Skybloom, a make-believe flower with rainbow blossoms that grows in no other world but this one — your own little corner of the sky.
 
 **[GUIDE]:** Up here, your hives are brass and solar-powered, gleaming in the sunlight and humming with a quiet, sun-warmed energy all their own.
 
@@ -80,11 +80,11 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 > **Carte-titre :** *L'air frais de la montagne, le rose de l'épilobe, et un tout nouvel horizon pour ta ruche.*
 
-**[GUIDE] :** Ah, sens-moi ça ! Des pins qui s'élancent jusqu'aux nuages, et des flancs de montagne tout entiers couverts d'épilobe rose et violet. Tes abeilles vont adorer ça.
+**[GUIDE] :** Ah, sens-moi ça ! Des pins qui s'élancent jusqu'aux nuages, et des flancs de montagne tout entiers peints de violet et de rose tendres. Tes abeilles vont adorer ça.
 
 **[GUIDE] :** Dans la Vallée Alpine, tes ruches prennent la forme de ruches-chalets — robustes, de style suisse, parfaitement à leur place sur les pentes de montagne.
 
-**[GUIDE] :** La fraîcheur de l'altitude donne à ton miel un caractère bien à lui. C'est le *Miel d'Épilobe Givré*, et crois-moi — c'est vraiment quelque chose.
+**[GUIDE] :** Dans ce monde de poche, l'air de la montagne donne à ton miel un caractère bien à lui. C'est le *Miel d'Épilobe Givré*, et crois-moi — c'est vraiment quelque chose.
 
 ---
 
@@ -92,7 +92,7 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 > **Carte-titre :** *Un monde lumineux au-delà des arbres — peu d'apiculteurs trouvent le chemin jusqu'ici.*
 
-**[GUIDE] :** Oh là là, regarde un peu ça ! Ces champignons sont immenses — ils brillent doucement dans l'obscurité comme de petits soleils. Et ces fleurs nocturnes ? Elles ne s'ouvrent qu'ici, dans ce coin magique de ton monde de poche.
+**[GUIDE] :** Oh là là, regarde un peu ça ! Ces champignons sont immenses — ils brillent doucement dans l'obscurité comme de petits soleils. Et ces fleurs nocturnes ? Ce sont des Clochettes-lueur (Glowbell), une fleur imaginaire qui ne s'ouvre qu'ici, dans ce coin magique de ton monde de poche.
 
 **[GUIDE] :** Tes ruches dans le Bosquet Enchanté prennent la forme de lanternes — des ruches-lanternes qui se balancent doucement et baignent le bosquet d'une chaleureuse lueur ambrée.
 
@@ -104,7 +104,7 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 > **Carte-titre :** *Des îles flottantes, des fleurs arc-en-ciel, et le miel le plus haut que ton monde de poche ait jamais goûté.*
 
-**[GUIDE] :** On y est, tout en haut ! Des îles célestes dérivent de tous côtés, couronnées de fleurs arc-en-ciel qui ne poussent dans aucun autre monde que le tien — ton propre petit coin de ciel.
+**[GUIDE] :** On y est, tout en haut ! Des îles célestes dérivent de tous côtés, couronnées de Skybloom, une fleur imaginaire aux pétales arc-en-ciel qui ne pousse dans aucun autre monde que le tien — ton propre petit coin de ciel.
 
 **[GUIDE] :** Ici, tes ruches sont en laiton et alimentées par le soleil — elles brillent dans la lumière et bourdonnent d'une énergie douce et ensoleillée qui leur appartient.
 
@@ -126,5 +126,3 @@ None. The biome intro cards are story and onboarding text set inside the game's 
    - **Pip** — a tiny glowing sprite companion who used to be a bee; whimsical and wordplay-prone.
 
 2. **Biome names in French.** The English biome names are taken directly from the GDD; the French names above are proposed equivalents (*Prairie Ensoleillée*, *Vallée Alpine*, *Bosquet Enchanté*, *Jardins Célestes*). The designer or the conservation partner should confirm or replace these before localisation.
-
-3. **Enchanted Grove and Cloud Gardens flora naming.** The GDD lists no specific flower names for post-launch biomes — only "night-blooming flora" and "rainbow blossoms." The intros describe these in those terms (in-world labelled as fictional). If the designer wants named fictional species used in the intros (e.g., *Glowbell*, *Skybloom*), those names need to be added to the GDD first. << yes add them

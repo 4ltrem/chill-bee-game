@@ -1,0 +1,10 @@
+{
+ "page": "https://claude.ai/artifact/18RZ7YYQW8wR8tx6nekw1V",
+ "read": "2026-11-05",
+ "pick": "flower-patch-b",
+ "votes": [
+  {"id": "flower-patch-a", "file": "flower-patch-a.png", "vote": "maybe", "note": ""},
+  {"id": "flower-patch-b", "file": "flower-patch-b.png", "vote": "yes", "note": ""},
+  {"id": "flower-patch-c", "file": "flower-patch-c.png", "vote": "no", "note": ""}
+ ]
+}

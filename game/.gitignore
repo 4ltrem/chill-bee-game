@@ -5,3 +5,7 @@
 
 # Exports
 builds/
+
+# godot_run.py raw logs
+reports/_runs/
+reports/ui-compare/design-votes.html

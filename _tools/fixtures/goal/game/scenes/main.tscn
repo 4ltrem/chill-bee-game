@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[node name="Main" type="Node3D"]
+
+[node name="FillNode" type="ColorRect" parent="."]
+
+[node name="TagNode" type="Label" parent="."]
+
+[node name="OldBar" type="ProgressBar" parent="."]

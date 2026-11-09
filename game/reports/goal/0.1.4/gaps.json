@@ -1,0 +1,2129 @@
+{
+ "spec": "0.1.4-ui-placement.md",
+ "version": "0.1.4",
+ "at": "2026-11-08T16:46:38-05:00",
+ "unit_log": "game/reports/_runs/20261108-153930/unit.log",
+ "goals": {
+  "H": {
+   "kind": "handoff",
+   "title": "Node handoff (Patricia to Bob)",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [],
+   "depends": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "handoff",
+     "name": "0.1.4-node-handoff.md",
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "c31bbb8",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C1": {
+   "kind": "change",
+   "title": "Harvest button is the honey meter",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "a32b0be",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C2": {
+   "kind": "change",
+   "title": "Buttons anchored to their props, the same way in every view",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "harvest_anchor_offset",
+     "ok": true
+    },
+    {
+     "kind": "config",
+     "name": "spin_anchor_offset",
+     "ok": true
+    },
+    {
+     "kind": "config",
+     "name": "sell_anchor_offset",
+     "ok": true
+    },
+    {
+     "kind": "config",
+     "name": "button_screen_margin",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "CentrifugeLabel",
+     "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_hud_no_overlap_no_cutoff",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_at_anchor_or_clamped",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_clamped_when_anchor_off_screen",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_harvest_hidden_at_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_placed_by_scene",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "90e03c6",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C3": {
+   "kind": "change",
+   "title": "Back in one fixed place",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "747a5a1",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C4": {
+   "kind": "change",
+   "title": "Speed tag clear of the top info",
+   "owners": [
+    "Bob"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "fb94e04",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C5": {
+   "kind": "change",
+   "title": "Bigger hive frames and combs",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "frame_scale",
+     "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "6a76e7d",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C6": {
+   "kind": "change",
+   "title": "Housekeeping from 0.1.3:",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "287bdd0",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C7": {
+   "kind": "change",
+   "title": "The pile loads on its own at the second stop",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "f6f153a",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C8": {
+   "kind": "change",
+   "title": "Instruction text below Back",
+   "owners": [
+    "Bob"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "HintLabel",
+     "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "485190a",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C9": {
+   "kind": "change",
+   "title": "\"Production paused\" above the upgrades",
+   "owners": [
+    "Bob"
+   ],
+   "items": [
+    9
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "PausedLabel",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "TopInfo",
+     "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "1169483",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C10": {
+   "kind": "change",
+   "title": "Combs shown in the hive",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    10
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_visible_in_hive",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_fill_frame_and_hive_whole",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "2d2ffb4",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C11": {
+   "kind": "change",
+   "title": "Spin goes to the second stop",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    11
+   ],
+   "depends": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_farm_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_first_zoom_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "33db081",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C12": {
+   "kind": "change",
+   "title": "No spinning in the farm view without the motor",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    12
+   ],
+   "depends": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_motor_in_phase_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_farm_view_without_motor",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_after_pour_farm_view",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_after_pour_farm_view_with_motor",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_first_zoom_without_motor",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "dbbca01",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C14": {
+   "kind": "change",
+   "title": "The hive is the round 9 pick",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
+     "kind": "ledger",
+     "name": "40128c7",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C15": {
+   "kind": "change",
+   "title": "Leaving the centrifuge stops the crank",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    15
+   ],
+   "depends": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_crank_pauses_on_back_and_resumes_on_spin",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_paused_crank_never_finishes_in_farm_view",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "d8f210a",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C13": {
+   "kind": "change",
+   "title": "Centrifuge text sits on the centrifuge",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    13
+   ],
+   "depends": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "CentrifugeLabel",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "FarmUI",
+     "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_centrifuge_label_on_centrifuge",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "b99657c",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.1": {
+   "kind": "test",
+   "title": "no two HUD controls overlap, and none is cut off by the screen edge;",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hud_no_overlap_no_cutoff",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_at_anchor_or_clamped",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_clamped_when_anchor_off_screen",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_harvest_hidden_at_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_placed_by_scene",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "b65f5e1",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T.1": {
+   "kind": "test",
+   "title": "Back has the same screen rect in the first zoom and at the second stop",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3,
+    8
+   ],
+   "depends": [
+    "C3",
+    "C8"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "928b711",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.2": {
+   "kind": "test",
+   "title": "Harvest, Spin and Sell stay within `button_screen_margin` of their anc",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hud_no_overlap_no_cutoff",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_at_anchor_or_clamped",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_clamped_when_anchor_off_screen",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_harvest_hidden_at_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_placed_by_scene",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "2c464bc",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T.2": {
+   "kind": "test",
+   "title": "Back's rect is in the top-right quadrant, and the speed tag is below t",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1,
+    4,
+    8
+   ],
+   "depends": [
+    "C1",
+    "C4",
+    "C8"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "1ee096d",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T1.1": {
+   "kind": "test",
+   "title": "the Harvest fill equals the hive fill fraction (± 1%), and the count l",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "C1"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T5.1": {
+   "kind": "test",
+   "title": "the hive's cell size on screen is within 15% of a pile cell's in the f",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "C5"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T6.1": {
+   "kind": "test",
+   "title": "no test file appears in `user://recordings` after a full run;",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [
+    "C6"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T7.1": {
+   "kind": "test",
+   "title": "item 7: at the second stop, with a pile waiting, a finished pour is fo",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [
+    "C7"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T8.1": {
+   "kind": "test",
+   "title": "item 8: the instruction text's rect lies wholly below Back's rect and ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [
+    "C8"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "1ee096d",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T1.2": {
+   "kind": "test",
+   "title": "item 1 fix: at about half fill, no fill pixel lies outside the button'",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "C1"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T10.1": {
+   "kind": "test",
+   "title": "item 10: with the hive partly full and no frame raised, the frames' co",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    10
+   ],
+   "depends": [
+    "C10"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_visible_in_hive",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_fill_frame_and_hive_whole",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "0d5606c",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T9.1": {
+   "kind": "test",
+   "title": "item 9: `PausedLabel` is one line (its height is one line's height), l",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    9
+   ],
+   "depends": [
+    "C9"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T7.2": {
+   "kind": "test",
+   "title": "item 7 (2026-11-07): after a pour with a pile waiting, spin mode stays",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [
+    "C7"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T5.2": {
+   "kind": "test",
+   "title": "item 5 fix: each frame's comb cells lie inside the frame's inner rect ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "C5"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T11.1": {
+   "kind": "test",
+   "title": "item 11: pressing Spin from the farm view or the first zoom ends at th",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    11
+   ],
+   "depends": [
+    "C11"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_farm_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_first_zoom_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "c5e6593",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T13.1": {
+   "kind": "test",
+   "title": "item 13: while cranking, `CentrifugeLabel`'s rect stays within `button",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    13
+   ],
+   "depends": [
+    "C13"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_centrifuge_label_on_centrifuge",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "f0768c4",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T14.1": {
+   "kind": "test",
+   "title": "item 14: the hive has five frames, each standing upright (its comb fac",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
+     "kind": "ledger",
+     "name": "720d42d",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T14.2": {
+   "kind": "test",
+   "title": "item 14 fix (play-test 2026-11-08, shown failing on the current build ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
+     "kind": "ledger",
+     "name": "720d42d",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T14.3": {
+   "kind": "test",
+   "title": "item 14 lid (play-test 2026-11-08, shown failing on the current build ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
+     "kind": "ledger",
+     "name": "720d42d",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T14.4": {
+   "kind": "test",
+   "title": "item 14 align (play-test 2026-11-08, shown failing on the current buil",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T14.5": {
+   "kind": "test",
+   "title": "item 14 lid fix (play-test 2026-11-08, shown failing on the current bu",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T15.1": {
+   "kind": "test",
+   "title": "item 15: after Back from a crank at the second stop, taps in the farm ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    15
+   ],
+   "depends": [
+    "C15"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_crank_pauses_on_back_and_resumes_on_spin",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_paused_crank_never_finishes_in_farm_view",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "d2d3b57",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T12.1": {
+   "kind": "test",
+   "title": "item 12: with no motor owned, the centrifuge never spins while the cam",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    12
+   ],
+   "depends": [
+    "C12"
+   ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_motor_in_phase_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_farm_view_without_motor",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_after_pour_farm_view",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_after_pour_farm_view_with_motor",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_first_zoom_without_motor",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "d9533a5",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T.3": {
+   "kind": "test",
+   "title": "mutations in `tests/mutations.json` prove the new tests.",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    14,
+    15,
+    13
+   ],
+   "depends": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9",
+    "C10",
+    "C11",
+    "C12",
+    "C14",
+    "C15",
+    "C13"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hud_no_overlap_no_cutoff",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_at_anchor_or_clamped",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_buttons_clamped_when_anchor_off_screen",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_harvest_hidden_at_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_placed_by_scene",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_back_fixed_top_right",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_speed_tag_below_labels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_visible_in_hive",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_combs_fill_frame_and_hive_whole",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_farm_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_from_first_zoom_goes_to_second_stop",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_motor_in_phase_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_farm_view_without_motor",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_after_pour_farm_view",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_after_pour_farm_view_with_motor",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_no_spin_first_zoom_without_motor",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_centrifuge_label_on_centrifuge",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_five_upright_frames_four_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_fill_and_size",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_closes_clear_of_walls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_raised_frame_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hive_frames_cells_aligned",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_close_never_clips_hive",
+     "ok": true,
+     "result": "x1, designer plays"
+    },
+    {
+     "kind": "test",
+     "name": "t_crank_pauses_on_back_and_resumes_on_spin",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_paused_crank_never_finishes_in_farm_view",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  }
+ },
+ "order": [
+  {
+   "id": "T14.4",
+   "score": 5.59,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.41,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T14.5",
+   "score": 5.59,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.41,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.3",
+   "score": 1.59,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.41,
+    "ready": 1,
+    "blocked_by": []
+   }
+  }
+ ],
+ "ambiguous": []
+}

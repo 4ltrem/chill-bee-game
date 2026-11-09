@@ -3,7 +3,7 @@
 
     python -I _tools/test_generate.py
 
-Each test builds a throwaway workspace (content/, research/, _meta/agent-runs.md, agent definitions
+Each test builds a throwaway workspace (content/, research/, the run log, agent definitions
 and index.py), points generate.py at it, and replaces run_agent, the one function that calls
 `claude -p`, with a fake. The fake William edits the draft the way the real one should, the fake
 critic replies with a scripted verdict block, and the fake Ruth writes a brief. What this proves
@@ -26,9 +26,6 @@ sys.path.insert(0, str(TOOLS))  # -I leaves the script's folder off sys.path
 import generate as g  # noqa: E402
 
 BAD, GOOD = "Flowers can't bloom without bees.", "Bees help the meadow's flowers make seeds."
-LOG = ("# Runs\n\n### Content generation: write or check player-facing text (`_tools/generate.py`)\n"
-       "Turns are the CLI's `num_turns`, not tool calls.\n"
-       "| Run | Phase | Total processed | Final context | Turns | Duration |\n|---|---|---|---|---|---|\n\n## Next\n")
 ROWS = {  # the finding a scripted FAIL carries
     "FAIL": "| 1 | Lore | \"x\" | Story Premise | reword |",
     "FAIL:source": f"| 1 | Facts & French | \"{BAD}\" | Bee Journal | Find a source that supports it |",
@@ -85,7 +82,6 @@ class Workspace(unittest.TestCase):
         for folder in ("content", "research", "_tools", "_meta", ".claude/agents"):
             (self.root / folder).mkdir(parents=True)
         shutil.copy(TOOLS / "index.py", self.root / "_tools" / "index.py")
-        (self.root / "_meta" / "agent-runs.md").write_text(LOG, encoding="utf-8")
         for name in (g.WRITER, g.CRITIC, g.RESEARCHER):
             (self.root / ".claude" / "agents" / f"{name}.md").write_text(
                 f"---\nname: {name}\nmodel: sonnet\n---\n", encoding="utf-8")
@@ -129,6 +125,11 @@ class GenerateTest(Workspace):
         board = self.board()
         self.assertIn("### Critic, round 1\nVERDICT: PASS", board)
         self.assertNotIn("```", board)  # fences and chatter are stripped
+        self.assertNotIn(BAD, board)  # the draft goes by reference (an input), the verdict inline (an output)
+        snap = self.root / "content" / "_runs" / "x" / "blackboard-round-1.md"
+        self.assertIn(BAD, snap.read_text(encoding="utf-8"))
+        self.assertIn("`content/_runs/x/blackboard-round-1.md`", board)
+        self.assertTrue(board.startswith("---\nslug: x\n") and board.count("## Result") == 1)
 
     def test_fail_then_pass_hands_out_slices(self):
         fake = Fake(self.root, ["FAIL", "PASS"])
@@ -228,11 +229,14 @@ class GenerateTest(Workspace):
 
     def test_calls_are_logged_with_agent_names(self):
         self.new(Fake(self.root, ["FAIL:source", "PASS"]), kind="journal")
-        log = (self.root / "_meta" / "agent-runs.md").read_text(encoding="utf-8")
-        table = log[log.index("### Content generation"):log.index("## Next")]
-        self.assertEqual(table.count("| post-ICM |"), 6)
-        self.assertIn("| Ruth: x, round 2 (Sonnet) | post-ICM | 1 | — | 1 | 1 s |", table)
-        self.assertIn("| Critic: x, round 1 (Sonnet) |", table)
+        import runlog
+        rows = runlog.read(self.root)
+        self.assertEqual(len(rows), 6)
+        self.assertTrue(all(r["table"] == "Content generation" and r["phase"] == "post-ICM" for r in rows))
+        ruth = next(r for r in rows if r["agent"] == "Ruth" and r["run"] == "x, round 2")
+        self.assertEqual((ruth["model"], ruth["total_processed"], ruth["final_context"], ruth["turns"],
+                          ruth["duration_s"]), ("Sonnet", "1", "", "1", "1"))
+        self.assertIn(("Critic", "x, round 1"), [(r["agent"], r["run"]) for r in rows])
 
     def test_transcripts_move_into_the_run_folder_and_give_final_context(self):
         projects = self.root / "projects"
@@ -252,8 +256,24 @@ class GenerateTest(Workspace):
                                 "william-round-1.jsonl", "william-round-2.jsonl"])
         self.assertEqual(list(projects.iterdir()), [])  # nothing left behind
         self.assertIn(f"Transcripts: `_meta/sessions/runs/{runs[0].name}/`", self.board())
-        log = (self.root / "_meta" / "agent-runs.md").read_text(encoding="utf-8")
-        self.assertIn("| William: x, round 1 (Sonnet) | post-ICM | 1 | 701 | 1 | 1 s |", log)
+        import runlog
+        william = next(r for r in runlog.read(self.root) if r["agent"] == "William" and r["run"] == "x, round 1")
+        self.assertEqual((william["total_processed"], william["final_context"]), ("1", "701"))
+
+    def test_a_repeated_label_never_overwrites_a_kept_transcript(self):
+        projects, dest = self.root / "projects", self.root / "runs"
+        projects.mkdir()
+        saved, g.projects_dir = g.projects_dir, (lambda: projects)
+        try:
+            for n in (1, 2):   # 0.1.4: "T14.4 fix 1" ran at 15:25 and again at 16:46
+                (projects / f"s{n}.jsonl").write_text('{"type":"assistant","message":{"id":"m%d","usage":{}}}\n' % n,
+                                                      encoding="utf-8")
+                u = {"session_id": f"s{n}"}
+                g.keep_transcript(u, dest, "fix-1-bob")
+                self.assertEqual(u["calls"], 1)
+        finally:
+            g.projects_dir = saved
+        self.assertEqual(sorted(p.name for p in dest.iterdir()), ["fix-1-bob-2.jsonl", "fix-1-bob.jsonl"])
 
 
 class CriticCheckTest(Workspace):
@@ -308,8 +328,6 @@ class LogSubagentTest(unittest.TestCase):
         (self.root / ".claude" / "agents").mkdir(parents=True)
         (self.root / ".claude" / "agents" / "hiring-manager.md").write_text(
             "---\nname: hiring-manager\ndescription: Martin, the Hiring Manager. Writes agents.\n---\n", encoding="utf-8")
-        self.log = self.root / "agent-runs.md"
-        self.log.write_text("# Runs\n\n### Probes\n| a |\n|---|\n\n## Daily Budget\nx\n", encoding="utf-8")
         self.saved = self.ls.ROOT
         self.ls.ROOT = self.root
         # three API calls; the second is split over two entries with the same id
@@ -338,13 +356,109 @@ class LogSubagentTest(unittest.TestCase):
         self.assertEqual(m["seconds"], 67)
         self.assertEqual(m["model"], "claude-haiku-5-5")
 
-    def test_creates_the_table_before_daily_budget_and_appends(self):
-        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
-        self.ls.log_run("hiring-manager", self.transcript, log=self.log)
-        text = self.log.read_text(encoding="utf-8")
-        self.assertLess(text.index(self.ls.TABLE), text.index("## Daily Budget"))
-        self.assertEqual(text.count(self.ls.TABLE), 1)
-        self.assertEqual(text.count("| Martin (hiring-manager): hire Ruth | post-ICM | 508 | 944 | 3 | 67 s |"), 2)
+    def rows(self):
+        import runlog
+        return runlog.read(self.root)
+
+    def test_logs_one_csv_row(self):
+        self.ls.log_run("hiring-manager", self.transcript)
+        (row,) = self.rows()
+        self.assertEqual((row["table"], row["agent"], row["run"], row["final_context"], row["total_processed"],
+                          row["tool_calls"], row["duration_s"], row["key"]),
+                         ("Subagent runs", "Martin (hiring-manager)", "hire Ruth", "508", "944", "3", "67", "agent-x"))
+        self.assertEqual((row["start"], row["end"]), ("2026-11-01T09:59:58Z", "2026-11-01T10:01:05Z"))
+
+    def test_a_subagent_that_stops_twice_keeps_one_row(self):  # Patricia's double row
+        self.ls.log_run("hiring-manager", self.transcript)
+        with self.transcript.open("a", encoding="utf-8") as f:  # it carried on, then stopped again
+            f.write(json.dumps({"type": "assistant", "timestamp": "2026-11-01T10:05:00Z", "message": {
+                "id": "m4", "model": "claude-haiku-5-5", "content": [],
+                "usage": {"cache_read_input_tokens": 900}}}) + "\n")
+        self.ls.log_run("hiring-manager", self.transcript)
+        (row,) = self.rows()
+        self.assertEqual((row["final_context"], row["total_processed"]), ("900", "1844"))  # updated, complete
+
+    def test_a_different_subagent_gets_its_own_row(self):
+        other = self.transcript.with_name("agent-y.jsonl")
+        shutil.copy(self.transcript, other)
+        self.ls.log_run("hiring-manager", self.transcript)
+        self.ls.log_run("hiring-manager", other)
+        self.assertEqual(sorted(r["key"] for r in self.rows()), ["agent-x", "agent-y"])
+
+    def write_main_session(self):
+        """A main session (session-1.jsonl) with this subagent under session-1/subagents/, and two readings."""
+        session = self.root / "session-1"
+        (session / "subagents").mkdir(parents=True)
+        sub = session / "subagents" / "agent-z.jsonl"
+        shutil.copy(self.transcript, sub)
+        main = [("o1", "2026-11-01T09:59:00Z", 7), ("o2", "2026-11-01T10:00:10Z", 40),  # before; inside
+                ("o3", "2026-11-01T10:00:50Z", 60), ("o4", "2026-11-01T10:02:00Z", 9)]   # inside; after
+        session.with_suffix(".jsonl").write_text("".join(json.dumps({"type": "assistant", "timestamp": ts,
+            "message": {"id": i, "model": "claude-opus-5-5", "usage": {
+                "input_tokens": 1, "cache_read_input_tokens": n, "output_tokens": 2}}}) + "\n"
+            for i, ts, n in main), encoding="utf-8")
+        readings = self.root / "_meta" / "usage" / "readings.jsonl"
+        readings.parent.mkdir(parents=True)
+        readings.write_text("".join(json.dumps(r) + "\n" for r in [
+            {"ts": "2026-11-01T09:00:00Z", "five_hour": 10, "seven_day": 30},
+            {"ts": "2026-11-01T10:03:00Z", "five_hour": 14, "seven_day": 31}]), encoding="utf-8")
+        return sub, session.with_suffix(".jsonl")
+
+    def test_orchestrator_tokens_and_usage_over_the_span(self):
+        sub, _ = self.write_main_session()
+        self.ls.log_run("hiring-manager", sub)
+        (row,) = self.rows()
+        self.assertEqual((row["orch_input"], row["orch_cache_read"], row["orch_output"]), ("2", "100", "4"))
+        self.assertEqual((row["five_hour_before"], row["five_hour_after"], row["seven_day_before"],
+                          row["seven_day_after"]), ("10", "14", "30", "31"))
+
+    def test_session_hook_logs_the_whole_main_session_once(self):
+        import log_session
+        saved = log_session.ROOT
+        log_session.ROOT = self.root
+        try:
+            _, main = self.write_main_session()
+            log_session.log_session(main)
+            log_session.log_session(main)  # every turn ends with a Stop: still one row
+        finally:
+            log_session.ROOT = saved
+        (row,) = self.rows()
+        self.assertEqual((row["table"], row["key"], row["turns"], row["orch_cache_read"], row["total_processed"],
+                          row["model"]), ("Orchestrator", "session-1", "4", "116", "128", "claude-opus-5-5"))
+
+    def test_session_hook_skips_headless_runs_and_never_fails(self):
+        import subprocess
+        env = {**__import__("os").environ, "CHILLBEE_HEADLESS": "1"}
+        for payload, e in (("not json", None), ('{"transcript_path": "/nope"}', None), ("{}", env)):
+            done = subprocess.run([sys.executable, "-I", str(TOOLS / "log_session.py")], input=payload, env=e,
+                                  capture_output=True, text=True, encoding="utf-8")
+            self.assertEqual(done.returncode, 0, payload)
+
+    def test_status_line_saves_new_readings_only(self):
+        import statusline
+        status = lambda five: json.dumps({"session_id": "s", "model": {"display_name": "Opus"},
+                                          "rate_limits": {"five_hour": {"used_percentage": five},
+                                                          "seven_day": {"used_percentage": 20.5}}})
+        self.assertEqual(statusline.main(status(12), self.root), "Opus · 5h 12% · week 20.5%")
+        statusline.main(status(12), self.root)  # unchanged: not saved again
+        statusline.main(status(13), self.root)
+        saved = (self.root / "_meta" / "usage" / "readings.jsonl").read_text(encoding="utf-8").splitlines()
+        self.assertEqual([json.loads(l)["five_hour"] for l in saved], [12, 13])
+        self.assertEqual(statusline.main("{}", self.root), "usage: no reading yet")
+
+    def test_live_agents_shown_while_running(self):
+        import datetime, statusline
+        live = self.root / "_meta" / "usage" / "live.json"
+        g.set_live_tag("goal 0.1.4 · C5")
+        g.live_update("a", {"agent": "Patricia", "tag": "goal 0.1.4 · C5", "start": "2026-11-07T20:00:00Z"}, live)
+        g.live_update("b", {"agent": "Bob", "tag": "goal 0.1.4 · C5", "start": "2026-11-07T20:02:00Z"}, live)
+        g.live_update("c", {"agent": "Old", "tag": "x", "start": "2026-11-07T10:00:00Z"}, live)  # killed run: hidden
+        at = datetime.datetime(2026, 11, 7, 20, 4, tzinfo=datetime.timezone.utc)
+        self.assertEqual(statusline.live(self.root, at), "▶ goal 0.1.4 · C5 · Patricia 4m · Bob 2m")
+        g.live_update("a", None, live)
+        self.assertEqual(statusline.live(self.root, at), "▶ goal 0.1.4 · C5 · Bob 2m")
+        live.write_text("not json", encoding="utf-8")
+        self.assertEqual(statusline.live(self.root, at), "")
 
     def run_hook(self, payload):
         import subprocess
@@ -384,6 +498,8 @@ class DecisionPageTest(unittest.TestCase):
         import decision_page as dp
         for log in (TOOLS.parent / "_meta" / "sessions").glob("*/decisions.md"):
             decisions, _ = dp.parse(log)
+            if not decisions and "No decisions were made" in log.read_text(encoding="utf-8"):
+                continue  # a session that holds no decisions says so in one line
             self.assertTrue(decisions, f"{log} has no decision headings in the expected format")
             for d in decisions:
                 self.assertTrue(d["fields"], f"{d['id']} in {log} has no '- Label: text' bullets")
@@ -442,11 +558,14 @@ class ConsistencyTest(unittest.TestCase):
 
     def test_a_stated_agent_count_that_is_wrong(self):  # Doris's first real finding
         self.edit("README.md", "The agent roster, each agent's model", "The nine agents, each agent's model")
-        self.assertIn("README.md:64: says the nine agents, but .claude/agents/ holds 12", self.problems())
+        line = next(i for i, text in enumerate((self.root / "README.md").read_text(encoding="utf-8").splitlines(), 1)
+                    if "The nine agents" in text)  # found, not hard-coded: README rows get added
+        held = len(list((self.root / ".claude" / "agents").glob("*.md")))  # counted: agents get hired
+        self.assertIn(f"README.md:{line}: says the nine agents, but .claude/agents/ holds {held}", self.problems())
 
     def test_an_estimate_saying_not_yet_run_beside_a_logged_run(self):  # the designer's catch
         self.edit("_meta/agent-runs.md", "| Doris, the Doc Auditor | Measured once,", "| Doris, the Doc Auditor | Not yet run. Measured once,")
-        self.assertIn("Doris's estimate says 'Not yet run', but line", self.problems())
+        self.assertIn("Doris's estimate says 'Not yet run', but _meta/agent-runs.csv line", self.problems())
 
     def test_an_agent_with_no_roster_row_or_route(self):
         (self.root / ".claude" / "agents" / "new-agent.md").write_text(
@@ -455,6 +574,317 @@ class ConsistencyTest(unittest.TestCase):
         found = self.problems()
         self.assertIn("no roster row links .claude/agents/new-agent.md (Nina)", found)
         self.assertIn("AGENTS.md: no route mentions .claude/agents/new-agent.md (Nina)", found)
+
+
+class BuildToolsTest(unittest.TestCase):
+    """godot_run.py summaries, mutate.py verdicts, build.py version and zip (no Godot needed)."""
+
+    def setUp(self):
+        import godot_run, mutate, build
+        self.gr, self.mu, self.bu = godot_run, mutate, build
+
+    def test_unit_summary_keeps_fails_and_drops_engine_noise(self):
+        text = "\n".join(["PASS  t_a  (3 checks)", 'ERROR: Parameter "m" is null.', "   at: mesh_get_surface_count (x)",
+                          "FAIL  t_b  expected 4 got 5", "MEASURE fps farm: 711 frames", "---- 1 passed, 1 failed", "RAN 2 of 2"])
+        r = self.gr.summarise("unit", text, 1)
+        self.assertEqual(r["status"], "FAIL")
+        self.assertEqual(r["total"], {"passed": 1, "failed": 1, "checks": 2})
+        self.assertEqual(r["fails"], ["FAIL  t_b  expected 4 got 5"])
+        self.assertEqual(r["measures"], ["MEASURE fps farm: 711 frames"])
+        self.assertEqual(r["noise_dropped"], 2)
+        self.assertEqual(r["errors"], [])
+
+    def test_windowed_suite_needs_completed(self):
+        text = "PASS  x\n---- 5 checks, 0 failed"
+        self.assertEqual(self.gr.summarise("play", text, 0)["status"], "FAIL")
+        self.assertEqual(self.gr.summarise("play", text + "\nCOMPLETED", 0)["status"], "PASS")
+
+    def test_start_suite_fails_on_script_errors_only(self):
+        self.assertEqual(self.gr.summarise("start", "Godot Engine v4.2.1\n", 1)["status"], "PASS")
+        bad = 'SCRIPT ERROR: Parse Error: Identifier "JarFlight" not declared in the current scope.'
+        self.assertEqual(self.gr.summarise("start", bad, 1)["status"], "FAIL")
+
+    def test_mutation_verdicts(self):
+        fail = {"status": "FAIL", "fails": ["FAIL  t_pop  curve differs", "FAIL  t_other  x"]}
+        ok = {"status": "PASS", "fails": []}
+        self.assertEqual(self.mu.verdict({"expect": ["t_pop"]}, fail)[0], "CAUGHT")
+        self.assertEqual(self.mu.verdict({"expect": ["t_pop", "t_missing"]}, fail)[0], "MISSED")
+        self.assertEqual(self.mu.verdict({"expect": []}, ok)[0], "MISSED")
+        self.assertEqual(self.mu.verdict({}, {"status": "TIMEOUT", "fails": []})[0], "BROKEN")
+        # D160, tests that prove more: a catch by a test already red, or by a script error, proves nothing
+        self.assertEqual(self.mu.verdict({"expect": ["t_pop"]}, fail, {"t_pop"})[0], "BROKEN")
+        crash = {"status": "FAIL", "fails": ["FAIL  t_pop  test stopped before its final line (script error)  (5 ms)"]}
+        self.assertEqual(self.mu.verdict({"expect": ["t_pop"]}, crash)[0], "BROKEN")
+
+    def test_mutation_env_runs_only_expected_unit_tests(self):
+        self.assertEqual(self.mu.mutation_env({"expect": ["a", "b"]}, "unit"), {"CB_ONLY": "a,b"})
+        self.assertIsNone(self.mu.mutation_env({"expect": []}, "unit"))
+        self.assertIsNone(self.mu.mutation_env({"expect": ["a"]}, "play"))
+
+    def test_mutations_changed_since_keeps_new_and_edited_only(self):
+        old = [{"name": "a", "find": "x"}, {"name": "b", "find": "y"}]
+        new = [{"name": "a", "find": "x"}, {"name": "b", "find": "z"}, {"name": "c", "find": "w"}]
+        self.assertEqual([m["name"] for m in self.mu.changed_since(new, old)], ["b", "c"])
+        self.assertEqual(len(self.mu.changed_since(new, [])), 3)
+
+    def test_mutations_file_is_valid_json_with_named_entries(self):
+        # 2026-11-08: Quinn wrote raw tabs into two "find"/"replace" strings and mutate.py crashed on json.load
+        path = Path(__file__).resolve().parent.parent / "game" / "tests" / "mutations.json"
+        data = json.loads(path.read_text(encoding="utf-8"))
+        entries = data if isinstance(data, list) else data.get("mutations", [])
+        self.assertTrue(entries)
+        names = [e.get("name") for e in entries]
+        self.assertTrue(all(names), "every mutation has a name")
+        self.assertEqual(len(names), len(set(names)), "mutation names are unique")
+
+    def test_budget_guard_blocks_warns_and_ignores_stale_readings(self):
+        import budget_guard as b
+        import datetime as d
+        t = d.datetime(2026, 11, 5, 4, 0, tzinfo=d.timezone.utc)
+        r = lambda five, week, mins=5: {"ts": (t - d.timedelta(minutes=mins)).isoformat(), "five_hour": five, "seven_day": week}
+        reset = "2026-11-07T13:59:00+00:00"   # t is 4.6 days into that week: pace ~66%
+        dec = lambda rd, agent: b.decide(rd, agent, t, reset=reset)[0]
+        self.assertEqual(dec(r(78, 50), "doc-auditor"), "warn")          # 78 + 2 <= 95: a cheap agent still runs
+        self.assertEqual(dec(r(70, 50), "qa-build-engineer"), "deny")    # 70 + 30 > 95
+        self.assertEqual(dec(r(60, 50), "qa-build-engineer"), "allow")
+        self.assertEqual(dec(r(60, 50), "mystery"), "allow")             # unknown counts as 25
+        self.assertEqual(dec(r(40, 80), "builder"), "deny")              # 80 > pace 66 + 10
+        self.assertEqual(dec(r(40, 80), "style-critic"), "allow")        # light agents ignore the pace
+        self.assertEqual(dec(r(10, 95), "style-critic"), "deny")         # weekly cap
+        self.assertEqual(dec(r(99, 50, 120), "builder"), "allow")        # stale reading
+        self.assertEqual(dec(None, "builder"), "allow")
+        self.assertAlmostEqual(b.week_pace(t, d.datetime(2026, 10, 24, 13, 59, tzinfo=d.timezone.utc)), 65.5, delta=0.5)
+        # average, not highest (designer 2026-11-09): runs of 2 and 9 points average 6 (rounded up), a reset run is skipped
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = str(Path(tmp) / "runs.csv")
+            with open(csv_path, "w", encoding="utf-8", newline="") as fh:
+                fh.write("agent,five_hour_before,five_hour_after\nPat (programmer),10,12\nPat (programmer),20,29\n"
+                         "Pat (programmer),90,5\nOrchestrator,1,50\n")
+            costs = b.average_costs(csv_path)
+            self.assertEqual(costs["programmer"], 6)
+            self.assertEqual(costs["builder"], b.COST["builder"])          # no logged run: the fixed table
+            self.assertEqual(b.decide(r(85, 50), "programmer", t, reset=reset, costs=costs)[0], "warn")   # 85 + 6 <= 95
+
+    def test_guard_shell_refuses_the_standing_rules_and_lets_normal_calls_through(self):
+        import guard_shell as gs
+        with tempfile.TemporaryDirectory() as d:
+            repo = str(Path(d) / "Repo")
+            (Path(repo) / "_meta" / "memory").mkdir(parents=True)
+            (Path(repo) / "GDD.md").write_text("x", encoding="utf-8")
+            (Path(repo) / "_meta" / "memory" / "m.md").write_text("x", encoding="utf-8")
+            sh = lambda c, tool="Bash": gs.decide(tool, {"command": c}, repo)
+            wr = lambda p, tool="Write": gs.decide(tool, {"file_path": p}, repo)
+            for bad in ['python -c "print(1)"', "python -I -c 'x'", "node -e 1", "python - <<'EOF'\nx\nEOF",
+                        "cat a.py | python", "sed -i 's/a/b/' GDD.md", "echo x >> GDD.md", "echo x | tee GDD.md",
+                        "cd _tools && ls", f'cd "{repo}" && git status', f"cat {repo}/GDD.md"]:
+                self.assertIsNotNone(sh(bad), bad)
+            self.assertIsNotNone(sh("'x' | Set-Content GDD.md", "PowerShell"))
+            self.assertIsNotNone(sh("@'\nx\n'@ | python -", "PowerShell"))
+            for ok in ["python -I _tools/links.py", "git commit -m \"$(cat <<'EOF'\nmsg\nEOF\n)\"",
+                       "grep -n x GDD.md 2>&1 | head", "python -I _tools/godot_run.py all > /dev/null",
+                       "echo x > new.txt", "sed -n '1,5p' GDD.md", "git log --oneline | head -5",
+                       '& "C:\\Users\\me\\Godot.exe" --path game']:
+                self.assertIsNone(sh(ok), ok)
+            self.assertIsNotNone(wr("GDD.md"))                                   # overwrite: use Edit
+            self.assertIsNone(wr("GDD.md", "Edit"))
+            self.assertIsNone(wr(str(Path(repo) / "new.md")))
+            self.assertIsNone(wr("_meta/memory/m.md"))                           # memories are replaced whole
+            self.assertIsNotNone(wr("C:/Users/x/AppData/Local/Temp/draft.md"))   # drafts live in the repo
+            self.assertIsNone(wr("C:/Users/x/.claude/plans/p.md"))
+            art = lambda **k: gs.decide("Artifact", k, repo)
+            self.assertIsNotNone(art(file_path="game/reports/ui-compare/design-votes.html"))
+            self.assertIsNone(art(file_path="game/reports/ui-compare/design-votes.html", url=gs.DESIGN_VOTES))
+            self.assertIsNotNone(art(action="open", url=gs.DESIGN_VOTES))
+            self.assertIsNone(art(file_path="report.html"))
+            self.assertIsNone(wr("game/tests/t.gd", "Edit"))                     # no goal run: the main session may edit
+            lock = Path(repo) / gs.LOCK
+            lock.parent.mkdir(parents=True)
+            lock.write_text("{}", encoding="utf-8")
+            self.assertIn("goal-run-owns-game", wr("game/tests/t.gd", "Edit"))  # a live run owns the build folders
+            self.assertIn("goal-run-owns-game", wr("game/scripts/new.gd"))
+            self.assertIsNone(wr("game/reports/goal/notes.md", "Edit"))         # its reports stay open
+            self.assertIsNone(wr(".claude/worktrees/fix/game/tests/t.gd", "Edit"))   # the main session's way: a worktree
+            import os, time
+            from unittest import mock
+            with mock.patch.dict(os.environ, {"CHILLBEE_HEADLESS": "1"}):
+                self.assertIsNone(wr("game/tests/t.gd", "Edit"))                 # the run's own agents
+            old = time.time() - gs.STALE - 60
+            os.utime(lock, (old, old))
+            self.assertIsNone(wr("game/tests/t.gd", "Edit"))                     # a stale lock is ignored
+
+    def test_spec_lint_catches_the_item_13_contradiction_and_multi_item_lines(self):
+        import spec_lint as sl
+        spec = ("---\nversion: 9.9\n---\n# 9.9\n\n## Changes\n\n"
+                "1. **Spin goes to the second stop** Pressing Spin moves the camera there. So the farm view never cranks.\n\n"
+                "2. **Centrifuge text sits on the centrifuge** `CentrifugeLabel` follows the lid anchor.\n\n"
+                "## Contract\n\n- **Quinn (`tests/`):**\n"
+                "  - item 1: pressing Spin from the farm view ends at the second stop;\n"
+                "  - item 2: while cranking, `CentrifugeLabel` stays on the anchor in the farm view and at the second stop;\n"
+                "  - items 1 and 2: the label and Spin never overlap;\n"
+                "  - mutations: items 1 and 2 each catch one mutation.\n")
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "9.9-x.md"
+            p.write_text(spec, encoding="utf-8")
+            fails, warns = sl.check_lines(p)
+            self.assertEqual(len(fails), 1)                       # "items 1 and 2", not the mutations line
+            self.assertIn("names items 1, 2", fails[0])
+            pairs = sl.review(p, only=2)
+            self.assertTrue(any(a[0] == 1 and b[0] == 2 and "crank" in shared for a, b, _, shared in pairs))
+            self.assertEqual(sl.lint(p, out=lambda line: None), 1)
+
+    def test_build_sets_version_and_zips_web_at_root(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "project.godot").write_text('[application]\n\nconfig/name="X"\nconfig/version="0.1.0"\n', encoding="utf-8")
+            self.bu.set_version(str(root), "0.1.2")
+            self.assertIn('config/version="0.1.2"', (root / "project.godot").read_text(encoding="utf-8"))
+            (root / "builds" / "web").mkdir(parents=True)
+            (root / "builds" / "web" / "index.html").write_text("<html></html>", encoding="utf-8")
+            ok, _ = self.bu.zip_web(str(root), "0.1.2")
+            self.assertTrue(ok)
+
+
+NEON, MEADOW = "0.2, 1.0, 0.1", "0.62, 0.84, 0.52"
+
+
+class StyleLoop(unittest.TestCase):
+    """style_loop.py with a fake renderer, a fake Bob and a fake Vera, in a throwaway workspace."""
+
+    def setUp(self):
+        import style_loop as sl
+        self.sl = sl
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        (self.root / "game" / "materials").mkdir(parents=True)
+        (self.root / "game" / "scenes").mkdir()
+        (self.root / "_meta").mkdir()
+        shutil.copy(TOOLS.parent / "STYLE_GUIDE.md", self.root / "STYLE_GUIDE.md")
+        self.mat(MEADOW)
+        self.saved = g.ROOT, g.run_agent, sl.render
+        g.ROOT = self.root
+        sl.render = self.fake_render
+
+    def tearDown(self):
+        g.ROOT, g.run_agent, self.sl.render = self.saved
+        self.tmp.cleanup()
+
+    def mat(self, rgb):
+        (self.root / "game" / "materials" / "ground_patch.tres").write_text(
+            f'[gd_resource type="StandardMaterial3D" format=3]\n\n[resource]\nalbedo_color = Color({rgb}, 1.0)\n',
+            encoding="utf-8")
+
+    @staticmethod
+    def fake_render(game, out):
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "measure.json").write_text('{"cell_px_min": 45.1}', encoding="utf-8")
+
+    def fake(self, verdicts, fixes=True, tokens=1):
+        calls, prompts = [], []
+
+        def agent(name, prompt):
+            calls.append(name)
+            prompts.append(prompt)
+            reply = ""
+            if name == self.sl.BUILDER and fixes:
+                self.mat(MEADOW)
+            elif name == self.sl.CRITIC:
+                n = re.search(r"round (\d+)", prompt).group(1)
+                said = verdicts.pop(0)
+                row = {"FAIL": "| 1 | V7 | 01-farm-start.png | clutter | move the truck |",
+                       "FAIL:designer": "| 1 | V3 | 01-farm-start.png | a third accent | A: recolour; B: new token (designer) |"
+                       }.get(said, "")
+                reply = (f"### Critic, round {n}\nVERDICT: {said.split(':')[0]}\n| # | Rule | Shot | Finding | Fix |\n"
+                         f"|---|---|---|---|---|\n{row}\n")
+            return reply, {"tokens": tokens, "turns": 1, "seconds": 1}
+        g.run_agent = agent
+        return calls, prompts
+
+    def run_loop(self, *args):
+        with contextlib.redirect_stdout(io.StringIO()):
+            return self.sl.main(["s", *args])
+
+    def board(self):
+        return (self.root / "game" / "reports" / "style" / "s" / "blackboard.md").read_text(encoding="utf-8")
+
+    def test_pass_in_round_one(self):
+        calls, _ = self.fake(["PASS"])
+        self.assertEqual(self.run_loop(), 0)
+        self.assertEqual(calls, [self.sl.CRITIC])
+        self.assertIn("result: pass", self.board())
+
+    def test_script_fail_then_bob_fixes_then_pass(self):
+        self.mat(NEON)
+        calls, prompts = self.fake(["PASS", "PASS"])  # Vera passes, but the script blocks round 1
+        self.assertEqual(self.run_loop(), 0)
+        self.assertEqual(calls, [self.sl.CRITIC, self.sl.BUILDER, self.sl.CRITIC])
+        self.assertIn("V1", prompts[1])
+        self.assertIn("ground_patch", prompts[1])
+        board = self.board()
+        self.assertIn("### Changes (Bob), round 2", board)
+        self.assertIn("No rows: every script rule passes.", board)
+        self.assertIn("Your round 1 verdict", prompts[2])
+
+    def test_max_rounds(self):
+        calls, _ = self.fake(["FAIL", "FAIL"], fixes=False)
+        self.assertEqual(self.run_loop("--max-rounds", "2"), 1)
+        self.assertEqual(calls, [self.sl.CRITIC, self.sl.BUILDER, self.sl.CRITIC])
+        self.assertIn("result: needs-review", self.board())
+
+    def test_token_cap(self):
+        calls, _ = self.fake(["FAIL"], tokens=10)
+        self.assertEqual(self.run_loop("--max-tokens", "5"), 1)
+        self.assertEqual(calls, [self.sl.CRITIC])
+
+    def test_designer_stop_then_resume(self):
+        self.mat(NEON)
+        calls, prompts = self.fake(["FAIL:designer", "PASS"])
+        self.assertEqual(self.run_loop(), 1)
+        self.assertEqual(calls, [self.sl.CRITIC, self.sl.BUILDER])
+        self.assertIn("V1", prompts[1])
+        self.assertNotIn("(designer)", prompts[1])  # Bob never gets a held row
+        board = self.board()
+        self.assertIn("result: waiting-designer", board)
+        self.assertIn("## Waiting for the designer", board)
+        self.assertIn("new token (designer)", board.split("## Waiting for the designer")[1])
+        self.assertEqual(self.run_loop("--resume"), 0)
+        self.assertEqual(calls[-1], self.sl.CRITIC)
+        self.assertIn("Your round 1 verdict", prompts[-1])  # Vera's context survives the stop
+        self.assertIn("ground_patch", prompts[-1])  # with Bob's meanwhile diff
+        self.assertTrue((self.root / "game" / "reports" / "style" / "s" / "round-2").is_dir())
+        board = self.board()
+        self.assertIn("result: pass", board)
+        self.assertEqual(board.count("## Result"), 1)                    # one Result, rewritten on resume
+        self.assertIn("## Resumed", board)
+        result = board.split("## Result")[1]
+        self.assertTrue(result.endswith("| **Total** | **3** | | | |\n"))  # all three calls of both invocations
+        self.assertLess(board.index("## Resumed"), board.index("## Result"))   # Result stays last
+
+    def test_designer_row_in_the_last_round_ends_at_max_rounds(self):
+        calls, prompts = self.fake(["FAIL:designer", "FAIL:designer"], fixes=False)
+        self.assertEqual(self.run_loop("--max-rounds", "2"), 1)  # round 1 stops for the designer
+        self.assertEqual(self.run_loop("--resume", "--max-rounds", "2", "--note", "defer V3"), 1)
+        self.assertIn("defer V3", prompts[-1])
+        board = self.board()
+        self.assertIn("result: needs-review", board)
+        self.assertIn("new token (designer)", board.split("## Result")[-1])  # listed as open, not waiting
+
+    def test_style_check_catches_every_fixture(self):
+        import style_critic_check as scc
+        saved, g.ROOT = g.ROOT, TOOLS.parent
+        try:
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertTrue(scc.check_script())
+        finally:
+            g.ROOT = saved
+
+    def test_palette_and_delta_e(self):
+        import style_check as sc
+        tokens = sc.load_palette(TOOLS.parent / "STYLE_GUIDE.md")
+        self.assertIn("truck red", [t["name"] for t in tokens])
+        self.assertAlmostEqual(sc.delta_e((1, 1, 1), (1, 0.96, 0.86)), 13.9, places=1)
+        self.assertAlmostEqual(sc.delta_e((0.85, 0.2, 0.15), (0.75, 0.2, 0.2)), 16.0, places=1)
+        self.assertEqual(sc.accent_limit((TOOLS.parent / "STYLE_GUIDE.md").read_text(encoding="utf-8")), 2)
+        self.assertEqual(sc.accent_limit("| V3 | **Accents are rare:** at most 3 accent-role colours |"), 3)
 
 
 if __name__ == "__main__":

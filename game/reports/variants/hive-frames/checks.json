@@ -1,0 +1,17 @@
+{
+ "hive-frames-a.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "hive-frames-b.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "hive-frames-c.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ }
+}

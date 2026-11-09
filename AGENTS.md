@@ -7,6 +7,9 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | Path | What it holds |
 |---|---|
 | [GDD.md](GDD.md) | the game design document: the single source of truth for every decision |
+| [STYLE_GUIDE.md](STYLE_GUIDE.md) | the approved look and voice rules (V1–V15, T1–T6) and palette tokens that scenes and text are checked against |
+| [STYLE_LOOP.md](STYLE_LOOP.md) | how the two style loops (visual: Bob, `style_check.py`, Vera; voice: William, Clara) enforce the guide, with the demo runs and their cost |
+| [MILESTONES.md](MILESTONES.md) | build stages, version numbers and the milestones, fitted to the course deadlines |
 | [README.md](README.md) | public overview and the Outstanding TBDs checklist |
 | [CONTEXT.md](CONTEXT.md) | the design loop: request, proposal, decision, apply |
 | [proposals/](proposals/CONTEXT.md) | agent proposals, one shelf per agent role, each with a status line |
@@ -16,11 +19,12 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | [game/](game/CONTEXT.md) | the Godot project: Patricia's scripts, Bob's scenes, Quinn's tests and reports |
 | `gdd-review/`, `gdd-review-v2/` | multi-agent review rounds of past GDD snapshots (read-only history) |
 | [_meta/team.md](_meta/team.md) | the agent roster: roles, models, and the rules every agent follows |
-| [_meta/agent-runs.md](_meta/agent-runs.md) | token, tool-call and duration log of every agent run, and the daily budget |
+| [_meta/agent-runs.md](_meta/agent-runs.md) | summary of every agent run (rows in `agent-runs.csv`), the calibration and the daily budget |
+| [_meta/learnings.md](_meta/learnings.md) | everything that broke, how it was noticed, its cause, fix and the check that now prevents it; read before changing a loop |
 | [_meta/memory/](_meta/memory/MEMORY.md) | Claude Code's project memories, shared across machines through git (each machine's `.claude/settings.local.json` points `autoMemoryDirectory` here) |
 | `_meta/sessions/` | one folder per working session: `decisions.md` and the decision page are committed; transcripts stay local (gitignored) |
-| `_templates/` | blank starters: `proposal.md`, `content.md`, `research-brief.md`, `audio-list.md`, and `agent.md` for a new agent |
-| `_tools/` | `links.py` checks every link and input path; `index.py` rebuilds `_index.md` (`--decisions` prints the ledger); `generate.py` runs the content loop; `critic_check.py` checks Clara against the known-bad drafts in `fixtures/`; `test_generate.py` tests them with fake agents; `log_subagent.py` is the SubagentStop hook that logs Agent-tool runs; `export_session.py` and `decision_page.py` serve the end-of-day routine; `sync_docs.py` writes the docs' generated sections, `consistency.py` checks docs against code (run by the `.githooks/pre-commit` gate), and `doc_audit.py` runs Doris on the day's changes |
+| `_templates/` | blank starters: `proposal.md`, `content.md`, `research-brief.md`, `audio-list.md`, `blackboard.md` (the one run-board format every loop script writes), and `agent.md` for a new agent |
+| [_tools/](_tools/CONTEXT.md) | the workspace scripts: checks, content and style loops, vote pages, Godot test/build runners, usage hooks, end-of-day helpers |
 | `.claude/agents/` | runnable agent definitions, one per roster role in [_meta/team.md](_meta/team.md) |
 
 ## Route by task
@@ -36,6 +40,9 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | real-world facts or sources are needed | Ruth: `.claude/agents/research-assistant.md`, writing to [research/](research/CONTEXT.md) | the designer's review of the brief |
 | an applied design needs code | Patricia: `.claude/agents/programmer.md`, writing to [game/](game/CONTEXT.md) `scripts/` | Quinn's report |
 | a biome or layout needs a scene | Bob: `.claude/agents/builder.md`, writing to [game/](game/CONTEXT.md) `scenes/` | Quinn's report |
+| a scene needs a style check | `python -I _tools/style_loop.py <slug>`: `style_check.py`, then Vera (`.claude/agents/style-critic.md`), then Bob, writing the blackboard to `game/reports/style/` | a PASS, or a designer stop with its question on the Design Votes page (`_tools/compare_page.py add`) |
+| a prop needs colorbox variants to compare | Milo: `.claude/agents/modeler.md`, writing to [game/scenes/variants/](game/scenes/variants/CONTEXT.md) | the designer's pick on the compare page |
+| a test suite, build, mutation or shot script needs running | Rex: `.claude/agents/script-runner.md`, dispatched by the orchestrator, reporting to the orchestrator | its reply (failures go to their owner) |
 | a feature or build is ready to test | Quinn: `.claude/agents/qa-build-engineer.md`, writing to [game/](game/CONTEXT.md) `tests/` and `reports/` | the developer plays the build |
 | a proposal was accepted | [CONTEXT.md](CONTEXT.md), step 4 (apply) | `python -I _tools/links.py` passes |
 | asked for status | `proposals/*/_index.md` and the README TBD list | report what exists |

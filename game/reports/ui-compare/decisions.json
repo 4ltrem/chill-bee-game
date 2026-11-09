@@ -1,0 +1,8 @@
+{
+  "question": "r7: which version placed the layout and UI right (Design Votes, 2026-11-06)",
+  "votes": {
+    "0.1.3": {"vote": "yes", "note": "hive frames and combs can be bigger to match the pile size, the honey meter should be transfered over to the harvest button so the background of it slowly fills up, the bees and money count can stay at the top, the hive text can go above the button, i.e 5/10 above the harvest button.  harvest button can be lower overall, in farm view just above the lid and in second view can be on the lid, same with spin button it can be just above the centrifuge lid, same with sell icon it can be lower, refer to ab-A for known good placement"},
+    "ab-A": {"vote": "no", "note": "sell icon is good here"},
+    "ab-B": {"vote": "no", "note": ""}
+  }
+}

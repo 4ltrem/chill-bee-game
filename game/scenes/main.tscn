@@ -1,4 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://ub4nv2k6wxgl"]
+[gd_scene load_steps=49 format=3 uid="uid://ub4nv2k6wxgl"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/props/hive.tscn" id="2_hive"]
+[ext_resource type="Script" path="res://scripts/bees.gd" id="3_bees"]
+[ext_resource type="Script" path="res://scripts/farm_ui.gd" id="4_farmui"]
+[ext_resource type="Script" path="res://scripts/shop_ui.gd" id="5_shopui"]
+[ext_resource type="PackedScene" path="res://scenes/props/centrifuge.tscn" id="6_centrifuge"]
+[ext_resource type="PackedScene" path="res://scenes/props/truck.tscn" id="7_truck"]
+[ext_resource type="PackedScene" path="res://scenes/props/jar_crate.tscn" id="9_crate"]
+[ext_resource type="PackedScene" path="res://scenes/props/flower_patch.tscn" id="10_patch"]
+[ext_resource type="Script" path="res://scripts/pile.gd" id="11_pile"]
+[ext_resource type="Script" path="res://scripts/harvest_ui.gd" id="12_hui"]
+[ext_resource type="Script" path="res://scripts/floating_icon.gd" id="8_icon"]
 
 [sub_resource type="Environment" id="Environment_sky"]
 background_mode = 1
@@ -12,9 +25,162 @@ albedo_color = Color(0.62, 0.84, 0.52, 1)
 
 [sub_resource type="PlaneMesh" id="Mesh_ground"]
 material = SubResource("Material_meadow")
-size = Vector2(10, 10)
+size = Vector2(18, 18)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBox_empty"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_barbg"]
+bg_color = Color(0.3, 0.22, 0.1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_barfill"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tag"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tag_pressed"]
+bg_color = Color(0.82, 0.58, 0.05, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tag_disabled"]
+bg_color = Color(0.38, 0.34, 0.3, 0.5)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_circle"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 80
+corner_radius_top_right = 80
+corner_radius_bottom_right = 80
+corner_radius_bottom_left = 80
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_circle_pressed"]
+bg_color = Color(0.82, 0.58, 0.05, 1)
+corner_radius_top_left = 80
+corner_radius_top_right = 80
+corner_radius_bottom_right = 80
+corner_radius_bottom_left = 80
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_pill"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_pill_pressed"]
+bg_color = Color(0.82, 0.58, 0.05, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_rect"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_rect_pressed"]
+bg_color = Color(0.82, 0.58, 0.05, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_back"]
+bg_color = Color(0.97, 0.93, 0.83, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_disabled"]
+bg_color = Color(0.38, 0.34, 0.3, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+expand_margin_top = -28.0
+expand_margin_bottom = -28.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_modal"]
+bg_color = Color(0.25, 0.2, 0.1, 0.96)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 
 [node name="Main" type="Node3D"]
+script = ExtResource("1_main")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_sky")
@@ -26,7 +192,374 @@ light_color = Color(1, 0.96, 0.86, 1)
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(0.7071, -0.4082, 0.5774, 0, 0.8165, 0.5773, -0.7071, -0.4082, 0.5774, 11.547, 11.547, 11.547)
 projection = 1
-size = 14.0
+current = true
+size = 20.0
 
-[node name="PlaceholderMeadow" type="MeshInstance3D" parent="."]
+[node name="FarmWorld" type="Node3D" parent="."]
+
+[node name="Ground" type="MeshInstance3D" parent="FarmWorld"]
 mesh = SubResource("Mesh_ground")
+
+[node name="Hive" parent="FarmWorld" instance=ExtResource("2_hive")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
+
+[node name="Flowers" type="Node3D" parent="FarmWorld"]
+
+[node name="FlowerPatch1" parent="FarmWorld/Flowers" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -4)
+color = Color(0.97, 0.66, 0.78, 1)
+radius = 0.9
+
+[node name="FlowerPatch2" parent="FarmWorld/Flowers" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0, -2)
+color = Color(0.78, 0.7, 0.93, 1)
+radius = 0.8
+
+[node name="FlowerPatch3" parent="FarmWorld/Flowers" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
+color = Color(1, 0.85, 0.3, 1)
+radius = 0.7
+
+[node name="Bees" type="MultiMeshInstance3D" parent="FarmWorld"]
+script = ExtResource("3_bees")
+
+[node name="Centrifuge" parent="FarmWorld" instance=ExtResource("6_centrifuge")]
+transform = Transform3D(0.64, 0, 0, 0, 0.64, 0, 0, 0, 0.64, 0, 0, 0)
+
+[node name="Pile" type="Node3D" parent="FarmWorld"]
+transform = Transform3D(0.17, 0, 0, 0, 0.17, 0, 0, 0, 0.17, 2, 0, 0)
+script = ExtResource("11_pile")
+
+[node name="JarCrate" parent="FarmWorld" instance=ExtResource("9_crate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 2)
+
+[node name="Truck" parent="FarmWorld" instance=ExtResource("7_truck")]
+transform = Transform3D(0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 3.8, 0, 5.2)
+
+[node name="ZoomFraming" type="Marker3D" parent="FarmWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.003879, 1.024243, -1.027997)
+metadata/zoom_size = 6.966
+
+[node name="FarmUIRoot" type="CanvasLayer" parent="."]
+
+[node name="FarmUI" type="Control" parent="FarmUIRoot"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_farmui")
+
+[node name="Margin" type="MarginContainer" parent="FarmUIRoot/FarmUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 32
+
+[node name="Column" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="TopInfo" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="MoneyLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 40
+text = "$0"
+
+[node name="BeeCountLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 32
+text = "Bees: 20"
+
+[node name="DevSpeedTag" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.96, 0.86, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 32
+text = "×1"
+horizontal_alignment = 0
+
+[node name="Spacer" type="Control" parent="FarmUIRoot/FarmUI/Margin/Column"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="PausedLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "Hive full, production paused"
+horizontal_alignment = 1
+
+[node name="ShopPanel" type="PanelContainer" parent="FarmUIRoot/FarmUI/Margin/Column"]
+layout_mode = 2
+script = ExtResource("5_shopui")
+
+[node name="ShopBox" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="LevelLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 28
+text = "Worker Swarm Count"
+horizontal_alignment = 1
+
+[node name="UpgradeButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
+focus_mode = 0
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+theme_override_colors/font_disabled_color = Color(1, 0.96, 0.86, 1)
+theme_override_font_sizes/font_size = 36
+theme_override_styles/disabled = SubResource("StyleBox_disabled")
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Upgrade"
+
+[node name="CentrifugeLabel" type="Label" parent="FarmUIRoot/FarmUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+offset_left = 24.0
+offset_top = 245.0
+offset_right = 696.0
+offset_bottom = 325.0
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 30
+text = "Honey: 0 / 10"
+horizontal_alignment = 1
+
+[node name="ForkIcon" type="Button" parent="FarmUIRoot/FarmUI"]
+focus_mode = 0
+custom_minimum_size = Vector2(240, 120)
+layout_mode = 0
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBox_tag")
+theme_override_styles/hover = SubResource("StyleBox_tag")
+theme_override_styles/disabled = SubResource("StyleBox_tag_disabled")
+theme_override_styles/pressed = SubResource("StyleBox_tag_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Harvest"
+script = ExtResource("8_icon")
+anchor_path = NodePath("../../../FarmWorld/Hive/ForkAnchor")
+screen_offset = Vector2(0, 0)
+
+[node name="HarvestFill" type="ColorRect" parent="FarmUIRoot/FarmUI/ForkIcon"]
+show_behind_parent = true
+layout_mode = 0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 236.0
+offset_bottom = 116.0
+mouse_filter = 2
+color = Color(1, 0.76, 0.12, 1)
+
+[node name="HiveCountLabel" type="Label" parent="FarmUIRoot/FarmUI"]
+layout_mode = 0
+offset_right = 240.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "0/10"
+horizontal_alignment = 1
+
+[node name="CentrifugeIcon" type="Button" parent="FarmUIRoot"]
+focus_mode = 0
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 0
+theme_override_font_sizes/font_size = 38
+theme_override_styles/normal = SubResource("StyleBox_circle")
+theme_override_styles/hover = SubResource("StyleBox_circle")
+theme_override_styles/pressed = SubResource("StyleBox_circle_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Spin"
+script = ExtResource("8_icon")
+anchor_path = NodePath("../../FarmWorld/Centrifuge/CentrifugeAnchor")
+screen_offset = Vector2(0, 0)
+
+[node name="SellIcon" type="Button" parent="FarmUIRoot/FarmUI"]
+focus_mode = 0
+custom_minimum_size = Vector2(250, 120)
+layout_mode = 0
+theme_override_font_sizes/font_size = 38
+theme_override_styles/normal = SubResource("StyleBox_pill")
+theme_override_styles/hover = SubResource("StyleBox_pill")
+theme_override_styles/pressed = SubResource("StyleBox_pill_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Sell $30"
+script = ExtResource("8_icon")
+anchor_path = NodePath("../../../FarmWorld/Truck/SellAnchor")
+screen_offset = Vector2(0, 0)
+
+[node name="SummaryModal" type="PanelContainer" parent="FarmUIRoot/FarmUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -230.0
+offset_right = 300.0
+offset_bottom = 230.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_modal")
+
+[node name="SummaryMargin" type="MarginContainer" parent="FarmUIRoot/FarmUI/SummaryModal"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="SummaryColumn" type="VBoxContainer" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="SummaryJarsLabel" type="Label" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 34
+text = "Jars: 10"
+horizontal_alignment = 1
+
+[node name="SummaryValueLabel" type="Label" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 34
+text = "Value per jar: $3"
+horizontal_alignment = 1
+
+[node name="SummaryTotalLabel" type="Label" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 40
+text = "Batch total: $30"
+horizontal_alignment = 1
+
+[node name="SummaryOkButton" type="Button" parent="FarmUIRoot/FarmUI/SummaryModal/SummaryMargin/SummaryColumn"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "OK"
+
+[node name="HarvestUIRoot" type="CanvasLayer" parent="."]
+
+[node name="HarvestUI" type="Control" parent="HarvestUIRoot"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("12_hui")
+
+[node name="HintLabel" type="Label" parent="HarvestUIRoot/HarvestUI"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -228.0
+offset_top = 144.0
+offset_right = 200.0
+offset_bottom = 254.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "Drag across the cells to uncap them"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="BackButton" type="Button" parent="HarvestUIRoot/HarvestUI"]
+focus_mode = 0
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -144.0
+offset_top = 16.0
+offset_right = -24.0
+offset_bottom = 136.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBox_back")
+theme_override_styles/hover = SubResource("StyleBox_back")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Back"

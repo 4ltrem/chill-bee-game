@@ -1,0 +1,17 @@
+C:\Users\mtrem\Desktop\Godot_v4.2.1-stable_win64_console.exe --path C:\Users\mtrem\Desktop\MAIGD\game --resolution 720x1280 --position 0,0 -s res://tests/ui_compare_shots.gd -- spin-b spin_farm_visual_px=72 spin_zoom_offset=40
+
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 621.01 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 3070
+ 
+overrides: ["spin_farm_visual_px=72", "spin_zoom_offset=40"]
+shot 1-farm-start (720, 1280) err=0 []
+shot 2-farm-hive-full (720, 1280) err=0 []
+shot 3-zoom-hive (720, 1280) err=0 []
+shot 4-zoom-scraping (720, 1280) err=0 []
+shot 5-bucket-full (720, 1280) err=0 []
+shot 6-centrifuge-stop (720, 1280) err=0 []
+shot 6b-farm-spin (720, 1280) err=0 []
+shot 7-bottling (720, 1280) err=0 []
+shot 8-sell (720, 1280) err=0 []
+shot 9-dev-speed-x5 (720, 1280) err=0 []
+COMPLETED

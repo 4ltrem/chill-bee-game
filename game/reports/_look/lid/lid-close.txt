@@ -1,0 +1,277 @@
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   0.0%  progress 1.000  lid origin (-1.029, 0.951, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   1.1%  progress 0.989  lid origin (-1.029, 1.017, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   2.2%  progress 0.978  lid origin (-1.029, 1.080, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   3.3%  progress 0.967  lid origin (-1.029, 1.140, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   4.4%  progress 0.956  lid origin (-1.029, 1.199, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   5.4%  progress 0.946  lid origin (-1.029, 1.254, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   6.5%  progress 0.935  lid origin (-1.029, 1.307, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   7.6%  progress 0.924  lid origin (-1.029, 1.358, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   8.7%  progress 0.913  lid origin (-1.029, 1.406, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close   9.8%  progress 0.902  lid origin (-1.029, 1.453, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  10.8%  progress 0.892  lid origin (-1.029, 1.496, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  11.9%  progress 0.881  lid origin (-1.029, 1.538, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  13.0%  progress 0.870  lid origin (-1.029, 1.577, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  14.1%  progress 0.859  lid origin (-1.029, 1.615, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  15.2%  progress 0.848  lid origin (-1.029, 1.649, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  16.3%  progress 0.837  lid origin (-1.029, 1.681, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  17.4%  progress 0.826  lid origin (-1.029, 1.711, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  18.5%  progress 0.815  lid origin (-1.029, 1.738, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  19.6%  progress 0.804  lid origin (-1.029, 1.763, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  20.7%  progress 0.793  lid origin (-1.029, 1.785, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  21.8%  progress 0.782  lid origin (-1.029, 1.805, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  22.9%  progress 0.771  lid origin (-1.029, 1.823, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  24.0%  progress 0.760  lid origin (-1.029, 1.838, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  25.1%  progress 0.749  lid origin (-1.029, 1.850, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  26.2%  progress 0.738  lid origin (-1.027, 1.860, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  27.3%  progress 0.727  lid origin (-1.024, 1.868, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  28.4%  progress 0.716  lid origin (-1.018, 1.873, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  29.5%  progress 0.705  lid origin (-1.011, 1.876, -2.000)  quat (0.000, 0.000, 0.574, 0.819)
+    worst penetration 0.0000 
+close  30.6%  progress 0.694  lid origin (-1.002, 1.876, -2.000)  quat (0.000, 0.000, 0.567, 0.824)
+    worst penetration 0.0000 
+close  31.7%  progress 0.683  lid origin (-0.992, 1.876, -2.000)  quat (0.000, 0.000, 0.549, 0.836)
+    worst penetration 0.0000 
+close  32.7%  progress 0.673  lid origin (-0.979, 1.876, -2.000)  quat (0.000, 0.000, 0.532, 0.847)
+    worst penetration 0.0000 
+close  33.8%  progress 0.662  lid origin (-0.965, 1.876, -2.000)  quat (0.000, 0.000, 0.514, 0.858)
+    worst penetration 0.0000 
+close  34.9%  progress 0.651  lid origin (-0.950, 1.876, -2.000)  quat (0.000, 0.000, 0.496, 0.868)
+    worst penetration 0.0000 
+close  36.0%  progress 0.640  lid origin (-0.932, 1.876, -2.000)  quat (0.000, 0.000, 0.477, 0.879)
+    worst penetration 0.0000 
+close  37.1%  progress 0.629  lid origin (-0.912, 1.876, -2.000)  quat (0.000, 0.000, 0.458, 0.889)
+    worst penetration 0.0000 
+close  38.2%  progress 0.618  lid origin (-0.890, 1.876, -2.000)  quat (0.000, 0.000, 0.439, 0.898)
+    worst penetration 0.0000 
+close  39.2%  progress 0.608  lid origin (-0.867, 1.876, -2.000)  quat (0.000, 0.000, 0.420, 0.907)
+    worst penetration 0.0000 
+close  40.3%  progress 0.597  lid origin (-0.843, 1.876, -2.000)  quat (0.000, 0.000, 0.401, 0.916)
+    worst penetration 0.0000 
+close  41.4%  progress 0.586  lid origin (-0.816, 1.876, -2.000)  quat (0.000, 0.000, 0.382, 0.924)
+    worst penetration 0.0000 
+close  42.5%  progress 0.575  lid origin (-0.788, 1.876, -2.000)  quat (0.000, 0.000, 0.362, 0.932)
+    worst penetration 0.0000 
+close  43.6%  progress 0.564  lid origin (-0.758, 1.876, -2.000)  quat (0.000, 0.000, 0.343, 0.939)
+    worst penetration 0.0000 
+close  44.6%  progress 0.554  lid origin (-0.727, 1.876, -2.000)  quat (0.000, 0.000, 0.323, 0.946)
+    worst penetration 0.0000 
+close  45.7%  progress 0.543  lid origin (-0.694, 1.876, -2.000)  quat (0.000, 0.000, 0.304, 0.953)
+    worst penetration 0.0000 
+close  46.8%  progress 0.532  lid origin (-0.658, 1.876, -2.000)  quat (0.000, 0.000, 0.283, 0.959)
+    worst penetration 0.0000 
+close  47.9%  progress 0.521  lid origin (-0.621, 1.876, -2.000)  quat (0.000, 0.000, 0.263, 0.965)
+    worst penetration 0.0000 
+close  48.9%  progress 0.511  lid origin (-0.583, 1.876, -2.000)  quat (0.000, 0.000, 0.243, 0.970)
+    worst penetration 0.0000 
+close  50.0%  progress 0.500  lid origin (-0.542, 1.876, -2.000)  quat (0.000, 0.000, 0.222, 0.975)
+    worst penetration 0.0000 
+close  51.1%  progress 0.489  lid origin (-0.499, 1.876, -2.000)  quat (0.000, 0.000, 0.201, 0.980)
+    worst penetration 0.0000 
+close  52.2%  progress 0.478  lid origin (-0.455, 1.876, -2.000)  quat (0.000, 0.000, 0.181, 0.984)
+    worst penetration 0.0000 
+close  53.3%  progress 0.467  lid origin (-0.408, 1.876, -2.000)  quat (0.000, 0.000, 0.160, 0.987)
+    worst penetration 0.0000 
+close  54.4%  progress 0.456  lid origin (-0.360, 1.876, -2.000)  quat (0.000, 0.000, 0.139, 0.990)
+    worst penetration 0.0000 
+close  55.5%  progress 0.445  lid origin (-0.311, 1.876, -2.000)  quat (0.000, 0.000, 0.118, 0.993)
+    worst penetration 0.0000 
+close  56.5%  progress 0.435  lid origin (-0.260, 1.876, -2.000)  quat (0.000, 0.000, 0.097, 0.995)
+    worst penetration 0.0000 
+close  57.6%  progress 0.424  lid origin (-0.207, 1.876, -2.000)  quat (0.000, 0.000, 0.076, 0.997)
+    worst penetration 0.0000 
+close  58.7%  progress 0.413  lid origin (-0.153, 1.876, -2.000)  quat (0.000, 0.000, 0.056, 0.998)
+    worst penetration 0.0000 
+close  59.8%  progress 0.402  lid origin (-0.097, 1.876, -2.000)  quat (0.000, 0.000, 0.035, 0.999)
+    worst penetration 0.0000 
+close  60.8%  progress 0.392  lid origin (-0.038, 1.876, -2.000)  quat (0.000, 0.000, 0.013, 1.000)
+    worst penetration 0.0000 
+close  61.9%  progress 0.381  lid origin (0.000, 1.876, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  63.0%  progress 0.370  lid origin (0.000, 1.876, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  64.1%  progress 0.359  lid origin (0.000, 1.876, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  65.2%  progress 0.348  lid origin (0.000, 1.876, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  66.2%  progress 0.338  lid origin (0.000, 1.876, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  67.3%  progress 0.327  lid origin (0.000, 1.876, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  68.4%  progress 0.316  lid origin (0.000, 1.876, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  69.5%  progress 0.305  lid origin (0.000, 1.876, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  70.6%  progress 0.294  lid origin (0.000, 1.871, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  71.7%  progress 0.283  lid origin (0.000, 1.861, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  72.7%  progress 0.273  lid origin (0.000, 1.846, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  73.8%  progress 0.262  lid origin (0.000, 1.826, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  74.9%  progress 0.251  lid origin (0.000, 1.801, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  76.0%  progress 0.240  lid origin (0.000, 1.773, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  77.0%  progress 0.230  lid origin (0.000, 1.741, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  78.1%  progress 0.219  lid origin (0.000, 1.706, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  79.2%  progress 0.208  lid origin (0.000, 1.669, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  80.3%  progress 0.197  lid origin (0.000, 1.629, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  81.4%  progress 0.186  lid origin (0.000, 1.587, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  82.4%  progress 0.176  lid origin (0.000, 1.544, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  83.5%  progress 0.165  lid origin (0.000, 1.501, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  84.6%  progress 0.154  lid origin (0.000, 1.456, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  85.7%  progress 0.143  lid origin (0.000, 1.412, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  86.8%  progress 0.132  lid origin (0.000, 1.369, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  87.8%  progress 0.122  lid origin (0.000, 1.326, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  88.9%  progress 0.111  lid origin (0.000, 1.285, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  90.0%  progress 0.100  lid origin (0.000, 1.245, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  91.1%  progress 0.089  lid origin (0.000, 1.207, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  92.2%  progress 0.078  lid origin (0.000, 1.172, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  93.2%  progress 0.068  lid origin (0.000, 1.140, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  94.3%  progress 0.057  lid origin (0.000, 1.112, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  95.4%  progress 0.046  lid origin (0.000, 1.087, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  96.5%  progress 0.035  lid origin (0.000, 1.067, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  97.6%  progress 0.024  lid origin (0.000, 1.051, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  98.7%  progress 0.013  lid origin (0.000, 1.041, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close  99.7%  progress 0.003  lid origin (0.000, 1.036, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+close 100.0%  progress 0.000  lid origin (0.000, 1.036, -2.000)  quat (0.000, 0.000, 0.000, 1.000)
+    worst penetration 0.0000 
+
+SUMMARY: worst penetration per node over the close (depth in metres, at what percent of the close)
+  no overlap above 0.0005 m with any node
+frames rendered during the close: 135
+side camera along hinge axis (0, 0, 1), hinge angle 70.0 deg

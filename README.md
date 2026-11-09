@@ -18,8 +18,8 @@ The game is a cross between *Egg, Inc.* and *Factorio*. The player discovers a t
 
 | Phase | What the player does |
 |---|---|
-| **1. Manual** | Harvest by hand in a tactile two-stage minigame: swipe to uncap the comb, then crank the centrifuge. A small free overflow buffer keeps production going while the hive is full. |
-| **2. Automation** | Buy automation upgrades (uncapping hubs, electric centrifuges, transport trucks) to take over the manual work. |
+| **1. Manual** | Harvest by hand in a tactile three-stage minigame: swipe to uncap the comb, spin the centrifuge, then bottle the honey and send the truck to sell it. A small free overflow buffer keeps production going while the hive is full. |
+| **2. Automation** | Buy automation upgrades (the centrifuge motor, the auto-scraper, a truck that sells by itself) to take over the manual work. |
 | **Expansion** | Buy land and place hive and flower units on each biome's grid. Biomes can grow indefinitely, and higher-tier units cost more but fit more honey production into less space. |
 | **3. Optimization** | Build the capstone Royal Honey Refinery and charge it with honey from every biome to earn a **Royal Crystal**. Then optionally reset: the swarm splits and leaves to restore a new pocket world. Crystals carry over, and each one gives a stacking production boost plus one starting upgrade for future runs. |
 
@@ -53,6 +53,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 |---|---|
 | [AGENTS.md](AGENTS.md) | Entry file for AI agents: where everything lives and where to go for each task. [CONTEXT.md](CONTEXT.md) describes the design loop (request, proposal, decision, apply). |
 | [GDD.md](GDD.md) | Game design document |
+| [MILESTONES.md](MILESTONES.md) | Build stages, version numbers (`0.<milestone>.<build>`) and the milestones with their course deliverables |
 | [gdd-review/reviews/](gdd-review/reviews/) | A multi-agent design review of the first draft. Six reviewer agents each reviewed it independently, then cross-examined each other, and a moderator wrote a synthesis ([SYNTHESIS.md](gdd-review/reviews/SYNTHESIS.md)). It was run with [gdd-review-kit](https://github.com/GixGosu/gdd-review-kit). |
 | [gdd-review/gdd.txt](gdd-review/gdd.txt) | Snapshot of the GDD as it was reviewed. Many review findings have since been addressed in `GDD.md`. |
 | [proposals/design/](proposals/design/) | Feature design proposals, e.g. the capstone [Royal Honey Refinery](proposals/design/capstone-machine.md) (Gerard). |
@@ -62,7 +63,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 | [audio/](audio/) | Licence-checked sound and music shortlists (Andrew). |
 | [game/](game/) | The Godot project: scripts (Patricia), scenes (Bob), tests and reports (Quinn). |
 | [_meta/team.md](_meta/team.md) | The agent roster, each agent's model, and the rules they follow; each has a definition in `.claude/agents/`. |
-| [_meta/agent-runs.md](_meta/agent-runs.md) | Token, tool-call and duration log of every agent run. |
+| [_meta/agent-runs.md](_meta/agent-runs.md) | Token, tool-call and duration summary of every agent run; the rows are in `agent-runs.csv`. |
 | [.claude/agents/](.claude/agents/) | Runnable Claude Code agent definitions, starting with Connie, the Compliance Officer. |
 | [gdd-review-v2/](gdd-review-v2/) | Second review, of the GDD at commit `8ddb97a` after the first round of fixes and peer feedback. Its [SYNTHESIS.md](gdd-review-v2/reviews/SYNTHESIS.md) compares the results with the first review. |
 
@@ -74,13 +75,18 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Income side of the economy: base jar price, bee fill rate, harvest cycle time
 - [ ] Habitat Health values (multipliers, costs, levels) and how much hive count lowers it
 - [ ] Honey sale value for each biome
-- [ ] Automation upgrade costs
+- [ ] Automation upgrade costs (motor, auto-scraper, Faster Delivery)
+- [ ] Upgrade mode UI: opening an automated unit's zoom screen (with the rest of the UI)
+- [ ] Back button as an arrow, its size set in the UI mockups (Design Votes round 8, 2026-11-07)
 - [ ] Overflow Storage capacity and costs (free buffer is 1 extra frame)
 - [ ] Land expansion costs
 - [ ] Hive and flower unit tiers: costs, production and space per tier
 - [ ] Research values (genetics multipliers and unit-tier unlocks)
 - [ ] Tool-upgrade flat bonuses after automation
-- [ ] Auto-Sell discount and costs
+- [ ] Auto-Sell costs (no discount: the truck leaves when full and sells at full price)
+- [ ] Jar crate tiers: jars waiting and truck load per tier, upgrade costs
+- [ ] Harvest logistics: centrifuge capacity (frames), truck capacity (jars) and truck trip time
+- [ ] Long Fork: unlock condition, cost, and how it leads into automated uncapping
 - [ ] Royal Jelly prices, time-skip costs, and Patron daily stipend amount
 - [ ] Impact Pass and Patron Pass prices
 

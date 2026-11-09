@@ -1,0 +1,112 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+ 
+PASS  t_cost_formula  (11 checks)
+PASS  t_cost_max_level  (15 checks)
+PASS  t_buy_deducts_and_levels  (5 checks)
+PASS  t_buy_blocked_unaffordable  (4 checks)
+PASS  t_fill_multiplier  (12 checks)
+PASS  t_bee_count  (13 checks)
+PASS  t_fill_multiplier_is_bees_over_base  (11 checks)
+PASS  t_economy_removed_jars  (9 checks)
+PASS  t_earn_and_jar_value  (4 checks)
+PASS  t_drawn_count_capped  (10 checks)
+PASS  t_fill_time_level0  (8 checks)
+PASS  t_fill_time_with_levels  (6 checks)
+PASS  t_hive_rate_is_live  (6 checks)
+PASS  t_overflow_and_pause  (14 checks)
+PASS  t_take_frame_not_full  (6 checks)
+PASS  t_take_frame_with_overflow  (16 checks)
+PASS  t_became_full_count_full_overflow  (8 checks)
+PASS  t_became_full_once_while_filling  (5 checks)
+PASS  t_cell_transitions  (113 checks)
+PASS  t_cell_reset_on_next_harvest  (41 checks)
+PASS  t_uncap_only_from_capped  (10 checks)
+PASS  t_all_uncapped_signal  (6 checks)
+PASS  t_centrifuge_state_flow  (12 checks)
+PASS  t_has_room  (8 checks)
+PASS  t_taps_per_frame  (15 checks)
+PASS  t_tap_cap  (10 checks)
+PASS  t_tap_cap_is_live  (6 checks)
+PASS  t_hold_at_cap  (6 checks)
+PASS  t_hold_ramp_is_visual_only  (5 checks)
+PASS  t_hold_never_slower  (10 checks)
+PASS  t_hold_release_stops  (7 checks)
+PASS  t_crank_ignored_outside_cranking  (13 checks)
+PASS  t_real_mouse_taps_crank  (11 checks)
+PASS  t_real_mouse_hold_cranks  (12 checks)
+PASS  t_real_touch_taps_crank  (5 checks)
+PASS  t_button_press_is_not_a_crank  (7 checks)
+PASS  t_bottling_timing  (26 checks)
+PASS  t_bottling_time_is_live  (8 checks)
+PASS  t_truck_full_and_can_sell  (15 checks)
+PASS  t_truck_sell_credits_at_once  (11 checks)
+PASS  t_truck_crate_while_away  (6 checks)
+PASS  t_truck_return_loads_crate  (12 checks)
+PASS  t_truck_trip_time_is_live  (7 checks)
+PASS  t_back_keeps_frame  (21 checks)
+PASS  t_fork_hidden_unless_empty  (12 checks)
+PASS  t_state_table_icons  (28 checks)
+PASS  t_icon_follows_anchor  (9 checks)
+PASS  t_icon_hidden_behind_camera  (7 checks)
+PASS  t_config_values  (42 checks)
+PASS  t_config_placeholders_marked  (15 checks)
+PASS  t_dev_mode_setting  (2 checks)
+PASS  t_dev_no_panel_when_off  (4 checks)
+PASS  t_dev_panel_when_on  (3 checks)
+PASS  t_dev_max_tap_rate  (12 checks)
+PASS  t_dev_bottling_seconds  (12 checks)
+PASS  t_dev_save_reset_roundtrip  (15 checks)
+PASS  t_dev_user_file_ignored_when_off  (6 checks)
+PASS  t_dev_backquote_opens  (4 checks)
+PASS  t_dev_three_finger_opens  (4 checks)
+PASS  t_dev_actions  (10 checks)
+---- 60 passed, 0 failed
+RAN 60 of 60
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)
+ERROR: Parameter "m" is null.
+   at: mesh_get_surface_count (servers/rendering/dummy/storage/mesh_storage.h:110)

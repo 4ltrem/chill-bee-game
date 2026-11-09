@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Zoom Framing Options</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>/* Layout: a short brief, then four option cards side by side (two on tablets, one on phones), the current build as reference */
+:root{--bg:#fbf7ec;--surface:#fffdf7;--ink:#2b1d06;--muted:#6e5a3c;--line:#e8dcc0;--honey:#e0a21a;--honey-ink:#7a5200;--ok:#3d7a3a;--low:#b2462e;
+--display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;--body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,sans-serif;--mono:ui-monospace,Consolas,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1810;--surface:#272016;--ink:#f4ead2;--muted:#bba985;--line:#3e3424;--honey:#f0b53a;--honey-ink:#f0b53a;--ok:#7cc076;--low:#ec8a72;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1d1810;--surface:#272016;--ink:#f4ead2;--muted:#bba985;--line:#3e3424;--honey:#f0b53a;--honey-ink:#f0b53a;--ok:#7cc076;--low:#ec8a72;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1240px;margin:0 auto;display:grid;gap:28px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);line-height:1.1;margin:0;text-wrap:balance}
+.brief{display:grid;gap:10px;max-width:68ch}.brief p{margin:0;color:var(--muted)}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--honey-ink);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:1100px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:10px;align-content:start;min-width:0}
+.card header{display:flex;gap:10px;align-items:center}
+.letter{font-family:var(--display);font-weight:800;font-size:22px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--honey);color:#2b1d06;flex:none}
+h2{font-family:var(--display);font-weight:600;font-size:17px;line-height:1.2;margin:0;text-wrap:balance}
+h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:4px 0 0}
+figure{margin:0}figure img,details img{width:100%;max-width:100%;height:auto;aspect-ratio:9/16;border-radius:8px;border:1px solid var(--line);display:block}
+.stat{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.num{font-family:var(--display);font-weight:800;font-size:30px;font-variant-numeric:tabular-nums}
+.unit{color:var(--muted);font-size:13px}
+.pill{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;border:1px solid currentColor;margin-left:auto}
+.pill.ok{color:var(--ok)}.pill.low{color:var(--low)}
+.meter{position:relative;height:8px;background:var(--line);border-radius:4px}
+.fill{height:100%;border-radius:4px}.fill.ok{background:var(--ok)}.fill.low{background:var(--low)}
+.mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+ul{margin:0;padding-left:18px;display:grid;gap:2px}ul.cut li::marker{color:var(--low)}
+.small{font-size:13px;color:var(--muted);margin:0}code{font-family:var(--mono);font-size:12px;overflow-wrap:anywhere}
+details summary{cursor:pointer;font-weight:700;font-size:13px}details[open]{display:grid;gap:8px}
+.ref{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:16px;align-items:start;background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:14px}
+@media (max-width:560px){.ref{grid-template-columns:minmax(0,1fr)}}
+.ref img{width:100%;max-width:100%;height:auto;aspect-ratio:9/16;border-radius:8px;border:1px solid var(--line)}
+.ask{border-left:4px solid var(--honey);padding:10px 14px;background:var(--bg);border-radius:0 10px 10px 0}
+summary:focus-visible,a:focus-visible{outline:2px solid var(--honey);outline-offset:2px}
+</style>
+<div class="wrap">
+<section class="brief">
+<span class="eyebrow">Chill Bee Game &middot; 0.1.1 &middot; uncapping zoom</span>

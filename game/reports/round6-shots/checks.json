@@ -1,0 +1,34 @@
+{
+	"A-hive-on-cell-1-first-zoom.png": {
+		"pass": false,
+		"summary": "hive_scale 1.40, hive offset 0.00, zoom_size 6.966 (cam 6.966); smallest cell 21.8 px (min 20); hive whole n (0.0% cropped); frames whole y (100% of the frames visible); centrifuge whole n (body without lid y)"
+	},
+	"A-hive-on-cell-2-second-stop.png": {
+		"pass": false,
+		"summary": "hive_scale 1.40, hive offset 0.00, pan_zoom_size 9.260 (config 8.600 raised to the smallest that fits: y); hive share 91.4%, centroid quadrant upper-right (100% of the visible part in upper-right); centrifuge whole y, crate whole y, truck whole y"
+	},
+	"B-smaller-cells-1-first-zoom.png": {
+		"pass": false,
+		"summary": "hive_scale 1.40, hive offset 1.25, zoom_size 8.685 (cam 8.685); smallest cell 17.4 px (min 20); hive whole y (0.0% cropped); frames whole y (100% of the frames visible); centrifuge whole y (body without lid y)"
+	},
+	"B-smaller-cells-2-second-stop.png": {
+		"pass": false,
+		"summary": "hive_scale 1.40, hive offset 1.25, pan_zoom_size 9.260 (config 8.600 raised to the smallest that fits: y); hive share 54.4%, centroid quadrant upper-right (100% of the visible part in upper-right); centrifuge whole y, crate whole y, truck whole y"
+	},
+	"C-smaller-hive-1-first-zoom.png": {
+		"pass": false,
+		"summary": "hive_scale 0.74, hive offset 1.25, zoom_size 7.600 (cam 7.600); smallest cell 10.5 px (min 20); hive whole y (0.0% cropped); frames whole y (100% of the frames visible); centrifuge whole y (body without lid y)"
+	},
+	"C-smaller-hive-2-second-stop.png": {
+		"pass": false,
+		"summary": "hive_scale 0.74, hive offset 1.25, pan_zoom_size 9.260 (config 8.600 raised to the smallest that fits: y); hive share 60.5%, centroid quadrant upper-right (100% of the visible part in upper-right); centrifuge whole y, crate whole y, truck whole y"
+	},
+	"D-hive-cropped-1-first-zoom.png": {
+		"pass": false,
+		"summary": "hive_scale 1.40, hive offset 1.25, zoom_size 6.966 (cam 6.966); smallest cell 21.8 px (min 20); hive whole n (24.2% cropped); frames whole n (74% of the frames visible); centrifuge whole y (body without lid y)"
+	},
+	"D-hive-cropped-2-second-stop.png": {
+		"pass": false,
+		"summary": "hive_scale 1.40, hive offset 1.25, pan_zoom_size 9.260 (config 8.600 raised to the smallest that fits: y); hive share 54.4%, centroid quadrant upper-right (100% of the visible part in upper-right); centrifuge whole y, crate whole y, truck whole y"
+	}
+}

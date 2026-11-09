@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Copy a Claude Code session transcript into the workspace, for analysis and episodic memory.
 
-    python -I _tools/export_session.py [SESSION_ID]
+    python -I _tools/export_session.py [SESSION_ID | --all]
 
-SESSION_ID defaults to the most recently updated session of this workspace. Claude Code keeps
+SESSION_ID defaults to the most recently updated session of this workspace. --all exports every
+session not yet exported or changed since its export: /clear and a second terminal each start a
+new session, so this catches them all. Claude Code keeps
 each session as one JSONL file (one JSON object per line: every message, tool call, tool result
 and token count) in ~/.claude/projects/<workspace path with separators as dashes>/, and the
 transcripts of subagents it launched in <SESSION_ID>/subagents/. Both are copied unchanged to
@@ -55,6 +57,12 @@ def summarise(path):
 
 def main():
     src = project_dir()
+    if sys.argv[1:] == ["--all"]:
+        todo = [s for s in sorted(src.glob("*.jsonl"), key=lambda p: p.stat().st_mtime) if stale(s)]
+        for session in todo:
+            export(src, session)
+        print(f"{len(todo)} session(s) exported; every other session's export is current")
+        return
     if len(sys.argv) > 1:
         session = src / f"{sys.argv[1]}.jsonl"
         if not session.is_file():
@@ -64,6 +72,17 @@ def main():
         if not sessions:
             sys.exit(f"no sessions in {src}")
         session = sessions[-1]
+    export(src, session)
+
+
+def stale(session):
+    """True when the session has no export yet, or its transcript changed after the last export."""
+    for copy in (ROOT / "_meta" / "sessions").glob(f"*-{session.stem[:8]}/session.jsonl"):
+        return session.stat().st_mtime > copy.stat().st_mtime
+    return True
+
+
+def export(src, session):
     sid = session.stem
     started = summarise(session)["first_timestamp"] or datetime.date.today().isoformat()
     dest = ROOT / "_meta" / "sessions" / f"{started[:10]}-{sid[:8]}"

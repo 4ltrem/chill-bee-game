@@ -1,0 +1,218 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 621.01 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 3070
+ 
+PASS  no Harvest close-up root (harvest.tscn retired)
+PASS  no icon, Continue or summary at start
+PASS  MoneyLabel at start (expected $0, got $0)
+PASS  BeeCountLabel at start (expected Bees: 20, got Bees: 20)
+PASS  UpgradeButton disabled with $0
+PASS  item 7: grab_focus() did not focus the disabled UpgradeButton (focus_mode None)
+screenshot r4-0-farm-start (720, 1280) err=0
+PASS  item 7: the disabled UpgradeButton renders the disabled style (97, 87, 76) +-2 (got 97, 87, 76)
+=== round 1 ===
+PASS  round 1: 5 full frames (expected 175, got 175)
+PASS  round 1: the bucket is EMPTY (expected 0, got 0)
+PASS  round 1: fork shows at a full hive
+PASS  round 1: fork touch area at least 120 x 120
+screenshot r4-1-farm-fork-empty (720, 1280) err=0
+PASS  round 1: the fork icon floats above the hive
+PASS  round 1: the fork icon sits at its anchor's projected position
+PASS  round 1: tapping the fork raised a frame
+PASS  round 1: the camera is at zoom_size (expected 6.7 +- 0.05, got 6.69999980926514)
+PASS  round 1: the farm UI is hidden in the zoom
+PASS  round 1: BackButton shows
+PASS  round 1: zoom open
+PASS  round 1: the first frame rises first (expected 0, got 0)
+screenshot r4-2-zoom-risen-frame (720, 1280) err=0
+PASS  round 1: frame 0 done, frame 1 rose
+PASS  round 1: the second frame shows its rows
+screenshot r4-3-zoom-cell-in-flight (720, 1280) err=0
+PASS  round 1: half of frame 1 scraped (21 of 35 Capped left)
+PASS  round 1: frame 1 is still up (expected 1, got 1)
+PASS  round 1: 49 cells in the bucket (expected 49, got 49)
+PASS  round 1: the bucket still has room
+PASS  round 1: Back kept the half frame's cells (expected [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], got [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+PASS  round 1: Back with cells in the bucket: lid on (expected false, got false)
+PASS  round 1: FULL (waiting for Spin) (expected 2, got 2)
+PASS  round 1: Spin shows after Back
+PASS  round 1: the fork stays while Capped cells remain
+PASS  round 1: the half frame is next (expected 1, got 1)
+screenshot r4-4-farm-full-spin-and-fork (720, 1280) err=0
+PASS  round 1: CRANKING (expected 3, got 3)
+screenshot r4-5-farm-cranking-with-fork (720, 1280) err=0
+PASS  round 1: one real click on the farm counted one turn (expected 1, got 1)
+PASS  round 1 (return, CRANKING): the fork icon floats above the hive
+PASS  round 1 (return, CRANKING): the fork icon sits at its anchor's projected position
+PASS  round 1 (return, CRANKING): tapping the fork raised a frame
+PASS  round 1 (return, CRANKING): the camera is at zoom_size (expected 6.7 +- 0.05, got 6.69999980926514)
+PASS  round 1 (return, CRANKING): the farm UI is hidden in the zoom
+PASS  round 1 (return, CRANKING): BackButton shows
+PASS  round 1: the fork opened the zoom while CRANKING
+PASS  round 1: the half frame rises first on the return (expected 1, got 1)
+PASS  round 1: clicks in the zoom counted no turn (expected 1, got 1)
+PASS  round 1: dragging on the frame was never a crank turn (expected 1, got 1)
+PASS  round 1: frame 1 done, the next rose
+PASS  round 1: frame 2 done, the next rose
+PASS  round 1: frame 3 done, the next rose
+PASS  round 1: no Capped cell left (expected 0, got 0)
+PASS  round 1: every later cell piled up (126) (expected 126, got 126)
+PASS  round 1: the cranking bucket took no cell (expected 49, got 49)
+PASS  round 1: the zoom ended on its own: farm UI back, fork gone
+screenshot r4-6-farm-pile-while-cranking (720, 1280) err=0
+PASS  round 1: still CRANKING after the zoom (expected 3, got 3)
+PASS  round 1: cranking counts again on the farm (expected true, got true)
+PASS  round 1 batch 1: ceil(jars x taps_per_jar) = 12 turns in all (expected 12, got 12)
+PASS  round 1 batch 1: DONE (expected 4, got 4)
+screenshot r4-7-farm-done-continue (720, 1280) err=0
+screenshot r4-8-farm-bottling (720, 1280) err=0
+PASS  round 1 batch 1: Continue shows
+PASS  round 1 batch 1: Continue at least 120 px high
+PASS  round 1 batch 1: centrifuge.gd has leftover_jars
+PASS  round 1 batch 1: Continue opens the spigot (expected 5, got 5)
+PASS  round 1 batch 1: the summary shows after bottling
+PASS  round 1 batch 1: floor(jars + carried leftover) = 2 jars bottled (expected 2, got 2)
+PASS  round 1 batch 1: the pile loaded into the empty bucket
+PASS  round 1 batch 1: the bucket closed after the load (full, or no zoom open) (expected false, got false)
+PASS  round 1 batch 1: FULL, Spin shows (expected 2, got 2)
+PASS  round 1 batch 1: the pile loaded up to the bucket's capacity
+screenshot r4-9-farm-pile-loaded (720, 1280) err=0
+PASS  round 1 batch 2: Spin shows
+PASS  round 1 batch 2: Spin touch area at least 120 x 120 ((160, 160))
+PASS  round 1 batch 2: tapping Spin starts CRANKING (expected 3, got 3)
+PASS  round 1 batch 2: Spin hides while cranking
+PASS  round 1 batch 2: ceil(jars x taps_per_jar) real clicks in all (16 turns for 70 cells) (expected 16, got 16)
+PASS  round 1 batch 2: DONE (expected 4, got 4)
+PASS  round 1 batch 2: Continue shows
+PASS  round 1 batch 2: Continue at least 120 px high
+PASS  round 1 batch 2: centrifuge.gd has leftover_jars
+PASS  round 1 batch 2: Continue opens the spigot (expected 5, got 5)
+PASS  round 1 batch 2: the summary shows after bottling
+PASS  round 1 batch 2: floor(jars + carried leftover) = 4 jars bottled (expected 4, got 4)
+PASS  round 1 batch 2: the pile loaded into the empty bucket
+PASS  round 1 batch 2: the bucket closed after the load (full, or no zoom open) (expected false, got false)
+PASS  round 1 batch 2: FULL, Spin shows (expected 2, got 2)
+PASS  round 1 batch 3: Spin shows
+PASS  round 1 batch 3: Spin touch area at least 120 x 120 ((160, 160))
+PASS  round 1 batch 3: tapping Spin starts CRANKING (expected 3, got 3)
+PASS  round 1 batch 3: Spin hides while cranking
+PASS  round 1 batch 3: ceil(jars x taps_per_jar) real clicks in all (13 turns for 56 cells) (expected 13, got 13)
+PASS  round 1 batch 3: DONE (expected 4, got 4)
+PASS  round 1 batch 3: Continue shows
+PASS  round 1 batch 3: Continue at least 120 px high
+PASS  round 1 batch 3: centrifuge.gd has leftover_jars
+PASS  round 1 batch 3: Continue opens the spigot (expected 5, got 5)
+PASS  round 1 batch 3: the summary shows after bottling
+PASS  round 1 batch 3: floor(jars + carried leftover) = 4 jars bottled (expected 4, got 4)
+PASS  round 1: all 10 jars bottled over 3 batches (the leftover fractions were carried, none lost) (expected 10, got 10)
+PASS  round 1: bucket EMPTY at the end (expected 0, got 0)
+PASS  round 1: bucket open at the end (expected true, got true)
+PASS  round 1: pile empty at the end (expected 0, got 0)
+PASS  round 1: the Sell icon floats above the full truck
+PASS  round 1: the truck holds 10 jars (expected 10, got 10)
+PASS  round 1: money credited at the tap (expected 30, got 30)
+PASS  round 1: the truck is away
+screenshot r4-10-farm-truck-away (720, 1280) err=0
+=== round 2 ===
+PASS  round 2: 5 full frames (expected 175, got 175)
+PASS  round 2: the bucket is EMPTY (expected 0, got 0)
+PASS  round 2: fork shows at a full hive
+PASS  round 2: fork touch area at least 120 x 120
+PASS  round 2: the fork icon floats above the hive
+PASS  round 2: the fork icon sits at its anchor's projected position
+PASS  round 2: tapping the fork raised a frame
+PASS  round 2: the camera is at zoom_size (expected 6.7 +- 0.05, got 6.69999980926514)
+PASS  round 2: the farm UI is hidden in the zoom
+PASS  round 2: BackButton shows
+PASS  round 2: zoom open
+PASS  round 2: the first frame rises first (expected 0, got 0)
+PASS  round 2: frame 0 done, frame 1 rose
+PASS  round 2: the second frame shows its rows
+PASS  round 2: half of frame 1 scraped (21 of 35 Capped left)
+PASS  round 2: frame 1 is still up (expected 1, got 1)
+PASS  round 2: 49 cells in the bucket (expected 49, got 49)
+PASS  round 2: the bucket still has room
+PASS  round 2: Back kept the half frame's cells (expected [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], got [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+PASS  round 2: Back with cells in the bucket: lid on (expected false, got false)
+PASS  round 2: FULL (waiting for Spin) (expected 2, got 2)
+PASS  round 2: Spin shows after Back
+PASS  round 2: the fork stays while Capped cells remain
+PASS  round 2: the half frame is next (expected 1, got 1)
+PASS  round 2: CRANKING (expected 3, got 3)
+PASS  round 2: one real click on the farm counted one turn (expected 1, got 1)
+PASS  round 2 (return, CRANKING): the fork icon floats above the hive
+PASS  round 2 (return, CRANKING): the fork icon sits at its anchor's projected position
+PASS  round 2 (return, CRANKING): tapping the fork raised a frame
+PASS  round 2 (return, CRANKING): the camera is at zoom_size (expected 6.7 +- 0.05, got 6.69999980926514)
+PASS  round 2 (return, CRANKING): the farm UI is hidden in the zoom
+PASS  round 2 (return, CRANKING): BackButton shows
+PASS  round 2: the fork opened the zoom while CRANKING
+PASS  round 2: the half frame rises first on the return (expected 1, got 1)
+PASS  round 2: clicks in the zoom counted no turn (expected 1, got 1)
+PASS  round 2: dragging on the frame was never a crank turn (expected 1, got 1)
+PASS  round 2: frame 1 done, the next rose
+PASS  round 2: frame 2 done, the next rose
+PASS  round 2: frame 3 done, the next rose
+PASS  round 2: no Capped cell left (expected 0, got 0)
+PASS  round 2: every later cell piled up (126) (expected 126, got 126)
+PASS  round 2: the cranking bucket took no cell (expected 49, got 49)
+PASS  round 2: the zoom ended on its own: farm UI back, fork gone
+PASS  round 2: still CRANKING after the zoom (expected 3, got 3)
+PASS  round 2: cranking counts again on the farm (expected true, got true)
+PASS  round 2 batch 1: the hold finished the cranking
+PASS  round 2 batch 1: real hold time (expected 2 +- 0.4, got 2.001)
+PASS  round 2 batch 1: DONE (expected 4, got 4)
+PASS  round 2 batch 1: Continue shows
+PASS  round 2 batch 1: Continue at least 120 px high
+PASS  round 2 batch 1: centrifuge.gd has leftover_jars
+PASS  round 2 batch 1: Continue opens the spigot (expected 5, got 5)
+PASS  round 2 batch 1: money 30 covers the swarm cost 25
+PASS  round 2 batch 1: UpgradeButton enabled while bottling
+PASS  round 2 batch 1: Worker Swarm Count level 1 bought mid-harvest (expected 1, got 1)
+PASS  round 2 batch 1: money after the purchase (expected 5, got 5)
+PASS  round 2 batch 1: BeeCountLabel after the purchase (expected Bees: 23, got Bees: 23)
+PASS  round 2 batch 1: the purchase did not disturb bottling (expected 5, got 5)
+PASS  round 2 batch 1: the summary shows after bottling
+PASS  round 2 batch 1: floor(jars + carried leftover) = 2 jars bottled (expected 2, got 2)
+PASS  round 2 batch 1: the pile loaded into the empty bucket
+PASS  round 2 batch 1: the bucket closed after the load (full, or no zoom open) (expected false, got false)
+PASS  round 2 batch 1: FULL, Spin shows (expected 2, got 2)
+PASS  round 2 batch 2: Spin shows
+PASS  round 2 batch 2: Spin touch area at least 120 x 120 ((160, 160))
+PASS  round 2 batch 2: tapping Spin starts CRANKING (expected 3, got 3)
+PASS  round 2 batch 2: Spin hides while cranking
+PASS  round 2 batch 2: ceil(jars x taps_per_jar) real clicks in all (16 turns for 70 cells) (expected 16, got 16)
+PASS  round 2 batch 2: DONE (expected 4, got 4)
+PASS  round 2 batch 2: Continue shows
+PASS  round 2 batch 2: Continue at least 120 px high
+PASS  round 2 batch 2: centrifuge.gd has leftover_jars
+PASS  round 2 batch 2: Continue opens the spigot (expected 5, got 5)
+PASS  round 2 batch 2: the summary shows after bottling
+PASS  round 2 batch 2: floor(jars + carried leftover) = 4 jars bottled (expected 4, got 4)
+PASS  round 2 batch 2: the pile loaded into the empty bucket
+PASS  round 2 batch 2: the bucket closed after the load (full, or no zoom open) (expected false, got false)
+PASS  round 2 batch 2: FULL, Spin shows (expected 2, got 2)
+PASS  round 2 batch 3: Spin shows
+PASS  round 2 batch 3: Spin touch area at least 120 x 120 ((160, 160))
+PASS  round 2 batch 3: tapping Spin starts CRANKING (expected 3, got 3)
+PASS  round 2 batch 3: Spin hides while cranking
+PASS  round 2 batch 3: ceil(jars x taps_per_jar) real clicks in all (13 turns for 56 cells) (expected 13, got 13)
+PASS  round 2 batch 3: DONE (expected 4, got 4)
+PASS  round 2 batch 3: Continue shows
+PASS  round 2 batch 3: Continue at least 120 px high
+PASS  round 2 batch 3: centrifuge.gd has leftover_jars
+PASS  round 2 batch 3: Continue opens the spigot (expected 5, got 5)
+PASS  round 2 batch 3: the summary shows after bottling
+PASS  round 2 batch 3: floor(jars + carried leftover) = 4 jars bottled (expected 4, got 4)
+PASS  round 2: all 10 jars bottled over 3 batches (the leftover fractions were carried, none lost) (expected 10, got 10)
+PASS  round 2: bucket EMPTY at the end (expected 0, got 0)
+PASS  round 2: bucket open at the end (expected true, got true)
+PASS  round 2: pile empty at the end (expected 0, got 0)
+PASS  round 2: the truck came back
+PASS  round 2: jars conserved: truck + crate = the batch (expected 10, got 10)
+PASS  round 2: Sell credited money at the tap
+PASS  the dev panel has a Show UI bounds button
+screenshot r4-11-show-ui-bounds (720, 1280) err=0
+---- 197 checks, 0 failed
+COMPLETED
+WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+     at: grab_focus (scene/gui/control.cpp:2012)

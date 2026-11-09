@@ -1,0 +1,18 @@
+[
+ {
+  "call": "William, round 1",
+  "tokens": 44706,
+  "final": 17990,
+  "turns": 4,
+  "seconds": 19,
+  "transcripts": "_meta/sessions/runs/2026-11-07-guides-run-4"
+ },
+ {
+  "call": "Critic, round 1",
+  "tokens": 63173,
+  "final": 27460,
+  "turns": 7,
+  "seconds": 21,
+  "transcripts": "_meta/sessions/runs/2026-11-07-guides-run-4"
+ }
+]

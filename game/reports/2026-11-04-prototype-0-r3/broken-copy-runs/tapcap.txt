@@ -1,0 +1,6 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+ 
+FAIL  t_tap_cap  30 taps over 1 s count as max_tap_rate (5/s): expected 5 got 30 | 20 taps in zero time count 1: expected 1 got 20
+FAIL  t_real_mouse_taps_crank  15 real clicks in zero time were already counted once, so a 16th tap is capped
+---- 58 passed, 2 failed
+RAN 60 of 60

@@ -1,0 +1,42 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 621.01 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 3070
+ 
+PASS  window 720 x 1280 ((720, 1280))
+build: 0.1 (zoom on the farm), mode check, tag r4
+PASS  the zoom opened with a risen frame
+PASS  cell 17 of the frame has a collider with its cell_index
+PASS  the cell's Mesh node was found
+cell 17 centre (345.6717, 226.1635), face width before the scrape 45.6636047363281 px, camera size 6.69999980926514
+PASS  all 15 sample times were captured (15)
+t_sim_s,projected_width_ratio,pixel_size_ratio,mesh_scale_x,projected_width_px,yellow_area_px,blob_w_px,blob_h_px
+0.0070,1.2453,1.1723,1.2453,56.86,2555,57,63
+0.0153,1.1912,1.1395,1.1912,54.40,2414,55,61
+0.0303,1.1117,1.0844,1.1117,50.76,2186,51,58
+0.0453,1.0526,1.0416,1.0526,48.06,2017,48,55
+0.0602,1.0120,1.0128,1.0120,46.21,1907,46,53
+0.0751,0.9865,0.9968,0.9865,45.05,1847,45,52
+0.0901,0.9734,0.9922,0.9734,44.45,1830,45,52
+0.1051,0.9700,0.9829,0.9700,44.29,1796,44,52
+0.1203,0.9735,0.9922,0.9735,44.46,1830,45,52
+0.1351,0.9810,0.9943,0.9810,44.80,1838,45,52
+0.1503,0.9899,0.9976,0.9899,45.20,1850,45,52
+0.1652,0.9971,1.0000,0.9971,45.53,1859,45,53
+0.1800,1.0000,0.9498,1.0000,45.66,1677,51,39
+0.2103,1.0000,0.9529,1.0000,45.66,1688,51,39
+0.3003,1.0000,0.9509,1.0000,45.66,1681,51,40
+
+MEASURE pop scale against 1.3 -> 1 over 0.18 s, back-out: worst difference 0.0025
+PASS  the Mesh scale follows 1.3 -> 1 over 0.18 s with a back-out ease at every sample (worst 0.0025)
+PASS  the first sample (T = 0.0070 s) shows the cell still enlarged (1.245 of its settled width)
+PASS  the back-out undershoots 1 (T = 0.120 s: 0.974)
+PASS  T = 0.30 s: the cell's Mesh scale is back at 1 (1.0000)
+PASS  a bright yellow cell face is visible at the end of the pop (1859 px)
+PASS  a bright yellow cell face is visible at T = 0
+sim clock at the end 0.3006294
+PASS  sim time at the last sample is about 0.30 s (0.3003)
+PASS  the revision 3 reference curve is present (15 samples in res://tests/snapshots/pop-r3-reference.csv)
+MEASURE pop curve against the revision 3 reference: worst projected-width difference 0.0003 at T = 0.015 s (tolerance 0.02); worst rendered-pixel difference 0.0165 at T = 0.090 s (tolerance 0.12)
+PASS  the projected size curve matches revision 3 within 0.02 (worst 0.0003)
+PASS  the rendered-pixel size curve matches revision 3 within 0.12 (worst 0.0165)
+---- 15 checks, 0 failed
+COMPLETED

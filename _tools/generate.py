@@ -9,8 +9,9 @@ PASS stops the loop with `status: draft` (awaiting the designer); a FAIL after t
 the draft with `status: needs-review`. Agents run through the Claude Code CLI (`claude -p --agent
 ...`, prompt on stdin), so no API key is needed. Standard library only.
 
-The blackboard (content/_runs/SLUG/blackboard.md) is the run's shared record: the request, the full
-draft in round 1, a diff against the previous round after that, and every verdict. The script is
+The blackboard (content/_runs/SLUG/blackboard.md, format in _templates/blackboard.md) is the run's
+shared record: the request, a link to the round-1 draft (saved as blackboard-round-1.md beside it),
+a diff against the previous round after that, every verdict, and one Result. The script is
 its controller: it hands each agent only the slice it needs in the prompt (William: the open FAIL
 rows; the critic: the draft or the diff, plus its previous verdict) and appends what they return.
 No agent opens the blackboard, so nothing on it is re-read turn after turn.
@@ -37,14 +38,17 @@ import argparse
 import datetime
 import difflib
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
+import threading
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script's folder off sys.path
 from log_subagent import measure  # noqa: E402
+import runlog  # noqa: E402
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -55,7 +59,7 @@ ROOT = Path(__file__).resolve().parent.parent
 WRITER, CRITIC, RESEARCHER = "writer", "content-critic", "research-assistant"
 NAMES = {WRITER: "William", CRITIC: "Critic", RESEARCHER: "Ruth"}
 TYPES = ("story", "onboarding", "journal", "ui-text")
-LOG_TABLE = "### Content generation"
+LOG_TABLE = "Content generation"
 RUNS = Path("_meta") / "sessions" / "runs"
 ASKS_FOR_SOURCE = re.compile(r"\bsource|\bcite|citation|\bURL", re.I)
 
@@ -64,26 +68,70 @@ class AgentError(Exception):
     pass
 
 
-def run_agent(agent, prompt):
-    """Run one agent headless with the prompt on stdin; return (reply text, usage summary)."""
+LIVE_FILE = ROOT / "_meta" / "usage" / "live.json"   # local (gitignored); statusline.py shows what runs now
+_live_lock = threading.Lock()
+_live_tag = [""]   # what the running loop is on, e.g. "goal 0.1.4 · C5"; set by each loop with set_live_tag
+
+
+def set_live_tag(tag):
+    _live_tag[0] = tag
+
+
+def live_update(key, entry=None, path=None):
+    """Add (entry) or remove (None) one running agent in live.json. Never fails a run."""
+    path = path or LIVE_FILE
+    with _live_lock:
+        try:
+            cur = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+        except (OSError, ValueError):
+            cur = {}
+        if entry is None:
+            cur.pop(key, None)
+        else:
+            cur[key] = entry
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(json.dumps(cur), encoding="utf-8")
+        except OSError:
+            pass
+
+
+def run_agent(agent, prompt, tools="WebFetch,WebSearch", max_turns=None):
+    """Run one agent headless with the prompt on stdin; return (reply text, usage summary).
+    tools: the --allowedTools list (goal_agent.py passes Bash and the file tools for Patricia, Bob and Quinn).
+    max_turns: a turn cap (goal_agent's fix rounds; one ran 36 turns and 777k tokens on 2026-11-08)."""
     claude = shutil.which("claude")
     if not claude:
         raise AgentError("claude CLI not found on PATH")
     cmd = [claude, "-p", "--agent", agent, "--output-format", "json",
-           "--permission-mode", "acceptEdits", "--allowedTools", "WebFetch,WebSearch"]
-    proc = subprocess.run(cmd, cwd=ROOT, input=prompt, capture_output=True, text=True, encoding="utf-8")
+           "--permission-mode", "acceptEdits", "--allowedTools", tools] \
+        + (["--max-turns", str(max_turns)] if max_turns else [])
+    started = now_iso()
+    key = f"{os.getpid()}-{threading.get_ident()}-{agent}"
+    live_update(key, {"agent": NAMES.get(agent, agent), "tag": _live_tag[0], "start": started})
+    try:
+        proc = subprocess.run(cmd, cwd=ROOT, input=prompt, capture_output=True, text=True, encoding="utf-8",
+                              env={**os.environ, "CHILLBEE_HEADLESS": "1"})  # log_session.py skips these
+    finally:
+        live_update(key)
+    ended = now_iso()
     try:
         out = json.loads(proc.stdout)
     except ValueError:
         raise AgentError(f"{agent} failed (exit {proc.returncode}): {proc.stderr or proc.stdout}")
-    if out.get("is_error"):
+    if out.get("subtype") == "error_max_turns":   # the cap is a stop, not a crash: the caller's checks decide
+        out["result"] = f"(stopped at the {max_turns}-turn cap before a reply) " + (out.get("result") or "")
+    elif out.get("is_error"):
         raise AgentError(f"{agent} reported an error: {out.get('result')}")
     u = out.get("usage", {})
     tokens = sum(u.get(k, 0) for k in ("input_tokens", "output_tokens",
                                        "cache_creation_input_tokens", "cache_read_input_tokens"))
     return out.get("result", ""), {"tokens": tokens, "turns": out.get("num_turns", 0),
+                                   "cmd": " ".join(["claude"] + cmd[1:]), "max_turns": max_turns,
+                                   "subtype": out.get("subtype", ""),
                                    "seconds": round(out.get("duration_ms", 0) / 1000),
-                                   "session_id": out.get("session_id")}
+                                   "session_id": out.get("session_id"), "start": started, "end": ended,
+                                   "model": out.get("modelUsage") and " ".join(out["modelUsage"]) or ""}
 
 
 def projects_dir():
@@ -101,16 +149,77 @@ def keep_transcript(usage, dest, name):
     if not src or not src.is_file():
         return
     dest.mkdir(parents=True, exist_ok=True)
+    n = 1   # a label can repeat in a later step of the same run (0.1.4 T14.4 fix 1 at 15:25 and 16:46): never overwrite
+    while (dest / f"{name}{'' if n == 1 else f'-{n}'}.jsonl").exists():
+        n += 1
+    name = name if n == 1 else f"{name}-{n}"
     target = dest / f"{name}.jsonl"
     shutil.move(str(src), str(target))
     if (src_dir / sid).is_dir():  # tool results the call saved beside its transcript
         shutil.move(str(src_dir / sid), str(dest / name))
-    usage["final"] = measure(target)["final"]
+    m = measure(target)
+    usage["final"], usage["calls"], usage["transcript"] = m["final"], m["calls"], target.as_posix()
 
 
 def append(path, text):
     with path.open("a", encoding="utf-8", newline="\n") as f:
         f.write(text)
+
+
+# ---------------------------------------------------------------------------------------------- the blackboard format
+# One format for every run board (generate.py, style_loop.py, goal_agent.py); written down in _templates/blackboard.md.
+BOARD_LINE = ("The shared record of this run. The script writes every section and hands each agent only the slice it "
+              "needs; no agent reads this file. Inputs (briefs, drafts, shots) are linked; what agents and checks "
+              "return (verdicts, replies, scores) is written here.")
+
+
+def board_start(path, front, title, request):
+    """A new board: front matter (with `result: running`), the title, the standard line and the Request."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    for side in (calls_file(path), path.with_name(f"{path.stem}.pass.json")):   # a restarted run starts clean
+        side.unlink(missing_ok=True)
+    fields = "".join(f"{k}: {v}\n" for k, v in front.items())
+    path.write_text(f"---\n{fields}result: running\n---\n# {title}\n\n{BOARD_LINE}\n\n## Request\n{request}\n",
+                    encoding="utf-8", newline="\n")
+
+
+def waiting(board, text):
+    """A designer stop: what the run waits on and how to resume it."""
+    append(board, f"\n## Waiting for the designer\n\n{text.strip()}\n")
+
+
+def resumed(board, text):
+    """The run goes on after a stop (the designer's answer, if any, goes in text)."""
+    set_front(board, result="running")
+    append(board, f"\n## Resumed {datetime.date.today()}\n\n{text.strip()}\n")
+
+
+def calls_file(board):
+    return board.with_name(f"{board.stem}.calls.json")
+
+
+def finish_board(board, calls, result, summary, run_folder=None):
+    """Write the board's one Result section (replacing any earlier one) and set `result:` in its front matter.
+
+    calls: (label, usage) pairs from this invocation. They are added to BOARD.calls.json beside the board, so the
+    table covers every call of the run, across resumes. Returns the run's total tokens."""
+    side = calls_file(board)
+    rows = json.loads(side.read_text(encoding="utf-8")) if side.is_file() else []
+    where = run_folder.relative_to(ROOT).as_posix() if run_folder and run_folder.is_dir() else None
+    rows += [{"call": label, "tokens": u["tokens"], "final": u.get("final"), "turns": u["turns"],
+              "seconds": u["seconds"], "transcripts": where} for label, u in calls]
+    if rows:
+        side.write_text(json.dumps(rows, indent=1, ensure_ascii=False), encoding="utf-8", newline="\n")
+    total = sum(r["tokens"] for r in rows)
+    kept = sorted({r["transcripts"] for r in rows if r.get("transcripts")})
+    text = re.sub(r"\n## Result\b.*?(?=\n## |\Z)", "", board.read_text(encoding="utf-8"), flags=re.S).rstrip("\n")
+    table = ("\n\n| Call | Total processed | Final context | Turns | Duration |\n|---|---|---|---|---|\n"
+             + "".join(f"| {r['call']} | {r['tokens']:,} | {fmt(r.get('final'))} | {r['turns']} | {r['seconds']} s |\n"
+                       for r in rows) + f"| **Total** | **{total:,}** | | | |") if rows else "\n\nNo agent calls."
+    links = ("\n\nTranscripts: " + ", ".join(f"`{k}/`" for k in kept)) if kept else ""
+    board.write_text(f"{text}\n\n## Result\n\n{summary.strip()}{links}{table}\n", encoding="utf-8", newline="\n")
+    set_front(board, result=result)
+    return total
 
 
 def critic_block(reply, n):
@@ -197,21 +306,22 @@ def research(slug, n, task, usage, run_folder):
     return brief
 
 
+def now_iso():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
 def log_runs(slug, usage, table=LOG_TABLE):
-    """Append one row per agent call to a table in _meta/agent-runs.md (default: Content generation)."""
-    log = ROOT / "_meta" / "agent-runs.md"
-    lines = log.read_text(encoding="utf-8").splitlines() if log.is_file() else []
-    i = next((k + 1 for k, line in enumerate(lines) if line.startswith(table)), None)
-    if i is None:
-        print(f"warning: no '{table}' table in _meta/agent-runs.md; run not logged")
-        return
-    while i < len(lines) and not lines[i].startswith("|"):
-        i += 1
-    while i < len(lines) and lines[i].startswith("|"):
-        i += 1
-    rows = [f"| {NAMES[agent]}: {slug}, round {n} ({model_of(agent)}) | post-ICM | {u['tokens']:,} | "
-            f"{fmt(u.get('final'))} | {u['turns']} | {u['seconds']} s |" for agent, n, u in usage]
-    log.write_text("\n".join(lines[:i] + rows + lines[i:]) + "\n", encoding="utf-8", newline="\n")
+    """Add one row per agent call to the run log, _meta/agent-runs.csv (default table: Content generation)."""
+    for agent, n, u in usage:
+        start, end = runlog.parse_ts(u.get("start")), runlog.parse_ts(u.get("end"))
+        f0, w0 = runlog.usage_at(start, ROOT)
+        f1, w1 = runlog.usage_at(end, ROOT, after=True)
+        runlog.upsert({"start": u.get("start"), "end": u.get("end"), "table": table,
+                       "run": f"{slug}, round {n}", "agent": NAMES[agent], "phase": "post-ICM",
+                       "model": u.get("model") or model_of(agent), "final_context": u.get("final"),
+                       "total_processed": u["tokens"], "turns": u["turns"], "duration_s": u["seconds"],
+                       "five_hour_before": f0, "five_hour_after": f1, "seven_day_before": w0,
+                       "seven_day_after": w1}, ROOT)
 
 
 def fmt(n):
@@ -220,15 +330,8 @@ def fmt(n):
 
 def finish(board, slug, usage, result, summary, run_folder=None):
     """Write the Result section, mark the blackboard, log the calls and rebuild the indexes."""
-    rows = "\n".join(f"| {NAMES[agent]}, round {n} | {u['tokens']:,} | {fmt(u.get('final'))} | {u['turns']} | "
-                     f"{u['seconds']} s |" for agent, n, u in usage)
-    total = sum(u["tokens"] for *_, u in usage)
-    kept = (f"\n\nTranscripts: `{run_folder.relative_to(ROOT).as_posix()}/`"
-            if run_folder and run_folder.is_dir() else "")
-    append(board, f"\n## Result\n\n{summary}{kept}\n\n| Call | Total processed | Final context | Turns | Duration |\n"
-                  f"|---|---|---|---|---|\n{rows}\n| **Total** | **{total:,}** | | | |\n")
-    text = board.read_text(encoding="utf-8")
-    board.write_text(text.replace("result: running", f"result: {result}", 1), encoding="utf-8", newline="\n")
+    total = finish_board(board, [(f"{NAMES[agent]}, round {n}", u) for agent, n, u in usage], result, summary,
+                         run_folder)
     log_runs(slug, usage)
     folders = ["content"] + (["research"] if (ROOT / "research").is_dir() else [])
     subprocess.run([sys.executable, "-I", str(ROOT / "_tools" / "index.py"), *folders], cwd=ROOT)
@@ -277,17 +380,17 @@ def main(argv=None):
             while (run_dir / f"blackboard-failed-{n}.md").exists():
                 n += 1
             board.rename(run_dir / f"blackboard-failed-{n}.md")  # keep the failed run as history
+            for old in (calls_file(board), run_dir / "blackboard-round-1.md"):
+                if old.is_file():
+                    old.rename(run_dir / old.name.replace("blackboard", f"blackboard-failed-{n}"))
         request = a.request
-    use_research = a.type == "journal" and not a.no_research
+    set_live_tag(f"content {a.slug}")
+    use_research =a.type == "journal" and not a.no_research
     rel_board = board.relative_to(ROOT).as_posix()
     run_folder = ROOT / RUNS / f"{datetime.date.today()}-{a.slug}-{board.stem.replace('blackboard', 'run')}"
     run_dir.mkdir(parents=True, exist_ok=True)
-    board.write_text(
-        f"---\nslug: {a.slug}\ntype: {a.type}\nstarted: {datetime.date.today()}\n"
-        f"max_rounds: {a.max_rounds}\nmax_tokens: {a.max_tokens}\nresult: running\n---\n"
-        f"# Blackboard: {a.slug}\n\nThe shared record of this run. The script writes every section and "
-        f"hands each agent only the slice it needs; no agent reads this file.\n\n"
-        f"## Request\n{request}\n", encoding="utf-8", newline="\n")
+    board_start(board, {"slug": a.slug, "type": a.type, "started": datetime.date.today(),
+                        "max_rounds": a.max_rounds, "max_tokens": a.max_tokens}, f"Blackboard: {a.slug}", request)
 
     usage, result, edited, v, n, block = [], "needs-review", False, None, 0, ""
     try:
@@ -299,6 +402,7 @@ def main(argv=None):
             append(board, f"\n## Research\n\nBrief: `{research(a.slug, 1, task, usage, run_folder).relative_to(ROOT).as_posix()}`\n")
 
         for n in range(1, a.max_rounds + 1):
+            set_live_tag(f"content {a.slug} · r{n}")
             rows = fail_rows(block) if n > 1 else []
             if n > 1 and use_research:
                 asks = [r for r in rows if "Facts" in r and ASKS_FOR_SOURCE.search(r)]
@@ -335,7 +439,10 @@ def main(argv=None):
             text = draft.read_text(encoding="utf-8").strip()
             if n == 1:
                 section = f"### Draft ({'William' if task else 'unchanged from the previous run'}), round 1"
-                append(board, f"\n## Round 1\n\n{section}\n\n~~~~markdown\n{text}\n~~~~\n")
+                snap = run_dir / f"{board.stem}-round-1.md"   # the draft file changes each round: keep round 1
+                snap.write_text(text + "\n", encoding="utf-8", newline="\n")
+                append(board, f"\n## Round 1\n\n{section}\n\nThe full draft: `{snap.relative_to(ROOT).as_posix()}` "
+                              f"({len(text.splitlines())} lines). Later rounds show only the changes.\n")
                 shown = (f"Request:\n{request}\n\nThe full draft of `{rel_draft}`:\n\n~~~~markdown\n{text}\n~~~~")
             else:
                 diff = "\n".join(difflib.unified_diff(previous_text.splitlines(), text.splitlines(),

@@ -1,0 +1,28 @@
+Godot Engine v4.2.1.stable.official.b09f793f5 - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 621.01 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 3070
+ 
+PASS  no Harvest close-up root (harvest.tscn retired)
+PASS  no icon, Continue or summary at start
+PASS  MoneyLabel at start (expected $0, got $0)
+PASS  BeeCountLabel at start (expected Bees: 20, got Bees: 20)
+PASS  UpgradeButton disabled with $0
+PASS  item 7: grab_focus() did not focus the disabled UpgradeButton (focus_mode None)
+screenshot r4-0-farm-start (720, 1280) err=0
+PASS  item 7: the disabled UpgradeButton renders the disabled style (97, 87, 76) +-2 (got 97, 87, 76)
+=== round 1 ===
+PASS  round 1: 5 full frames (expected 175, got 175)
+PASS  round 1: the bucket is EMPTY (expected 0, got 0)
+PASS  round 1: fork shows at a full hive
+PASS  round 1: fork touch area at least 120 x 120
+screenshot r4-1-farm-fork-empty (720, 1280) err=0
+PASS  round 1: the fork icon floats above the hive
+PASS  round 1: the fork icon sits at its anchor's projected position
+FAIL  round 1: tapping the fork raised a frame
+FAIL  round 1: the camera is at zoom_size (expected 6.7 +- 0.05, got 20)
+FAIL  round 1: the farm UI is hidden in the zoom
+FAIL  round 1: BackButton shows
+FAIL  round 1: zoom open
+FAIL  round 1: the first frame rises first (expected 0, got -1)
+screenshot r4-2-zoom-risen-frame (720, 1280) err=0
+FAIL  round 1: frame -1 done, frame 0 rose
+FAIL  round 1: the second frame shows its rows

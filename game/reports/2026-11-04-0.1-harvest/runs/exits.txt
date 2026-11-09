@@ -1,0 +1,6 @@
+run_tests exit 0
+play_loop exit 124
+r4_measure exit 1
+snapshot_pop exit 0
+touch_windowed exit 0
+ALLDONE

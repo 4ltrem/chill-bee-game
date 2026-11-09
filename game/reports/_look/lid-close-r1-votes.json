@@ -1,0 +1,16 @@
+{
+  "question": "lid-close-r1",
+  "read": "2026-11-08",
+  "page": "https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa",
+  "votes": {
+    "Before 0% (open)": "yes",
+    "Before 40%": "yes",
+    "Before 70%": "yes",
+    "Before 90%": {"vote": "maybe", "note": "this shot doesn't appear to be clipping"},
+    "After 0% (open)": "no",
+    "After 40%": "yes",
+    "After 70%": "yes",
+    "After 90%": "yes"
+  },
+  "reading": "Open pose: before (leaning on the left side), not after (upright behind the hive). Close motion: both fine. End: must not clip; the before clip (1.7 cm into 3 walls) shows at 100%, not at 90%."
+}

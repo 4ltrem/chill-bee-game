@@ -1,5 +1,57 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "python -I \"${CLAUDE_PROJECT_DIR:-.}/_tools/statusline.py\""
+  },
+  "permissions": {
+    "allow": [
+      "Bash(python -I _tools/links.py)",
+      "Bash(python -I _tools/test_generate.py)",
+      "Bash(python -I _tools/consistency.py)",
+      "Bash(python -I _tools/test_goal_agent.py)",
+      "Bash(python -I _tools/links.py *)",
+      "Bash(python -I _tools/test_generate.py *)",
+      "Bash(python -I _tools/consistency.py *)",
+      "Bash(python -I _tools/test_goal_agent.py *)",
+      "Bash(python -I _tools/godot_run.py *)",
+      "Bash(CB_TIME_SCALE=* python -I _tools/godot_run.py *)",
+      "Bash(CB_SKIP_X1=* python -I _tools/godot_run.py *)",
+      "Bash(CB_TIME_SCALE=* CB_SKIP_X1=* python -I _tools/godot_run.py *)",
+      "Bash(CB_TIME_SCALE=6 CB_SKIP_X1=1 python -I _tools/godot_run.py *)",
+      "Bash(CB_TIME_SCALE=6 python -I _tools/godot_run.py *)",
+      "Bash(CB_SKIP_X1=1 python -I _tools/godot_run.py *)",
+      "Bash(SCENE=* OUT=* C:/Users/mtrem/Desktop/Godot_v4.2.1-stable_win64_console.exe --path game --script res://tests/render.gd)",
+      "Bash(SCENE=* OUT=* C:/Users/mtrem/Desktop/Godot_v4.2.1-stable_win64_console.exe --path game --script res://tests/render.gd *)",
+      "Bash(C:/Users/mtrem/Desktop/Godot_v4.2.1-stable_win64.exe --path game*)",
+      "Bash(C:/Users/mtrem/Desktop/Godot_v4.2.1-stable_win64_console.exe --path game*)",
+      "PowerShell(& \"C:\\Users\\mtrem\\Desktop\\Godot_v4.2.1-stable_win64.exe\" --path game*)",
+      "PowerShell(& \"C:\\Users\\mtrem\\Desktop\\Godot_v4.2.1-stable_win64_console.exe\" --path game*)"
+    ]
+  },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Agent|Workflow",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -I \"$CLAUDE_PROJECT_DIR/_tools/budget_guard.py\"",
+            "timeout": 15,
+            "statusMessage": "Checking plan usage"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell|Write|Edit|Artifact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -I \"$CLAUDE_PROJECT_DIR/_tools/guard_shell.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
     "SubagentStop": [
       {
         "hooks": [
@@ -8,6 +60,17 @@
             "command": "python -I \"$CLAUDE_PROJECT_DIR/_tools/log_subagent.py\"",
             "timeout": 30,
             "statusMessage": "Logging subagent run"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python -I \"$CLAUDE_PROJECT_DIR/_tools/log_session.py\"",
+            "timeout": 30
           }
         ]
       }

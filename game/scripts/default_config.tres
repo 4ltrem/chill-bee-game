@@ -1,0 +1,61 @@
+[gd_resource type="Resource" script_class="GameConfig" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/game_config.gd" id="1_cfg"]
+
+[resource]
+script = ExtResource("1_cfg")
+frames_per_hive = 5
+frame_jars = 2
+overflow_hives = 1
+swarm_fill_bonus_per_level = 0.15
+swarm_base_cost = 25.0
+swarm_cost_growth = 1.18
+swarm_max_level = 10
+base_seconds_per_jar = 6.0
+sale_value_per_jar = 3
+taps_per_jar = 4
+grid_cols = 5
+grid_rows = 2
+frame_scale = 2.7
+base_bee_count = 20
+bees_per_swarm_level = 3
+visual_bee_cap = 60
+centrifuge_capacity_frames = 2
+truck_capacity_jars = 10
+truck_trip_seconds = 30.0
+bottling_seconds_per_jar = 3.0
+jar_lid_seconds = 0.25
+jar_fly_seconds = 0.5
+crate_empty_jars_shown = 10
+max_tap_rate = 5.0
+hold_ramp_seconds = 1.5
+spin_impulse = 5.0
+spin_decay = 3.0
+barrel_stop_seconds = 0.6
+spin_max = 18.0
+slide_seconds = 0.3
+close_delay_seconds = 0.5
+truck_slide_distance = 25.0
+truck_slide_fraction = 0.25
+zoom_seconds = 0.6
+lid_lift_height = 0.6
+lid_lift_seconds = 0.25
+lid_drop_seconds = 0.4
+frame_rise = 0.92
+cell_fly_seconds = 0.5
+cell_fly_arc = 1.5
+pile_load_stagger_seconds = 0.03
+icon_visual_px = 88
+min_cell_px = 20
+zoom_size = 6.966
+hive_scale = 1.4
+pan_zoom_size = 9.54
+pan_margin = 0.04
+camera_pan_seconds = 1.2
+harvest_anchor_offset = -40.0
+spin_anchor_offset = -40.0
+spin_farm_visual_px = 60
+spin_zoom_offset = 80.0
+sell_anchor_offset = -40.0
+button_gap_px = 8.0
+button_screen_margin = 16.0

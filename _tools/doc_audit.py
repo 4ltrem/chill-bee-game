@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script
 import generate as g  # noqa: E402
 
 AUDITOR = "doc-auditor"
-LOG_TABLE = "### Doc audits"
+LOG_TABLE = "Doc audits"
 HISTORY = ["content/_runs", "_meta/sessions", "research", "content/*.md", "_tools/fixtures", "_meta/agent-runs.md"]
 
 
