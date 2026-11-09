@@ -4,6 +4,62 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L24 · 2026-11-08 · A commit to `main` from a worktree failed the hooks and the push hung
+- **What broke:** the first commit on a worktree from `origin/main` ran the milestone branch's pre-commit check, which calls `contract_check.py` that `main` does not have; `git push` hung over two minutes on a hidden login prompt.
+- **How noticed:** the commit was rejected and the push never returned; the designer logged in and the retry went through.
+- **Cause:** the hooks path setting points at the milestone branch's hooks; Git Credential Manager prompts non-interactively.
+- **How fixed:** `-c core.hooksPath=.githooks` on the commit, `GCM_INTERACTIVE=never` on the push.
+- **Prevention:** memory `commit-to-main` only; not scripted (Still open).
+
+## L23 · 2026-11-08 · `/goal finish 0.1.4` was judged unmet 16 times
+- **What broke:** with the code done and green, the goal judge kept sending the session back for the designer's play-test, web check and itch upload.
+- **How noticed:** the `/goal` vs `goal_agent.py` comparison (D195).
+- **Cause:** a vague condition holding steps only the designer can do.
+- **How fixed:** a `/goal` condition holds only what the agent can make true (written in `GOAL_AGENT.md`).
+- **Prevention:** a rule in `GOAL_AGENT.md` and backlog item 8.
+
+## L22 · 2026-11-08 · Dev mode's saved snapshot overrode new defaults
+- **What broke:** the designer saw small combs in a current build ("an old version").
+- **How noticed:** the designer's play-test; `dev_config.tres` held `frame_scale = 0.85` against the new 2.7.
+- **Cause:** the Dev panel saved every value and laid the snapshot over the defaults on launch; tests and shots don't read it, so they looked right.
+- **How fixed:** the file renamed; Dev mode saves only edited values (item 16, `b385d39`).
+- **Prevention:** the Dev save test.
+
+## L21 · 2026-11-08 · The orchestrator and Quinn ran scripts themselves
+- **What broke:** the main session ran the unit suite and lid test in its own Bash, and Quinn's briefs had him run his own tests (974k tokens, 38 turns); Rex had no script for the lid shots.
+- **How noticed:** the designer: "rex is supposed to run scripts".
+- **Cause:** a memory-only rule the orchestrator and briefs didn't follow, and no `lid` suite.
+- **How fixed:** Quinn's briefs no longer say to run tests (`b9f9347`); `godot_run.py lid` and `fixture` suites.
+- **Prevention:** the brief assertion in `test_goal_agent`; for the orchestrator a memory rule only (Still open).
+
+## L20 · 2026-11-08 · Lid vote cards with spaces, % and brackets in their IDs saved no votes
+- **What broke:** the designer voted on the lid section but no votes were stored.
+- **How noticed:** "read my votes" found none for the lid.
+- **Cause:** card IDs like `lid-close-r1-Before 0% (open)`; the store silently rejects spaces, `%` and brackets.
+- **How fixed:** `compare_page.py` turns every card ID into a safe one; the page was republished and the designer voted again.
+- **Prevention:** the safe-ID conversion in `_tools/compare_page.py`.
+
+## L19 · 2026-11-08 · The goal agent skipped real-time tests, so Quinn rewrote a test that never ran
+- **What broke:** Quinn spent three rounds (about 800k tokens) on T14.5, which was red from the start.
+- **How noticed:** the designer: "800k wasted".
+- **Cause:** the goal agent's routine run uses 6x speed, which skips real-time tests.
+- **How fixed:** a real-time bug test also runs alone at normal speed for the fail-first check; a single-test log no longer counts as a suite run (`b4410cf`, `320fdb7`, `eb134fe`).
+- **Prevention:** `test_goal_agent` cases.
+
+## L18 · 2026-11-08 · A lid "fix" was logged as done with no code change
+- **What broke:** the handoff said "lid fixed (designer confirmed)", but no lid code changed; T14.3 passed on the clipping build, and positional test IDs let the goal agent credit a new line from a passing sibling.
+- **How noticed:** the designer played the exe and the lid still clipped: "a fix should always be committed".
+- **Cause:** nothing checked that a "shown failing" test failed before the fix, nor that a bug fix changed code; the handoff was written from memory, not from git.
+- **How fixed:** fail-first gate, code-change rule, run lock (D172); built-lines rule for positional IDs (`fcde905`); the lid test redone in `lid_shots.gd`.
+- **Prevention:** the goal-agent gates and `test_goal_agent`; memory `fix-needs-commit`. Related: L1, L9.
+
+## L17 · 2026-11-08 · Test runs at full real-time speed, one test cut off by the 15-minute cap
+- **What broke:** three `godot_run.py unit start` runs took 14m52s–15m each; the third hit `godot_run`'s 15-minute timeout and never ran `t_paused_crank_never_finishes_in_farm_view` (177 of 178 reported).
+- **How noticed:** Rex reported TIMEOUT; the designer asked "why does it take 15 minutes".
+- **Cause:** the orchestrator briefed Rex with the plain command, without the fast settings approved on 2026-11-06 (`CB_TIME_SCALE=6 CB_SKIP_X1=1` for checkpoints, `CB_ONLY` while iterating); the suite has grown to about 15 minutes at real time.
+- **How fixed:** the cut-off test re-ran alone with `CB_ONLY` (pass); the rule is now the `test-speed-fixes` memory's index line.
+- **Prevention:** a memory rule only, so it can be missed again; a code guard (fast settings as `godot_run.py`'s default, plain speed opt-in) is listed under Still open.
+
 ## L16 · 2026-11-08 · A mutation passed because button placement depends on order
 - **What broke:** the item 20 mutation (Harvest treats Spin as a blocker again) survived `t_harvest_holds_anchor_spin_below`.
 - **How noticed:** Rex's `mutate.py` run reported MISSED.

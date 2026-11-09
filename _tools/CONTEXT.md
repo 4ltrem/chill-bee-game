@@ -31,6 +31,6 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | Usage | `runlog.py` | keeps the run log (`_meta/agent-runs.csv`) and calibrates usage |
 | Usage | `log_subagent.py`, `log_session.py` | SubagentStop and Stop hooks that log subagents and the orchestrator |
 | Usage | `statusline.py` | saves plan-usage readings |
-| Usage | `budget_guard.py` | PreToolUse hook on Agent/Workflow: blocks a new agent when its largest logged cost would take the 5-hour window past 95%, at 95% of the week, or (Bob, Patricia, Quinn) when the week runs 10 points ahead of pace |
+| Usage | `budget_guard.py` | PreToolUse hook on Agent/Workflow: blocks a new agent when its average logged cost (`budget_guard.py --costs` lists them) would take the 5-hour window past 95%, at 95% of the week, or (heavy agents: 10% or more on average, today general-purpose and Workflow) when the week runs 10 points ahead of pace |
 | Rules | `guard_shell.py` | PreToolUse hook on Bash/PowerShell/Write/Edit/Artifact: refuses inline interpreter code, in-place and whole-file rewrites, `cd`/absolute repo paths, writes outside the repo, and any votes page that isn't the one Design Votes artifact |
 | End of day | `export_session.py`, `decision_page.py` | serve the end-of-day routine |

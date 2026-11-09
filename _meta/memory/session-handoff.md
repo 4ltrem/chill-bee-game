@@ -1,32 +1,33 @@
 ---
 name: session-handoff
-description: "Where work stands (2026-11-08, night): Quinn's interaction checklist built and committed (c2bfdc5); Patricia/Bob lid+comb brief still waits for the 5-hour reset; end-of-day not run; read first"
+description: "Where work stands (2026-11-08, 22:55): 0.1.4 items 1-22 + later-fix 1 committed (044f59b), unit 178/178; both builds re-exported from 044f59b; waits on the designer's play-test and itch upload; end-of-day not run; read first"
 metadata:
   node_type: memory
   type: project
-  originSessionId: 472fd463-d58d-41f5-abb3-fb73c957a854
-  modified: 2026-11-08T23:56:01.057Z
+  originSessionId: 4ccf1614-06de-4d77-a86f-48a1fbf341b4
+  modified: 2026-11-09T04:07:43.231Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
 
-**Setup:** terminal `claude` CLI; main folder on `milestone/0.1.4`, no worktrees. Last commit `c2bfdc5` (checkpoint). Uncommitted, not from this session: `_meta/agent-runs.csv/.md`, `ONBOARDING.md`, `game/reports/_look/votes/`. End-of-day has NOT run for 2026-11-08 afternoon/evening/night: run it when the designer says "end of work day" ([[end-of-day-routine]]).
+**Setup:** main folder on `milestone/0.1.4`. Last commit `044f59b`. No other worktrees. Uncommitted, left for end-of-day: `_meta/agent-runs.csv/.md`, `ONBOARDING.md`, `game/reports/_look/votes/`, `game/reports/ui-compare/now/`, memory files (this one, `repo-only.md`, `commit-to-main.md`). End-of-day has NOT run for 2026-11-08 ([[end-of-day-routine]]).
 
-**Next step (designer: "wait until after the reset"):** brief Patricia, then Bob (sequentially, not in parallel), on item 14:
-- Lid: go back to the committed open pose from before the fix rounds (`e77235a^`), leaning on the left side, NOT the fix rounds' upright-behind-the-hive pose (`HiveLidSpot` at -0.7, 0.68, 110°). Either close motion is fine. Change only the end: the lid lands flat on the hive, no wall clip (before: 1.7 cm into WallXNeg/ZPos/ZNeg at 100%) and no touch on the comb tops (fix rounds: 0.5 cm at 100%). Votes: `game/reports/_look/lid-close-r1-votes.json`.
-- Combs: KEEP the fix-round comb size (designer: "the comb size looks good"): `honey_cell.tscn` radius 0.34 + 30° yaw, `honeycomb.gd` CELL_YAW and pitch 1.85, `hive_comb_view.gd` yaw line. Still to fix: cells overshoot the standing frame's top bar; uncapped (bright) cells render on the open lid's face while scraping (`game/reports/ui-compare/now/4-zoom-scraping.png`).
-- Regression: `t_icons_above_props` (ForkIcon within 40 px of hive centre in the first zoom).
-- After: Rex runs `godot_run.py unit` and `godot_run.py lid`; compare shots before "done" ([[look-before-done]]).
-- Last unit run (17:06): 151 passed, 6 failed (3 lid open-pose tests, 2 comb overshoot, ForkIcon).
+**0.1.4 state:** spec items 1-22 built; last commit `044f59b`; unit 178/178 (full run `20261108-222553` reached 177 before the 15-min cap, the cut-off test passed alone in `20261108-224135`). Both builds re-exported from `044f59b` (~22:50). Next test runs: use the fast env vars ([[test-speed-fixes]]).
+- Item 19: lowered frames start empty; overflow pours back at the fill rate on top of production (orchestrator default, GDD silent; designer may overrule).
+- Item 20 (designer: "Spin moves down"): Harvest holds its lid anchor; Spin yields down by `button_gap_px` (8); Spin's `process_priority` 1; a hidden Harvest (second stop) is not a blocker.
+- Item 21: the truck loads waiting jars whenever it is home with room.
+- Learnings L15 (raw tabs in mutations.json, now a validity test) and L16 (order-dependent nudge: test both update orders).
+- Item 14 (`d8cefc8`): lid back to the voted open pose, closes with no clip; combs fit the frame (`hex_cell_mesh.gd`).
+- Item 16: Dev mode saves only edited values to `user://dev_config.json`; the old `dev_config.tres` is ignored (the designer's stale one renamed to `dev_config.old.tres` in `%APPDATA%/Godot/app_userdata/Chill Bee Game/`).
+- Item 17: cell hitbox = thin collider (r 0.29, h 0.1 in `honey_cell.tscn`) scaled by `frame_scale` with the mesh.
+- Item 18: Dev panel opens on the physical backtick and from `DevButton` (left edge, 8,600, 80x80); the HUD overlap test skips "dev" names, so `t_dev_button_clear_of_hud` checks it.
 
-**Shots:** `game/reports/_look/lid-before/` (before fix rounds) and `lid-now/` (fix rounds), contact sheets `before-close.png` / `now-close.png`; Design Votes section "Lid close: before or after?" (version 15).
+**Later fixes ALL DONE (2026-11-08 ~22:50):** fix 1 centrifuge text only on the spin screen (`b810f31`); item 22 Spin 60 px in the farm view, +80 px in the first zoom (Design Votes spin-r1: C; `044f59b`); unit 178/178. Both builds re-exported from `044f59b` (exe + `game/builds/chill-bee-game-0.1.4-web.zip`). Old note: Spin smaller in the farm view and lower in the first zoom (both against item 2's rules; sizes/offsets go to Design Votes).
 
-**Built this session (`c2bfdc5`): Quinn's interaction checklist.** Every Quinn test brief now carries `INTERACTION_CHECKLIST` (`_tools/goal_agent.py`): for anything the player starts that keeps running, one sequence test through real input: start (and not where the spec rules it out); leave mid-way by every exit (Back, zoom out, another panel, app pause), where the player's input stops counting but anything automatic (loads, pours, whatever an owned automation upgrade runs, e.g. the motor) keeps going and the test asserts it finished; come back; do it twice. One-tap actions get only "twice". Two mutations per sequence test (leave, twice). Spec silent on leaving, coming back, or whether a step goes on by itself → Quinn asks, the orchestrator brings it to the designer and writes the answer into the spec ([[spec-consistency]]). Also in `qa-build-engineer.md`, `game/CONTEXT.md` Process 2; asserted in `test_goal_agent.py` (34/34 OK). Choices: `_meta/drafts/0.1.4/quinn-interaction-checklist.md`. Not yet used by a real Quinn run.
+**Waiting on the designer (A5 due 11/15):** play both builds (comb hitbox, Dev button on web), then upload the web zip to itch and submit the A5 link ([[itch-upload-rule]], [[demo-link-submissions]]). Local web check: `python -I _tools/build.py 0.1.4 --serve 8060` via Rex (stop it after; the designer asked for it off).
 
-**Loop fixes (committed in `3bb2012`, see `_meta/learnings.md` L1, L11-L14):** turn cap counted from the transcript; transcripts no longer overwritten; one code owner per fix round; `scope` check; keep tests; `mutate.py` baseline; `_tools/checkpoint.py`. Still approved, not built: `live.json` for script steps + `_tools/watch.py` + side pane; web smoke real-time wait.
+**Tools changed this session:** budget guard uses average agent cost (`--costs`), heavy line stays 10; `godot_run.py fixture` suite; `build.py --serve`. Reads outside the repo allowed ([[repo-only]]).
 
-**A5 (due 11/15):** the `720d42d` exe/web zip exist; web smoke shot was black, so the designer browser-checks before the itch upload ([[itch-upload-rule]], [[course-milestones]]).
+**Rules:** all scripts go to Rex ([[rex-runs-scripts]]); don't kill the designer's running game (wait for it to close, then export); [[fix-needs-commit]]; [[look-before-done]]; [[edit-lines-only]].
 
-**Rules:** all scripts incl. shot follow-ups go to Rex ([[rex-runs-scripts]]); [[fix-needs-commit]]; [[prefer-bash]]; [[edit-lines-only]] (no in-place sed); Bash paths repo-relative (the repo-only hook refuses absolute repo paths and `cd`); run Python tests by path (`python -I _tools/test_x.py`), not `-m unittest <path>`.
-
-**How to apply:** keep CLI replies short and long material in files ([[cost-rules]]). At the end of each session, rewrite this file to the new current state.
+**How to apply:** keep CLI replies short ([[cost-rules]]). At the end of each session, rewrite this file to the new current state.
