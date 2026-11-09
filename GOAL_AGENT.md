@@ -101,6 +101,32 @@ What the order shows:
 5. **Second run, before starting:** the orchestrator removed C1 and C7 from `ledger.json` so the play-test rebuilds would run. It also marked the node handoff's two C5 questions answered (round 9 variant a) and fixed four unit tests and the play suite for the Round 8 offsets (`578b761`).
 6. **Second run, to review:** Bob never saw his scenes. The render command starts with environment variables (`SCENE=… OUT=…`), and the permission check blocked it in C10 and in C5. C1, C8, C9, C10 and C5 are all checked by tests and the contract only, with no shot. Quinn's test lines and `ui_shots.py` have to cover that.
 
+## Compared with Claude Code's `/goal`
+
+_From the finished session's transcript (session `4ccf1614`, 2026-11-08, 2 h 26 min, commits `b385d39` and `948a49e`)._
+
+On the evening of 2026-11-08 the designer ran the same work, finishing 0.1.4, a second way: Claude Code's native `/goal finish 0.1.4`. The same roster did the building. Only the orchestrator was different.
+
+**How `/goal` works.** It installs a session-scoped Stop hook that holds the condition in plain language. The main session works as usual. Each time it tries to stop, a judge model reads the transcript and either lets it stop or sends it back with a reason ("the last unit run … still shows 6 failures"). The session called the roster as ordinary subagents: Rex 42 times, Patricia 15, Quinn 10 and Bob 2. It used SendMessage 20 times to continue an agent that still had its context.
+
+**What happened.** The session built spec items 14 to 21 to green (unit 178/178) in two checkpoint commits. Two goals were set:
+- **`finish 0.1.4`: judged unmet 16 times, then cleared by the designer.** After the code was done, the judge kept refusing because "finish" also covered the designer's play-test, the web check and the itch upload. The agent couldn't do any of those. Claude Code deferred the check for 30 and then 60 minutes, paused the goal ("goal checks kept finding it unmet"), and waited for a message.
+- **`feedback for 0.1.4 implemented and bugs fixed`: met on its first check.** The judge cited the play-test items 19–21, the code that fixed them and Quinn's passing tests.
+
+The lesson: a `/goal` condition has to be something the agent can make true on its own. A condition that includes a human step loops until it is cleared.
+
+| | `/goal` (native) | `goal_agent.py` |
+|---|---|---|
+| Seeing what runs | Subagents show in the agent list, and the designer can talk to the session mid-run | Headless `claude -p` runs the designer can't see |
+| Planning | The model's judgment, which bends to whatever comes up | `parse_spec` → `gaps` → `priority_score`: tested code that spends no tokens and gives the same answer every time |
+| Context | One long context that keeps growing, plus agents it can continue | A fresh agent for every step, briefed only with its spec slice |
+| Done means | A judge reading the transcript; it checked an old `unit.log` and ran no check of its own | Checkable evidence: config keys, node names, tests passing, the ledger |
+| Getting stuck | When the budget guard blocked it, it repeated "stuck at the same step" until the designer stepped in. A condition with a human step in it ("finish") was judged unmet 16 times | Pauses cleanly; running it again resumes |
+| Records | The transcript only | A blackboard, briefs, a ledger, checkpoint commits and run-log rows |
+| Cost record | The orchestrator's context is paid on every turn and is not logged in `agent-runs.csv` | Every call is logged per agent; fix rounds are capped at 15 turns |
+
+**What it shows.** The designer found `/goal` more intuitive, because one session sees everything and can be steered. What it lacks is what this assignment asks for: a reasoning layer that can be checked. It has no scored order, it can't be reproduced, and its stop test is a model reading a transcript. Next step: run both together. `/goal` stays the outer loop, and its condition is something that can be checked, such as "`goal_agent.py SPEC --plan` reports nothing left to build and the latest unit run is green". The script's gaps decide when the work is done, and the designer keeps the native, visible experience.
+
 ## Cost
 
 _The whole run so far, from the blackboard and `_meta/agent-runs.csv` (table "Goal agent")._

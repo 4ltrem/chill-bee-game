@@ -31,4 +31,7 @@ description: Build milestones and version numbers for Chill Bee Game, fitted to 
 - M2: built 2026-11-05 on `milestone/m2` from `game/specs/m2-style-loop.md` and the approved `STYLE_GUIDE.md`; write-up `STYLE_LOOP.md` approved by the designer (2026-11-05). Each assignment is submitted as a demo link, resubmitted after every milestone.
 - M2 and M3 each need a new agent or tool (Martin for a style critic; a `_tools/` planner for A5); scoped when started.
 - Budget: M1 and M4 are the costliest (Patricia, Bob, Quinn); check `_meta/agent-runs.md` daily.
+- Assignment 3 grader's next steps (designer, 2026-11-08), scheduled:
+  - **M3:** a cap-stop summary in `_tools/generate.py`. When a run stops at the token cap, the blackboard summary and the console line list the last round's open FAIL rows, the owner of each (William or Ruth) and the exact command to re-run. It is small tooling in the same scripts that M3's goal agent uses.
+  - **M4 (0.2.x):** one approved Bee Journal entry (EN/FR) exported to Godot's translation CSV, loaded by `TranslationServer` and shown on one in-game screen, so "passed" becomes "in-game". This counts toward A7 deliverable 2 (engine integration).
 - Onboarding stays deferred (designer); M5's hint is a stopgap, not the onboarding script.

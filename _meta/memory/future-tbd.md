@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 472d224a-a84f-4a66-bfff-00b669226a91
-  modified: 2026-11-08T23:43:11.035Z
+  modified: 2026-11-09T02:27:18.524Z
 ---
 
 TBD items the designer named on 2026-11-01, not started:
@@ -37,6 +37,23 @@ TBD items the designer named on 2026-11-01, not started:
 6. **Onboarding guide** (deferred 2026-11-07, "not a priority rn"). `ONBOARDING.md` draft at the repo root, share
    link https://claude.ai/claude-code/onboard/34Mn5DdRy4BS (short_code 34Mn5DdRy4BS). Still to do: confirm the team
    name, fill Team Tips and Get Started, then refresh the link with ShareOnboardingGuide mode=update.
+
+7. **Assignment 3 grader's next steps** (feedback received 2026-11-08; grade comment: "Solid, honest work").
+   SCHEDULED by the designer 2026-11-08 in MILESTONES.md Open: (b) in M3, (a) in M4 (0.2.x, A7 engine integration).
+   (a) Wire one approved content file (e.g. a Bee Journal entry, EN/FR) into Godot's own string format
+   (a `.csv`/`.po` translation file loaded by `TranslationServer`) so "passed" becomes "in-game".
+   (b) Cap-stop summary: `generate.py` (~line 492) only says "Still FAIL ... stopped at the token cap"; add the
+   last round's open FAIL rows, their owner (William or Ruth) and the exact re-queue command to the blackboard
+   summary and the console line.
+
+8. **`/goal` + `goal_agent.py` together** (designer, 2026-11-08, after running `/goal finish 0.1.4` in a parallel
+   session and finding it more intuitive). Use native `/goal` as the outer loop with a checkable condition, e.g.
+   "`python -I _tools/goal_agent.py SPEC --plan` reports nothing left to build and the latest unit run is green", so the
+   script's gaps decide when the work is done. Pitfalls seen in that run: the judge reads only the transcript (it trusted an
+   old unit.log), and it repeated "stuck at the same step" when budget_guard blocked it, so the condition should allow
+   "paused by budget_guard" as a stop. Final run: "finish 0.1.4" was judged unmet 16× (it needed the designer's play-test
+   and the itch upload), while "feedback for 0.1.4 implemented and bugs fixed" was met on its first check, so never put a
+   human step in the condition. Comparison written up in GOAL_AGENT.md "Compared with Claude Code's `/goal`".
 
 **Why:** the designer keeps every session for analysis and wants memory to work across machines.
 
