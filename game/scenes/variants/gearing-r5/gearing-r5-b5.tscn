@@ -1,0 +1,491 @@
+[gd_scene load_steps=29 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/props/jar.tscn" id="2_jar"]
+[ext_resource type="Material" path="res://materials/steel.tres" id="m_steel"]
+[ext_resource type="Material" path="res://materials/steel_dark.tres" id="m_dark"]
+[ext_resource type="Material" path="res://materials/glass.tres" id="m_glass"]
+[ext_resource type="Material" path="res://materials/honey_level.tres" id="m_honey"]
+[ext_resource type="Material" path="res://materials/crank_arm.tres" id="m_arm"]
+[ext_resource type="Material" path="res://materials/crank_handle.tres" id="m_handle"]
+[ext_resource type="Material" path="res://materials/spigot.tres" id="m_spigot"]
+
+[sub_resource type="CylinderMesh" id="Mesh_base"]
+material = ExtResource("m_steel")
+top_radius = 1.1
+bottom_radius = 1.1
+height = 0.12
+
+[sub_resource type="CylinderMesh" id="Mesh_bucket"]
+material = ExtResource("m_glass")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 1.4
+cap_top = false
+
+[sub_resource type="CylinderMesh" id="Mesh_honey"]
+material = ExtResource("m_honey")
+top_radius = 0.9
+bottom_radius = 0.9
+height = 1.0
+
+[sub_resource type="CylinderMesh" id="Mesh_lid"]
+material = ExtResource("m_dark")
+top_radius = 1.05
+bottom_radius = 1.05
+height = 0.15
+
+[sub_resource type="CylinderMesh" id="Mesh_spigot"]
+material = ExtResource("m_spigot")
+top_radius = 0.12
+bottom_radius = 0.12
+height = 0.5
+
+[sub_resource type="BoxMesh" id="Mesh_arm"]
+material = ExtResource("m_arm")
+size = Vector3(1, 0.12, 0.14)
+
+[sub_resource type="BoxMesh" id="Mesh_handle"]
+material = ExtResource("m_handle")
+size = Vector3(0.18, 0.4, 0.18)
+
+[sub_resource type="CylinderMesh" id="Mesh_gt_hub"]
+material = ExtResource("m_dark")
+top_radius = 0.06
+bottom_radius = 0.06
+height = 0.05
+
+[sub_resource type="CylinderMesh" id="Mesh_gt_disc1"]
+material = ExtResource("m_steel")
+top_radius = 0.28
+bottom_radius = 0.28
+height = 0.1
+
+[sub_resource type="BoxMesh" id="Mesh_gt_tooth1"]
+material = ExtResource("m_steel")
+size = Vector3(0.08, 0.08, 0.055)
+
+[sub_resource type="CylinderMesh" id="Mesh_gt_disc2"]
+material = ExtResource("m_steel")
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.1
+
+[sub_resource type="BoxMesh" id="Mesh_gt_tooth2"]
+material = ExtResource("m_steel")
+size = Vector3(0.08, 0.08, 0.0554)
+
+[sub_resource type="CylinderMesh" id="Mesh_gt_disc3"]
+material = ExtResource("m_steel")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 0.1
+
+[sub_resource type="BoxMesh" id="Mesh_gt_tooth3"]
+material = ExtResource("m_steel")
+size = Vector3(0.08, 0.08, 0.0571)
+
+[sub_resource type="CylinderMesh" id="Mesh_gt_disc4"]
+material = ExtResource("m_steel")
+top_radius = 0.17
+bottom_radius = 0.17
+height = 0.1
+
+[sub_resource type="BoxMesh" id="Mesh_gt_tooth4"]
+material = ExtResource("m_steel")
+size = Vector3(0.08, 0.08, 0.0534)
+
+[sub_resource type="CylinderMesh" id="Mesh_gt_disc5"]
+material = ExtResource("m_steel")
+top_radius = 0.14
+bottom_radius = 0.14
+height = 0.1
+
+[sub_resource type="BoxMesh" id="Mesh_gt_tooth5"]
+material = ExtResource("m_steel")
+size = Vector3(0.08, 0.08, 0.055)
+
+[sub_resource type="CylinderMesh" id="Mesh_gt_disc6"]
+material = ExtResource("m_steel")
+top_radius = 0.11
+bottom_radius = 0.11
+height = 0.1
+
+[sub_resource type="BoxMesh" id="Mesh_gt_tooth6"]
+material = ExtResource("m_steel")
+size = Vector3(0.08, 0.08, 0.0576)
+
+[node name="Centrifuge" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("Mesh_base")
+
+[node name="Spinner" type="Node3D" parent="."]
+
+[node name="Bucket" type="MeshInstance3D" parent="Spinner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+mesh = SubResource("Mesh_bucket")
+
+[node name="HoneyLevel" type="MeshInstance3D" parent="Spinner"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.67, 0)
+mesh = SubResource("Mesh_honey")
+visible = false
+
+[node name="Lid" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.625, 0)
+
+[node name="LidDisc" type="MeshInstance3D" parent="Lid"]
+mesh = SubResource("Mesh_lid")
+
+[node name="Crank" type="Node3D" parent="Lid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.095, 0)
+
+[node name="CrankArm" type="MeshInstance3D" parent="Lid/Crank"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.14, 0)
+mesh = SubResource("Mesh_arm")
+
+[node name="CrankHandle" type="MeshInstance3D" parent="Lid/Crank"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 0.32, 0)
+mesh = SubResource("Mesh_handle")
+
+[node name="Gears" type="Node3D" parent="Lid"]
+
+[node name="Gear1" type="Node3D" parent="Lid/Gears"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
+
+[node name="Disc" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+mesh = SubResource("Mesh_gt_disc1")
+
+[node name="Hub" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
+mesh = SubResource("Mesh_gt_hub")
+
+[node name="Tooth1" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0.31, 0, 0)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth2" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(0.92388, 0, 0.38268, 0, 1, 0, -0.38268, 0, 0.92388, 0.2864, 0, 0.11863)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth3" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(0.70711, 0, 0.70711, 0, 1, 0, -0.70711, 0, 0.70711, 0.2192, 0, 0.2192)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth4" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(0.38268, 0, 0.92388, 0, 1, 0, -0.92388, 0, 0.38268, 0.11863, 0, 0.2864)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth5" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.31)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth6" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(-0.38268, 0, 0.92388, 0, 1, 0, -0.92388, 0, -0.38268, -0.11863, 0, 0.2864)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth7" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(-0.70711, 0, 0.70711, 0, 1, 0, -0.70711, 0, -0.70711, -0.2192, 0, 0.2192)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth8" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(-0.92388, 0, 0.38268, 0, 1, 0, -0.38268, 0, -0.92388, -0.2864, 0, 0.11863)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth9" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -0.31, 0, 0)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth10" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(-0.92388, 0, -0.38268, 0, 1, 0, 0.38268, 0, -0.92388, -0.2864, 0, -0.11863)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth11" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(-0.70711, 0, -0.70711, 0, 1, 0, 0.70711, 0, -0.70711, -0.2192, 0, -0.2192)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth12" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(-0.38268, 0, -0.92388, 0, 1, 0, 0.92388, 0, -0.38268, -0.11863, 0, -0.2864)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth13" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -0, 0, -0.31)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth14" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(0.38268, 0, -0.92388, 0, 1, 0, 0.92388, 0, 0.38268, 0.11863, 0, -0.2864)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth15" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(0.70711, 0, -0.70711, 0, 1, 0, 0.70711, 0, 0.70711, 0.2192, 0, -0.2192)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Tooth16" type="MeshInstance3D" parent="Lid/Gears/Gear1"]
+transform = Transform3D(0.92388, 0, -0.38268, 0, 1, 0, 0.38268, 0, 0.92388, 0.2864, 0, -0.11863)
+mesh = SubResource("Mesh_gt_tooth1")
+
+[node name="Gear2" type="Node3D" parent="Lid/Gears"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0.36709, 0.125, -0.52426)
+
+[node name="Disc" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+mesh = SubResource("Mesh_gt_disc2")
+
+[node name="Hub" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
+mesh = SubResource("Mesh_gt_hub")
+
+[node name="Tooth1" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(0.98297, 0, 0.18375, 0, 1, 0, -0.18375, 0, 0.98297, 0.32438, 0, 0.06064)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth2" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(0.85022, 0, 0.52643, 0, 1, 0, -0.52643, 0, 0.85022, 0.28057, 0, 0.17372)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth3" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(0.60263, 0, 0.79802, 0, 1, 0, -0.79802, 0, 0.60263, 0.19887, 0, 0.26335)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth4" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(0.27366, 0, 0.96183, 0, 1, 0, -0.96183, 0, 0.27366, 0.09031, 0, 0.3174)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth5" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(-0.09227, 0, 0.99573, 0, 1, 0, -0.99573, 0, -0.09227, -0.03045, 0, 0.32859)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth6" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(-0.44574, 0, 0.89516, 0, 1, 0, -0.89516, 0, -0.44574, -0.14709, 0, 0.2954)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth7" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(-0.73901, 0, 0.6737, 0, 1, 0, -0.6737, 0, -0.73901, -0.24387, 0, 0.22232)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth8" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(-0.93247, 0, 0.36124, 0, 1, 0, -0.36124, 0, -0.93247, -0.30772, 0, 0.11921)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth9" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -0.33, 0, 0)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth10" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(-0.93247, 0, -0.36124, 0, 1, 0, 0.36124, 0, -0.93247, -0.30772, 0, -0.11921)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth11" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(-0.73901, 0, -0.6737, 0, 1, 0, 0.6737, 0, -0.73901, -0.24387, 0, -0.22232)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth12" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(-0.44574, 0, -0.89516, 0, 1, 0, 0.89516, 0, -0.44574, -0.14709, 0, -0.2954)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth13" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(-0.09227, 0, -0.99573, 0, 1, 0, 0.99573, 0, -0.09227, -0.03045, 0, -0.32859)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth14" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(0.27366, 0, -0.96183, 0, 1, 0, 0.96183, 0, 0.27366, 0.09031, 0, -0.3174)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth15" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(0.60263, 0, -0.79802, 0, 1, 0, 0.79802, 0, 0.60263, 0.19887, 0, -0.26335)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth16" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(0.85022, 0, -0.52643, 0, 1, 0, 0.52643, 0, 0.85022, 0.28057, 0, -0.17372)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Tooth17" type="MeshInstance3D" parent="Lid/Gears/Gear2"]
+transform = Transform3D(0.98297, 0, -0.18375, 0, 1, 0, 0.18375, 0, 0.98297, 0.32438, 0, -0.06064)
+mesh = SubResource("Mesh_gt_tooth2")
+
+[node name="Gear3" type="Node3D" parent="Lid/Gears"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.18593, 0.125, -0.6124)
+
+[node name="Disc" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+mesh = SubResource("Mesh_gt_disc3")
+
+[node name="Hub" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
+mesh = SubResource("Mesh_gt_hub")
+
+[node name="Tooth1" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0.23, 0, 0)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth2" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(0.84125, 0, 0.54064, 0, 1, 0, -0.54064, 0, 0.84125, 0.19349, 0, 0.12435)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth3" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(0.41542, 0, 0.90963, 0, 1, 0, -0.90963, 0, 0.41542, 0.09555, 0, 0.20922)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth4" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(-0.14231, 0, 0.98982, 0, 1, 0, -0.98982, 0, -0.14231, -0.03273, 0, 0.22766)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth5" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(-0.65486, 0, 0.75575, 0, 1, 0, -0.75575, 0, -0.65486, -0.15062, 0, 0.17382)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth6" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(-0.95949, 0, 0.28173, 0, 1, 0, -0.28173, 0, -0.95949, -0.22068, 0, 0.0648)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth7" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(-0.95949, 0, -0.28173, 0, 1, 0, 0.28173, 0, -0.95949, -0.22068, 0, -0.0648)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth8" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(-0.65486, 0, -0.75575, 0, 1, 0, 0.75575, 0, -0.65486, -0.15062, 0, -0.17382)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth9" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(-0.14231, 0, -0.98982, 0, 1, 0, 0.98982, 0, -0.14231, -0.03273, 0, -0.22766)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth10" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(0.41542, 0, -0.90963, 0, 1, 0, 0.90963, 0, 0.41542, 0.09555, 0, -0.20922)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Tooth11" type="MeshInstance3D" parent="Lid/Gears/Gear3"]
+transform = Transform3D(0.84125, 0, -0.54064, 0, 1, 0, 0.54064, 0, 0.84125, 0.19349, 0, -0.12435)
+mesh = SubResource("Mesh_gt_tooth3")
+
+[node name="Gear4" type="Node3D" parent="Lid/Gears"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.53151, 0.125, -0.35651)
+
+[node name="Disc" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+mesh = SubResource("Mesh_gt_disc4")
+
+[node name="Hub" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
+mesh = SubResource("Mesh_gt_hub")
+
+[node name="Tooth1" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(0.95106, 0, 0.30902, 0, 1, 0, -0.30902, 0, 0.95106, 0.19021, 0, 0.0618)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Tooth2" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(0.58779, 0, 0.80902, 0, 1, 0, -0.80902, 0, 0.58779, 0.11756, 0, 0.1618)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Tooth3" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.2)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Tooth4" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(-0.58779, 0, 0.80902, 0, 1, 0, -0.80902, 0, -0.58779, -0.11756, 0, 0.1618)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Tooth5" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(-0.95106, 0, 0.30902, 0, 1, 0, -0.30902, 0, -0.95106, -0.19021, 0, 0.0618)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Tooth6" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(-0.95106, 0, -0.30902, 0, 1, 0, 0.30902, 0, -0.95106, -0.19021, 0, -0.0618)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Tooth7" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(-0.58779, 0, -0.80902, 0, 1, 0, 0.80902, 0, -0.58779, -0.11756, 0, -0.1618)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Tooth8" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -0, 0, -0.2)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Tooth9" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(0.58779, 0, -0.80902, 0, 1, 0, 0.80902, 0, 0.58779, 0.11756, 0, -0.1618)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Tooth10" type="MeshInstance3D" parent="Lid/Gears/Gear4"]
+transform = Transform3D(0.95106, 0, -0.30902, 0, 1, 0, 0.30902, 0, 0.95106, 0.19021, 0, -0.0618)
+mesh = SubResource("Mesh_gt_tooth4")
+
+[node name="Gear5" type="Node3D" parent="Lid/Gears"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.63999, 0.125, -0.00277)
+
+[node name="Disc" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+mesh = SubResource("Mesh_gt_disc5")
+
+[node name="Hub" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
+mesh = SubResource("Mesh_gt_hub")
+
+[node name="Tooth1" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 0.17, 0, 0)
+mesh = SubResource("Mesh_gt_tooth5")
+
+[node name="Tooth2" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+transform = Transform3D(0.70711, 0, 0.70711, 0, 1, 0, -0.70711, 0, 0.70711, 0.12021, 0, 0.12021)
+mesh = SubResource("Mesh_gt_tooth5")
+
+[node name="Tooth3" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.17)
+mesh = SubResource("Mesh_gt_tooth5")
+
+[node name="Tooth4" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+transform = Transform3D(-0.70711, 0, 0.70711, 0, 1, 0, -0.70711, 0, -0.70711, -0.12021, 0, 0.12021)
+mesh = SubResource("Mesh_gt_tooth5")
+
+[node name="Tooth5" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, -0, 0, -1, -0.17, 0, 0)
+mesh = SubResource("Mesh_gt_tooth5")
+
+[node name="Tooth6" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+transform = Transform3D(-0.70711, 0, -0.70711, 0, 1, 0, 0.70711, 0, -0.70711, -0.12021, 0, -0.12021)
+mesh = SubResource("Mesh_gt_tooth5")
+
+[node name="Tooth7" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -0, 0, -0.17)
+mesh = SubResource("Mesh_gt_tooth5")
+
+[node name="Tooth8" type="MeshInstance3D" parent="Lid/Gears/Gear5"]
+transform = Transform3D(0.70711, 0, -0.70711, 0, 1, 0, 0.70711, 0, 0.70711, 0.12021, 0, -0.12021)
+mesh = SubResource("Mesh_gt_tooth5")
+
+[node name="Gear6" type="Node3D" parent="Lid/Gears"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, -0.56622, 0.125, 0.29832)
+
+[node name="Disc" type="MeshInstance3D" parent="Lid/Gears/Gear6"]
+mesh = SubResource("Mesh_gt_disc6")
+
+[node name="Hub" type="MeshInstance3D" parent="Lid/Gears/Gear6"]
+transform = Transform3D(1, 0, -0, 0, 1, 0, 0, 0, 1, 0, 0.075, 0)
+mesh = SubResource("Mesh_gt_hub")
+
+[node name="Tooth1" type="MeshInstance3D" parent="Lid/Gears/Gear6"]
+transform = Transform3D(0.86603, 0, 0.5, 0, 1, 0, -0.5, 0, 0.86603, 0.12124, 0, 0.07)
+mesh = SubResource("Mesh_gt_tooth6")
+
+[node name="Tooth2" type="MeshInstance3D" parent="Lid/Gears/Gear6"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0.14)
+mesh = SubResource("Mesh_gt_tooth6")
+
+[node name="Tooth3" type="MeshInstance3D" parent="Lid/Gears/Gear6"]
+transform = Transform3D(-0.86603, 0, 0.5, 0, 1, 0, -0.5, 0, -0.86603, -0.12124, 0, 0.07)
+mesh = SubResource("Mesh_gt_tooth6")
+
+[node name="Tooth4" type="MeshInstance3D" parent="Lid/Gears/Gear6"]
+transform = Transform3D(-0.86603, 0, -0.5, 0, 1, 0, 0.5, 0, -0.86603, -0.12124, 0, -0.07)
+mesh = SubResource("Mesh_gt_tooth6")
+
+[node name="Tooth5" type="MeshInstance3D" parent="Lid/Gears/Gear6"]
+transform = Transform3D(-0, 0, -1, 0, 1, 0, 1, 0, -0, -0, 0, -0.14)
+mesh = SubResource("Mesh_gt_tooth6")
+
+[node name="Tooth6" type="MeshInstance3D" parent="Lid/Gears/Gear6"]
+transform = Transform3D(0.86603, 0, -0.5, 0, 1, 0, 0.5, 0, 0.86603, 0.12124, 0, -0.07)
+mesh = SubResource("Mesh_gt_tooth6")
+
+[node name="Spigot" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.3, 1.15)
+mesh = SubResource("Mesh_spigot")
+
+[node name="SpigotJar" parent="." instance=ExtResource("2_jar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 1.5)
+visible = false

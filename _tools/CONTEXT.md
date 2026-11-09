@@ -17,6 +17,7 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | Style loop | `style_critic_check.py` | checks both evaluators against `fixtures/style/` |
 | Votes | `compare_page.py` | builds the A/B comparison and vote pages (`add --versions` for a versions vote) |
 | Votes | `model_shots.py` | renders a prop's variants and builds their vote page |
+| Votes | `gear_train.py` | generates the Centrifuge Gearing gear train (Gear1 under the crank, the rest on a ring concentric with the lid, unique tooth counts) into a centrifuge variant; refuses overhangs and overlaps |
 | Votes | `compose_variant.py` | builds a new round's variant from seen ones (graft, drop, material, move on node paths), no agent; Milo only for new shapes |
 | Votes | `pick_match.py` | renders a live prop beside the designer's picked variant (one load, `model_shots.gd --scenes`) and has Vera judge only the match; goal_agent runs it on every spec item naming a pick (`--no-agent` renders only) |
 | Votes | `ui_shots.py` | shoots the same UI moments (`game/tests/ui_compare_shots.gd`) in several worktrees for a versions vote |
