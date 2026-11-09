@@ -12,6 +12,7 @@ One command for what Quinn did by hand in every build run (about a third of his 
   4. with --smoke: serves builds/web with the COOP/COEP headers itch.io's SharedArrayBuffer option gives,
      loads it in headless Edge at 720x1280 and saves a screenshot to game/reports/_runs/smoke-VERSION.png.
      Only the page booting is checked, not input.
+`python -I _tools/build.py VERSION --serve 8060` only serves builds/web with those headers, for a real-browser check.
 Prints one line per step; exit 0 only when every step passed. Standard library only.
 """
 import argparse
@@ -114,7 +115,17 @@ def main(argv=None):
     ap.add_argument("--no-zip", action="store_true")
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--root", default=os.path.join(REPO, "game"))
+    ap.add_argument("--serve", type=int, metavar="PORT", help="only serve builds/web (itch's COOP/COEP headers) until Ctrl+C")
     args = ap.parse_args(argv)
+    if args.serve:   # the designer's real-browser check: headless Edge shows only the loading spinner (0.1.3 open item)
+        web = os.path.join(os.path.abspath(args.root), "builds", "web")
+        server = http.server.ThreadingHTTPServer(("127.0.0.1", args.serve), functools.partial(IsolatedHandler, directory=web))
+        print(f"serving {os.path.relpath(web, REPO)} at http://127.0.0.1:{args.serve}/index.html (Ctrl+C to stop)", flush=True)
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        return 0
     if not VERSION.match(args.version):
         ap.error("VERSION must look like 0.1.2")
     root = os.path.abspath(args.root)
