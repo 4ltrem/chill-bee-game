@@ -9,6 +9,7 @@ Steps run in the order given. NODE paths are relative to the root, as Godot writ
 
   --graft SRC.tscn:NODE[@PARENT]  copy NODE and its children from SRC (with the resources they use) under the
                                   same parent path, or under PARENT; a node already at that path is replaced
+  --copy NODE=NEWNAME             duplicate NODE and its children beside it, named NEWNAME (exact path, no "*")
   --drop NODE                     remove NODE and its children
   --material NODE=NAME            set material_override on each matching MeshInstance3D to materials/NAME.tres
   --move NODE=DX,DY,DZ            add to the node's local position (its transform's origin)
@@ -188,6 +189,30 @@ def graft(base, spec):
         base.nodes[idx + 1:idx + 1] = copied
 
 
+def copy(base, spec):
+    path, _, new_name = spec.rpartition("=")
+    if not new_name or "/" in new_name:
+        sys.exit(f"--copy '{spec}': use NODE=NEWNAME (a name, not a path)")
+    if path not in [n[0] for n in base.nodes]:
+        sys.exit(f"--copy: no node '{path}' in {base.name}; nothing written")
+    parent = path.rpartition("/")[0]
+    new_path = f"{parent}/{new_name}" if parent else new_name
+    if new_path in [n[0] for n in base.nodes]:
+        sys.exit(f"--copy: '{new_path}' already exists; nothing written")
+    old = base.subtree(path)
+    copied = []
+    for p, head, body in old:
+        np = new_path + p[len(path):]
+        if p == path:
+            head = head.replace(f'name="{path.rpartition("/")[2]}"', f'name="{new_name}"', 1)
+        else:
+            par = np.rpartition("/")[0]
+            head = re.sub(r'parent="[^"]*"', f'parent="{par}"', head)
+        copied.append([np, head, body])
+    idx = max(i for i, n in enumerate(base.nodes) if n[0] == path or n[0].startswith(path + "/"))
+    base.nodes[idx + 1:idx + 1] = copied
+
+
 def drop(base, pattern):
     gone = [n[0] for n in base.match(pattern, "--drop")]
     base.nodes = [n for n in base.nodes if not any(n[0] == g or n[0].startswith(g + "/") for g in gone)]
@@ -235,7 +260,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("out")
     ap.add_argument("--base", required=True)
-    for op in ("graft", "drop", "material", "move"):
+    for op in ("graft", "copy", "drop", "material", "move"):
         ap.add_argument(f"--{op}", dest=op, action=Step, default=None)
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
@@ -246,7 +271,7 @@ def main(argv=None):
         sys.exit(f"{out} exists: each round is a new file, never an overwrite")
     base = Scene((ROOT / a.base).read_text(encoding="utf-8"), a.base)
     for op, value in getattr(a, "steps", None) or []:
-        {"graft": graft, "drop": drop, "material": material, "move": move}[op](base, value)
+        {"graft": graft, "copy": copy, "drop": drop, "material": material, "move": move}[op](base, value)
     text = base.text()
     if a.dry_run:
         print(re.search(r"load_steps=\d+", text).group(0) if "load_steps" in text else "load_steps=1")

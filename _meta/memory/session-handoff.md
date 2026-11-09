@@ -5,12 +5,12 @@ metadata:
   node_type: memory
   type: project
   originSessionId: f6f4c6c0-43ee-4483-9665-cc6335d16443
-  modified: 2026-11-09T20:38:37.134Z
+  modified: 2026-11-09T20:46:23.578Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
 
-**Setup:** main folder on `milestone/0.2` (local `main` is stale at `ad1cae9`; fast-forward it before the next merge). Models session checkpointed as `7bc4316`; fork-r4 and the final decisions in the commit after it. End-of-day for 2026-11-09 has NOT run. No worktrees.
+**Setup:** main folder on `milestone/0.2` (local `main` is stale at `ad1cae9`; fast-forward it before the next merge). Models session committed as `7bc4316` and `ee9616e`. End-of-day for 2026-11-09 has NOT run. No worktrees.
 
 **0.2 models session: done (2026-11-09).** Picks (each in `game/reports/variants/<prop>-r<N>/decisions.json`):
 - Uncapping fork: `game/scenes/variants/fork-r4/fork-r4-c.tscn` (cold) and `fork-r4-c-hot.tscn` (full pulse: whole metal head, tines + crossbar + ferrule, in crank orange; the handle stays wood).
@@ -18,9 +18,9 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 - Truck flames, **one look per Faster Delivery level**: L1 `truck-flames-r3/…-l1` (exhaust pipes only), L2 `truck-flames-r1/…-a`, L3 `truck-flames-r1/…-b`, L4 `truck-flames-r3/…-l4` (decals + pipes + roof flames). Rule: no flames from the exhaust at any level.
 - Later: a "wider fork" upgrade (look `fork-r1-c`) is in README TBDs.
 
-**Next: 0.2 implementation session.** `game/specs/0.2-first-automation.md` is still **status proposed**. Write the picks into items 3–5 (item 5 changes from "flames from level 1" to a look per level; Quinn's item 5 look test becomes per level, Bob's promotion per level), keep [[spec-consistency]], designer approves, then `/goal` + `goal_agent.py` builds (condition: `goal_agent.py SPEC --plan` reports nothing left and the latest unit run is green). Open for the designer before Bob promotes: STYLE_GUIDE names no role for the fork's materials (Metal/Wood/Accent lists), and V3's "each accent on one object" vs. crank orange on several parts of one prop (fork head, truck flames).
+**Next: 0.2 implementation session.** The picks are written into `game/specs/0.2-first-automation.md` items 3–5 and their contract lines (spec_lint clean), still **status proposed** for the designer's review. Designer answers 2026-11-09: fork pulse = albedo tween, no emission; pipes cumulative from Faster Delivery 1, no exhaust flames; Gear1 always under the crank, level N shows N + 1 gears (six at 5). STYLE_GUIDE updated (fork/gears roles, crank orange on fork head and truck flames, V3 object = prop). One vote open: Gear6's place, `gearing-r4` a (curl) vs b (straight) on Design Votes; the spec names a6 until then. After approval: `/goal` + `goal_agent.py` (condition: `goal_agent.py SPEC --plan` reports nothing left and the latest unit run is green).
 
-**New tooling (2026-11-09):** `_tools/compose_variant.py` builds recombination rounds with no agent ([[compose-variants]]); Milo's parts convention is in `.claude/agents/modeler.md`. `checkpoint.py` failed silently once this session (files staged, no commit); the commit was made by hand; check why before relying on it.
+**New tooling (2026-11-09):** `_tools/compose_variant.py` builds recombination rounds with no agent ([[compose-variants]]); Milo's parts convention is in `.claude/agents/modeler.md`. `checkpoint.py` failed once this session because its path list included `game/reports/ui-compare/design-votes.html`, which is gitignored (git add errors on ignored paths); never pass that file to it or to `git add`.
 
 **UI design:** read `UI_DESIGN.md` first ([[ui-design-prefs]]). Canvas https://claude.ai/artifact/ErtHvkxYUpDQHRM8RLRLca; proposal `proposals/design/ui-screens.md` (proposed). Not in any spec yet. Ask before the next UI round whether UI A/B choices move to Design Votes ([[ab-comparison-page]]).
 
