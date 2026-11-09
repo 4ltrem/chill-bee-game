@@ -217,6 +217,39 @@ func _ready() -> void:
 	_build_crate_jars()
 	_refresh_jars()
 	_last_global = global_position if is_inside_tree() else position
+	_apply_delivery_look(true)
+
+
+## 0.2 item 5 look: which part groups show at a Faster Delivery level (0 none; Stacks 1..4; DecalsSmall only 2; DecalsBold 3..4; FlamesTop only 4).
+static func groups_shown(level: int) -> Dictionary:
+	return {
+		"Stacks": level >= 1,
+		"DecalsSmall": level == 2,
+		"DecalsBold": level >= 3,
+		"FlamesTop": level >= 4,
+	}
+
+
+## Test hook: a level >= 0 replaces the Economy's Faster Delivery level.
+var delivery_level_override: int = -1
+var _look_level: int = -1
+
+
+func delivery_level() -> int:
+	return delivery_level_override if delivery_level_override >= 0 else UpgradeLevel.of("faster_delivery")
+
+
+## Shows the groups for the current level (cheap: only touches nodes when the level changed).
+func _apply_delivery_look(force: bool = false) -> void:
+	var level: int = delivery_level()
+	if level == _look_level and not force:
+		return
+	_look_level = level
+	var shown: Dictionary = groups_shown(level)
+	for group_name: String in shown:
+		var node: Node3D = find_child(group_name, true, false) as Node3D
+		if node != null:
+			node.visible = shown[group_name]
 
 
 func _new_jar() -> Node3D:
@@ -337,3 +370,4 @@ func roll_wheels(displacement: Vector3) -> void:
 func _process(delta: float) -> void:
 	advance(delta)
 	update_pose()
+	_apply_delivery_look()

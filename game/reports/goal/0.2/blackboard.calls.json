@@ -1,0 +1,34 @@
+[
+ {
+  "call": "Patricia, H",
+  "tokens": 145622,
+  "final": 39495,
+  "turns": 9,
+  "seconds": 36,
+  "transcripts": "_meta/sessions/runs/2026-11-09-goal-0.2"
+ },
+ {
+  "call": "Patricia, C4",
+  "tokens": 128981,
+  "final": 64921,
+  "turns": 2,
+  "seconds": 5,
+  "transcripts": "_meta/sessions/runs/2026-11-09-goal-0.2"
+ },
+ {
+  "call": "Patricia, C4 fix 1",
+  "tokens": 44493,
+  "final": 16405,
+  "turns": 5,
+  "seconds": 8,
+  "transcripts": "_meta/sessions/runs/2026-11-09-goal-0.2"
+ },
+ {
+  "call": "Bob, C4 fix 2",
+  "tokens": 315858,
+  "final": 48723,
+  "turns": 16,
+  "seconds": 82,
+  "transcripts": "_meta/sessions/runs/2026-11-09-goal-0.2"
+ }
+]

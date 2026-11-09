@@ -75,7 +75,14 @@ extends Resource
 @export var spin_farm_visual_px: int = 60             # 0.1.4 item 22 (Design Votes spin-r1: C): Spin's drawn size in the farm view only; touch area stays 120
 @export var spin_zoom_offset: float = 80.0            # 0.1.4 item 22 (Design Votes spin-r1: C): extra px Spin sits lower in the first zoom only
 
-const DEFAULT_PATH := "res://scripts/default_config.tres"
+# --- 0.2 (game/specs/0.2-first-automation.md, item 4): Centrifuge Gearing ---
+@export var gearing_cut_per_level: float = 0.15        # PLACEHOLDER (spec 0.2): share of crank turns and hold-ramp time cut per Gearing level
+@export var gearing_max_level: int = 5                 # PLACEHOLDER (spec 0.2): Gearing's highest level
+@export var gearing_post_auto_time_cut_per_level: float = 0.08   # PLACEHOLDER (spec 0.2): extra time cut per level, only with the motor owned (no effect in 0.2)
+@export var gearing_post_auto_cut_includes_bottling: bool = false # PLACEHOLDER (spec 0.2): the after-automation cut also shortens bottling
+@export var dev_own_motor: bool = false                # Dev toggle "own motor": acts as if the motor were owned (the motor arrives after 0.2)
+
+const DEFAULT_PATH :="res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read
 const DEV_SETTING := "chill_bee/dev_mode"
 

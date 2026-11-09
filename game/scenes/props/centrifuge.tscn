@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/centrifuge.gd" id="1_c"]
 [ext_resource type="PackedScene" path="res://scenes/props/jar.tscn" id="2_jar"]
+[ext_resource type="PackedScene" path="res://scenes/props/centrifuge_gears.tscn" id="3_gears"]
 [ext_resource type="Material" path="res://materials/steel.tres" id="m_steel"]
 [ext_resource type="Material" path="res://materials/steel_dark.tres" id="m_dark"]
 [ext_resource type="Material" path="res://materials/glass.tres" id="m_glass"]
@@ -84,6 +85,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("Mesh_lid")
 
 [node name="Crank" type="Node3D" parent="Lid"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.095, 0)
 
 [node name="CrankArm" type="MeshInstance3D" parent="Lid/Crank"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.14, 0)
@@ -92,6 +94,8 @@ mesh = SubResource("Mesh_arm")
 [node name="CrankHandle" type="MeshInstance3D" parent="Lid/Crank"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0, 0.32, 0)
 mesh = SubResource("Mesh_handle")
+
+[node name="Gears" parent="Lid" instance=ExtResource("3_gears")]
 
 [node name="Spigot" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.3, 1.15)

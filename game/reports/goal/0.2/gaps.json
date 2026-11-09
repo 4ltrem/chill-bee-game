@@ -1,7 +1,7 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T16:05:02-05:00",
+ "at": "2026-11-09T16:05:41-05:00",
  "unit_log": "game/reports/_runs/20261108-222553/unit.log",
  "goals": {
   "H": {
@@ -12,15 +12,20 @@
    ],
    "items": [],
    "depends": [],
-   "status": "missing",
+   "status": "done",
    "evidence": [
     {
      "kind": "handoff",
-     "name": "game/specs/0.2-node-handoff.md",
-     "ok": false
+     "name": "0.2-node-handoff.md",
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "2fb8e5d",
+     "ok": true
     }
    ],
-   "built": false,
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -565,17 +570,6 @@
  },
  "order": [
   {
-   "id": "H",
-   "score": 19.46,
-   "factors": {
-    "unblocks": 6,
-    "value": 1,
-    "cost": 0.54,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C4",
    "score": 12.46,
    "factors": {
@@ -587,12 +581,78 @@
    }
   },
   {
+   "id": "C3",
+   "score": 12.09,
+   "factors": {
+    "unblocks": 3,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C5",
+   "score": 12.09,
+   "factors": {
+    "unblocks": 3,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "C2",
    "score": 9.46,
    "factors": {
     "unblocks": 2,
     "value": 2,
     "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C1",
+   "score": 9.09,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C6",
+   "score": 9.09,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C7",
+   "score": 9.09,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C8",
+   "score": 9.09,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.91,
     "ready": 1,
     "blocked_by": []
    }
@@ -617,84 +677,6 @@
     "cost": 0.39,
     "ready": 1,
     "blocked_by": []
-   }
-  },
-  {
-   "id": "C1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.91,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
-   }
-  },
-  {
-   "id": "C3",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 3,
-    "value": 2,
-    "cost": 0.91,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
-   }
-  },
-  {
-   "id": "C5",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 3,
-    "value": 2,
-    "cost": 0.91,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
-   }
-  },
-  {
-   "id": "C6",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.91,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
-   }
-  },
-  {
-   "id": "C7",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.91,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
-   }
-  },
-  {
-   "id": "C8",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.91,
-    "ready": 0,
-    "blocked_by": [
-     "H"
-    ]
    }
   },
   {
