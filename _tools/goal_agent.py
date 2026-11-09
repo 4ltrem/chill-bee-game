@@ -75,6 +75,7 @@ VALUE = {"playtest": 3, "feature": 2, "housekeeping": 1}
 COST_UNIT = 10.0
 MAX_FIX_ROUNDS = 2
 FIX_MAX_TURNS = 15   # approved 2026-11-08: Patricia's T14 fix 1 ran 36 turns, 777k tokens, 25 min
+BUILD_MAX_TURNS = 30   # designer, 2026-11-09: Bob's 0.2 C3 build call ran 47 turns, 1.09M tokens with no cap
 # a Quinn line saying its test is "shown failing on the current build" reports a bug the designer saw: its tests must
 # fail before any fix counts, and only a script or scene change can fix it (0.1.4 T14.3: the lid test passed on a
 # clipping lid, and the step was committed green with no lid change; approved 2026-11-08, A and B)
@@ -130,10 +131,12 @@ def is_node(tok):
 
 
 def item_numbers(text):
-    """Item numbers named in a line: "Item 2", "items 1 and 3", "Item 3: ... Item 4: ..."."""
+    """Item numbers named in a line: "Item 2", "items 1 and 3", "Items 3–5", "Item 3: ... Item 4: ..."."""
     nums = []
-    for m in re.finditer(r"\bitems?\s+(\d+(?:\s*(?:,|and|&)\s*\d+)*)", text, re.I):
+    for m in re.finditer(r"\bitems?\s+(\d+(?:\s*(?:,|and|&|–|-|to)\s*\d+)*)", text, re.I):
         nums += [int(n) for n in re.findall(r"\d+", m.group(1))]
+        for a, b in re.findall(r"(\d+)\s*(?:–|-|to)\s*(\d+)", m.group(1)):   # a range: 0.2 "Items 3–5" was read as 3 only
+            nums += list(range(int(a), int(b) + 1))
     return sorted(set(nums))
 
 
@@ -165,12 +168,14 @@ def parse_changes(body):
 
 
 def parse_contract(body):
-    """{owner: [lines]} for Patricia, Bob and Quinn; Quinn's lines carry the "Item N" header above them."""
-    blocks, owner = {}, None
+    """{owner: [lines]} for Patricia, Bob and Quinn; Quinn's lines carry the "Item N" header above them. A sub-bullet
+    (indented deeper than its owner's first bullet) under Patricia or Bob is ("sub", text): it inherits its parent's items."""
+    blocks, owner, indent = {}, None, None
     for line in body.splitlines():
         m = re.match(r"^- \*\*(\w+)\b", line)
         if m:
             owner = m.group(1) if m.group(1) in OWNERS else None
+            indent = None
             if owner:
                 blocks.setdefault(owner, [])
                 head = re.sub(r"^- \*\*\w+ \(`[^`]*`\):?\*\*:?,?\s*", "", line).strip()
@@ -183,7 +188,10 @@ def parse_contract(body):
             continue
         s = line.strip()
         if s.startswith("- "):
-            blocks[owner].append(("line", s[2:]))
+            depth = len(line) - len(line.lstrip())
+            indent = depth if indent is None else indent
+            sub = depth > indent and owner != "Quinn"   # 0.2 Bob's fork/gears/truck lines sat under "Items 3–5" and were dropped
+            blocks[owner].append(("sub" if sub else "line", s[2:]))
         elif owner == "Quinn":
             blocks[owner].append(("head", s))
     return blocks
@@ -250,8 +258,13 @@ def parse_spec(path):
                         "depends": []}
     handoff = False
     for owner in ("Patricia", "Bob"):
-        for _, line in contract.get(owner, []):
+        parent = []
+        for kind, line in contract.get(owner, []):
             nums = item_numbers(line)
+            if kind == "line":
+                parent = nums
+            elif not nums and parent:   # a sub-bullet: its parent's item, or the one of them it matches best
+                nums = parent if len(parent) == 1 else match_items(line, [c for c in changes if c[0] in parent])
             if owner == "Patricia" and re.search(r"\bhandoff\b", line, re.I):
                 handoff = True
                 continue
@@ -846,6 +859,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     say(board, f"\n### Step: {ids} ({now()})\n\n")
     keep_briefs(folder, board, plan, goal["id"])
     before, code_before = tree_state(), tree_state(CODE_PATHS)
+    start_files = file_states()   # style rows are kept only for files this step changes
     needs_red = [b["id"] for b in batch if b["kind"] == "test" and FAIL_FIRST.search(b["text"])]
     seen_red = set()
     lines = [b for b in batch if b["kind"] == "test" and not re.search(r"\bmutations?\b", b["text"], re.I)]
@@ -853,7 +867,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     if written:   # Quinn's tests exist (marked `# goal <ID>`): go straight to the checks; a red test goes to the code
         say(board, "- Quinn's step skipped: every line already has its marked test ("   # owners (0.1.4 T14.4/T14.5:
                    + ", ".join(f"{b['id']}: {', '.join(marked_tests(b['id']))}" for b in lines) + ")\n")   # ~800k saved)
-    elif not call_agents(plan, board, usage, run, ids):
+    elif not call_agents(plan, board, usage, run, ids, max_turns=BUILD_MAX_TURNS):
         return "paused"
     rounds = MAX_FIX_ROUNDS + (1 if needs_red else 0)   # one round may go to Quinn alone, to reproduce the bug
     scope_rows = []   # files the last fix round changed outside its owners' folders
@@ -861,9 +875,15 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         failed = [("scope", scope_rows.pop())] if scope_rows else []
         for label, cmd, env in cmds:
             code, out = run_cmd([c.replace("{round}", str(rnd)) for c in cmd], env=env)
+            if code and label == "style":
+                now_files = file_states()
+                text = style_report(out, {p for p, h in now_files.items() if start_files.get(p) != h})
+                if not text:   # every open row is older than this step: not this goal's to fix
+                    say(board, "- Check `style`: PASS (open rows only on files this step did not change)\n")
+                    continue
             say(board, f"- Check `{label}`: {'PASS' if code == 0 else f'FAIL (exit {code})'}\n")
             if code:
-                text = style_report(out) if label == "style" else summary_of(out)
+                text = text if label == "style" else summary_of(out)
                 failed.append((label, text))
                 say(board, "\n```\n" + text + "\n```\n")
                 if label in ("contract", "tests"):
@@ -947,15 +967,46 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     return "green"
 
 
-def style_report(out):
-    """The Result of the style board a failed `style` check names (its open rows), else the output's tail."""
+def style_report(out, changed=None):
+    """The Result of the style board a failed `style` check names (its open rows), else the output's tail.
+    With `changed` (paths this step changed), only rows about those files are kept: the board checks the whole game,
+    and in 0.2 C3 Bob followed an older V4 row on honey_cell.tscn and broke two frame tests. "" when no row is left."""
     m = re.search(r"game/reports/style/[\w-]+/blackboard\.md", out)
     board = ROOT / m.group(0) if m else None
     if board and board.is_file():
         result = board.read_text(encoding="utf-8").split("\n## Result", 1)
         if len(result) == 2:
-            return f"Style board `{m.group(0)}`, Result:{result[1].rstrip()}"
+            body = result[1].rstrip()
+            if changed is not None:
+                body, dropped = rows_in_scope(body, changed)
+                if body is None:
+                    return ""
+                if dropped:
+                    body += (f"\n\n({dropped} older row(s) about files this step did not change were left out: "
+                             f"not yours this round, change nothing for them.)")
+            return f"Style board `{m.group(0)}`, Result:{body}"
     return summary_of(out)
+
+
+def rows_in_scope(body, changed):
+    """(body with only the style rows this step's files caused, number dropped); (None, n) when no row is left.
+    A row naming a .tscn/.tres/.gd is kept if that file changed; a shot row if it names a changed scene's word
+    (e.g. `fork` for uncapping_fork.tscn)."""
+    words = {w for p in changed if p.endswith((".tscn", ".tres")) for w in re.split(r"[_\-]", Path(p).stem) if len(w) >= 4}
+    kept, out, dropped = 0, [], 0
+    for line in body.splitlines():
+        cells = [c.strip() for c in line.split("|")]
+        data = line.startswith("|") and len(cells) > 4 and not set(line) <= set("|-: ") and cells[1] != "#"
+        if data:
+            refs = re.findall(r"[\w/.\-]+\.(?:tscn|tres|gd)", cells[3])
+            mine = (any(p.endswith(r) for r in refs for p in changed) if refs
+                    else any(re.search(rf"\b{re.escape(w)}", line, re.I) for w in words))
+            if not mine:
+                dropped += 1
+                continue
+            kept += 1
+        out.append(line)
+    return ("\n".join(out) if kept else None), dropped
 
 
 def match_pick(spec, goal, live, pick, folder, rnd, board, usage, run, ids):

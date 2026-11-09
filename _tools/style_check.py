@@ -50,6 +50,9 @@ GLOW_ROLES = {"Honey", "Biome glow"}
 PRIMITIVES = {"BoxMesh", "CylinderMesh", "SphereMesh", "PlaneMesh", "PrismMesh", "CapsuleMesh",
               "QuadMesh", "TorusMesh"}
 THIN_OK = re.compile(r"rim|handle|lip|line|mark|border|edge", re.I)
+# Scripted meshes that build a primitive shape (V4 holds): 0.1.4 item 14 baked the comb cell's 30° turn into a
+# CylinderMesh-equivalent hex prism; a "fix" back to CylinderMesh broke the frame tests (0.2 C3, 2026-11-09).
+PROCEDURAL_PRIMITIVES = {"hex_cell_mesh.gd"}
 COLOR = re.compile(r"Color\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+))?\s*\)")
 GODOT_BUTTON_FONT = (0.875, 0.875, 0.875)  # Godot 4 default theme
 GODOT_DEFAULT_FONT_SIZE = 16
@@ -256,8 +259,14 @@ def check_materials(root, tokens, rep, threshold, phase, guide_text=""):
 
 def meshes(root, rep, phase, budget):
     for p in scene_files(root):
+        ext = {}   # ext_resource id -> path, for a mesh's script
         for kind, attrs, line, props in sections(p):
             typ = attrs.get("type", "")
+            if kind == "ext_resource":
+                ext[attrs.get("id", "")] = attrs.get("path", "")
+            script = re.search(r'ExtResource\(\s*"?([^")]+?)"?\s*\)', (props.get("script") or [""])[0])
+            if script and ext.get(script.group(1), "").rsplit("/", 1)[-1] in PROCEDURAL_PRIMITIVES:
+                continue
             if kind == "ext_resource" and re.search(r"\.(obj|glb|gltf|fbx|mesh|res|dae)$", attrs.get("path", ""), re.I):
                 if phase == "colorbox":
                     rep.add("V4", p, line, f"imported mesh `{attrs['path']}`", "replace with primitive meshes")

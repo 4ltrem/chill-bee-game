@@ -18,6 +18,13 @@ Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Pre
 - **How fixed:** Milo rebuilt the fork upright inside one tilted `Pose` node; the decals went to 0.05.
 - **Prevention:** the parts convention in `.claude/agents/modeler.md`: a tilt or pose lives on one parent node, parts are built untilted; briefs never relax a V rule.
 
+## L31 · 2026-11-09 · Bob's 0.2 C3 fork step rebuilt the honey cell and broke two frame tests
+- **What broke:** in C3 (Heated Fork) Bob built the truck groups too, ran 47 turns / 1.09M tokens, then swapped `hex_cell_mesh.gd` for a CylinderMesh in a fix round; `t_raised_frame_cells_aligned` and `t_hive_frames_cells_aligned` failed and the run stopped.
+- **How noticed:** the designer read the blackboard ("bob's prompt slice is too vast?"); the orchestrator diffed the fix-round edits.
+- **Cause:** `item_numbers` read "Items 3–5" as item 3 and dropped the indented sub-bullets; fix briefs carried every open style row of the whole game (an old V4 row on `honey_cell.tscn`, truck, zoom, jars); build calls had no turn cap; V4 flagged the deliberate 0.1.4 scripted hex mesh.
+- **How fixed:** ranges and sub-bullets go to their item (`parse_contract` "sub"); `rows_in_scope` keeps only style rows about files the step changed (none left = style PASS); `BUILD_MAX_TURNS` 30; `style_check.py` `PROCEDURAL_PRIMITIVES`; the honey cell and glass edits reverted, C3 accepted by hand.
+- **Prevention:** `test_goal_agent`: item ranges and sub-bullets, style rows in scope, build-call cap.
+
 ## L30 · 2026-11-09 · The `/goal` stop hook kept firing after the designer said "stop"
 - **What broke:** the designer stopped the UI work mid-turn; the goal judge re-sent "condition not met" six times while the session stayed paused.
 - **How noticed:** six identical hook messages in a row.

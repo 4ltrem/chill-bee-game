@@ -59,6 +59,29 @@ class Parse(unittest.TestCase):
         changes = [(1, "Speed", "game speed row"), (2, "Camera", "camera stops")]
         self.assertEqual(ga.match_items("the speed row (report open item 6)", changes), [1])
 
+    def test_item_ranges_and_sub_bullets_go_to_their_item(self):
+        # 0.2: "Items 3–5: promote the picks." was read as item 3, and its sub-bullets were dropped
+        self.assertEqual(ga.item_numbers("Items 3–5: promote the picks."), [3, 4, 5])
+        self.assertEqual(ga.item_numbers("Items 2-6 and item 8"), [2, 3, 4, 5, 6, 8])
+        body = ("- **Bob (`scenes/`):**\n  - Items 1–2: promote the picks.\n    - A new fork prop from the fork pick.\n"
+                "    - The truck groups added to the truck.\n  - Item 1: the shop list.\n")
+        self.assertEqual(ga.parse_contract(body)["Bob"], [
+            ("line", "Items 1–2: promote the picks."), ("sub", "A new fork prop from the fork pick."),
+            ("sub", "The truck groups added to the truck."), ("line", "Item 1: the shop list.")])
+
+    def test_style_rows_only_for_files_the_step_changed(self):
+        body = ("\n\n| # | Rule | Where | Finding | Fix |\n|---|---|---|---|---|\n"
+                "| 1 | V4 | `scenes/props/honey_cell.tscn:5` | ArrayMesh | use a primitive |\n"
+                "| 2 | V13 | 06-truck-away.png | truck under the panel | stop above it |\n"
+                "| 3 | V2 | 04-fork.png | fork head glows | albedo only |\n")
+        kept, dropped = ga.rows_in_scope(body, {"game/scenes/props/uncapping_fork.tscn"})
+        self.assertEqual(dropped, 2)
+        self.assertIn("fork head glows", kept)
+        self.assertNotIn("honey_cell", kept)
+        self.assertEqual(ga.rows_in_scope(body, {"game/scripts/main.gd"}), (None, 3))
+        kept, _ = ga.rows_in_scope(body, {"game/scenes/props/honey_cell.tscn"})
+        self.assertIn("honey_cell", kept)
+
 
 class Gaps(unittest.TestCase):
     def test_done_partial_missing_with_evidence(self):
@@ -261,7 +284,7 @@ class Loop(unittest.TestCase):
         self.assertNotEqual(self.calls[-2][0], self.calls[-1][0])           # round 2 goes to the other owner
         self.assertIn("You alone work this round", self.calls[-1][1])
         self.assertIn("Change only what a failing row names", self.calls[-1][1])
-        self.assertEqual([t for _, t in self.turn_caps], [None] * 2 + [ga.FIX_MAX_TURNS] * 2)   # only fix rounds capped
+        self.assertEqual([t for _, t in self.turn_caps], [ga.BUILD_MAX_TURNS] * 2 + [ga.FIX_MAX_TURNS] * 2)   # build calls 30, fix rounds 15
         self.assertIn("Do not run the test suite", self.calls[-1][1])
         quinn = ga.briefs(ga.parse_spec(SPEC), ga.parse_spec(SPEC)["goals"]["T3.1"],
                           [ga.parse_spec(SPEC)["goals"]["T3.1"]], "t", "b")[ga.QA]
@@ -271,7 +294,7 @@ class Loop(unittest.TestCase):
                      "runs on its own", "automation upgrade", "never that it stopped"):
             self.assertIn(step, quinn)                                      # Quinn's interaction checklist
         self.assertIn("(cap 15; CLI num_turns 1)", board)                   # every call's command and turns logged
-        self.assertIn("(no cap; CLI num_turns 1)", board)
+        self.assertIn(f"(cap {ga.BUILD_MAX_TURNS}; CLI num_turns 1)", board)   # build calls capped too (0.2 C3)
         self.assertIn("**Over the turn cap:** 16", ga.call_line({"turns": 17, "calls": 16, "cmd": "claude -p"}, 15))
         self.assertNotIn("Over", ga.call_line({"turns": 20, "calls": 10, "cmd": "claude -p"}, 15))  # num_turns isn't the cap's unit
         self.assertNotIn("Over", ga.call_line({"turns": 20, "cmd": "claude -p"}, 15))   # no transcript: no claim
