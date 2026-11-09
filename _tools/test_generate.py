@@ -644,6 +644,16 @@ class BuildToolsTest(unittest.TestCase):
         self.assertEqual(dec(r(99, 50, 120), "builder"), "allow")        # stale reading
         self.assertEqual(dec(None, "builder"), "allow")
         self.assertAlmostEqual(b.week_pace(t, d.datetime(2026, 10, 24, 13, 59, tzinfo=d.timezone.utc)), 65.5, delta=0.5)
+        # average, not highest (designer 2026-11-09): runs of 2 and 9 points average 6 (rounded up), a reset run is skipped
+        with tempfile.TemporaryDirectory() as tmp:
+            csv_path = str(Path(tmp) / "runs.csv")
+            with open(csv_path, "w", encoding="utf-8", newline="") as fh:
+                fh.write("agent,five_hour_before,five_hour_after\nPat (programmer),10,12\nPat (programmer),20,29\n"
+                         "Pat (programmer),90,5\nOrchestrator,1,50\n")
+            costs = b.average_costs(csv_path)
+            self.assertEqual(costs["programmer"], 6)
+            self.assertEqual(costs["builder"], b.COST["builder"])          # no logged run: the fixed table
+            self.assertEqual(b.decide(r(85, 50), "programmer", t, reset=reset, costs=costs)[0], "warn")   # 85 + 6 <= 95
 
     def test_guard_shell_refuses_the_standing_rules_and_lets_normal_calls_through(self):
         import guard_shell as gs

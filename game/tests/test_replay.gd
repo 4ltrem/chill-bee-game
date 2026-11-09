@@ -2,7 +2,7 @@ extends "res://tests/test_second_stop.gd"
 
 # Quinn: the input-recorder replay (0.1.3 spec, "Input recorder"; Clarifications 0.1.3c "Spin in the first zoom": closing the zoom with a
 # full bucket, Back included, pans to the second stop). tests/fixtures/recording_fill_and_back.json was made by
-# tests/make_recording_fixture.gd: it opens the zoom with Harvest, fills the bucket (70 cells) by dragging across the cells and presses Back.
+# tests/make_recording_fixture.gd: it opens the zoom with Harvest, fills the bucket (capacity from config) by dragging across the cells and presses Back.
 # The replay (tests/replay_core.gd, the engine of tests/replay.gd) loads it through InputRecorder, starts main.tscn with its config and seed
 # and feeds each event at its game time as window pixels.
 
@@ -20,7 +20,7 @@ func _replay(path: String) -> Object:
 func t_replay_fill_and_back() -> void:
 	var rec: Dictionary = InputRecorder.load_recording(FIXTURE)
 	ck(not rec.is_empty(), "the fixture loads through InputRecorder.load_recording")
-	ck(InputRecorder.events(rec).size() > 100, "the fixture holds drag events (%d)" % InputRecorder.events(rec).size())
+	ck(InputRecorder.events(rec).size() > 2 * _bucket_cells(), "the fixture holds drag events (%d)" % InputRecorder.events(rec).size())
 	var core: Object = await _replay(FIXTURE)
 	var states: Array = core.states
 	ck(states.size() > 5, "the replay printed STATE lines (%d)" % states.size())
@@ -35,7 +35,7 @@ func t_replay_fill_and_back() -> void:
 	var last: Dictionary = states[states.size() - 1]
 	eq(last["stop"], "second", "the replay ends at the second stop (bucket full, Back pressed)")
 	eq(last["zoom"], "NONE", "the zoom is closed at the end")
-	eq(last["bucket"], 70, "the bucket holds 2 frames (70 cells)")
+	eq(last["bucket"], _bucket_cells(), "the bucket holds %d frames (%d cells)" % [int(cv("centrifuge_capacity_frames")), _bucket_cells()])
 	ck((last["icons"] as Array).has("Centrifuge"), "Spin shows at the end (icons %s)" % str(last["icons"]))
 	var line: String = (core.lines[core.lines.size() - 1] as String)
 	ck(line.begins_with("STATE t=") and line.contains("stop=second"), "the printed line has the STATE format (%s)" % line)
@@ -62,6 +62,6 @@ func t_replay_without_back_stays_in_zoom() -> void:
 		return
 	var last: Dictionary = states[states.size() - 1]
 	eq(last["stop"], "zoom", "without Back the replay stays in the first zoom")
-	eq(last["bucket"], 70, "the bucket is still full")
+	eq(last["bucket"], _bucket_cells(), "the bucket is still full")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 	_fin()

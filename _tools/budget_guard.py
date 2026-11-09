@@ -3,7 +3,8 @@
 
 Reads the newest plan-usage reading the status line saved (`_meta/usage/readings.jsonl`, written by
 `_tools/statusline.py`) and, for a reading less than 60 minutes old, the agent type being launched:
-  - 5-hour usage + that agent's largest logged cost (COST, from `_meta/agent-runs.csv`) > CAP (95%): deny,
+  - 5-hour usage + that agent type's average logged cost (average_costs(), from `_meta/agent-runs.csv`; COST
+    for types with no logged run; average not highest, designer 2026-11-09) > CAP (95%): deny,
     so a cheap agent (Doris, Vera: ~1%) still runs late in the window while Quinn (~29%) stops near 66%;
   - weekly >= WEEK_CAP (95%): deny every agent;
   - a heavy agent (cost >= 10: Bob, Patricia, Quinn, unknown) while weekly usage is more than WEEK_SLACK
@@ -37,6 +38,36 @@ COST = {"qa-build-engineer": 30, "programmer": 27, "builder": 16, "general-purpo
         "research-assistant": 3, "gameplay-architect": 5, "compliance-officer": 5, "audiophile": 5,
         "Explore": 3, "web-fetch": 2, "script-runner": 3, "Workflow": 40}   # script-runner (Rex, Haiku): estimate, no runs logged yet
 UNKNOWN = 25
+RUNS = os.path.join(REPO, "_meta", "agent-runs.csv")
+
+
+def average_costs(path=RUNS):
+    """Average 5-hour cost (five_hour_after - five_hour_before, rounded up) per agent type, from the logged runs.
+    The type is the parenthesised part of the `agent` column ("Patricia (programmer)"); a run whose window reset
+    mid-run (after < before) is skipped. Types with no logged run keep COST. Designer 2026-11-09: average, not highest."""
+    import csv
+    import math
+    sums = {}
+    try:
+        with open(path, encoding="utf-8", newline="") as fh:
+            for row in csv.DictReader(fh):
+                name = row.get("agent") or ""
+                if "(" not in name:
+                    continue
+                kind = name[name.rindex("(") + 1:].rstrip(") ")
+                try:
+                    delta = float(row["five_hour_after"]) - float(row["five_hour_before"])
+                except (KeyError, TypeError, ValueError):
+                    continue
+                if delta < 0:
+                    continue
+                total, n = sums.get(kind, (0.0, 0))
+                sums[kind] = (total + delta, n + 1)
+    except OSError:
+        return dict(COST)
+    costs = dict(COST)
+    costs.update({k: math.ceil(t / n) for k, (t, n) in sums.items()})
+    return costs
 
 
 def now():
@@ -82,8 +113,9 @@ def week_pace(at, reset):
     return 100.0 * (at - (reset - WEEK)) / WEEK
 
 
-def decide(reading, agent, at=None, cap=95, warn=65, week_cap=95, slack=10, reset=None):
-    """Pure: ('deny'|'warn'|'allow', message) for one reading and the agent type launched (tested in test_generate.py)."""
+def decide(reading, agent, at=None, cap=95, warn=65, week_cap=95, slack=10, reset=None, costs=None):
+    """Pure: ('deny'|'warn'|'allow', message) for one reading and the agent type launched (tested in test_generate.py).
+    `costs`: per-type 5-hour cost (main passes average_costs()); COST when not given."""
     at = at or now()
     if not reading:
         return "allow", ""
@@ -91,14 +123,14 @@ def decide(reading, agent, at=None, cap=95, warn=65, week_cap=95, slack=10, rese
     if age > MAX_AGE:
         return "allow", ""
     five, week = reading.get("five_hour") or 0, reading.get("seven_day") or 0
-    cost = COST.get(agent, UNKNOWN)
+    cost = (costs or COST).get(agent, UNKNOWN)
     reset = parse_ts(reading.get("week_resets") or reset or WEEK_RESET)
     pace = week_pace(at, reset)
     mins = int(age.total_seconds() // 60)
     tail = (f" (reading {mins} min old). Don't start it: wait for the reset, or ask the designer to run "
             f"`python -I _tools/budget_guard.py --allow-for 60`.")
     if five + cost > cap:
-        return "deny", (f"Budget guard: 5-hour usage is {five}% and a {agent or 'agent'} run has cost up to {cost}%, "
+        return "deny", (f"Budget guard: 5-hour usage is {five}% and a {agent or 'agent'} run costs {cost}% on average, "
                         f"over the {cap}% cap" + tail)
     if week >= week_cap:
         return "deny", f"Budget guard: weekly usage is {week}% (cap {week_cap}%)" + tail
@@ -120,6 +152,10 @@ def main(argv=None):
             json.dump({"until": (now() + datetime.timedelta(minutes=minutes)).isoformat()}, fh)
         print(f"budget_guard: agent launches allowed for {minutes} minutes")
         return 0
+    if argv[:1] == ["--costs"]:
+        for kind, cost in sorted(average_costs().items(), key=lambda kv: -kv[1]):
+            print(f"{kind:26} {cost}%")
+        return 0
     try:
         event = json.loads(sys.stdin.read() or "{}")
     except (OSError, ValueError):
@@ -131,7 +167,7 @@ def main(argv=None):
     env = os.environ.get
     verdict, msg = decide(latest(), agent, cap=int(env("BUDGET_GUARD_CAP", 95)), warn=int(env("BUDGET_GUARD_WARN", 65)),
                           week_cap=int(env("BUDGET_GUARD_WEEK_CAP", 95)), slack=int(env("BUDGET_GUARD_WEEK_SLACK", 10)),
-                          reset=env("BUDGET_GUARD_WEEK_RESET"))
+                          reset=env("BUDGET_GUARD_WEEK_RESET"), costs=average_costs())
     if verdict == "deny":
         print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny",
                                                  "permissionDecisionReason": msg},

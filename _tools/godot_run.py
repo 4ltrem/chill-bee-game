@@ -7,7 +7,8 @@ Suites: unit (run_tests.gd, headless), start (a headless start, errors only), pl
 measure (r4_measure.gd), snapshot (snapshot_pop.gd), ui (ui_bounds_pixels.gd), touch (touch_windowed.gd);
 the windowed ones open a 720x1280 window. `all` runs every test suite; no suite means `unit start`.
 Shot runs (by name only, not in `all`; PASS = exit 0 + COMPLETED): lid (lid_shots.gd, the hive lid's close shot every
-10% plus per-node penetration, into ROOT/../game/reports/_look/lid/).
+10% plus per-node penetration, into ROOT/../game/reports/_look/lid/); fixture (make_recording_fixture.gd, rewrites
+tests/fixtures/recording_fill_and_back.json; PASS = exit 0 + its "wrote" line).
 
 Why: agents used to read Godot's raw output, hundreds of lines a run, much of it engine noise (the
 headless dummy renderer's `mesh_get_surface_count` errors). Each raw log now goes to
@@ -43,6 +44,8 @@ SUITES = {
     "touch": {"script": "res://tests/touch_windowed.gd", "headless": False},
     # shot runs: no pass/fail total; PASS = exit 0 + COMPLETED. --out is relative to the checkout root (the folder above game/)
     "lid": {"script": "res://tests/lid_shots.gd", "headless": False, "shots": True, "args": ["--out=game/reports/_look/lid"]},
+    # fixture runs: rewrite a test fixture by driving the game; PASS = exit 0 + the `done` line
+    "fixture": {"script": "res://tests/make_recording_fixture.gd", "headless": True, "shots": True, "done": "wrote "},
 }
 ALL = [s for s in SUITES if not SUITES[s].get("shots")]   # `all` = the test suites; shot runs are asked for by name
 
@@ -88,7 +91,7 @@ def summarise(suite, text, code):
             fails.append(s[:240])
         elif s.startswith("MEASURE"):
             measures.append(s[:300])
-        elif s.startswith("COMPLETED"):
+        elif s.startswith(SUITES[suite].get("done", "COMPLETED")):
             completed = True
         elif ERROR.match(s.strip()):
             errors.append(s.strip()[:240])
