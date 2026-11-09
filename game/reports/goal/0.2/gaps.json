@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T16:05:41-05:00",
- "unit_log": "game/reports/_runs/20261108-222553/unit.log",
+ "at": "2026-11-09T16:27:25-05:00",
+ "unit_log": "game/reports/_runs/20261109-162100/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -185,31 +185,36 @@
     4
    ],
    "depends": [],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
      "name": "gearing_cut_per_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "gearing_max_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "gearing_post_auto_time_cut_per_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "gearing_post_auto_cut_includes_bottling",
-     "ok": false
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "01267f7",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -570,89 +575,78 @@
  },
  "order": [
   {
-   "id": "C4",
-   "score": 12.46,
-   "factors": {
-    "unblocks": 3,
-    "value": 2,
-    "cost": 0.54,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C3",
-   "score": 12.09,
+   "score": 12.12,
    "factors": {
     "unblocks": 3,
     "value": 2,
-    "cost": 0.91,
+    "cost": 0.88,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C5",
-   "score": 12.09,
+   "score": 12.12,
    "factors": {
     "unblocks": 3,
     "value": 2,
-    "cost": 0.91,
+    "cost": 0.88,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C2",
-   "score": 9.46,
+   "score": 9.49,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.54,
+    "cost": 0.51,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C1",
-   "score": 9.09,
+   "score": 9.12,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.91,
+    "cost": 0.88,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C6",
-   "score": 9.09,
+   "score": 9.12,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.91,
+    "cost": 0.88,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C7",
-   "score": 9.09,
+   "score": 9.12,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.91,
+    "cost": 0.88,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C8",
-   "score": 9.09,
+   "score": 9.12,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.91,
+    "cost": 0.88,
     "ready": 1,
     "blocked_by": []
    }
@@ -680,6 +674,28 @@
    }
   },
   {
+   "id": "T4.1",
+   "score": 3.61,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T4.2",
+   "score": 3.61,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T.1",
    "score": 0.0,
    "factors": {
@@ -690,7 +706,6 @@
     "blocked_by": [
      "C1",
      "C2",
-     "C4",
      "C5",
      "C6",
      "C7",
@@ -721,32 +736,6 @@
     "ready": 0,
     "blocked_by": [
      "C2"
-    ]
-   }
-  },
-  {
-   "id": "T4.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.39,
-    "ready": 0,
-    "blocked_by": [
-     "C4"
-    ]
-   }
-  },
-  {
-   "id": "T4.2",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.39,
-    "ready": 0,
-    "blocked_by": [
-     "C4"
     ]
    }
   },

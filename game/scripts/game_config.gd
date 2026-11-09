@@ -82,6 +82,14 @@ extends Resource
 @export var gearing_post_auto_cut_includes_bottling: bool = false # PLACEHOLDER (spec 0.2): the after-automation cut also shortens bottling
 @export var dev_own_motor: bool = false                # Dev toggle "own motor": acts as if the motor were owned (the motor arrives after 0.2)
 
+# --- 0.2 (game/specs/0.2-first-automation.md, item 3): Heated Uncapping Fork ---
+@export var uncap_radius: float = 0.5                  # PLACEHOLDER (spec 0.2): fork reach at level 0, in cell pitches around the hit cell (below the 0.866 neighbour spacing = the hit cell only)
+@export var heated_fork_radius_bonus_per_level: float = 1.0   # PLACEHOLDER (spec 0.2): reach = uncap_radius x (1 + this x level)
+@export var heated_fork_max_level: int = 5             # spec 0.2: Heated Fork's highest level
+@export var heated_fork_post_auto_yield_bonus_per_level: float = 0.04   # spec 0.2: yield bonus per level, only with the auto-scraper owned (no effect in 0.2)
+@export var fork_pulse_seconds: float = 1.0            # PLACEHOLDER (spec 0.2): one steel -> crank orange -> steel head pulse
+@export var dev_own_auto_scraper: bool = false         # Dev toggle "own auto-scraper": acts as if the auto-scraper were owned (it arrives after 0.2)
+
 const DEFAULT_PATH :="res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read
 const DEV_SETTING := "chill_bee/dev_mode"
