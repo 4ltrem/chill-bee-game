@@ -527,3 +527,47 @@ The only open item from the contract check is the 3 `_probe.tscn` lookups, which
 - Check `tests`: PASS
 - Check `ui shots`: PASS
 - Check `style`: PASS (open rows only on files this step did not change)
+- Green: checkpoint `e46adf7` on `milestone/0.2`
+
+## Pass 6: scan (2026-11-09T17:20:20-05:00)
+
+Unit results from `game/reports/_runs/20261109-171526/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C5 Faster Delivery | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config faster_delivery_max_level, ✓ config faster_delivery_trip_cut_per_level, ✓ node DecalsBold, ✓ node DecalsSmall, ✓ node FlamesTop, ✓ ledger e46adf7 |
+
+No score changed.
+
+Next: **C2** (score 9.49: 2 goal(s) wait on it; designer feature; cost 0.51 (Patricia)).
+
+### Step: C2 (2026-11-09T17:20:20-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C2-patricia.md` (1353 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (213,043 tokens, 20 turns, 28 s):
+
+Flight Endurance (item 2) is in, but I only ran `contract_check.py` (0 unresolved). I did not run the unit tests or `play_loop.gd`.
+
+**Files changed**
+- `game_config.gd` and `default_config.tres`: added `flight_speed_bonus_per_level` = 0.10 and `flight_max_level` = 10, both marked PLACEHOLDER. I didn't find the Dev panel listing config keys by name, so I assume it builds its rows from the exports.
+- `economy.gd`:
+  - New `flight_level`, `flight_level_changed` signal and `flight_multiplier()` (1 + bonus × level).
+  - New `is_flight_maxed()` and `set_flight_level()`.
+  - `fill_multiplier()` is now the swarm factor × the flight multiplier, so `hive.gd` needs no edit.
+  - `reset()` clears the flight level.
+- `bees.gd`: bee speed is multiplied by `Economy.flight_multiplier()`.
+
+**Nodes:** none.
+
+**Open questions**
+- The $15 base cost and 1.15× growth keys belong to C1's shop work, and I did not add them. C1 should call `set_flight_level()` after taking the cost.
+- Quinn should add a test for the fill multiplier and bee speed at flight level N.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 8 (cap 30; CLI num_turns 20); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS

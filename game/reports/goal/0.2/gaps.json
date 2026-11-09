@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T17:02:58-05:00",
- "unit_log": "game/reports/_runs/20261109-165359/unit.log",
+ "at": "2026-11-09T17:20:20-05:00",
+ "unit_log": "game/reports/_runs/20261109-171526/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -244,12 +244,12 @@
     {
      "kind": "config",
      "name": "faster_delivery_max_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "faster_delivery_trip_cut_per_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
@@ -265,10 +265,15 @@
      "kind": "node",
      "name": "FlamesTop",
      "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "e46adf7",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -582,17 +587,6 @@
   }
  },
  "order": [
-  {
-   "id": "C5",
-   "score": 12.12,
-   "factors": {
-    "unblocks": 3,
-    "value": 2,
-    "cost": 0.88,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "C2",
    "score": 9.49,

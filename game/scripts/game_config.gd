@@ -13,6 +13,8 @@ extends Resource
 @export var swarm_base_cost: float = 25.0              # GDD Tree A
 @export var swarm_cost_growth: float = 1.18            # cost = base * growth^level (GDD Tree A)
 @export var swarm_max_level: int = 10                  # GDD Tree A
+@export var flight_speed_bonus_per_level: float = 0.10 # PLACEHOLDER (0.2 item 2; Dev panel): Flight Endurance, +10% bee speed and hive fill per level
+@export var flight_max_level: int = 10                 # PLACEHOLDER (0.2 item 2; Dev panel): Flight Endurance max level
 
 # --- Placeholders (TBD in the GDD) ---
 @export var base_seconds_per_jar: float = 6.0          # PLACEHOLDER (GDD TBD): 1 jar per 6 s, one frame in 60 s

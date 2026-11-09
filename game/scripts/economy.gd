@@ -5,10 +5,12 @@ extends Node
 
 signal money_changed(money: int)
 signal swarm_level_changed(level: int)
+signal flight_level_changed(level: int)
 
 var config: GameConfig = GameConfig.live()
 var money: int = 0
 var swarm_level: int = 0
+var flight_level: int = 0
 
 
 ## Bees in the swarm: base + per-level * level (Worker Swarm Count adds bees, GDD Tree A).
@@ -16,9 +18,24 @@ func bee_count() -> int:
 	return config.base_bee_count + config.bees_per_swarm_level * swarm_level
 
 
-## Multiplier on the hive fill rate: bee_count / base_bee_count (= 1 + 15% per level with the placeholders).
+## Flight Endurance (0.2 item 2): 1 + flight_speed_bonus_per_level * level. Bee speed and, on top of Swarm, the hive fill.
+func flight_multiplier() -> float:
+	return 1.0 + config.flight_speed_bonus_per_level * float(flight_level)
+
+
+func is_flight_maxed() -> bool:
+	return flight_level >= config.flight_max_level
+
+
+## Sets the Flight Endurance level (clamped to 0..flight_max_level); the shop's purchase (item 1) calls it after taking the cost.
+func set_flight_level(level: int) -> void:
+	flight_level = clampi(level, 0, config.flight_max_level)
+	flight_level_changed.emit(flight_level)
+
+
+## Multiplier on the hive fill rate: bee_count / base_bee_count (= 1 + 15% per level with the placeholders), times Flight Endurance.
 func fill_multiplier() -> float:
-	return float(bee_count()) / float(config.base_bee_count)
+	return float(bee_count()) / float(config.base_bee_count) * flight_multiplier()
 
 
 ## Cost of the next level: base * growth^level, rounded to whole dollars.
@@ -60,5 +77,7 @@ func earn(amount: int) -> void:
 func reset() -> void:
 	money = 0
 	swarm_level = 0
+	flight_level = 0
 	money_changed.emit(money)
 	swarm_level_changed.emit(swarm_level)
+	flight_level_changed.emit(flight_level)
