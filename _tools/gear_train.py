@@ -29,6 +29,13 @@ def tf(x=0.0, y=0.0, z=0.0, yaw=0.0):
     return "transform = Transform3D(" + ", ".join(f"{round(n, 5):g}" for n in v) + ")"
 
 
+def tooth_tf(phi, rr):
+    """A PrismMesh tooth lying on the gear: its point (local +y) faces outward, local z is the gear's axis."""
+    c, s = math.cos(phi), math.sin(phi)
+    v = [-s, 0, c, c, 0, s, 0, 1, 0, rr * c, 0, rr * s]  # basis columns X (tangent), Y (radial), Z (up)
+    return "transform = Transform3D(" + ", ".join(f"{round(n, 5):g}" for n in v) + ")"
+
+
 def ext_id(scene, name):
     res = f"res://materials/{name}.tres"
     for i, h, _ in scene.ext:
@@ -49,6 +56,8 @@ def main(argv=None):
     ap.add_argument("--pitch", type=float, default=0.11)
     ap.add_argument("--show", type=int, default=0)
     ap.add_argument("--lid-radius", type=float, default=1.05)
+    ap.add_argument("--tooth", choices=("prism", "box"), default="prism",
+                    help="prism = pointed teeth (designer, 2026-11-09: 'all need to be pointy'); box = round 5's")
     a = ap.parse_args(argv)
     out = a.out.replace("\\", "/")
     if not cv.OUT_RE.match(out):
@@ -105,9 +114,14 @@ def main(argv=None):
         g = f"Lid/Gears/Gear{k}"
         disc = mesh("CylinderMesh", f"Mesh_gt_disc{k}",
                     f'material = ExtResource("{steel}")\ntop_radius = {r:g}\nbottom_radius = {r:g}\nheight = {DISC_H:g}')
-        width = max(0.05, round(0.5 * 2 * math.pi * r / n, 4))
-        tooth = mesh("BoxMesh", f"Mesh_gt_tooth{k}",
-                     f'material = ExtResource("{steel}")\nsize = Vector3({DEPTH:g}, {HEIGHT:g}, {width:g})')
+        if a.tooth == "box":
+            width = max(0.05, round(0.5 * 2 * math.pi * r / n, 4))
+            tooth = mesh("BoxMesh", f"Mesh_gt_tooth{k}",
+                         f'material = ExtResource("{steel}")\nsize = Vector3({DEPTH:g}, {HEIGHT:g}, {width:g})')
+        else:  # base width, radial depth, thickness along the gear axis
+            width = max(0.05, round(0.75 * 2 * math.pi * r / n, 4))
+            tooth = mesh("PrismMesh", f"Mesh_gt_tooth{k}",
+                         f'material = ExtResource("{steel}")\nsize = Vector3({width:g}, {DEPTH:g}, {HEIGHT:g})')
         nodes.append([g, f'[node name="Gear{k}" type="Node3D" parent="Lid/Gears"]', tf(x, 0.125, z)])
         nodes.append([f"{g}/Disc", f'[node name="Disc" type="MeshInstance3D" parent="{g}"]', f'mesh = SubResource("{disc}")'])
         nodes.append([f"{g}/Hub", f'[node name="Hub" type="MeshInstance3D" parent="{g}"]', tf(y=0.075) + f'\nmesh = SubResource("{hub}")'])
@@ -115,8 +129,9 @@ def main(argv=None):
         for t in range(n):
             phi = 2 * math.pi * t / n + off
             rr = r + DEPTH / 2 - 0.01
+            place = tf(rr * math.cos(phi), 0, rr * math.sin(phi), -phi) if a.tooth == "box" else tooth_tf(phi, rr)
             nodes.append([f"{g}/Tooth{t + 1}", f'[node name="Tooth{t + 1}" type="MeshInstance3D" parent="{g}"]',
-                          tf(rr * math.cos(phi), 0, rr * math.sin(phi), -phi) + f'\nmesh = SubResource("{tooth}")'])
+                          place + f'\nmesh = SubResource("{tooth}")'])
     idx = max(i for i, nd in enumerate(base.nodes) if nd[0] == "Lid" or nd[0].startswith("Lid/"))
     base.nodes[idx + 1:idx + 1] = nodes
     text = base.text()
