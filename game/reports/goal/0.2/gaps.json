@@ -1,0 +1,838 @@
+{
+ "spec": "0.2-first-automation.md",
+ "version": "0.2",
+ "at": "2026-11-09T16:05:02-05:00",
+ "unit_log": "game/reports/_runs/20261108-222553/unit.log",
+ "goals": {
+  "H": {
+   "kind": "handoff",
+   "title": "Node handoff (Patricia to Bob)",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [],
+   "depends": [],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "handoff",
+     "name": "game/specs/0.2-node-handoff.md",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C1": {
+   "kind": "change",
+   "title": "Upgrade shop holds several rows.",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "flight_base_cost",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "flight_cost_growth",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "heated_fork_base_cost",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "heated_fork_cost_growth",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "gearing_base_cost",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "gearing_cost_growth",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "faster_delivery_base_cost",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "faster_delivery_cost_growth",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "auto_sell_cost",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C2": {
+   "kind": "change",
+   "title": "Flight Endurance",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "flight_speed_bonus_per_level",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "flight_max_level",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C3": {
+   "kind": "change",
+   "title": "Heated Uncapping Fork",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "heated_fork_radius_bonus_per_level",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "fork_pulse_seconds",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "heated_fork_max_level",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "heated_fork_post_auto_yield_bonus_per_level",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "uncap_radius",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "ForkIcon",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C4": {
+   "kind": "change",
+   "title": "Centrifuge Gearing",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "gearing_cut_per_level",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "gearing_max_level",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "gearing_post_auto_time_cut_per_level",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "gearing_post_auto_cut_includes_bottling",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C5": {
+   "kind": "change",
+   "title": "Faster Delivery",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "faster_delivery_max_level",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "faster_delivery_trip_cut_per_level",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "DecalsBold",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "DecalsSmall",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "FlamesTop",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C6": {
+   "kind": "change",
+   "title": "Auto-Sell",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "auto_sell_unlock_delivery_level",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C7": {
+   "kind": "change",
+   "title": "Phase 2 flag.",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C8": {
+   "kind": "change",
+   "title": "Bee Journal entry, EN/FR, through Godot's translation CSV.",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T1.1": {
+   "kind": "test",
+   "title": "item 1: each row's cost equals `base × growth^level` (floored) for lev",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "C1"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.1": {
+   "kind": "test",
+   "title": "item 2: at Flight level 3 and Swarm level 0, the hive fills 1.30× as f",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.1": {
+   "kind": "test",
+   "title": "item 3: at Heated level 0 one drag point uncaps one cell; at level 5 i",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.2": {
+   "kind": "test",
+   "title": "item 3 look: during a drag the fork prop is visible within `button_scr",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T4.1": {
+   "kind": "test",
+   "title": "item 4 look: at Gearing N (0..5) exactly Gear1..Gear(N + 1) are visibl",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "C4"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T5.1": {
+   "kind": "test",
+   "title": "item 5 look: at each Faster Delivery level 0..4 exactly the groups in ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "C5"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T4.2": {
+   "kind": "test",
+   "title": "item 4: at Gearing level 2 the turns needed are `ceil(base × 0.70)`; b",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "C4"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T5.2": {
+   "kind": "test",
+   "title": "item 5: trip time at Faster Delivery 0..4 is 30, 25.5, 21, 16.5, 12 s ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "C5"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T6.1": {
+   "kind": "test",
+   "title": "item 6: with Auto-Sell owned, a full bed leaves with no Sell press and",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [
+    "C6"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T7.1": {
+   "kind": "test",
+   "title": "item 7: buying Auto-Sell sets phase 2 once and the toast shows once; F",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [
+    "C7"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T8.1": {
+   "kind": "test",
+   "title": "item 8: `journal.csv` has every key in `en` and `fr`, non-empty; `tr()",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [
+    "C8"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T.1": {
+   "kind": "test",
+   "title": "mutations in `tests/mutations.json` prove the new tests.",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "depends": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  }
+ },
+ "order": [
+  {
+   "id": "H",
+   "score": 19.46,
+   "factors": {
+    "unblocks": 6,
+    "value": 1,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C4",
+   "score": 12.46,
+   "factors": {
+    "unblocks": 3,
+    "value": 2,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C2",
+   "score": 9.46,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T3.1",
+   "score": 3.61,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T3.2",
+   "score": 3.61,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "C3",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 3,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "C5",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 3,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "C6",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "C7",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "C8",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.91,
+    "ready": 0,
+    "blocked_by": [
+     "H"
+    ]
+   }
+  },
+  {
+   "id": "T.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C1",
+     "C2",
+     "C4",
+     "C5",
+     "C6",
+     "C7",
+     "C8"
+    ]
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C1"
+    ]
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C2"
+    ]
+   }
+  },
+  {
+   "id": "T4.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C4"
+    ]
+   }
+  },
+  {
+   "id": "T4.2",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C4"
+    ]
+   }
+  },
+  {
+   "id": "T5.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C5"
+    ]
+   }
+  },
+  {
+   "id": "T5.2",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C5"
+    ]
+   }
+  },
+  {
+   "id": "T6.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C6"
+    ]
+   }
+  },
+  {
+   "id": "T7.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C7"
+    ]
+   }
+  },
+  {
+   "id": "T8.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.39,
+    "ready": 0,
+    "blocked_by": [
+     "C8"
+    ]
+   }
+  }
+ ],
+ "ambiguous": []
+}
