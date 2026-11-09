@@ -88,6 +88,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [x] Auto-Sell costs (no discount: the truck leaves when full and sells at full price): provisional, first-automation-values
 - [ ] Jar crate tiers: jars waiting and truck load per tier, upgrade costs
 - [ ] Harvest logistics: centrifuge capacity (frames), truck capacity (jars) and truck trip time
+- [ ] Centrifuge Gearing gears: look revision after 0.2 ("good enough for now, will need revision later", designer on `gearing-r6-b5`, 2026-11-09)
 - [ ] Wider fork upgrade: a possible later upgrade, its look the wide rake head of `fork-r1-c` (designer, Design Votes 2026-11-09)
 - [x] Long Fork: unlock condition, cost, and how it leads into automated uncapping: provisional, first-automation-values
 - [ ] Royal Jelly prices, time-skip costs, and Patron daily stipend amount

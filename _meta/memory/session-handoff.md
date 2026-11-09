@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: f6f4c6c0-43ee-4483-9665-cc6335d16443
-  modified: 2026-11-09T20:57:32.173Z
+  modified: 2026-11-09T20:59:21.624Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -18,7 +18,7 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 - Truck flames, **one look per Faster Delivery level**: L1 `truck-flames-r3/…-l1` (exhaust pipes only), L2 `truck-flames-r1/…-a`, L3 `truck-flames-r1/…-b`, L4 `truck-flames-r3/…-l4` (decals + pipes + roof flames). Rule: no flames from the exhaust at any level.
 - Later: a "wider fork" upgrade (look `fork-r1-c`) is in README TBDs.
 
-**Next: 0.2 implementation session.** The picks are written into `game/specs/0.2-first-automation.md` items 3–5 and their contract lines (spec_lint clean), still **status proposed** for the designer's review. Designer answers 2026-11-09: fork pulse = albedo tween, no emission; pipes cumulative from Faster Delivery 1, no exhaust flames; Gear1 always under the crank, level N shows N + 1 gears (six at 5). STYLE_GUIDE updated (fork/gears roles, crank orange on fork head and truck flames, V3 object = prop). Gearing went to round 6 (`_tools/gear_train.py`: ring concentric with the lid, unique tooth counts, pointed prism teeth); the spec names `gearing-r6-b5` / `-b0`, awaiting the designer's yes on Design Votes. After approval: `/goal` + `goal_agent.py` (condition: `goal_agent.py SPEC --plan` reports nothing left and the latest unit run is green).
+**Next: 0.2 implementation session.** The picks are written into `game/specs/0.2-first-automation.md` items 3–5 and their contract lines (spec_lint clean), **approved 2026-11-09**. Designer answers 2026-11-09: fork pulse = albedo tween, no emission; pipes cumulative from Faster Delivery 1, no exhaust flames; Gear1 always under the crank, level N shows N + 1 gears (six at 5). STYLE_GUIDE updated (fork/gears roles, crank orange on fork head and truck flames, V3 object = prop). Gearing went to round 6 (`_tools/gear_train.py`: ring concentric with the lid, unique tooth counts, pointed prism teeth); picked `gearing-r6-b5` / `-b0` ("good enough for now", revision later in README TBDs). **The spec is APPROVED (2026-11-09).** Start the build in a fresh session: `/goal` with the condition in the spec's Build line, `goal_agent.py` inside. After approval: `/goal` + `goal_agent.py` (condition: `goal_agent.py SPEC --plan` reports nothing left and the latest unit run is green).
 
 **New tooling (2026-11-09):** `_tools/compose_variant.py` builds recombination rounds with no agent ([[compose-variants]]); Milo's parts convention is in `.claude/agents/modeler.md`. `checkpoint.py` failed once this session because its path list included `game/reports/ui-compare/design-votes.html`, which is gitignored (git add errors on ignored paths); never pass that file to it or to `git add`.
 
