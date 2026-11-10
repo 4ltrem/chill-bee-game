@@ -312,6 +312,15 @@ func _actions_row() -> Control:
 	bounds_button.text = "Show UI bounds"
 	bounds_button.pressed.connect(func() -> void: set_ui_bounds(not ui_bounds_shown()))
 	flow.add_child(bounds_button)
+	# 0.2 item 8: EN/FR toggle (the game's locale otherwise follows the OS, `en` fallback)
+	var locale_button := Button.new()
+	locale_button.name = "LocaleButton"
+	locale_button.text = "Language: " + TranslationServer.get_locale().substr(0, 2).to_upper()
+	locale_button.pressed.connect(func() -> void:
+		var next: String = "fr" if TranslationServer.get_locale().begins_with("en") else "en"
+		TranslationServer.set_locale(next)
+		locale_button.text = "Language: " + next.to_upper())
+	flow.add_child(locale_button)
 	for speed in SPEEDS:
 		var button: Button = _button(_speed_text(speed), func() -> void: _set_speed(speed))
 		button.toggle_mode = true

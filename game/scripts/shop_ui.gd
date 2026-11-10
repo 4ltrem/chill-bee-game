@@ -27,6 +27,10 @@ func _ready() -> void:
 				"level": row.find_child("LevelLabel", true, false) as Label,
 				"gate": row.find_child("GateLabel", true, false) as Label,
 			}
+	var farm_ui: Node = get_tree().current_scene.find_child("FarmUI", true, false) if get_tree().current_scene != null else null
+	if farm_ui != null:
+		var journal := JournalUI.new()   # item 8: wires JournalButton / JournalPanel (added at runtime)
+		farm_ui.add_child.call_deferred(journal)
 	Economy.money_changed.connect(func(_m: int) -> void: _refresh())
 	Economy.upgrade_changed.connect(func(_id: String, _l: int) -> void: _refresh())
 	_refresh()

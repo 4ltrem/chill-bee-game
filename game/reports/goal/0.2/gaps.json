@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T19:34:43-05:00",
- "unit_log": "game/reports/_runs/20261109-192909/unit.log",
+ "at": "2026-11-09T19:40:45-05:00",
+ "unit_log": "game/reports/_runs/20261109-193514/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -331,10 +331,16 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "49044b8",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -603,17 +609,6 @@
  },
  "order": [
   {
-   "id": "C7",
-   "score": 9.14,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.86,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C8",
    "score": 9.14,
    "factors": {
@@ -724,6 +719,17 @@
    }
   },
   {
+   "id": "T7.1",
+   "score": 3.62,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.38,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T.1",
    "score": 0.0,
    "factors": {
@@ -732,21 +738,7 @@
     "cost": 0.38,
     "ready": 0,
     "blocked_by": [
-     "C7",
      "C8"
-    ]
-   }
-  },
-  {
-   "id": "T7.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.38,
-    "ready": 0,
-    "blocked_by": [
-     "C7"
     ]
    }
   },

@@ -605,6 +605,69 @@ theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "OK"
 
+[node name="JournalPanel" type="PanelContainer" parent="FarmUIRoot/FarmUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -500.0
+offset_right = 320.0
+offset_bottom = 500.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_modal")
+
+[node name="JournalMargin" type="MarginContainer" parent="FarmUIRoot/FarmUI/JournalPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="JournalColumn" type="VBoxContainer" parent="FarmUIRoot/FarmUI/JournalPanel/JournalMargin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="JournalTitle" type="Label" parent="FarmUIRoot/FarmUI/JournalPanel/JournalMargin/JournalColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 40
+text = "Bumble Bees"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="JournalScroll" type="ScrollContainer" parent="FarmUIRoot/FarmUI/JournalPanel/JournalMargin/JournalColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="JournalBody" type="Label" parent="FarmUIRoot/FarmUI/JournalPanel/JournalMargin/JournalColumn/JournalScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "Journal text"
+autowrap_mode = 3
+
+[node name="JournalCloseButton" type="Button" parent="FarmUIRoot/FarmUI/JournalPanel/JournalMargin/JournalColumn"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Close"
+
 [node name="HarvestUIRoot" type="CanvasLayer" parent="."]
 
 [node name="HarvestUI" type="Control" parent="HarvestUIRoot"]

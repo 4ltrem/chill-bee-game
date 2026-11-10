@@ -1049,3 +1049,77 @@ Item 7 is in and the contract check passes. I didn't run the unit tests or `play
 - Check `tests`: PASS
 - Check `ui shots`: PASS
 - Check `style`: PASS (open rows only on files this step did not change)
+- Green: checkpoint `49044b8` on `milestone/0.2`
+
+## Pass 12: scan (2026-11-09T19:40:45-05:00)
+
+Unit results from `game/reports/_runs/20261109-193514/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C7 Phase 2 flag. | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger 49044b8 |
+
+### Order: new or rescored (2 of 13)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 11 | T7.1 item 7: buying Auto-Sell sets phase 2 once and the | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 12 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.38 | 0 | waits on C8 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C8** (score 9.14: 2 goal(s) wait on it; designer feature; cost 0.86 (Patricia, Bob)).
+
+### Step: C8 (2026-11-09T19:40:45-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C8-patricia.md` (1375 chars)
+- Brief for Bob: `game/reports/goal/0.2/briefs/C8-bob.md` (1394 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Bob** (110,763 tokens, 10 turns, 21 s):
+
+Item 8 is in `scenes/main.tscn`, and `python -I _tools/contract_check.py` reports 0 unresolved lookups. I did not render it, so I haven't seen it on screen.
+
+**What I did**
+- Added `JournalPanel` under `FarmUI`, hidden, with `StyleBox_modal`. It is centred at 640 x 1000, using the same margin, spacing and button styling as `SummaryModal` and the colour tokens already in `main.tscn`. I did not check them against `STYLE_GUIDE.md`.
+- Its children follow your handoff:
+  - `JournalMargin` > `JournalColumn` > `JournalTitle` (40 pt, wraps)
+  - `JournalScroll` > `JournalBody` (30 pt, word-smart wrap)
+  - `JournalCloseButton` (120 high, "Close")
+- `JournalTitle` and `JournalBody` hold placeholder text for Patricia to replace through `tr()`.
+- `ShopBox/JournalButton` was already in the scene (120 x 120, "Journal"), so I left it.
+
+**Open questions:** none.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 6 (cap 30; CLI num_turns 10); end `success`
+
+
+**Patricia** (72,959 tokens, 2 turns, 5 s):
+
+Item 8 is done and the checks pass. The `unit` run passed 178 tests with 0 failures, and `start` passed. `contract_check.py` found 72 lookups and 0 unresolved. That includes the `call_deferred` fix for the `add_child` error.
+
+I didn't run the windowed `play_loop.gd` playthrough. No test covers the Journal button, the Close button or the EN/FR toggle, so Quinn should add one.
+
+**Files changed**
+- `_tools/journal_csv.py`
+- `game/translations/journal.csv`, plus the imported `journal.en.translation` and `journal.fr.translation`
+- `game/project.godot`
+- `game/scripts/journal_ui.gd`
+- `game/scripts/dev_panel.gd`
+- `game/scripts/shop_ui.gd`
+
+**Node names:** `JournalButton`, `JournalPanel`, `JournalTitle`, `JournalBody`, `JournalCloseButton`.
+
+**Open question:** The Dev panel's Phase flag and "own auto-scraper" aren't on my contract lines, so I added only the EN/FR toggle.
+
+No Godot processes of mine are left running.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 26 (cap 30; CLI num_turns 2); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: PASS (open rows only on files this step did not change)
