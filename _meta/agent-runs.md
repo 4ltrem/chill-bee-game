@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-455 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+456 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -66,11 +66,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Ruth | post-ICM | 2 | — | 266,270 | 116 s |
 | **All** | | **46** | **23,802** | **123,576** | 105 s |
 
-**Doc audits** (11 runs)
+**Doc audits** (12 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Doris | post-ICM | 11 | 48,315 | 259,734 | 46 s |
+| Doris | post-ICM | 12 | 47,551 | 254,095 | 44 s |
 
 **Probes** (2 runs)
 
@@ -101,7 +101,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 43 | — | 19,993,305 | 14,247 s |
+| Orchestrator (main session) | post-ICM | 43 | — | 20,018,624 | 14,248 s |
 
 **Style loop** (14 runs)
 
