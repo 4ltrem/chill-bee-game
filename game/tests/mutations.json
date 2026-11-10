@@ -1178,5 +1178,55 @@
    "t_gearing_own_motor_cut"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 DecalsSmall also shows at level 3",
+  "file": "scripts/truck.gd",
+  "find": "\"DecalsSmall\": level == 2,",
+  "replace": "\"DecalsSmall\": level >= 2,",
+  "expect": [
+   "t_delivery_look_groups_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 FlamesTop shows from level 3",
+  "file": "scripts/truck.gd",
+  "find": "\"FlamesTop\": level >= 4,",
+  "replace": "\"FlamesTop\": level >= 3,",
+  "expect": [
+   "t_delivery_look_groups_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 Stacks pipes use the flame material",
+  "file": "scenes/props/truck.tscn",
+  "find": "id=\"Mesh_Stack\"]\nmaterial = ExtResource(\"m_steel\")",
+  "replace": "id=\"Mesh_Stack\"]\nmaterial = ExtResource(\"m_flame\")",
+  "expect": [
+   "t_delivery_stacks_not_flame_material"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 trip cut is 10% per level",
+  "file": "scripts/truck.gd",
+  "find": "return config.truck_trip_seconds * maxf(1.0 - config.faster_delivery_trip_cut_per_level * float(level), 0.0)",
+  "replace": "return config.truck_trip_seconds * maxf(1.0 - 0.10 * float(level), 0.0)",
+  "expect": [
+   "t_delivery_trip_time_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 trip time ignores the level",
+  "file": "scripts/truck.gd",
+  "find": "return config.truck_trip_seconds * maxf(1.0 - config.faster_delivery_trip_cut_per_level * float(level), 0.0)",
+  "replace": "return config.truck_trip_seconds",
+  "expect": [
+   "t_delivery_trip_time_by_level"
+  ],
+  "suite": "unit"
  }
 ]

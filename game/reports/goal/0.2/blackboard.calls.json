@@ -190,5 +190,21 @@
   "turns": 3,
   "seconds": 7,
   "transcripts": "_meta/sessions/runs/2026-11-09-goal-0.2"
+ },
+ {
+  "call": "Quinn, T4.1, T4.2",
+  "tokens": 813108,
+  "final": 66788,
+  "turns": 31,
+  "seconds": 107,
+  "transcripts": "_meta/sessions/runs/2026-11-09-goal-0.2"
+ },
+ {
+  "call": "Quinn, T4.1, T4.2 fix 1",
+  "tokens": 43095,
+  "final": 15154,
+  "turns": 4,
+  "seconds": 7,
+  "transcripts": "_meta/sessions/runs/2026-11-09-goal-0.2"
  }
 ]

@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T20:36:32-05:00",
- "unit_log": "game/reports/_runs/20261109-203101/unit.log",
+ "at": "2026-11-09T21:23:16-05:00",
+ "unit_log": "game/reports/_runs/20261109-211133/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -208,6 +208,12 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_flight_fill_rate_level3",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "ba8562d",
      "ok": true
@@ -306,6 +312,30 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_fork_reach_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_post_auto_yield_bonus",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_prop_follows_drag_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_head_colour_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "d71df5c",
      "ok": true
@@ -390,6 +420,36 @@
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_gears_visible_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_gears_turn_opposite_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_turns_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_bottling_time_unchanged",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_own_motor_cut",
      "ok": true,
      "result": "PASS"
     },
@@ -785,9 +845,21 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_flight_fill_rate_level3",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "60ae8f7",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -804,8 +876,21 @@
    "depends": [
     "C3"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_fork_reach_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_post_auto_yield_bonus",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -823,8 +908,21 @@
    "depends": [
     "C3"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_fork_prop_follows_drag_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_head_colour_by_level",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -842,8 +940,21 @@
    "depends": [
     "C4"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_gearing_gears_visible_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_gears_turn_opposite_twice",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -880,8 +991,27 @@
    "depends": [
     "C4"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_gearing_turns_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_bottling_time_unchanged",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_own_motor_cut",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -1032,6 +1162,66 @@
      "name": "t_shop_no_row_overlaps_other_controls",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_flight_fill_rate_level3",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_reach_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_post_auto_yield_bonus",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_prop_follows_drag_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_head_colour_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_gears_visible_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_gears_turn_opposite_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_turns_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_bottling_time_unchanged",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_own_motor_cut",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1042,111 +1232,56 @@
  },
  "order": [
   {
-   "id": "T2.1",
-   "score": 3.62,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.38,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T3.1",
-   "score": 3.62,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.38,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T3.2",
-   "score": 3.62,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.38,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T4.1",
-   "score": 3.62,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.38,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T4.2",
-   "score": 3.62,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.38,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T5.1",
-   "score": 3.62,
+   "score": 3.64,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.38,
+    "cost": 0.36,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T5.2",
-   "score": 3.62,
+   "score": 3.64,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.38,
+    "cost": 0.36,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T6.1",
-   "score": 3.62,
+   "score": 3.64,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.38,
+    "cost": 0.36,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T7.1",
-   "score": 3.62,
+   "score": 3.64,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.38,
+    "cost": 0.36,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T8.1",
-   "score": 3.62,
+   "score": 3.64,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.38,
+    "cost": 0.36,
     "ready": 1,
     "blocked_by": []
    }

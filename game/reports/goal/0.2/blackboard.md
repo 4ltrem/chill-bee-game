@@ -1246,40 +1246,6 @@ Command: `goal_agent.py game/specs/0.2-first-automation.md --accept T1.1 --note 
 - Change (orchestrator, Process 9): test_economy.gd t_cost_formula: roundi -> floori, quoting 0.2 item 1 ('rounded down'), which replaces 0.1's rounding (Patricia's economy.gd floor fix kept). unit 172/172, start as baseline, contract 0 unresolved (20261109-203101)
 - Accepted: checkpoint `5cc9a5c` on `milestone/0.2`
 
-## Result
-
-T1.1 accepted with a manual fix (checkpoint `5cc9a5c` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
-
-Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
-
-| Call | Total processed | Final context | Turns | Duration |
-|---|---|---|---|---|
-| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
-| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
-| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
-| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
-| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
-| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
-| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
-| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
-| Patricia, C1 | 128,628 | 32,719 | 12 | 14 s |
-| Bob, C1 | 171,980 | 22,145 | 11 | 30 s |
-| Quinn, C1 fix 1 | 82,925 | 20,798 | 6 | 16 s |
-| Patricia, C1 fix 1 | 165,546 | 28,457 | 13 | 21 s |
-| Quinn, C1 fix 2 | 69,434 | 20,193 | 8 | 17 s |
-| Bob, C1 fix 2 | 133,709 | 22,738 | 9 | 19 s |
-| Bob, C6 | 84,741 | 20,580 | 7 | 15 s |
-| Patricia, C6 | 90,946 | 20,971 | 12 | 17 s |
-| Bob, C6 fix 1 | 40,960 | 14,537 | 4 | 8 s |
-| Bob, C7 | 86,223 | 20,455 | 6 | 11 s |
-| Patricia, C7 | 152,741 | 27,551 | 19 | 29 s |
-| Bob, C8 | 110,763 | 22,489 | 10 | 21 s |
-| Patricia, C8 | 72,959 | 36,963 | 2 | 5 s |
-| Quinn, T1.1, T.1 | 996,332 | 79,607 | 33 | 114 s |
-| Patricia, T1.1, T.1 fix 1 | 65,531 | 18,495 | 7 | 10 s |
-| Bob, T1.1, T.1 fix 2 | 26,930 | 14,541 | 3 | 7 s |
-| **Total** | **4,468,473** | | | |
-
 ## Resumed 2026-11-09
 
 Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `stopped`).
@@ -1327,6 +1293,339 @@ T2.1 now has a test, but nothing has been run and I did not parse-check it. `god
 **Open questions:** none for this line. I wrote no input-path or sequence test, since the line is about a rate, not something the player starts. The bees flying faster is item 2's second sentence but not part of T2.1, so it has no test.
 
 - Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 11 (cap 30; CLI num_turns 19); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Green: checkpoint `60ae8f7` on `milestone/0.2`
+
+## Pass 16: scan (2026-11-09T20:42:30-05:00)
+
+Unit results from `game/reports/_runs/20261109-203715/unit.log`. 12 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C2 Flight Endurance | change | Patricia | done | 11/11 present: ✓ config flight_speed_bonus_per_level, ✓ config flight_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text ... |
+| T2.1 item 2: at Flight level 3 and Swarm level 0, the hive fills  | test | Quinn | done | ✓ test t_flight_fill_rate_level3, ✓ ledger 60ae8f7 |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 8/8 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+Next: **T3.1** (score 3.62: designer feature; cost 0.38 (Quinn)), with T3.2.
+
+### Step: T3.1, T3.2 (2026-11-09T20:42:30-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T3.1-quinn.md` (4797 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (781,713 tokens, 35 turns, 174 s):
+
+I wrote the four 0.2 item 3 tests and their mutations, but nothing has been parsed or run. `godot` isn't on PATH here, so I couldn't do the `--check-only` pass either.
+
+**Files changed**
+- `game/tests/test_fork.gd` (new, extends `test_flight.gd`)
+- `game/tests/run_tests.gd` (now extends `test_fork.gd`; group comment `# 0.2 item 3 (written from game/specs/0.2-first-automation.md before the code)`)
+- `game/tests/mutations.json` (12 mutations added)
+
+**Tests**
+- T3.1: `t_fork_reach_by_level`, `t_fork_post_auto_yield_bonus`
+- T3.2: `t_fork_prop_follows_drag_twice`, `t_fork_head_colour_by_level`
+
+**Node names used:** `UncapFork`, `Head`, `Handle`, `Honeycomb`. The yield test reads the `cell_scraped` signal.
+
+**Pick match:** I wrote no test for it. `goal_agent.py` runs it through Vera.
+
+**Open questions**
+- Item 3: what happens to the fork prop on Back mid-drag?
+- Item 3: what happens to the fork prop on zoom out mid-drag?
+- Item 3: what happens to the fork prop on app pause mid-drag?
+- Item 3: does the next press after one of those exits show the fork again?
+- `honeycomb.gd` only emits `drag_ended` while `active`, so the prop may stay visible after Back.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 15 (cap 30; CLI num_turns 35); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      176 passed, 1 failed  (exit 1, 286 noise lines dropped)  game/reports/_runs/20261109-204525/unit.log
+    FAIL  t_fork_prop_follows_drag_twice  drag 1: the fork follows the drag point (within 16 px of the last point) | drag 2: the fork follows the drag point (within 16 px of the last point)  (1585 ms)
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T3.1-fix1-patricia.md` (2676 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (184,342 tokens, 15 turns, 29 s):
+
+I changed `game/scripts/honeycomb.gd` to fix `t_fork_prop_follows_drag_twice`. I did not run the unit tests or the Godot parse check, so the fix is unconfirmed until the goal agent runs the tests. Only `python -I _tools/contract_check.py` ran, and it reports 0 unresolved lookups.
+
+**Cause:** a scraped cell's collider is switched off (`_set_collider`). Once the drag uncapped the cells under it, the ray hit nothing, `drag_point` stopped firing, and the fork prop stayed behind.
+
+**Fix:** when `_probe` misses a cell collider, the new `_follow_over_emptied` intersects the ray with the frame's plane. If that point is within one `cell_pitch` of any cell, it emits `drag_point`. It uncaps nothing. Presses away from the combs still show no fork, and release still hides it.
+
+No placeholders left. For Quinn: a drag across already-emptied cells should keep the fork following.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 9 (cap 15; CLI num_turns 15); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate baseline: 4 expected tests, 0 already failing
+mutate 1/12: 0.2 item 3 the fork reach ignores the Heated level ... CAUGHT in 8s
+mutate 2/12: 0.2 item 3 level 0 uncaps the neighbours too ... CAUGHT in 8s
+mutate 3/12: 0.2 item 3 the auto-scraper yield bonus is doubled ... CAUGHT in 12s
+mutate 4/12: 0.2 item 3 the yield bonus applies without the auto-scraper ... CAUGHT in 12s
+mutate 5/12: 0.2 item 3 the fork stays after the drag ends ... CAUGHT in 5s
+mutate 6/12: 0.2 item 3 the fork never shows on a second drag ... CAUGHT in 5s
+mutate 7/12: 0.2 item 3 the fork sits far from the drag point ... CAUGHT in 5s
+mutate 9/12: 0.2 item 3 the head pulses at Heated 0 ... CAUGHT in 12s
+mutate 10/12: 0.2 item 3 the head pulse takes twice as long ... CAUGHT in 12s
+mutate 11/12: 0.2 item 3 the head peaks blue, not crank orange ... CAUGHT in 12s
+mutate 12/12: 0.2 item 3 the head glows at the peak ... CAUGHT in 12s
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T3.1-fix2-quinn.md` (3130 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (93,273 tokens, 8 turns, 14 s):
+
+I fixed one defect, in `game/tests/mutations.json`. I ran nothing, as instructed.
+
+Mutation 8/12, "the fork shows on a press that misses the combs", was never reported as caught or missed. Its `find` text matched nothing in `honeycomb.gd`. The game code reads `if hit.is_empty() or not (...has_meta("cell_index")):`, not the bare `if hit.is_empty():` the mutation looked for.
+
+I changed the find/replace to target the `_follow_over_emptied(from, to)` / `return` lines instead. The mutant now emits `drag_point` on a press that misses the combs. `t_fork_prop_follows_drag_twice` should catch it at step 1, "a drag that starts away from the combs shows no fork". That is my reading of the test, not a run.
+
+The other 11 mutations were all caught. No game-code or spec failure turned up. Please rerun mutation 8 to confirm.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 8); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `running`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 17: scan (2026-11-09T21:03:21-05:00)
+
+Unit results from `game/reports/_runs/20261109-205131/unit.log`. 14 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C3 Heated Uncapping Fork | change | Patricia, Bob | done | 18/18 present: ✓ config heated_fork_radius_bonus_per_level, ✓ config fork_pulse_seconds, ✓ config heated_fork_max_level, ✓ config heated_fork_post_auto_yield_bonus_per_level, ✓ config uncap_radius, ✓ node ForkIcon, ✓ test t_shop_costs_floor_base_growth, ✓ ... |
+| T3.1 item 3: at Heated level 0 one drag point uncaps one cell; at | test | Quinn | done | ✓ test t_fork_reach_by_level, ✓ test t_fork_post_auto_yield_bonus |
+| T3.2 item 3 look: during a drag the fork prop is visible within ` | test | Quinn | done | ✓ test t_fork_prop_follows_drag_twice, ✓ test t_fork_head_colour_by_level |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 12/12 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+Next: **T4.1** (score 3.62: designer feature; cost 0.38 (Quinn)), with T4.2.
+
+### Step: T4.1, T4.2 (2026-11-09T21:03:21-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T4.1-quinn.md` (4154 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (813,108 tokens, 31 turns, 107 s):
+
+I wrote the five item 4 tests, but none have run. The `--check-only` parse of `run_tests.gd` (which loads the new file through the extends chain) printed no errors.
+
+**Files changed**
+- `game/tests/test_gearing.gd` is new and extends `test_fork.gd`.
+- `run_tests.gd` now extends `test_gearing.gd`. It has the `# 0.2 item 4 (written from … before the code)` group, and each test has a `# goal` line.
+- `mutations.json` has 8 new mutations, one per test and two for the turn-opposite test.
+
+**Tests**
+- T4.1: `t_gearing_gears_visible_by_level`, `t_gearing_gears_turn_opposite_twice`.
+- T4.2: `t_gearing_turns_by_level`, `t_gearing_bottling_time_unchanged`, `t_gearing_own_motor_cut`.
+
+**Node names used:** `Gear1`–`Gear6`.
+
+**Methods read from the code, not the spec:** `turns_needed()`, `ramp_seconds()`, `_process`.
+
+**Mutation to check:** the "second crank dead" mutation uses `_clock < 5.0`. It may survive if the first run takes under 5 s of game time.
+
+**Open questions**
+- Item 4: what do the gears do when the player leaves (Back, zoom out, app pause) mid-crank? No leave test is written.
+- Item 4: with "own motor" on, does the 8% cut multiply with the 15% cut or add to it? The test checks only the ratio, ramp with the motor over ramp without it, equal to `1 − 0.08 × level`.
+- Item 4: does the after-automation cut shorten bottling? The spec defaults it to no, and I didn't test it.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 18 (cap 30; CLI num_turns 31); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+    sys.exit(main())
+  File "C:\Users\mtrem\Desktop\MAIGD\_tools\mutate.py", line 107, in main
+    mutations = json.load(open(args.file, encoding="utf-8"))
+  File "C:\Program Files\Python310\lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+  File "C:\Program Files\Python310\lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "C:\Program Files\Python310\lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "C:\Program Files\Python310\lib\json\decoder.py", line 353, in raw_decode
+    obj, end = self.scan_once(s, idx)
+json.decoder.JSONDecodeError: Invalid control character at: line 1175 column 12 (char 39777)
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T4.1-fix1-quinn.md` (2528 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (43,095 tokens, 4 turns, 7 s):
+
+I fixed the `mutations` failure in `game/tests/mutations.json`. I haven't run anything: no JSON parse, no suite, no mutations.
+
+The cause was my own entry "0.2 item 4 the motor cut applies without the motor". Its `find` and `replace` strings held literal tab characters, which JSON doesn't allow. `mutate.py` stopped on them at line 1175 with "Invalid control character". I replaced the tabs with `\t` escapes. The text the mutation searches for and swaps in is the same as before.
+
+A search for literal tabs inside other `find` or `replace` strings found none, so I don't expect another parse error. I'd still have the goal agent re-run `mutate.py` to confirm, since I didn't run it.
+
+Nothing outside `tests/` was changed. The failure wasn't in another folder or in the spec.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 4); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate 9/20: 0.2 item 3 the head pulses at Heated 0 ... CAUGHT in 12s
+mutate 10/20: 0.2 item 3 the head pulse takes twice as long ... CAUGHT in 12s
+mutate 11/20: 0.2 item 3 the head peaks blue, not crank orange ... CAUGHT in 12s
+mutate 12/20: 0.2 item 3 the head glows at the peak ... CAUGHT in 12s
+mutate 13/20: 0.2 item 4 one gear too many shows ... CAUGHT in 7s
+mutate 14/20: 0.2 item 4 neighbouring gears turn the same way ... CAUGHT in 3s
+mutate 15/20: 0.2 item 4 gears turn only in the first minutes of the clock (second crank dead) ... MISSED in 3s
+mutate 16/20: 0.2 item 4 turns cut is 10% per level ... CAUGHT in 7s
+mutate 17/20: 0.2 item 4 turns are rounded down ... CAUGHT in 7s
+mutate 18/20: 0.2 item 4 gearing shortens bottling ... CAUGHT in 13s
+mutate 19/20: 0.2 item 4 own motor cut is 5% per level ... CAUGHT in 6s
+mutate 20/20: 0.2 item 4 the motor cut applies without the motor ... CAUGHT in 6s
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T4.1-fix2-quinn.md` (2723 chars)
+
+**Paused:** Budget guard: weekly usage is 76% with 36% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 19 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
+## Result
+
+Last invocation (2026-11-09T21:21:53-05:00): paused.
+
+Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
+| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
+| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
+| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
+| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
+| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
+| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
+| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
+| Patricia, C1 | 128,628 | 32,719 | 12 | 14 s |
+| Bob, C1 | 171,980 | 22,145 | 11 | 30 s |
+| Quinn, C1 fix 1 | 82,925 | 20,798 | 6 | 16 s |
+| Patricia, C1 fix 1 | 165,546 | 28,457 | 13 | 21 s |
+| Quinn, C1 fix 2 | 69,434 | 20,193 | 8 | 17 s |
+| Bob, C1 fix 2 | 133,709 | 22,738 | 9 | 19 s |
+| Bob, C6 | 84,741 | 20,580 | 7 | 15 s |
+| Patricia, C6 | 90,946 | 20,971 | 12 | 17 s |
+| Bob, C6 fix 1 | 40,960 | 14,537 | 4 | 8 s |
+| Bob, C7 | 86,223 | 20,455 | 6 | 11 s |
+| Patricia, C7 | 152,741 | 27,551 | 19 | 29 s |
+| Bob, C8 | 110,763 | 22,489 | 10 | 21 s |
+| Patricia, C8 | 72,959 | 36,963 | 2 | 5 s |
+| Quinn, T1.1, T.1 | 996,332 | 79,607 | 33 | 114 s |
+| Patricia, T1.1, T.1 fix 1 | 65,531 | 18,495 | 7 | 10 s |
+| Bob, T1.1, T.1 fix 2 | 26,930 | 14,541 | 3 | 7 s |
+| Quinn, T4.1, T4.2 | 813,108 | 66,788 | 31 | 107 s |
+| Quinn, T4.1, T4.2 fix 1 | 43,095 | 15,154 | 4 | 7 s |
+| **Total** | **5,324,676** | | | |
+
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `paused`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 18: scan (2026-11-09T21:23:16-05:00)
+
+Unit results from `game/reports/_runs/20261109-211133/unit.log`. 16 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C4 Centrifuge Gearing | change | Patricia, Bob | done | 17/17 present: ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ config gearing_post_auto_time_cut_per_level, ✓ config gearing_post_auto_cut_includes_bottling, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test ... |
+| T4.1 item 4 look: at Gearing N (0..5) exactly Gear1..Gear(N + 1)  | test | Quinn | done | ✓ test t_gearing_gears_visible_by_level, ✓ test t_gearing_gears_turn_opposite_twice |
+| T4.2 item 4: at Gearing level 2 the turns needed are `ceil(base × | test | Quinn | done | ✓ test t_gearing_turns_by_level, ✓ test t_gearing_bottling_time_unchanged, ✓ test t_gearing_own_motor_cut |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 17/17 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+### Order: new or rescored (5 of 5)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T5.1 item 5 look: at each Faster Delivery level 0..4 ex | 3.64 | 0 | 2 | 0.36 | 1 | designer feature; cost 0.36 (Quinn) |
+| 2 | T5.2 item 5: trip time at Faster Delivery 0..4 is 30, 2 | 3.64 | 0 | 2 | 0.36 | 1 | designer feature; cost 0.36 (Quinn) |
+| 3 | T6.1 item 6: with Auto-Sell owned, a full bed leaves wi | 3.64 | 0 | 2 | 0.36 | 1 | designer feature; cost 0.36 (Quinn) |
+| 4 | T7.1 item 7: buying Auto-Sell sets phase 2 once and the | 3.64 | 0 | 2 | 0.36 | 1 | designer feature; cost 0.36 (Quinn) |
+| 5 | T8.1 item 8: `journal.csv` has every key in `en` and `f | 3.64 | 0 | 2 | 0.36 | 1 | designer feature; cost 0.36 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T5.1** (score 3.64: designer feature; cost 0.36 (Quinn)), with T5.2.
+
+### Step: T5.1, T5.2 (2026-11-09T21:23:16-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T5.1-quinn.md` (3946 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (518,408 tokens, 30 turns, 59 s):
+
+I wrote the Faster Delivery tests and the parse check passed, but I haven't run any test or mutation.
+
+**Files changed**
+- New `game/tests/test_delivery.gd`. It extends `test_gearing.gd`.
+- `game/tests/run_tests.gd` now extends `test_delivery.gd`. Its `# 0.2 item 5` group lists the three tests.
+- `game/tests/mutations.json` has 5 new mutations.
+
+**Tests**
+- `t_delivery_look_groups_by_level` (goal T5.1)
+- `t_delivery_stacks_not_flame_material` (goal T5.1)
+- `t_delivery_trip_time_by_level` (goal T5.2)
+
+**Node names used:** `Stacks`, `DecalsSmall`, `DecalsBold`, `FlamesTop`. The flame material is `materials/crank_handle.tres`.
+
+**Mutations**
+- Look test: DecalsSmall also shows at level 3; FlamesTop shows from level 3.
+- Material test: the `Stacks` pipe mesh uses the flame material in `truck.tscn`.
+- Trip test: the cut is 10% per level; the level is ignored.
+
+These point at `truck.gd` and `truck.tscn`, and the match strings were copied from them.
+
+**Open questions:** none. Faster Delivery is a one-tap upgrade, so it has no sequence test.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 14 (cap 30; CLI num_turns 30); end `success`
 
 - Check `contract`: PASS
 - Check `tests`: PASS
