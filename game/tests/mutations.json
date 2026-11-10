@@ -978,5 +978,205 @@
    "t_flight_fill_rate_level3"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork reach ignores the Heated level",
+  "file": "scripts/honeycomb.gd",
+  "find": "return config.uncap_radius * (1.0 + config.heated_fork_radius_bonus_per_level * float(level))",
+  "replace": "return config.uncap_radius * (1.0 + config.heated_fork_radius_bonus_per_level * float(level) * 0.1)",
+  "expect": [
+   "t_fork_reach_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 level 0 uncaps the neighbours too",
+  "file": "scripts/honeycomb.gd",
+  "find": "radius * cell_pitch + 0.001",
+  "replace": "radius * cell_pitch + 1.0",
+  "expect": [
+   "t_fork_reach_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the auto-scraper yield bonus is doubled",
+  "file": "scripts/honeycomb.gd",
+  "find": "return 1.0 + config.heated_fork_post_auto_yield_bonus_per_level * float(level)",
+  "replace": "return 1.0 + config.heated_fork_post_auto_yield_bonus_per_level * 2.0 * float(level)",
+  "expect": [
+   "t_fork_post_auto_yield_bonus"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the yield bonus applies without the auto-scraper",
+  "file": "scripts/honeycomb.gd",
+  "find": "if not config.dev_own_auto_scraper:",
+  "replace": "if config.dev_own_auto_scraper == null:",
+  "expect": [
+   "t_fork_post_auto_yield_bonus"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork stays after the drag ends",
+  "file": "scripts/uncap_fork.gd",
+  "find": "_dragging = false\n\tvisible = false\n\t_pulse_t = 0.0",
+  "replace": "_dragging = false\n\tvisible = true\n\t_pulse_t = 0.0",
+  "expect": [
+   "t_fork_prop_follows_drag_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork never shows on a second drag",
+  "file": "scripts/uncap_fork.gd",
+  "find": "_dragging = false\n\tvisible = false\n\t_pulse_t = 0.0",
+  "replace": "_dragging = true\n\tvisible = false\n\t_pulse_t = 0.0",
+  "expect": [
+   "t_fork_prop_follows_drag_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork sits far from the drag point",
+  "file": "scripts/uncap_fork.gd",
+  "find": "global_position = world_position",
+  "replace": "global_position = world_position + Vector3(0.0, 6.0, 0.0)",
+  "expect": [
+   "t_fork_prop_follows_drag_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork shows on a press that misses the combs",
+  "file": "scripts/honeycomb.gd",
+  "find": "\t\t_follow_over_emptied(from, to)\n\t\treturn\n\tvar collider",
+  "replace": "\t\t_follow_over_emptied(from, to)\n\t\tdrag_point.emit(from)\n\t\treturn\n\tvar collider",
+  "expect": [
+   "t_fork_prop_follows_drag_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the head pulses at Heated 0",
+  "file": "scripts/uncap_fork.gd",
+  "find": "if heated_level() < 1:",
+  "replace": "if heated_level() < 0:",
+  "expect": [
+   "t_fork_head_colour_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the head pulse takes twice as long",
+  "file": "scripts/uncap_fork.gd",
+  "find": "fposmod(t / pulse_seconds(), 1.0)",
+  "replace": "fposmod(t / (pulse_seconds() * 2.0), 1.0)",
+  "expect": [
+   "t_fork_head_colour_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the head peaks blue, not crank orange",
+  "file": "scripts/uncap_fork.gd",
+  "find": "Color = Color(0.95, 0.50, 0.20)",
+  "replace": "Color = Color(0.20, 0.50, 0.95)",
+  "expect": [
+   "t_fork_head_colour_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the head glows at the peak",
+  "file": "scripts/uncap_fork.gd",
+  "find": "_head_material.albedo_color = _steel.lerp(hot_color, blend)",
+  "replace": "_head_material.albedo_color = _steel.lerp(hot_color, blend)\n\t\t_head_material.emission_enabled = blend > 0.5",
+  "expect": [
+   "t_fork_head_colour_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 one gear too many shows",
+  "file": "scripts/centrifuge.gd",
+  "find": "return gearing_level() + 1",
+  "replace": "return gearing_level() + 2",
+  "expect": [
+   "t_gearing_gears_visible_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 neighbouring gears turn the same way",
+  "file": "scripts/centrifuge.gd",
+  "find": "speed = -speed * float(GEAR_TEETH[i - 1]) / float(GEAR_TEETH[i])",
+  "replace": "speed = speed * float(GEAR_TEETH[i - 1]) / float(GEAR_TEETH[i])",
+  "expect": [
+   "t_gearing_gears_turn_opposite_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 gears turn only in the first minutes of the clock (second crank dead)",
+  "file": "scripts/centrifuge.gd",
+  "find": "gear.rotate_y(speed * delta)",
+  "replace": "gear.rotate_y(speed * delta * (1.0 if _clock < 5.0 else 0.0))",
+  "expect": [
+   "t_gearing_gears_turn_opposite_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 turns cut is 10% per level",
+  "file": "scripts/centrifuge.gd",
+  "find": "return maxf(1.0 - config.gearing_cut_per_level * float(gearing_level()), 0.0)",
+  "replace": "return maxf(1.0 - 0.10 * float(gearing_level()), 0.0)",
+  "expect": [
+   "t_gearing_turns_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 turns are rounded down",
+  "file": "scripts/centrifuge.gd",
+  "find": "return maxi(ceili(base * gearing_multiplier() - EPS), 1)",
+  "replace": "return maxi(floori(base * gearing_multiplier() + EPS), 1)",
+  "expect": [
+   "t_gearing_turns_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 gearing shortens bottling",
+  "file": "scripts/centrifuge.gd",
+  "find": "var s: float = config.bottling_seconds_per_jar",
+  "replace": "var s: float = config.bottling_seconds_per_jar * gearing_multiplier()",
+  "expect": [
+   "t_gearing_bottling_time_unchanged"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 own motor cut is 5% per level",
+  "file": "scripts/centrifuge.gd",
+  "find": "return maxf(1.0 - config.gearing_post_auto_time_cut_per_level * float(gearing_level()), 0.0)",
+  "replace": "return maxf(1.0 - 0.05 * float(gearing_level()), 0.0)",
+  "expect": [
+   "t_gearing_own_motor_cut"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 the motor cut applies without the motor",
+  "file": "scripts/centrifuge.gd",
+  "find": "\tif not config.dev_own_motor:\n\t\treturn 1.0\n\treturn maxf(1.0 - config.gearing_post_auto",
+  "replace": "\treturn maxf(1.0 - config.gearing_post_auto",
+  "expect": [
+   "t_gearing_own_motor_cut"
+  ],
+  "suite": "unit"
  }
 ]

@@ -389,12 +389,27 @@ func _probe(screen_pos: Vector2) -> void:
 	var to: Vector3 = from + camera.project_ray_normal(screen_pos) * RAY_LENGTH
 	var space: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 	var hit: Dictionary = space.intersect_ray(PhysicsRayQueryParameters3D.create(from, to))
-	if hit.is_empty():
+	if hit.is_empty() or not (hit["collider"] as Object).has_meta("cell_index"):
+		_follow_over_emptied(from, to)
 		return
 	var collider: Object = hit["collider"]
 	if collider != null and collider.has_meta("cell_index"):
 		drag_point.emit(hit["position"])
 		uncap_reach(int(collider.get_meta("cell_index")))
+
+
+## Scraped cells have no collider, so the ray misses them: the fork prop still follows while the ray crosses the frame plane
+## within one cell pitch of a cell (no cell is uncapped here).
+func _follow_over_emptied(from: Vector3, to: Vector3) -> void:
+	var plane := Plane(global_basis.y.normalized(), global_position)
+	var point: Variant = plane.intersects_segment(from, to)
+	if point == null:
+		return
+	var p: Vector3 = point
+	for i in _cell_roots.size():
+		if _cell_roots[i].global_position.distance_to(p) <= cell_pitch:
+			drag_point.emit(p)
+			return
 
 
 ## 0.2 item 3: fork reach in cell pitches: uncap_radius x (1 + heated_fork_radius_bonus_per_level x Heated Fork level).
