@@ -51,7 +51,7 @@ PRIMITIVES = {"BoxMesh", "CylinderMesh", "SphereMesh", "PlaneMesh", "PrismMesh",
               "QuadMesh", "TorusMesh"}
 THIN_OK = re.compile(r"rim|handle|lip|line|mark|border|edge", re.I)
 # Scripted meshes that build a primitive shape (V4 holds): 0.1.4 item 14 baked the comb cell's 30° turn into a
-# CylinderMesh-equivalent hex prism; a "fix" back to CylinderMesh broke the frame tests (0.2 C3, 2026-11-09).
+# CylinderMesh-equivalent hex prism; a "fix" back to CylinderMesh broke the frame tests (0.2 C3, 2026-11-09; learnings L33).
 PROCEDURAL_PRIMITIVES = {"hex_cell_mesh.gd"}
 COLOR = re.compile(r"Color\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+))?\s*\)")
 GODOT_BUTTON_FONT = (0.875, 0.875, 0.875)  # Godot 4 default theme

@@ -362,6 +362,10 @@ def scan(game, ledger_path=None):
             m = re.match(r"^(PASS|FAIL)\s+(t_\w+)", line)
             if m:
                 results[m.group(2)] = m.group(1)
+    marks = {}   # {goal id: [tests]} from Quinn's `# goal <ID>` line above each test function
+    for f in sorted((game / "tests").glob("*.gd")):
+        for gid, t in re.findall(r"^\s*#\s*goal\s+(\S+).*\n\s*func\s+(t_\w+)", f.read_text(encoding="utf-8", errors="replace"), re.M):
+            marks.setdefault(gid, []).append(t)
     handoffs = sorted(p.name for p in (game / "specs").glob("*handoff*.md"))
     handoff_text = {p.name: p.read_text(encoding="utf-8") for p in (game / "specs").glob("*handoff*.md")}
     ledger = {}
@@ -369,7 +373,7 @@ def scan(game, ledger_path=None):
     if ledger_path.is_file():
         ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
     return {"keys": keys, "nodes": nodes, "groups": groups, "x1": x1, "results": results,
-            "handoff_text": handoff_text,
+            "handoff_text": handoff_text, "marks": marks,
             "unit_log": log.relative_to(game.parent).as_posix() if log and game.parent in log.parents else
             (str(log) if log else None), "handoffs": handoffs, "ledger": ledger}
 
@@ -408,14 +412,22 @@ def gaps(spec, found):
             ev.append({"kind": "handoff", "name": hand[0] if hand else f"game/specs/{spec['version']}-node-handoff.md",
                        "ok": bool(hand)})
         tests = tests_for(spec, found, goal["items"]) if goal["kind"] != "handoff" else []
+        entry = ledger.get(gid, {})
+        built = gid in ledger and "held" not in entry
+        by_marks = False
+        if goal["kind"] == "test" and not re.search(r"\bmutations?\b", goal["text"], re.I):
+            # once this spec's tests carry `# goal <ID>` marks, a line's evidence is its own marked tests: 0.2 T1.1
+            # was batched with the mutations line, its group comment named items 1-8, and all 12 lines read as done
+            mine = set(tests_for(spec, found, []))
+            marked = {k: [t for t in v if t in mine] for k, v in found.get("marks", {}).items()}
+            if any(marked.get(g) for g, x in spec["goals"].items() if x["kind"] == "test"):
+                tests, by_marks = marked.get(gid, []), True
         for t in tests:
             r = found["results"].get(t)
-            ok = r == "PASS" or (r is None and t in found["x1"])
+            ok = r == "PASS" or (r is None and t in found["x1"] and (built or not by_marks))   # an unrun x1 test proves a built line only
             ev.append({"kind": "test", "name": t, "ok": ok, "result": r or ("x1, designer plays" if t in found["x1"]
                                                                            else "not run")})
-        entry = ledger.get(gid, {})
         held = entry.get("held") if entry.get("text") == text_hash(goal) else None   # a spec edit lifts the hold
-        built = gid in ledger and "held" not in entry
         if built:
             ev.append({"kind": "ledger", "name": ledger[gid].get("commit") or ledger[gid].get("run", ""), "ok": True})
         present = [e for e in ev if e["ok"] or (e["kind"] == "test")]
@@ -667,7 +679,8 @@ def briefs(spec, goal, batch, run, branch):
         return out
     if goal["kind"] == "test":
         lines = "\n".join(f"- {b['id']}: {b['text']}" for b in batch)
-        items = sorted({n for b in batch for n in b["items"]})
+        items = sorted({n for b in batch if not re.search(r"\bmutations?\b", b["text"], re.I) for n in b["items"]}
+                       or {n for b in batch for n in b["items"]})   # the mutations line covers every item: not a label
         label = f"{spec['version']} item{'s' if len(items) > 1 else ''} {', '.join(map(str, items))}"
         out[QA] = head + (
             f"Write the tests for these contract lines, from the spec, not the code (Process 2): every expected "

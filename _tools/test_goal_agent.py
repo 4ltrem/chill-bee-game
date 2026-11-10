@@ -13,6 +13,7 @@ Standard library only.
 import contextlib
 import io
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -115,6 +116,20 @@ class Gaps(unittest.TestCase):
         self.assertEqual(report["T1.2"]["status"], "partial")               # green item tests, but never built
         self.assertEqual(report["T1.1"]["status"], "done")
         self.assertEqual(plan(ledger=["T3.1"])[1]["T1.1"]["status"], "done")   # no ledgered sibling: old rule
+
+    def test_marked_tests_are_a_lines_only_evidence(self):
+        # 0.2: T1.1 rode with the mutations line, its group comment named every item, and all 12 lines read as done
+        spec = ga.parse_spec(SPEC)
+        found = ga.scan(FIX / "game", ledger_path=FIX / "none.json")
+        found["marks"] = {"T1.1": ["t_meter_fill"]}                         # one line marked, the others not
+        report = ga.gaps(spec, found)
+        self.assertEqual(report["T1.1"]["status"], "done")
+        self.assertEqual([e["name"] for e in report["T1.1"]["evidence"] if e["kind"] == "test"], ["t_meter_fill"])
+        others = [g for g, x in spec["goals"].items() if x["kind"] == "test" and g != "T1.1"
+                  and not re.search(r"mutation", x["text"], re.I)]
+        self.assertTrue(others)
+        for g in others:
+            self.assertNotEqual(report[g]["status"], "done", g)             # no mark of its own: not built
 
     def test_a_built_test_goal_on_a_red_item_waits_instead_of_rebuilding(self):
         spec, report, ranked, _ = plan(ledger=["H", "C2", "T.1"])           # T.1's evidence has C2's failing test

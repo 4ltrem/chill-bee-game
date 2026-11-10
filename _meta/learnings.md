@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L34 · 2026-11-09 · `--plan` said 21/21 done after Quinn wrote only the shop tests
+- **What broke:** after T1.1 (7 shop tests) the plan marked all 12 test lines done; the `/goal` condition would have passed with 10 lines untested.
+- **How noticed:** the orchestrator compared the plan with the `# goal` marks in `game/tests/` (7 × T1.1, nothing else).
+- **Cause:** T1.1 was batched with T.1 (mutations, which covers every item), so the brief's group label read "0.2 items 1, …, 8"; `scan()` read only group comments, not the marks. Also the stale 0.1 `t_cost_formula` (roundi) went to Patricia and Bob, not Quinn, because a test goal's fix rounds go to code owners.
+- **How fixed:** `scan()` reads the marks; once a spec's tests carry them, a line's evidence is its own marked tests (an unrun x1 test counts only once built); the label leaves out the mutations line's items; `t_cost_formula` floored by hand, quoting item 1.
+- **Prevention:** `test_goal_agent` `test_marked_tests_are_a_lines_only_evidence`. Open: a stale older test in a test goal's fix round still goes to the code owners first.
+
 ## L32 · 2026-11-09 · Recombination rounds cost a full Milo run each
 - **What broke:** 0.2 models rounds 2 and 3 were mostly "take A's part, add it to B, drop C, swap a material", yet each was a Milo run (34k–112k tokens) that re-read and rewrote whole centrifuge and truck copies.
 - **How noticed:** the designer asked how to cut tokens on permutation runs.
@@ -18,7 +25,7 @@ Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Pre
 - **How fixed:** Milo rebuilt the fork upright inside one tilted `Pose` node; the decals went to 0.05.
 - **Prevention:** the parts convention in `.claude/agents/modeler.md`: a tilt or pose lives on one parent node, parts are built untilted; briefs never relax a V rule.
 
-## L31 · 2026-11-09 · Bob's 0.2 C3 fork step rebuilt the honey cell and broke two frame tests
+## L33 · 2026-11-09 · Bob's 0.2 C3 fork step rebuilt the honey cell and broke two frame tests
 - **What broke:** in C3 (Heated Fork) Bob built the truck groups too, ran 47 turns / 1.09M tokens, then swapped `hex_cell_mesh.gd` for a CylinderMesh in a fix round; `t_raised_frame_cells_aligned` and `t_hive_frames_cells_aligned` failed and the run stopped.
 - **How noticed:** the designer read the blackboard ("bob's prompt slice is too vast?"); the orchestrator diffed the fix-round edits.
 - **Cause:** `item_numbers` read "Items 3–5" as item 3 and dropped the indented sub-bullets; fix briefs carried every open style row of the whole game (an old V4 row on `honey_cell.tscn`, truck, zoom, jars); build calls had no turn cap; V4 flagged the deliberate 0.1.4 scripted hex mesh.
