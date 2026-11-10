@@ -108,7 +108,7 @@ func is_maxed(id: String) -> bool:
 func cost(id: String) -> int:
 	var lv: float = float(level(id))
 	match id:
-		"swarm": return roundi(config.swarm_base_cost * pow(config.swarm_cost_growth, lv))
+		"swarm": return floori(config.swarm_base_cost * pow(config.swarm_cost_growth, lv))
 		"flight": return floori(config.flight_base_cost * pow(config.flight_cost_growth, lv))
 		"heated_fork": return floori(config.heated_fork_base_cost * pow(config.heated_fork_cost_growth, lv))
 		"gearing": return floori(config.gearing_base_cost * pow(config.gearing_cost_growth, lv))

@@ -876,5 +876,97 @@
    "t_truck_home_loads_crate_without_trip"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 Flight Endurance cost uses level + 1",
+  "file": "scripts/economy.gd",
+  "find": "floori(config.flight_base_cost * pow(config.flight_cost_growth, lv))",
+  "replace": "floori(config.flight_base_cost * pow(config.flight_cost_growth, lv + 1.0))",
+  "expect": [
+   "t_shop_costs_floor_base_growth"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 Gearing cost rounds up",
+  "file": "scripts/economy.gd",
+  "find": "floori(config.gearing_base_cost * pow(config.gearing_cost_growth, lv))",
+  "replace": "ceili(config.gearing_base_cost * pow(config.gearing_cost_growth, lv))",
+  "expect": [
+   "t_shop_costs_floor_base_growth"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 a buy takes one dollar too many",
+  "file": "scripts/economy.gd",
+  "find": "\t\tmoney -= cost(id)\n",
+  "replace": "\t\tmoney -= cost(id) + 1\n",
+  "expect": [
+   "t_shop_buy_deducts_and_levels",
+   "t_shop_buy_button_real_click_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 a locked row can be bought",
+  "file": "scripts/economy.gd",
+  "find": "return not is_maxed(id) and not is_locked(id) and money >= cost(id)",
+  "replace": "return not is_maxed(id) and money >= cost(id)",
+  "expect": [
+   "t_shop_auto_sell_locked_until_delivery_1",
+   "t_shop_buttons_disabled_unaffordable_maxed_locked"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 a maxed row can still be bought",
+  "file": "scripts/economy.gd",
+  "find": "return not is_maxed(id) and not is_locked(id) and money >= cost(id)",
+  "replace": "return not is_locked(id) and money >= cost(id)",
+  "expect": [
+   "t_shop_buttons_disabled_unaffordable_maxed_locked"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 a buy is allowed one dollar short",
+  "file": "scripts/economy.gd",
+  "find": "return not is_maxed(id) and not is_locked(id) and money >= cost(id)",
+  "replace": "return not is_maxed(id) and not is_locked(id) and money >= cost(id) - 1",
+  "expect": [
+   "t_shop_buttons_disabled_unaffordable_maxed_locked"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 Auto-Sell gate needs one more Faster Delivery level",
+  "file": "scripts/economy.gd",
+  "find": "level(\"faster_delivery\") < config.auto_sell_unlock_delivery_level:",
+  "replace": "level(\"faster_delivery\") <= config.auto_sell_unlock_delivery_level:",
+  "expect": [
+   "t_shop_auto_sell_locked_until_delivery_1"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 the level text drops the max",
+  "file": "scripts/shop_ui.gd",
+  "find": "\"Lv %d / %d\" % [lv, Economy.max_level(id)]",
+  "replace": "\"Lv %d / %d\" % [lv, lv]",
+  "expect": [
+   "t_shop_rows_order_and_level_text"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 the shop list is taller than the screen",
+  "file": "scenes/main.tscn",
+  "find": "custom_minimum_size = Vector2(0, 128)\nlayout_mode = 2\nsize_flags_vertical = 3\nhorizontal_scroll_mode = 0",
+  "replace": "custom_minimum_size = Vector2(0, 1800)\nlayout_mode = 2\nsize_flags_vertical = 3\nhorizontal_scroll_mode = 0",
+  "expect": [
+   "t_shop_no_row_overlaps_other_controls"
+  ],
+  "suite": "unit"
  }
 ]

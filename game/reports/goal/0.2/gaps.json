@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T19:40:45-05:00",
- "unit_log": "game/reports/_runs/20261109-193514/unit.log",
+ "at": "2026-11-09T20:30:24-05:00",
+ "unit_log": "game/reports/_runs/20261109-202355/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -43,7 +43,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -91,13 +91,55 @@
      "ok": true
     },
     {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "162246f",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -111,7 +153,7 @@
     2
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -124,13 +166,55 @@
      "ok": true
     },
     {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "ba8562d",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -147,7 +231,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -180,13 +264,55 @@
      "ok": true
     },
     {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "d71df5c",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -203,7 +329,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -226,13 +352,55 @@
      "ok": true
     },
     {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "01267f7",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -249,7 +417,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -277,13 +445,55 @@
      "ok": true
     },
     {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "e46adf7",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -300,12 +510,54 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
      "name": "auto_sell_unlock_delivery_level",
      "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -314,7 +566,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -331,8 +583,50 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "49044b8",
@@ -340,7 +634,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -357,9 +651,57 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "e57e1c6",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -376,8 +718,51 @@
    "depends": [
     "C1"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -599,8 +984,51 @@
     "C7",
     "C8"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -608,28 +1036,6 @@
   }
  },
  "order": [
-  {
-   "id": "C8",
-   "score": 9.14,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.86,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T1.1",
-   "score": 3.62,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.38,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T2.1",
    "score": 3.62,
@@ -730,29 +1136,14 @@
    }
   },
   {
-   "id": "T.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.38,
-    "ready": 0,
-    "blocked_by": [
-     "C8"
-    ]
-   }
-  },
-  {
    "id": "T8.1",
-   "score": 0.0,
+   "score": 3.62,
    "factors": {
     "unblocks": 0,
     "value": 2,
     "cost": 0.38,
-    "ready": 0,
-    "blocked_by": [
-     "C8"
-    ]
+    "ready": 1,
+    "blocked_by": []
    }
   }
  ],

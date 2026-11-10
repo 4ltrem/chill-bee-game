@@ -831,30 +831,6 @@ Command: `goal_agent.py game/specs/0.2-first-automation.md --accept C1 --note ma
 - Change (orchestrator, Process 9): main.tscn ShopScroll custom_minimum_size 340 -> 128 (one 120 px row shows, the rest scroll): the taller shop panel pushed the second-stop framing so the centrifuge top left the screen (t_camera_second_stop_in_frame). Height goes to Design Votes with the shop list (spec Review). unit 165/165, start as baseline, contract 0 unresolved (20261109-191826)
 - Accepted: checkpoint `162246f` on `milestone/0.2`
 
-## Result
-
-C1 accepted with a manual fix (checkpoint `162246f` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
-
-Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
-
-| Call | Total processed | Final context | Turns | Duration |
-|---|---|---|---|---|
-| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
-| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
-| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
-| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
-| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
-| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
-| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
-| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
-| Patricia, C1 | 128,628 | 32,719 | 12 | 14 s |
-| Bob, C1 | 171,980 | 22,145 | 11 | 30 s |
-| Quinn, C1 fix 1 | 82,925 | 20,798 | 6 | 16 s |
-| Patricia, C1 fix 1 | 165,546 | 28,457 | 13 | 21 s |
-| Quinn, C1 fix 2 | 69,434 | 20,193 | 8 | 17 s |
-| Bob, C1 fix 2 | 133,709 | 22,738 | 9 | 19 s |
-| **Total** | **2,740,347** | | | |
-
 ## Resumed 2026-11-09
 
 Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `stopped`).
@@ -1123,3 +1099,182 @@ No Godot processes of mine are left running.
 - Check `tests`: PASS
 - Check `ui shots`: PASS
 - Check `style`: PASS (open rows only on files this step did not change)
+- Green: checkpoint `e57e1c6` on `milestone/0.2`
+
+## Pass 13: scan (2026-11-09T20:10:58-05:00)
+
+Unit results from `game/reports/_runs/20261109-200506/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C8 Bee Journal entry, EN/FR, through Godot's translation CSV. | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger e57e1c6 |
+
+### Order: new or rescored (2 of 12)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 11 | T8.1 item 8: `journal.csv` has every key in `en` and `f | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 12 | T.1 mutations in `tests/mutations.json` prove the new  | 1.62 | 0 | 1 | 0.38 | 1 | housekeeping/handoff; cost 0.38 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T1.1** (score 3.62: designer feature; cost 0.38 (Quinn)), with T.1.
+
+### Step: T1.1, T.1 (2026-11-09T20:10:58-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T1.1-quinn.md` (3694 chars)
+
+**Paused:** Budget guard: weekly usage is 73% with 35% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 47 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `paused`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 14: scan (2026-11-09T20:11:59-05:00)
+
+Unit results from `game/reports/_runs/20261109-200506/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+Next: **T1.1** (score 3.62: designer feature; cost 0.38 (Quinn)), with T.1.
+
+### Step: T1.1, T.1 (2026-11-09T20:11:59-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T1.1-quinn.md` (3694 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (996,332 tokens, 33 turns, 114 s):
+
+I wrote 7 shop tests for T1.1 and 10 mutations for T.1. I haven't run any of them. Godot's `--check-only` on `test_shop.gd` printed no errors, but I did not check `run_tests.gd` itself.
+
+**Files changed**
+- New: `game/tests/test_shop.gd`, extending `test_lid_clip.gd`.
+- `game/tests/run_tests.gd` now extends `test_shop.gd`. It registers the tests under the `# 0.2 items 1, 2, 3, 4, 5, 6, 7, 8 …` comment.
+- `game/tests/mutations.json` has 10 new entries.
+
+Each test has `# goal T1.1` on the line above it.
+
+**Nodes used:** `ShopRows`, `ShopScroll`, `ShopPanel`, `JournalButton`, and per row `NameLabel`, `LevelLabel`, `GateLabel` and the first `Button`. Other nodes: `TopInfo`, `SellIcon`, `ForkIcon`, `CentrifugeIcon`, `BackButton`, `HiveCountLabel`, `HintLabel`.
+
+**Open questions**
+- Item 1: should Worker Swarm cost be floored? The spec says rounded down, but the code and the old `t_cost_formula` use `roundi`. I test floor, so a failure is a finding.
+- Item 1: what does the button show when maxed? The code shows "Max". I assert nothing about it.
+- Item 1: what does a one-time row's level label show before purchase? I only assert "Owned" after the buy.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 17 (cap 30; CLI num_turns 33); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      169 passed, 3 failed  (exit 1, 270 noise lines dropped)  game/reports/_runs/20261109-201355/unit.log
+    FAIL  t_shop_costs_floor_base_growth  swarm: cost at level 1 is floor(base x growth^level): expected 29 got 30 | swarm: cost at level 2 is floor(base x growth^level): expected 34 got 35 | swarm: cost at level 7 is floor(base x growth^level)
+    FAIL  t_shop_buy_deducts_and_levels  swarm: money after buy 1 is what was left over: expected 7 got 6 | swarm: money after buy 2 is what was left over: expected 7 got 6 | swarm: money after buy 7 is what was left over: expected 7 got 6 | sw
+    FAIL  t_shop_buy_button_real_click_twice  run 2: the second price is the next level's, not the first's: expected 5 got 4  (860 ms)
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T1.1-fix1-patricia.md` (2225 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (65,531 tokens, 7 turns, 10 s):
+
+I fixed the three failing shop tests in `game/scripts/economy.gd`, but I haven't run them (you said not to).
+
+**Cause:** `cost()` used `roundi` for the Worker Swarm Count row. The spec says costs are rounded down, and the other five rows already used `floori`. The tests expected 29, 34 and so on, and the code gave 30, 35. `t_shop_buy_button_real_click_twice` probably failed for the same reason.
+
+**Fix:** I changed `roundi` to `floori` on the swarm line, and nothing else.
+
+`swarm_cost()` at line 44 of `economy.gd` is the only other swarm cost code I found. I didn't open it, so check that it calls `cost("swarm")` and doesn't round on its own.
+
+The swarm price at level 0 stays 25 either way.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 7); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      171 passed, 1 failed  (exit 1, 270 noise lines dropped)  game/reports/_runs/20261109-201854/unit.log
+    FAIL  t_cost_formula  cost at level 1: expected 30 got 29 | cost at level 2: expected 35 got 34 | cost at level 7: expected 80 got 79 | cost at level 8: expected 94 got 93 | cost at level 9: expected 111 got 110  (0 ms)
+```
+
+#### Fix round 2: to Bob
+
+- Brief for Bob: `game/reports/goal/0.2/briefs/T1.1-fix2-bob.md` (1844 chars)
+- Budget guard for Bob: override
+
+**Bob** (26,930 tokens, 3 turns, 7 s):
+
+I changed nothing, because the failure isn't in `scenes/` or `materials/`.
+
+**Cause:** `t_cost_formula` in `game/tests/test_economy.gd` (lines 5–13) is out of date against the spec. It expects `roundi(base * pow(growth, lvl))`. Spec item 1 says costs are "rounded down", and the passing `t_shop_costs_floor_base_growth` in `test_shop.gd` (line 69) already expects floor. The code now floors, so level 1 gives 29 where the old test expects 30.
+
+**Next round:**
+- **Quinn (`tests/`):** change line 13 of `test_economy.gd` to use `floori`. Line 10 should also use floor for consistency. That is only a mismatch for a non-integer base cost, and level 0 passes today.
+- **Patricia (`scripts/`):** nothing to change, as long as the floor is intentional per the spec.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 2 (cap 15; CLI num_turns 3); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      171 passed, 1 failed  (exit 1, 270 noise lines dropped)  game/reports/_runs/20261109-202355/unit.log
+    FAIL  t_cost_formula  cost at level 1: expected 30 got 29 | cost at level 2: expected 35 got 34 | cost at level 7: expected 80 got 79 | cost at level 8: expected 94 got 93 | cost at level 9: expected 111 got 110  (0 ms)
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T1.1, T.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T1.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T1.1, T.1 fix-round edits"`.
+
+## Result
+
+Last invocation (2026-11-09T20:28:52-05:00): waiting-designer.
+
+Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
+| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
+| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
+| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
+| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
+| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
+| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
+| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
+| Patricia, C1 | 128,628 | 32,719 | 12 | 14 s |
+| Bob, C1 | 171,980 | 22,145 | 11 | 30 s |
+| Quinn, C1 fix 1 | 82,925 | 20,798 | 6 | 16 s |
+| Patricia, C1 fix 1 | 165,546 | 28,457 | 13 | 21 s |
+| Quinn, C1 fix 2 | 69,434 | 20,193 | 8 | 17 s |
+| Bob, C1 fix 2 | 133,709 | 22,738 | 9 | 19 s |
+| Bob, C6 | 84,741 | 20,580 | 7 | 15 s |
+| Patricia, C6 | 90,946 | 20,971 | 12 | 17 s |
+| Bob, C6 fix 1 | 40,960 | 14,537 | 4 | 8 s |
+| Bob, C7 | 86,223 | 20,455 | 6 | 11 s |
+| Patricia, C7 | 152,741 | 27,551 | 19 | 29 s |
+| Bob, C8 | 110,763 | 22,489 | 10 | 21 s |
+| Patricia, C8 | 72,959 | 36,963 | 2 | 5 s |
+| Quinn, T1.1, T.1 | 996,332 | 79,607 | 33 | 114 s |
+| Patricia, T1.1, T.1 fix 1 | 65,531 | 18,495 | 7 | 10 s |
+| Bob, T1.1, T.1 fix 2 | 26,930 | 14,541 | 3 | 7 s |
+| **Total** | **4,468,473** | | | |
+
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept T1.1 --note test_economy.gd t_cost_formula: roundi -> floori, quoting 0.2 item 1 ('rounded down'), which replaces 0.1's rounding (Patricia's economy.gd floor fix kept). unit 172/172, start as baseline, contract 0 unresolved (20261109-203101)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T1.1 (2026-11-09T20:36:27-05:00)
+
+- Change (orchestrator, Process 9): test_economy.gd t_cost_formula: roundi -> floori, quoting 0.2 item 1 ('rounded down'), which replaces 0.1's rounding (Patricia's economy.gd floor fix kept). unit 172/172, start as baseline, contract 0 unresolved (20261109-203101)
