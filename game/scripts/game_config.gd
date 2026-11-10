@@ -94,6 +94,17 @@ extends Resource
 @export var faster_delivery_trip_cut_per_level: float = 0.15   # PLACEHOLDER (spec 0.2 item 5): trip time x (1 - this x level): 30 -> 25.5 -> 21 -> 16.5 -> 12 s
 @export var dev_own_auto_scraper: bool = false        # Dev toggle "own auto-scraper": acts as if the auto-scraper were owned (it arrives after 0.2)
 
+# --- 0.2 item 1: shop costs, cost = base x growth^level (spec 0.2 items 2-6; Dev panel) ---
+@export var flight_base_cost: float = 15.0             # PLACEHOLDER (spec 0.2 item 2)
+@export var flight_cost_growth: float = 1.15           # PLACEHOLDER (spec 0.2 item 2)
+@export var heated_fork_base_cost: float = 40.0        # PLACEHOLDER (spec 0.2 item 3)
+@export var heated_fork_cost_growth: float = 1.22      # PLACEHOLDER (spec 0.2 item 3)
+@export var gearing_base_cost: float = 35.0            # PLACEHOLDER (spec 0.2 item 4)
+@export var gearing_cost_growth: float = 1.20          # PLACEHOLDER (spec 0.2 item 4)
+@export var faster_delivery_base_cost: float = 60.0    # PLACEHOLDER (spec 0.2 item 5)
+@export var faster_delivery_cost_growth: float = 1.30  # PLACEHOLDER (spec 0.2 item 5)
+@export var auto_sell_cost: float = 250.0              # PLACEHOLDER (spec 0.2 item 6): one-time price; unlocks at Faster Delivery 1
+
 const DEFAULT_PATH :="res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read
 const DEV_SETTING := "chill_bee/dev_mode"
