@@ -38,6 +38,11 @@ window/handheld/orientation=1
 
 pointing/emulate_touch_from_mouse=true
 
+[internationalization]
+
+locale/fallback="en"
+locale/translations=PackedStringArray("res://translations/journal.en.translation", "res://translations/journal.fr.translation")
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

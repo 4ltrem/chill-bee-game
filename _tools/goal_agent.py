@@ -774,7 +774,8 @@ def git(*args):
     return run_cmd(["git", *args])
 
 
-BUILD_PATHS = ["game/scripts", "game/scenes", "game/materials", "game/tests", "game/specs"]
+BUILD_PATHS = ["game/scripts", "game/scenes", "game/materials", "game/tests", "game/specs",
+               "game/translations", "game/project.godot"]   # 0.2 C8's CSV and its project.godot registration were left out
 
 
 def tree_state(paths=None):
