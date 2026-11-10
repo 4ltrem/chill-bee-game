@@ -76,7 +76,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Habitat Health values (multipliers, costs, levels) and how much hive count lowers it
 - [ ] Honey sale value for each biome
 - [x] Automation upgrade costs (motor, auto-scraper, Faster Delivery): provisional, first-automation-values
-- [ ] Spigot flow-rate upgrades (bottling speed): levels and costs, after 0.2
+- [ ] Spigot Flow (bottling speed): levels and costs (provisional placeholders in 0.2.1; Terry checks before 0.3.0)
 - [ ] Bee Journal sources list in-game, so the entries' ⁵/⁶ markers (kept verbatim, designer 2026-11-09) point to their sources
 - [ ] Heated Fork "clean cut" batch bonus: what counts as a clean cut (reach is its effect; a single sweep is the Long Fork)
 - [ ] Upgrade mode UI: opening an automated unit's zoom screen (with the rest of the UI)

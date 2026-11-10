@@ -1,36 +1,37 @@
 ---
 name: session-handoff
-description: "Where work stands (2026-11-09 23:00): 0.2 build DONE by /goal + goal_agent (21/21, unit 195/195), 0.2.0 Windows exe built for the designer's play-test; next: play-test notes, Quinn's mutation fixes, Design Votes, itch 0.2.0 (A7); read first"
+description: "Where work stands (2026-11-10): 0.2.0 play-tested; 0.2.1 specced (items 9-14, 21/34 goals) and ready to build once the budget guard allows; roadmap + build-from-start-r2 proposals answered, awaiting acceptance; read first"
 metadata:
   node_type: memory
   type: project
-  originSessionId: 524a865e-ca7f-46b9-8a52-ee13ca0adcf1
-  modified: 2026-11-10T04:28:04.195Z
+  originSessionId: 3c5a9003-bd51-4155-8369-edf76b12f3b2
+  modified: 2026-11-10T05:56:51.629Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
 
-**Setup:** main folder on `milestone/0.2` (local `main` stale at `ad1cae9`; fast-forward before the merge). Last commits `4ee67e2` (T8.1 accept), `85bc9d0`. Uncommitted: `game/project.godot` `config/version="0.2.0"` (written by build.py), report files. End-of-day for 2026-11-09 has NOT run. No worktrees.
+**Setup:** main folder on `milestone/0.2`; end-of-day ran 2026-11-10 (D200-D212, all 11/09-10 work committed). No worktrees.
 
-**0.2 build: done 2026-11-09.** `/goal` condition met: `goal_agent.py game/specs/0.2-first-automation.md --plan` 21/21, unit 195/195 (`game/reports/_runs/20261109-223506`). Hand fixes recorded with `--accept`: C4 (gear name for contract_check), C3 (reverted Bob's honey_cell/glass edits), C1 (ShopScroll min height 128: one row shows, the rest scroll), T1.1 (t_cost_formula floori per item 1), T8.1 (shop_ui.gd finds FarmUI by walking up, not current_scene). Board: `game/reports/goal/0.2/blackboard.md`.
+**Budget (D212):** weekly 81% at 38% of the week (reset Sat 11/14 9:00 Toronto). Until then cheap work only: Rex mutation rerun, scripted Spec Review shots, answers on the two proposals. The 0.2.1 build waits for the reset. A6 due date unclear: pasted text says Nov 22, MILESTONES says 11/12; ask.
 
-**Play-test build:** `game/builds/windows/ChillBeeGame.exe` (0.2.0, 22:58). Designer times minutes to Faster Delivery 1 and to Auto-Sell (Terry point 5: Auto-Sell after 15 min → `auto_sell_cost` $200 first).
+**0.2.1 = 0.2.0 play-test fixes** (spec `game/specs/0.2-first-automation.md`, lint clean, `goal_agent --plan` 21/34):
+- 9 Spin alone pans to the second stop (drop `_filled_in_zoom`/`_closing_to_second` pan in `main.gd`; replace the `test_camera.gd` full-bucket pan check).
+- 10 fork prop hides on any release and returns into the Harvest icon (`fork_return_seconds` 0.35); cause: `honeycomb.gd` misses the release once inactive.
+- 11 lid stays still; `Crank` turns on its pivot, Gear1 follows it, the rest from Gear1 (today `centrifuge.gd` rotates the whole `Lid`).
+- 12 Spigot Flow shop row ($30, 1.20×, max 5, −12%/level bottling; placeholders, Terry checks before 0.3.0).
+- 13 truck waits for in-flight bed jars before leaving (Sell and Auto-Sell).
+- 14 shop shows all 7 rows, no scroll (reopens C1).
+- Build: weekly budget ~78% at 37% of the week; the designer must run `python -I _tools/budget_guard.py --allow-for 60` first. Then `/goal` + goal_agent; version 0.2.1; itch upload of 0.2.1 as the A7 link (due 11/19).
+- Designer didn't answer whether to also lower base `bottling_seconds_per_jar` (3.0); Spigot Flow was the chosen fix.
 
-**Open, in order:**
-1. Designer's play-test notes (grep the spec before adding items, [[spec-consistency]]).
-2. Quinn, one call + `mutate.py --since 48afcd8` rerun (Rex): mutation 25 MISSED "second crank dead" (gearing test too short); 45 BROKEN "French title left empty in the CSV"; `mutate.py` crashes after 48/49 with FileNotFoundError on `_tools/journal_csv.py`; Rex saw 1 baseline test failing (unit was green, check). goal_agent's T.1 counts mutations present, not caught: consider making T.1 require a clean `mutate.py`.
-3. Spec Review: `ui_shots.py`, then the shop list (one-row height) and Journal panel EN/FR to Design Votes (`compare_page.py add`); pick matches for fork, gears, truck ([[look-before-done]]) were not run by hand.
-4. itch 0.2.0 web build (A7 link, due 11/19) after the play-test ([[itch-upload-rule]]).
-5. M3 cap-stop summary in `generate.py` (spec Tooling, not built).
+**Versions (MILESTONES, designer 2026-11-09):** 0.2.x = play-test fixes; 0.3.0 (11/24) = first UI pass for existing features (needs ui-screens decisions 2, 3, 4 and the skin first; bottom slot A with B-D in Dev) + M5 items; 0.4+ = roadmap.
 
-**Designer answers 2026-11-09:** Journal footnote markers (⁵, ⁶) stay verbatim; an in-game sources list is a README TBD.
+**Proposals awaiting the designer's acceptance** (answers recorded in each file; GDD edits only after acceptance):
+- `proposals/design/roadmap.md` (Gerard): 51 rows, layers 0.4-0.14 + post-launch. Questions 2 (number-only TBDs don't hold a milestone), 3 (watering), 5 (Connie timing) still open; question 1 answered by build-from-start. Needs re-layering to r2 (Build mode = 0.4, vertical slice moves later).
+- `proposals/design/build-from-start-r2.md` (supersedes `build-from-start.md`): Build mode from the start in 0.4; start = hive + truck (queen's leftover magic), starting money builds the centrifuge, then crate; raw comb fallback; ground jars before the crate; free grid, centrifuge within bee range of a hive (range = Flight Endurance); centrifuge tiers replace in place; bee carry (FE = range+speed, Swarm = rate, no fill cost); two zones (close: cells fly to centrifuge pile; farther: hive pile + bees); split across centrifuges in range; free moving; automation per farm + flat install fee; post-launch BeeTech conveyors give freed bees a bonus. Before the 0.4 spec: Terry, Bob's zoom ceiling, William's lore text, Ruth/William raw-comb price check.
 
-**Loop fixes this session (learnings L33, L34):** contract ranges and sub-bullets go to their item; style rows only for files a step changed; build calls capped 30 turns; V4 accepts `hex_cell_mesh.gd`; a test line's evidence is its own `# goal` marks; `BUILD_PATHS` adds `game/translations`, `game/project.godot`; `godot_run.py` prints UTF-8. Still open: a stale older test in a test goal's fix round goes to code owners before Quinn; `checkpoint.py` refuses on a stale `goal-run.lock` after a memory kill (delete it when its pid is gone).
+**Still open from before:** Quinn's mutation fixes + `mutate.py --since 48afcd8` rerun (mutation 25 MISSED, 45 BROKEN, crash on `_tools/journal_csv.py`); Spec Review shots to Design Votes (shop list, Journal EN/FR; pick matches for fork, gears, truck); M3 cap-stop summary in `generate.py`; A5 link (11/15); A6 fixes; UI canvas https://claude.ai/artifact/ErtHvkxYUpDQHRM8RLRLca.
 
-**Budget:** weekly ~76% at 36% of the week; every agent run tonight needed `budget_guard.py --allow-for`. Background runs were twice killed for low memory (`CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` turns that off).
-
-**Still pending from before:** A5 link submission (due 11/15); A6 fixes (Clara scores 0–10, style_loop picks the guide's option for "(designer)" rows; MILESTONES says 11/12, fix to 11/22); UI canvas https://claude.ai/artifact/ErtHvkxYUpDQHRM8RLRLca ([[ui-design-prefs]]).
-
-**Rules:** scripts go to Rex ([[rex-runs-scripts]]) with the fast env vars ([[test-speed-fixes]]); [[fix-needs-commit]]; [[edit-lines-only]]; a fresh session per milestone ([[cost-rules]]).
+**Rules:** questions to the designer go in AskUserQuestion with a preview on every option ([[ask-with-quiz-tool]]); Gerard has no Edit and the hook blocks his rewrites, so revisions are new `-rN` files and the orchestrator rebuilds `_index.md`; [[spec-consistency]], [[rex-runs-scripts]], [[test-speed-fixes]], [[fix-needs-commit]], [[edit-lines-only]].
 
 **How to apply:** keep CLI replies short. At the end of each session, rewrite this file to the new current state.

@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T22:10:32-05:00",
- "unit_log": "game/reports/_runs/20261109-220256/unit.log",
+ "at": "2026-11-09T23:56:21-05:00",
+ "unit_log": "game/reports/_runs/20261109-223506/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -43,7 +43,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -74,6 +74,16 @@
      "kind": "config",
      "name": "gearing_cost_growth",
      "ok": true
+    },
+    {
+     "kind": "config",
+     "name": "spigot_flow_base_cost",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "spigot_flow_cost_growth",
+     "ok": false
     },
     {
      "kind": "config",
@@ -139,7 +149,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -158,11 +168,6 @@
     {
      "kind": "config",
      "name": "flight_speed_bonus_per_level",
-     "ok": true
-    },
-    {
-     "kind": "config",
-     "name": "flight_max_level",
      "ok": true
     },
     {
@@ -361,16 +366,6 @@
    ],
    "status": "done",
    "evidence": [
-    {
-     "kind": "config",
-     "name": "gearing_cut_per_level",
-     "ok": true
-    },
-    {
-     "kind": "config",
-     "name": "gearing_max_level",
-     "ok": true
-    },
     {
      "kind": "config",
      "name": "gearing_post_auto_time_cut_per_level",
@@ -810,12 +805,378 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_journal_csv_every_key_en_and_fr",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_tr_follows_locale",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_panel_text_matches_csv_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_csv_equals_script_output",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "e57e1c6",
      "ok": true
     }
    ],
    "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C9": {
+   "kind": "change",
+   "title": "The second stop only after Spin",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    9
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C10": {
+   "kind": "change",
+   "title": "The fork goes back into the Harvest icon",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    10
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "fork_return_seconds",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C11": {
+   "kind": "change",
+   "title": "The lid stays still; the crank drives the gears",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    11
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "LidDisc",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C12": {
+   "kind": "change",
+   "title": "Spigot Flow",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    12
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "spigot_flow_max_level",
+     "ok": false
+    },
+    {
+     "kind": "config",
+     "name": "spigot_flow_cut_per_level",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C13": {
+   "kind": "change",
+   "title": "No jar flies after a leaving truck",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    13
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C14": {
+   "kind": "change",
+   "title": "The shop shows every row without scrolling",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "ShopScroll",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "CFG": {
+   "kind": "change",
+   "title": "Config and Dev mode",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [],
+   "depends": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "config",
+     "name": "flight_max_level",
+     "ok": true
+    },
+    {
+     "kind": "config",
+     "name": "gearing_cut_per_level",
+     "ok": true
+    },
+    {
+     "kind": "config",
+     "name": "gearing_max_level",
+     "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_costs_floor_base_growth",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_deducts_and_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buttons_disabled_unaffordable_maxed_locked",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_rows_order_and_level_text",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_auto_sell_locked_until_delivery_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_buy_button_real_click_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_no_row_overlaps_other_controls",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_flight_fill_rate_level3",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_reach_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_post_auto_yield_bonus",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_prop_follows_drag_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_head_colour_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_gears_visible_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_gears_turn_opposite_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_turns_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_bottling_time_unchanged",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_gearing_own_motor_cut",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_delivery_look_groups_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_delivery_stacks_not_flame_material",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_delivery_trip_time_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_full_bed_leaves_by_itself",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_not_owned_full_bed_waits",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_part_load_sells_by_sell",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_twice_matches",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_phase2_auto_sell_sets_once_toast_once",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_phase2_locked_auto_sell_keeps_phase_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_csv_every_key_en_and_fr",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_tr_follows_locale",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_panel_text_matches_csv_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_csv_equals_script_output",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
+   "built": false,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1218,6 +1579,150 @@
    "depends": [
     "C8"
    ],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_journal_csv_every_key_en_and_fr",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_tr_follows_locale",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_panel_text_matches_csv_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_csv_equals_script_output",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "4ee67e2",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T9.1": {
+   "kind": "test",
+   "title": "item 9: the bucket filling during the first zoom leaves the zoom open;",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    9
+   ],
+   "depends": [
+    "C9"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T10.1": {
+   "kind": "test",
+   "title": "item 10: after a drag release the fork prop is hidden; with the press ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    10
+   ],
+   "depends": [
+    "C10"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T11.1": {
+   "kind": "test",
+   "title": "item 11: while cranking, `Lid`'s and `LidDisc`'s global rotation stay ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    11
+   ],
+   "depends": [
+    "C11"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T12.1": {
+   "kind": "test",
+   "title": "item 12: Spigot Flow's cost equals `30 × 1.20^level` (floored) for lev",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    12
+   ],
+   "depends": [
+    "C12"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T13.1": {
+   "kind": "test",
+   "title": "item 13: with a jar in flight to the bed, a Sell press (and Auto-Sell ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    13
+   ],
+   "depends": [
+    "C13"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T14.1": {
+   "kind": "test",
+   "title": "item 14: the shop panel has no scroll container, all seven rows are in",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
    "status": "missing",
    "evidence": [],
    "built": false,
@@ -1239,7 +1744,13 @@
     5,
     6,
     7,
-    8
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
    ],
    "depends": [
     "C1",
@@ -1249,7 +1760,13 @@
     "C5",
     "C6",
     "C7",
-    "C8"
+    "C8",
+    "C9",
+    "C10",
+    "C11",
+    "C12",
+    "C13",
+    "C14"
    ],
    "status": "done",
    "evidence": [
@@ -1408,6 +1925,30 @@
      "name": "t_phase2_locked_auto_sell_keeps_phase_1",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_csv_every_key_en_and_fr",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_tr_follows_locale",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_panel_text_matches_csv_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_journal_csv_equals_script_output",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1418,14 +1959,143 @@
  },
  "order": [
   {
-   "id": "T8.1",
-   "score": 3.64,
+   "id": "C10",
+   "score": 8.54,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.46,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C11",
+   "score": 8.54,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.46,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C12",
+   "score": 8.54,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.46,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C13",
+   "score": 8.54,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.46,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C14",
+   "score": 8.54,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.46,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C9",
+   "score": 8.54,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.46,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T11.1",
+   "score": 5.64,
    "factors": {
     "unblocks": 0,
-    "value": 2,
+    "value": 3,
     "cost": 0.36,
     "ready": 1,
     "blocked_by": []
+   }
+  },
+  {
+   "id": "T14.1",
+   "score": 5.64,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.36,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T10.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.36,
+    "ready": 0,
+    "blocked_by": [
+     "C10"
+    ]
+   }
+  },
+  {
+   "id": "T12.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.36,
+    "ready": 0,
+    "blocked_by": [
+     "C12"
+    ]
+   }
+  },
+  {
+   "id": "T13.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.36,
+    "ready": 0,
+    "blocked_by": [
+     "C13"
+    ]
+   }
+  },
+  {
+   "id": "T9.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.36,
+    "ready": 0,
+    "blocked_by": [
+     "C9"
+    ]
    }
   }
  ],

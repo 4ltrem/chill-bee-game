@@ -3,7 +3,7 @@ spec: 0.2-first-automation.md
 version: 0.2
 run: 0.2
 started: 2026-11-09
-result: running
+result: stopped
 ---
 # Goal agent: 0.2-first-automation.md (run 0.2)
 
@@ -1918,9 +1918,18 @@ FAIL    unit      194 passed, 1 failed  (exit 1, 292 noise lines dropped)  game/
 
 2 fix rounds failed on T8.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T8.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T8.1 fix-round edits"`.
 
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept T8.1 --note shop_ui.gd finds FarmUI by walking up from ShopPanel instead of get_tree().current_scene, which is the test runner in tests, so JournalUI was never added and a Journal tap did nothing. godot_run.py stdout reconfigured to UTF-8 (the summary print crashed). Footnote markers stay (designer 2026-11-09). unit 195/195, start as baseline, contract 0 unresolved (20261109-223506)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T8.1 (2026-11-09T22:43:26-05:00)
+
+- Change (orchestrator, Process 9): shop_ui.gd finds FarmUI by walking up from ShopPanel instead of get_tree().current_scene, which is the test runner in tests, so JournalUI was never added and a Journal tap did nothing. godot_run.py stdout reconfigured to UTF-8 (the summary print crashed). Footnote markers stay (designer 2026-11-09). unit 195/195, start as baseline, contract 0 unresolved (20261109-223506)
+- Accepted: checkpoint `4ee67e2` on `milestone/0.2`
+
 ## Result
 
-Last invocation (2026-11-09T22:34:33-05:00): waiting-designer.
+T8.1 accepted with a manual fix (checkpoint `4ee67e2` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
 
@@ -1962,11 +1971,3 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
 | Patricia, T8.1 fix 1 | 27,646 | 15,269 | 2 | 7 s |
 | Bob, T8.1 fix 2 | 12,681 | 12,681 | 1 | 6 s |
 | **Total** | **7,123,295** | | | |
-
-## Resumed 2026-11-09
-
-Command: `goal_agent.py game/specs/0.2-first-automation.md --accept T8.1 --note shop_ui.gd finds FarmUI by walking up from ShopPanel instead of get_tree().current_scene, which is the test runner in tests, so JournalUI was never added and a Journal tap did nothing. godot_run.py stdout reconfigured to UTF-8 (the summary print crashed). Footnote markers stay (designer 2026-11-09). unit 195/195, start as baseline, contract 0 unresolved (20261109-223506)` (the run had stopped: `waiting-designer`).
-
-### Manual fix: T8.1 (2026-11-09T22:43:26-05:00)
-
-- Change (orchestrator, Process 9): shop_ui.gd finds FarmUI by walking up from ShopPanel instead of get_tree().current_scene, which is the test runner in tests, so JournalUI was never added and a Journal tap did nothing. godot_run.py stdout reconfigured to UTF-8 (the summary print crashed). Footnote markers stay (designer 2026-11-09). unit 195/195, start as baseline, contract 0 unresolved (20261109-223506)

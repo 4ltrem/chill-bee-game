@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-395 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+452 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -66,11 +66,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Ruth | post-ICM | 2 | — | 266,270 | 116 s |
 | **All** | | **46** | **23,802** | **123,576** | 105 s |
 
-**Doc audits** (10 runs)
+**Doc audits** (11 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Doris | post-ICM | 10 | 49,160 | 257,043 | 48 s |
+| Doris | post-ICM | 11 | 48,315 | 259,734 | 46 s |
 
 **Probes** (2 runs)
 
@@ -80,7 +80,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Clara, one empty turn, prompt on stdin | post-ICM | 1 | — | 13,370 | — |
 | **All** | | **2** | **—** | **12,806** | — |
 
-**Subagent runs** (162 runs)
+**Subagent runs** (173 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
@@ -93,31 +93,32 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | general-purpose | post-ICM | 8 | 93,388 | 1,347,212 | 182 s |
 | Terry (progression-tree-expert) | post-ICM | 2 | 53,919 | 571,352 | 270 s |
 | Milo (modeler) | post-ICM | 12 | 86,387 | 836,745 | 238 s |
-| Rex (script-runner) | post-ICM | 47 | 16,633 | 110,388 | 368 s |
-| **All** | | **162** | **57,555** | **1,167,339** | 589 s |
+| Rex (script-runner) | post-ICM | 55 | 16,881 | 117,057 | 375 s |
+| Gerard (gameplay-architect) | post-ICM | 3 | 93,639 | 683,935 | 301 s |
+| **All** | | **173** | **56,367** | **1,112,200** | 576 s |
 
-**Orchestrator** (40 runs)
-
-| Agent | Phase | Runs | Final context | Total processed | Duration |
-|---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 40 | — | 20,176,934 | 14,475 s |
-
-**Style loop** (7 runs)
+**Orchestrator** (43 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Vera | post-ICM | 5 | 22,004 | 48,632 | 14 s |
+| Orchestrator (main session) | post-ICM | 43 | — | 19,718,849 | 14,206 s |
+
+**Style loop** (14 runs)
+
+| Agent | Phase | Runs | Final context | Total processed | Duration |
+|---|---|---|---|---|---|
+| Vera | post-ICM | 12 | 23,914 | 51,891 | 19 s |
 | Bob | post-ICM | 2 | 28,634 | 153,404 | 28 s |
-| **All** | | **7** | **23,898** | **78,567** | 18 s |
+| **All** | | **14** | **24,588** | **66,393** | 20 s |
 
-**Goal agent** (95 runs)
+**Goal agent** (130 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Patricia (programmer) | post-ICM | 37 | 30,331 | 173,842 | 288 s |
-| Bob (builder) | post-ICM | 28 | 30,053 | 198,122 | 38 s |
-| Quinn (qa-build-engineer) | post-ICM | 30 | 38,828 | 392,762 | 91 s |
-| **All** | | **95** | **32,932** | **250,131** | 152 s |
+| Patricia (programmer) | post-ICM | 49 | 30,398 | 155,811 | 221 s |
+| Bob (builder) | post-ICM | 40 | 28,567 | 194,840 | 35 s |
+| Quinn (qa-build-engineer) | post-ICM | 41 | 38,362 | 377,009 | 79 s |
+| **All** | | **130** | **32,346** | **237,583** | 119 s |
 
 **Pick match** (1 run)
 
