@@ -174,6 +174,8 @@ def render(results, markdown=False):
 
 
 def main(argv=None):
+    if hasattr(sys.stdout, "reconfigure"):   # 0.2 T8.1: French/em-dash test output crashed the cp1252 console print
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("suites", nargs="*")
     ap.add_argument("--root", default=os.path.join(REPO, "game"))
