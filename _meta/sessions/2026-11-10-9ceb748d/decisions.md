@@ -70,13 +70,31 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 - Decided: asked, the designer confirmed the assignment text's date: A6 (style guide agent) is due 2026-11-22. It moves after the weekly reset with the 0.2.1 build.
 - Files: `MILESTONES.md`, `_meta/memory/course-milestones.md`
 
+### D214 · 2026-11-10 · Pipeline design · Number-only TBDs don't hold a milestone
+- Decided: roadmap question 2, yes: a TBD that is only a number gets a Terry run before its spec and keeps its slot; an undefined rule holds its row.
+- Files: `proposals/design/roadmap.md`
+
+### D215 · 2026-11-10 · Game design · Watering gets a rule, as an automation branch
+- Decided: roadmap question 4: watering stays in the GDD and gets a rule later: a watering can used like the fork, automated later (for example bees carrying tiny water buckets to sprinklers). Row 17 stays held until Gerard proposes it.
+- Rejected: dropping "water" from the Executive Summary and §1.
+- Files: `proposals/design/roadmap.md`
+
+### D216 · 2026-11-10 · Game design · Zoom framing is computed at runtime; bee range has no zoom cap
+- Decided: asked to accept `build-from-start-r2.md`, the designer answered with a note instead: the first zoom frames a hive with its centrifuge only when they are in range, and the camera parameters are calculated at runtime. R2's zoom-ceiling cap on bee range and Bob's measurement go. Acceptance is still pending.
+- Files: `proposals/design/build-from-start-r2.md`
+
+### D217 · 2026-11-10 · Pipeline design · Pick matches: only the default state renders for now
+- Decided: of the 9 pick-match pairs, the 2 that `pick_match.py` can render as saved (fork cold vs `fork-r4-c`, centrifuge vs `gearing-r6-b0`) run now with `--no-agent`; the levelled ones (hot fork, Gearing 5, truck levels 1-4) need a level option in the script, and the shop and Journal shots need Bob to add two `ui_compare_shots.gd` moments, both after the reset.
+- Files: `_tools/pick_match.py`, `game/tests/ui_compare_shots.gd`
+
 ## Still open
 
 - **0.2.1 build** after the weekly reset: `budget_guard.py --allow-for 60`, `/goal` + goal_agent, version 0.2.1, itch upload as the A7 link (~11/19).
-- **Proposals to accept:** `roadmap.md` (questions 2, 3, 5 open; re-layer to r2) and `build-from-start-r2.md` (then mark `build-from-start.md` superseded). Before the 0.4 spec: Terry, Bob's zoom ceiling, William's lore text, Ruth/William raw-comb price check.
+- **Proposals to accept:** `build-from-start-r2.md` (accept, now with note 8; then mark `build-from-start.md` superseded) and `roadmap.md` (questions 3 starting-upgrade whitelist and 5 Connie timing open; re-layer to r2). Before the 0.4 spec: Terry, William's lore text, Ruth/William raw-comb price check; Gerard settles whether "in range" for the zoom means the close zone or bee range.
+- **Watering proposal** (D215): Gerard, before 0.6.
+- **Pick matches left:** a level option for `pick_match.py` (hot fork, Gearing 5, truck 1-4); Bob adds shop and Journal EN/FR moments.
 - **Spigot Flow numbers** are placeholders; Terry checks before 0.3.0.
-- **Mutation fixes:** Quinn's fixes and `mutate.py --since 48afcd8` rerun (25 MISSED, 45 BROKEN, crash on `_tools/journal_csv.py`).
-- **Spec Review shots** to Design Votes (shop list, Journal EN/FR; pick matches for fork, gears, truck).
+- **Mutation fixes** (rerun 2026-11-10, Rex, unchanged): 45 caught; 25 "second crank dead" MISSED (a test gap: Quinn); 45 "French title left empty" BROKEN; the run crashes at 48/49 because `mutate.py` copies only `game/` and the Journal test reads `../_tools/journal_csv.py` (likely also the one baseline unit failure in the copy). Fix `mutate.py` to copy `_tools/` (or the test's path), then Quinn's test for 25.
 - **0.3.0 UI pass** needs ui-screens decisions 2, 3 and 4 and the skin first.
 - **Web build browser check:** the smoke shot is still the loading spinner; the real-time wait fix is approved but not built.
 - **Item 19 refill speed:** overflow drains back at up to twice the fill rate (the assistant's choice; the GDD is silent). Say if you want the normal rate only.
