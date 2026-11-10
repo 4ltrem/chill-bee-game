@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T17:20:20-05:00",
- "unit_log": "game/reports/_runs/20261109-171526/unit.log",
+ "at": "2026-11-09T19:16:39-05:00",
+ "unit_log": "game/reports/_runs/20261109-191226/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -43,52 +43,52 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
      "name": "flight_base_cost",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "flight_cost_growth",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "heated_fork_base_cost",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "heated_fork_cost_growth",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "gearing_base_cost",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "gearing_cost_growth",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "faster_delivery_base_cost",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "faster_delivery_cost_growth",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "auto_sell_cost",
-     "ok": false
+     "ok": true
     }
    ],
    "built": false,
@@ -106,21 +106,26 @@
     2
    ],
    "depends": [],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
      "name": "flight_speed_bonus_per_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "flight_max_level",
-     "ok": false
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "ba8562d",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -588,122 +593,133 @@
  },
  "order": [
   {
-   "id": "C2",
-   "score": 9.49,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.51,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C1",
-   "score": 9.12,
+   "score": 9.14,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.88,
+    "cost": 0.86,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C6",
-   "score": 9.12,
+   "score": 9.14,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.88,
+    "cost": 0.86,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C7",
-   "score": 9.12,
+   "score": 9.14,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.88,
+    "cost": 0.86,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C8",
-   "score": 9.12,
+   "score": 9.14,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.88,
+    "cost": 0.86,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 3.62,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.38,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 3.62,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.38,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T3.1",
-   "score": 3.61,
+   "score": 3.62,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T3.2",
-   "score": 3.61,
+   "score": 3.62,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T4.1",
-   "score": 3.61,
+   "score": 3.62,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T4.2",
-   "score": 3.61,
+   "score": 3.62,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T5.1",
-   "score": 3.61,
+   "score": 3.62,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T5.2",
-   "score": 3.61,
+   "score": 3.62,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 1,
     "blocked_by": []
    }
@@ -714,40 +730,12 @@
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 0,
     "blocked_by": [
-     "C1",
-     "C2",
      "C6",
      "C7",
      "C8"
-    ]
-   }
-  },
-  {
-   "id": "T1.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.39,
-    "ready": 0,
-    "blocked_by": [
-     "C1"
-    ]
-   }
-  },
-  {
-   "id": "T2.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.39,
-    "ready": 0,
-    "blocked_by": [
-     "C2"
     ]
    }
   },
@@ -757,7 +745,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 0,
     "blocked_by": [
      "C6"
@@ -770,7 +758,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 0,
     "blocked_by": [
      "C7"
@@ -783,7 +771,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.39,
+    "cost": 0.38,
     "ready": 0,
     "blocked_by": [
      "C8"

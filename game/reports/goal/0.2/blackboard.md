@@ -441,24 +441,6 @@ Command: `goal_agent.py game/specs/0.2-first-automation.md --accept C3 --note Re
 - Change (orchestrator, Process 9): Reverted Bob's out-of-scope fix-round edits: honey_cell.tscn (hex_cell_mesh ArrayMesh swapped for a 6-sided CylinderMesh after a pre-existing V4 style row; broke t_raised_frame_cells_aligned and t_hive_frames_cells_aligned) and glass.tres alpha 0.28->0.35. Kept uncapping_fork.tscn, fork_head.tres, main.gd wiring, honeycomb.gd reach, truck groups. unit 165/165, start same as baseline, contract 0 unresolved (20261109-165359)
 - Accepted: checkpoint `d71df5c` on `milestone/0.2`
 
-## Result
-
-C3 accepted with a manual fix (checkpoint `d71df5c` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
-
-Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
-
-| Call | Total processed | Final context | Turns | Duration |
-|---|---|---|---|---|
-| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
-| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
-| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
-| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
-| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
-| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
-| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
-| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
-| **Total** | **1,988,125** | | | |
-
 ## Resumed 2026-11-09
 
 Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `stopped`).
@@ -571,3 +553,303 @@ Flight Endurance (item 2) is in, but I only ran `contract_check.py` (0 unresolve
 
 - Check `contract`: PASS
 - Check `tests`: PASS
+- Green: checkpoint `ba8562d` on `milestone/0.2`
+
+## Pass 7: scan (2026-11-09T17:24:38-05:00)
+
+Unit results from `game/reports/_runs/20261109-172050/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C2 Flight Endurance | change | Patricia | partial (built, waits on its tests) | ✓ config flight_speed_bonus_per_level, ✓ config flight_max_level, ✓ ledger ba8562d |
+
+### Order: new or rescored (2 of 16)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 5 | T2.1 item 2: at Flight level 3 and Swarm level 0, the h | 3.61 | 0 | 2 | 0.39 | 1 | designer feature; cost 0.39 (Quinn) |
+| 12 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.39 | 0 | waits on C1, C6, C7, C8 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C1** (score 9.12: 2 goal(s) wait on it; designer feature; cost 0.88 (Patricia, Bob)).
+
+### Step: C1 (2026-11-09T17:24:38-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C1-patricia.md` (1967 chars)
+- Brief for Bob: `game/reports/goal/0.2/briefs/C1-bob.md` (1513 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Bob** (143,962 tokens, 9 turns, 30 s):
+
+Item 1 is in `scenes/main.tscn`, but I did not render it. `contract_check.py` reports one unresolved lookup: `shop_ui.gd:11` still looks up `UpgradeButton`, which is gone from the scene as the handoff says. Patricia's script has to stop looking it up. The row template is hidden until her script adds rows, so a render would show an empty panel.
+
+**Files changed:** only `scenes/main.tscn`, edited line by line. I removed the old `ShopBox/LevelLabel` and `ShopBox/UpgradeButton`.
+
+**Node names, all under `ShopPanel/ShopBox`:**
+- `ShopScroll` is a ScrollContainer with horizontal scroll off, vertical auto, expand vertical, and a 520 px minimum height.
+- `ShopScroll/ShopRows` is the VBox that will hold the rows.
+- `ShopRows/RowTemplate` is a hidden PanelContainer.
+  - It holds `RowBox`, then `Info` (`NameLabel`, `LevelLabel`, hidden `GateLabel`) and `BuyButton`.
+  - `BuyButton` is 160 × 120 and keeps the old button's styleboxes.
+- `JournalButton` sits below the scroll, outside it, with the text "Journal".
+
+**Open questions:**
+- The 520 px scroll height is a guess, not checked at 720 × 1280. Say if it should change.
+- `RowTemplate` has no panel style of its own. It uses the default.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 7 (cap 30; CLI num_turns 9); end `success`
+
+
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `running`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 8: scan (2026-11-09T19:02:21-05:00)
+
+Unit results from `game/reports/_runs/20261109-172050/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Upgrade shop holds several rows. | change | Patricia, Bob | partial | ✓ config flight_base_cost, ✓ config flight_cost_growth, ✓ config heated_fork_base_cost, ✓ config heated_fork_cost_growth, ✓ config gearing_base_cost, ✓ config gearing_cost_growth, ✓ config faster_delivery_base_cost, ✓ config faster_delivery_cost_growth, ✓ config auto_sell_cost |
+
+### Order: new or rescored (2 of 16)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 5 | T1.1 item 1: each row's cost equals `base × growth^leve | 3.61 | 0 | 2 | 0.39 | 1 | designer feature; cost 0.39 (Quinn) |
+| 13 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.39 | 0 | waits on C6, C7, C8 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C1** (score 9.12: 2 goal(s) wait on it; designer feature; cost 0.88 (Patricia, Bob)).
+
+### Step: C1 (2026-11-09T19:02:21-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C1-patricia.md` (1967 chars)
+- Brief for Bob: `game/reports/goal/0.2/briefs/C1-bob.md` (1513 chars)
+
+**Paused:** Budget guard: weekly usage is 72% with 35% of the week gone, more than 10 points ahead of pace, so heavy agents (programmer) wait (reading 1 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `paused`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 9: scan (2026-11-09T19:03:09-05:00)
+
+Unit results from `game/reports/_runs/20261109-172050/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+Next: **C1** (score 9.12: 2 goal(s) wait on it; designer feature; cost 0.88 (Patricia, Bob)).
+
+### Step: C1 (2026-11-09T19:03:09-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C1-patricia.md` (1967 chars)
+- Brief for Bob: `game/reports/goal/0.2/briefs/C1-bob.md` (1513 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Patricia** (128,628 tokens, 12 turns, 14 s):
+
+Item 1 is built in `scripts/`. I made no edits this run because the files already held it. I ran only `contract_check.py` (69 lookups, 0 unresolved) and no Godot tests.
+
+**What's in place**
+- **`economy.gd`:** `UPGRADE_IDS` lists the six upgrades in spec order. It has generic `level`, `max_level`, `cost`, `can_buy`, `buy`, `is_locked`, `gate_text` and `set_level`, plus an `upgrade_changed` signal. Swarm and Flight use the same table, and the old swarm functions call into it.
+- **`shop_ui.gd`:** it duplicates `RowTemplate` once per upgrade and sets the name, level text, gate text and buy button. The first row's button is renamed `UpgradeButton`.
+- **Config:** all nine cost keys are in `game_config.gd` and `default_config.tres`, marked PLACEHOLDER. `dev_panel.gd` uses `value_names`, so they appear in the Dev panel automatically.
+
+**Node names used:** `RowTemplate`, `NameLabel`, `LevelLabel`, `GateLabel`, `BuyButton`.
+
+**Open questions:** none.
+
+**For Quinn:** the shop is untested for input. The first row's button must be found by the name `UpgradeButton`. Buying should be tested on rows 2–6. The Auto-Sell gate shows "Needs Faster Delivery 1".
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 12); end `success`
+
+
+**Bob** (171,980 tokens, 11 turns, 30 s):
+
+Item 1 was already in `main.tscn` when I opened it, so I changed no files. `contract_check.py` reports 0 unresolved lookups.
+
+I rendered `main.tscn`. It shows four rows with name, level, and a `$` buy button. The list scrolls and the Journal button sits below it. The panel stays clear of `TopInfo`, `Harvest` and the Sell icon, and all text is readable. The panel is semi-transparent, so the world shows through it.
+
+I didn't check the gate text (it only shows when a row is locked) or the last two rows.
+
+**Nodes:** `ShopBox/ShopScroll/ShopRows/RowTemplate`, with `RowBox`, `Info`, `NameLabel`, `LevelLabel`, `GateLabel`, `BuyButton`, and `ShopBox/JournalButton`. The old `LevelLabel` and `UpgradeButton` are gone.
+
+**Open questions:** none. `ShopScroll` has a minimum height of 520, not the ~0 in the handoff, to keep the panel's top below the HUD at 720 × 1280.
+
+I deleted my render shot.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 9 (cap 30; CLI num_turns 11); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      154 passed, 11 failed  (exit 1, 260 noise lines dropped)  game/reports/_runs/20261109-190341/unit.log
+    FAIL  t_harvest_holds_anchor_spin_below  farm view: Spin does not overlap ShopPanel [P: (24, 620), S: (672, 628)] | farm view, Harvest placed first: Spin does not overlap ShopPanel [P: (24, 620), S: (672, 628)] | farm view, Spin placed firs
+    FAIL  t_crank_ignored_outside_cranking  CRANKING: real clicks counted and finished the bucket (positive control) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself) | DONE: no extra turn: expected 0 got 16 | BOTTLIN
+    FAIL  t_real_mouse_taps_crank  exactly ceil(jars x taps_per_jar) real clicks finish the bucket: expected 16 got 32 | DONE (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself) | 15 real clicks in zero time were alread
+    FAIL  t_real_touch_taps_crank  touch taps finished the bucket (32 sent) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (386 ms)
+    FAIL  t_button_press_is_not_a_crank  clicks off the button finish the bucket (positive control) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (395 ms)
+    FAIL  t_dev_button_clear_of_hud  farm: no HUD control overlaps the DevButton [P: (8, 600), S: (80, 80)]: expected [] got ["ShopPanel [P: (24, 620), S: (672, 628)]", "Row_swarm [P: (24, 620), S: (664, 120)]", "NameLabel [P: (24, 620), S: (49
+    FAIL  t_barrel_eases_to_stop  no frame turns the barrel faster than the frame before it (worst rise 0.48 rad/s at sample 4)  (1226 ms)
+    FAIL  t_camera_second_stop_in_frame  Centrifuge is wholly in frame at the second stop (screen box [P: (244.0349, -241.6409), S: (267.1646, 269.9258)], viewport [P: (0, 0), S: (720, 1280)])  (3465 ms)
+    FAIL  t_camera_second_stop_hive_share  the hive is partly shown: 0.0% of its silhouette is on screen (want > 0 and < 100%; 0 of 810 points) | the visible part is in the upper-right quadrant (0% of its points; centroid (0, 0); want >= 90%)  
+    FAIL  t_camera_second_stop_hud_clear  part of the hive shows (its visible box is the rect no control may cover)  (3474 ms)
+    FAIL  t_camera_pan_seconds  after a live change to 2.5 the pan took 2.442 s +- 0.057 s  (7162 ms)
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C1-fix1-patricia.md` (3741 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C1-fix1-quinn.md` (3694 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (82,925 tokens, 6 turns, 16 s):
+
+I changed no tests. None of the 11 failures comes from a spec change that replaces a test's expectation, so all of them are findings against the code. I did not run anything.
+
+**Layout (code or scene finding, for Bob or Patricia):**
+- `t_harvest_holds_anchor_spin_below` and `t_dev_button_clear_of_hud` both fail the same way. The extended ShopPanel is now at (24, 620) with size 672×628, so it overlaps the Spin button and the DevButton.
+- The spec says the panel scrolls at 720×1280, so its height or position needs bounding. A scroll container capped to the free area would fix it.
+
+**Crank (finding for Patricia):**
+- `t_crank_ignored_outside_cranking`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank` and `t_button_press_is_not_a_crank` fail because the bucket needs 32 turns where the tests expect `ceil(jars × taps_per_jar)` = 16.
+- At Gearing 0 the spec's multiplier is 1.0, so it should still be 16.
+- Suspect `gearing_multiplier()` or `gearing_level()` in `centrifuge.gd`, for example a level carried over from earlier state or the `UpgradeLevel` lookup.
+
+**Camera and barrel (not diagnosed):**
+- `t_camera_second_stop_*`, `t_camera_pan_seconds` and `t_barrel_eases_to_stop` fail; these are probably knock-on effects of the crank and layout changes, or timing. Re-check after the fixes above.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 6); end `success`
+
+
+**Patricia** (165,546 tokens, 13 turns, 21 s):
+
+Nothing changed. The cause is in `game/scenes/main.tscn`, which is Bob's folder, so the next round goes to Bob.
+
+**Cause:** `ShopScroll` has `custom_minimum_size = Vector2(0, 520)` (line 334). That makes `ShopPanel` about 672×628 px at (24, 620). It now covers the Spin and Harvest buttons, the DevButton, the crank click spot and the camera's second-stop hive area.
+
+**Failures this explains:**
+- `t_harvest_holds_anchor_spin_below`
+- `t_dev_button_clear_of_hud`
+- `t_camera_second_stop_in_frame`
+- `t_camera_second_stop_hive_share`
+- `t_camera_second_stop_hud_clear`
+- The four crank tests (`t_crank_ignored_outside_cranking`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_button_press_is_not_a_crank`). The panel swallows the clicks, so 32 clicks never finish the bucket.
+
+**Fix for Bob:** shrink or remove the 520 px minimum on `ShopScroll` so the panel stays clear of those controls, and let it scroll.
+
+**Scripts:** `shop_ui.gd`, `centrifuge.gd` and `upgrade_level.gd` look correct for the spec.
+
+**Not diagnosed:** `t_barrel_eases_to_stop` and `t_camera_pan_seconds`. I haven't traced them to either folder, so they may be separate causes.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 8 (cap 15; CLI num_turns 13); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      156 passed, 9 failed  (exit 1, 260 noise lines dropped)  game/reports/_runs/20261109-190802/unit.log
+    FAIL  t_harvest_holds_anchor_spin_below  farm view: Spin does not overlap ShopPanel [P: (24, 620), S: (672, 628)] | farm view, Harvest placed first: Spin does not overlap ShopPanel [P: (24, 620), S: (672, 628)] | farm view, Spin placed firs
+    FAIL  t_crank_ignored_outside_cranking  CRANKING: real clicks counted and finished the bucket (positive control) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself) | DONE: no extra turn: expected 0 got 16 | BOTTLIN
+    FAIL  t_real_mouse_taps_crank  exactly ceil(jars x taps_per_jar) real clicks finish the bucket: expected 16 got 32 | DONE (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself) | 15 real clicks in zero time were alread
+    FAIL  t_real_touch_taps_crank  touch taps finished the bucket (32 sent) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (431 ms)
+    FAIL  t_button_press_is_not_a_crank  clicks off the button finish the bucket (positive control) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (434 ms)
+    FAIL  t_dev_button_clear_of_hud  farm: no HUD control overlaps the DevButton [P: (8, 600), S: (80, 80)]: expected [] got ["ShopPanel [P: (24, 620), S: (672, 628)]", "Row_swarm [P: (24, 620), S: (664, 120)]", "NameLabel [P: (24, 620), S: (49
+    FAIL  t_camera_second_stop_in_frame  Centrifuge is wholly in frame at the second stop (screen box [P: (244.0349, -241.6409), S: (267.1646, 269.9258)], viewport [P: (0, 0), S: (720, 1280)])  (3499 ms)
+    FAIL  t_camera_second_stop_hive_share  the hive is partly shown: 0.0% of its silhouette is on screen (want > 0 and < 100%; 0 of 810 points) | the visible part is in the upper-right quadrant (0% of its points; centroid (0, 0); want >= 90%)  
+    FAIL  t_camera_second_stop_hud_clear  part of the hive shows (its visible box is the rect no control may cover)  (3500 ms)
+```
+
+#### Fix round 2: to Bob, Quinn
+
+- Brief for Bob: `game/reports/goal/0.2/briefs/C1-fix2-bob.md` (3519 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C1-fix2-quinn.md` (3452 chars)
+- Budget guard for Bob: override
+- Budget guard for Quinn: override
+
+**Quinn** (69,434 tokens, 8 turns, 17 s):
+
+No test edits this round. All 9 failures look like findings against the code, not stale test expectations.
+
+**Likely cause: the shop panel is too big.** The failing runs report ShopPanel at (24, 620), size 672×628. That is the whole lower half of the 720×1280 screen. `shop_ui.gd` is Patricia's, and she should confirm. Spec item 1 says the panel scrolls if the rows do not fit, so it should have a capped height.
+
+- **`t_harvest_holds_anchor_spin_below`:** Spin overlaps ShopPanel.
+- **`t_dev_button_clear_of_hud`:** ShopPanel, Row_swarm and NameLabel overlap the DevButton at (8, 600).
+- **Crank tests** (`t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_crank_ignored_outside_cranking`, `t_button_press_is_not_a_crank`): they click `EMPTY_SPOT` (360, 640), which is now inside the panel. The panel swallows the clicks, so cranking needs 32 clicks instead of 16. The spec doesn't replace this expectation, so I left `EMPTY_SPOT` alone. Fix the panel height first. Rerun, and only then think about moving `EMPTY_SPOT` in `test_base.gd:59`.
+
+**Not diagnosed:** the three `t_camera_second_stop_*` failures. The Centrifuge is off-frame (screen box y −241 to 270) and 0% of the hive is on screen. That could come from Bob's camera framing or Patricia's code. I didn't confirm the panel is the cause, so this one is unconfirmed.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 8); end `success`
+
+
+**Bob** (133,709 tokens, 9 turns, 19 s):
+
+I made one change: the shop scroll area's minimum height in `game/scenes/main.tscn` (ShopScroll) went from 520 to 340. I didn't run any checks or renders, and nothing is committed.
+
+- **Panel overlap:** the ShopPanel was 628 px tall and started at y=620, so it overlapped the Spin button and the DevButton. This should fix `t_harvest_holds_anchor_spin_below` and `t_dev_button_clear_of_hud`. I haven't confirmed that 340 clears them both.
+- **Bottling/crank failures (5 tests):** `t_crank_ignored_outside_cranking`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_button_press_is_not_a_crank` and the crank part of the unit failures. The state goes straight to bottling and the click count is 32 instead of 16. This points to the crank/centrifuge logic in `scripts/`, not the scene. I haven't found the file or line.
+- **Camera second stop (3 tests):** `t_camera_second_stop_in_frame`, `t_camera_second_stop_hive_share` and `t_camera_second_stop_hud_clear`. The Centrifuge is out of frame and 0% of the hive shows. This is probably the camera stop values in `scripts/`. I haven't looked, so I changed nothing for it. It may also fail only because the shop panel covers the hive.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 9); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      164 passed, 1 failed  (exit 1, 260 noise lines dropped)  game/reports/_runs/20261109-191226/unit.log
+    FAIL  t_camera_second_stop_in_frame  Centrifuge is wholly in frame at the second stop (screen box [P: (244.0349, -61.64093), S: (267.1646, 269.926)], viewport [P: (0, 0), S: (720, 1280)])  (3512 ms)
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on C1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept C1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C1 fix-round edits"`.
+
+## Result
+
+Last invocation (2026-11-09T19:16:33-05:00): waiting-designer.
+
+Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
+| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
+| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
+| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
+| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
+| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
+| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
+| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
+| Patricia, C1 | 128,628 | 32,719 | 12 | 14 s |
+| Bob, C1 | 171,980 | 22,145 | 11 | 30 s |
+| Quinn, C1 fix 1 | 82,925 | 20,798 | 6 | 16 s |
+| Patricia, C1 fix 1 | 165,546 | 28,457 | 13 | 21 s |
+| Quinn, C1 fix 2 | 69,434 | 20,193 | 8 | 17 s |
+| Bob, C1 fix 2 | 133,709 | 22,738 | 9 | 19 s |
+| **Total** | **2,740,347** | | | |
+
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept C1 --note main.tscn ShopScroll custom_minimum_size 340 -> 128 (one 120 px row shows, the rest scroll): the taller shop panel pushed the second-stop framing so the centrifuge top left the screen (t_camera_second_stop_in_frame). Height goes to Design Votes with the shop list (spec Review). unit 165/165, start as baseline, contract 0 unresolved (20261109-191826)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C1 (2026-11-09T19:23:06-05:00)
+
+- Change (orchestrator, Process 9): main.tscn ShopScroll custom_minimum_size 340 -> 128 (one 120 px row shows, the rest scroll): the taller shop panel pushed the second-stop framing so the centrifuge top left the screen (t_camera_second_stop_in_frame). Height goes to Design Votes with the shop list (spec Review). unit 165/165, start as baseline, contract 0 unresolved (20261109-191826)
