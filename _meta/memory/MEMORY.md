@@ -26,6 +26,7 @@
 - [Prefer Bash](prefer-bash.md) — shell work in Bash with Linux tools (tail, grep, env VAR=x), not PowerShell cmdlets
 - [No Select-String](no-select-string.md) — search with the Grep tool, never PowerShell Select-String
 - [Fix needs commit](fix-needs-commit.md) — never say "fixed" without the commit that changed the bug's code; a green test isn't a fix
+- [No pick vote after play-test](no-pick-vote-after-playtest.md) — no Design Votes round for models the designer play-tests; never one-column full-size stacks
 - [Look before done](look-before-done.md) — never call a model change done on tests alone; compare fresh shots with the picked variant
 - [Spec consistency](spec-consistency.md) — before adding a play-test item, grep the spec for the same object/view and fix contradictions in the same edit
 - [UI design prefs](ui-design-prefs.md) — read UI_DESIGN.md before UI work: real shots + icons, no nav bar, fork meter, Jelly icon K, variants with sliders

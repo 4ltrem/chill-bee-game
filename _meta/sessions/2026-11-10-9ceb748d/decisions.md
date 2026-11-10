@@ -80,19 +80,20 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 - Files: `proposals/design/roadmap.md`
 
 ### D216 · 2026-11-10 · Game design · Zoom framing is computed at runtime; bee range has no zoom cap
-- Decided: asked to accept `build-from-start-r2.md`, the designer answered with a note instead: the first zoom frames a hive with its centrifuge only when they are in range, and the camera parameters are calculated at runtime. R2's zoom-ceiling cap on bee range and Bob's measurement go. Acceptance is still pending.
+- Decided: asked to accept `build-from-start-r2.md`, the designer answered with a note instead: the first zoom frames a hive with its centrifuge only when they are in range, and the camera parameters are calculated at runtime. R2's zoom-ceiling cap on bee range and Bob's measurement go. Asked again, the designer narrowed it: "in range" means the close zone where combs fly straight into the centrifuge, about 1-2 tiles (`CELL_FLY_RANGE`); a hive served by bee carry is framed with its own pile. Then accepted: `build-from-start-r2.md` applied to GDD §2 (start state, raw comb, ground jars, per-hive fork icons, close-zone zoom, bee carry with split across centrifuges), §3 (Flight Endurance = range + carry speed, Worker Swarm Count = carry rate; automation per farm + flat install fee), §4 (Build mode from the start, centrifuge tiers), §7 (first build beat), §9 and a new Glossary table (Raw comb, Hive pile, Bee lane, Centrifuge range, Close zone), all marked "from 0.4".
 - Files: `proposals/design/build-from-start-r2.md`
 
-### D217 · 2026-11-10 · Pipeline design · Pick matches: only the default state renders for now
-- Decided: of the 9 pick-match pairs, the 2 that `pick_match.py` can render as saved (fork cold vs `fork-r4-c`, centrifuge vs `gearing-r6-b0`) run now with `--no-agent`; the levelled ones (hot fork, Gearing 5, truck levels 1-4) need a level option in the script, and the shop and Journal shots need Bob to add two `ui_compare_shots.gd` moments, both after the reset.
-- Files: `_tools/pick_match.py`, `game/tests/ui_compare_shots.gd`
+### D217 · 2026-11-10 · Pipeline design · No pick-match vote round for models the designer has play-tested
+- Decided: two pick-match pairs (fork, centrifuge G0) went onto Design Votes; the designer said the images were far too big and the models were fine in the play-test, so a vote round to check models is not needed when the designer play-tests anyway. The section was removed (Design Votes back to the version before it); the levelled pick matches are dropped, not deferred. Shop and Journal shots still wait for Bob.
+- Rejected: a `pick_match.py` level option for the remaining 7 pairs.
+- Files: `_meta/memory/no-pick-vote-after-playtest.md`
 
 ## Still open
 
 - **0.2.1 build** after the weekly reset: `budget_guard.py --allow-for 60`, `/goal` + goal_agent, version 0.2.1, itch upload as the A7 link (~11/19).
-- **Proposals to accept:** `build-from-start-r2.md` (accept, now with note 8; then mark `build-from-start.md` superseded) and `roadmap.md` (questions 3 starting-upgrade whitelist and 5 Connie timing open; re-layer to r2). Before the 0.4 spec: Terry, William's lore text, Ruth/William raw-comb price check; Gerard settles whether "in range" for the zoom means the close zone or bee range.
+- **Roadmap:** re-layer rows 1-16 to build-from-start-r2 §2.8 (orchestrator); questions 3 (starting-upgrade whitelist) and 5 (Connie timing) open; then accept. Before the 0.4 spec: Terry (§3 parameters, including `CELL_FLY_RANGE` ~1-2 tiles and the split rule's throughput), William's lore and guide beats, Ruth/William raw-comb price check.
 - **Watering proposal** (D215): Gerard, before 0.6.
-- **Pick matches left:** a level option for `pick_match.py` (hot fork, Gearing 5, truck 1-4); Bob adds shop and Journal EN/FR moments.
+- **Shop and Journal shots:** Bob adds shop and Journal EN/FR moments to `ui_compare_shots.gd` (after the reset).
 - **Spigot Flow numbers** are placeholders; Terry checks before 0.3.0.
 - **Mutation fixes** (rerun 2026-11-10, Rex, unchanged): 45 caught; 25 "second crank dead" MISSED (a test gap: Quinn); 45 "French title left empty" BROKEN; the run crashes at 48/49 because `mutate.py` copies only `game/` and the Journal test reads `../_tools/journal_csv.py` (likely also the one baseline unit failure in the copy). Fix `mutate.py` to copy `_tools/` (or the test's path), then Quinn's test for 25.
 - **0.3.0 UI pass** needs ui-screens decisions 2, 3 and 4 and the skin first.
