@@ -5,14 +5,14 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 3c5a9003-bd51-4155-8369-edf76b12f3b2
-  modified: 2026-11-10T06:16:41.432Z
+  modified: 2026-11-10T06:22:03.348Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
 
 **Setup:** main folder on `milestone/0.2`; end-of-day ran 2026-11-10 (D200-D212, all 11/09-10 work committed). No worktrees.
 
-**Budget (D212):** weekly 81% at 38% of the week (reset Sat 11/14 9:00 Toronto). Done 11/10: mutation rerun (same result; cause of the crash found: `mutate.py` copies only `game/`, the Journal test needs `../_tools/journal_csv.py`), pick-match vote section added then removed at the designer's request (D217: no vote rounds for play-tested models), roadmap Q2 and Q4 answered (D214-D215), build-from-start-r2 ACCEPTED and applied to the GDD as "from 0.4" (D216; zoom 1 frames only centrifuges in the 1-2 tile close zone, camera computed at runtime). Roadmap still needs re-layering to r2 §2.8 and questions 3, 5. Next cheap step: fix `mutate.py`'s copy. The 0.2.1 build waits for the reset. A6 is due Nov 22 (designer 2026-11-10), after the reset.
+**Budget (D212):** weekly 81% at 38% of the week (reset Sat 11/14 9:00 Toronto). Done 11/10: mutation rerun (same result; cause of the crash found: `mutate.py` copies only `game/`, the Journal test needs `../_tools/journal_csv.py`), pick-match vote section added then removed at the designer's request (D217: no vote rounds for play-tested models), roadmap Q2 and Q4 answered (D214-D215), build-from-start-r2 ACCEPTED and applied to the GDD as "from 0.4" (D216; zoom 1 frames only centrifuges in the 1-2 tile close zone, camera computed at runtime). Roadmap still needs re-layering to r2 §2.8 and questions 3, 5. `mutate.py` fixed (D218, L35): Journal mutations now CAUGHT; mutation 25 (second crank dead) still MISSED, Quinn's test after the reset. The 0.2.1 build waits for the reset. A6 is due Nov 22 (designer 2026-11-10), after the reset.
 
 **0.2.1 = 0.2.0 play-test fixes** (spec `game/specs/0.2-first-automation.md`, lint clean, `goal_agent --plan` 21/34):
 - 9 Spin alone pans to the second stop (drop `_filled_in_zoom`/`_closing_to_second` pan in `main.gd`; replace the `test_camera.gd` full-bucket pan check).

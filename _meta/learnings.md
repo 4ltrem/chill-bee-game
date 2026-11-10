@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L35 · 2026-11-10 · `mutate.py` crashed on the Journal mutations
+- **What broke:** `mutate.py --since 48afcd8` crashed at mutation 48/49 (FileNotFoundError on `game/../_tools/journal_csv.py`) twice, and mutation 45 "French title left empty" came back BROKEN.
+- **How noticed:** Rex's rerun reports (2026-11-09 and 2026-11-10).
+- **Cause:** `mutate.py` copied only `game/` to its temp folder, but `test_journal.gd` runs `../_tools/journal_csv.py`, which reads `content/bee-journal-real.md`, and mutation 48 edits that script itself.
+- **How fixed:** `mutate.py` also copies `_tools/` and `content/` beside the copied `game/`. Rex's check: 48 and 45 CAUGHT, baseline 0 failing.
+- **Prevention:** the copy in `mutate.py` (with a comment naming the test). Open: no unit test in `test_generate.py` checks the siblings are copied; mutation 25 (second crank dead) is still MISSED, a test gap for Quinn.
+
 ## L34 · 2026-11-09 · `--plan` said 21/21 done after Quinn wrote only the shop tests
 - **What broke:** after T1.1 (7 shop tests) the plan marked all 12 test lines done; the `/goal` condition would have passed with 10 lines untested.
 - **How noticed:** the orchestrator compared the plan with the `# goal` marks in `game/tests/` (7 × T1.1, nothing else).

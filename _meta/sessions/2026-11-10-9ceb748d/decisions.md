@@ -95,7 +95,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 - **Watering proposal** (D215): Gerard, before 0.6.
 - **Shop and Journal shots:** Bob adds shop and Journal EN/FR moments to `ui_compare_shots.gd` (after the reset).
 - **Spigot Flow numbers** are placeholders; Terry checks before 0.3.0.
-- **Mutation fixes** (rerun 2026-11-10, Rex, unchanged): 45 caught; 25 "second crank dead" MISSED (a test gap: Quinn); 45 "French title left empty" BROKEN; the run crashes at 48/49 because `mutate.py` copies only `game/` and the Journal test reads `../_tools/journal_csv.py` (likely also the one baseline unit failure in the copy). Fix `mutate.py` to copy `_tools/` (or the test's path), then Quinn's test for 25.
+- **Mutation 25** "second crank dead" is still MISSED (`t_gearing_gears_turn_opposite_twice` passes with it): Quinn adds a test after the reset. The crash and mutation 45 are fixed (L35).
 - **0.3.0 UI pass** needs ui-screens decisions 2, 3 and 4 and the skin first.
 - **Web build browser check:** the smoke shot is still the loading spinner; the real-time wait fix is approved but not built.
 - **Item 19 refill speed:** overflow drains back at up to twice the fill rate (the assistant's choice; the GDD is silent). Say if you want the normal rate only.
