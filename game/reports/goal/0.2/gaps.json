@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T20:30:24-05:00",
- "unit_log": "game/reports/_runs/20261109-202355/unit.log",
+ "at": "2026-11-09T20:36:32-05:00",
+ "unit_log": "game/reports/_runs/20261109-203101/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -761,9 +761,14 @@
      "name": "t_shop_no_row_overlaps_other_controls",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "5cc9a5c",
+     "ok": true
     }
    ],
-   "built": false,
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false

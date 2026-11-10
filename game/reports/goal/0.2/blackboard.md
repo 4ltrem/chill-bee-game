@@ -1237,9 +1237,18 @@ FAIL    unit      171 passed, 1 failed  (exit 1, 270 noise lines dropped)  game/
 
 2 fix rounds failed on T1.1, T.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T1.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T1.1, T.1 fix-round edits"`.
 
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept T1.1 --note test_economy.gd t_cost_formula: roundi -> floori, quoting 0.2 item 1 ('rounded down'), which replaces 0.1's rounding (Patricia's economy.gd floor fix kept). unit 172/172, start as baseline, contract 0 unresolved (20261109-203101)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T1.1 (2026-11-09T20:36:27-05:00)
+
+- Change (orchestrator, Process 9): test_economy.gd t_cost_formula: roundi -> floori, quoting 0.2 item 1 ('rounded down'), which replaces 0.1's rounding (Patricia's economy.gd floor fix kept). unit 172/172, start as baseline, contract 0 unresolved (20261109-203101)
+- Accepted: checkpoint `5cc9a5c` on `milestone/0.2`
+
 ## Result
 
-Last invocation (2026-11-09T20:28:52-05:00): waiting-designer.
+T1.1 accepted with a manual fix (checkpoint `5cc9a5c` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
 
@@ -1273,8 +1282,52 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
 
 ## Resumed 2026-11-09
 
-Command: `goal_agent.py game/specs/0.2-first-automation.md --accept T1.1 --note test_economy.gd t_cost_formula: roundi -> floori, quoting 0.2 item 1 ('rounded down'), which replaces 0.1's rounding (Patricia's economy.gd floor fix kept). unit 172/172, start as baseline, contract 0 unresolved (20261109-203101)` (the run had stopped: `waiting-designer`).
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: already on it.
 
-### Manual fix: T1.1 (2026-11-09T20:36:27-05:00)
+## Pass 15: scan (2026-11-09T20:36:32-05:00)
 
-- Change (orchestrator, Process 9): test_economy.gd t_cost_formula: roundi -> floori, quoting 0.2 item 1 ('rounded down'), which replaces 0.1's rounding (Patricia's economy.gd floor fix kept). unit 172/172, start as baseline, contract 0 unresolved (20261109-203101)
+Unit results from `game/reports/_runs/20261109-203101/unit.log`. 11 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (10 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Upgrade shop holds several rows. | change | Patricia, Bob | done | 17/17 present: ✓ config flight_base_cost, ✓ config flight_cost_growth, ✓ config heated_fork_base_cost, ✓ config heated_fork_cost_growth, ✓ config gearing_base_cost, ✓ config gearing_cost_growth, ✓ config faster_delivery_base_cost, ✓ config faster_delivery ... |
+| C2 Flight Endurance | change | Patricia | done | 10/10 present: ✓ config flight_speed_bonus_per_level, ✓ config flight_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text ... |
+| C3 Heated Uncapping Fork | change | Patricia, Bob | done | 14/14 present: ✓ config heated_fork_radius_bonus_per_level, ✓ config fork_pulse_seconds, ✓ config heated_fork_max_level, ✓ config heated_fork_post_auto_yield_bonus_per_level, ✓ config uncap_radius, ✓ node ForkIcon, ✓ test t_shop_costs_floor_base_growth, ✓ ... |
+| C4 Centrifuge Gearing | change | Patricia, Bob | done | 12/12 present: ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ config gearing_post_auto_time_cut_per_level, ✓ config gearing_post_auto_cut_includes_bottling, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test ... |
+| C5 Faster Delivery | change | Patricia, Bob | done | 13/13 present: ✓ config faster_delivery_max_level, ✓ config faster_delivery_trip_cut_per_level, ✓ node DecalsBold, ✓ node DecalsSmall, ✓ node FlamesTop, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_dis ... |
+| C6 Auto-Sell | change | Patricia, Bob | done | 9/9 present: ✓ config auto_sell_unlock_delivery_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sel ... |
+| C7 Phase 2 flag. | change | Patricia, Bob | done | 8/8 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+| C8 Bee Journal entry, EN/FR, through Godot's translation CSV. | change | Patricia, Bob | done | 8/8 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+| T1.1 item 1: each row's cost equals `base × growth^level` (floore | test | Quinn | done | 8/8 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 7/7 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+Next: **T2.1** (score 3.62: designer feature; cost 0.38 (Quinn)).
+
+### Step: T2.1 (2026-11-09T20:36:32-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T2.1-quinn.md` (3004 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (332,856 tokens, 19 turns, 40 s):
+
+T2.1 now has a test, but nothing has been run and I did not parse-check it. `godot` isn't on PATH in Bash, so `--check-only` never ran.
+
+**Files changed**
+- `game/tests/test_flight.gd` (new, extends `test_shop.gd`) holds `t_flight_fill_rate_level3`, tagged `# goal T2.1`. It builds two fresh hives and times each to full, one at Flight 0 and one at Flight 3, both at Swarm 0. It checks that the time ratio is `1 + flight_speed_bonus_per_level × 3` within ±2%, with the bonus read from the config. It drives the hive through `Economy.fill_multiplier()` and `advance()`, not through real input.
+- `game/tests/run_tests.gd`: now extends `test_flight.gd`, and the test is registered under the comment `# 0.2 item 2 (written from game/specs/0.2-first-automation.md before the code)`.
+- `game/tests/mutations.json`: one mutation, which drops `* flight_multiplier()` from `fill_multiplier()` in `economy.gd` and expects the test to fail.
+
+**Node names used:** none. It only needs the `Hive` node from `_mk_hive()` and the `Economy` autoload.
+
+**Open questions:** none for this line. I wrote no input-path or sequence test, since the line is about a rate, not something the player starts. The bees flying faster is item 2's second sentence but not part of T2.1, so it has no test.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 11 (cap 30; CLI num_turns 19); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS

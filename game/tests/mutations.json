@@ -968,5 +968,15 @@
    "t_shop_no_row_overlaps_other_controls"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 2 Flight Endurance no longer speeds the hive fill",
+  "file": "scripts/economy.gd",
+  "find": "float(config.base_bee_count) * flight_multiplier()",
+  "replace": "float(config.base_bee_count)",
+  "expect": [
+   "t_flight_fill_rate_level3"
+  ],
+  "suite": "unit"
  }
 ]
