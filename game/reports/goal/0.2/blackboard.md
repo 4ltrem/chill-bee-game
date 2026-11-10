@@ -1527,42 +1527,6 @@ mutate 20/20: 0.2 item 4 the motor cut applies without the motor ... CAUGHT in 6
 **Paused:** Budget guard: weekly usage is 76% with 36% of the week gone, more than 10 points ahead of pace, so heavy agents (qa-build-engineer) wait (reading 19 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
 Run the same command again to resume.
 
-## Result
-
-Last invocation (2026-11-09T21:21:53-05:00): paused.
-
-Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
-
-| Call | Total processed | Final context | Turns | Duration |
-|---|---|---|---|---|
-| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
-| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
-| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
-| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
-| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
-| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
-| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
-| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
-| Patricia, C1 | 128,628 | 32,719 | 12 | 14 s |
-| Bob, C1 | 171,980 | 22,145 | 11 | 30 s |
-| Quinn, C1 fix 1 | 82,925 | 20,798 | 6 | 16 s |
-| Patricia, C1 fix 1 | 165,546 | 28,457 | 13 | 21 s |
-| Quinn, C1 fix 2 | 69,434 | 20,193 | 8 | 17 s |
-| Bob, C1 fix 2 | 133,709 | 22,738 | 9 | 19 s |
-| Bob, C6 | 84,741 | 20,580 | 7 | 15 s |
-| Patricia, C6 | 90,946 | 20,971 | 12 | 17 s |
-| Bob, C6 fix 1 | 40,960 | 14,537 | 4 | 8 s |
-| Bob, C7 | 86,223 | 20,455 | 6 | 11 s |
-| Patricia, C7 | 152,741 | 27,551 | 19 | 29 s |
-| Bob, C8 | 110,763 | 22,489 | 10 | 21 s |
-| Patricia, C8 | 72,959 | 36,963 | 2 | 5 s |
-| Quinn, T1.1, T.1 | 996,332 | 79,607 | 33 | 114 s |
-| Patricia, T1.1, T.1 fix 1 | 65,531 | 18,495 | 7 | 10 s |
-| Bob, T1.1, T.1 fix 2 | 26,930 | 14,541 | 3 | 7 s |
-| Quinn, T4.1, T4.2 | 813,108 | 66,788 | 31 | 107 s |
-| Quinn, T4.1, T4.2 fix 1 | 43,095 | 15,154 | 4 | 7 s |
-| **Total** | **5,324,676** | | | |
-
 ## Resumed 2026-11-09
 
 Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `paused`).
@@ -1825,3 +1789,184 @@ I changed no other lines, and `mutations.json` is unchanged. The goal agent stil
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `mutations`: PASS
+- Green: checkpoint `4272bff` on `milestone/0.2`
+
+## Pass 21: scan (2026-11-09T22:10:32-05:00)
+
+Unit results from `game/reports/_runs/20261109-220256/unit.log`. 20 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C7 Phase 2 flag. | change | Patricia, Bob | done | 10/10 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+| T7.1 item 7: buying Auto-Sell sets phase 2 once and the toast sho | test | Quinn | done | ✓ test t_phase2_auto_sell_sets_once_toast_once, ✓ test t_phase2_locked_auto_sell_keeps_phase_1, ✓ ledger 4272bff |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 26/26 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+Next: **T8.1** (score 3.64: designer feature; cost 0.36 (Quinn)).
+
+### Step: T8.1 (2026-11-09T22:10:32-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T8.1-quinn.md` (3509 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (375,981 tokens, 19 turns, 64 s):
+
+I wrote four tests for T8.1 in `game/tests/test_journal.gd`. A `--check-only` parse of that file printed no errors. I did not run the tests or the mutations.
+
+**Files changed**
+- `game/tests/test_journal.gd` is new and extends `test_phase.gd`.
+- `game/tests/run_tests.gd` now extends `test_journal.gd`. It has a new `# 0.2 item 8 (written from …)` group listing the four tests.
+- `game/tests/mutations.json` has five new mutations.
+
+**Tests** (each has `# goal T8.1`)
+- `t_journal_csv_every_key_en_and_fr`
+- `t_journal_tr_follows_locale`
+- `t_journal_panel_text_matches_csv_twice`: a real tap on Journal, then Close, run twice in each of EN and FR.
+- `t_journal_csv_equals_script_output`: it runs `journal_csv.py`, compares the bytes, then restores the committed CSV.
+
+**Nodes used:** `JournalButton`, `JournalPanel`, `JournalTitle`, `JournalBody`, `JournalCloseButton`.
+
+**Open questions**
+- Item 8: I wrote no test for the Dev panel EN/FR toggle (`LocaleButton`) or the OS-locale default.
+- The generator mutation targets `../_tools/journal_csv.py`. `mutate.py` may not accept a path outside `game/`.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 11 (cap 30; CLI num_turns 19); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+godot_run: unit ...
+godot_run: unit done in 7m22s (FAIL)
+godot_run: start ...
+godot_run: start done in 0m02s (PASS)
+Traceback (most recent call last):
+  File "C:\Users\mtrem\Desktop\MAIGD\_tools\godot_run.py", line 206, in <module>
+    sys.exit(main())
+  File "C:\Users\mtrem\Desktop\MAIGD\_tools\godot_run.py", line 198, in main
+    print(render(results, args.markdown))
+  File "C:\Program Files\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\ufffd' in position 311: character maps to <undefined>
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T8.1-fix1-patricia.md` (2057 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (27,646 tokens, 2 turns, 7 s):
+
+I changed nothing. The failure isn't in `scripts/`, and the reports don't show which unit test failed.
+
+- **Crash in the runner:** `_tools/godot_run.py` line 198, `print(render(...))`, raised `UnicodeEncodeError`. Godot's output contained a `\ufffd` character and the Windows cp1252 console could not print it. That hid the failure detail. Fix: reconfigure stdout to UTF-8 (`sys.stdout.reconfigure(encoding="utf-8", errors="replace")`) or run with `PYTHONUTF8=1`. This belongs to whoever owns `_tools/`.
+- **Unit FAIL (7m22s):** I can't tell which test failed. A fresh summary is needed once the runner is fixed.
+- **Journal code:** I haven't confirmed the journal CSV, `project.godot` registration, Journal button or EN/FR toggle. If the unit failure is a journal test, send me the failing line.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 2 (cap 15; CLI num_turns 2); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+godot_run: unit ...
+godot_run: unit done in 7m32s (FAIL)
+godot_run: start ...
+godot_run: start done in 0m02s (PASS)
+Traceback (most recent call last):
+  File "C:\Users\mtrem\Desktop\MAIGD\_tools\godot_run.py", line 206, in <module>
+    sys.exit(main())
+  File "C:\Users\mtrem\Desktop\MAIGD\_tools\godot_run.py", line 198, in main
+    print(render(results, args.markdown))
+  File "C:\Program Files\Python310\lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode character '\ufffd' in position 311: character maps to <undefined>
+```
+
+#### Fix round 2: to Bob
+
+- Brief for Bob: `game/reports/goal/0.2/briefs/T8.1-fix2-bob.md` (2077 chars)
+- Budget guard for Bob: override
+
+**Bob** (12,681 tokens, 1 turns, 6 s):
+
+I changed nothing this round, because no failing row names a file in `scenes/` or `materials/`.
+
+- **Unit run:** it reported FAIL, but the output has no failing test names, so I can't trace the failure to a scene or material.
+- **Traceback:** `_tools/godot_run.py` line 198 (`print(render(...))`) crashed with a `UnicodeEncodeError`. The cp1252 console can't encode the character `\ufffd`, which most likely comes from a test's output. That is a tooling bug outside my folder, and it also hid the failing test names.
+- **Likely fix:** write the output as UTF-8 (for example `sys.stdout.reconfigure(encoding="utf-8", errors="replace")`, or `PYTHONIOENCODING=utf-8`).
+- **Possible second cause:** the `\ufffd` suggests a test prints non-ASCII text, such as the French journal text. If the unit failure comes from `game/translations/journal.csv` or `_tools/journal_csv.py`, an encoding or BOM problem there is the first thing to check. Neither is in my folder.
+
+Next round, send the full unit failure lines (with the encoding fix applied) to the owner they name.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 1 (cap 15; CLI num_turns 1); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      194 passed, 1 failed  (exit 1, 292 noise lines dropped)  game/reports/_runs/20261109-222655/unit.log
+    FAIL  t_journal_panel_text_matches_csv_twice  en run 1: a real tap on Journal opens the panel | en run 1: the panel body is the CSV text: expected Canada is home to 41 bumble bee species � fuzzy, sturdy flyers that forage even in cold, clou
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T8.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T8.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T8.1 fix-round edits"`.
+
+## Result
+
+Last invocation (2026-11-09T22:34:33-05:00): waiting-designer.
+
+Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
+| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
+| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
+| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
+| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
+| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
+| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
+| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
+| Patricia, C1 | 128,628 | 32,719 | 12 | 14 s |
+| Bob, C1 | 171,980 | 22,145 | 11 | 30 s |
+| Quinn, C1 fix 1 | 82,925 | 20,798 | 6 | 16 s |
+| Patricia, C1 fix 1 | 165,546 | 28,457 | 13 | 21 s |
+| Quinn, C1 fix 2 | 69,434 | 20,193 | 8 | 17 s |
+| Bob, C1 fix 2 | 133,709 | 22,738 | 9 | 19 s |
+| Bob, C6 | 84,741 | 20,580 | 7 | 15 s |
+| Patricia, C6 | 90,946 | 20,971 | 12 | 17 s |
+| Bob, C6 fix 1 | 40,960 | 14,537 | 4 | 8 s |
+| Bob, C7 | 86,223 | 20,455 | 6 | 11 s |
+| Patricia, C7 | 152,741 | 27,551 | 19 | 29 s |
+| Bob, C8 | 110,763 | 22,489 | 10 | 21 s |
+| Patricia, C8 | 72,959 | 36,963 | 2 | 5 s |
+| Quinn, T1.1, T.1 | 996,332 | 79,607 | 33 | 114 s |
+| Patricia, T1.1, T.1 fix 1 | 65,531 | 18,495 | 7 | 10 s |
+| Bob, T1.1, T.1 fix 2 | 26,930 | 14,541 | 3 | 7 s |
+| Quinn, T4.1, T4.2 | 813,108 | 66,788 | 31 | 107 s |
+| Quinn, T4.1, T4.2 fix 1 | 43,095 | 15,154 | 4 | 7 s |
+| Quinn, T5.1, T5.2 | 518,408 | 44,605 | 30 | 59 s |
+| Quinn, T6.1 | 317,803 | 41,839 | 16 | 46 s |
+| Patricia, T6.1 fix 1 | 88,678 | 20,162 | 6 | 12 s |
+| Quinn, T6.1 fix 2 | 70,173 | 21,704 | 8 | 14 s |
+| Quinn, T7.1 | 301,167 | 34,142 | 21 | 52 s |
+| Quinn, T7.1 fix 1 | 86,082 | 20,246 | 6 | 16 s |
+| Quinn, T8.1 | 375,981 | 42,911 | 19 | 64 s |
+| Patricia, T8.1 fix 1 | 27,646 | 15,269 | 2 | 7 s |
+| Bob, T8.1 fix 2 | 12,681 | 12,681 | 1 | 6 s |
+| **Total** | **7,123,295** | | | |
+
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept T8.1 --note shop_ui.gd finds FarmUI by walking up from ShopPanel instead of get_tree().current_scene, which is the test runner in tests, so JournalUI was never added and a Journal tap did nothing. godot_run.py stdout reconfigured to UTF-8 (the summary print crashed). Footnote markers stay (designer 2026-11-09). unit 195/195, start as baseline, contract 0 unresolved (20261109-223506)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T8.1 (2026-11-09T22:43:26-05:00)
+
+- Change (orchestrator, Process 9): shop_ui.gd finds FarmUI by walking up from ShopPanel instead of get_tree().current_scene, which is the test runner in tests, so JournalUI was never added and a Journal tap did nothing. godot_run.py stdout reconfigured to UTF-8 (the summary print crashed). Footnote markers stay (designer 2026-11-09). unit 195/195, start as baseline, contract 0 unresolved (20261109-223506)

@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T21:54:14-05:00",
- "unit_log": "game/reports/_runs/20261109-214647/unit.log",
+ "at": "2026-11-09T22:10:32-05:00",
+ "unit_log": "game/reports/_runs/20261109-220256/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -730,6 +730,18 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_phase2_auto_sell_sets_once_toast_once",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_phase2_locked_auto_sell_keeps_phase_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "49044b8",
      "ok": true
@@ -1169,9 +1181,27 @@
    "depends": [
     "C7"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_phase2_auto_sell_sets_once_toast_once",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_phase2_locked_auto_sell_keeps_phase_1",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "4272bff",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1366,6 +1396,18 @@
      "name": "t_autosell_twice_matches",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_phase2_auto_sell_sets_once_toast_once",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_phase2_locked_auto_sell_keeps_phase_1",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1375,17 +1417,6 @@
   }
  },
  "order": [
-  {
-   "id": "T7.1",
-   "score": 3.64,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.36,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T8.1",
    "score": 3.64,

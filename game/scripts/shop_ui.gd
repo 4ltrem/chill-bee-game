@@ -27,7 +27,9 @@ func _ready() -> void:
 				"level": row.find_child("LevelLabel", true, false) as Label,
 				"gate": row.find_child("GateLabel", true, false) as Label,
 			}
-	var farm_ui: Node = get_tree().current_scene.find_child("FarmUI", true, false) if get_tree().current_scene != null else null
+	var farm_ui: Node = get_parent()   # ShopPanel sits under FarmUI: walk up, so it also works when main is not the current scene (tests)
+	while farm_ui != null and farm_ui.name != "FarmUI":
+		farm_ui = farm_ui.get_parent()
 	if farm_ui != null:
 		var journal := JournalUI.new()   # item 8: wires JournalButton / JournalPanel (added at runtime)
 		farm_ui.add_child.call_deferred(journal)

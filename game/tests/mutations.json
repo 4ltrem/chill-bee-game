@@ -1320,5 +1320,56 @@
    "t_phase2_locked_auto_sell_keeps_phase_1"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 French title left empty in the CSV",
+  "file": "translations/journal.csv",
+  "find": ",Bourdons\n",
+  "replace": ",\n",
+  "expect": [
+   "t_journal_csv_every_key_en_and_fr",
+   "t_journal_csv_equals_script_output"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 French translation not registered",
+  "file": "project.godot",
+  "find": ", \"res://translations/journal.fr.translation\"",
+  "replace": "",
+  "expect": [
+   "t_journal_tr_follows_locale"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 panel body shows the title key",
+  "file": "scripts/journal_ui.gd",
+  "find": "_body.text = tr(\"JOURNAL_%s_BODY\" % ENTRY_ID)",
+  "replace": "_body.text = tr(\"JOURNAL_%s_TITLE\" % ENTRY_ID)",
+  "expect": [
+   "t_journal_panel_text_matches_csv_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 panel text not refreshed on reopen",
+  "file": "scripts/journal_ui.gd",
+  "find": "func open() -> void:\n\t_refresh_text()",
+  "replace": "func open() -> void:\n\tif _title.text == \"\":\n\t\t_refresh_text()",
+  "expect": [
+   "t_journal_panel_text_matches_csv_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 generator drops the English title",
+  "file": "../_tools/journal_csv.py",
+  "find": "w.writerow([f\"JOURNAL_{eid}_TITLE\", en_t, fr_t])",
+  "replace": "w.writerow([f\"JOURNAL_{eid}_TITLE\", en_t.upper(), fr_t])",
+  "expect": [
+   "t_journal_csv_equals_script_output"
+  ],
+  "suite": "unit"
  }
 ]
