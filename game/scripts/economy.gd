@@ -11,6 +11,8 @@ var config: GameConfig = GameConfig.live()
 var money: int = 0
 var swarm_level: int = 0
 var flight_level: int = 0
+signal phase_changed(phase: int)
+var phase: int = 1   # GDD 1; 0.2 item 7: Auto-Sell sets 2 (no gameplay effect in 0.2)
 
 
 ## Bees in the swarm: base + per-level * level (Worker Swarm Count adds bees, GDD Tree A).
@@ -152,6 +154,9 @@ func set_level(id: String, lv: int) -> void:
 		_:
 			_levels[id] = lv
 	upgrade_changed.emit(id, lv)
+	if id == "auto_sell" and lv >= 1 and phase < 2:
+		phase = 2
+		phase_changed.emit(phase)
 
 
 func jar_value() -> int:
@@ -171,6 +176,9 @@ func reset() -> void:
 	swarm_level = 0
 	flight_level = 0
 	_levels.clear()
+	if phase != 1:
+		phase = 1
+		phase_changed.emit(phase)
 	for id in UPGRADE_IDS:
 		upgrade_changed.emit(id, 0)
 	money_changed.emit(money)

@@ -979,3 +979,73 @@ I changed nothing else. There were no `(designer)` rows, and nothing in `scripts
 - Check `tests`: PASS
 - Check `ui shots`: PASS
 - Check `style`: PASS (open rows only on files this step did not change)
+- Green: checkpoint `41a68f7` on `milestone/0.2`
+
+## Pass 11: scan (2026-11-09T19:34:43-05:00)
+
+Unit results from `game/reports/_runs/20261109-192909/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C6 Auto-Sell | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config auto_sell_unlock_delivery_level, ✓ ledger 41a68f7 |
+
+### Order: new or rescored (2 of 14)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 11 | T6.1 item 6: with Auto-Sell owned, a full bed leaves wi | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 12 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.38 | 0 | waits on C7, C8 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C7** (score 9.14: 2 goal(s) wait on it; designer feature; cost 0.86 (Patricia, Bob)).
+
+### Step: C7 (2026-11-09T19:34:43-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C7-patricia.md` (936 chars)
+- Brief for Bob: `game/reports/goal/0.2/briefs/C7-bob.md` (978 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Bob** (86,223 tokens, 6 turns, 11 s):
+
+Both nodes were already in `scenes/main.tscn`, so I changed no files and did not render the scene.
+
+`python -I _tools/contract_check.py` reports 69 lookups, 0 unresolved.
+
+- **`FUI/AutoTag`:** a Label with text "Auto", `visible = false`, `mouse_filter = 2`. It is 90×44, font size 30, cream with a dark-brown outline. Patricia positions it beside `SellIcon` at runtime.
+- **`FUI/PhaseToast`:** a PanelContainer using the modal stylebox, `visible = false`, `mouse_filter = 2`. It is centred, 600×100, 200 px from the top. Its child `ToastLabel` has font size 30 and wraps text. It has the text "Phase 2: your farm starts running itself".
+
+**Open question:** I did not check that the toast stays clear of the Spin, Sell and Harvest icons. The placement is a guess until someone renders it at 720×1280.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 6); end `success`
+
+
+**Patricia** (152,741 tokens, 19 turns, 29 s):
+
+Item 7 is in and the contract check passes. I didn't run the unit tests or `play_loop.gd`.
+
+**Files changed**
+- `economy.gd`: new `phase` (starts at 1) and `phase_changed(phase)` signal. `set_level("auto_sell", >=1)` sets `phase` to 2, so Faster Delivery doesn't trigger it. `reset()` puts it back to 1.
+- `farm_ui.gd`: finds `PhaseToast` and `ToastLabel` by name. The first time `phase` reaches 2 it sets the text with `tr()` and shows the toast. A timer then hides it again.
+- `dev_panel.gd`: code-built `PhaseLabel` ("Phase: N") under the title. It stays current through `phase_changed`.
+
+**Placeholder**
+- `PHASE_TOAST_SECONDS = 4.0` in `farm_ui.gd`.
+
+**Open questions**
+- After a Dev "Reset progress", the toast can show once more. It is once per session, not once per save. Is that what you want?
+
+**For Quinn**
+- Test that buying Auto-Sell sets `phase` to 2.
+- Test that buying Faster Delivery alone leaves it at 1.
+- Test that the toast shows once.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 7 (cap 30; CLI num_turns 19); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: PASS (open rows only on files this step did not change)

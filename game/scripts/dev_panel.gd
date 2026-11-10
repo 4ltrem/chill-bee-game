@@ -253,6 +253,9 @@ func toggle() -> void:
 
 # --- building the panel ---
 
+var _phase_label: Label
+
+
 func _build() -> void:
 	_panel = PanelContainer.new()
 	_panel.name = "Panel"
@@ -268,6 +271,13 @@ func _build() -> void:
 	var title := Label.new()
 	title.text = "Dev mode  (` or three-finger tap closes)"
 	column.add_child(title)
+	_phase_label = Label.new()
+	_phase_label.name = "PhaseLabel"
+	column.add_child(_phase_label)
+	var economy: Node = get_node_or_null("/root/Economy")
+	if economy != null:
+		_phase_label.text = "Phase: %d" % int(economy.get("phase"))
+		economy.connect("phase_changed", func(p: int) -> void: _phase_label.text = "Phase: %d" % p)
 	column.add_child(_actions_row())
 	column.add_child(_file_row())
 	_recording_label = Label.new()
