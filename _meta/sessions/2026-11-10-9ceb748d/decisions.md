@@ -88,6 +88,10 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 - Rejected: a `pick_match.py` level option for the remaining 7 pairs.
 - Files: `_meta/memory/no-pick-vote-after-playtest.md`
 
+### D218 · 2026-11-10 · Pipeline design · `mutate.py` copies `_tools/` and `content/` beside the game
+- Decided: the designer said fix it: the temp copy now holds `_tools/` and `content/` next to `game/`, so tests and mutations that reach `../_tools/journal_csv.py` work. Rex's check: the two Journal mutations are CAUGHT; mutation 25 is still MISSED (a real test gap).
+- Files: `_tools/mutate.py`, `_meta/learnings.md` (L35)
+
 ## Still open
 
 - **0.2.1 build** after the weekly reset: `budget_guard.py --allow-for 60`, `/goal` + goal_agent, version 0.2.1, itch upload as the A7 link (~11/19).
