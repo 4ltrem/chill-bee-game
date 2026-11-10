@@ -1739,3 +1739,89 @@ The fourth mutation, "works only for the first load", already matched and was ca
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `mutations`: PASS
+- Green: checkpoint `4cb1c6a` on `milestone/0.2`
+
+## Pass 20: scan (2026-11-09T21:54:14-05:00)
+
+Unit results from `game/reports/_runs/20261109-214647/unit.log`. 19 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C6 Auto-Sell | change | Patricia, Bob | done | 13/13 present: ✓ config auto_sell_unlock_delivery_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sel ... |
+| T6.1 item 6: with Auto-Sell owned, a full bed leaves with no Sell | test | Quinn | done | ✓ test t_autosell_full_bed_leaves_by_itself, ✓ test t_autosell_not_owned_full_bed_waits, ✓ test t_autosell_part_load_sells_by_sell, ✓ test t_autosell_twice_matches, ✓ ledger 4cb1c6a |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 24/24 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+Next: **T7.1** (score 3.64: designer feature; cost 0.36 (Quinn)).
+
+### Step: T7.1 (2026-11-09T21:54:14-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T7.1-quinn.md` (2976 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (301,167 tokens, 21 turns, 52 s):
+
+I wrote the T7.1 tests, but nothing has been run and the parse check didn't happen. `godot` isn't on the PATH in Bash, so `--check-only` never ran.
+
+**Files changed**
+- `game/tests/test_phase.gd` is new. It extends `test_autosell.gd`.
+- `game/tests/run_tests.gd` now extends `test_phase.gd`. It registers the tests under `# 0.2 item 7 (written from game/specs/0.2-first-automation.md before the code)`.
+- `game/tests/mutations.json` has 5 new mutations, none run.
+
+**Tests**
+- `t_phase2_auto_sell_sets_once_toast_once` (`# goal T7.1`): Faster Delivery alone leaves phase 1 with no toast. Auto-Sell then sets phase 2 with one `phase_changed` and the toast showing. Setting it again doesn't re-announce or re-show the toast.
+- `t_phase2_locked_auto_sell_keeps_phase_1` (`# goal T7.1`): a locked Auto-Sell can't be bought, so phase stays 1.
+
+**Node names used:** `PhaseToast` and `ToastLabel`.
+
+The tests are one-tap actions, so there is no interaction-checklist sequence test.
+
+**Open questions**
+- Item 7: should the toast show again after a prestige reset, since `reset()` returns phase to 1?
+- Item 7: how long does the toast stay up? The spec gives no duration, so I assert none.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 11 (cap 30; CLI num_turns 21); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 4 of 5 caught
+mutate baseline: 2 expected tests, 0 already failing
+mutate 1/5: 0.2 item 7 any upgrade sets phase 2 ... CAUGHT in 2s
+mutate 2/5: 0.2 item 7 Auto-Sell never sets phase 2 ... CAUGHT in 2s
+mutate 3/5: 0.2 item 7 phase 2 announced on every set ... CAUGHT in 2s
+mutate 4/5: 0.2 item 7 toast shows every time ... MISSED in 2s
+mutate 5/5: 0.2 item 7 locked Auto-Sell still sets phase 2 ... CAUGHT in 1s
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T7.1-fix1-quinn.md` (1303 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (86,082 tokens, 6 turns, 16 s):
+
+I fixed the missed mutation 4 ("toast shows every time"). I haven't run anything.
+
+**Cause:** the test's "set again" step never made `Economy` emit `phase_changed(2)` a second time. `Economy` only emits it when the phase moves from below 2 to 2, so `farm_ui.gd`'s `_phase_toast_shown` guard was never exercised. With the guard removed, the toast still stayed hidden and the test still passed.
+
+**Fix:** in `game/tests/test_phase.gd`, `t_phase2_auto_sell_sets_once_toast_once` now has an extra step at the end. It sets `phase` back to 1 by hand. It then calls `set_level("auto_sell", 0)` and `set_level("auto_sell", 1)`, so `phase_changed(2)` fires again. It asserts:
+- the phase is 2 again,
+- the signal count is 2,
+- the toast stays hidden.
+
+With the mutation, the toast would show on that second signal, so the last assert should fail.
+
+I changed no other lines, and `mutations.json` is unchanged. The goal agent still needs to re-run mutation 4 to confirm it is caught.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 6); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS

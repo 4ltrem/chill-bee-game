@@ -1270,5 +1270,55 @@
    "t_autosell_twice_matches"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 any upgrade sets phase 2",
+  "file": "scripts/economy.gd",
+  "find": "if id == \"auto_sell\" and lv >= 1 and phase < 2:",
+  "replace": "if (id == \"auto_sell\" or id == \"faster_delivery\") and lv >= 1 and phase < 2:",
+  "expect": [
+   "t_phase2_auto_sell_sets_once_toast_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 Auto-Sell never sets phase 2",
+  "file": "scripts/economy.gd",
+  "find": "if id == \"auto_sell\" and lv >= 1 and phase < 2:",
+  "replace": "if false and id == \"auto_sell\" and lv >= 1 and phase < 2:",
+  "expect": [
+   "t_phase2_auto_sell_sets_once_toast_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 phase 2 announced on every set",
+  "file": "scripts/economy.gd",
+  "find": "if id == \"auto_sell\" and lv >= 1 and phase < 2:",
+  "replace": "if id == \"auto_sell\" and lv >= 1:",
+  "expect": [
+   "t_phase2_auto_sell_sets_once_toast_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 toast shows every time",
+  "file": "scripts/farm_ui.gd",
+  "find": "if new_phase < 2 or _phase_toast_shown or _phase_toast == null:",
+  "replace": "if new_phase < 2 or _phase_toast == null:",
+  "expect": [
+   "t_phase2_auto_sell_sets_once_toast_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 locked Auto-Sell still sets phase 2",
+  "file": "scripts/economy.gd",
+  "find": "return not is_maxed(id) and not is_locked(id) and money >= cost(id)",
+  "replace": "return not is_maxed(id) and money >= cost(id)",
+  "expect": [
+   "t_phase2_locked_auto_sell_keeps_phase_1"
+  ],
+  "suite": "unit"
  }
 ]

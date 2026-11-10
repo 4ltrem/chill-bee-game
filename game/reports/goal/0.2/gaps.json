@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T21:31:42-05:00",
- "unit_log": "game/reports/_runs/20261109-212417/unit.log",
+ "at": "2026-11-09T21:54:14-05:00",
+ "unit_log": "game/reports/_runs/20261109-214647/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -638,6 +638,30 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_autosell_full_bed_leaves_by_itself",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_not_owned_full_bed_waits",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_part_load_sells_by_sell",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_twice_matches",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "41a68f7",
      "ok": true
@@ -1096,9 +1120,39 @@
    "depends": [
     "C6"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_autosell_full_bed_leaves_by_itself",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_not_owned_full_bed_waits",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_part_load_sells_by_sell",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_twice_matches",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "4cb1c6a",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1288,6 +1342,30 @@
      "name": "t_delivery_trip_time_by_level",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_full_bed_leaves_by_itself",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_not_owned_full_bed_waits",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_part_load_sells_by_sell",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_autosell_twice_matches",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1297,17 +1375,6 @@
   }
  },
  "order": [
-  {
-   "id": "T6.1",
-   "score": 3.64,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.36,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T7.1",
    "score": 3.64,
