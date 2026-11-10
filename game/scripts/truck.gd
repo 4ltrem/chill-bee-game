@@ -64,7 +64,11 @@ func is_full() -> bool:
 
 ## Full and home: the Sell icon may show.
 func can_sell() -> bool:
-	return not away and is_full()
+	if away:
+		return false
+	if is_full():
+		return true
+	return auto_sell_owned() and loaded_jars > 0   # 0.2 item 6: with Auto-Sell owned, Sell stays pressable for a part load
 
 
 ## What the load is worth at the current jar value.
@@ -155,7 +159,7 @@ func advance(delta: float) -> void:
 		if room > 0:
 			_load_crate_jars(room)
 			_changed()
-		if auto_sell_owned() and can_sell():
+		if auto_sell_owned() and is_full():
 			sell()   # 0.2 item 6: leaves by itself when the bed is full, full price, exactly as a Sell press
 		return
 	trip_elapsed += delta

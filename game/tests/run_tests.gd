@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_delivery.gd"
+extends "res://tests/test_autosell.gd"
 
 
 # Tests that stay at x1 (they read the wall clock on purpose, own Engine.time_scale through the Dev speed row, or measure wall seconds
@@ -119,6 +119,9 @@ func _run() -> void:
 							"t_gearing_bottling_time_unchanged", "t_gearing_own_motor_cut",
 								# 0.2 item 5 (written from game/specs/0.2-first-automation.md before the code)
 								"t_delivery_look_groups_by_level", "t_delivery_stacks_not_flame_material", "t_delivery_trip_time_by_level",
+									# 0.2 item 6 (written from game/specs/0.2-first-automation.md before the code)
+									"t_autosell_full_bed_leaves_by_itself", "t_autosell_not_owned_full_bed_waits",
+									"t_autosell_part_load_sells_by_sell", "t_autosell_twice_matches",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

@@ -1630,3 +1630,112 @@ These point at `truck.gd` and `truck.tscn`, and the match strings were copied fr
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `mutations`: PASS
+- Green: checkpoint `5028cf3` on `milestone/0.2`
+
+## Pass 19: scan (2026-11-09T21:31:42-05:00)
+
+Unit results from `game/reports/_runs/20261109-212417/unit.log`. 18 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C5 Faster Delivery | change | Patricia, Bob | done | 16/16 present: ✓ config faster_delivery_max_level, ✓ config faster_delivery_trip_cut_per_level, ✓ node DecalsBold, ✓ node DecalsSmall, ✓ node FlamesTop, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_dis ... |
+| T5.1 item 5 look: at each Faster Delivery level 0..4 exactly the  | test | Quinn | done | ✓ test t_delivery_look_groups_by_level, ✓ test t_delivery_stacks_not_flame_material, ✓ ledger 5028cf3 |
+| T5.2 item 5: trip time at Faster Delivery 0..4 is 30, 25.5, 21, 1 | test | Quinn | done | ✓ test t_delivery_trip_time_by_level, ✓ ledger 5028cf3 |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 20/20 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+Next: **T6.1** (score 3.64: designer feature; cost 0.36 (Quinn)).
+
+### Step: T6.1 (2026-11-09T21:31:42-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T6.1-quinn.md` (3079 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (317,803 tokens, 16 turns, 46 s):
+
+Four tests for T6.1 are written and registered, but I couldn't parse-check them: `godot` isn't on the PATH in this shell. Nothing has been run.
+
+**Files changed**
+- New `game/tests/test_autosell.gd`, extending `test_delivery.gd`.
+- `game/tests/run_tests.gd` now extends it and registers the tests under the `# 0.2 item 6 (written from game/specs/0.2-first-automation.md before the code)` comment.
+- `game/tests/mutations.json` has four new mutations, all on `truck.gd`.
+
+**Tests**
+Each has `# goal T6.1` on the line above it:
+- `t_autosell_full_bed_leaves_by_itself`
+- `t_autosell_not_owned_full_bed_waits`
+- `t_autosell_part_load_sells_by_sell`
+- `t_autosell_twice_matches`
+
+They drive the truck through `advance()` and `sell()`, with no scene nodes. Ownership is set through `Economy.set_level("auto_sell", …)`.
+
+**Open questions**
+- **Part-load Sell conflicts with existing code:** `truck.can_sell()` requires a full bed, and the existing `t_truck_full_and_can_sell` asserts a part load cannot sell. Spec item 6 says Sell "stays pressable for a part load". I wrote the test from the spec, so it should fail against the current code. Which rule is right?
+- **`AutoTag` not tested:** the "Auto" tag was outside the T6.1 line, so I wrote no test for it.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 10 (cap 30; CLI num_turns 16); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      188 passed, 1 failed  (exit 1, 288 noise lines dropped)  game/reports/_runs/20261109-213230/unit.log
+    FAIL  t_autosell_part_load_sells_by_sell  owned, part load: Sell is pressable | owned, part load: Sell returns jars x jar_value: expected 27 got 0 | owned, part load: money rises by jars x jar_value: expected 27 got 0 | owned, part load: th
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T6.1-fix1-patricia.md` (1426 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (88,678 tokens, 6 turns, 12 s):
+
+I changed `game/scripts/truck.gd` so a part load can be sold once Auto-Sell is owned. I haven't run any checks, per the brief.
+
+- **`can_sell()`:** it now returns true for a part load (`loaded_jars > 0`) when `auto_sell_owned()` is true, as well as for a full bed. The truck must be home.
+- **`advance()`:** the Auto-Sell trigger now checks `is_full()` instead of `can_sell()`. Without this, the truck would have left by itself on a part load.
+- **Without Auto-Sell:** Sell still needs a full bed, so the existing `t_truck_full_and_can_sell` should be unaffected. I limited the change to "owned" because the spec says Sell "stays pressable" for a part load.
+- **Question for the spec owner:** the spec doesn't say whether a part load is sellable without Auto-Sell. If it should be, `can_sell()` can drop the ownership check, but `t_truck_full_and_can_sell` would then need to change.
+
+I made no changes in other folders.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 6); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 1 of 4 caught
+mutate baseline: 4 expected tests, 0 already failing
+mutate 4/4: 0.2 item 6 Auto-Sell works only for the first load ... CAUGHT in 2s
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T6.1-fix2-quinn.md` (1076 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (70,173 tokens, 8 turns, 14 s):
+
+Three of the four T6.1 mutations were not caught because their `find` strings were wrong. I haven't run `mutate.py`, the test suite or shots, so the fix is untested.
+
+**Cause:** the first three mutations in `game/tests/mutations.json` searched `truck.gd` for `if auto_sell_owned() and can_sell():`. That line doesn't exist. The auto-sell line is `if auto_sell_owned() and is_full():`, at `truck.gd` line 162. `mutate.py` therefore never applied them.
+
+**Fix:** I changed only the `find` and `replace` strings of those three mutations to match the real line. Names and `expect` lists are untouched.
+- **Never sells by itself:** `if false and is_full():`
+- **Leaves without Auto-Sell:** `if is_full():`
+- **Sends a part load too:** `if auto_sell_owned() and loaded_jars > 0:`
+
+The fourth mutation, "works only for the first load", already matched and was caught. I didn't touch it or any test in `test_autosell.gd`. No game code or spec problem found.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 8); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS

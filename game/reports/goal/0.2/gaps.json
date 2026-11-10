@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T21:23:16-05:00",
- "unit_log": "game/reports/_runs/20261109-211133/unit.log",
+ "at": "2026-11-09T21:31:42-05:00",
+ "unit_log": "game/reports/_runs/20261109-212417/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -547,6 +547,24 @@
      "result": "PASS"
     },
     {
+     "kind": "test",
+     "name": "t_delivery_look_groups_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_delivery_stacks_not_flame_material",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_delivery_trip_time_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "e46adf7",
      "ok": true
@@ -972,9 +990,27 @@
    "depends": [
     "C5"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_delivery_look_groups_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_delivery_stacks_not_flame_material",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "5028cf3",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1029,9 +1065,21 @@
    "depends": [
     "C5"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_delivery_trip_time_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "5028cf3",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1222,6 +1270,24 @@
      "name": "t_gearing_own_motor_cut",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_delivery_look_groups_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_delivery_stacks_not_flame_material",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_delivery_trip_time_by_level",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1231,28 +1297,6 @@
   }
  },
  "order": [
-  {
-   "id": "T5.1",
-   "score": 3.64,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.36,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T5.2",
-   "score": 3.64,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.36,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T6.1",
    "score": 3.64,

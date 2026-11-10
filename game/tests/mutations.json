@@ -1228,5 +1228,47 @@
    "t_delivery_trip_time_by_level"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 6 Auto-Sell never sells by itself",
+  "file": "scripts/truck.gd",
+  "find": "if auto_sell_owned() and is_full():",
+  "replace": "if false and is_full():",
+  "expect": [
+   "t_autosell_full_bed_leaves_by_itself",
+   "t_autosell_twice_matches"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 6 full bed leaves by itself without Auto-Sell",
+  "file": "scripts/truck.gd",
+  "find": "if auto_sell_owned() and is_full():",
+  "replace": "if is_full():",
+  "expect": [
+   "t_autosell_not_owned_full_bed_waits"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 6 Auto-Sell sends a part load too",
+  "file": "scripts/truck.gd",
+  "find": "if auto_sell_owned() and is_full():",
+  "replace": "if auto_sell_owned() and loaded_jars > 0:",
+  "expect": [
+   "t_autosell_part_load_sells_by_sell",
+   "t_autosell_full_bed_leaves_by_itself"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 6 Auto-Sell works only for the first load",
+  "file": "scripts/truck.gd",
+  "find": "sell()   # 0.2 item 6:",
+  "replace": "sell(); auto_sell_override = 0   # 0.2 item 6:",
+  "expect": [
+   "t_autosell_twice_matches"
+  ],
+  "suite": "unit"
  }
 ]
