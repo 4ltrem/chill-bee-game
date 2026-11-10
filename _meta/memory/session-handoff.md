@@ -5,14 +5,14 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 3c5a9003-bd51-4155-8369-edf76b12f3b2
-  modified: 2026-11-10T05:56:51.629Z
+  modified: 2026-11-10T05:58:29.402Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
 
 **Setup:** main folder on `milestone/0.2`; end-of-day ran 2026-11-10 (D200-D212, all 11/09-10 work committed). No worktrees.
 
-**Budget (D212):** weekly 81% at 38% of the week (reset Sat 11/14 9:00 Toronto). Until then cheap work only: Rex mutation rerun, scripted Spec Review shots, answers on the two proposals. The 0.2.1 build waits for the reset. A6 due date unclear: pasted text says Nov 22, MILESTONES says 11/12; ask.
+**Budget (D212):** weekly 81% at 38% of the week (reset Sat 11/14 9:00 Toronto). Until then cheap work only: Rex mutation rerun, scripted Spec Review shots, answers on the two proposals. The 0.2.1 build waits for the reset. A6 is due Nov 22 (designer 2026-11-10), after the reset.
 
 **0.2.1 = 0.2.0 play-test fixes** (spec `game/specs/0.2-first-automation.md`, lint clean, `goal_agent --plan` 21/34):
 - 9 Spin alone pans to the second stop (drop `_filled_in_zoom`/`_closing_to_second` pan in `main.gd`; replace the `test_camera.gd` full-bucket pan check).

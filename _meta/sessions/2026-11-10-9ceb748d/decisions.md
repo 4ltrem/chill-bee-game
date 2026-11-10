@@ -66,9 +66,12 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 - Decided: with weekly usage at 81% and 38% of the week gone (reset Sat 11/14, 9:00 Toronto), the designer agreed: commit the uncommitted days first, then cheap work only (Rex mutation rerun, scripted Spec Review shots, answers on the two proposals); the full 0.2.1 build (about 15-20% by the 0.2.0 build's cost) waits for the reset. A5 and A7 fall after it.
 - Why: the 0.2.0 build took about 34 points for 21 goals; design talk alone ran 2-3 points an hour on 11/09-10.
 
+### D213 · 2026-11-10 · Records & deliverables · A6 is due Nov 22, not 11/12
+- Decided: asked, the designer confirmed the assignment text's date: A6 (style guide agent) is due 2026-11-22. It moves after the weekly reset with the 0.2.1 build.
+- Files: `MILESTONES.md`, `_meta/memory/course-milestones.md`
+
 ## Still open
 
-- **A6 due date:** the assignment text pasted on 11/09 says due Nov 22; `MILESTONES.md` M2 and memory say 11/12. Which is right?
 - **0.2.1 build** after the weekly reset: `budget_guard.py --allow-for 60`, `/goal` + goal_agent, version 0.2.1, itch upload as the A7 link (~11/19).
 - **Proposals to accept:** `roadmap.md` (questions 2, 3, 5 open; re-layer to r2) and `build-from-start-r2.md` (then mark `build-from-start.md` superseded). Before the 0.4 spec: Terry, Bob's zoom ceiling, William's lore text, Ruth/William raw-comb price check.
 - **Spigot Flow numbers** are placeholders; Terry checks before 0.3.0.
