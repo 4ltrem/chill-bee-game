@@ -103,7 +103,8 @@ extends Resource
 @export var gearing_cost_growth: float = 1.20          # PLACEHOLDER (spec 0.2 item 4)
 @export var faster_delivery_base_cost: float = 60.0    # PLACEHOLDER (spec 0.2 item 5)
 @export var faster_delivery_cost_growth: float = 1.30  # PLACEHOLDER (spec 0.2 item 5)
-@export var auto_sell_cost: float = 250.0              # PLACEHOLDER (spec 0.2 item 6): one-time price; unlocks at Faster Delivery 1
+@export var auto_sell_unlock_delivery_level: int = 1    # PLACEHOLDER (spec 0.2 item 6): Faster Delivery level that unlocks Auto-Sell
+@export var auto_sell_cost: float = 250.0             # PLACEHOLDER (spec 0.2 item 6): one-time price; unlocks at Faster Delivery 1
 
 const DEFAULT_PATH :="res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read

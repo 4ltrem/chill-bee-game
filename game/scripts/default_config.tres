@@ -82,4 +82,5 @@ gearing_base_cost = 35.0
 gearing_cost_growth = 1.2
 faster_delivery_base_cost = 60.0
 faster_delivery_cost_growth = 1.3
+auto_sell_unlock_delivery_level = 1
 auto_sell_cost = 250.0

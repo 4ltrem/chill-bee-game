@@ -365,7 +365,7 @@ autowrap_mode = 3
 [node name="LevelLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll/ShopRows/RowTemplate/RowBox/Info"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "Lv 0 / 5"
 
 [node name="GateLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll/ShopRows/RowTemplate/RowBox/Info"]
@@ -396,7 +396,7 @@ text = "$40"
 
 [node name="JournalButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
 focus_mode = 0
-custom_minimum_size = Vector2(120, 100)
+custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 theme_override_colors/font_disabled_color = Color(1, 0.96, 0.86, 1)
 theme_override_font_sizes/font_size = 36
@@ -505,6 +505,41 @@ text = "Sell $30"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../../FarmWorld/Truck/SellAnchor")
 screen_offset = Vector2(0, 0)
+
+[node name="AutoTag" type="Label" parent="FarmUIRoot/FarmUI"]
+visible = false
+layout_mode = 0
+offset_right = 90.0
+offset_bottom = 44.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.96, 0.86, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 30
+text = "Auto"
+horizontal_alignment = 1
+
+[node name="PhaseToast" type="PanelContainer" parent="FarmUIRoot/FarmUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 200.0
+offset_right = 300.0
+offset_bottom = 300.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_modal")
+
+[node name="ToastLabel" type="Label" parent="FarmUIRoot/FarmUI/PhaseToast"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 30
+text = "Phase 2: your farm starts running itself"
+horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="SummaryModal" type="PanelContainer" parent="FarmUIRoot/FarmUI"]
 visible = false

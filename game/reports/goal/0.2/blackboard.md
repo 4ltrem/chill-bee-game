@@ -822,9 +822,18 @@ FAIL    unit      164 passed, 1 failed  (exit 1, 260 noise lines dropped)  game/
 
 2 fix rounds failed on C1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept C1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C1 fix-round edits"`.
 
+## Resumed 2026-11-09
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept C1 --note main.tscn ShopScroll custom_minimum_size 340 -> 128 (one 120 px row shows, the rest scroll): the taller shop panel pushed the second-stop framing so the centrifuge top left the screen (t_camera_second_stop_in_frame). Height goes to Design Votes with the shop list (spec Review). unit 165/165, start as baseline, contract 0 unresolved (20261109-191826)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C1 (2026-11-09T19:23:06-05:00)
+
+- Change (orchestrator, Process 9): main.tscn ShopScroll custom_minimum_size 340 -> 128 (one 120 px row shows, the rest scroll): the taller shop panel pushed the second-stop framing so the centrifuge top left the screen (t_camera_second_stop_in_frame). Height goes to Design Votes with the shop list (spec Review). unit 165/165, start as baseline, contract 0 unresolved (20261109-191826)
+- Accepted: checkpoint `162246f` on `milestone/0.2`
+
 ## Result
 
-Last invocation (2026-11-09T19:16:33-05:00): waiting-designer.
+C1 accepted with a manual fix (checkpoint `162246f` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
 
@@ -848,8 +857,125 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
 
 ## Resumed 2026-11-09
 
-Command: `goal_agent.py game/specs/0.2-first-automation.md --accept C1 --note main.tscn ShopScroll custom_minimum_size 340 -> 128 (one 120 px row shows, the rest scroll): the taller shop panel pushed the second-stop framing so the centrifuge top left the screen (t_camera_second_stop_in_frame). Height goes to Design Votes with the shop list (spec Review). unit 165/165, start as baseline, contract 0 unresolved (20261109-191826)` (the run had stopped: `waiting-designer`).
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: already on it.
 
-### Manual fix: C1 (2026-11-09T19:23:06-05:00)
+## Pass 10: scan (2026-11-09T19:23:12-05:00)
 
-- Change (orchestrator, Process 9): main.tscn ShopScroll custom_minimum_size 340 -> 128 (one 120 px row shows, the rest scroll): the taller shop panel pushed the second-stop framing so the centrifuge top left the screen (t_camera_second_stop_in_frame). Height goes to Design Votes with the shop list (spec Review). unit 165/165, start as baseline, contract 0 unresolved (20261109-191826)
+Unit results from `game/reports/_runs/20261109-191826/unit.log`. 1 of 21 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 21)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Upgrade shop holds several rows. | change | Patricia, Bob | partial (built, waits on its tests) | ✓ config flight_base_cost, ✓ config flight_cost_growth, ✓ config heated_fork_base_cost, ✓ config heated_fork_cost_growth, ✓ config gearing_base_cost, ✓ config gearing_cost_growth, ✓ config faster_delivery_base_cost, ✓ config faster_delivery_cost_growth, ✓ config auto_sell_cost, ✓ ledger 162246f |
+
+### Order: new or rescored (15 of 15)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C6 Auto-Sell | 9.14 | 2 | 2 | 0.86 | 1 | 2 goal(s) wait on it; designer feature; cost 0.86 (Patricia, Bob) |
+| 2 | C7 Phase 2 flag. | 9.14 | 2 | 2 | 0.86 | 1 | 2 goal(s) wait on it; designer feature; cost 0.86 (Patricia, Bob) |
+| 3 | C8 Bee Journal entry, EN/FR, through Godot's translat | 9.14 | 2 | 2 | 0.86 | 1 | 2 goal(s) wait on it; designer feature; cost 0.86 (Patricia, Bob) |
+| 4 | T1.1 item 1: each row's cost equals `base × growth^leve | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 5 | T2.1 item 2: at Flight level 3 and Swarm level 0, the h | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 6 | T3.1 item 3: at Heated level 0 one drag point uncaps on | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 7 | T3.2 item 3 look: during a drag the fork prop is visibl | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 8 | T4.1 item 4 look: at Gearing N (0..5) exactly Gear1..Ge | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 9 | T4.2 item 4: at Gearing level 2 the turns needed are `c | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 10 | T5.1 item 5 look: at each Faster Delivery level 0..4 ex | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 11 | T5.2 item 5: trip time at Faster Delivery 0..4 is 30, 2 | 3.62 | 0 | 2 | 0.38 | 1 | designer feature; cost 0.38 (Quinn) |
+| 12 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.38 | 0 | waits on C6, C7, C8 |
+| 13 | T6.1 item 6: with Auto-Sell owned, a full bed leaves wi | 0.0 | 0 | 2 | 0.38 | 0 | waits on C6 |
+| 14 | T7.1 item 7: buying Auto-Sell sets phase 2 once and the | 0.0 | 0 | 2 | 0.38 | 0 | waits on C7 |
+| 15 | T8.1 item 8: `journal.csv` has every key in `en` and `f | 0.0 | 0 | 2 | 0.38 | 0 | waits on C8 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C6** (score 9.14: 2 goal(s) wait on it; designer feature; cost 0.86 (Patricia, Bob)).
+
+### Step: C6 (2026-11-09T19:23:12-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C6-patricia.md` (1336 chars)
+- Brief for Bob: `game/reports/goal/0.2/briefs/C6-bob.md` (1015 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Bob** (84,741 tokens, 7 turns, 15 s):
+
+Added two nodes to `game/scenes/main.tscn` (items 6 and 7). `contract_check.py` passes: 69 lookups, 0 unresolved. I did not render the scene.
+
+- **Item 6:** `FarmUI/AutoTag` is a Label with text "Auto", cream with a brown outline at 30 pt, `visible = false`, `mouse_filter = 2`. Its size is 90×44. You position it beside `SellIcon` at runtime.
+- **Item 7:** `FarmUI/PhaseToast` is a PanelContainer with the modal stylebox, with a child Label `ToastLabel`. It is hidden, 600 px wide, top-centred, and its top edge is 200 px from the top of the frame, under `TopInfo`. The label is 30 pt, centred and wraps.
+
+**Open questions:** I haven't rendered the toast or checked it against the Spin/Sell/Harvest icons. The 200 px offset is a guess at how tall `TopInfo` is. I also didn't touch items 1, 3–5 or 8, so those nodes are still outstanding for someone else.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 7); end `success`
+
+
+**Patricia** (90,946 tokens, 12 turns, 17 s):
+
+Auto-Sell (item 6) is done in `scripts/`, and `contract_check.py` passes: 0 unresolved. I did not run the Godot test suite or `play_loop.gd`.
+
+**Files changed**
+- `game_config.gd` and `default_config.tres`: added `auto_sell_unlock_delivery_level = 1`, marked PLACEHOLDER. The Dev panel lists config keys by reflection (`game_config.gd` line 186), so the new key should appear there without panel code.
+- `economy.gd`: the Auto-Sell gate and its "Needs Faster Delivery N" text now read that key instead of a hard-coded 1.
+
+**Already in place**
+- `truck.gd` `advance()` calls `sell()` when `auto_sell_owned() and can_sell()`, so a full bed sells by itself at full price.
+- Sell stays pressable for a part load.
+
+**Not done**
+- The "Auto" tag (`FUI/AutoTag`) has no script yet. `AutoTag` is not in the scripts and I did not check the UI scripts, so it is probably unwired. That sits with the UI scripts and Bob's node.
+
+**Node names used:** none new.
+
+**Open questions:** none.
+
+**For Quinn:** add a test that Auto-Sell leaves on a full bed only once owned, and that the gate follows the config key.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 12); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: FAIL (exit 1)
+
+```
+Style board `game/reports/style/goal-0-2-c6-r0/blackboard.md`, Result:
+
+Still FAIL after round 1 (max rounds 1 or the token cap). Open rows:
+
+| # | Rule | Where | Finding | Fix |
+|---|---|---|---|---|
+| 1 | V11 | `scenes/main.tscn:399` | Button `JournalButton` touch area height 100 px < 120 | raise `custom_minimum_size` to at least 120 in each dimension |
+| 2 | V12 | `scenes/main.tscn:368` | Label `LevelLabel` font size 24 px < 28 | set `theme_override_font_sizes/font_size = 28` or more |
+
+Transcripts: `_meta/sessions/runs/2026-11-09-style-goal-0-2-c6-r0/`
+
+|---|---|---|---|---|
+
+(9 older row(s) about files this step did not change were left out: not yours this round, change nothing for them.)
+```
+
+#### Fix round 1: to Bob
+
+- Brief for Bob: `game/reports/goal/0.2/briefs/C6-fix1-bob.md` (2022 chars)
+- Budget guard for Bob: override
+
+**Bob** (40,960 tokens, 4 turns, 8 s):
+
+I fixed both open style rows in `scenes/main.tscn`. I didn't render or run any checks, as instructed.
+
+- **Row 1 (V11):** `JournalButton` now has `custom_minimum_size = Vector2(120, 120)`. It was `(120, 100)`.
+- **Row 2 (V12):** `LevelLabel` now has `theme_override_font_sizes/font_size = 28`. It was 24.
+
+I changed nothing else. There were no `(designer)` rows, and nothing in `scripts/` was involved. The `JournalButton` row is taller now, which could shift the `ShopBox` layout. The goal agent's shots should confirm it still fits.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 4); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: PASS (open rows only on files this step did not change)

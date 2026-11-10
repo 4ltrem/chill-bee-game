@@ -117,8 +117,8 @@ func cost(id: String) -> int:
 
 ## Gate text while locked ("Needs Faster Delivery 1"), else "".
 func gate_text(id: String) -> String:
-	if id == "auto_sell" and level("faster_delivery") < 1:
-		return "Needs Faster Delivery 1"
+	if id == "auto_sell" and level("faster_delivery") < config.auto_sell_unlock_delivery_level:
+		return "Needs Faster Delivery %d" % config.auto_sell_unlock_delivery_level
 	return ""
 
 
