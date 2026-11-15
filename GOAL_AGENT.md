@@ -1,7 +1,9 @@
 ---
 author: orchestrator
 type: write-up
-status: draft
+status: approved
+decided: 2026-11-15
+decision: approved by the designer as the A5 README
 milestone: M3 (Assignment 5)
 description: The goal-oriented coding agent (goal_agent.py): how it finds what the 0.1.4 spec asks for that the game lacks, why it built each feature in the order it did, and the manual changes made before accepting the code
 ---
