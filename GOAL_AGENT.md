@@ -11,6 +11,14 @@ description: The goal-oriented coding agent (goal_agent.py): how it finds what t
 
 **The agent:** [`_tools/goal_agent.py`](_tools/goal_agent.py), tests in [`_tools/test_goal_agent.py`](_tools/test_goal_agent.py), plan in [game/specs/m3-goal-agent.md](game/specs/m3-goal-agent.md). Its demo run built **0.1.4** from [game/specs/0.1.4-ui-placement.md](game/specs/0.1.4-ui-placement.md), the designer's play-test fixes to the UI. The run's record is the blackboard [game/reports/goal/0.1.4/blackboard.md](game/reports/goal/0.1.4/blackboard.md).
 
+**Play it:** [4ltrem.itch.io/chill-bee-game](https://4ltrem.itch.io/chill-bee-game) (version 0.1.4, in the browser).
+
+## In short
+
+- **What the agent built:** 0.1.4's UI fixes and features (a node handoff plus 15 numbered changes, C1 to C15) and Quinn's tests for them, in 3 runs and 28 checkpoint commits. At pass 36 the agent re-scanned and found **38 of 38 goals done** ("Nothing left to build"). Feature examples you can try in the build: the Harvest button is now the honey meter (C1), buttons anchor to their props (C2), Spin goes to the centrifuge's second stop (C11), leaving the centrifuge pauses the crank (C15), and the hive shows bigger 5×2 frames with their combs (C5, C10, C14).
+- **Why it picked them, in that order:** `priority_score()` = ready × (3·unblocks + 2·value − 1·cost). The node handoff went first because 5 goals waited on it. Play-test fixes (value 3) went before designer features (value 2). Among those, the cheapest went first, and each change's tests came only once the change was built. One goal with an open question (C5) was held for the designer, not guessed. See [What it built, and why](#what-it-built-and-why).
+- **Manual changes before accepting:** 5 steps were accepted with a note after their fix rounds ran out (C2, T2.x, C5, T13.1, T.1). Each was a test or spec line that pinned the old layout, or a bug in the agent's own mutation check. The orchestrator also cleared ledger rows for play-test rebuilds and regenerated a replay fixture. Spec items 14's hive-lid alignment (after the agent's 3 fix rounds failed) and 16 to 22 were finished outside the agent, by the orchestrator session and Claude Code's `/goal`. See [Manual changes](#manual-changes-before-accepting-the-code).
+
 ## How it decides: the reasoning layer is code
 
 The GDD reaches the game through approved specs (one per build). The agent reads a spec, not the whole GDD. Everything up to "what to build next" is plain Python that spends no tokens, so the order can be read and tested.
@@ -55,11 +63,11 @@ The GDD reaches the game through approved specs (one per build). The agent reads
    - Before every agent call, `budget_guard.decide()` runs. The hook only sees the Agent tool, so the agent calls it itself, and a denial pauses the run.
 6. **The iteration loop.** Re-scan, re-score and build the top goal. It stops when nothing is left, when only ambiguous or blocked goals remain, after 2 failed fix rounds, or when the budget guard pauses it.
 
-The tests (`python -I _tools/test_goal_agent.py`, 17 cases) pin all of this on a fixture game with one done, one partial and one missing change. They cover the order (handoff before scenes, scenes before their tests), the fix rounds, the budget pause and ambiguity. The loop runs with fake agents and fake commands.
+The tests (`python -I _tools/test_goal_agent.py`, 34 cases, all passing on 2026-11-15) pin all of this on a fixture game with one done, one partial and one missing change. They cover the order (handoff before scenes, scenes before their tests), the fix rounds, the budget pause and ambiguity. The loop runs with fake agents and fake commands.
 
 ## What it built, and why
 
-_The first run is rows 1–8 (it stopped at 15:09). The second run (20:24–21:40) is rows 9–14. It was started after the designer play-tested the build, answered the C5 question (Design Votes round 9) and added items 9 and 10, and it paused at C5's fix round. Still to build: C5's fix round and Quinn's ten test lines._
+_The first run (2026-11-07) is rows 1–8 (it stopped at 15:09). The second run (20:24–21:40) is rows 9–14. It was started after the designer play-tested the build, answered the C5 question (Design Votes round 9) and added items 9 and 10, and it paused at C5's fix round. The third run (22:04 to 03:51 on 2026-11-08) is rows 15–27: C5's fix rounds, the designer's new items 11 to 15 and every test line. It ended with "38 of 38 goals done". Row 28 is the run on 11-08 afternoon that retried the item 14 hive alignment and stopped for the designer._
 
 | # | Goal | Why it came next (score) | Agents | Outcome | Checkpoint |
 |---|---|---|---|---|---|
@@ -78,6 +86,20 @@ _The first run is rows 1–8 (it stopped at 15:09). The second run (20:24–21:4
 | 12 | C9 "Production paused" above the upgrades | new play-test item 9, Bob only | Bob | `PausedLabel` moved out of the top info, above the shop. Not rendered | `1169483` |
 | 13 | C10 Combs shown in the hive | new play-test item 10 | Bob, Patricia | Bob lowered the hive's front wall. Patricia shows the comb cells before a frame rises (hidden since 0.1). Green (150/150) | `2d2ffb4` |
 | 14 | C5 Bigger frames (round 9 variant a: 5×2) | unheld by the designer's answer; 1 test line waits on it (6.03) | Bob, Patricia | Bigger frames and smaller hexes, and the pile and bucket cells now match the frame cells. 7 unit tests still assume 7×5 (cell 17, 35 cells per frame). **Paused** by the budget guard before fix round 1 (5-hour usage 74%) | - |
+| 15 | C5, resumed (5.89) | the only goal ready; 1 test line waits on it | Bob, Patricia; Quinn in fix rounds | 2 fix rounds left one test red (`t_dev_show_ui_bounds` counted every node in the tree). Accepted by hand (see below) | `6a76e7d` |
+| 16 | C11 Spin goes to the second stop (11.32) | play-test fix, 2 goals wait on it | Patricia | green first try | `33db081` |
+| 17 | C12 No spinning in the farm view without the motor (8.32) | play-test fix, 1 goal waits on it | Patricia | green first try | `dbbca01` |
+| 18 | C13 Centrifuge text sits on the centrifuge | play-test fix | Patricia | green after her own fixes | `b99657c` |
+| 19 | T.1, T.2, T8.1 (Back's fixed place, instruction text, speed tag) | test lines whose changes were all built | Quinn | green | `1ee096d` |
+| 20 | T10.1 combs shown in the hive | test line | Quinn | green | `0d5606c` |
+| 21 | T11.1 Spin to the second stop | test line | Quinn | green | `c5e6593` |
+| 22 | T12.1 no spin without the motor (5.45) | test line | Quinn | green. Quinn dropped one mutation whose expectation was wrong | `d9533a5` |
+| 23 | T13.1 centrifuge text | test line | Quinn | 2 fix rounds: the test also checked a farm-view case that items 11–12 rule out. Accepted by hand | `f0768c4` |
+| 24 | T.1, T.2, T8.1, T.3 mutations | the mutation line covers every change | Quinn | tests green, but the mutation check failed: a bug in the agent (below). Accepted by hand | `928b711` |
+| 25 | C15 Leaving the centrifuge stops the crank (8.4) | play-test fix, 1 goal waits on it | Patricia | green first try | `d8f210a` |
+| 26 | C14 The hive is the round 9 pick | designer feature | Patricia, Bob; fix round 1 | green after Quinn updated the replay tests to the new cell order | `40128c7` |
+| 27 | T14.1–T14.3, then T15.1 | the last test lines | Quinn; Bob and Patricia in fix rounds | green. **Pass 36: 38 of 38 goals done, "Nothing left to build."** | `720d42d`, `d2d3b57` |
+| 28 | T14.4, T14.5 (new lines: cells inside the frame, lid closes clear) | the designer added them after looking at the hive | Quinn; Bob and Patricia in 8 fix rounds over 3 attempts | cells still overshot the frame and the lid leaned 80° (55–75 wanted). **Stopped for the designer**; finished outside the agent (`d8cefc8`) | - |
 
 What the order shows:
 - **The handoff went first** because every scene change waited on it (unblocks).
@@ -86,7 +108,10 @@ What the order shows:
 - **Changes before their tests.** No test line was ready until its change was built (ready = 0), so the test goals came last.
 - **C5 was held, not guessed.** The question in the node handoff kept it out of the scoring, and the rest was built around it.
 - **In the second run, the cheap changes went before C5.** C1, C8, C7, C9 and C10 cost 1.1M tokens together. C5 alone cost 1.4M before its fix round. With the question answered, C5 was scored like any other goal.
-- **The budget guard paused the run twice.** The first pause came at the start (weekly usage ahead of pace) and the designer allowed 60 minutes. The second came before C5's fix round (5-hour usage). Each time the run stopped cleanly and can resume.
+- **The budget guard paused the run twice.** The first pause came at the start (weekly usage ahead of pace) and the designer allowed 60 minutes. The second came before C5's fix round (5-hour usage). Each time the run stopped cleanly and can resume. It paused 6 more times in the third run, before each heavy agent, until the designer allowed 120 minutes (D167).
+- **New spec items were picked up by the re-scan, not by restarting.** Items 11 to 15 were added to the spec between runs. The next scan turned them into goals and scored them with the rest: C11 (2 goals waiting) went before C12 and C15 (1 each).
+- **The loop stopped on its own when the gaps were closed:** "38 of 38 goals done … Nothing left to build."
+- **It doesn't know when to give up on a visual problem.** The hive alignment (row 28) used 15 calls and 4.6M tokens over 8 fix rounds in 3 attempts. The tests were precise (cells overshoot the frame by 0.03), but the agents kept changing placeholder sizes without seeing the hive. A person finished it, with shots and Design Votes.
 
 ## Manual changes before accepting the code
 
@@ -100,6 +125,12 @@ What the order shows:
    - **C7:** committed with no code change, and Patricia's two questions are unanswered. "Green with nothing changed" counted as built. **Fixed after this run:** the agent now compares the game folders before and after a step. If nothing changed, it holds the goal like an open question instead of committing it, builds the rest, and then waits. The hold lifts when the spec item is edited, or with `--accept` (tests: `test_green_with_no_change_is_held_not_committed`, `test_a_held_goal_waits_until_its_spec_text_changes`).
 5. **Second run, before starting:** the orchestrator removed C1 and C7 from `ledger.json` so the play-test rebuilds would run. It also marked the node handoff's two C5 questions answered (round 9 variant a) and fixed four unit tests and the play suite for the Round 8 offsets (`578b761`).
 6. **Second run, to review:** Bob never saw his scenes. The render command starts with environment variables (`SCENE=… OUT=…`), and the permission check blocked it in C10 and in C5. C1, C8, C9, C10 and C5 are all checked by tests and the contract only, with no shot. Quinn's test lines and `ui_shots.py` have to cover that.
+7. **Third run, three accepts by the orchestrator** (`--accept … --note`), each after the agent stopped with "waiting for the designer":
+   - **C5:** `t_dev_show_ui_bounds` counted every node in the tree, so the bigger hive's new nodes broke it (15 → 17). It now counts only the bounds overlay's own nodes. The designer chose this fix (option 1).
+   - **T13.1:** the spec line asked for a farm-view check of the centrifuge text. Items 11–12 (confirmed by the designer) mean no cranking happens in the farm view, so the spec line was corrected and the farm-view half of the test removed. The second-stop half passes.
+   - **T.1:** a bug in the agent, not the game. `mutate.py --since <step base>` skipped mutations committed in an earlier step and exited 1 on "no mutations to run". The orchestrator ran them by name (3 of 3 caught) and removed one of Quinn's mutations that couldn't fail by design.
+8. **Item 14, finished by hand** (`d8cefc8`): after 8 fix rounds the comb cells still overshot the frame and the lid leaned too far. The orchestrator session put the lid back to its voted pose and fitted the cells (a baked-turn hex mesh), with shots and Design Votes, then re-recorded the replay fixture.
+9. **After the agent: items 16 to 22**, the designer's later play-test notes, were built by Claude Code's `/goal` session and the orchestrator, not by `goal_agent.py` (commits `b385d39`, `948a49e`, `b810f31`, `044f59b`). The designer play-tested the result and merged it into `main` (`6e22681`).
 
 ## Compared with Claude Code's `/goal`
 
@@ -148,6 +179,13 @@ _The whole run so far, from the blackboard and `_meta/agent-runs.csv` (table "Go
 | C9 | 1 | 92,562 | 14 s |
 | C10 | 2 | 272,799 | 41 s |
 | C5 (paused before its fix round) | 2 | 1,387,781 | 13 min |
-| **Total** | **38** | **8,565,965** | |
+| *Second run* | *11* | *2,455,757* | |
+| C5 fix rounds | 8 | 1,018,270 | 13.5 min |
+| C11, C12, C13, C15 | 6 | 475,125 | 20 min |
+| C14 | 5 | 1,680,399 | 4 min |
+| Test lines T.1–T15.1 | 23 | 7,456,272 | 41 min |
+| *Third run (38 of 38 done)* | *42* | *10,630,066* | |
+| T14.4, T14.5 hive alignment (stopped for the designer) | 15 | 4,566,414 | 15.5 min |
+| **Total** | **95** | **23,762,445** | |
 
 The reasoning layer (scan, gaps, scores) costs no tokens; every token above is an agent writing or fixing code. In the first run, C2 alone is 47% of the tokens. Most of it is Quinn's first fix round (928k) and Patricia's first build (533k), spent untangling tests that pinned the 0.1.3 layout. In the second run, C5 is 57% of the tokens (1.39M of 2.46M): Bob and Patricia each took around 40 turns rescaling the hive, the pile and the bucket. Plan-usage % per call is in `_meta/agent-runs.csv`.
