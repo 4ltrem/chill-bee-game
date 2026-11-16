@@ -26,7 +26,8 @@ With designer notes, William first edits the draft for them; without, the critic
 draft as it stands, and William is called only if it fails. William edits flagged lines only.
 
 --max-tokens (default 500,000) is checked after each FAIL: once the run has used that many, no new
-round starts and the draft is saved as needs-review. Every agent call is appended to the Content
+round starts and the draft is saved as needs-review; the Result and the console then list the last
+verdict's open FAIL rows, each with its owner (Ruth or William), and the --revise command to resume. Every agent call is appended to the Content
 generation table in _meta/agent-runs.md, with both token measures: total processed (the CLI's
 usage, summed over the call's turns) and final context (the conversation's size at its last turn,
 read from the call's transcript). Each call's transcript is moved out of ~/.claude/projects/ into
@@ -247,6 +248,19 @@ def fail_rows(block):
     """The blocking findings rows of a critic block (table rows that are not minor notes)."""
     rows = [line for line in block.splitlines() if re.match(r"\|\s*\d+\s*\|", line)]
     return [r for r in rows if "(minor)" not in r]
+
+
+def cap_stop(block, slug, use_research, max_tokens):
+    """What a token-cap stop leaves open: each blocking FAIL row of the last verdict with its owner (Ruth for
+    a Facts row asking for a source on a researched run, as the next round would route it; else William),
+    and the command that resumes the run. Returns markdown lines for the Result and the console."""
+    rows = fail_rows(block or "")
+    lines = [f"Open FAIL rows ({len(rows)}):"] if rows else ["Open FAIL rows: none parsed from the last verdict."]
+    for r in rows:
+        ruth = use_research and "Facts" in r and ASKS_FOR_SOURCE.search(r)
+        lines.append(f"- {NAMES[RESEARCHER] if ruth else NAMES[WRITER]}: {r.strip()}")
+    lines.append(f"Re-run: `python -I _tools/generate.py {slug} --revise --max-tokens {max_tokens}`")
+    return lines
 
 
 def set_front(path, **fields):
@@ -489,7 +503,10 @@ def main(argv=None):
     if v == "PASS":
         summary = f"PASS after {n} round(s)"
     elif n < a.max_rounds:
-        summary = f"Still FAIL after {n} round(s); stopped at the token cap ({spent:,} of {a.max_tokens:,})"
+        open_rows = cap_stop(block, a.slug, use_research, a.max_tokens)
+        summary = (f"Still FAIL after {n} round(s); stopped at the token cap ({spent:,} of {a.max_tokens:,}).\n\n"
+                   + "\n".join(open_rows))
+        print("\n".join(open_rows), flush=True)
     else:
         summary = f"Still FAIL after {n} round(s)"
     total = finish(board, a.slug, usage, result, f"{summary}: `{rel_draft}` saved with `status: {result}`.",

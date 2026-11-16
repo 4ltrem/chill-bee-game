@@ -164,6 +164,20 @@ class GenerateTest(Workspace):
         self.assertIn("token cap reached", out)
         self.assertEqual(self.status(), "needs-review")
 
+    def test_token_cap_lists_open_rows_owner_and_rerun_command(self):
+        out = self.new(Fake(self.root, ["FAIL", "PASS"], tokens=300_000), "--max-tokens", "500000")
+        cmd = "python -I _tools/generate.py x --revise --max-tokens 500000"
+        for text in (out, self.board()):
+            self.assertIn("Open FAIL rows (1):", text)
+            self.assertIn(f"- William: {ROWS['FAIL']}", text)
+            self.assertIn(cmd, text)
+
+    def test_token_cap_gives_source_rows_to_ruth_on_a_journal_run(self):
+        out = self.new(Fake(self.root, ["FAIL:source", "PASS"], tokens=300_000), "--max-tokens", "500000",
+                       kind="journal")
+        self.assertIn(f"- Ruth: {ROWS['FAIL:source']}", out)
+        self.assertIn(f"- Ruth: {ROWS['FAIL:source']}", self.board())
+
     def test_journal_runs_research_first_and_william_cites_the_brief(self):
         fake = Fake(self.root, ["PASS"])
         self.new(fake, kind="journal")
