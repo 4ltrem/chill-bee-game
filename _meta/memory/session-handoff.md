@@ -10,7 +10,7 @@ metadata:
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
 
-**Setup:** main folder on `main`, last commit `739b51c`. No other worktrees; `milestone/0.1.4` is merged (`6e22681`) and still on origin. Uncommitted: `_meta/agent-runs.csv/.md` (one new orchestrator run row, left for end-of-day). End-of-day for 2026-11-08 ran (`fe23e98`: D170-D199, L17-L24); end-of-day for 2026-11-15 has not run ([[end-of-day-routine]]).
+**Setup:** main folder on `main`, last commit `739b51c`. No other worktrees; `milestone/0.1.4` is merged (`6e22681`) and still on origin. Uncommitted: `_meta/agent-runs.csv/.md` (one new orchestrator run row, left for end-of-day). End-of-day for 2026-11-08 ran (`fe23e98`: D170-D199, L17-L24); end-of-day for 2026-11-15 ran on the laptop (D219-D221; it set up the laptop's memory folder and commit gate). The decision page was NOT republished from the laptop: the live page has D200-D218 from the other machine; rebuild and republish after the pull ([[end-of-day-routine]]). Godot is not installed on the laptop (scripts hard-code `C:\Users\mtrem\...`): build and run tests on the desktop.
 
 **0.1.4 / A5: done.** The designer play-tested 0.1.4 and it was merged into main. `GOAL_AGENT.md` (the A5 write-up: 38/38 goals, 95 calls, 23.8M tokens) was approved as the A5 README (`739b51c`). Web build is on itch: 4ltrem.itch.io/chill-bee-game (0.1.4). Whether the A5 link was submitted to the course is the designer's step, not recorded here ([[demo-link-submissions]]).
 

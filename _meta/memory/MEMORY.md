@@ -28,3 +28,5 @@
 - [Look before done](look-before-done.md) — never call a model change done on tests alone; compare fresh shots with the picked variant
 - [Spec consistency](spec-consistency.md) — before adding a play-test item, grep the spec for the same object/view and fix contradictions in the same edit
 - [Repo only](repo-only.md) — write only inside the repo (hook-enforced); reading outside is fine; moving/deleting outside files needs a yes
+- [GDD review decisions](gdd-review-decisions.md) — GDD is a first draft; leaderboard split by purchase status, habitat health in Flora slot
+- [ICM run phases](icm-run-phases.md) — tag agent runs pre-ICM / post-ICM in _meta/agent-runs.md
