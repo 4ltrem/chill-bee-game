@@ -630,6 +630,13 @@ class BuildToolsTest(unittest.TestCase):
         crash = {"status": "FAIL", "fails": ["FAIL  t_pop  test stopped before its final line (script error)  (5 ms)"]}
         self.assertEqual(self.mu.verdict({"expect": ["t_pop"]}, crash)[0], "BROKEN")
 
+    def test_godot_run_flags_set_the_cb_env(self):
+        import argparse
+        ns = lambda **kw: argparse.Namespace(**{"only": None, "time_scale": None, "skip_x1": False, **kw})
+        self.assertIsNone(self.gr.suite_env(ns()))                       # no flag: os.environ applies as before
+        self.assertEqual(self.gr.suite_env(ns(only="t_a,t_b", time_scale="6", skip_x1=True)),
+                         {"CB_ONLY": "t_a,t_b", "CB_TIME_SCALE": "6", "CB_SKIP_X1": "1"})
+
     def test_mutation_env_runs_only_expected_unit_tests(self):
         self.assertEqual(self.mu.mutation_env({"expect": ["a", "b"]}, "unit"), {"CB_ONLY": "a,b"})
         self.assertIsNone(self.mu.mutation_env({"expect": []}, "unit"))

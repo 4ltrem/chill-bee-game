@@ -2,6 +2,11 @@
 """Run the Godot test suites and print a short summary instead of the raw log.
 
     python -I _tools/godot_run.py [SUITE ...] [--root game] [--refresh] [--json FILE] [--markdown] [--timeout S]
+                                  [--only T1,T2] [--time-scale X] [--skip-x1]
+
+--only, --time-scale and --skip-x1 set CB_ONLY, CB_TIME_SCALE and CB_SKIP_X1=1 for the Godot run (run_tests.gd
+reads them), so no shell `VAR=value` prefix is needed: Claude Code cannot allow-list such prefixes cleanly. An
+env var already set in the caller's environment still works when its flag is not given.
 
 Suites: unit (run_tests.gd, headless), start (a headless start, errors only), play (play_loop.gd),
 measure (r4_measure.gd), snapshot (snapshot_pop.gd), ui (ui_bounds_pixels.gd), touch (touch_windowed.gd);
@@ -173,6 +178,18 @@ def render(results, markdown=False):
     return "\n".join(lines)
 
 
+def suite_env(args):
+    """Pure: the CB_* env the CLI flags ask for (None when no flag is given; os.environ then applies as before)."""
+    env = {}
+    if args.only:
+        env["CB_ONLY"] = args.only
+    if args.time_scale:
+        env["CB_TIME_SCALE"] = str(args.time_scale)
+    if args.skip_x1:
+        env["CB_SKIP_X1"] = "1"
+    return env or None
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("suites", nargs="*")
@@ -181,7 +198,11 @@ def main(argv=None):
     ap.add_argument("--json", help="also write the summary as JSON to this file")
     ap.add_argument("--markdown", action="store_true", help="print a Markdown table for reports")
     ap.add_argument("--timeout", type=int, default=900, help="seconds per suite")
+    ap.add_argument("--only", help="comma list of test names to run alone (sets CB_ONLY)")
+    ap.add_argument("--time-scale", help="Engine.time_scale for the unit tests, e.g. 6 (sets CB_TIME_SCALE)")
+    ap.add_argument("--skip-x1", action="store_true", help="skip the real-time X1_TESTS (sets CB_SKIP_X1=1)")
     args = ap.parse_args(argv)
+    env = suite_env(args)
     suites = args.suites or ["unit", "start"]
     if suites == ["all"]:
         suites = ALL
@@ -194,7 +215,7 @@ def main(argv=None):
     os.makedirs(logdir, exist_ok=True)
     if args.refresh:
         refresh(root, args.timeout)
-    results = [run_suite(s, root, logdir, args.timeout) for s in suites]
+    results = [run_suite(s, root, logdir, args.timeout, env=env) for s in suites]
     print(render(results, args.markdown))
     if args.json:
         with open(args.json, "w", encoding="utf-8") as fh:
