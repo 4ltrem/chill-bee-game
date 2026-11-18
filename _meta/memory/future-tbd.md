@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 472d224a-a84f-4a66-bfff-00b669226a91
-  modified: 2026-11-09T02:27:18.524Z
+  modified: 2026-11-18T00:58:15.229Z
 ---
 
 TBD items the designer named on 2026-11-01, not started:
@@ -54,6 +54,28 @@ TBD items the designer named on 2026-11-01, not started:
    "paused by budget_guard" as a stop. Final run: "finish 0.1.4" was judged unmet 16× (it needed the designer's play-test
    and the itch upload), while "feedback for 0.1.4 implemented and bugs fixed" was met on its first check, so never put a
    human step in the condition. Comparison written up in GOAL_AGENT.md "Compared with Claude Code's `/goal`".
+
+9. **Assignment 4 grader's next steps** (feedback received 2026-11-17; "Lovely, rigorous work ... Excellent pipeline";
+   standout: Clara). SCHEDULED by the designer 2026-11-17: both (a) and (b) are built BEFORE the next
+   `generate.py` content run, new or `--revise` (MILESTONES.md Open). If asked to start a content run first, build these first or say so.
+   (a) Cut the content loop's token cost: a cheaper verification pass (e.g. Haiku or a script for Clara's mechanical
+   checks, Sonnet only for tone/lore) and cached facts (Ruth's fetched source quotes reused by URL+date instead of
+   Clara re-fetching every URL each round).
+   (b) Promote a couple of voice rules (STYLE_GUIDE T1-T6) to hard script checks, as `style_check.py` does for the
+   visual rules: T2 Glossary terms and T5 cited GDD sections are the mechanical candidates. (b) BUILT 2026-11-17
+   as `_tools/voice_check.py` (run by generate.py each round); (a) still open.
+
+10. **Godot 4.2.1 -> 4.7.2 upgrade** (designer, 2026-11-17: assessed by a subagent, "add it to future-tbd").
+    NOT before the final deadline (11/24); do it on a branch right after a milestone. Assessment (subagent, not yet
+    re-checked): 4.7.2-stable is real (18 Aug 2026; 4.8 in beta); no GDScript API break found in the 4.3-4.7 guides;
+    watch `scripts/ui_bounds_overlay.gd` lines in shots. One-way: the newer editor rewrites project.godot/.tscn/.tres,
+    adds `.uid` sidecars, and 4.2.1 can't reopen it. To change: the hard-coded 4.2.1 exe path (`_tools/godot_run.py`,
+    `build.py`, `model_shots.py`, `pick_match.py`, `style_loop.py`, `.claude/settings.json`, `builder.md`, `render.gd`,
+    `game/CONTEXT.md`); 4.7.2 export templates; the Web preset turns single-threaded (fine for itch). Unverified until a
+    real run: `godot_run.py` noise filter, the "exits 1 on empty project" workaround, `build.py`'s exit-139 retry, Android
+    SDK/JDK needs. Procedure: (1) 4.7.2 alongside 4.2.1, `GODOT` env to the new exe, branch; (2) open/refresh once and
+    commit the format-only rewrite alone; (3) Rex: unit then `all` vs 178/178; (4) `ui_shots.py` + style shots old vs
+    new by eye; (5) `build.py --smoke` + a real browser check; (6) only then update paths and the workarounds.
 
 **Why:** the designer keeps every session for analysis and wants memory to work across machines.
 

@@ -23,6 +23,7 @@ All agents run through Claude Code. Larger models use up the shared Pro limits f
 | Milo | Modeler | Colorbox prop variants: primitive-only `.tscn` in the palette, no textures, a few variants per model for a compare page | Haiku | Fixed-shape output: primitives with palette tokens. Every variant is checked by script shots and picked by the designer, so a miss costs one variant, not a shipped bug | [modeler.md](../.claude/agents/modeler.md) |
 | Vera | Style Critic | Judges Bob's colorbox screenshots against the style guide's critic rules (V3, V6–V10, V13, V15); PASS or FAIL verdict | Sonnet | A critic with no check after it: it judges shapes, glass and contrast in pictures, where a miss ships. Calibrated on fixtures by `_tools/style_critic_check.py` before it judges a round. Haiku was not chosen because those misses are subtle | [style-critic.md](../.claude/agents/style-critic.md) |
 | Rex | Script Runner | Runs the repository's own test, build, mutation and shot scripts exactly as given; reports summary counts, failing names and first error lines; changes no files | Haiku | Fixed commands and script-printed summaries, with no code, judgement or fixes. Long suite runs and log reading on Quinn's Sonnet took 21% of the plan usage on 2026-11-04, so the execution moves here. A miss is a wrong count that the owner re-runs | [script-runner.md](../.claude/agents/script-runner.md) |
+| Oscar | Operator | Main session: routes each task to its owner, waits without spending turns, relays stops and does the mechanical upkeep. Run with `claude --agent operator` | Sonnet | Routing, waiting and upkeep need no judgement. The Opus main session used about 83% of logged tokens, and about half of that sat in routing and waiting. Each job still ends at its owner's check, and Phase 5 compares its cost with Opus sessions | [operator.md](../.claude/agents/operator.md) |
 
 Every role has a definition. New roles come from Martin, copied from the template.
 
@@ -43,8 +44,9 @@ Each agent is a module in the development workflow: a developer input triggers i
 - **Martin, the Hiring Manager:** when the lead architect notices a skill gap, writes a new agent definition by copying [`_templates/agent.md`](../_templates/agent.md) into `.claude/agents/` and adds the role to the roster above; the developer reviews the git diff.
 - **Connie, the Compliance Officer:** reviews features for child safety (kid mode, COPPA, app-store kids and families rules, ad SDK settings), charity and cause marketing (donation disclosures, partner agreements), privacy and data (PIPEDA, Quebec Law 25, privacy policy) and store policy (subscriptions, premium currency, rewarded ads, donations) when a feature touches those areas or before store submission. The developer sees a findings report and checklist in `proposals/compliance/`, citing official sources, with items needing lawyer or partner sign-off marked.
 - **Quinn, the QA & Build Engineer:** writes and runs tests, produces mobile builds, and profiles performance against the 60 FPS target when a feature or build is ready for testing, and the developer sees a test report, build output and performance profile.
-- **Rex, the Script Runner:** runs the repository's test, build, mutation and shot scripts exactly as the orchestrator gives them, and reports each one's summary counts, failing tests or checks with their log paths and first error lines; the orchestrator sends failures to their owners. Dispatched only by the orchestrator (for Quinn's, Bob's, Patricia's and Milo's runs); it stops the processes it started and changes no files.
+- **Rex, the Script Runner:** runs the repository's test, build, mutation and shot scripts exactly as the orchestrator or the operator gives them, and reports each one's summary counts, failing tests or checks with their log paths and first error lines; the dispatching main session sends failures to their owners. Dispatched only by the orchestrator or the operator (for Quinn's, Bob's, Patricia's and Milo's runs); it stops the processes it started and changes no files.
 - **Doris, the Doc Auditor:** at the end of the working day, the `end-of-day` skill gives her the day's `git diff` and changed-file list, and she finds every doc statement those changes made untrue, citing the code, config or GDD line that contradicts it; the main session or the developer sees her findings table, and she edits nothing.
+- **Oscar, the Operator:** runs as the main session (`claude --agent operator`) for a day's routing, waiting and upkeep: sends each task to the agent or script that owns it, relays the stops in `operator/escalate.md`, and keeps the session handoff and `operator/queue.md` current. He decides nothing and writes none of the owners' output; each owner's output and check reach the designer as before.
 
 ## Rules for every agent
 
@@ -53,7 +55,7 @@ Each agent is a module in the development workflow: a developer input triggers i
 3. **No invented systems:** ground every suggestion in `GDD.md`: the existing 3-phase progression model and the low-poly 3D constraints.
 4. **Agents propose; the designer decides.** No agent edits `GDD.md` (see [AGENTS.md](../AGENTS.md)).
 5. **Edit lines, not files** (designer, 2026-11-05): change an existing file only with Edit, on the lines that need it; never rewrite it with Write, `sed -i` or a script. Write is for new files.
-6. **Wait by running, not sleeping** (2026-11-06): run scripts in the foreground with a long Bash timeout (up to 600000 ms); never `sleep` to wait for something (the harness blocks it and points to Monitor, which agents don't have). A run longer than 10 minutes goes in the background with `run_in_background`, and you wait for its completion notice.
+6. **Wait by running, not sleeping** (2026-11-06): run scripts in the foreground with a long Bash timeout (up to 600000 ms); never `sleep` to wait for something (the harness blocks it and points to Monitor, which most agents don't have; only the operator does). A run longer than 10 minutes goes in the background with `run_in_background`, and you wait for its completion notice.
 
 ## Model reviews
 
@@ -76,6 +78,7 @@ Every model choice is a bet that the agent's mistakes are caught downstream. A c
 | Gerard, Terry (Opus) | the designer's decision | proposals rejected or revised | `status:` and the ledger |
 | Connie (Sonnet) | lawyer or partner sign-off | findings overturned | her reports |
 | Doris (Sonnet) | the designer | findings later found wrong or missed | end-of-day reports |
+| Oscar (Sonnet) | the designer, and the Phase 5 comparison with Opus sessions | routing misses that cost rework, or a stop that should have been handed off | the Orchestrator rows in `_meta/agent-runs.csv` |
 
 ### Rework tally
 

@@ -4,6 +4,20 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L26 · 2026-11-17 · No test or build could run on the laptop: Godot's path was the desktop's
+- **What broke:** `godot_run.py`, `build.py` and the other scripts, Bob's render command and the settings rules all named `C:\Users\mtrem\Desktop\Godot_v4.2.1-stable_win64_console.exe`, which exists only on the desktop.
+- **How noticed:** the laptop handoff (D220, Still open) and the designer: "make it computer agnostic".
+- **Cause:** the path was written by hand into each tool when there was one machine.
+- **How fixed:** `_tools/godot_path.py` (the `GODOT` env var, then the repo-folder copy, then the desktop path); everything calls it (`8011388`, D225).
+- **Prevention:** no tracked file names a machine's Godot path; not yet checked by script, and the branch is unmerged (Still open).
+
+## L25 · 2026-11-17 · Allow rules with `VAR=*` prefixes warned that they allow any command
+- **What broke:** the Claude Code console warned that each rule like `Bash(CB_TIME_SCALE=* python -I _tools/godot_run.py *)` "allows any command at the * in its value".
+- **How noticed:** the warnings on the laptop's console (D223).
+- **Cause:** test speed settings were passed as shell env prefixes (L17), so the allow rules had to wildcard the value.
+- **How fixed:** CLI flags `--only`, `--time-scale`, `--skip-x1` in `godot_run.py`; the `VAR=` rules removed (`51b775d`).
+- **Prevention:** the memory rule "never VAR= prefixes"; the branch is unmerged (Still open).
+
 ## L24 · 2026-11-08 · A commit to `main` from a worktree failed the hooks and the push hung
 - **What broke:** the first commit on a worktree from `origin/main` ran the milestone branch's pre-commit check, which calls `contract_check.py` that `main` does not have; `git push` hung over two minutes on a hidden login prompt.
 - **How noticed:** the commit was rejected and the push never returned; the designer logged in and the retry went through.

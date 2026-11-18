@@ -12,7 +12,7 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-377 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+393 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -66,11 +66,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Ruth | post-ICM | 2 | — | 266,270 | 116 s |
 | **All** | | **46** | **23,802** | **123,576** | 105 s |
 
-**Doc audits** (11 runs)
+**Doc audits** (12 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Doris | post-ICM | 11 | 47,827 | 252,393 | 45 s |
+| Doris | post-ICM | 12 | 48,752 | 265,862 | 44 s |
 
 **Probes** (2 runs)
 
@@ -80,27 +80,28 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Clara, one empty turn, prompt on stdin | post-ICM | 1 | — | 13,370 | — |
 | **All** | | **2** | **—** | **12,806** | — |
 
-**Subagent runs** (145 runs)
+**Subagent runs** (153 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
 | Patricia (programmer) | post-ICM | 24 | 69,722 | 1,751,651 | 1,196 s |
 | Bob (builder) | post-ICM | 29 | 59,457 | 900,790 | 307 s |
 | Quinn (qa-build-engineer) | post-ICM | 30 | 94,194 | 3,036,694 | 1,166 s |
-| claude-code-guide | post-ICM | 2 | 48,226 | 255,200 | 52 s |
-| Martin (hiring-manager) | post-ICM | 7 | 41,916 | 283,129 | 72 s |
+| claude-code-guide | post-ICM | 3 | 52,724 | 281,989 | 374 s |
+| Martin (hiring-manager) | post-ICM | 8 | 42,429 | 277,777 | 72 s |
 | Ruth (research-assistant) | post-ICM | 1 | 37,318 | 203,725 | 107 s |
-| general-purpose | post-ICM | 8 | 93,388 | 1,347,212 | 182 s |
+| general-purpose | post-ICM | 12 | 97,793 | 1,257,531 | 165 s |
 | Terry (progression-tree-expert) | post-ICM | 1 | 34,830 | 142,788 | 168 s |
 | Milo (modeler) | post-ICM | 3 | 135,542 | 1,926,113 | 331 s |
-| Rex (script-runner) | post-ICM | 40 | 17,032 | 121,434 | 430 s |
-| **All** | | **145** | **58,762** | **1,265,625** | 642 s |
+| Rex (script-runner) | post-ICM | 41 | 17,053 | 119,218 | 420 s |
+| fork | post-ICM | 1 | 89,645 | 178,894 | 7 s |
+| **All** | | **153** | **59,883** | **1,232,768** | 619 s |
 
-**Orchestrator** (38 runs)
+**Orchestrator** (45 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 38 | — | 19,053,683 | 14,883 s |
+| Orchestrator (main session) | post-ICM | 45 | — | 16,469,750 | 14,613 s |
 
 **Style loop** (7 runs)
 

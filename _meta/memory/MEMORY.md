@@ -1,18 +1,18 @@
 - [Flower patch follow-up](flower-patch-followup.md) — DONE 11/6 on milestone/0.1 (3b6fdf1) except Bob's shots
 - [Pending approvals](pending-approvals.md) — onboarding-script, biome-intros re-approval (T6 revise); three content follow-ups
 - [End-of-day routine](end-of-day-routine.md) — "end of work day" runs the end-of-day skill; only milestone-branch checkpoint commits mid-session
-- [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, transcript sync, learnings file, live view of headless agents (status line + live.json), A3 grader's next steps (content into Godot strings, cap-stop summary), /goal wrapping goal_agent.py
+- [Future TBD](future-tbd.md) — backlog: episodic memory upgrade, dream skill, transcript sync, learnings file, live view of headless agents (status line + live.json), A3 grader's next steps (content into Godot strings, cap-stop summary), /goal wrapping goal_agent.py, A4 grader's next steps (cheaper Clara pass + cached facts, voice rules as hard checks), Godot 4.7.2 upgrade (after 11/24)
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
 - [0.1.3 play-test](playtest-0-1-3.md) — 11/6: UI broken (Back inconsistent, Spin/Harvest move, x5 tag overlaps); noted, not fixing yet
-- [Session handoff](session-handoff.md) — read first: 0.1.4 items 1-21 done (948a49e), unit 178/178, both builds rebuilt; waits on designer play-test + itch upload; end-of-day not run
+- [Session handoff](session-handoff.md) — read first: 0.1.4 items 1-21 done (948a49e), unit 178/178, both builds rebuilt; waits on designer play-test + itch upload; end-of-day not run; NO content run until A4 grader items are built
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
 - [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
 - [A/B comparison page](ab-comparison-page.md) — every creative A/B choice AND every numerical visual change (scale, offset, size) becomes a new section of the one Design Votes artifact, built by script; never a new artifact or browser tab
 - [Cost rules](cost-rules.md) — 9 approved token cuts: godot_run/build/mutate scripts, split tests, sliced briefs, 150-word replies, fresh session per milestone
 - [Edit lines only](edit-lines-only.md) — change only the needed lines with Edit; no whole-file rewrite scripts
 - [itch upload rule](itch-upload-rule.md) — itch only at a new milestone number (0.2.0, 0.3.0), or when the build is an assignment demo (0.1.4 = A5)
-- [Test speed fixes](test-speed-fixes.md) — always brief Rex with CB_ONLY=<tests> (iterating) or CB_TIME_SCALE=6 CB_SKIP_X1=1 … all (checkpoint); plain runs take 15 min
+- [Test speed fixes](test-speed-fixes.md) — always brief Rex with `godot_run.py unit --only <tests> --time-scale 6` (iterating) or `all --time-scale 6 --skip-x1` (checkpoint); never VAR= prefixes; plain runs take 15 min
 - [One folder rule](one-folder-rule.md) — main folder on the milestone branch; worktree only for parallel work, removed when merged
 - [Commit to main](commit-to-main.md) — worktree inside the repo, `-c core.hooksPath=.githooks`, push with GCM_INTERACTIVE=never
 - [Scripted shots](scripted-shots.md) — same moments = `_tools/ui_shots.py`; agent only when a new screen/phase/menu is added; gradual animations shot at several points
