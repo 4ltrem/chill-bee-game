@@ -13,3 +13,6 @@ __pycache__/
 
 # Plan-usage readings saved by the status line (local; times and percentages only)
 _meta/usage/
+
+# Godot binary unpacked in the repo folder (laptop); _tools/godot_path.py finds it
+Godot_v4.2.1-stable_win64.exe/

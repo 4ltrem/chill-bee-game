@@ -29,7 +29,7 @@ import compare_page  # noqa: E402
 import style_check  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-GODOT = os.environ.get("GODOT", r"C:\Users\mtrem\Desktop\Godot_v4.2.1-stable_win64_console.exe")
+from godot_path import GODOT  # noqa: E402
 
 
 def render(prop, out, size):

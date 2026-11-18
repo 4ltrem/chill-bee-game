@@ -14,11 +14,8 @@
       "Bash(python -I _tools/consistency.py *)",
       "Bash(python -I _tools/test_goal_agent.py *)",
       "Bash(python -I _tools/godot_run.py *)",
-      "Bash(C:/Users/mtrem/Desktop/Godot_v4.2.1-stable_win64_console.exe --path game --script res://tests/render.gd *)",
-      "Bash(C:/Users/mtrem/Desktop/Godot_v4.2.1-stable_win64.exe --path game*)",
-      "Bash(C:/Users/mtrem/Desktop/Godot_v4.2.1-stable_win64_console.exe --path game*)",
-      "PowerShell(& \"C:\\Users\\mtrem\\Desktop\\Godot_v4.2.1-stable_win64.exe\" --path game*)",
-      "PowerShell(& \"C:\\Users\\mtrem\\Desktop\\Godot_v4.2.1-stable_win64_console.exe\" --path game*)"
+      "Bash(python -I _tools/godot_path.py --path game*)",
+      "PowerShell(python -I _tools/godot_path.py --path game*)"
     ]
   },
   "hooks": {

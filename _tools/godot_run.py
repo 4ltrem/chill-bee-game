@@ -36,7 +36,8 @@ import time
 
 TOOLS = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(TOOLS)
-GODOT = os.environ.get("GODOT", r"C:\Users\mtrem\Desktop\Godot_v4.2.1-stable_win64_console.exe")
+sys.path.insert(0, TOOLS)  # -I leaves the script's folder off sys.path
+from godot_path import GODOT  # noqa: E402
 WINDOW = ["--resolution", "720x1280", "--position", "0,0"]
 
 SUITES = {
