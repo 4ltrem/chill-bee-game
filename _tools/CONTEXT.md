@@ -10,6 +10,7 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | Docs | `consistency.py` | checks docs against code (run by the `.githooks/pre-commit` gate) |
 | Docs | `doc_audit.py` | runs Doris on the day's changes |
 | Content loop | `generate.py` | runs the content loop |
+| Content loop | `voice_check.py` | checks the mechanical voice rules (T5 cited GDD sections, T2 Glossary terms from the GDD and `voice_terms.json`) before Clara; `generate.py` runs it each round |
 | Content loop | `critic_check.py` | checks Clara against the known-bad drafts in `fixtures/` |
 | Content loop | `test_generate.py` | tests the tools with fake agents |
 | Style loop | `style_check.py` | measures the script rules of `STYLE_GUIDE.md` |

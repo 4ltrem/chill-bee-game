@@ -4,7 +4,10 @@
     python -I _tools/generate.py SLUG --type TYPE --request "TEXT" [--max-rounds 3] [--max-tokens N]
     python -I _tools/generate.py SLUG --revise [--request "DESIGNER NOTES"] [--max-rounds 3] [--max-tokens N]
 
-Each round: William writes or revises content/SLUG.md from the GDD, and the critic checks it. A
+Each round: William writes or revises content/SLUG.md from the GDD, voice_check.py checks the
+mechanical voice rules (T5 cited sections, T2 Glossary terms; a FAIL goes straight back to William
+with no critic call), and the critic checks it. The critic sees the whole draft on her first look in a
+run, then her last verdict and a diff since the draft she judged. A
 PASS stops the loop with `status: draft` (awaiting the designer); a FAIL after the last round saves
 the draft with `status: needs-review`. Agents run through the Claude Code CLI (`claude -p --agent
 ...`, prompt on stdin), so no API key is needed. Standard library only.
@@ -50,6 +53,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script's folder off sys.path
 from log_subagent import measure  # noqa: E402
 import runlog  # noqa: E402
+import voice_check  # noqa: E402
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -406,7 +410,7 @@ def main(argv=None):
     board_start(board, {"slug": a.slug, "type": a.type, "started": datetime.date.today(),
                         "max_rounds": a.max_rounds, "max_tokens": a.max_tokens}, f"Blackboard: {a.slug}", request)
 
-    usage, result, edited, v, n, block = [], "needs-review", False, None, 0, ""
+    usage, result, edited, v, n, block, clara = [], "needs-review", False, None, 0, "", None
     try:
         if use_research and not briefs(a.slug):
             task = (f"Verify the real-world claims in `{rel_draft}` (its Real-world facts section and any "
@@ -426,8 +430,8 @@ def main(argv=None):
                                                 "the narrower claim a source does support:\n" + "\n".join(asks), usage, run_folder)
                     append(board, f"\n## Research, round {n}\n\nBrief: `{brief.relative_to(ROOT).as_posix()}`\n")
             if n > 1:
-                task = (f"Revise `{rel_draft}` to fix every FAIL row below (from the critic's round {n - 1} "
-                        f"verdict). Use Edit on the flagged lines only; do not rewrite the file.\n\n"
+                task = (f"Revise `{rel_draft}` to fix every FAIL row below (from the round {n - 1} "
+                        f"verdict: the critic's, or the script check's). Use Edit on the flagged lines only; do not rewrite the file.\n\n"
                         + "\n".join(rows))
             elif a.revise and a.request:
                 task = (f"Revise `{rel_draft}` for these designer notes. Use Edit on the lines they concern "
@@ -457,16 +461,28 @@ def main(argv=None):
                 snap.write_text(text + "\n", encoding="utf-8", newline="\n")
                 append(board, f"\n## Round 1\n\n{section}\n\nThe full draft: `{snap.relative_to(ROOT).as_posix()}` "
                               f"({len(text.splitlines())} lines). Later rounds show only the changes.\n")
-                shown = (f"Request:\n{request}\n\nThe full draft of `{rel_draft}`:\n\n~~~~markdown\n{text}\n~~~~")
             else:
                 diff = "\n".join(difflib.unified_diff(previous_text.splitlines(), text.splitlines(),
                                                      f"round {n - 1}", f"round {n}", n=1, lineterm=""))
                 append(board, f"\n## Round {n}\n\n### Changes (William), round {n}\n\n~~~~diff\n"
                               f"{diff or '(no changes)'}\n~~~~\n")
-                shown = (f"Your round {n - 1} verdict:\n\n{block}\n\nWilliam's changes since then, as a diff "
+            previous_text = text
+
+            if (ROOT / "GDD.md").is_file():  # T5 and T2's terms by script first: a FAIL costs no critic call
+                v, block = voice_check.check(text, (ROOT / "GDD.md").read_text(encoding="utf-8"), n=n)
+                append(board, f"\n{block}\n")
+                print(f"round {n}: script check {v}", flush=True)
+                if v == "FAIL":
+                    continue
+
+            if clara is None:  # the critic's first look in this run: the whole draft
+                shown = (f"Request:\n{request}\n\nThe full draft of `{rel_draft}`:\n\n~~~~markdown\n{text}\n~~~~")
+            else:
+                diff = "\n".join(difflib.unified_diff(clara[1].splitlines(), text.splitlines(),
+                                                     f"round {clara[2]}", f"round {n}", n=1, lineterm=""))
+                shown = (f"Your round {clara[2]} verdict:\n\n{clara[0]}\n\nWilliam's changes since then, as a diff "
                          f"of `{rel_draft}` (read the file only for context around them):\n\n~~~~diff\n"
                          f"{diff or '(no changes)'}\n~~~~")
-            previous_text = text
 
             print(f"round {n}: critic checking...", flush=True)
             prompt = f"Content loop, round {n}.\n\n{shown}\n\nReply with only your `### Critic, round {n}` block."
@@ -482,6 +498,7 @@ def main(argv=None):
             if block is None:
                 raise AgentError(f"the critic returned no verdict for round {n}")
             append(board, f"\n{block}\n")
+            clara = (block, text, n)   # her verdict, the draft she judged, its round: her next diff starts here
             v = verdict_of(block)
             print(f"round {n}: {v}", flush=True)
             if v == "PASS":

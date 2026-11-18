@@ -97,7 +97,7 @@ New token: proposed in a FAIL row's Fix and added here by the designer, never by
 
 ## Voice rules (Clara)
 
-These restate the first six of Clara's seven checks (`.claude/agents/content-critic.md`) so both critics share one guide; her definition stays the authority on how she checks them. Her seventh, Completeness (no empty slots or placeholders, EN and FR alike; designer, 2026-11-07), checks the draft's form rather than its voice, so it is not a T rule.
+These restate the first six of Clara's seven checks (`.claude/agents/content-critic.md`) so both critics share one guide; her definition stays the authority on how she checks them. T5 and the word part of T2 are also checked by script before her each round (`_tools/voice_check.py`; a FAIL costs no agent call). Her seventh, Completeness (no empty slots or placeholders, EN and FR alike; designer, 2026-11-07), checks the draft's form rather than its voice, so it is not a T rule.
 
 | ID | Rule | Source |
 |---|---|---|

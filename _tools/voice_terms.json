@@ -1,0 +1,7 @@
+{
+  "_about": "Words voice_check.py flags under T2 (Tone & Glossary) before Clara runs. Each entry: the pattern (a regex, matched case-insensitively on whole words), the Glossary term to use instead, its Glossary section, and confirmed. confirmed: true makes a hit a FAIL row (blocks the round, William fixes it, no Clara call); false makes it a (minor) row that is only reported. The Glossary's own Rejected terms are read from GDD.md and need no entry here. Entries with confirmed false wait for the designer.",
+  "terms": [
+    {"pattern": "coins?", "use": "In-game money", "section": "Glossary > Currencies & Prestige", "confirmed": true},
+    {"pattern": "honey money", "use": "In-game money", "section": "Glossary > Currencies & Prestige", "confirmed": true}
+  ]
+}
