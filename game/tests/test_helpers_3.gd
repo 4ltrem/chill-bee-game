@@ -325,6 +325,25 @@ func _spigot_spot(traces: Dictionary) -> Dictionary:
 	return {"pos": mean, "spread": spread, "n": pts.size()}
 
 
+## 0.2 item 13 flow step: `jars` bottled jars counted on a home truck, the last one still flying to its bed slot (the others just appear).
+## Needs jar_fly_seconds long enough to act inside the flight (the test sets it through _set_cfg).
+func _bed_last_jar_in_flight(tk: Node, jars: int) -> void:
+	for i in maxi(jars - 1, 0):
+		tk.call("receive_jar")
+	tk.call("receive_jar", (tk as Node3D).global_position + Vector3(0.0, 2.0, 0.0), 0.0, null)
+
+
+## Call advance() each frame until `cond` is true or `timeout` game seconds pass (what _process does on the real truck).
+func _advance_until(tk: Node, cond: Callable, timeout: float) -> bool:
+	var t0: int = _gms()
+	while float(_gms() - t0) < timeout * 1000.0:
+		tk.call("advance", 0.05)
+		if cond.call():
+			return true
+		await process_frame
+	return cond.call()
+
+
 func _bed_count(tk: Node) -> int:
 	var bed: Node = tk.find_child("BedJars", true, false)
 	var n: int = 0

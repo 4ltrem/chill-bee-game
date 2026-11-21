@@ -1441,5 +1441,37 @@
    "t_spigot_jar_flight_unchanged"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 13 truck leaves without waiting for the jar in flight",
+  "file": "scripts/truck.gd",
+  "find": "if not _departure_pending or _flying_to_bed > 0:",
+  "replace": "if not _departure_pending:",
+  "expect": [
+   "t_truck_sell_waits_for_jar_in_flight",
+   "t_truck_autosell_waits_for_jar_in_flight",
+   "t_truck_sell_with_jar_in_flight_twice_matches"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 13 a jar bottled after departure still goes to the bed",
+  "file": "scripts/truck.gd",
+  "find": "var to_bed: bool = not away and not _departure_pending and loaded_jars < capacity",
+  "replace": "var to_bed: bool = loaded_jars < capacity",
+  "expect": [
+   "t_truck_jar_after_departure_goes_to_crate"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 13 pending departure never cleared (second run differs)",
+  "file": "scripts/truck.gd",
+  "find": "\t_departure_pending = false\n\tloaded_jars = 0\n\taway = true",
+  "replace": "\tloaded_jars = 0\n\taway = true",
+  "expect": [
+   "t_truck_sell_with_jar_in_flight_twice_matches"
+  ],
+  "suite": "unit"
  }
 ]
