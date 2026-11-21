@@ -1,0 +1,18 @@
+{
+ "question": "fork-r2",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": "fork-r2-b, with two changes",
+ "votes": {
+  "fork-r2-a": "no", "fork-r2-a-hot": "no",
+  "fork-r2-b": "yes", "fork-r2-b-hot": "maybe",
+  "fork-r2-c": "no", "fork-r2-c-hot": "no",
+  "fork-r2-d": "no", "fork-r2-d-hot": "no"
+ },
+ "notes": {
+  "fork-r2-b": "handle should go into the blade more",
+  "fork-r2-b-hot": "whole blade should get hot",
+  "fork-r2-d-hot": "gap bewtween base and of the teeth"
+ },
+ "next": "fork-r3: b with the handle set deeper into the blade, and the hot state orange on the whole metal head (tines, crossbar and ferrule)"
+}

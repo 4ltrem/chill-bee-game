@@ -1,0 +1,17 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://bv4op72sfeche"
+
+[deps]
+
+files=["res://translations/journal.en.translation", "res://translations/journal.fr.translation"]
+
+source_file="res://translations/journal.csv"
+dest_files=["res://translations/journal.en.translation", "res://translations/journal.fr.translation"]
+
+[params]
+
+compress=true
+delimiter=0

@@ -1,0 +1,41 @@
+goal_agent: spec_lint 0.2-first-automation.md: no FAIL or WARN
+0.2-first-automation.md: 1/21 goals done (H)
+  C1     partial  Upgrade shop holds several rows.
+  C2     partial  (built, waits on tests) Flight Endurance
+  C3     partial  (built, waits on tests) Heated Uncapping Fork
+  C4     partial  (built, waits on tests) Centrifuge Gearing
+  C5     partial  (built, waits on tests) Faster Delivery
+  C6     missing  Auto-Sell
+  C7     missing  Phase 2 flag.
+  C8     missing  Bee Journal entry, EN/FR, through Godot's translation CSV.
+  T1.1   missing  item 1: each row's cost equals `base × growth^level` (floore
+  T2.1   missing  item 2: at Flight level 3 and Swarm level 0, the hive fills 
+  T3.1   missing  item 3: at Heated level 0 one drag point uncaps one cell; at
+  T3.2   missing  item 3 look: during a drag the fork prop is visible within `
+  T4.1   missing  item 4 look: at Gearing N (0..5) exactly Gear1..Gear(N + 1) 
+  T5.1   missing  item 5 look: at each Faster Delivery level 0..4 exactly the 
+  T4.2   missing  item 4: at Gearing level 2 the turns needed are `ceil(base ×
+  T5.2   missing  item 5: trip time at Faster Delivery 0..4 is 30, 25.5, 21, 1
+  T6.1   missing  item 6: with Auto-Sell owned, a full bed leaves with no Sell
+  T7.1   missing  item 7: buying Auto-Sell sets phase 2 once and the toast sho
+  T8.1   missing  item 8: `journal.csv` has every key in `en` and `fr`, non-em
+  T.1    missing  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. C1       9.12  2 goal(s) wait on it; designer feature; cost 0.88 (Patricia, Bob)
+   2. C6       9.12  2 goal(s) wait on it; designer feature; cost 0.88 (Patricia, Bob)
+   3. C7       9.12  2 goal(s) wait on it; designer feature; cost 0.88 (Patricia, Bob)
+   4. C8       9.12  2 goal(s) wait on it; designer feature; cost 0.88 (Patricia, Bob)
+   5. T1.1     3.61  designer feature; cost 0.39 (Quinn)
+   6. T2.1     3.61  designer feature; cost 0.39 (Quinn)
+   7. T3.1     3.61  designer feature; cost 0.39 (Quinn)
+   8. T3.2     3.61  designer feature; cost 0.39 (Quinn)
+   9. T4.1     3.61  designer feature; cost 0.39 (Quinn)
+  10. T4.2     3.61  designer feature; cost 0.39 (Quinn)
+  11. T5.1     3.61  designer feature; cost 0.39 (Quinn)
+  12. T5.2     3.61  designer feature; cost 0.39 (Quinn)
+  13. T.1       0.0  waits on C6, C7, C8
+  14. T6.1      0.0  waits on C6
+  15. T7.1      0.0  waits on C7
+  16. T8.1      0.0  waits on C8
+gaps.json: game/reports/goal/0.2/gaps.json
+goal_agent: paused. Blackboard: game/reports/goal/0.2/blackboard.md

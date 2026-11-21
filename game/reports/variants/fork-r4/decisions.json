@@ -1,0 +1,13 @@
+{
+ "question": "fork-r4",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": "fork-r4-c (handle +0.09 over fork-r3-a): final; cold = game/scenes/variants/fork-r4/fork-r4-c.tscn, heated = fork-r4-c-hot.tscn",
+ "votes": {
+  "fork-r4-a": "no", "fork-r4-a-hot": "no",
+  "fork-r4-b": "no", "fork-r4-b-hot": "no",
+  "fork-r4-c": "yes", "fork-r4-c-hot": "yes"
+ },
+ "notes": {},
+ "next": "implementation session: spec item 3 names fork-r4-c (the hot file shows the full-pulse look: whole metal head in crank orange); Bob promotes it to scenes/props/fork.tscn"
+}

@@ -12,7 +12,8 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 ## Runs by Task Type
 
 <!-- generated: run-summary (python -I _tools/sync_docs.py; do not edit by hand) -->
-393 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
+<!-- merge of laptop main + desktop milestone/0.2 (2026-11-20): run counts below are recounted from the combined csv; averages that both machines changed are carried over from one side and are stale until `python -I _tools/sync_docs.py` regenerates this block -->
+489 runs in [agent-runs.csv](agent-runs.csv). Averages by agent and phase; each measure averages only the runs that have it (— where none do).
 
 **Document review** (12 runs)
 
@@ -66,11 +67,11 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Ruth | post-ICM | 2 | — | 266,270 | 116 s |
 | **All** | | **46** | **23,802** | **123,576** | 105 s |
 
-**Doc audits** (12 runs)
+**Doc audits** (14 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Doris | post-ICM | 12 | 48,752 | 265,862 | 44 s |
+| Doris | post-ICM | 14 | 48,752 | 265,862 | 44 s |
 
 **Probes** (2 runs)
 
@@ -80,45 +81,46 @@ Martin's run hiring Clara was 39,232 final context but 234,632 total processed. 
 | Clara, one empty turn, prompt on stdin | post-ICM | 1 | — | 13,370 | — |
 | **All** | | **2** | **—** | **12,806** | — |
 
-**Subagent runs** (153 runs)
+**Subagent runs** (194 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Patricia (programmer) | post-ICM | 24 | 69,722 | 1,751,651 | 1,196 s |
+| Patricia (programmer) | post-ICM | 25 | 67,815 | 1,686,727 | 1,149 s |
 | Bob (builder) | post-ICM | 29 | 59,457 | 900,790 | 307 s |
 | Quinn (qa-build-engineer) | post-ICM | 30 | 94,194 | 3,036,694 | 1,166 s |
 | claude-code-guide | post-ICM | 3 | 52,724 | 281,989 | 374 s |
 | Martin (hiring-manager) | post-ICM | 8 | 42,429 | 277,777 | 72 s |
 | Ruth (research-assistant) | post-ICM | 1 | 37,318 | 203,725 | 107 s |
 | general-purpose | post-ICM | 12 | 97,793 | 1,257,531 | 165 s |
-| Terry (progression-tree-expert) | post-ICM | 1 | 34,830 | 142,788 | 168 s |
-| Milo (modeler) | post-ICM | 3 | 135,542 | 1,926,113 | 331 s |
-| Rex (script-runner) | post-ICM | 41 | 17,053 | 119,218 | 420 s |
+| Terry (progression-tree-expert) | post-ICM | 2 | 53,919 | 571,352 | 270 s |
+| Milo (modeler) | post-ICM | 12 | 86,387 | 836,745 | 238 s |
+| Rex (script-runner) | post-ICM | 68 | 16,911 | 113,579 | 362 s |
 | fork | post-ICM | 1 | 89,645 | 178,894 | 7 s |
-| **All** | | **153** | **59,883** | **1,232,768** | 619 s |
+| Gerard (gameplay-architect) | post-ICM | 3 | 93,639 | 683,935 | 301 s |
+| **All** | | **194** | **55,704** | **1,094,091** | 568 s |
 
-**Orchestrator** (45 runs)
-
-| Agent | Phase | Runs | Final context | Total processed | Duration |
-|---|---|---|---|---|---|
-| Orchestrator (main session) | post-ICM | 45 | — | 16,469,750 | 14,613 s |
-
-**Style loop** (7 runs)
+**Orchestrator** (56 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Vera | post-ICM | 5 | 22,004 | 48,632 | 14 s |
+| Orchestrator (main session) | post-ICM | 56 | — | 19,600,553 | 13,933 s |
+
+**Style loop** (14 runs)
+
+| Agent | Phase | Runs | Final context | Total processed | Duration |
+|---|---|---|---|---|---|
+| Vera | post-ICM | 12 | 23,914 | 51,891 | 19 s |
 | Bob | post-ICM | 2 | 28,634 | 153,404 | 28 s |
-| **All** | | **7** | **23,898** | **78,567** | 18 s |
+| **All** | | **14** | **24,588** | **66,393** | 20 s |
 
-**Goal agent** (95 runs)
+**Goal agent** (130 runs)
 
 | Agent | Phase | Runs | Final context | Total processed | Duration |
 |---|---|---|---|---|---|
-| Patricia (programmer) | post-ICM | 37 | 30,331 | 173,842 | 288 s |
-| Bob (builder) | post-ICM | 28 | 30,053 | 198,122 | 38 s |
-| Quinn (qa-build-engineer) | post-ICM | 30 | 38,828 | 392,762 | 91 s |
-| **All** | | **95** | **32,932** | **250,131** | 152 s |
+| Patricia (programmer) | post-ICM | 49 | 30,398 | 155,811 | 221 s |
+| Bob (builder) | post-ICM | 40 | 28,567 | 194,840 | 35 s |
+| Quinn (qa-build-engineer) | post-ICM | 41 | 38,362 | 377,009 | 79 s |
+| **All** | | **130** | **32,346** | **237,583** | 119 s |
 
 **Pick match** (1 run)
 
@@ -131,7 +133,7 @@ Notes on the Content generation runs:
 - **Rows before `biome-intros`** were logged by hand; from `biome-intros` on, `generate.py` and `critic_check.py` append them.
 - **William's 720,124-token `bee-journal-real` call** is research, not writing: 34 turns of WebSearch and WebFetch. It is why research moved to Ruth; leave it out of William's writing average.
 - **Ruth's Haiku brief** (339,442 tokens) overclaimed and ignored the template; she is back on Sonnet (see [team.md](team.md), Model reviews).
-- **Critic checks** (`_tools/critic_check.py` on `_tools/fixtures/onboarding-bad.md`, 3 known errors): the first (153,734) missed the false bloom fact; the second (72,423) missed the "cheapest" upgrade. Each caught 2 of 3; Clara's Lore check was then extended to game facts in tables and notes. The third (66,952, on main 2026-11-08) caught all three.
+- **Critic checks** (`_tools/critic_check.py` on `_tools/fixtures/onboarding-bad.md`, 3 known errors): the first (153,734) missed the false bloom fact; the second (72,423) missed the "cheapest" upgrade. Each caught 2 of 3; Clara's Lore check was then extended to game facts in tables and notes.
 - **Before 2026-11-01** (rows down to the regression run), Clara read the whole blackboard herself and later rounds copied the full draft; afterwards she gets only her slice, and later rounds a diff.
 
 A full design review (Round 1 + Round 2, 12 agent runs) used about 586k subagent tokens the first time and 634k the second. The orchestrator's synthesis is not included.

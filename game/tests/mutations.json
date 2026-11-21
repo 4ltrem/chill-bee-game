@@ -876,5 +876,500 @@
    "t_truck_home_loads_crate_without_trip"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 Flight Endurance cost uses level + 1",
+  "file": "scripts/economy.gd",
+  "find": "floori(config.flight_base_cost * pow(config.flight_cost_growth, lv))",
+  "replace": "floori(config.flight_base_cost * pow(config.flight_cost_growth, lv + 1.0))",
+  "expect": [
+   "t_shop_costs_floor_base_growth"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 Gearing cost rounds up",
+  "file": "scripts/economy.gd",
+  "find": "floori(config.gearing_base_cost * pow(config.gearing_cost_growth, lv))",
+  "replace": "ceili(config.gearing_base_cost * pow(config.gearing_cost_growth, lv))",
+  "expect": [
+   "t_shop_costs_floor_base_growth"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 a buy takes one dollar too many",
+  "file": "scripts/economy.gd",
+  "find": "\t\tmoney -= cost(id)\n",
+  "replace": "\t\tmoney -= cost(id) + 1\n",
+  "expect": [
+   "t_shop_buy_deducts_and_levels",
+   "t_shop_buy_button_real_click_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 a locked row can be bought",
+  "file": "scripts/economy.gd",
+  "find": "return not is_maxed(id) and not is_locked(id) and money >= cost(id)",
+  "replace": "return not is_maxed(id) and money >= cost(id)",
+  "expect": [
+   "t_shop_auto_sell_locked_until_delivery_1",
+   "t_shop_buttons_disabled_unaffordable_maxed_locked"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 a maxed row can still be bought",
+  "file": "scripts/economy.gd",
+  "find": "return not is_maxed(id) and not is_locked(id) and money >= cost(id)",
+  "replace": "return not is_locked(id) and money >= cost(id)",
+  "expect": [
+   "t_shop_buttons_disabled_unaffordable_maxed_locked"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 a buy is allowed one dollar short",
+  "file": "scripts/economy.gd",
+  "find": "return not is_maxed(id) and not is_locked(id) and money >= cost(id)",
+  "replace": "return not is_maxed(id) and not is_locked(id) and money >= cost(id) - 1",
+  "expect": [
+   "t_shop_buttons_disabled_unaffordable_maxed_locked"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 Auto-Sell gate needs one more Faster Delivery level",
+  "file": "scripts/economy.gd",
+  "find": "level(\"faster_delivery\") < config.auto_sell_unlock_delivery_level:",
+  "replace": "level(\"faster_delivery\") <= config.auto_sell_unlock_delivery_level:",
+  "expect": [
+   "t_shop_auto_sell_locked_until_delivery_1"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 the level text drops the max",
+  "file": "scripts/shop_ui.gd",
+  "find": "\"Lv %d / %d\" % [lv, Economy.max_level(id)]",
+  "replace": "\"Lv %d / %d\" % [lv, lv]",
+  "expect": [
+   "t_shop_rows_order_and_level_text"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 1 the shop list is taller than the screen",
+  "file": "scenes/main.tscn",
+  "find": "custom_minimum_size = Vector2(0, 128)\nlayout_mode = 2\nsize_flags_vertical = 3\nhorizontal_scroll_mode = 0",
+  "replace": "custom_minimum_size = Vector2(0, 1800)\nlayout_mode = 2\nsize_flags_vertical = 3\nhorizontal_scroll_mode = 0",
+  "expect": [
+   "t_shop_no_row_overlaps_other_controls"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 2 Flight Endurance no longer speeds the hive fill",
+  "file": "scripts/economy.gd",
+  "find": "float(config.base_bee_count) * flight_multiplier()",
+  "replace": "float(config.base_bee_count)",
+  "expect": [
+   "t_flight_fill_rate_level3"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork reach ignores the Heated level",
+  "file": "scripts/honeycomb.gd",
+  "find": "return config.uncap_radius * (1.0 + config.heated_fork_radius_bonus_per_level * float(level))",
+  "replace": "return config.uncap_radius * (1.0 + config.heated_fork_radius_bonus_per_level * float(level) * 0.1)",
+  "expect": [
+   "t_fork_reach_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 level 0 uncaps the neighbours too",
+  "file": "scripts/honeycomb.gd",
+  "find": "radius * cell_pitch + 0.001",
+  "replace": "radius * cell_pitch + 1.0",
+  "expect": [
+   "t_fork_reach_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the auto-scraper yield bonus is doubled",
+  "file": "scripts/honeycomb.gd",
+  "find": "return 1.0 + config.heated_fork_post_auto_yield_bonus_per_level * float(level)",
+  "replace": "return 1.0 + config.heated_fork_post_auto_yield_bonus_per_level * 2.0 * float(level)",
+  "expect": [
+   "t_fork_post_auto_yield_bonus"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the yield bonus applies without the auto-scraper",
+  "file": "scripts/honeycomb.gd",
+  "find": "if not config.dev_own_auto_scraper:",
+  "replace": "if config.dev_own_auto_scraper == null:",
+  "expect": [
+   "t_fork_post_auto_yield_bonus"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork stays after the drag ends",
+  "file": "scripts/uncap_fork.gd",
+  "find": "_dragging = false\n\tvisible = false\n\t_pulse_t = 0.0",
+  "replace": "_dragging = false\n\tvisible = true\n\t_pulse_t = 0.0",
+  "expect": [
+   "t_fork_prop_follows_drag_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork never shows on a second drag",
+  "file": "scripts/uncap_fork.gd",
+  "find": "_dragging = false\n\tvisible = false\n\t_pulse_t = 0.0",
+  "replace": "_dragging = true\n\tvisible = false\n\t_pulse_t = 0.0",
+  "expect": [
+   "t_fork_prop_follows_drag_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork sits far from the drag point",
+  "file": "scripts/uncap_fork.gd",
+  "find": "global_position = world_position",
+  "replace": "global_position = world_position + Vector3(0.0, 6.0, 0.0)",
+  "expect": [
+   "t_fork_prop_follows_drag_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the fork shows on a press that misses the combs",
+  "file": "scripts/honeycomb.gd",
+  "find": "\t\t_follow_over_emptied(from, to)\n\t\treturn\n\tvar collider",
+  "replace": "\t\t_follow_over_emptied(from, to)\n\t\tdrag_point.emit(from)\n\t\treturn\n\tvar collider",
+  "expect": [
+   "t_fork_prop_follows_drag_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the head pulses at Heated 0",
+  "file": "scripts/uncap_fork.gd",
+  "find": "if heated_level() < 1:",
+  "replace": "if heated_level() < 0:",
+  "expect": [
+   "t_fork_head_colour_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the head pulse takes twice as long",
+  "file": "scripts/uncap_fork.gd",
+  "find": "fposmod(t / pulse_seconds(), 1.0)",
+  "replace": "fposmod(t / (pulse_seconds() * 2.0), 1.0)",
+  "expect": [
+   "t_fork_head_colour_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the head peaks blue, not crank orange",
+  "file": "scripts/uncap_fork.gd",
+  "find": "Color = Color(0.95, 0.50, 0.20)",
+  "replace": "Color = Color(0.20, 0.50, 0.95)",
+  "expect": [
+   "t_fork_head_colour_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 3 the head glows at the peak",
+  "file": "scripts/uncap_fork.gd",
+  "find": "_head_material.albedo_color = _steel.lerp(hot_color, blend)",
+  "replace": "_head_material.albedo_color = _steel.lerp(hot_color, blend)\n\t\t_head_material.emission_enabled = blend > 0.5",
+  "expect": [
+   "t_fork_head_colour_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 one gear too many shows",
+  "file": "scripts/centrifuge.gd",
+  "find": "return gearing_level() + 1",
+  "replace": "return gearing_level() + 2",
+  "expect": [
+   "t_gearing_gears_visible_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 neighbouring gears turn the same way",
+  "file": "scripts/centrifuge.gd",
+  "find": "speed = -speed * float(GEAR_TEETH[i - 1]) / float(GEAR_TEETH[i])",
+  "replace": "speed = speed * float(GEAR_TEETH[i - 1]) / float(GEAR_TEETH[i])",
+  "expect": [
+   "t_gearing_gears_turn_opposite_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 gears turn only in the first minutes of the clock (second crank dead)",
+  "file": "scripts/centrifuge.gd",
+  "find": "gear.rotate_y(speed * delta)",
+  "replace": "gear.rotate_y(speed * delta * (1.0 if _clock < 5.0 else 0.0))",
+  "expect": [
+   "t_gearing_gears_turn_opposite_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 turns cut is 10% per level",
+  "file": "scripts/centrifuge.gd",
+  "find": "return maxf(1.0 - config.gearing_cut_per_level * float(gearing_level()), 0.0)",
+  "replace": "return maxf(1.0 - 0.10 * float(gearing_level()), 0.0)",
+  "expect": [
+   "t_gearing_turns_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 turns are rounded down",
+  "file": "scripts/centrifuge.gd",
+  "find": "return maxi(ceili(base * gearing_multiplier() - EPS), 1)",
+  "replace": "return maxi(floori(base * gearing_multiplier() + EPS), 1)",
+  "expect": [
+   "t_gearing_turns_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 gearing shortens bottling",
+  "file": "scripts/centrifuge.gd",
+  "find": "var s: float = config.bottling_seconds_per_jar",
+  "replace": "var s: float = config.bottling_seconds_per_jar * gearing_multiplier()",
+  "expect": [
+   "t_gearing_bottling_time_unchanged"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 own motor cut is 5% per level",
+  "file": "scripts/centrifuge.gd",
+  "find": "return maxf(1.0 - config.gearing_post_auto_time_cut_per_level * float(gearing_level()), 0.0)",
+  "replace": "return maxf(1.0 - 0.05 * float(gearing_level()), 0.0)",
+  "expect": [
+   "t_gearing_own_motor_cut"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 4 the motor cut applies without the motor",
+  "file": "scripts/centrifuge.gd",
+  "find": "\tif not config.dev_own_motor:\n\t\treturn 1.0\n\treturn maxf(1.0 - config.gearing_post_auto",
+  "replace": "\treturn maxf(1.0 - config.gearing_post_auto",
+  "expect": [
+   "t_gearing_own_motor_cut"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 DecalsSmall also shows at level 3",
+  "file": "scripts/truck.gd",
+  "find": "\"DecalsSmall\": level == 2,",
+  "replace": "\"DecalsSmall\": level >= 2,",
+  "expect": [
+   "t_delivery_look_groups_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 FlamesTop shows from level 3",
+  "file": "scripts/truck.gd",
+  "find": "\"FlamesTop\": level >= 4,",
+  "replace": "\"FlamesTop\": level >= 3,",
+  "expect": [
+   "t_delivery_look_groups_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 Stacks pipes use the flame material",
+  "file": "scenes/props/truck.tscn",
+  "find": "id=\"Mesh_Stack\"]\nmaterial = ExtResource(\"m_steel\")",
+  "replace": "id=\"Mesh_Stack\"]\nmaterial = ExtResource(\"m_flame\")",
+  "expect": [
+   "t_delivery_stacks_not_flame_material"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 trip cut is 10% per level",
+  "file": "scripts/truck.gd",
+  "find": "return config.truck_trip_seconds * maxf(1.0 - config.faster_delivery_trip_cut_per_level * float(level), 0.0)",
+  "replace": "return config.truck_trip_seconds * maxf(1.0 - 0.10 * float(level), 0.0)",
+  "expect": [
+   "t_delivery_trip_time_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 5 trip time ignores the level",
+  "file": "scripts/truck.gd",
+  "find": "return config.truck_trip_seconds * maxf(1.0 - config.faster_delivery_trip_cut_per_level * float(level), 0.0)",
+  "replace": "return config.truck_trip_seconds",
+  "expect": [
+   "t_delivery_trip_time_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 6 Auto-Sell never sells by itself",
+  "file": "scripts/truck.gd",
+  "find": "if auto_sell_owned() and is_full():",
+  "replace": "if false and is_full():",
+  "expect": [
+   "t_autosell_full_bed_leaves_by_itself",
+   "t_autosell_twice_matches"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 6 full bed leaves by itself without Auto-Sell",
+  "file": "scripts/truck.gd",
+  "find": "if auto_sell_owned() and is_full():",
+  "replace": "if is_full():",
+  "expect": [
+   "t_autosell_not_owned_full_bed_waits"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 6 Auto-Sell sends a part load too",
+  "file": "scripts/truck.gd",
+  "find": "if auto_sell_owned() and is_full():",
+  "replace": "if auto_sell_owned() and loaded_jars > 0:",
+  "expect": [
+   "t_autosell_part_load_sells_by_sell",
+   "t_autosell_full_bed_leaves_by_itself"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 6 Auto-Sell works only for the first load",
+  "file": "scripts/truck.gd",
+  "find": "sell()   # 0.2 item 6:",
+  "replace": "sell(); auto_sell_override = 0   # 0.2 item 6:",
+  "expect": [
+   "t_autosell_twice_matches"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 any upgrade sets phase 2",
+  "file": "scripts/economy.gd",
+  "find": "if id == \"auto_sell\" and lv >= 1 and phase < 2:",
+  "replace": "if (id == \"auto_sell\" or id == \"faster_delivery\") and lv >= 1 and phase < 2:",
+  "expect": [
+   "t_phase2_auto_sell_sets_once_toast_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 Auto-Sell never sets phase 2",
+  "file": "scripts/economy.gd",
+  "find": "if id == \"auto_sell\" and lv >= 1 and phase < 2:",
+  "replace": "if false and id == \"auto_sell\" and lv >= 1 and phase < 2:",
+  "expect": [
+   "t_phase2_auto_sell_sets_once_toast_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 phase 2 announced on every set",
+  "file": "scripts/economy.gd",
+  "find": "if id == \"auto_sell\" and lv >= 1 and phase < 2:",
+  "replace": "if id == \"auto_sell\" and lv >= 1:",
+  "expect": [
+   "t_phase2_auto_sell_sets_once_toast_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 toast shows every time",
+  "file": "scripts/farm_ui.gd",
+  "find": "if new_phase < 2 or _phase_toast_shown or _phase_toast == null:",
+  "replace": "if new_phase < 2 or _phase_toast == null:",
+  "expect": [
+   "t_phase2_auto_sell_sets_once_toast_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 7 locked Auto-Sell still sets phase 2",
+  "file": "scripts/economy.gd",
+  "find": "return not is_maxed(id) and not is_locked(id) and money >= cost(id)",
+  "replace": "return not is_maxed(id) and money >= cost(id)",
+  "expect": [
+   "t_phase2_locked_auto_sell_keeps_phase_1"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 French title left empty in the CSV",
+  "file": "translations/journal.csv",
+  "find": ",Bourdons\n",
+  "replace": ",\n",
+  "expect": [
+   "t_journal_csv_every_key_en_and_fr",
+   "t_journal_csv_equals_script_output"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 French translation not registered",
+  "file": "project.godot",
+  "find": ", \"res://translations/journal.fr.translation\"",
+  "replace": "",
+  "expect": [
+   "t_journal_tr_follows_locale"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 panel body shows the title key",
+  "file": "scripts/journal_ui.gd",
+  "find": "_body.text = tr(\"JOURNAL_%s_BODY\" % ENTRY_ID)",
+  "replace": "_body.text = tr(\"JOURNAL_%s_TITLE\" % ENTRY_ID)",
+  "expect": [
+   "t_journal_panel_text_matches_csv_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 panel text not refreshed on reopen",
+  "file": "scripts/journal_ui.gd",
+  "find": "func open() -> void:\n\t_refresh_text()",
+  "replace": "func open() -> void:\n\tif _title.text == \"\":\n\t\t_refresh_text()",
+  "expect": [
+   "t_journal_panel_text_matches_csv_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 8 generator drops the English title",
+  "file": "../_tools/journal_csv.py",
+  "find": "w.writerow([f\"JOURNAL_{eid}_TITLE\", en_t, fr_t])",
+  "replace": "w.writerow([f\"JOURNAL_{eid}_TITLE\", en_t.upper(), fr_t])",
+  "expect": [
+   "t_journal_csv_equals_script_output"
+  ],
+  "suite": "unit"
  }
 ]

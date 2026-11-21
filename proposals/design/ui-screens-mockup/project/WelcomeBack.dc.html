@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Welcome back</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>body{margin:0}</style>
+</helmet>
+<div style="width: 360px; height: 640px; position: relative; overflow: hidden; font-family: 'Nunito', system-ui, sans-serif; color: #331F05">
+  <img src="/_blob/307f54ef490d522affb7cf7eba22cf25" alt="0.1.4 farm view" style="position: absolute; left: 0; top: 0; width: 360px; height: 640px">
+  <div style="position: absolute; left: 0; top: 0"><dc-import name="Icons" hint-size="360px,640px"></dc-import></div>
+  <div style="position: absolute; inset: 0; background: rgba(51,31,5,0.5)"></div>
+  <section aria-label="Welcome back" style="position: absolute; left: 24px; right: 24px; top: 150px; background: #FFF5DB; border: 3px solid #59380D; border-radius: 22px; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px">
+    <h2 style="margin: 0; font: 800 26px 'Nunito'; text-align: center">Welcome back!</h2>
+    <p style="margin: 0; font: 700 16px 'Nunito'; text-align: center">While you were away for 3 h 12 min, your bees kept busy.</p>
+    <div style="display: flex; justify-content: space-between; font: 800 18px 'Nunito'; padding: 10px 0; border-top: 2px dashed #D1940D; border-bottom: 2px dashed #D1940D"><span>Honey made</span><span>22 jars</span></div>
+    <p style="margin: 0; font: 600 14px 'Nunito'; color: #61574C">The jars wait in the hive and its overflow, ready to harvest. Bees rest after 4 hours away.</p>
+    <button style="min-height: 60px; border-radius: 16px; border: 3px solid #59380D; background: #FFC21F; font: 800 16px 'Nunito'; color: #331F05; cursor: pointer">Back to the farm</button>
+    <button style="min-height: 60px; border-radius: 16px; border: 3px solid #59380D; background: #FFF5DB; font: 800 16px 'Nunito'; color: #331F05; cursor: pointer; line-height: 1.1">Watch an ad: 2× for [TBD] min<br><span style="font: 700 14px 'Nunito'">part of the ad money funds bee habitat</span></button>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -47,12 +47,12 @@ Every material colour must sit near one of these tokens (script: distance in Lab
 - **Biome glow** (glows; *provisional*, confirmed when the biome is built): glowing clover patches (GDD Art Style), Enchanted Grove mushrooms only
   - clover glow (0.70, 0.95, 0.55)
   - mushroom glow (0.60, 0.90, 0.95)
-- **Wood**: hive, frames, crate, truck bed
+- **Wood**: hive, frames, crate, truck bed, uncapping fork handle (designer, 2026-11-09)
   - hive (0.85, 0.72, 0.50)
   - lid (0.60, 0.45, 0.28)
   - frame (0.55, 0.35, 0.20)
   - crate (0.50, 0.33, 0.18)
-- **Metal**: centrifuge, spigot, crank arm
+- **Metal**: centrifuge, spigot, crank arm, Gearing gears, uncapping fork head (designer, 2026-11-09)
   - steel (0.60, 0.66, 0.74)
   - steel dark (0.45, 0.50, 0.58)
   - iron (0.33, 0.33, 0.37)
@@ -61,7 +61,7 @@ Every material colour must sit near one of these tokens (script: distance in Lab
 - **Shadow** (small parts only): chassis, tyres
   - charcoal (0.25, 0.25, 0.28)
   - tyre (0.10, 0.10, 0.10)
-- **Accent** (approved one by one): the truck's paint, the crank handle
+- **Accent** (approved one by one): the truck's paint, the crank handle; crank orange also on the heated fork head (a colour tween, never emission) and the truck's hot rod flames (designer, 2026-11-09)
   - truck red (0.75, 0.20, 0.20)
   - crank orange (0.95, 0.50, 0.20)
 - **UI**: text, buttons, panels
@@ -81,7 +81,7 @@ New token: proposed in a FAIL row's Fix and added here by the designer, never by
 |---|---|---|---|---|
 | V1 | Every material colour is within ΔE 12 of a palette token, in a role allowed for that object. | script | all | GDD Art Style; this palette |
 | V2 | Only Honey-role and Biome-glow-role materials emit light, and Biome glow only on its own flora. In a harvest view, only honey glows. | script | all | GDD Art Style (glowing clover), §2 (glowing honey), Biomes (glowing mushrooms); spec 0.1 |
-| V3 | **Accents are rare:** at most 2 accent-role colours per screen, each on one object. | script (count) + critic | all | the calm-palette rule above |
+| V3 | **Accents are rare:** at most 2 accent-role colours per screen, each on one object (an object is one prop: several parts of one prop count once; designer, 2026-11-09). | script (count) + critic | all | the calm-palette rule above |
 | V4 | Primitive meshes only (`BoxMesh`, `CylinderMesh`, `SphereMesh`, `PlaneMesh`, `PrismMesh`, `CapsuleMesh`); no imported meshes; no textures. | script | colorbox | spec 0.1, Look: colorbox |
 | V5 | Low-poly: no mesh above the vertex budget (default 2,000 per mesh, *provisional*: the GDD says only "low vertex counts"; Terry or the profiler sets it), flat-colour atlas only. | script | art | GDD Technical Constraints |
 | V6 | Shapes are chunky and rounded in feel: no thin spikes or knife edges facing the camera; nothing thinner than 0.05 units unless it is a rim or a handle. | critic (+ script for size) | all | GDD Bees & Characters ("chunky, rounded") |

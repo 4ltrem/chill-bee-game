@@ -13,7 +13,8 @@ Do NOT load: `GDD.md` unless the request names a prop the style guide cannot pla
 1. Check the request names a prop, a footprint and a variant count. If one is missing, stop and ask.
 2. Read the style reference scene and the palette materials you need.
 3. Write each variant as `<prop>-r<N>/<prop>-r<N>-a.tscn`, `-b`, `-c` (N = the vote round; a new folder every round, never an earlier round's, so each voted round survives until it is committed; `model_shots.py` refuses a folder without `-r<N>`): a root `Node3D` with primitive `MeshInstance3D` parts (Box, Cylinder, Sphere, Prism), palette materials only, origin at the footprint centre on the ground (y = 0).
-4. Make the variants different takes on the same prop, with the same footprint.
+4. Make the variants different takes on the same prop, with the same footprint. Group each feature under one named node and put any tilt on one `Pose` parent (the parts convention in `.claude/agents/modeler.md`).
+   - A later round that only recombines parts the designer has already seen (add B's part to A, drop a part, swap a material, nudge a part) is not a Milo run: the orchestrator writes it with `_tools/compose_variant.py OUT --base A.tscn --graft B.tscn:NODE --drop NODE --material NODE=NAME --move NODE=DX,DY,DZ`. Milo is for new shapes.
 5. Hand back the list of files and any palette token that had no material file.
 
 ## Outputs

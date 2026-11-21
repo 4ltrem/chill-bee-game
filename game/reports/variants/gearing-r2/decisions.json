@@ -1,0 +1,20 @@
+{
+ "question": "gearing-r2",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": "a combination: c's notched gears + a/d's hubs + a1's Gear1 size, on a's shrinking arc",
+ "votes": {
+  "gearing-r2-a1": "no", "gearing-r2-a5": "yes",
+  "gearing-r2-b1": "no", "gearing-r2-b5": "no",
+  "gearing-r2-c1": "yes", "gearing-r2-c5": "yes",
+  "gearing-r2-d1": "no", "gearing-r2-d5": "yes"
+ },
+ "notes": {
+  "gearing-r2-a1": "like the size of the gear",
+  "gearing-r2-a5": "I like the centers",
+  "gearing-r2-c5": "yes love the notches",
+  "gearing-r2-d5": "same like the centers of the gears"
+ },
+ "answers": "designer, 2026-11-09: layout = a's shrinking arc",
+ "next": "gearing-r3: the combined gear train, at Gearing 1 and 5"
+}

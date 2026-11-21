@@ -69,12 +69,18 @@ When hive storage reaches capacity in Phase 1, players trigger a tactile, three-
 
 The farm holds the hive, a centrifuge with a spigot, a jar crate and a pickup truck (a vintage truck). The whole harvest plays on the farm; for uncapping, the camera zooms in on the hive and the centrifuge.
 
+**Building the farm (from 0.4; full design: `proposals/design/build-from-start-r2.md`):** Build mode is open from the first launch. The farm starts with the hive and the truck only (the queen and the leftover magic of the world's creation built the truck), and the starting money pays for the first build, the centrifuge; the jar crate comes next. Until 0.4 the centrifuge and the crate are already built.
+* **Raw comb:** before any centrifuge reaches a hive, its harvest is scraped as usual onto the hive pile and sold as raw comb by the truck (a "Sell raw comb" pill) at a low price; a centrifuge placed in range later takes the pile at full value. No hive is ever a dead end.
+* **Ground jars:** a centrifuge with no crate stands full jars on the ground beside its spigot, up to a small cap, while the truck is away; the crate is the bigger buffer and replaces them.
+* **Several hives:** each hive has its own fork icon and meter; tapping one zooms on that hive, and the others keep filling.
+
 The hive is a body holding five frames (2 jars each at base) under a lid. The centrifuge is a glass bucket with a spigot, and a steel lid that carries the crank.
 
 * **Start:** When the hive is full, a fork icon floats above it. Tapping it starts the harvest.
 * **Stage 1: Uncapping (Tactile Swiping)**
-  * Tapping the fork icon zooms the camera in on the hive and the centrifuge. This first zoom always keeps both in focus, at every upgrade level; the crate and the truck are not in it. When the bucket is full, the camera pans to the centrifuge, the crate and the truck, with the hive partly visible in the upper-right corner. The hive's lid drops to the ground beside it and the first full frame slides up out of the body, standing upright. Frames never leave the hive; they only slide up and down.
+  * Tapping the fork icon zooms the camera in on the hive and the centrifuge. This first zoom always keeps both in focus, at every upgrade level; the crate and the truck are not in it. From 0.4 (free grid) the framing is computed at runtime for each placement: the first zoom frames the hive with the centrifuges in its close zone (where combs fly straight into the bucket, about 1–2 tiles); a hive whose centrifuge is farther is framed with its own hive pile. When the bucket is full, the camera pans to the centrifuge, the crate and the truck, with the hive partly visible in the upper-right corner. The hive's lid drops to the ground beside it and the first full frame slides up out of the body, standing upright. Frames never leave the hive; they only slide up and down.
   * Every player starts with the basic uncapping fork: dragging across the matte yellow capped wax cells scrapes them off, revealing glowing golden honey underneath. Each scraped cell pops, then flies into the centrifuge's bucket. When the bucket is full, its lid with the crank drops on, and further cells pile up next to the centrifuge; the piles load into the bucket by themselves when it is next empty.
+  * **Bee carry (from 0.4):** a centrifuge in the hive's close zone gets its cells by flying, as above. A centrifuge farther away, but within the bees' range, is fed by the bees: cells land on the hive pile beside the hive, and bees carry them along a visible bee lane into the bucket whenever its lid is off. A hive in range of several centrifuges splits its cells across all of them. Range and carry speed come from Flight Endurance and carry rate from Worker Swarm Count (Tree A); carrying never slows the hive's fill. Beyond range, the pile sells as raw comb. Post-launch, BeeTech Automation conveyors or pipes can take over a lane, and the freed bees give a production or pollination bonus (values TBD).
   * When a frame is fully uncapped it slides back down and the next full frame slides up, until no full frame is left; then the hive's lid goes back on and the camera zooms out. The player can leave at any time with Back: the hive closes, half-scraped frames keep their state, and the fork icon stays while any full frame remains.
   * Supported by particle pop effects, popping audio cues, and native mobile haptic feedback.
   * With the Long Fork (Tree B), tapping the fork icon hands the player the Long Fork, which uncaps the entire frame in one sweep.
@@ -83,24 +89,24 @@ The hive is a body holding five frames (2 jars each at base) under a lid. The ce
   * The centrifuge has a physical crank on its cylinder. The player taps or holds the crank, or anywhere on screen around it (but not on buttons such as Back), to spin it, spraying honey streams against its glass walls: as it spins, the combs inside melt into honey. Holding ramps the spin up to the fastest tap rate, so holding is never slower than tapping. There is no on-screen crank button.
   * When extraction is done, bottling starts by itself.
 * **Stage 3: Bottling & Selling**
-  * Empty glass jars wait in the jar crate. One at a time, a jar flies under the spigot and fills, while the honey level in the glass bucket drops until it is empty. Each full jar gets its lid and is loaded onto the truck, or back into the crate while the truck is away.
+  * Empty glass jars wait in the jar crate. One at a time, a jar flies under the spigot and fills, while the honey level in the glass bucket drops until it is empty. Each full jar gets its lid and is loaded onto the truck, or back into the crate while the truck is away (onto the ground beside the spigot, up to a small cap, when there is no crate yet).
   * When the truck is full (capacity TBD), a Sell ($X) icon floats above it, showing what the load will earn. Tapping it sells the load: the truck speeds off and comes back (trip time TBD), and a summary shows the jars sold, the price per jar and the total, plus tool precision and artisanal quality bonuses once those exist. Jars bottled while it is away wait in the crate and load when it returns.
 
 ### 3. Progression Trees & Economy Balance
 Progression is split across three synergizing upgrade paths using an exponential cost model ($\text{Cost} = \text{Base} \times \text{Growth}^{\text{Level}}$):
 
 * **Tree A: Bee Upgrades (Swarm Size & Flight Endurance)**
-  * *Worker Swarm Count:* Adds active foraging bees (+15% fill rate per level, base cost $25, 1.18x growth factor, max level 10).
-  * *Flight Endurance:* Increases bee movement speed between flowers and hive (+10% speed per level, base cost $15, 1.15x growth).
+  * *Worker Swarm Count:* Adds active foraging bees (+15% fill rate per level, base cost $25, 1.18x growth factor, max level 10). From 0.4 it also raises the bees' carry rate (cells per second carried from a hive pile to its centrifuges; values TBD, Terry).
+  * *Flight Endurance:* Increases bee movement speed between flowers and hive (+10% speed per level, base cost $15, 1.15x growth). From 0.4 it also sets how far bees carry combs (the centrifuge range, in tiles) and their carry speed; it gains a max level and is re-priced (values TBD, Terry).
 * **Tree B: Hive & Tool Efficiency**
   * *Heated Uncapping Fork:* Increases swipe radius by +12% per level and adds up to +5% batch bonus for clean cuts (base cost $40, 1.22x growth, max level 5).
   * *Centrifuge Gearing:* Reduces required extraction taps or hold time by -15% per level (base cost $35, 1.20x growth, max level 5).
-  * *Long Fork:* Makes uncapping quicker: uncap the entire frame in one sweep (tap the fork icon to take it). The final fork upgrade, a step past the Heated Uncapping Fork; it leads into the auto-scraper (unlock condition and cost TBD).
+  * *Long Fork:* Makes uncapping quicker: uncap the entire frame in one sweep (tap the fork icon to take it). The final fork upgrade, a step past the Heated Uncapping Fork; it leads into the auto-scraper (unlocks at Heated Fork level 3, one-time cost $200, provisional).
   * *Deep Frame:* Increases frame capacity from 2 jars to 5 jars per frame (10 to 25 jars per full hive). Deep frames are twice as long as standard frames, so they fill more of the screen while uncapping (base cost $150, 1.45x growth, max level 3).
-  * *Tool Upgrades After Automation:* Once harvesting is automated, the Heated Uncapping Fork applies as a flat +% yield bonus and Centrifuge Gearing as a flat −% extraction time (values TBD), so these upgrades keep their value.
+  * *Tool Upgrades After Automation:* Once harvesting is automated, the Heated Uncapping Fork applies as a flat +% yield bonus and Centrifuge Gearing as a flat −% extraction time (provisional: +4% yield and −8% extraction time per level, so +20% and −40% at level 5), so these upgrades keep their value. Gearing does not speed up bottling; bottling speed comes from the Spigot Flow upgrade (from 0.2.1; values provisional, TBD).
   * *Overflow Storage (optional):* Enlarges the free overflow buffer, so returning players have extra frames waiting to harvest (capacity and costs TBD).
-  * *Auto-Sell:* The sales truck leaves by itself when full and sells at the full price (costs TBD).
-  * *Automation:* Separate purchases with in-game money: the **motor** (the electric centrifuge spins by itself), the **auto-scraper** (the Long Fork mounted on a moving gantry, which uncaps frames by itself; unlocked after the Long Fork) and **Faster Delivery** (shorter truck trips). The first automation purchase moves the player into Phase 2; the capacity pause ends once the motor and the auto-scraper are both owned (costs TBD).
+  * *Auto-Sell:* The sales truck leaves by itself when full and sells at the full price (one-time $250, unlocks at Faster Delivery level 1, provisional; about 12 min into play).
+  * *Automation:* Separate purchases with in-game money: the **motor** (the electric centrifuge spins by itself), the **auto-scraper** (the Long Fork mounted on a moving gantry, which uncaps frames by itself; unlocked after the Long Fork) and **Faster Delivery** (shorter truck trips). The first automation purchase moves the player into Phase 2; the capacity pause ends once the motor and the auto-scraper are both owned. The motor and the auto-scraper are bought once per farm and equip every centrifuge and hive; each unit built afterwards costs a flat install fee on top of its price (values TBD, Terry). Gearing and Spigot Flow need a centrifuge and apply to every centrifuge. Provisional costs: motor $150 (unlocks at Centrifuge Gearing level 2; 3 s per spin), auto-scraper $400 (needs the Long Fork), Faster Delivery $60 base, 1.30x growth, max level 4, −15% of the base trip time per level (30 s down to 12 s).
   * *Artisanal Branding:* Increases base sale value per jar by +$2.50 (base cost $60, 1.25x growth, max level 10).
 * **Tree C: Native Habitat**
   Its own progression track, measured in biodiversity (Habitat Health and native bee species attracted) rather than honey. Upgrades are bought with in-game money (values TBD).
@@ -152,6 +158,8 @@ Progression is split across three synergizing upgrade paths using an exponential
 ### 4. Land, Grid & Units
 * **Indefinite Expansion:** Each biome can be expanded indefinitely by buying more land with in-game money (cost growth TBD).
 * **Grid Placement:** Players place each hive and flower unit on the biome's grid themselves. Space is limited, so the goal is the most honey production per tile.
+* **Build Mode from the Start (from 0.4):** A free grid from the first launch: the player places centrifuges, crates and hives on any free tile (tap the unit, tap a tile, Confirm; dragging is optional). The only link between units is range: a centrifuge serves every hive within bee range (Flight Endurance), and range only grows within a run. While a unit is held, tiles in range show a honeycomb pattern and the bee lanes preview. Moving units is free (not during a zoom or spin); there is no demolish or sell-back, and nothing breaks, wears or decays. Each biome is its own grid. A crate sits on a tile touching the centrifuge it serves.
+* **Centrifuge Tiers:** Bigger centrifuges (e.g., hand centrifuge, barrel, radial extractor) are separate units bought in Build mode that replace the old one on the same spot; every tier has a one-tile footprint, so lanes and the crate stay valid. Separate from Gearing (crank) and Spigot Flow (bottling). Capacities, costs and unlocks TBD (Terry).
 * **Hive & Flower Units:** Hives and flower patches are bought and placed as units. Each unit type has tiers (e.g., Langstroth hive → stacked hive → hive tower; wild patch → raised bed → vertical garden). Higher tiers cost much more in-game money but produce more in less space. Units can be upgraded in place.
 * **Jar Crate Tiers:** The jar crate has three tiers, each larger on the grid: tier 1 (a half crate, 1 cell), tier 2 (2 cells), tier 3 (3 cells in a row). Each tier holds more jars waiting and makes a bigger truck load (values TBD).
 * **Biome Units:** Each biome adds new top-tier units in its own style (e.g., chalet hives in Alpine Valley, lantern hives in Enchanted Grove).
@@ -188,6 +196,7 @@ Leaderboards are opt-in: the game is cozy by default, and only players who choos
 
 A guide character walks new players through their first session. Six candidate guides (`content/guides.md`: Melli, Pip, Lady Aura, Miel, Queen Maeve and Lumi, a bee-turned-sprite) share one script and differ in name, personality and signature lines; a playtest chooses one (designer, 2026-11-07). The guide:
 * Explains why the meadow matters and introduces the farm.
+* Guides the first build, the centrifuge (from 0.4), with the line that the bees will carry the comb to it; later beats: the crate when the ground jars fill, and a range hint the first time a hive is placed out of range.
 * Guides the first manual harvest (uncapping and centrifuge extraction).
 * Guides the first upgrade purchase.
 
@@ -198,7 +207,7 @@ A guide character walks new players through their first session. Six candidate g
 * **Text Size & One-Handed Play:** Adjustable text size, and all UI reachable with one thumb.
 
 ### 9. UI & Screens
-* **Farm View (Main Screen):** The pannable, zoomable pocket-dimension farm, including a build mode for buying land and placing hive and flower units on the grid.
+* **Farm View (Main Screen):** The pannable, zoomable pocket-dimension farm, including a build mode (open from the start, from 0.4) for buying land and placing centrifuges, crates, hive and flower units on the grid, with range tiles and bee lanes shown while placing.
 * **Upgrade Shop:** Trees A–C, automation, research, and the capstone.
 * **Worlds:** Load and switch between saved pocket worlds.
 * **Harvest Minigame:** The uncapping zoom on the hive and the centrifuge. Extraction, bottling and the sales truck play on the Farm View.
@@ -285,6 +294,15 @@ Terms used in this document and in the design and balance reports (`proposals/de
 | Rush | Meadow rush, first-biome rush, speedrun route, shortcut | Stay in Sunny Meadow, never unlock later biomes, and build and charge the Refinery there. Intentionally allowed. |
 | Alpine stop / Grove stop | Partial shortcut | Unlock some biomes but stop at Alpine Valley or Enchanted Grove instead of reaching the last biome. |
 | Content version | — | How many biomes existed when a run was played (launch = 2, post-launch = 4). Run times from different versions are never compared. |
+
+### Farm & Harvest
+| Term | Meaning |
+|---|---|
+| Raw comb | A hive's scraped cells sold by the truck without extraction, at a low price, when no centrifuge reaches the hive. |
+| Hive pile | The pile of scraped cells beside a hive, waiting for bees to carry them (or sold as raw comb). |
+| Bee lane | The dotted line from a hive to a centrifuge along which bees carry cells. |
+| Centrifuge range | How far bees carry cells from a hive pile to a centrifuge, in tiles; set by Flight Endurance. |
+| Close zone | The few tiles (about 1–2) within which cells fly straight into the centrifuge with no bee carry; the first zoom frames only the centrifuges in it. |
 
 ### Comparing Routes
 | Term | Meaning | Example |

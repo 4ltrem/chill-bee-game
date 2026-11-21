@@ -1,0 +1,22 @@
+{
+ "fork-r3-a-hot.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r3-a.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r3-b-hot.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ },
+ "fork-r3-b.png": {
+  "pass": true,
+  "summary": "no rows",
+  "rows": []
+ }
+}

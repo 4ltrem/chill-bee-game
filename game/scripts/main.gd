@@ -79,6 +79,10 @@ func _ready() -> void:
 	if _honeycomb != null:
 		_honeycomb.cell_scraped.connect(_on_cell_scraped)
 		_honeycomb.frame_done.connect(_on_frame_done)
+		var fork_prop: UncapFork = find_child("UncapFork", true, false) as UncapFork   # 0.2 item 3 look: follows the drag, hides when it ends
+		if fork_prop != null:
+			_honeycomb.drag_point.connect(fork_prop.follow)
+			_honeycomb.drag_ended.connect(fork_prop.release)
 	else:
 		push_warning("main.gd: no Honeycomb node under Hive (see game/specs/0.1-harvest.md, Node paths for Bob).")
 	if _pile == null:

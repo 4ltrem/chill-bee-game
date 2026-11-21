@@ -1,0 +1,11 @@
+{
+  "change": "whole hive scaled 1.4x (body 1.82, lid 1.96 inside the 2.0 cell): frame 1.38 x 0.85 world, cells x1.4, 7 x 5 kept",
+  "file": "c-1-uncap.png",
+  "label": "bigger frames",
+  "min_cell_px": 21.6,
+  "note": "you can zoom in even closer the hive and centrifuge the truck and crate dont need to be visible fgor the first zoom only the second in which the hive will be partly visible oin the upper right corner of the screen",
+  "option": "C",
+  "updatedAt": "2026-11-05T08:07:35.273Z",
+  "vote": "yes",
+  "zoom_size": 7.032
+}

@@ -25,6 +25,7 @@ const HEAP_RADIUS: float = 3.0     # (0.1.4 fix: was 3.4, outer cells poked past
 const HEAP_LAYER: float = 0.3      # one heap layer's height (a cell's height), in HeapRoot units
 const HEAP_PER_LAYER: int = 40     # cells per layer, spread over the disc (a 5-frame bucket is 5 layers)
 const GOLDEN_ANGLE: float = 2.39996
+const GEAR_TEETH: Array[int] = [16, 17, 11, 10, 8, 6]   # spec 0.2 item 4: each gear's own tooth count, Gear1..Gear6
 
 @export var config: GameConfig = GameConfig.live()
 
@@ -79,6 +80,7 @@ var _honey_level: MeshInstance3D
 var _honey_bottom: Node3D
 var _honey_top: Node3D
 var _spigot_jar: Node3D
+var _gears: Array[Node3D] = []   # Lid/Gears/Gear1..Gear6 (0.2 item 4), found by name
 var _fetch_remaining: float = 0.0  # seconds before the next empty jar is at the spigot (its delay plus jar_fly_seconds); the fill waits for it
 ## True when main.gd draws the jars itself (a traveling jar per fetch): the SpigotJar node then stays hidden.
 var external_jars: bool = false
@@ -220,7 +222,52 @@ func heap_cell_scale() -> float:
 ## in an earlier batch, so it needs no turns again (it still counts in `jars` and is bottled).
 func turns_needed() -> int:
 	var cell_jars: float = float(cells * config.frame_jars) / float(maxi(config.cells_per_frame(), 1))
-	return maxi(ceili(cell_jars * float(config.taps_per_jar) - EPS), 0)
+	var base: float = cell_jars * float(config.taps_per_jar)
+	if base <= EPS:
+		return 0
+	return maxi(ceili(base * gearing_multiplier() - EPS), 1)   # 0.2 item 4: ceil(base x (1 - cut x level)), at least 1
+
+
+# --- 0.2 item 4: Centrifuge Gearing ---
+
+## Test hook: a level >= 0 replaces the Economy's Gearing level.
+var gearing_level_override: int = -1
+
+
+## Gearing level in use (0 to gearing_max_level).
+func gearing_level() -> int:
+	var level: int = gearing_level_override if gearing_level_override >= 0 else UpgradeLevel.of("gearing")
+	return clampi(level, 0, config.gearing_max_level)
+
+
+## Share of the base crank turns and ramp time that remain: 1 - gearing_cut_per_level x level (never below 0).
+func gearing_multiplier() -> float:
+	return maxf(1.0 - config.gearing_cut_per_level * float(gearing_level()), 0.0)
+
+
+## The after-automation time cut multiplier: only with the motor owned (Dev toggle "own motor" in 0.2), else 1.
+func post_auto_multiplier() -> float:
+	if not config.dev_own_motor:
+		return 1.0
+	return maxf(1.0 - config.gearing_post_auto_time_cut_per_level * float(gearing_level()), 0.0)
+
+
+## Hold-to-crank ramp time: hold_ramp_seconds x gearing multiplier (x the after-automation cut with the motor owned).
+func ramp_seconds() -> float:
+	return config.hold_ramp_seconds * gearing_multiplier() * post_auto_multiplier()
+
+
+## Bottling seconds per jar: unchanged by Gearing, except the after-automation cut when gearing_post_auto_cut_includes_bottling.
+func bottling_seconds() -> float:
+	var s: float = config.bottling_seconds_per_jar
+	if config.gearing_post_auto_cut_includes_bottling:
+		s *= post_auto_multiplier()
+	return s
+
+
+## Gear nodes shown at the current level: Gear1..Gear(N + 1).
+func gears_shown() -> int:
+	return gearing_level() + 1
 
 
 ## The centrifuge icon was tapped: start cranking.
@@ -309,7 +356,7 @@ func advance(delta: float) -> void:
 			_count_turn()
 	spin_speed = maxf(spin_speed - config.spin_decay * delta, 0.0)
 	if held:
-		var ramp: float = clampf(_hold_time / maxf(config.hold_ramp_seconds, 0.001), 0.0, 1.0)
+		var ramp: float = clampf(_hold_time / maxf(ramp_seconds(), 0.001), 0.0, 1.0)
 		spin_speed = maxf(spin_speed, config.spin_max * ramp)
 	if state == State.DONE:
 		open_spigot()   # no Continue: bottling starts by itself after extraction; this frame's time is not counted
@@ -319,7 +366,7 @@ func advance(delta: float) -> void:
 
 
 func _advance_bottling(delta: float) -> void:
-	var per_jar: float = maxf(config.bottling_seconds_per_jar, 0.001)
+	var per_jar: float = maxf(bottling_seconds(), 0.001)
 	_bottle_timer += delta   # one cycle per jar: the empty flies in, then it fills; the cycle is exactly per_jar
 	while jars_bottled < _bottle_count and _bottle_timer >= per_jar:
 		_bottle_timer -= per_jar
@@ -441,6 +488,11 @@ func _ready() -> void:
 	_honey_bottom = find_child("HoneyBottom", true, false) as Node3D
 	_honey_top = find_child("HoneyTop", true, false) as Node3D
 	_spigot_jar = find_child("SpigotJar", true, false) as Node3D
+	for g in GEAR_TEETH.size():
+		var gear_name: String = "Gear" + str(g + 1)   # built first: contract_check reads a literal find_child name, and Bob's Lid/Gears holds Gear1..Gear6
+		var gear: Node3D = find_child(gear_name, true, false) as Node3D
+		if gear != null:
+			_gears.append(gear)
 	if _spigot_jar != null:
 		_spigot_jar.visible = false
 	if _lid != null:
@@ -481,9 +533,26 @@ func _process(delta: float) -> void:
 			_spinner.rotate_y(spin_speed * delta)
 		if _lid != null and not lid_open:
 			_lid.rotate_y(spin_speed * delta)
+	_update_gears(delta)
 	_update_heap()
 	_update_honey_level()
 	_update_spigot_jar(delta)
+
+
+## 0.2 item 4 look: Gear1..Gear(N + 1) show at Gearing N. Each gear turns about its own Y with the crank (spin_speed); neighbours mesh,
+## so they turn opposite ways and speed ~ 1 / teeth (tooth counts 16, 17, 11, 10, 8, 6; Gear1's the crank's).
+func _update_gears(delta: float) -> void:
+	if _gears.is_empty():
+		return
+	var shown: int = gears_shown()
+	var speed: float = spin_speed
+	for i in _gears.size():
+		var gear: Node3D = _gears[i]
+		gear.visible = i < shown
+		if i > 0:
+			speed = -speed * float(GEAR_TEETH[i - 1]) / float(GEAR_TEETH[i])
+		if gear.visible and spin_speed > 0.0:
+			gear.rotate_y(speed * delta)
 
 
 func _update_heap() -> void:
@@ -547,7 +616,7 @@ func spigot_jar_fraction() -> float:
 ## Fill progress of the current jar: 0 while it flies in (the first jar_fly_seconds of its cycle), 1 at the cycle's end.
 func _fill_fraction() -> float:
 	var fly: float = maxf(config.jar_fly_seconds, 0.0)
-	return clampf((_bottle_timer - fly) / maxf(config.bottling_seconds_per_jar - fly, 0.001), 0.0, 1.0)
+	return clampf((_bottle_timer - fly) / maxf(bottling_seconds() - fly, 0.001), 0.0, 1.0)
 
 
 func _update_spigot_jar(delta: float) -> void:

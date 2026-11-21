@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Build mode</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.chip{flex:none;min-height:60px;padding:0 12px;border-radius:14px;border:3px solid #59380D;background:#FFF5DB;font:800 16px 'Nunito';color:#331F05;cursor:pointer}
+.chip.on{background:#FFC21F}
+.item{flex:none;width:100px;min-height:96px;border-radius:14px;border:3px solid #59380D;background:#FFFFFF;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:800 14px 'Nunito';color:#331F05;cursor:pointer;padding:4px}
+.pill{min-height:60px;padding:0 12px;border-radius:30px;border:3px solid #59380D;background:#FFF5DB;font:800 16px 'Nunito';color:#331F05;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 360px; height: 640px; position: relative; overflow: hidden; font-family: 'Nunito', system-ui, sans-serif; color: #331F05">
+  <img src="/_blob/307f54ef490d522affb7cf7eba22cf25" alt="0.1.4 farm view" style="position: absolute; left: 0; top: 0; width: 360px; height: 640px">
+  <div style="position: absolute; left: 0; right: 0; top: 0; height: 80px; background: #4D381A; border-bottom: 3px solid #59380D; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; box-sizing: border-box">
+    <div style="color: #FFF5DB"><div style="font: 800 20px 'Nunito'">Build mode</div><div style="font: 700 14px 'Nunito'">$1,240 · tap a tile to place</div></div>
+    <button class="pill" style="background: #FFC21F">Done</button>
+  </div>
+  <div aria-hidden="true" style="position: absolute; left: 270px; top: 395px; width: 52px; height: 52px; border: 3px dashed #331F05; background: rgba(255,245,219,0.55); transform: translate(-50%,-50%) scaleY(0.58) rotate(45deg)"></div>
+  <div aria-hidden="true" style="position: absolute; left: 172px; top: 232px; width: 104px; height: 90px; border: 3px dashed #331F05; border-radius: 12px"></div>
+  <div style="position: absolute; left: 96px; top: 330px; display: flex; gap: 6px">
+    <button class="pill">Move</button><button class="pill" style="background: #FFC21F">Upgrade · [TBD]</button>
+  </div>
+  <section aria-label="Build tray" style="position: absolute; left: 0; right: 0; bottom: 0; height: 196px; background: #FFF5DB; border-top: 3px solid #59380D; border-radius: 22px 22px 0 0; padding: 10px 12px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; gap: 6px; overflow: hidden">
+      <button class="chip">Hives</button><button class="chip on">Flowers</button><button class="chip">Crate</button><button class="chip">Land</button><button class="chip">Refinery</button>
+    </div>
+    <div style="display: flex; gap: 8px; overflow: hidden">
+      <button class="item"><span style="width: 26px; height: 26px; border-radius: 50%; background: #F7A8C7; border: 2px solid #59380D"></span>Wild patch<span style="font-weight: 700">$[TBD]</span></button>
+      <button class="item" style="background: #FFF5DB; color: #61574C; border-color: #61574C"><span>Raised bed</span><span style="font-weight: 700">Research to unlock</span></button>
+      <button class="item" style="background: #FFF5DB; color: #61574C; border-color: #61574C"><span>Vertical garden</span><span style="font-weight: 700">Research to unlock</span></button>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

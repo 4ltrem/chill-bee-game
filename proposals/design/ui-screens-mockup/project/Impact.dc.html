@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Impact and Leaderboards</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.fx{font:700 14px 'Nunito';color:#61574C}
+.tab{flex:none;min-height:60px;padding:0 12px;border-radius:14px;border:3px solid #59380D;background:#FFF5DB;font:800 16px 'Nunito';color:#331F05;cursor:pointer}
+.tab.on{background:#FFC21F}
+.box{border:3px solid #59380D;border-radius:16px;background:#FFFFFF;padding:10px;display:flex;flex-direction:column;gap:4px}
+.r{display:flex;justify-content:space-between;font:800 14px 'Nunito';padding:4px 0;border-bottom:2px dashed #D1940D}
+</style>
+</helmet>
+<div style="width: 360px; height: 640px; position: relative; overflow: hidden; font-family: 'Nunito', system-ui, sans-serif; color: #331F05">
+  <img src="/_blob/307f54ef490d522affb7cf7eba22cf25" alt="0.1.4 farm view" style="position: absolute; left: 0; top: 0; width: 360px; height: 640px">
+  <div style="position: absolute; inset: 0; background: rgba(51,31,5,0.6)"></div>
+  <section aria-label="Impact and leaderboards" style="position: absolute; left: 0; right: 0; top: 84px; bottom: 0; background: #FFF5DB; border: 3px solid #59380D; border-bottom: 0; border-radius: 22px 22px 0 0; padding: 12px 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <h2 style="margin: 0; font: 800 24px 'Nunito'">Impact</h2>
+      <button aria-label="Close Impact" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #59380D; background: #FFF5DB; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#331F05" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div style="display: flex; gap: 6px">
+      <button class="tab on">Habitat</button><button class="tab">My best runs</button><button class="tab" style="color: #61574C; border-color: #61574C">Ranked · later</button>
+    </div>
+    <div class="box">
+      <span class="fx">Players together have helped restore</span>
+      <span style="font: 800 26px 'Nunito'">[TBD] m² of bee habitat</span>
+      <span class="fx">Updated [date] · with Canadian conservation partners</span>
+    </div>
+    <div class="box">
+      <div style="font: 800 16px 'Nunito'">Where the money goes</div>
+      <div class="r"><span>Rewarded ads</span><span>[TBD]% donated</span></div>
+      <div class="r"><span>Impact Pass</span><span>[TBD]% donated</span></div>
+      <div class="r" style="border-bottom: 0"><span>Patron Pass</span><span>[TBD]% donated</span></div>
+    </div>
+    <div class="box">
+      <div style="font: 800 16px 'Nunito'">Best run (this device)</div>
+      <div class="r" style="border-bottom: 0"><span>Normal route · 0 Crystals · unboosted</span><span>[time]</span></div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

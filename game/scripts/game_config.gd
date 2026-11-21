@@ -13,6 +13,8 @@ extends Resource
 @export var swarm_base_cost: float = 25.0              # GDD Tree A
 @export var swarm_cost_growth: float = 1.18            # cost = base * growth^level (GDD Tree A)
 @export var swarm_max_level: int = 10                  # GDD Tree A
+@export var flight_speed_bonus_per_level: float = 0.10 # PLACEHOLDER (0.2 item 2; Dev panel): Flight Endurance, +10% bee speed and hive fill per level
+@export var flight_max_level: int = 10                 # PLACEHOLDER (0.2 item 2; Dev panel): Flight Endurance max level
 
 # --- Placeholders (TBD in the GDD) ---
 @export var base_seconds_per_jar: float = 6.0          # PLACEHOLDER (GDD TBD): 1 jar per 6 s, one frame in 60 s
@@ -75,7 +77,36 @@ extends Resource
 @export var spin_farm_visual_px: int = 60             # 0.1.4 item 22 (Design Votes spin-r1: C): Spin's drawn size in the farm view only; touch area stays 120
 @export var spin_zoom_offset: float = 80.0            # 0.1.4 item 22 (Design Votes spin-r1: C): extra px Spin sits lower in the first zoom only
 
-const DEFAULT_PATH := "res://scripts/default_config.tres"
+# --- 0.2 (game/specs/0.2-first-automation.md, item 4): Centrifuge Gearing ---
+@export var gearing_cut_per_level: float = 0.15        # PLACEHOLDER (spec 0.2): share of crank turns and hold-ramp time cut per Gearing level
+@export var gearing_max_level: int = 5                 # PLACEHOLDER (spec 0.2): Gearing's highest level
+@export var gearing_post_auto_time_cut_per_level: float = 0.08   # PLACEHOLDER (spec 0.2): extra time cut per level, only with the motor owned (no effect in 0.2)
+@export var gearing_post_auto_cut_includes_bottling: bool = false # PLACEHOLDER (spec 0.2): the after-automation cut also shortens bottling
+@export var dev_own_motor: bool = false                # Dev toggle "own motor": acts as if the motor were owned (the motor arrives after 0.2)
+
+# --- 0.2 (game/specs/0.2-first-automation.md, item 3): Heated Uncapping Fork ---
+@export var uncap_radius: float = 0.5                  # PLACEHOLDER (spec 0.2): fork reach at level 0, in cell pitches around the hit cell (below the 0.866 neighbour spacing = the hit cell only)
+@export var heated_fork_radius_bonus_per_level: float = 1.0   # PLACEHOLDER (spec 0.2): reach = uncap_radius x (1 + this x level)
+@export var heated_fork_max_level: int = 5             # spec 0.2: Heated Fork's highest level
+@export var heated_fork_post_auto_yield_bonus_per_level: float = 0.04   # spec 0.2: yield bonus per level, only with the auto-scraper owned (no effect in 0.2)
+@export var fork_pulse_seconds: float = 1.0            # PLACEHOLDER (spec 0.2): one steel -> crank orange -> steel head pulse
+@export var faster_delivery_max_level: int = 4          # PLACEHOLDER (spec 0.2 item 5): Faster Delivery's highest level
+@export var faster_delivery_trip_cut_per_level: float = 0.15   # PLACEHOLDER (spec 0.2 item 5): trip time x (1 - this x level): 30 -> 25.5 -> 21 -> 16.5 -> 12 s
+@export var dev_own_auto_scraper: bool = false        # Dev toggle "own auto-scraper": acts as if the auto-scraper were owned (it arrives after 0.2)
+
+# --- 0.2 item 1: shop costs, cost = base x growth^level (spec 0.2 items 2-6; Dev panel) ---
+@export var flight_base_cost: float = 15.0             # PLACEHOLDER (spec 0.2 item 2)
+@export var flight_cost_growth: float = 1.15           # PLACEHOLDER (spec 0.2 item 2)
+@export var heated_fork_base_cost: float = 40.0        # PLACEHOLDER (spec 0.2 item 3)
+@export var heated_fork_cost_growth: float = 1.22      # PLACEHOLDER (spec 0.2 item 3)
+@export var gearing_base_cost: float = 35.0            # PLACEHOLDER (spec 0.2 item 4)
+@export var gearing_cost_growth: float = 1.20          # PLACEHOLDER (spec 0.2 item 4)
+@export var faster_delivery_base_cost: float = 60.0    # PLACEHOLDER (spec 0.2 item 5)
+@export var faster_delivery_cost_growth: float = 1.30  # PLACEHOLDER (spec 0.2 item 5)
+@export var auto_sell_unlock_delivery_level: int = 1    # PLACEHOLDER (spec 0.2 item 6): Faster Delivery level that unlocks Auto-Sell
+@export var auto_sell_cost: float = 250.0             # PLACEHOLDER (spec 0.2 item 6): one-time price; unlocks at Faster Delivery 1
+
+const DEFAULT_PATH :="res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read
 const DEV_SETTING := "chill_bee/dev_mode"
 

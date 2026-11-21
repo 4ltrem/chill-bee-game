@@ -1,0 +1,9 @@
+{
+ "question": "gearing-r6",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": "gearing-r6-b5 (Gearing 5, six gears) and gearing-r6-b0 (Gearing 0): final for 0.2",
+ "votes": {"gearing-r6-b0": "yes", "gearing-r6-b5": "yes"},
+ "notes": {"gearing-r6-b5": "good enough for now, will need revision later"},
+ "next": "promoted by Bob in the 0.2 build; a later look revision is in README TBDs"
+}

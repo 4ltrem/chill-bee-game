@@ -2,15 +2,16 @@ extends "res://tests/test_helpers_3.gd"
 
 # Quinn: economy tests, split from run_tests.gd 2026-11-05 (names unchanged). Each file extends the one before it.
 
-# L67: cost = 25 x 1.18^level, rounded; max level 10.
+# L67: cost = 25 x 1.18^level; max level 10. Rounding replaced by 0.2 item 1 (game/specs/0.2-first-automation.md):
+# "a buy button showing the next cost ($, rounded down)", so floori, as t_shop_costs_floor_base_growth.
 func t_cost_formula() -> void:
 	var e: Node = _eco()
 	var base: float = float(cv("swarm_base_cost"))
 	var growth: float = float(cv("swarm_cost_growth"))
-	eq(e.call("swarm_cost"), roundi(base), "level 0 cost")
+	eq(e.call("swarm_cost"), floori(base), "level 0 cost")
 	for lvl in int(cv("swarm_max_level")):
 		e.set("swarm_level", lvl)
-		eq(e.call("swarm_cost"), roundi(base * pow(growth, lvl)), "cost at level %d" % lvl)
+		eq(e.call("swarm_cost"), floori(base * pow(growth, lvl)), "cost at level %d" % lvl)
 	_fin()
 
 

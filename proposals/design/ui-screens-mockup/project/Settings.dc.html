@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.fx{font:700 14px 'Nunito';color:#61574C}
+.row{display:flex;align-items:center;justify-content:space-between;min-height:60px;border-bottom:2px dashed #D1940D;font:800 16px 'Nunito'}
+.row input[type=checkbox]{width:44px;height:44px;accent-color:#D1940D}
+.seg{min-width:60px;min-height:60px;border:3px solid #59380D;background:#FFF5DB;font:800 16px 'Nunito';color:#331F05;cursor:pointer}
+.seg.on{background:#FFC21F}
+</style>
+</helmet>
+<div style="width: 360px; height: 640px; position: relative; overflow: hidden; font-family: 'Nunito', system-ui, sans-serif; color: #331F05">
+  <img src="/_blob/307f54ef490d522affb7cf7eba22cf25" alt="0.1.4 farm view" style="position: absolute; left: 0; top: 0; width: 360px; height: 640px">
+  <div style="position: absolute; inset: 0; background: rgba(51,31,5,0.6)"></div>
+  <section aria-label="Settings" style="position: absolute; left: 0; right: 0; top: 84px; bottom: 0; background: #FFF5DB; border: 3px solid #59380D; border-bottom: 0; border-radius: 22px 22px 0 0; padding: 12px 14px; box-sizing: border-box; display: flex; flex-direction: column">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px">
+      <h2 style="margin: 0; font: 800 24px 'Nunito'">Settings</h2>
+      <button aria-label="Close Settings" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #59380D; background: #FFF5DB; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#331F05" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <label class="row">Vibration <input type="checkbox" checked></label>
+    <label class="row">Sound effects <input type="checkbox" checked></label>
+    <label class="row">Music <input type="checkbox"></label>
+    <div class="row"><span>Text size</span><span style="display: flex"><button class="seg" style="border-radius: 14px 0 0 14px; font-size: 14px">A</button><button class="seg on" style="border-left: 0; border-right: 0">A</button><button class="seg" style="border-radius: 0 14px 14px 0; font-size: 20px">A</button></span></div>
+    <div class="row"><span>Language</span><span style="display: flex"><button class="seg on" style="border-radius: 14px 0 0 14px; padding: 0 10px">English</button><button class="seg" style="border-radius: 0 14px 14px 0; border-left: 0; padding: 0 10px">Français</button></span></div>
+    <label class="row" style="border-bottom: 0">Ranked runs (opt-in) <input type="checkbox"></label>
+    <span class="fx">Ranked boards come after launch. Names are built from word lists; kid mode has no public name.</span>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

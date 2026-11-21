@@ -5,9 +5,9 @@
 - [Guide playtest](guide-playtest.md) — later: playtest Melli, Pip, Lady Aura and Miel; needs signature lines first
 - [Usage calibration](usage-calibration.md) — every agent run logs /usage before and after, plus orchestrator tokens
 - [0.1.3 play-test](playtest-0-1-3.md) — 11/6: UI broken (Back inconsistent, Spin/Harvest move, x5 tag overlaps); noted, not fixing yet
-- [Session handoff](session-handoff.md) — read first: 0.1.4 items 1-21 done (948a49e), unit 178/178, both builds rebuilt; waits on designer play-test + itch upload; end-of-day not run; NO content run until A4 grader items are built
+- [Session handoff](session-handoff.md) — read first: desktop milestone/0.2 (0.2.0 built, play-tested) merged into laptop main, staged NOT committed; 0.2.1 specced (items 9-14), build after budget allow; roadmap + build-from-start-r2 await acceptance; NO content run until A4 grader item (a) is built
 - [Dev mode and pacing](dev-mode-and-pacing.md) — every spec gets an in-game Dev mode; all tunables in config; placeholders err slow
-- [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A6 11/12, A5 due 11/15, A7 11/19, final 11/24
+- [Course milestones](course-milestones.md) — MILESTONES.md: 0.1 Harvest 11/9, A5 due 11/15, A7 11/19, A6 11/22, final 11/24
 - [A/B comparison page](ab-comparison-page.md) — every creative A/B choice AND every numerical visual change (scale, offset, size) becomes a new section of the one Design Votes artifact, built by script; never a new artifact or browser tab
 - [Cost rules](cost-rules.md) — 9 approved token cuts: godot_run/build/mutate scripts, split tests, sliced briefs, 150-word replies, fresh session per milestone
 - [Edit lines only](edit-lines-only.md) — change only the needed lines with Edit; no whole-file rewrite scripts
@@ -17,6 +17,7 @@
 - [Commit to main](commit-to-main.md) — worktree inside the repo, `-c core.hooksPath=.githooks`, push with GCM_INTERACTIVE=never
 - [Scripted shots](scripted-shots.md) — same moments = `_tools/ui_shots.py`; agent only when a new screen/phase/menu is added; gradual animations shot at several points
 - [Variant shots](variant-shots.md) — Milo's variants: one shared grid, one load, close-up shot of each
+- [Compose variants](compose-variants.md) — recombination rounds = `compose_variant.py` recipes; Milo only for new shapes, features as named groups
 - [Demo link submissions](demo-link-submissions.md) — every assignment is a demo link, resubmitted after each milestone
 - [Model routing](model-routing.md) — small admin tasks go to a cheap-model subagent, never a /model switch
 - [Drafts folder](drafts-folder.md) — unfinished work for a later session goes in _meta/drafts/<version>/, never temp; the handoff links it
@@ -25,8 +26,11 @@
 - [Prefer Bash](prefer-bash.md) — shell work in Bash with Linux tools (tail, grep, env VAR=x), not PowerShell cmdlets
 - [No Select-String](no-select-string.md) — search with the Grep tool, never PowerShell Select-String
 - [Fix needs commit](fix-needs-commit.md) — never say "fixed" without the commit that changed the bug's code; a green test isn't a fix
+- [No pick vote after play-test](no-pick-vote-after-playtest.md) — no Design Votes round for models the designer play-tests; never one-column full-size stacks
 - [Look before done](look-before-done.md) — never call a model change done on tests alone; compare fresh shots with the picked variant
 - [Spec consistency](spec-consistency.md) — before adding a play-test item, grep the spec for the same object/view and fix contradictions in the same edit
+- [UI design prefs](ui-design-prefs.md) — read UI_DESIGN.md before UI work: real shots + icons, no nav bar, fork meter, Jelly icon K, variants with sliders
+- [Ask with quiz tool](ask-with-quiz-tool.md) — open questions for the designer go in AskUserQuestion, never a text list
 - [Repo only](repo-only.md) — write only inside the repo (hook-enforced); reading outside is fine; moving/deleting outside files needs a yes
 - [GDD review decisions](gdd-review-decisions.md) — GDD is a first draft; leaderboard split by purchase status, habitat health in Flora slot
 - [ICM run phases](icm-run-phases.md) — tag agent runs pre-ICM / post-ICM in _meta/agent-runs.md

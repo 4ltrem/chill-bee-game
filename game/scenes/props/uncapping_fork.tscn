@@ -1,0 +1,94 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://scripts/uncap_fork.gd" id="1_fork"]
+[ext_resource type="Material" path="res://materials/fork_head.tres" id="m_head"]
+[ext_resource type="Material" path="res://materials/wood.tres" id="m_wood"]
+
+[sub_resource type="CylinderMesh" id="Mesh_tine"]
+material = ExtResource("m_head")
+top_radius = 0.03
+bottom_radius = 0.03
+height = 0.7125
+
+[sub_resource type="BoxMesh" id="Mesh_crossbar"]
+material = ExtResource("m_head")
+size = Vector3(0.525, 0.225, 0.18)
+
+[sub_resource type="CylinderMesh" id="Mesh_cap"]
+material = ExtResource("m_head")
+top_radius = 0.1125
+bottom_radius = 0.1125
+height = 0.18
+
+[sub_resource type="BoxMesh" id="Mesh_ferrule"]
+material = ExtResource("m_head")
+size = Vector3(0.33, 0.165, 0.12)
+
+[sub_resource type="CylinderMesh" id="Mesh_handle"]
+material = ExtResource("m_wood")
+top_radius = 0.1275
+bottom_radius = 0.1275
+height = 0.535
+
+[sub_resource type="SphereMesh" id="Mesh_end"]
+material = ExtResource("m_wood")
+radius = 0.1275
+height = 0.255
+
+[node name="Fork" type="Node3D"]
+script = ExtResource("1_fork")
+
+[node name="Pose" type="Node3D" parent="."]
+transform = Transform3D(0.6, 0, 0, 0, 0.5196, 0.3, 0, -0.3, 0.5196, 0, 0.06, 0)
+
+[node name="Head" type="Node3D" parent="Pose"]
+
+[node name="Tine1" type="MeshInstance3D" parent="Pose/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.255, 0.35625, 0)
+mesh = SubResource("Mesh_tine")
+
+[node name="Tine2" type="MeshInstance3D" parent="Pose/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1275, 0.35625, 0)
+mesh = SubResource("Mesh_tine")
+
+[node name="Tine3" type="MeshInstance3D" parent="Pose/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35625, 0)
+mesh = SubResource("Mesh_tine")
+
+[node name="Tine4" type="MeshInstance3D" parent="Pose/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1275, 0.35625, 0)
+mesh = SubResource("Mesh_tine")
+
+[node name="Tine5" type="MeshInstance3D" parent="Pose/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.255, 0.35625, 0)
+mesh = SubResource("Mesh_tine")
+
+[node name="CrossbarBox" type="MeshInstance3D" parent="Pose/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.825, 0)
+mesh = SubResource("Mesh_crossbar")
+
+[node name="CrossbarCapL" type="MeshInstance3D" parent="Pose/Head"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, -0.2625, 0.825, 0)
+mesh = SubResource("Mesh_cap")
+
+[node name="CrossbarCapR" type="MeshInstance3D" parent="Pose/Head"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0.2625, 0.825, 0)
+mesh = SubResource("Mesh_cap")
+
+[node name="Ferrule" type="MeshInstance3D" parent="Pose/Head"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.02, 0)
+mesh = SubResource("Mesh_ferrule")
+
+[node name="Handle" type="Node3D" parent="Pose"]
+
+[node name="HandleBar" type="MeshInstance3D" parent="Pose/Handle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3975, 0)
+mesh = SubResource("Mesh_handle")
+
+[node name="HandleBottom" type="MeshInstance3D" parent="Pose/Handle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.13, 0)
+mesh = SubResource("Mesh_end")
+
+[node name="HandleTop" type="MeshInstance3D" parent="Pose/Handle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.665, 0)
+mesh = SubResource("Mesh_end")

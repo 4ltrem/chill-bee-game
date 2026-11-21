@@ -82,7 +82,7 @@ func _process(delta: float) -> void:
 	# Dev mode can change visual_bee_cap or the bee counts live: resize when the target differs (rare, not per bee).
 	if mini(Economy.bee_count(), Economy.config.visual_bee_cap) != _drawn:
 		_resize_flock()
-	_time += delta * speed * TAU
+	_time += delta * speed * Economy.flight_multiplier() * TAU
 	var mm: MultiMesh = multimesh
 	var avoiding: bool = _avoid_camera != null and _avoid_camera.is_inside_tree()
 	var rect := Rect2()

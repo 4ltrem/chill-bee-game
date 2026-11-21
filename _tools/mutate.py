@@ -116,6 +116,11 @@ def main(argv=None):
     tmp = tempfile.mkdtemp(prefix="cbg-mutate-")
     copy = os.path.join(tmp, "game")
     shutil.copytree(os.path.abspath(args.root), copy, ignore=shutil.ignore_patterns("builds", "reports"))
+    # tests that reach outside game/ (test_journal.gd runs ../_tools/journal_csv.py, which reads content/) need these beside the copy
+    for sibling in ("_tools", "content"):
+        src = os.path.join(os.path.dirname(os.path.abspath(args.root)), sibling)
+        if os.path.isdir(src):
+            shutil.copytree(src, os.path.join(tmp, sibling), ignore=shutil.ignore_patterns("__pycache__"))
     os.makedirs(os.path.join(copy, "reports"), exist_ok=True)
     logdir = os.path.join(copy, "reports", "_runs", "mutate")
     os.makedirs(logdir, exist_ok=True)

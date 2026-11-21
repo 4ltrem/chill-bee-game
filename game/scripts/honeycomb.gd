@@ -12,6 +12,11 @@ signal slid_out
 signal frame_done
 ## A cell was scraped: its index, the jars it was worth (0 with no hive) and where it is in the world.
 signal cell_scraped(cell: int, jar_value: float, world_position: Vector3)
+## The drag is over the combs at this world point (main.gd moves the fork prop there) / the drag ended.
+signal drag_point(world_position: Vector3)
+signal drag_ended
+## Test hook: a level >= 0 replaces the Economy's Heated Fork level.
+var heated_level_override: int = -1
 
 const CAPPED: int = 0
 const UNCAPPED: int = 1
@@ -164,7 +169,7 @@ func uncap_at(cell: int) -> bool:
 	_set_collider(cell, false)   # a scraped slot's collider is off from now on
 	var jar_value: float = 0.0
 	if hive != null:
-		jar_value = hive.scrape(frame_index, cell)
+		jar_value = hive.scrape(frame_index, cell) * post_auto_yield_multiplier()
 	cell_scraped.emit(cell, jar_value, _cell_world_position(cell))
 	_departures.append({"cell": cell, "t": POP_SECONDS})
 	if all_uncapped():
@@ -349,6 +354,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if _dragging:
 			_last_pos = event.position
 			_probe(event.position)
+		else:
+			drag_ended.emit()
 	elif event is InputEventScreenDrag:
 		if _dragging:
 			_sweep(event.position)
@@ -358,6 +365,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			if _dragging:
 				_last_pos = event.position
 				_probe(event.position)
+			else:
+				drag_ended.emit()
 	elif event is InputEventMouseMotion:
 		if _dragging and (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0:
 			_sweep(event.position)
@@ -380,8 +389,55 @@ func _probe(screen_pos: Vector2) -> void:
 	var to: Vector3 = from + camera.project_ray_normal(screen_pos) * RAY_LENGTH
 	var space: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 	var hit: Dictionary = space.intersect_ray(PhysicsRayQueryParameters3D.create(from, to))
-	if hit.is_empty():
+	if hit.is_empty() or not (hit["collider"] as Object).has_meta("cell_index"):
+		_follow_over_emptied(from, to)
 		return
 	var collider: Object = hit["collider"]
 	if collider != null and collider.has_meta("cell_index"):
-		uncap_at(int(collider.get_meta("cell_index")))
+		drag_point.emit(hit["position"])
+		uncap_reach(int(collider.get_meta("cell_index")))
+
+
+## Scraped cells have no collider, so the ray misses them: the fork prop still follows while the ray crosses the frame plane
+## within one cell pitch of a cell (no cell is uncapped here).
+func _follow_over_emptied(from: Vector3, to: Vector3) -> void:
+	var plane := Plane(global_basis.y.normalized(), global_position)
+	var point: Variant = plane.intersects_segment(from, to)
+	if point == null:
+		return
+	var p: Vector3 = point
+	for i in _cell_roots.size():
+		if _cell_roots[i].global_position.distance_to(p) <= cell_pitch:
+			drag_point.emit(p)
+			return
+
+
+## 0.2 item 3: fork reach in cell pitches: uncap_radius x (1 + heated_fork_radius_bonus_per_level x Heated Fork level).
+func reach_radius() -> float:
+	var level: int = clampi(UpgradeLevel.of("heated_fork") if heated_level_override < 0 else heated_level_override, 0, config.heated_fork_max_level)
+	return config.uncap_radius * (1.0 + config.heated_fork_radius_bonus_per_level * float(level))
+
+
+## Uncaps the hit cell and every capped cell whose centre is within reach_radius() of it. Returns the number uncapped.
+func uncap_reach(hit_cell: int) -> int:
+	var count: int = 0
+	if hit_cell < 0 or hit_cell >= cells.size():
+		return 0
+	var radius: float = reach_radius()
+	var origin: Vector3 = cell_position(hit_cell, config.grid_cols, config.grid_rows, cell_pitch)
+	for i in cells.size():
+		if cells[i] != CAPPED:
+			continue
+		var p: Vector3 = cell_position(i, config.grid_cols, config.grid_rows, cell_pitch)
+		if i == hit_cell or Vector2(p.x - origin.x, p.z - origin.z).length() <= radius * cell_pitch + 0.001:
+			if uncap_at(i):
+				count += 1
+	return count
+
+
+## After automation (auto-scraper owned, Dev toggle in 0.2): 1 + heated_fork_post_auto_yield_bonus_per_level x level, else 1.
+func post_auto_yield_multiplier() -> float:
+	if not config.dev_own_auto_scraper:
+		return 1.0
+	var level: int = clampi(UpgradeLevel.of("heated_fork") if heated_level_override < 0 else heated_level_override, 0, config.heated_fork_max_level)
+	return 1.0 + config.heated_fork_post_auto_yield_bonus_per_level * float(level)

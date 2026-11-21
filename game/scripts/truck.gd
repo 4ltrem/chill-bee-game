@@ -64,7 +64,11 @@ func is_full() -> bool:
 
 ## Full and home: the Sell icon may show.
 func can_sell() -> bool:
-	return not away and is_full()
+	if away:
+		return false
+	if is_full():
+		return true
+	return auto_sell_owned() and loaded_jars > 0   # 0.2 item 6: with Auto-Sell owned, Sell stays pressable for a part load
 
 
 ## What the load is worth at the current jar value.
@@ -155,9 +159,11 @@ func advance(delta: float) -> void:
 		if room > 0:
 			_load_crate_jars(room)
 			_changed()
+		if auto_sell_owned() and is_full():
+			sell()   # 0.2 item 6: leaves by itself when the bed is full, full price, exactly as a Sell press
 		return
 	trip_elapsed += delta
-	if trip_elapsed >= config.truck_trip_seconds:
+	if trip_elapsed >= trip_seconds():
 		away = false
 		trip_elapsed = 0.0
 		var moved: int = mini(crate_jars, maxi(capacity - loaded_jars, 0))
@@ -170,7 +176,7 @@ func advance(delta: float) -> void:
 func away_fraction() -> float:
 	if not away:
 		return 0.0
-	var trip: float = maxf(config.truck_trip_seconds, 0.001)
+	var trip: float = maxf(trip_seconds(), 0.001)
 	var slice: float = clampf(config.truck_slide_fraction, 0.01, 0.5)
 	var p: float = clampf(trip_elapsed / trip, 0.0, 1.0)
 	if p < slice:
@@ -217,6 +223,56 @@ func _ready() -> void:
 	_build_crate_jars()
 	_refresh_jars()
 	_last_global = global_position if is_inside_tree() else position
+	_apply_delivery_look(true)
+
+
+## 0.2 item 5 look: which part groups show at a Faster Delivery level (0 none; Stacks 1..4; DecalsSmall only 2; DecalsBold 3..4; FlamesTop only 4).
+static func groups_shown(level: int) -> Dictionary:
+	return {
+		"Stacks": level >= 1,
+		"DecalsSmall": level == 2,
+		"DecalsBold": level >= 3,
+		"FlamesTop": level >= 4,
+	}
+
+
+## Test hook: a level >= 0 replaces the Economy's Faster Delivery level.
+var delivery_level_override: int = -1
+var _look_level: int = -1
+
+
+func delivery_level() -> int:
+	return delivery_level_override if delivery_level_override >= 0 else UpgradeLevel.of("faster_delivery")
+
+
+## 0.2 item 5: trip time = truck_trip_seconds x (1 - faster_delivery_trip_cut_per_level x level), level clamped to the max.
+func trip_seconds() -> float:
+	var level: int = clampi(delivery_level(), 0, config.faster_delivery_max_level)
+	return config.truck_trip_seconds * maxf(1.0 - config.faster_delivery_trip_cut_per_level * float(level), 0.0)
+
+
+## Test hook: 1 or 0 replaces the Economy's Auto-Sell ownership (-1 = ask Economy).
+var auto_sell_override: int = -1
+
+
+## 0.2 item 6: Auto-Sell is owned (Economy level of "auto_sell" >= 1).
+func auto_sell_owned() -> bool:
+	if auto_sell_override >= 0:
+		return auto_sell_override > 0
+	return UpgradeLevel.of("auto_sell") >= 1
+
+
+## Shows the groups for the current level (cheap: only touches nodes when the level changed).
+func _apply_delivery_look(force: bool = false) -> void:
+	var level: int = delivery_level()
+	if level == _look_level and not force:
+		return
+	_look_level = level
+	var shown: Dictionary = groups_shown(level)
+	for group_name: String in shown:
+		var node: Node3D = find_child(group_name, true, false) as Node3D
+		if node != null:
+			node.visible = shown[group_name]
 
 
 func _new_jar() -> Node3D:
@@ -337,3 +393,4 @@ func roll_wheels(displacement: Vector3) -> void:
 func _process(delta: float) -> void:
 	advance(delta)
 	update_pose()
+	_apply_delivery_look()

@@ -1,0 +1,9 @@
+{
+ "question": "gearing-r5",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": "b layout (ring 0.64 nearer the rim, radii 0.28/0.30/0.20/0.17/0.14/0.11) with pointed teeth; a0 for level 0",
+ "votes": {"gearing-r5-a0": "yes", "gearing-r5-b5": "yes"},
+ "notes": {"gearing-r5-b5": "so close, the teeth on the gears all need to be pointy some of the teeth look good and some look flat"},
+ "next": "gearing-r6: the b layout with PrismMesh teeth pointing outward (gear_train.py --tooth prism)"
+}

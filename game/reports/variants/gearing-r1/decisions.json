@@ -1,0 +1,18 @@
+{
+ "question": "gearing-r1",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": null,
+ "votes": {
+  "gearing-r1-a1": "maybe", "gearing-r1-a5": "maybe",
+  "gearing-r1-b1": "no", "gearing-r1-b5": "no",
+  "gearing-r1-c1": "no", "gearing-r1-c5": "no",
+  "gearing-r1-d1": "no", "gearing-r1-d5": "no"
+ },
+ "notes": {
+  "gearing-r1-a1": "close but not quite, with the gearing the handle lies on top of the gear",
+  "gearing-r1-a5": "close, variate on this"
+ },
+ "answers": "designer, 2026-11-09: the a1 note means the crank arm should sit on top of Gear1 (Gear1 under the crank pivot)",
+ "next": "round 2 (gearing-r2): variations on a (flat arc), the arm resting on Gear1"
+}

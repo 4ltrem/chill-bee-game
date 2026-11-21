@@ -4,19 +4,96 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
-## L26 · 2026-11-17 · No test or build could run on the laptop: Godot's path was the desktop's
+## L37 · 2026-11-17 · No test or build could run on the laptop: Godot's path was the desktop's
 - **What broke:** `godot_run.py`, `build.py` and the other scripts, Bob's render command and the settings rules all named `C:\Users\mtrem\Desktop\Godot_v4.2.1-stable_win64_console.exe`, which exists only on the desktop.
 - **How noticed:** the laptop handoff (D220, Still open) and the designer: "make it computer agnostic".
 - **Cause:** the path was written by hand into each tool when there was one machine.
 - **How fixed:** `_tools/godot_path.py` (the `GODOT` env var, then the repo-folder copy, then the desktop path); everything calls it (`8011388`, D225).
 - **Prevention:** no tracked file names a machine's Godot path; not yet checked by script, and the branch is unmerged (Still open).
 
-## L25 · 2026-11-17 · Allow rules with `VAR=*` prefixes warned that they allow any command
+## L36 · 2026-11-17 · Allow rules with `VAR=*` prefixes warned that they allow any command
 - **What broke:** the Claude Code console warned that each rule like `Bash(CB_TIME_SCALE=* python -I _tools/godot_run.py *)` "allows any command at the * in its value".
 - **How noticed:** the warnings on the laptop's console (D223).
 - **Cause:** test speed settings were passed as shell env prefixes (L17), so the allow rules had to wildcard the value.
 - **How fixed:** CLI flags `--only`, `--time-scale`, `--skip-x1` in `godot_run.py`; the `VAR=` rules removed (`51b775d`).
 - **Prevention:** the memory rule "never VAR= prefixes"; the branch is unmerged (Still open).
+
+## L35 · 2026-11-10 · `mutate.py` crashed on the Journal mutations
+- **What broke:** `mutate.py --since 48afcd8` crashed at mutation 48/49 (FileNotFoundError on `game/../_tools/journal_csv.py`) twice, and mutation 45 "French title left empty" came back BROKEN.
+- **How noticed:** Rex's rerun reports (2026-11-09 and 2026-11-10).
+- **Cause:** `mutate.py` copied only `game/` to its temp folder, but `test_journal.gd` runs `../_tools/journal_csv.py`, which reads `content/bee-journal-real.md`, and mutation 48 edits that script itself.
+- **How fixed:** `mutate.py` also copies `_tools/` and `content/` beside the copied `game/`. Rex's check: 48 and 45 CAUGHT, baseline 0 failing.
+- **Prevention:** the copy in `mutate.py` (with a comment naming the test). Open: no unit test in `test_generate.py` checks the siblings are copied; mutation 25 (second crank dead) is still MISSED, a test gap for Quinn.
+
+## L34 · 2026-11-09 · `--plan` said 21/21 done after Quinn wrote only the shop tests
+- **What broke:** after T1.1 (7 shop tests) the plan marked all 12 test lines done; the `/goal` condition would have passed with 10 lines untested.
+- **How noticed:** the orchestrator compared the plan with the `# goal` marks in `game/tests/` (7 × T1.1, nothing else).
+- **Cause:** T1.1 was batched with T.1 (mutations, which covers every item), so the brief's group label read "0.2 items 1, …, 8"; `scan()` read only group comments, not the marks. Also the stale 0.1 `t_cost_formula` (roundi) went to Patricia and Bob, not Quinn, because a test goal's fix rounds go to code owners.
+- **How fixed:** `scan()` reads the marks; once a spec's tests carry them, a line's evidence is its own marked tests (an unrun x1 test counts only once built); the label leaves out the mutations line's items; `t_cost_formula` floored by hand, quoting item 1.
+- **Prevention:** `test_goal_agent` `test_marked_tests_are_a_lines_only_evidence`. Open: a stale older test in a test goal's fix round still goes to the code owners first.
+
+## L32 · 2026-11-09 · Recombination rounds cost a full Milo run each
+- **What broke:** 0.2 models rounds 2 and 3 were mostly "take A's part, add it to B, drop C, swap a material", yet each was a Milo run (34k–112k tokens) that re-read and rewrote whole centrifuge and truck copies.
+- **How noticed:** the designer asked how to cut tokens on permutation runs.
+- **Cause:** the only way to change a variant was an agent writing `.tscn` text.
+- **How fixed:** `_tools/compose_variant.py` (graft, drop, material, move on node paths; prunes resources, recounts `load_steps`, writes only a new round file); Milo's parts convention (one named group per feature).
+- **Prevention:** `game/scenes/variants/CONTEXT.md` Process: a round that only recombines seen parts is a recipe, not a Milo run; tested by an exact round-trip of three variants and a byte-identical rebuild of Milo's `truck-flames-r3-l4`.
+
+## L31 · 2026-11-09 · A Milo round came back with parts not touching
+- **What broke:** all four `fork-r1` forks had the handle beside the head, not on it; `truck-flames-r1` a, b, e failed V6 (0.02 decals).
+- **How noticed:** the orchestrator looked at the shots before publishing ([[look-before-done]]); style_check caught the decals.
+- **Cause:** each part was tilted on its own, so their ends drifted apart; the brief allowed decals thinner than V6.
+- **How fixed:** Milo rebuilt the fork upright inside one tilted `Pose` node; the decals went to 0.05.
+- **Prevention:** the parts convention in `.claude/agents/modeler.md`: a tilt or pose lives on one parent node, parts are built untilted; briefs never relax a V rule.
+
+## L33 · 2026-11-09 · Bob's 0.2 C3 fork step rebuilt the honey cell and broke two frame tests
+- **What broke:** in C3 (Heated Fork) Bob built the truck groups too, ran 47 turns / 1.09M tokens, then swapped `hex_cell_mesh.gd` for a CylinderMesh in a fix round; `t_raised_frame_cells_aligned` and `t_hive_frames_cells_aligned` failed and the run stopped.
+- **How noticed:** the designer read the blackboard ("bob's prompt slice is too vast?"); the orchestrator diffed the fix-round edits.
+- **Cause:** `item_numbers` read "Items 3–5" as item 3 and dropped the indented sub-bullets; fix briefs carried every open style row of the whole game (an old V4 row on `honey_cell.tscn`, truck, zoom, jars); build calls had no turn cap; V4 flagged the deliberate 0.1.4 scripted hex mesh.
+- **How fixed:** ranges and sub-bullets go to their item (`parse_contract` "sub"); `rows_in_scope` keeps only style rows about files the step changed (none left = style PASS); `BUILD_MAX_TURNS` 30; `style_check.py` `PROCEDURAL_PRIMITIVES`; the honey cell and glass edits reverted, C3 accepted by hand.
+- **Prevention:** `test_goal_agent`: item ranges and sub-bullets, style rows in scope, build-call cap.
+
+## L30 · 2026-11-09 · The `/goal` stop hook kept firing after the designer said "stop"
+- **What broke:** the designer stopped the UI work mid-turn; the goal judge re-sent "condition not met" six times while the session stayed paused.
+- **How noticed:** six identical hook messages in a row.
+- **Cause:** the `/goal` condition ("design created for the UI…") was still false, and the hook has no notion of a stop request.
+- **How fixed:** the session kept honouring the stop and pointed to `/goal clear`; the designer then set a new direction.
+- **Prevention:** when the designer says stop under an active `/goal`, say once that the hook will loop until `/goal clear` or "continue", then answer each hook message in one line (L23 is the same family: conditions holding human steps).
+
+## L29 · 2026-11-09 · Icon geometry took many rounds when described in words
+- **What broke:** the Royal Jelly icon went through drop → dipper → dipper rotated → rotated 180° → nine variants → G+H mixes before it settled; the designer also named "H" when meaning "K" once.
+- **How noticed:** the designer's comments on the canvas, one geometry change per round.
+- **Cause:** angles, positions and "on top of" were guessed from words; each guess cost a full round.
+- **How fixed:** a variants board with letters and live sliders (angle, crown drop, lift) on the candidate; the designer set the numbers by hand (K: 60°, 1.8, −2.6).
+- **Prevention:** `UI_DESIGN.md` working rules: for any shape, angle, offset or size, show 3+ lettered variants and expose sliders; restate the chosen letter and values before applying it everywhere.
+
+## L28 · 2026-11-09 · A variant's large preview ignored the sliders its pill followed
+- **What broke:** on the Royal Jelly variants board, K's pill moved with the Tweaks sliders but the 120 px preview did not, though both used the same markup.
+- **How noticed:** the designer: "the tweaks work to the pill but not the big icon".
+- **Cause:** not confirmed; most likely the canvas dropped `{{hole}}` values interpolated inside an SVG `transform` string.
+- **How fixed:** both previews now bind the whole `transform` value, computed in `renderVals()` (`kRotT`, `kCrownT`, `kLiftT`). Not yet confirmed by the designer.
+- **Prevention:** `UI_DESIGN.md` canvas rule: bind whole attribute values from `renderVals()`, never interpolate inside SVG attribute strings (Still open until confirmed).
+
+## L27 · 2026-11-09 · Publishes raced the designer's own page edits
+- **What broke:** two publishes were refused and four warned that a page save had landed minutes earlier; the designer was moving sliders and nudging elements while the orchestrator edited the same files.
+- **How noticed:** the Artifact tool's refusal and "saved from the artifact's page" warnings.
+- **Cause:** editing local copies read several minutes earlier.
+- **How fixed:** read the live file right before each edit, diff it against the local copy, re-apply the change on the live version, then publish.
+- **Prevention:** `UI_DESIGN.md` canvas rule: read → edit → publish in one step per change; never resend an older copy.
+
+## L26 · 2026-11-09 · The "12" in the Jelly pill could not be selected on the canvas
+- **What broke:** the designer could not swap the number and the icon, because the "12" had no element of its own.
+- **How noticed:** "can't find the element for 12".
+- **Cause:** the number was a bare text node inside the button.
+- **How fixed:** every variant pill puts the 12, the icon and the + in separate elements.
+- **Prevention:** `UI_DESIGN.md` canvas rule: every piece of text is its own element.
+
+## L25 · 2026-11-09 · The first UI mockups redrew the harvest loop instead of using the game's shots
+- **What broke:** the first boards were drawn from scratch, including the harvest screens the game already has, with a bottom navigation bar.
+- **How noticed:** the designer: "screens were being invented for the harvest loop which we already know, use the screenshots we already have and build the UI on top, icons over the screen are preferred over a navigation bar". The designer also said "stop" mid-run.
+- **Cause:** the brief started from the GDD's screen list, not from what the build already shows.
+- **How fixed:** the canvas was rebuilt on `game/reports/ui-compare/spin-c/` shots with floating icons; the invented boards were deleted.
+- **Prevention:** `UI_DESIGN.md` rule 1: start every UI design from the latest scripted shots (`_tools/ui_shots.py`) and draw only the new UI on top.
 
 ## L24 · 2026-11-08 · A commit to `main` from a worktree failed the hooks and the push hung
 - **What broke:** the first commit on a worktree from `origin/main` ran the milestone branch's pre-commit check, which calls `contract_check.py` that `main` does not have; `git push` hung over two minutes on a hidden login prompt.

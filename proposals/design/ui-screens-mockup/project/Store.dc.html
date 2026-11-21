@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Store</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.fx{font:700 14px 'Nunito';color:#61574C}
+.box{border:3px solid #59380D;border-radius:16px;background:#FFFFFF;padding:10px;display:flex;align-items:center;gap:10px}
+.buy{flex:none;min-width:84px;min-height:60px;border-radius:14px;border:3px solid #59380D;background:#FFC21F;font:800 16px 'Nunito';color:#331F05;cursor:pointer}
+.buy.c{background:#FFF5DB}
+</style>
+</helmet>
+<div style="width: 360px; height: 640px; position: relative; overflow: hidden; font-family: 'Nunito', system-ui, sans-serif; color: #331F05">
+  <img src="/_blob/307f54ef490d522affb7cf7eba22cf25" alt="0.1.4 farm view" style="position: absolute; left: 0; top: 0; width: 360px; height: 640px">
+  <div style="position: absolute; inset: 0; background: rgba(51,31,5,0.6)"></div>
+  <section aria-label="Store" style="position: absolute; left: 0; right: 0; top: 84px; bottom: 0; background: #FFF5DB; border: 3px solid #59380D; border-bottom: 0; border-radius: 22px 22px 0 0; padding: 12px 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <div><h2 style="margin: 0; font: 800 24px 'Nunito'">Store</h2><span class="fx">You have 12 Royal Jelly</span></div>
+      <button aria-label="Close Store" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #59380D; background: #FFF5DB; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#331F05" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div style="font: 800 16px 'Nunito'">Use Jelly</div>
+    <div class="box"><div style="flex: 1"><div style="font: 800 16px 'Nunito'">Skip ahead [TBD] h</div><div class="fx">Time-skipped runs rank separately</div></div><button class="buy c">[TBD] Jelly</button></div>
+    <div style="font: 800 16px 'Nunito'">Passes</div>
+    <div class="box"><div style="flex: 1"><div style="font: 800 16px 'Nunito'">Impact Pass · monthly</div><div class="fx">Auto-tap helpers, 12 h offline · [TBD]% to bee habitat</div></div><button class="buy">[price]</button></div>
+    <div class="box" style="background: #FFF5DB; border-style: dashed; border-color: #61574C"><div style="flex: 1"><div style="font: 800 16px 'Nunito'; color: #61574C">Patron Pass · Adopt-a-Hive</div><div class="fx">Coming after launch</div></div></div>
+    <div class="box"><div style="flex: 1"><div style="font: 800 16px 'Nunito'">Royal Jelly packs</div><div class="fx">[sizes and prices TBD]</div></div><button class="buy c">See</button></div>
+    <p class="fx" style="margin: 0">In kid mode, a grown-up check comes before any purchase.</p>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Habitat and Refinery</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+.fx{font:700 14px 'Nunito';color:#61574C}
+.seg{flex:1;height:14px;border:2px solid #59380D;border-radius:4px;background:#FFFFFF}
+.seg.on{background:#D1940D}
+.bee{display:flex;justify-content:space-between;align-items:center;font:800 14px 'Nunito';padding:5px 0;border-bottom:2px dashed #D1940D}
+</style>
+</helmet>
+<div style="width: 360px; height: 640px; position: relative; overflow: hidden; font-family: 'Nunito', system-ui, sans-serif; color: #331F05">
+  <img src="/_blob/307f54ef490d522affb7cf7eba22cf25" alt="0.1.4 farm view" style="position: absolute; left: 0; top: 0; width: 360px; height: 640px">
+  <div style="position: absolute; inset: 0; background: rgba(51,31,5,0.6)"></div>
+  <section aria-label="Habitat" style="position: absolute; left: 0; right: 0; top: 84px; bottom: 0; background: #FFF5DB; border: 3px solid #59380D; border-bottom: 0; border-radius: 22px 22px 0 0; padding: 12px 14px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+    <div style="display: flex; justify-content: space-between; align-items: center">
+      <div style="display: flex; align-items: center; gap: 4px">
+        <button aria-label="Previous biome" style="width: 44px; height: 60px; border: 0; background: none; font: 800 26px 'Nunito'; color: #61574C; cursor: pointer">‹</button>
+        <div><h2 style="margin: 0; font: 800 22px 'Nunito'">Sunny Meadow</h2><span class="fx">Next: Alpine Valley, locked</span></div>
+        <button aria-label="Next biome" style="width: 44px; height: 60px; border: 0; background: none; font: 800 26px 'Nunito'; color: #331F05; cursor: pointer">›</button>
+      </div>
+      <button aria-label="Close Habitat" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid #59380D; background: #FFF5DB; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0"><svg width="24" height="24" viewBox="0 0 24 24" stroke="#331F05" stroke-width="3" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div>
+      <div style="display: flex; justify-content: space-between; font: 800 16px 'Nunito'"><span>Habitat Synergy</span><span>Lv 2</span></div>
+      <div style="display: flex; gap: 4px; margin: 4px 0" aria-hidden="true"><div class="seg on"></div><div class="seg on"></div><div class="seg"></div><div class="seg"></div><div class="seg"></div></div>
+      <span class="fx">Alpine Valley opens at Lv [TBD] · 2 hives, 3 flower patches: balanced</span>
+    </div>
+    <div>
+      <div style="font: 800 16px 'Nunito'">Native bees here</div>
+      <div class="bee"><span>Sweat bees · pollination +25%</span><span>Here</span></div>
+      <div class="bee"><span>Leafcutter bees · sale value +10%</span><span class="fx">Plant bergamot, aster</span></div>
+      <div class="bee" style="border-bottom: 0"><span>Bumble bees · visitor</span><span>Here</span></div>
+      <span class="fx">Meadow bonus: sale value +[TBD]% of +15% max</span>
+    </div>
+    <div style="border: 3px solid #59380D; border-radius: 16px; padding: 8px 10px; background: #FFFFFF; display: flex; flex-direction: column; gap: 4px">
+      <div style="display: flex; justify-content: space-between; font: 800 16px 'Nunito'"><span>Royal Honey Refinery</span><span>Refining</span></div>
+      <div style="height: 14px; border-radius: 7px; border: 2px solid #59380D; overflow: hidden; background: #FFF5DB" aria-hidden="true"><div style="width: 38%; height: 100%; background: #FFBF1A"></div></div>
+      <span class="fx">Charge 38% · pauses below Synergy Lv [TBD]</span>
+      <label style="font: 800 14px 'Nunito'; display: flex; align-items: center; gap: 8px">Send to Refinery <input type="range" min="0" max="100" value="30" aria-label="Share of honey sent to the Refinery" style="flex: 1; height: 44px; accent-color: #D1940D"> 30%</label>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":360,"height":640}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

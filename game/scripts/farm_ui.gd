@@ -42,6 +42,10 @@ var _top_saved: bool = false
 var _top_flags: int = 0
 var _bar_flags: int = 0
 var _bar_min_x: float = 0.0
+const PHASE_TOAST_SECONDS: float = 4.0   # PLACEHOLDER display time
+var _phase_toast: Control
+var _phase_toast_label: Label
+var _phase_toast_shown: bool = false
 
 
 func _ready() -> void:
@@ -65,9 +69,27 @@ func _ready() -> void:
 		_centrifuge_label.visible = false
 	Economy.swarm_level_changed.connect(func(_l: int) -> void: _refresh_bees())
 	Economy.money_changed.connect(func(_m: int) -> void: _refresh_money())
+	_phase_toast = find_child("PhaseToast", true, false) as Control
+	_phase_toast_label = find_child("ToastLabel", true, false) as Label
+	if _phase_toast != null:
+		_phase_toast.visible = false
+	Economy.phase_changed.connect(_on_phase_changed)
 	_refresh_bees()
 	_refresh_money()
 	_refresh_hive()
+
+
+## 0.2 item 7: one-line toast the first time the phase becomes 2; hidden again after a timer.
+func _on_phase_changed(new_phase: int) -> void:
+	if new_phase < 2 or _phase_toast_shown or _phase_toast == null:
+		return
+	_phase_toast_shown = true
+	if _phase_toast_label != null:
+		_phase_toast_label.text = tr("Phase 2: your farm starts running itself")
+	_phase_toast.visible = true
+	get_tree().create_timer(PHASE_TOAST_SECONDS).timeout.connect(func() -> void:
+		if is_instance_valid(_phase_toast):
+			_phase_toast.visible = false)
 
 
 ## Called by main.gd once the farm nodes are known.

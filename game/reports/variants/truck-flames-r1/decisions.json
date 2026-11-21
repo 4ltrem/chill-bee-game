@@ -1,0 +1,20 @@
+{
+ "question": "truck-flames-r1",
+ "read": "2026-11-09",
+ "source": "Design Votes (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), collection votes",
+ "pick": {"faster_delivery_1": "truck-flames-r1-c's pipes, without the exhaust flames (amended in truck-flames-r2/decisions.json)", "faster_delivery_2": "truck-flames-r1-a", "faster_delivery_3": "truck-flames-r1-b", "faster_delivery_4": "b's flames + c's exhaust pipes + flames on top of the cab (no model yet: round 2)"},
+ "votes": {
+  "truck-flames-r1-a": "yes",
+  "truck-flames-r1-b": "yes",
+  "truck-flames-r1-c": "maybe",
+  "truck-flames-r1-d": "no",
+  "truck-flames-r1-e": "no"
+ },
+ "notes": {
+  "truck-flames-r1-a": "level 2 faster delivery",
+  "truck-flames-r1-b": "level 3 faster delivery",
+  "truck-flames-r1-c": "I like the exhaust pipes, can keep for another speed level"
+ },
+ "answers": "designer, 2026-11-09: L1 = c's pipes, L4 = b + c's pipes, and flames on top of the cab too",
+ "next": "round 2 (truck-flames-r2): level 4 variants only"
+}
