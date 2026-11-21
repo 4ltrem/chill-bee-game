@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-21T13:58:19-05:00",
- "unit_log": "game/reports/_runs/20261121-134236/unit.log",
+ "at": "2026-11-21T14:29:23-05:00",
+ "unit_log": "game/reports/_runs/20261121-141430/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -1043,6 +1043,12 @@
      "ok": false
     },
     {
+     "kind": "test",
+     "name": "t_shop_seven_rows_on_screen_no_scroll",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "0628fc6",
      "ok": true
@@ -1303,6 +1309,12 @@
     {
      "kind": "test",
      "name": "t_truck_sell_with_jar_in_flight_twice_matches",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_seven_rows_on_screen_no_scroll",
      "ok": true,
      "result": "PASS"
     }
@@ -1915,9 +1927,21 @@
    "depends": [
     "C14"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_shop_seven_rows_on_screen_no_scroll",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "7f3ced5",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -2189,6 +2213,12 @@
      "name": "t_truck_sell_with_jar_in_flight_twice_matches",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_seven_rows_on_screen_no_scroll",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -2200,33 +2230,22 @@
  "order": [
   {
    "id": "T10.1",
-   "score": 5.72,
+   "score": 5.71,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.28,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T14.1",
-   "score": 5.72,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.28,
+    "cost": 0.29,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T9.1",
-   "score": 5.72,
+   "score": 5.71,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.28,
+    "cost": 0.29,
     "ready": 1,
     "blocked_by": []
    }

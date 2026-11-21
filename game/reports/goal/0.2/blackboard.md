@@ -3241,9 +3241,109 @@ Unit results from `game/reports/_runs/20261121-134236/unit.log`. 28 of 34 goals 
 
 No score changed.
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T14.1 --max-goals 1` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 36: scan (2026-11-21T13:58:26-05:00)
+
+Unit results from `game/reports/_runs/20261121-134236/unit.log`. 28 of 34 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+### Order: new or rescored (3 of 3)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T10.1 item 10: after a drag release the fork prop is hid | 5.71 | 0 | 3 | 0.29 | 1 | play-test fix; cost 0.29 (Quinn) |
+| 2 | T14.1 item 14: the shop panel has no scroll container, a | 5.71 | 0 | 3 | 0.29 | 1 | play-test fix; cost 0.29 (Quinn) |
+| 3 | T9.1 item 9: the bucket filling during the first zoom l | 5.71 | 0 | 3 | 0.29 | 1 | play-test fix; cost 0.29 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T14.1** (score 5.71: play-test fix; cost 0.29 (Quinn)).
+
+### Step: T14.1 (2026-11-21T13:58:26-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T14.1-quinn.md` (3773 chars)
+- Budget guard for Quinn: allow (reading 5 min old)
+
+**Quinn** (646,334 tokens, 30 turns, 74 s):
+
+Parse check is clean. I ran no tests or mutations.
+
+**Files changed**
+- `game/tests/test_shop.gd`: new `t_shop_seven_rows_on_screen_no_scroll`, with `# goal T14.1` above it. It sets the window size from ProjectSettings. It asserts three things:
+  - No `ScrollContainer` under `ShopPanel`.
+  - The panel top clears the `TopInfo` bottom, and every row (the count comes from `_SHOP_IDS`) is inside the panel and on screen.
+  - No row overlaps `TopInfo`, `SellIcon`, `ForkIcon`, `CentrifugeIcon`, `BackButton` or another row.
+- `game/tests/run_tests.gd`: registered under the `# 0.2 item 14 (written from …)` comment. My first edit duplicated an entry and I removed it. The line above the new group lost its indentation, which is harmless.
+- `game/tests/mutations.json`: two mutations, both in `scenes/main.tscn`: buy buttons made 400 high, and a `ShopScroll` `ScrollContainer` added.
+
+**Nodes used:** `ShopPanel`, `ShopRows`, `RowTemplate`, `NameLabel`, `TopInfo`, `SellIcon`, `ForkIcon`, `CentrifugeIcon`, `BackButton`, `HiveCountLabel`, `HintLabel`, `ShopScroll` (must be absent), and `JournalButton` (in `ShopBox`).
+
+**Open questions**
+- Item 14: `t_shop_no_row_overlaps_other_controls` already carries `# goal T1.1` and checks similar things. Its mutation in `mutations.json` looks stale.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 18 (cap 30; CLI num_turns 30); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 1 of 2 caught
+mutate baseline: 1 expected tests, 0 already failing
+mutate 1/2: 0.2 item 14 buy buttons too tall: rows run off screen ... MISSED in 6s
+mutate 2/2: 0.2 item 14 a scroll container returns around the rows ... CAUGHT in 7s
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T14.1-fix1-quinn.md` (1294 chars)
+- Budget guard for Quinn: allow (reading 6 min old)
+
+**Quinn** (140,713 tokens, 10 turns, 20 s):
+
+I fixed the mutation entry; I did not run it. The cause was in my `tests/` folder, not in the game code.
+
+**Why it was missed:** the "buy buttons too tall" mutation edited `scenes/main.tscn`. At runtime `shop_ui.gd` (lines 114 and 125) overwrites each buy button's minimum height with `_cfg.shop_row_height`, so the scene value never mattered. The mutated game behaved like the original, and the test passed.
+
+**Fix:** in `game/tests/mutations.json` I changed only that entry's `file`, `find` and `replace`. It now edits `scripts/default_config.tres`, replacing `shop_row_height = 64` with `shop_row_height = 400`.
+
+I expect that to push the rows off screen, so `t_shop_seven_rows_on_screen_no_scroll` should fail on its row-on-screen and inside-the-panel checks. The goal agent still needs to run `mutate.py` to confirm.
+
+I did not touch the test itself, and no other test, mutation or value changed.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 10); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Green: checkpoint `7f3ced5` on `milestone/0.2`
+
+**Stop:** stopped after 1 goal(s) (--max-goals).
+
+## Pass 37: scan (2026-11-21T14:29:23-05:00)
+
+Unit results from `game/reports/_runs/20261121-141430/unit.log`. 29 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C14 The shop shows every row without scrolling | change | Patricia, Bob | partial (built, waits on its tests) | ✗ node ShopScroll, ✓ test t_shop_seven_rows_on_screen_no_scroll, ✓ ledger 0628fc6 |
+| CFG Config and Dev mode | change | Patricia | done | 42/42 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T14.1 item 14: the shop panel has no scroll container, all seven r | test | Quinn | done | ✓ test t_shop_seven_rows_on_screen_no_scroll, ✓ ledger 7f3ced5 |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 39/39 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
 ## Result
 
-Last invocation (2026-11-21T13:58:19-05:00): stopped after 1 goal(s) (--max-goals).
+Last invocation (2026-11-21T14:29:23-05:00): stopped after 1 goal(s) (--max-goals).
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 
@@ -3314,4 +3414,6 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/20
 | Patricia, T12.1 fix 1 | 67,231 | 19,477 | 7 | 12 s |
 | Quinn, T12.1 fix 2 | 92,356 | 21,722 | 7 | 28 s |
 | Quinn, T13.1 | 534,742 | 54,755 | 25 | 95 s |
-| **Total** | **14,770,110** | | | |
+| Quinn, T14.1 | 646,334 | 42,215 | 30 | 74 s |
+| Quinn, T14.1 fix 1 | 140,713 | 23,261 | 10 | 20 s |
+| **Total** | **15,557,157** | | | |
