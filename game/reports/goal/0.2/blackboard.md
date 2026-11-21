@@ -3,7 +3,7 @@ spec: 0.2-first-automation.md
 version: 0.2
 run: 0.2
 started: 2026-11-09
-result: paused
+result: failed
 ---
 # Goal agent: 0.2-first-automation.md (run 0.2)
 
@@ -3370,9 +3370,85 @@ Next: **T9.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
 **Paused:** Budget guard: 5-hour usage is 69% and a qa-build-engineer run costs 30% on average, over the 95% cap (reading 3 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
 Run the same command again to resume.
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T10.1 --max-goals 1` (the run had stopped: `paused`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 39: scan (2026-11-21T14:36:11-05:00)
+
+Unit results from `game/reports/_runs/20261121-141430/unit.log`. 27 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C10 The fork goes back into the Harvest icon | change | Patricia | partial (built, waits on its tests) | ✓ config fork_return_seconds, ✗ test t_fork_returns_to_icon_twice (not run), ✓ ledger 0.2 |
+| CFG Config and Dev mode | change | Patricia | partial | 42/43 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T10.1 item 10: after a drag release the fork prop is hidden; with  | test | Quinn | partial | ✗ test t_fork_returns_to_icon_twice (not run) |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | 39/40 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+### Order: new or rescored (2 of 4)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 3 | CFG Config and Dev mode | 3.63 | 0 | 2 | 0.37 | 1 | designer feature; cost 0.37 (Patricia) |
+| 4 | T.1 mutations in `tests/mutations.json` prove the new  | 1.72 | 0 | 1 | 0.28 | 1 | housekeeping/handoff; cost 0.28 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T10.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
+
+### Step: T10.1 (2026-11-21T14:36:11-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T10.1-quinn.md` (4138 chars)
+- Quinn's step skipped: every line already has its marked test (T10.1: t_fork_returns_to_icon_twice)
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_truck_wheels_roll_with_travel  WheelFL: return leg: every sample rolls with the travel (no skid); 28 good: expected 0 got 1 | WheelFR: return leg: every sample rolls with the travel (no skid); 28 good: expected 0 got 1 | WheelRL: re
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T10.1-fix1-patricia.md` (1669 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (117,150 tokens, 9 turns, 24 s):
+
+I'm saying what I found, not editing anything: this failure doesn't come from `scripts/`.
+
+- **Unchanged code:** `scripts/truck.gd` has no change against HEAD. The only modified script is `honeycomb.gd`, which the truck doesn't use.
+- **The failing check:** each wheel has exactly 1 bad sample on the return leg, with 28 good. `roll_wheels()` turns the wheel by `up × displacement / radius` on every move, on both legs. The drive-off leg passes, so the roll logic is correct.
+- **Likely cause:** one frame where the wheel turned more than half a turn, or a frame where the sampled position and rotation weren't from the same frame. The test's sampling would then read that frame as reversed. That points to a timing hitch (frame-time spike) in `game/tests/test_truck.gd` lines 164–170 and 199–215, which samples every frame with no guard for such frames.
+- **Not confirmed:** I haven't run anything, so the hitch is a guess. A re-run would show whether it is flaky.
+
+This is a flaky test, so it needs Quinn. I changed nothing and ran nothing.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 6 (cap 15; CLI num_turns 9); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      no total line  (exit 3221225477, 202 noise lines dropped)  game/reports/_runs/20261121-145146/unit.log
+    FAIL  t_camera_pan_seconds  after a live change to 2.5 the pan took 2.217 s +- 0.106 s  (13815 ms)
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T10.1-fix2-patricia.md` (1648 chars)
+- Budget guard for Patricia: override
+
+**Patricia failed:** programmer reported an error: API Error: Can't reach the API server — check your internet or DNS (ENOTFOUND)
+
+**Stop:** the run crashed: failed (AgentError: programmer reported an error: API Error: Can't reach the API server — check your internet or DNS (ENOTFOUND)). A rerun re-scans and continues from the ledger.
+
 ## Result
 
-Last invocation (2026-11-21T14:29:31-05:00): paused.
+Last invocation (2026-11-21T15:04:46-05:00): failed (AgentError: programmer reported an error: API Error: Can't reach the API server — check your internet or DNS (ENOTFOUND)).
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 
@@ -3445,4 +3521,5 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/20
 | Quinn, T13.1 | 534,742 | 54,755 | 25 | 95 s |
 | Quinn, T14.1 | 646,334 | 42,215 | 30 | 74 s |
 | Quinn, T14.1 fix 1 | 140,713 | 23,261 | 10 | 20 s |
-| **Total** | **15,557,157** | | | |
+| Patricia, T10.1 fix 1 | 117,150 | 23,587 | 9 | 24 s |
+| **Total** | **15,674,307** | | | |
