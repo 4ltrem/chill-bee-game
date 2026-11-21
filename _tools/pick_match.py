@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script
 import generate as g  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-GODOT = os.environ.get("GODOT", r"C:\Users\mtrem\Desktop\Godot_v4.2.1-stable_win64_console.exe")
+from godot_path import GODOT  # noqa: E402
 CRITIC = "style-critic"
 g.NAMES.setdefault(CRITIC, "Vera")
 LIVE = re.compile(r"(?:game/)?scenes/props/[\w-]+\.tscn")

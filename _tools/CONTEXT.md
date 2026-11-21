@@ -23,6 +23,7 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | Godot | `godot_run.py` | runs the Godot test suites and prints a short summary |
 | Godot | `build.py` | exports and zips a version |
 | Godot | `mutate.py` | proves tests catch named mutations; a catch by a test already red unmutated (one baseline run) or by a script error is BROKEN |
+| Godot | `godot_path.py` | finds the Godot binary for the scripts: `GODOT` env var, else the copy unpacked in the repo folder (gitignored), else the desktop's `C:\Users\mtrem\Desktop\` copy; alone it prints the path in use, with arguments it runs Godot with them (Bob's renders, so no agent or permission rule names a machine's path) |
 | Godot | `checkpoint.py` | commits work in progress on the milestone branch with the last unit run's counts in the message; refused off `milestone/*` or during a goal run |
 | Godot | `contract_check.py` | checks that every node a script looks up exists in the scenes (pre-commit gate) |
 | Godot | `contact_sheet.py` | tiles a shot set into one image |

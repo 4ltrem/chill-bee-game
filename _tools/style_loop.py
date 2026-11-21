@@ -40,7 +40,7 @@ import style_check  # noqa: E402
 BUILDER, CRITIC = "builder", "style-critic"
 g.NAMES.update({BUILDER: "Bob", CRITIC: "Vera"})
 LOG_TABLE = "Style loop"
-GODOT = os.environ.get("GODOT", r"C:\Users\mtrem\Desktop\Godot_v4.2.1-stable_win64_console.exe")
+from godot_path import GODOT  # noqa: E402
 WATCHED = ("scenes", "materials")  # what Bob may edit, relative to the game folder
 ROW = re.compile(r"^\|\s*\d+\s*\|")
 
