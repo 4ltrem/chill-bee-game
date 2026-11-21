@@ -290,6 +290,85 @@ class GenerateTest(Workspace):
         self.assertEqual(sorted(p.name for p in dest.iterdir()), ["fix-1-bob-2.jsonl", "fix-1-bob.jsonl"])
 
 
+VC_GDD = ("# G\n## Game Mechanics\n### 2. Phase 1 Uncapping & Extraction Minigame\n* **Stage 1: Uncapping (Tactile)**\n"
+          "### 4. Land, Grid & Units\n### 7. Story Premise & Onboarding\n* **Tree C: Native Habitat**\n"
+          "### 9. UI & Screens\n## Environmental & Visual Identity\n### Progression Tiers & Biomes\n## Glossary\n"
+          "### Currencies & Prestige\n| Term | Meaning |\n|---|---|\n| Frontier bonus | — | **Rejected.** Extra. |\n")
+BAD_CITE = "| Biomes in order | GDD §9 Progression Tiers | ✓ GDD |"
+
+
+def vc(text, terms=()):
+    return g.voice_check.check(text, VC_GDD, terms=list(terms))
+
+
+class VoiceCheckTest(unittest.TestCase):
+    def test_sources_line_forms_that_name_real_sections_pass(self):
+        v, block = vc('**Sources:** `GDD.md` (Story Premise & Onboarding: "a guide (e.g., a queen; TBD)", '
+                      "Phase 1 Uncapping & Extraction Minigame §2, Land Grid & Units; Tree C: Native Habitat — "
+                      "its table, Glossary > Currencies & Prestige), `content/CONTEXT.md`.\nGDD §2 Stage 1 says so.")
+        self.assertEqual(v, "PASS", block)
+        self.assertIn("Land Grid & Units", block)
+
+    def test_a_wrong_number_or_an_unknown_name_fails(self):
+        v, block = vc(f"**Sources:** `GDD.md` (Story Premise & Onboarding §4, Tree D).\n{BAD_CITE}\n{BAD_CITE}")
+        self.assertEqual(v, "FAIL")
+        self.assertIn("numbered §7, not §4", block)
+        self.assertIn("| Sources | \"Tree D\"", block)
+        self.assertIn('§9 is "UI & Screens"', block)
+        self.assertEqual(block.count("GDD §9 Progression Tiers"), 2)  # listed once as checked, one row, though cited twice
+        self.assertEqual(len(g.fail_rows(block)), 3)
+
+    def test_glossary_terms(self):
+        v, block = vc("# X\nThe frontier bonus helps.\n")  # Rejected in the GDD Glossary: blocks
+        self.assertEqual((v, len(g.fail_rows(block))), ("FAIL", 1))
+        terms = [{"pattern": "coins?", "use": "In-game money", "section": "Glossary", "confirmed": False}]
+        v, block = vc("# X\nCoins appear.\n## 2. Texte (français)\nDans le coin.\n", terms)
+        self.assertEqual(v, "PASS")  # unconfirmed: a (minor) row only
+        self.assertIn('(minor) "Coins appear."', block)
+        self.assertNotIn("le coin", block)  # French sections are skipped
+        terms[0]["confirmed"] = True
+        self.assertEqual(vc("Coins appear.", terms)[0], "FAIL")
+
+
+class ScriptCheckLoopTest(Workspace):
+    def agents(self, fake, bad_on, fixed_on):
+        """The fake, with William adding a wrong GDD citation on his call bad_on and removing it on fixed_on."""
+        (self.root / "GDD.md").write_text(VC_GDD, encoding="utf-8")
+        draft, calls = self.root / "content" / "x.md", []
+
+        def agent(name, prompt):
+            reply = fake(name, prompt)
+            if name == g.WRITER:
+                calls.append(1)
+                text = draft.read_text(encoding="utf-8")
+                if len(calls) == bad_on:
+                    draft.write_text(text + BAD_CITE + "\n", encoding="utf-8")
+                elif len(calls) == fixed_on:
+                    draft.write_text(text.replace(BAD_CITE + "\n", ""), encoding="utf-8")
+            return reply
+        return agent
+
+    def test_script_fail_goes_to_william_without_a_critic_call(self):
+        fake = Fake(self.root, ["PASS"])
+        self.new(self.agents(fake, 1, 2))
+        self.assertEqual(fake.calls, [g.WRITER, g.WRITER, g.CRITIC])
+        self.assertIn("### Script check, round 1\nVERDICT: FAIL", self.board())
+        self.assertIn("GDD §9 Progression Tiers", fake.prompts[1])  # William gets the script's row
+        self.assertIn("~~~~markdown", fake.prompts[2])  # the critic's first look is the whole draft
+        self.assertNotIn("Your round", fake.prompts[2])
+        self.assertIn("### Script check, round 2\nVERDICT: PASS", self.board())
+        self.assertEqual(self.status(), "draft")
+
+    def test_critic_diff_starts_from_the_draft_she_judged(self):
+        fake = Fake(self.root, ["FAIL", "PASS"])
+        self.new(self.agents(fake, 2, 3))  # round 2: William fixes Clara's row but adds a bad citation
+        self.assertEqual(fake.calls, [g.WRITER, g.CRITIC, g.WRITER, g.WRITER, g.CRITIC])
+        critic2 = fake.prompts[4]
+        self.assertIn("Your round 1 verdict", critic2)
+        self.assertIn(f"-{BAD}", critic2)
+        self.assertNotIn("§9", critic2)  # the citation came and went between her looks
+
+
 class CriticCheckTest(Workspace):
     """critic_check.py: the critic must FAIL the known-bad fixture with every expected finding."""
 
