@@ -19,11 +19,16 @@ The reasoning layer is plain code, tested in _tools/test_goal_agent.py, and spen
 The loop (only the code-writing step calls agents): until gaps() has nothing left to build, re-scan, score,
 take the top goal and build it: Patricia's handoff, Patricia and Bob in parallel for a Change, Quinn for test
 goals (all ready test goals of the same item in one call). Each agent is a fresh headless `claude -p` given only
-its spec slice (generate.run_agent). Then contract_check.py, godot_run.py (unit + start), ui_shots.py after
+its spec slice (generate.run_agent). A Change also gets Quinn, when existing tests read the names it touches
+(test_impact(): its nodes, keys and backticked names, and two-word phrases of its text such as second_stop): he
+updates the tests the spec makes stale beside the build (L39; `--impact GOAL` prints the list). Then
+contract_check.py, godot_run.py (unit + start, plus the windowed suites the impact list reaches), ui_shots.py after
 scene work, mutate.py --since after new tests. Failures go to the folder's owners, at most MAX_FIX_ROUNDS
 rounds, then the run stops for the designer. A green step gets a ledger line and a checkpoint commit on the
 milestone branch (never main, never a push); a step green only because no file changed is held for the
-designer instead, like an open question, until its spec text changes or --accept. It stops when nothing is left, when budget_guard denies an agent
+designer instead, like an open question, until its spec text changes or --accept. When nothing is left it runs
+every suite (`all --time-scale 6 --skip-x1`): red gets one Quinn round for stale tests, then waits for the designer.
+It stops when nothing is left, when budget_guard denies an agent
 (the run pauses: run it again to resume), when a goal is ambiguous (Process 1), or after the fix rounds.
 
 The blackboard is game/reports/goal/RUN/blackboard.md (RUN defaults to the spec's version), in the shared format of
@@ -101,6 +106,21 @@ LOCK = "_meta/usage/goal-run.lock"   # exists while a build run is live; guard_s
 REMOVED = re.compile(r"\b(removed?|retired?|goes away|deleted?)\b", re.I)   # a node in such a sentence must be absent
 AMBIGUOUS = re.compile(r"\bTBD\b|\bto be decided\b|\bopen question", re.I)
 ENV = {"CB_TIME_SCALE": "6", "CB_SKIP_X1": "1"}   # routine runs: x6, the real-time tests are the designer's (D102)
+# L39: tests that copied a flow inline went stale on every feature change, and the windowed suites drifted unseen for two
+# versions because each step ran `unit` only. The test files that are their own godot_run.py suite (the rest are `unit`):
+SUITE_FILES = {"play_loop.gd": "play", "r4_measure.gd": "measure", "snapshot_pop.gd": "snapshot",
+               "ui_bounds_pixels.gd": "ui", "touch_windowed.gd": "touch"}
+UNIT_FILES = re.compile(r"^(test_\w+|farm_input)\.gd$")   # the unit chain (run_tests.gd only lists names); shot scripts are not checks
+FULL_SUITE = ["all", "--time-scale", "6", "--skip-x1"]   # the end-of-run check: every suite, as at a checkpoint
+IMPACT_MAX = 40   # test functions listed in a brief; the rest are counted
+PHRASE_STOP = {"per", "max", "min", "level", "levels", "time", "rate", "base", "new", "model", "change", "growth"}   # in most upgrade tests' names
+TEST_RULES = (
+    " Test rules (L39): a flow step that several tests take (reach the second stop, open the shop, fill the bucket, "
+    "wait for CRANKING) goes through one shared helper (unit: `tests/test_helpers_*.gd`; the windowed suites, which "
+    "extend SceneTree: a static func in `tests/flow.gd`, preloaded, created on first need); reuse it, add it if it is "
+    "missing, and never copy the steps inline, so a change to that step is fixed in one place. No literal cell index, "
+    "node count or screen size: read it from the config, the scene, or ProjectSettings "
+    "(`display/window/size/viewport_width` and `_height`).")
 
 STOP = {"a", "an", "the", "and", "or", "of", "to", "in", "on", "at", "is", "it", "its", "as", "by", "be", "for", "with",
         "from", "that", "this", "each", "every", "any", "no", "not", "its", "than", "are", "one", "two", "stay", "stays",
@@ -690,7 +710,7 @@ def briefs(spec, goal, batch, run, branch):
             f"agent runs every check right after you (team.md: scripts run on Rex, not Sonnet); a parse check with "
             f"Godot's `--check-only` is fine. A failing test is a finding: report it, never bend the test to the code. On the line just above each new test function, write "
             f"`# goal <ID>` with the contract line's ID below (the goal agent maps tests to lines by it)."
-            + INTERACTION_CHECKLIST
+            + INTERACTION_CHECKLIST + TEST_RULES
             + (" A line saying \"shown failing on the current build\" is a bug the designer saw in play: its test "
                "must fail on this build, on the check that shows the bug (a script error does not count); if it "
                "passes, it does not reproduce the bug. Where the line or spec text says what stays (keep, only, "
@@ -713,7 +733,86 @@ def briefs(spec, goal, batch, run, branch):
             f"Build your part ({FOLDERS[agent]}) of this change. {other}; the handoff is your contract. Run "
             f"`python -I _tools/contract_check.py` before you finish.{keys}\n{hand_ref}\nYour contract lines:\n{lines}\n\n"
             f"Spec text:\n{spec_slice(spec, goal)}") + tail
+    rows = test_impact(goal)
+    if rows:   # L39 (b): the stale tests are updated beside the build, from the spec, not found red in fix rounds
+        out[QA] = head + (
+            f"Patricia and Bob are building this change in parallel ({', '.join(goal['owners'])}). These existing "
+            f"tests read names it touches:\n{impact_text(rows)}\n\nFor each, compare what it expects with the spec "
+            f"text below. Update only a test whose expectation this change replaces (a flow step it now takes "
+            f"differently, a node it renames or removes, a value it changes), and quote the spec line in a comment "
+            f"beside it; most names on the list are only read, so leave those tests as they are. Change no "
+            f"expectation the spec does not change, and write no new tests (the contract lines do that). Do not run "
+            f"the tests: the goal agent runs them, with the windowed suites this list names, after the build."
+            + TEST_RULES + f"\n\nSpec text:\n{spec_slice(spec, goal)}") + tail
     return out
+
+
+def impact_tokens(goal):
+    """The names a change touches that a test could read: its nodes (kept and removed), config keys, and the backticked
+    code names in its text and contract lines (snake_case functions and keys, UPPER_CASE states, CamelCase nodes)."""
+    own = goal["text"] + " " + " ".join(l for ls in goal["lines"].values() for l in ls)
+    toks = set(goal["nodes"]) | set(goal.get("removed", [])) | set(goal["keys"])
+    for t in (w for span in backticked(own) for w in re.findall(r"[A-Za-z_]\w*", span)):   # a formula holds several
+        if is_key(t.lstrip("_")) or is_node(t) or re.fullmatch(r"[A-Z][A-Z0-9_]{3,}", t):
+            toks.add(t)
+    return sorted(toks)
+
+
+def impact_phrases(goal):
+    """Two-word phrases of the change's title and text, as identifier parts: "the second stop" -> second_stop and
+    SecondStop, "the shop panel" -> shop_panel and ShopPanel. Item 9 and item 14 broke tests through names the spec
+    wrote only in words (L39)."""
+    out = set()
+    prose = re.sub(r"`[^`]*`", ".", goal["title"] + ". " + goal["text"])   # code names are impact_tokens' job
+    for part in re.split(r"[^\w\s']+|_", prose.lower()):
+        ws = re.findall(r"[a-z']+", part)
+        for a, b in zip(ws, ws[1:]):
+            if min(len(a), len(b)) >= 3 and not {a, b} & (STOP | PHRASE_STOP) and "'" not in a + b:
+                out.add(f"{a}_{b}")
+    return sorted(out)
+
+
+def test_impact(goal, tests=None):
+    """[(file, function, suite, [names])]: each existing test function (or shared helper) in game/tests/ that reads a
+    name the change touches, so Quinn updates the stale ones beside the build, not in fix rounds (L39, fix b)."""
+    tests = tests or ROOT / "game" / "tests"
+    toks, phrases = impact_tokens(goal), impact_phrases(goal)
+    if not (toks or phrases) or not tests.is_dir():
+        return []
+    alts = [r"(?<!\w)" + re.escape(t) + r"(?!\w)" for t in sorted(toks, key=len, reverse=True)]
+    camel = {p.replace("_", " ").title().replace(" ", ""): p for p in phrases}
+    alts += [r"(?<![A-Za-z0-9])" + re.escape(p) + r"(?![a-z0-9])" for p in phrases]   # inside a snake_case name
+    alts += [re.escape(c) + r"(?![a-z0-9])" for c in camel]                         # inside a CamelCase name
+    pat = re.compile("(" + "|".join(alts) + ")") if alts else None
+    out = []
+    for f in sorted(tests.glob("*.gd")):
+        suite = SUITE_FILES.get(f.name) or ("unit" if UNIT_FILES.match(f.name) else None)
+        if not suite:
+            continue
+        hits, cur = {}, ""
+        for line in f.read_text(encoding="utf-8", errors="replace").splitlines():
+            m = re.match(r"^(?:static\s+)?func\s+(\w+)", line)
+            if m:
+                cur = m.group(1)
+            if cur and not line.lstrip().startswith("#"):
+                for t in pat.findall(line):
+                    hits.setdefault(cur, set()).add(camel.get(t, t))   # a CamelCase hit is named by its phrase
+        out += [(f"tests/{f.name}", fn, suite, sorted(ts)) for fn, ts in hits.items()]
+    return out
+
+
+def impact_suites(rows):
+    """The windowed suites a change's impact list reaches: run with `unit` in that step's test check."""
+    return sorted({s for _, _, s, _ in rows if s != "unit"}, key=list(SUITE_FILES.values()).index)
+
+
+def impact_text(rows):
+    """The impact list for a brief: one line per file, its functions with the names each reads."""
+    by_file = {}
+    for f, fn, suite, ts in rows[:IMPACT_MAX]:
+        by_file.setdefault((f, suite), []).append(f"`{fn}` ({', '.join(ts)})")
+    more = f"\n- and {len(rows) - IMPACT_MAX} more functions" if len(rows) > IMPACT_MAX else ""
+    return "\n".join(f"- `{f}` [{suite}]: " + ", ".join(fns) for (f, suite), fns in by_file.items()) + more
 
 
 def scan_handoffs(game=None):
@@ -747,11 +846,12 @@ def budget_ok(agent):
     return verdict != "deny", (msg or f"allow{age}")
 
 
-def checks(spec, goal, base, version):
-    """The check commands for a step, in order: [(label, cmd, env)]."""
+def checks(spec, goal, base, version, suites=()):
+    """The check commands for a step, in order: [(label, cmd, env)]. `suites`: the windowed suites the change's
+    impact list reaches (L39), run with unit so a change that breaks play, measure or snapshot is seen in its step."""
     py = [sys.executable, "-I"]
     out = [("contract", py + ["_tools/contract_check.py"], None),
-           ("tests", py + ["_tools/godot_run.py", "unit", "start"], ENV)]
+           ("tests", py + ["_tools/godot_run.py", "unit", "start", *suites], ENV)]
     if goal["kind"] == "change" and "Bob" in goal["owners"]:
         out.append(("ui shots", py + ["_tools/ui_shots.py", f"{version}={ROOT}"], None))
         # one style-loop round (render, style_check, Vera; no Bob): a FAIL goes to Bob in the fix round. {round} is
@@ -863,7 +963,8 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     plan = briefs(spec, goal, batch, run, branch)
     _, base = git("rev-parse", "--short", "HEAD")
     base = base.strip()
-    cmds = checks(spec, goal, base, spec["version"]) if goal["kind"] != "handoff" else []
+    suites = impact_suites(test_impact(goal)) if goal["kind"] == "change" else []
+    cmds = checks(spec, goal, base, spec["version"], suites) if goal["kind"] != "handoff" else []
     if dry:   # the console only: no brief files, no board
         print(f"\nStep {ids}: {len(plan)} agent(s) in parallel: {', '.join(g.NAMES[a] for a in plan)}")
         for agent, prompt in plan.items():
@@ -979,6 +1080,43 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     msg = checkpoint(spec, batch, run, folder, folder.parent / "ledger.json")
     say(board, f"- Green: {msg}\n")
     return "green"
+
+
+def final_suite(spec, run, folder, board, usage):
+    """L39 (c): when a run has built every goal, run every suite (`all --time-scale 6 --skip-x1`), since a step checks
+    `unit` and only the windowed suites its impact list names. Red: one round to Quinn for the stale tests, then the
+    check again; still red, the run waits for the designer. Returns done, paused or waiting-designer."""
+    cmd = [sys.executable, "-I", "_tools/godot_run.py", *FULL_SUITE]
+    say(board, f"\n### Full suite ({now()})\n\n")
+    for rnd in range(2):
+        code, out = run_cmd(cmd)
+        say(board, f"- Check `full suite`: {'PASS' if code == 0 else f'FAIL (exit {code})'}\n")
+        if code == 0:
+            if rnd:   # Quinn's test fixes made it green: keep them
+                git("add", "--", "game/tests", folder.relative_to(ROOT).as_posix())
+                c, o = git("commit", "-m", f"{spec['version']} full suite: stale tests updated (goal_agent run {run})"
+                           f"\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>")
+                say(board, "- Green: " + ("tests committed" if c == 0 else "commit failed: " + summary_of(o, 6)) + "\n")
+            return "done"
+        text = summary_of(out, 20)
+        say(board, "\n```\n" + text + "\n```\n")
+        if rnd:
+            g.waiting(board, f"Every goal of `{spec['file']}` is built, but the full suite is red after Quinn's round "
+                      f"(output above). The designer decides which failures are game bugs (they go to Patricia or "
+                      f"Bob) and which tests are stale. Quinn's edits are not committed: keep them with "
+                      f"`python -I _tools/checkpoint.py \"full suite fix-round edits\"`.")
+            return "waiting-designer"
+        plan = {QA: (
+            f"Goal agent run `{run}` has built every goal of `game/specs/{spec['file']}`, but the full suite "
+            f"(`godot_run.py {' '.join(FULL_SUITE)}`) is red. Your folder: {FOLDERS[QA]}. For each failing test, read "
+            f"the spec item it covers: if its expectation is one the spec's changes replaced (a stale test), update it "
+            f"and quote the spec line in a comment beside it; if the game breaks the spec, change nothing and list it "
+            f"as a finding (test, spec line, likely file). Do not commit. Do not run the suites: the goal agent runs "
+            f"them after you. You have {FIX_MAX_TURNS} turns.{TEST_RULES}\n\n{text}\n\nReply in at most 150 words.")}
+        keep_briefs(folder, board, plan, "suite-fix1")
+        if not call_agents(plan, board, usage, run, "full suite fix 1", max_turns=FIX_MAX_TURNS):
+            return "paused"
+    return "waiting-designer"
 
 
 def style_report(out, changed=None):
@@ -1101,7 +1239,7 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
         out[QA] = head + (f"Your folder: {FOLDERS[QA]}. Update only a test whose expectation this change of the "
                           f"spec replaces, and quote the spec line in a comment beside it. Any other failure is a "
                           f"finding against the code: leave the test and say which. Do not run the tests: the goal agent "
-                          f"runs them after you.\n\n{report}\n\nSpec text:\n{spec_slice(spec, goal)}\n\nReply in at most 150 words.")
+                          f"runs them after you.{TEST_RULES}\n\n{report}\n\nSpec text:\n{spec_slice(spec, goal)}\n\nReply in at most 150 words.")
     return out
 
 
@@ -1212,11 +1350,21 @@ def main(argv=None):
                     "checkpoint it, and exit; run the checks first")
     ap.add_argument("--note", default="", help="with --accept: the manual change, for the blackboard and GOAL_AGENT.md; "
                     "otherwise: the designer's answer the run resumes on (written under Resumed)")
+    ap.add_argument("--impact", metavar="GOAL", help="print the existing tests that read what GOAL touches (L39) and "
+                    "the windowed suites its step would add, then exit; any goal, built or not")
     a = ap.parse_args(argv)
     path = Path(a.spec)
     if not path.is_file():
         path = ROOT / "game" / "specs" / a.spec
     spec = parse_spec(path)
+    if a.impact:
+        if a.impact not in spec["goals"]:
+            print(f"goal_agent: {a.impact} is not a goal of {spec['file']}")
+            return 2
+        rows = test_impact(spec["goals"][a.impact])
+        print(impact_text(rows) or "no existing test reads what it touches")
+        print(f"{len(rows)} functions; suites added to its step: {', '.join(impact_suites(rows)) or 'none'}")
+        return 0
     if spec["status"] != "approved":
         print(f"goal_agent: {spec['file']} is `{spec['status'] or 'no status'}`, not approved; nothing is built.")
         return 2
@@ -1311,6 +1459,8 @@ def main(argv=None):
                 say(board, f"\n**Stop:** {result}.\n")
                 plan_pass(spec, ROOT / "game", folder, board, costs, n)   # the re-scan after the last write
                 break
+        if result == "done" and board is not None:   # L39 (c): a step runs unit only; the end runs every suite
+            result = final_suite(spec, run, folder, board, usage)
     except Exception as e:   # an agent or check crashed: never record it as done (generate.py marks `result: failed`)
         result = f"failed ({type(e).__name__}: {e})"
         say(board, f"\n**Stop:** the run crashed: {result}. A rerun re-scans and continues from the ledger.\n")

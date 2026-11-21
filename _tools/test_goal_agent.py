@@ -555,6 +555,63 @@ class Loop(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(ga.main(["9.9-fixture.md", "--run", "t", "--plan"]), 2)
 
+    def impact_fixture(self):
+        """C3 (key frame_scale, removes OldBar) is read by one unit test and one play-suite helper."""
+        game = self.tmp / "game"
+        (game / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        (game / "tests" / "test_frames.gd").write_text(
+            'func t_old_bar() -> void:\n\tvar n = m.get_node("OldBar")\n\n'
+            "func t_untouched() -> void:\n\t# OldBar was here\n\tpass\n", encoding="utf-8")
+        (game / "tests" / "play_loop.gd").write_text("func _round() -> void:\n\tprint(cfg.frame_scale)\n", encoding="utf-8")
+        (game / "tests" / "round6_shots.gd").write_text("func _s() -> void:\n\tprint(cfg.frame_scale)\n", encoding="utf-8")
+
+    def test_the_impact_list_briefs_quinn_beside_the_build(self):
+        """L39 (b): existing tests reading what a change touches go to Quinn in the build step, and a windowed suite
+        on the list runs with unit in that step's check (c)."""
+        self.impact_fixture()
+        goal = ga.parse_spec(self.tmp / "game" / "specs" / "9.9-fixture.md")["goals"]["C3"]
+        self.assertEqual(ga.test_impact(goal), [("tests/play_loop.gd", "_round", "play", ["frame_scale"]),
+                                                ("tests/test_frames.gd", "t_old_bar", "unit", ["OldBar"])])   # no shot script, no comment
+        code, out, board = self.run_main("--max-goals", "1")
+        self.assertEqual(sorted(a for a, _ in self.calls), sorted([ga.BUILDER, ga.PROGRAMMER, ga.QA]))
+        quinn = next(p for a, p in self.calls if a == ga.QA)
+        for text in ("`t_old_bar` (OldBar)", "[play]", "quote the spec line", "Test rules (L39)", "viewport_width"):
+            self.assertIn(text, quinn)
+        self.assertNotIn("t_untouched", quinn)
+        test_cmd = next(c for c in self.cmds if any("godot_run.py" in x for x in c))
+        self.assertEqual(test_cmd[-3:], ["unit", "start", "play"])
+
+    def test_no_impact_no_quinn_call(self):
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        self.run_main("--max-goals", "1")
+        self.assertNotIn(ga.QA, [a for a, _ in self.calls])
+
+    def suite_board(self):
+        spec = ga.parse_spec(self.tmp / "game" / "specs" / "9.9-fixture.md")
+        folder = self.tmp / "game" / "reports" / "goal" / "t"
+        ga.board_start(folder / "blackboard.md", spec, "t", "goal_agent.py test")
+        return spec, folder, folder / "blackboard.md"
+
+    def test_full_suite_red_gets_one_quinn_round_then_commits(self):
+        """L39 (c): the end of a run runs every suite; a red one goes to Quinn once, and a green rerun is committed."""
+        spec, folder, board = self.suite_board()
+        self.check_codes = [1, 0]
+        self.assertEqual(ga.final_suite(spec, "t", folder, board, []), "done")
+        suite = [c for c in self.cmds if any("godot_run.py" in x for x in c)]
+        self.assertEqual([c[-4:] for c in suite], [ga.FULL_SUITE] * 2)
+        self.assertEqual([a for a, _ in self.calls], [ga.QA])
+        self.assertIn("Test rules (L39)", self.calls[0][1])
+        self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
+        self.assertIn("briefs/suite-fix1-quinn.md", board.read_text(encoding="utf-8"))
+
+    def test_full_suite_red_twice_waits_for_the_designer(self):
+        spec, folder, board = self.suite_board()
+        self.check_codes = [1, 1]
+        self.assertEqual(ga.final_suite(spec, "t", folder, board, []), "waiting-designer")
+        self.assertEqual(len(self.calls), 1)
+        self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
+        self.assertIn("full suite is red after Quinn's round", board.read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)
