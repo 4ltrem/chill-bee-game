@@ -132,7 +132,9 @@ func _run() -> void:
 													"t_spigot_cost_floor_levels", "t_spigot_bottling_time_by_level", "t_spigot_jar_flight_unchanged",
 														# 0.2 item 13 (written from game/specs/0.2-first-automation.md before the code)
 														"t_truck_sell_waits_for_jar_in_flight", "t_truck_autosell_waits_for_jar_in_flight", "t_truck_jar_after_departure_goes_to_crate",
-														"t_truck_sell_with_jar_in_flight_twice_matches",
+	"t_truck_sell_with_jar_in_flight_twice_matches",
+															# 0.2 item 14 (written from game/specs/0.2-first-automation.md before the code)
+															"t_shop_seven_rows_on_screen_no_scroll",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

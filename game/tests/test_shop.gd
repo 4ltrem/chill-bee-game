@@ -328,3 +328,48 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 		for rw in rows:
 			ck(view.encloses((rw as Control).get_global_rect()), "row '%s' is whole on screen without scrolling (item 14)" % _row_name(rw))
 	_fin()
+
+
+## Item 14: no scroll container in the shop panel, all rows inside the panel and on screen at the project's window size, none over another control.
+# goal T14.1
+func t_shop_seven_rows_on_screen_no_scroll() -> void:
+	if _root_size_saved == Vector2i.ZERO:
+		_root_size_saved = root.size
+	root.size = Vector2i(int(ProjectSettings.get_setting("display/window/size/viewport_width")), int(ProjectSettings.get_setting("display/window/size/viewport_height")))
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	await _frames(2)
+	await _shop_open(m)
+	var panel: Control = m.find_child("ShopPanel", true, false) as Control
+	ck(panel != null, "step open: ShopPanel exists")
+	if panel == null:
+		_fin()
+		return
+	var e: Node = _shop_zero()
+	e.call("set_level", "faster_delivery", _shop_unlock_level())   # Auto-Sell unlocked: its row and gate text are at their tallest
+	await _frames(3)
+	ck(panel.find_children("*", "ScrollContainer", true, false).is_empty(), "no ScrollContainer anywhere under ShopPanel (item 14)")
+	var rows: Array = _shop_rows(m)
+	eq(rows.size(), _SHOP_IDS.size(), "all %d rows are shown at once" % _SHOP_IDS.size())
+	var view: Rect2 = _vp()
+	var pr: Rect2 = panel.get_global_rect()
+	ck(view.encloses(pr), "the shop panel is on screen %s in %s" % [str(pr), str(view)])
+	var others: Array = []
+	for nm in ["TopInfo", "SellIcon", "ForkIcon", "CentrifugeIcon", "BackButton", "HiveCountLabel", "HintLabel"]:
+		var c: Control = m.find_child(nm, true, false) as Control
+		if c != null and c.is_visible_in_tree() and c.get_global_rect().size.x > 0.0 and not panel.is_ancestor_of(c):
+			others.append([nm, c.get_global_rect()])
+	var top: Control = m.find_child("TopInfo", true, false) as Control
+	if top != null:
+		ck(pr.position.y >= top.get_global_rect().end.y, "the panel top %s clears the HUD (TopInfo bottom %s)" % [str(pr.position.y), str(top.get_global_rect().end.y)])
+	for i in rows.size():
+		var r: Rect2 = (rows[i] as Control).get_global_rect()
+		ck(pr.encloses(r), "row '%s' %s is inside the panel %s" % [_row_name(rows[i]), str(r), str(pr)])
+		ck(view.encloses(r), "row '%s' is whole on screen" % _row_name(rows[i]))
+		for o in others:
+			ck(not r.intersects(o[1] as Rect2), "row '%s' overlaps %s" % [_row_name(rows[i]), o[0]])
+		for j in range(i + 1, rows.size()):
+			ck(not r.intersects((rows[j] as Control).get_global_rect()), "rows '%s' and '%s' overlap" % [_row_name(rows[i]), _row_name(rows[j])])
+	_fin()

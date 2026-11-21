@@ -1473,5 +1473,25 @@
    "t_truck_sell_with_jar_in_flight_twice_matches"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 14 buy buttons too tall: rows run off screen",
+  "file": "scripts/default_config.tres",
+  "find": "shop_row_height = 64",
+  "replace": "shop_row_height = 400",
+  "expect": [
+   "t_shop_seven_rows_on_screen_no_scroll"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 14 a scroll container returns around the rows",
+  "file": "scenes/main.tscn",
+  "find": "[node name=\"ShopBox\" type=\"VBoxContainer\" parent=\"FarmUIRoot/FarmUI/Margin/Column/ShopPanel\"]\nlayout_mode = 2\nmouse_filter = 2\ntheme_override_constants/separation = 8\n",
+  "replace": "[node name=\"ShopBox\" type=\"VBoxContainer\" parent=\"FarmUIRoot/FarmUI/Margin/Column/ShopPanel\"]\nlayout_mode = 2\nmouse_filter = 2\ntheme_override_constants/separation = 8\n\n[node name=\"ShopScroll\" type=\"ScrollContainer\" parent=\"FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox\"]\nlayout_mode = 2\n",
+  "expect": [
+   "t_shop_seven_rows_on_screen_no_scroll"
+  ],
+  "suite": "unit"
  }
 ]
