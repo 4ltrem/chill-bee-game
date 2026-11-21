@@ -5,8 +5,8 @@ Copy to _tools/ in a workspace and run from anywhere:
     python -I _tools/links.py [ROOT] [--skip FOLDER ...] [--graph FILE]
 ROOT defaults to the folder that holds _tools/. Standard library only.
 
-Checks every .md file outside dot-folders, node_modules/, _archive/, _templates/, raw/ and any
-folder named with --skip:
+Checks every .md file outside dot-folders, node_modules/, _archive/, _templates/, raw/, folders git
+ignores (in a git checkout) and any folder named with --skip:
   - markdown links [text](path), .md paths in consumes: / produces: frontmatter, and import
     lines such as @AGENTS.md (the one-line pointers CLAUDE.md and GEMINI.md hold).
     Web links, #anchors, {placeholders} and [[wikilinks]] are not checked.
@@ -22,6 +22,7 @@ viz.py draws it.
 import json
 import os
 import re
+import subprocess
 import sys
 import urllib.parse
 from pathlib import Path
@@ -80,6 +81,17 @@ def looks_like_path(s):
     return "/" in s or bool(re.search(r"\.\w{1,5}$", s))
 
 
+def ignored_dirs(root):
+    """Folders git ignores under root (e.g. style_loop's sandbox copies in _meta/sessions/runs/): not part of the
+    workspace, so their links are not checked. Empty when root is not a git checkout or git is missing."""
+    try:
+        p = subprocess.run(["git", "ls-files", "--others", "--ignored", "--exclude-standard", "--directory"],
+                           cwd=root, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=60)
+    except (OSError, subprocess.SubprocessError):
+        return []
+    return [l for l in p.stdout.splitlines() if l.endswith("/")] if p.returncode == 0 else []
+
+
 def main():
     args, skip, graph_out = sys.argv[1:], set(SKIP), None
     while "--skip" in args:
@@ -92,8 +104,10 @@ def main():
         del args[i:i + 2]
     root = Path(args[0]).resolve() if args else Path(__file__).resolve().parent.parent
 
+    ignored = ignored_dirs(root)
     files = sorted(f for f in root.rglob("*.md")
-                   if not any(p.startswith(".") or p in skip for p in f.relative_to(root).parts[:-1]))
+                   if not any(p.startswith(".") or p in skip for p in f.relative_to(root).parts[:-1])
+                   and not any(f.relative_to(root).as_posix().startswith(d) for d in ignored))
     broken, nodes, edges, checked = [], [], [], 0
 
     def link(f, rel, target):
