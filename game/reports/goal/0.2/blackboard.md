@@ -2759,9 +2759,293 @@ FAIL    unit      184 passed, 11 failed  (exit 1, 292 noise lines dropped)  game
 
 2 fix rounds failed on C14: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept C14 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C14 fix-round edits"`.
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --accept C14 --note Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/ui-compare/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C14 (2026-11-21T11:34:31-05:00)
+
+- Change (orchestrator, Process 9): Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/ui-compare/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/
+- Accepted: checkpoint `0628fc6` on `milestone/0.2`
+
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 29: scan (2026-11-21T11:34:43-05:00)
+
+Unit results from `game/reports/_runs/20261121-112004/unit.log`. 22 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C14 The shop shows every row without scrolling | change | Patricia, Bob | partial (built, waits on its tests) | ✗ node ShopScroll, ✓ ledger 0628fc6 |
+
+### Order: new or rescored (6 of 6)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T10.1 item 10: after a drag release the fork prop is hid | 5.7 | 0 | 3 | 0.3 | 1 | play-test fix; cost 0.3 (Quinn) |
+| 2 | T11.1 item 11: while cranking, `Lid`'s and `LidDisc`'s g | 5.7 | 0 | 3 | 0.3 | 1 | play-test fix; cost 0.3 (Quinn) |
+| 3 | T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^leve | 5.7 | 0 | 3 | 0.3 | 1 | play-test fix; cost 0.3 (Quinn) |
+| 4 | T13.1 item 13: with a jar in flight to the bed, a Sell p | 5.7 | 0 | 3 | 0.3 | 1 | play-test fix; cost 0.3 (Quinn) |
+| 5 | T14.1 item 14: the shop panel has no scroll container, a | 5.7 | 0 | 3 | 0.3 | 1 | play-test fix; cost 0.3 (Quinn) |
+| 6 | T9.1 item 9: the bucket filling during the first zoom l | 5.7 | 0 | 3 | 0.3 | 1 | play-test fix; cost 0.3 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T10.1** (score 5.7: play-test fix; cost 0.3 (Quinn)).
+
+### Step: T10.1 (2026-11-21T11:34:43-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T10.1-quinn.md` (4033 chars)
+- Budget guard for Quinn: allow (reading 11 min old)
+
+**Quinn** (1,255,309 tokens, 33 turns, 120 s):
+
+The parse check passed with no errors. I did not run the tests, mutations or shots.
+
+**Files changed**
+- `tests/test_fork_return.gd` (new, extends `test_journal`). It holds `t_fork_returns_to_icon_twice` with `# goal T10.1` above it.
+- `tests/test_helpers_3.gd`: added the shared step `_drag_last_frame_held`.
+- `tests/run_tests.gd`: now extends `test_fork_return`, and the group comment and test name are registered.
+- `tests/mutations.json`: three mutations for the test:
+  - no return call on zoom end (breaks the leave step);
+  - the scale is not restored after the return (breaks the twice step);
+  - release leaves the fork visible.
+
+**Nodes used:** `FarmWorld/UncapFork`, `ForkIcon`, `BackButton`, `Honeycomb`, and `main.zoom == 0` as the zoom end.
+
+**Open questions**
+- Item 10: what happens to the fork on Back mid-drag? A single mouse press cannot hold a drag and tap Back, so I wrote no test for it.
+- Item 10: what happens to the fork on an app pause mid-drag?
+- Item 10: does the fork stay shown from the last frame ending until the zoom ends? The contract's "last shown point near the icon" implies it does, and the test requires it.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 19 (cap 30; CLI num_turns 33); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      195 passed, 1 failed  (exit 1, 294 noise lines dropped)  game/reports/_runs/20261121-113647/unit.log
+    FAIL  t_fork_returns_to_icon_twice  run 1: every frame was uncapped by real drags and the last one by a press that is still held | run 1: the zoom ended (zoom NONE) with the press still held | run 1: the fork prop is still on screen when th
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T10.1-fix1-patricia.md` (1683 chars)
+- Budget guard for Patricia: allow (reading 24 min old)
+
+**Patricia** (157,002 tokens, 13 turns, 25 s):
+
+I fixed one line in `scripts/honeycomb.gd` and ran nothing, so `t_fork_returns_to_icon_twice` is untested.
+
+**Cause:** `Honeycomb.load_frame` cleared `_dragging` whenever the next frame loaded. A press still held across frames therefore stopped uncapping at the frame change. The test's "every frame uncapped by real drags and the last one by a held press" check failed on that. The two later failures, "zoom ended" and "fork prop still on screen", most likely follow from it, since the held-press run never finished.
+
+**Fix:** `load_frame` still emits `drag_ended`, so the fork hides when the frame ends. It no longer clears `_dragging`, so the held press keeps uncapping the next frame. The next mouse move shows the fork again through `follow`.
+
+No other files changed.
+
+**For Quinn:** a press held across a frame change now keeps uncapping. The fork hides at the frame change and reappears on the next move.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 13); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      195 passed, 1 failed  (exit 1, 294 noise lines dropped)  game/reports/_runs/20261121-114743/unit.log
+    FAIL  t_fork_returns_to_icon_twice  run 1: every frame was uncapped by real drags and the last one by a press that is still held | run 1: the zoom ended (zoom NONE) with the press still held | run 1: the fork prop is still on screen when th
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T10.1-fix2-patricia.md` (1683 chars)
+- Budget guard for Patricia: allow (reading 3 min old)
+
+**Patricia** (251,940 tokens, 19 turns, 41 s):
+
+I changed `scripts/honeycomb.gd` to fix `t_fork_returns_to_icon_twice`. I didn't run any checks, as instructed, so the fix is untested.
+
+**Cause:** My earlier item 10 change made `load_frame()` and the `active` setter set `_dragging = false` mid-drag, to hide the fork. A held press then stopped uncapping the next frame, because the mouse-motion handler only ran while `_dragging` was true. That left cells capped, so the zoom never ended.
+
+**Fix:**
+- **New `_held` flag:** it tracks whether the press is still down. Motion and drag events now check `_held` instead of `_dragging`.
+- **`_dragging`:** it now only means the fork is shown. I set it to true whenever `drag_point` fires, so the fork still hides and reappears as before.
+- **`active` going false:** it clears `_held`, since the release event would be missed while inactive.
+
+Everything else is unchanged.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 10 (cap 15; CLI num_turns 19); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      195 passed, 1 failed  (exit 1, 294 noise lines dropped)  game/reports/_runs/20261121-115905/unit.log
+    FAIL  t_fork_returns_to_icon_twice  run 1: every frame was uncapped by real drags and the last one by a press that is still held | run 1: the zoom ended (zoom NONE) with the press still held | run 1: the fork prop is still on screen when th
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T10.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T10.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T10.1 fix-round edits"`.
+
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T11.1 --max-goals 1` (the run had stopped: `waiting-designer`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 30: scan (2026-11-21T12:11:01-05:00)
+
+Unit results from `game/reports/_runs/20261121-115905/unit.log`. 22 of 34 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+Next: **T11.1** (score 5.7: play-test fix; cost 0.3 (Quinn)).
+
+### Step: T11.1 (2026-11-21T12:11:01-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T11.1-quinn.md` (4003 chars)
+- Budget guard for Quinn: allow (reading 0 min old)
+
+**Quinn** (706,295 tokens, 32 turns, 79 s):
+
+I wrote the T11.1 test, registered it and added four mutations. The `--check-only` parse of `test_lidstill.gd` printed no errors. I ran no tests, mutations or shots.
+
+**Files changed**
+- `game/tests/test_lidstill.gd` (new). It holds `t_lid_still_crank_and_gear1_turn_twice`, with `# goal T11.1` above it.
+- `game/tests/run_tests.gd`: now extends `test_lidstill.gd`, and the test is registered under the `# 0.2 item 11 (written from game/specs/0.2-first-automation.md before the code)` comment.
+- `game/tests/mutations.json`: four mutations, all in `scripts/centrifuge.gd`:
+  - the Lid spins too;
+  - the Crank doesn't turn;
+  - Gear1 turns at double speed;
+  - the second run turns the Crank backwards.
+
+**Node names used:** `Lid`, `LidDisc`, `Crank`, `Gear1`, `Spinner`.
+
+**What it checks:** after a tap, Lid and LidDisc keep the same global rotation. Crank turns, Gear1 turns the same angle in the same direction, and Spinner turns. It does this twice.
+
+**Open questions**
+- Item 11: what happens to the Crank and gears on Back, zoom out, another panel or app pause mid-crank? I wrote no leave-step test.
+- Item 11: does the crank handle keep turning while a stopping `Spinner` eases to rest?
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 16 (cap 30; CLI num_turns 32); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 3 of 4 caught
+mutate baseline: 1 expected tests, 0 already failing
+mutate 1/4: 0.2 item 11 the whole lid spins again with the crank ... CAUGHT in 10s
+mutate 2/4: 0.2 item 11 the crank no longer turns ... CAUGHT in 10s
+mutate 3/4: 0.2 item 11 Gear1 turns at twice the crank's rate ... CAUGHT in 10s
+mutate 4/4: 0.2 item 11 the second run turns the crank backwards ... MISSED in 5s
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T11.1-fix1-quinn.md` (1606 chars)
+- Budget guard for Quinn: allow (reading 8 min old)
+
+**Quinn** (92,390 tokens, 6 turns, 16 s):
+
+Mutation 4 ("the second run turns the crank backwards") was missed because of a flaw in the mutation, not in the test. I fixed the mutation; I haven't re-run it.
+
+The old mutation flipped the crank direction after the first `_process` call. Run 1 was then almost entirely backwards too, so both runs turned the same way and the "same way as run 1" assert still passed.
+
+The new version in `game/tests/mutations.json` remembers the instance ID of the first centrifuge it sees. It reverses the crank only on a different centrifuge, and `t_lid_still_crank_and_gear1_turn_twice` builds a fresh one for each run. Run 1 stays forward and run 2 goes backwards, so the "run 2 turns Crank the same way as run 1" assert should now fail.
+
+I didn't change `test_lidstill.gd`. Mutations 1–3 were already caught.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 6); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      195 passed, 1 failed  (exit 1, 294 noise lines dropped)  game/reports/_runs/20261121-122435/unit.log
+    FAIL  t_barrel_eases_to_stop  no frame turns the barrel faster than the frame before it (worst rise 1.82 rad/s at sample 3)  (2936 ms)
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T11.1-fix2-patricia.md` (1617 chars)
+- Budget guard for Patricia: allow (reading 20 min old)
+
+**Patricia** (216,266 tokens, 14 turns, 62 s):
+
+I changed nothing: I don't think this failure is in `scripts/`, so I didn't edit anything.
+
+**Failing row:** `t_barrel_eases_to_stop`, worst rise 1.82 rad/s at sample 3. Round 1 failed the same check with a rise of 0.48.
+
+**Why the code looks correct:**
+- `centrifuge.gd` `_process` (lines 532–543) computes the barrel's stop analytically: angle left = distance × rest^(k+1).
+- The speed along that curve only falls, and it starts exactly at the spin speed when the lid opens.
+- The item 11 changes only turn `_crank` and the gears. They never touch `_spinner` or `spin_speed`, so they can't change the barrel's angle.
+
+**Likely cause:** the test reads `get_process_delta_time()` right after `await process_frame`. The angle it samples comes from the previous frame's `_process`, so a headless frame-time jitter of about 10% at 18 rad/s shows up as a rise of about 1.8 rad/s. The tolerance in `game/tests/test_lids.gd` line 343 is 0.35.
+
+**Where to look:** this is in Quinn's folder. The next round should work out the frame delta that goes with each sampled angle, or loosen the tolerance for jitter.
+
+I ran nothing, as instructed.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 14); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      195 passed, 1 failed  (exit 1, 294 noise lines dropped)  game/reports/_runs/20261121-123703/unit.log
+    FAIL  t_camera_pan_seconds  the pan took 1.142 s; camera_pan_seconds is 1.200 s +- 0.057 s (one frame)  (11641 ms)
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T11.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T11.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T11.1 fix-round edits"`.
+
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T11.1 --max-goals 1` (the run had stopped: `waiting-designer`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 31: scan (2026-11-21T12:54:39-05:00)
+
+Unit results from `game/reports/_runs/20261121-123703/unit.log`. 24 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C11 The lid stays still; the crank drives the gears | change | Patricia | done | ✓ node LidDisc, ✓ test t_lid_still_crank_and_gear1_turn_twice, ✓ ledger 0.2 |
+| CFG Config and Dev mode | change | Patricia | done | 34/34 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T11.1 item 11: while cranking, `Lid`'s and `LidDisc`'s global rota | test | Quinn | done | ✓ test t_lid_still_crank_and_gear1_turn_twice |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 31/31 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+### Order: new or rescored (5 of 5)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T10.1 item 10: after a drag release the fork prop is hid | 5.71 | 0 | 3 | 0.29 | 1 | play-test fix; cost 0.29 (Quinn) |
+| 2 | T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^leve | 5.71 | 0 | 3 | 0.29 | 1 | play-test fix; cost 0.29 (Quinn) |
+| 3 | T13.1 item 13: with a jar in flight to the bed, a Sell p | 5.71 | 0 | 3 | 0.29 | 1 | play-test fix; cost 0.29 (Quinn) |
+| 4 | T14.1 item 14: the shop panel has no scroll container, a | 5.71 | 0 | 3 | 0.29 | 1 | play-test fix; cost 0.29 (Quinn) |
+| 5 | T9.1 item 9: the bucket filling during the first zoom l | 5.71 | 0 | 3 | 0.29 | 1 | play-test fix; cost 0.29 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
 ## Result
 
-Last invocation (2026-11-21T03:26:20-05:00): waiting-designer.
+Last invocation (2026-11-21T12:54:39-05:00): stopped (--goal was not a ready, unbuilt goal).
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 
@@ -2822,12 +3106,114 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/20
 | Patricia, C14 fix 1 | 146,929 | 26,135 | 8 | 20 s |
 | Quinn, C14 fix 2 | 101,697 | 23,642 | 10 | 24 s |
 | Bob, C14 fix 2 | 189,457 | 25,599 | 13 | 37 s |
-| **Total** | **10,937,564** | | | |
+| Quinn, T10.1 | 1,255,309 | 82,567 | 33 | 120 s |
+| Patricia, T10.1 fix 1 | 157,002 | 29,827 | 13 | 25 s |
+| Patricia, T10.1 fix 2 | 251,940 | 33,064 | 19 | 41 s |
+| Quinn, T11.1 | 706,295 | 53,624 | 32 | 79 s |
+| Quinn, T11.1 fix 1 | 92,390 | 21,098 | 6 | 16 s |
+| Patricia, T11.1 fix 2 | 216,266 | 41,028 | 14 | 62 s |
+| **Total** | **13,616,766** | | | |
 
 ## Resumed 2026-11-21
 
-Command: `goal_agent.py 0.2-first-automation.md --accept C14 --note Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/ui-compare/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/` (the run had stopped: `waiting-designer`).
+Command: `goal_agent.py 0.2-first-automation.md --goal T12.1 --max-goals 1` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: already on it.
 
-### Manual fix: C14 (2026-11-21T11:34:31-05:00)
+## Pass 32: scan (2026-11-21T12:54:56-05:00)
 
-- Change (orchestrator, Process 9): Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/ui-compare/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/
+Unit results from `game/reports/_runs/20261121-123703/unit.log`. 24 of 34 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+Next: **T12.1** (score 5.71: play-test fix; cost 0.29 (Quinn)).
+
+### Step: T12.1 (2026-11-21T12:54:56-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T12.1-quinn.md` (3887 chars)
+- Budget guard for Quinn: allow (reading 0 min old)
+
+**Quinn** (459,015 tokens, 26 turns, 71 s):
+
+I wrote three tests for T12.1. I haven't run them, the mutations or any shots. The Godot `--check-only` parse check of `test_spigot.gd` printed no errors.
+
+**Files changed**
+- `game/tests/test_spigot.gd` is new. It sits in the chain between `test_lidstill.gd` and `run_tests.gd`.
+- `game/tests/run_tests.gd` now extends `test_spigot.gd` and registers the tests under the "0.2 item 12" group comment.
+- `game/tests/mutations.json` has three new mutations, one per test.
+
+**Tests, each marked `# goal T12.1`**
+- `t_spigot_cost_floor_levels` checks the cost at levels 0..5.
+- `t_spigot_bottling_time_by_level` checks 3.0 s at level 0 and 1.8 s (±0.05) at level 5.
+- `t_spigot_jar_flight_unchanged` checks the jar lands after `jar_fly_seconds` at every level.
+
+**Node names:** none. The tests use the Economy `spigot_flow` id and the centrifuge's `advance()` and `spigot_jar_fraction()`.
+
+**Open questions:** none. Spigot Flow is a one-tap buy, so the interaction sequence test doesn't apply. The real-click twice test for the shop buy is item 1's.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 14 (cap 30; CLI num_turns 26); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      198 passed, 1 failed  (exit 1, 294 noise lines dropped)  game/reports/_runs/20261121-125612/unit.log
+    FAIL  t_spigot_bottling_time_by_level  config: level 5 leaves 1.8 s: expected 1.8 (+-0.05) got 1.2 | level 5: one jar takes 1.8 s: expected 1.8 (+-0.05) got 1.2  (26593 ms)
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T12.1-fix1-patricia.md` (1569 chars)
+- Budget guard for Patricia: allow (reading 13 min old)
+
+**Patricia** (67,231 tokens, 7 turns, 12 s):
+
+I changed `spigot_flow_cut_per_level` from 0.12 to 0.08. Level 5 now leaves 3.0 × (1 − 0.08×5) = 1.8 s. I haven't re-run the tests, as instructed.
+
+The spec contradicts itself. It says "−12%/level" and also "3.0 → 1.8 s at level 5". At −12% per level, level 5 gives 3.0 × 0.4 = 1.2 s, which is what the failing test saw. The 1.8 s figure needs 8% per level. I kept the formula and the endpoint the test checks, since 1.8 s is the stated result.
+
+The edit is in `game/scripts/default_config.tres` and `game/scripts/game_config.gd`, where the value is still marked PLACEHOLDER.
+
+**Designer decision:** Gerard or the designer should confirm which spec figure is right, 8% per level (1.8 s) or 12% per level (1.2 s). If it's 12%, the spec text and the test both need to change to 1.2 s.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 7); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 6 of 7 caught
+mutate baseline: 4 expected tests, 0 already failing
+mutate 1/7: 0.2 item 11 the whole lid spins again with the crank ... CAUGHT in 10s
+mutate 2/7: 0.2 item 11 the crank no longer turns ... CAUGHT in 10s
+mutate 3/7: 0.2 item 11 Gear1 turns at twice the crank's rate ... CAUGHT in 10s
+mutate 4/7: 0.2 item 11 the second run turns the crank backwards ... MISSED in 5s
+mutate 5/7: 0.2 item 12 Spigot Flow cost rounds up ... CAUGHT in 2s
+mutate 6/7: 0.2 item 12 Spigot Flow does not shorten bottling ... CAUGHT in 31s
+mutate 7/7: 0.2 item 12 Spigot Flow also shortens the jar flight ... CAUGHT in 17s
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T12.1-fix2-quinn.md` (1751 chars)
+- Budget guard for Quinn: allow (reading 2 min old)
+
+**Quinn** (92,356 tokens, 7 turns, 28 s):
+
+I fixed mutation 4 ("the second run turns the crank backwards") in `game/tests/mutations.json`. Nothing has been run, so the fix is unproven until you run `mutate.py`.
+
+- **Cause:** the old replacement was a multi-line edit. The rest of the source line ("`: the lid stays still…`") was left dangling after its last line. That probably broke the mutated script's syntax rather than reversing the second run. This is my best reading, not something I confirmed by running it.
+- **Fix:** the replacement is now a single line. The first centrifuge instance turns the crank forward and records its id in `Engine` meta. Any later instance turns it backwards. A trailing `#` swallows the leftover comment.
+- **Test:** `t_lid_still_crank_and_gear1_turn_twice` already asserts that run 2 turns the Crank the same way and by the same angle as run 1. I didn't change it.
+
+I made no other changes.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 7); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS

@@ -174,7 +174,7 @@ func _hud_hits(controls: Array, target: Rect2) -> Array:
 
 ## First and last frame at which the camera pose changed from `pose0`: the pan's duration in wall seconds (a frame quantises each end) and
 ## the longest frame in between. samples: [[usec, pose], ...] one per rendered frame.
-func _pan_span(samples: Array, pose0: Dictionary) -> Dictionary:
+func _pan_span(samples: Array, pose0: Dictionary, clock: int = -1) -> Dictionary:
 	var i0: int = -1
 	var i1: int = -1
 	var prev: Dictionary = pose0
@@ -188,9 +188,10 @@ func _pan_span(samples: Array, pose0: Dictionary) -> Dictionary:
 	if i0 < 0 or i1 < 0:
 		return {"ok": false, "secs": 0.0, "worst": 0.0}
 	var worst: float = 0.0
+	var k: int = clock if clock >= 0 else (2 if (samples[i1] as Array).size() > 2 else 0)   # clock 3 = real time; sim-time clock when the sampler recorded one, else the game clock
 	for i in range(maxi(i0, 1), i1 + 1):
-		worst = maxf(worst, float((samples[i] as Array)[0] - (samples[i - 1] as Array)[0]) / 1.0e6)
-	return {"ok": true, "secs": float((samples[i1] as Array)[0] - (samples[i0] as Array)[0]) / 1.0e6, "worst": worst}
+		worst = maxf(worst, float((samples[i] as Array)[k] - (samples[i - 1] as Array)[k]) / 1.0e6)
+	return {"ok": true, "secs": float((samples[i1] as Array)[k] - (samples[i0] as Array)[k]) / 1.0e6, "worst": worst}
 
 
 ## The glass bucket's boxes: every glass.tres mesh of the centrifuge outside the spigot jar.
@@ -225,7 +226,9 @@ func _go_second_stop(speed: float = 1.0, pan_seconds: float = -1.0) -> Dictionar
 	var cb: Callable = func() -> void:
 		var cam: Camera3D = root.get_viewport().get_camera_3d()
 		if cam != null:
-			(rec["s"] as Array).append([_gus(), _pose(cam)])
+			# third value: sim time in microseconds, the sum of each frame's own process delta, which already includes time_scale (wall-clock jitter cannot move it)
+			rec["sim"] = float(rec.get("sim", 0.0)) + root.get_process_delta_time() * 1.0e6
+			(rec["s"] as Array).append([_gus(), _pose(cam), int(rec["sim"]), Time.get_ticks_usec()])   # fourth: real (wall) microseconds
 	process_frame.connect(cb)
 	var frames_needed: int = _frames_n()   # 0.1.3c: a full bucket does not pan: every frame is finished first (the extra cells go to the pile), then the pan
 	for k in frames_needed:
@@ -511,7 +514,7 @@ func t_camera_pan_follows_time_scale() -> void:
 		if s.is_empty():
 			Engine.time_scale = 1.0
 			continue
-		var sp: Dictionary = _pan_span(s["samples"] as Array, s["pose0"] as Dictionary)
+		var sp: Dictionary = _pan_span(s["samples"] as Array, s["pose0"] as Dictionary, 3)   # real time: the pan is n times faster on the wall clock
 		ck(bool(sp["ok"]), "x%s: the camera moved" % str(n))
 		if bool(sp["ok"]):
 			var want: float = float(cv("camera_pan_seconds")) / n

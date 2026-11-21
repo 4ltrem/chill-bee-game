@@ -92,7 +92,7 @@ extends Resource
 @export var fork_pulse_seconds: float = 1.0            # PLACEHOLDER (spec 0.2): one steel -> crank orange -> steel head pulse
 @export var fork_return_seconds: float = 0.35          # PLACEHOLDER (spec 0.2 item 10): the fork shrinks into the Harvest icon over this long when the zoom ends
 @export var spigot_flow_max_level: int = 5              # PLACEHOLDER (spec 0.2 item 12): Spigot Flow's highest level
-@export var spigot_flow_cut_per_level: float = 0.12     # PLACEHOLDER (spec 0.2 item 12): bottling time x (1 - this x level): 3.0 -> 1.8 s at level 5
+@export var spigot_flow_cut_per_level: float = 0.08    # PLACEHOLDER (spec 0.2 item 12): bottling time x (1 - this x level): 3.0 -> 1.8 s at level 5
 @export var faster_delivery_max_level: int = 4         # PLACEHOLDER (spec 0.2 item 5): Faster Delivery's highest level
 @export var faster_delivery_trip_cut_per_level: float = 0.15   # PLACEHOLDER (spec 0.2 item 5): trip time x (1 - this x level): 30 -> 25.5 -> 21 -> 16.5 -> 12 s
 @export var dev_own_auto_scraper: bool = false        # Dev toggle "own auto-scraper": acts as if the auto-scraper were owned (it arrives after 0.2)

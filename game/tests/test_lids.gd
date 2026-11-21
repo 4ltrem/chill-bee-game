@@ -335,8 +335,8 @@ func t_barrel_eases_to_stop() -> void:
 	var worst: float = 0.0
 	var worst_at: int = 0
 	for i in range(2, rest_i + 1):
-		var r1: float = absf(float(samples[i]["a"]) - float(samples[i - 1]["a"])) / maxf(float(samples[i]["d"]), 1.0e-6)
-		var r0: float = absf(float(samples[i - 1]["a"]) - float(samples[i - 2]["a"])) / maxf(float(samples[i - 1]["d"]), 1.0e-6)
+		var r1: float = absf(float(samples[i]["a"]) - float(samples[i - 1]["a"])) / maxf(float(samples[i - 1]["d"]), 1.0e-6)   # the delta read at the start of frame i-1 is the one that turned the barrel into sample i
+		var r0: float = absf(float(samples[i - 1]["a"]) - float(samples[i - 2]["a"])) / maxf(float(samples[i - 2]["d"]), 1.0e-6)
 		if r1 - r0 > worst:
 			worst = r1 - r0
 			worst_at = i

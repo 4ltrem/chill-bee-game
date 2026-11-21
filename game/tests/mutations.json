@@ -1371,5 +1371,75 @@
    "t_journal_csv_equals_script_output"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 11 the whole lid spins again with the crank",
+  "file": "scripts/centrifuge.gd",
+  "find": "\t\t\t_crank.rotate_y(spin_speed * delta)   # 0.2 item 11",
+  "replace": "\t\t\t_crank.rotate_y(spin_speed * delta)\n\t\t\tif _lid != null:\n\t\t\t\t_lid.rotate_y(spin_speed * delta)   # 0.2 item 11",
+  "expect": [
+   "t_lid_still_crank_and_gear1_turn_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 11 the crank no longer turns",
+  "file": "scripts/centrifuge.gd",
+  "find": "\t\t\t_crank.rotate_y(spin_speed * delta)   # 0.2 item 11",
+  "replace": "\t\t\tpass   # 0.2 item 11",
+  "expect": [
+   "t_lid_still_crank_and_gear1_turn_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 11 Gear1 turns at twice the crank's rate",
+  "file": "scripts/centrifuge.gd",
+  "find": "\t\t\tgear.rotate_y(speed * delta)",
+  "replace": "\t\t\tgear.rotate_y(speed * delta * (2.0 if i == 0 else 1.0))",
+  "expect": [
+   "t_lid_still_crank_and_gear1_turn_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 11 the second run turns the crank backwards",
+  "file": "scripts/centrifuge.gd",
+  "find": "\t\t\t_crank.rotate_y(spin_speed * delta)   # 0.2 item 11",
+  "replace": "\t\t\t_crank.rotate_y(spin_speed * delta * (1.0 if (not Engine.has_meta(\"q11\") or Engine.get_meta(\"q11\") == get_instance_id()) else -1.0)); Engine.set_meta(\"q11\", Engine.get_meta(\"q11\", get_instance_id())); #",
+  "expect": [
+   "t_lid_still_crank_and_gear1_turn_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 12 Spigot Flow cost rounds up",
+  "file": "scripts/economy.gd",
+  "find": "floori(config.spigot_flow_base_cost * pow(config.spigot_flow_cost_growth, lv))",
+  "replace": "ceili(config.spigot_flow_base_cost * pow(config.spigot_flow_cost_growth, lv))",
+  "expect": [
+   "t_spigot_cost_floor_levels"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 12 Spigot Flow does not shorten bottling",
+  "file": "scripts/centrifuge.gd",
+  "find": "var s: float = config.bottling_seconds_per_jar * spigot_multiplier()",
+  "replace": "var s: float = config.bottling_seconds_per_jar",
+  "expect": [
+   "t_spigot_bottling_time_by_level"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 12 Spigot Flow also shortens the jar flight",
+  "file": "scripts/centrifuge.gd",
+  "find": "_bottle_count and _bottle_timer >= config.jar_fly_seconds:",
+  "replace": "_bottle_count and _bottle_timer >= config.jar_fly_seconds * spigot_multiplier():",
+  "expect": [
+   "t_spigot_jar_flight_unchanged"
+  ],
+  "suite": "unit"
  }
 ]

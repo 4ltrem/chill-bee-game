@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-21T10:47:25-05:00",
- "unit_log": "game/reports/_runs/20261121-102318/unit.log",
+ "at": "2026-11-21T12:54:56-05:00",
+ "unit_log": "game/reports/_runs/20261121-123703/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -43,7 +43,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -127,20 +127,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -149,7 +149,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -163,7 +163,7 @@
     2
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -197,20 +197,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -225,7 +225,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -242,7 +242,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -301,20 +301,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -347,7 +347,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -364,7 +364,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -403,20 +403,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -455,7 +455,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -472,7 +472,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -526,20 +526,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -566,7 +566,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -583,7 +583,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -617,20 +617,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -663,7 +663,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -680,7 +680,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -709,20 +709,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -743,7 +743,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -760,7 +760,7 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -789,20 +789,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -819,8 +819,8 @@
     {
      "kind": "test",
      "name": "t_journal_panel_text_matches_csv_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -835,7 +835,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -900,12 +900,18 @@
     11
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
      "name": "LidDisc",
      "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_still_crank_and_gear1_turn_twice",
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -914,7 +920,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -987,16 +993,21 @@
    "depends": [
     "H"
    ],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "node",
      "name": "ShopScroll",
      "ok": false
+    },
+    {
+     "kind": "ledger",
+     "name": "0628fc6",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -1008,7 +1019,7 @@
    ],
    "items": [],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -1052,20 +1063,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -1196,12 +1207,18 @@
     {
      "kind": "test",
      "name": "t_journal_panel_text_matches_csv_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_journal_csv_equals_script_output",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_still_crank_and_gear1_turn_twice",
      "ok": true,
      "result": "PASS"
     }
@@ -1223,7 +1240,7 @@
    "depends": [
     "C1"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -1252,20 +1269,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -1274,7 +1291,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -1609,7 +1626,7 @@
    "depends": [
     "C8"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -1626,8 +1643,8 @@
     {
      "kind": "test",
      "name": "t_journal_panel_text_matches_csv_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -1642,7 +1659,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -1696,8 +1713,15 @@
    "depends": [
     "C11"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_lid_still_crank_and_gear1_turn_twice",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -1798,7 +1822,7 @@
     "C13",
     "C14"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -1827,20 +1851,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -1971,12 +1995,18 @@
     {
      "kind": "test",
      "name": "t_journal_panel_text_matches_csv_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_journal_csv_equals_script_output",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_still_crank_and_gear1_turn_twice",
      "ok": true,
      "result": "PASS"
     }
@@ -1989,106 +2019,58 @@
  },
  "order": [
   {
-   "id": "C14",
-   "score": 11.31,
-   "factors": {
-    "unblocks": 2,
-    "value": 3,
-    "cost": 0.69,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T10.1",
-   "score": 5.7,
+   "score": 5.71,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.3,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T11.1",
-   "score": 5.7,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.3,
+    "cost": 0.29,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T12.1",
-   "score": 5.7,
+   "score": 5.71,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.3,
+    "cost": 0.29,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T13.1",
-   "score": 5.7,
+   "score": 5.71,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.3,
+    "cost": 0.29,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T14.1",
+   "score": 5.71,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.29,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T9.1",
-   "score": 5.7,
+   "score": 5.71,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.3,
+    "cost": 0.29,
     "ready": 1,
     "blocked_by": []
-   }
-  },
-  {
-   "id": "CFG",
-   "score": 3.62,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.38,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.3,
-    "ready": 0,
-    "blocked_by": [
-     "C14"
-    ]
-   }
-  },
-  {
-   "id": "T14.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.3,
-    "ready": 0,
-    "blocked_by": [
-     "C14"
-    ]
    }
   }
  ],
