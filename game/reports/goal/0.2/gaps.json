@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-21T12:54:56-05:00",
- "unit_log": "game/reports/_runs/20261121-123703/unit.log",
+ "at": "2026-11-21T13:58:19-05:00",
+ "unit_log": "game/reports/_runs/20261121-134236/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -934,7 +934,7 @@
     12
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -947,13 +947,31 @@
      "ok": true
     },
     {
+     "kind": "test",
+     "name": "t_spigot_cost_floor_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_bottling_time_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_jar_flight_unchanged",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "0.2",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -967,8 +985,32 @@
     13
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_truck_sell_waits_for_jar_in_flight",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_autosell_waits_for_jar_in_flight",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_jar_after_departure_goes_to_crate",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_sell_with_jar_in_flight_twice_matches",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "0.2",
@@ -976,7 +1018,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -1219,6 +1261,48 @@
     {
      "kind": "test",
      "name": "t_lid_still_crank_and_gear1_turn_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_cost_floor_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_bottling_time_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_jar_flight_unchanged",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_sell_waits_for_jar_in_flight",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_autosell_waits_for_jar_in_flight",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_jar_after_departure_goes_to_crate",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_sell_with_jar_in_flight_twice_matches",
      "ok": true,
      "result": "PASS"
     }
@@ -1739,9 +1823,33 @@
    "depends": [
     "C12"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_spigot_cost_floor_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_bottling_time_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_jar_flight_unchanged",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "81f0997",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -1758,9 +1866,39 @@
    "depends": [
     "C13"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_truck_sell_waits_for_jar_in_flight",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_autosell_waits_for_jar_in_flight",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_jar_after_departure_goes_to_crate",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_sell_with_jar_in_flight_twice_matches",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "b4529db",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -2009,6 +2147,48 @@
      "name": "t_lid_still_crank_and_gear1_turn_twice",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_cost_floor_levels",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_bottling_time_by_level",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spigot_jar_flight_unchanged",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_sell_waits_for_jar_in_flight",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_autosell_waits_for_jar_in_flight",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_jar_after_departure_goes_to_crate",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_truck_sell_with_jar_in_flight_twice_matches",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -2020,55 +2200,33 @@
  "order": [
   {
    "id": "T10.1",
-   "score": 5.71,
+   "score": 5.72,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.29,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T12.1",
-   "score": 5.71,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.29,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T13.1",
-   "score": 5.71,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.29,
+    "cost": 0.28,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T14.1",
-   "score": 5.71,
+   "score": 5.72,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.29,
+    "cost": 0.28,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T9.1",
-   "score": 5.71,
+   "score": 5.72,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.29,
+    "cost": 0.28,
     "ready": 1,
     "blocked_by": []
    }

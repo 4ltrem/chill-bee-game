@@ -3,7 +3,7 @@ spec: 0.2-first-automation.md
 version: 0.2
 run: 0.2
 started: 2026-11-09
-result: running
+result: stopped
 ---
 # Goal agent: 0.2-first-automation.md (run 0.2)
 
@@ -3043,77 +3043,6 @@ Unit results from `game/reports/_runs/20261121-123703/unit.log`. 24 of 34 goals 
 
 Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
 
-## Result
-
-Last invocation (2026-11-21T12:54:39-05:00): stopped (--goal was not a ready, unbuilt goal).
-
-Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
-
-| Call | Total processed | Final context | Turns | Duration |
-|---|---|---|---|---|
-| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
-| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
-| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
-| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
-| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
-| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
-| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
-| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
-| Patricia, C1 | 128,628 | 32,719 | 12 | 14 s |
-| Bob, C1 | 171,980 | 22,145 | 11 | 30 s |
-| Quinn, C1 fix 1 | 82,925 | 20,798 | 6 | 16 s |
-| Patricia, C1 fix 1 | 165,546 | 28,457 | 13 | 21 s |
-| Quinn, C1 fix 2 | 69,434 | 20,193 | 8 | 17 s |
-| Bob, C1 fix 2 | 133,709 | 22,738 | 9 | 19 s |
-| Bob, C6 | 84,741 | 20,580 | 7 | 15 s |
-| Patricia, C6 | 90,946 | 20,971 | 12 | 17 s |
-| Bob, C6 fix 1 | 40,960 | 14,537 | 4 | 8 s |
-| Bob, C7 | 86,223 | 20,455 | 6 | 11 s |
-| Patricia, C7 | 152,741 | 27,551 | 19 | 29 s |
-| Bob, C8 | 110,763 | 22,489 | 10 | 21 s |
-| Patricia, C8 | 72,959 | 36,963 | 2 | 5 s |
-| Quinn, T1.1, T.1 | 996,332 | 79,607 | 33 | 114 s |
-| Patricia, T1.1, T.1 fix 1 | 65,531 | 18,495 | 7 | 10 s |
-| Bob, T1.1, T.1 fix 2 | 26,930 | 14,541 | 3 | 7 s |
-| Quinn, T4.1, T4.2 | 813,108 | 66,788 | 31 | 107 s |
-| Quinn, T4.1, T4.2 fix 1 | 43,095 | 15,154 | 4 | 7 s |
-| Quinn, T5.1, T5.2 | 518,408 | 44,605 | 30 | 59 s |
-| Quinn, T6.1 | 317,803 | 41,839 | 16 | 46 s |
-| Patricia, T6.1 fix 1 | 88,678 | 20,162 | 6 | 12 s |
-| Quinn, T6.1 fix 2 | 70,173 | 21,704 | 8 | 14 s |
-| Quinn, T7.1 | 301,167 | 34,142 | 21 | 52 s |
-| Quinn, T7.1 fix 1 | 86,082 | 20,246 | 6 | 16 s |
-| Quinn, T8.1 | 375,981 | 42,911 | 19 | 64 s |
-| Patricia, T8.1 fix 1 | 27,646 | 15,269 | 2 | 7 s |
-| Bob, T8.1 fix 2 | 12,681 | 12,681 | 1 | 6 s |
-| Patricia, C10 | 596,687 | 37,509 | 43 | 712 s |
-| Patricia, C10 | 101,892 | 23,368 | 9 | 15 s |
-| Quinn, C10 fix 1 | 318,689 | 32,052 | 16 | 38 s |
-| Patricia, C10 fix 1 | 415,357 | 38,997 | 23 | 48 s |
-| Patricia, C11 | 123,536 | 23,429 | 9 | 20 s |
-| Patricia, C12 | 199,654 | 32,305 | 23 | 33 s |
-| Patricia, C12 fix 1 | 30,878 | 17,872 | 2 | 7 s |
-| Quinn, C12 fix 1 | 90,999 | 29,622 | 10 | 19 s |
-| Patricia, C13 | 131,316 | 26,513 | 14 | 30 s |
-| Patricia, C9 | 149,095 | 25,411 | 17 | 26 s |
-| Patricia, C9 fix 1 | 45,768 | 16,693 | 3 | 12 s |
-| Quinn, C9 fix 1 | 366,652 | 38,507 | 20 | 54 s |
-| Patricia, C9 fix 2 | 47,328 | 17,881 | 4 | 11 s |
-| Quinn, C9 fix 2 | 462,425 | 49,946 | 28 | 77 s |
-| Patricia, C14 | 114,001 | 21,968 | 8 | 18 s |
-| Bob, C14 | 129,301 | 26,829 | 12 | 29 s |
-| Quinn, C14 fix 1 | 52,608 | 19,963 | 4 | 13 s |
-| Patricia, C14 fix 1 | 146,929 | 26,135 | 8 | 20 s |
-| Quinn, C14 fix 2 | 101,697 | 23,642 | 10 | 24 s |
-| Bob, C14 fix 2 | 189,457 | 25,599 | 13 | 37 s |
-| Quinn, T10.1 | 1,255,309 | 82,567 | 33 | 120 s |
-| Patricia, T10.1 fix 1 | 157,002 | 29,827 | 13 | 25 s |
-| Patricia, T10.1 fix 2 | 251,940 | 33,064 | 19 | 41 s |
-| Quinn, T11.1 | 706,295 | 53,624 | 32 | 79 s |
-| Quinn, T11.1 fix 1 | 92,390 | 21,098 | 6 | 16 s |
-| Patricia, T11.1 fix 2 | 216,266 | 41,028 | 14 | 62 s |
-| **Total** | **13,616,766** | | | |
-
 ## Resumed 2026-11-21
 
 Command: `goal_agent.py 0.2-first-automation.md --goal T12.1 --max-goals 1` (the run had stopped: `stopped`).
@@ -3217,3 +3146,172 @@ I made no other changes.
 - Check `contract`: PASS
 - Check `tests`: PASS
 - Check `mutations`: PASS
+- Green: checkpoint `81f0997` on `milestone/0.2`
+
+**Stop:** stopped after 1 goal(s) (--max-goals).
+
+## Pass 33: scan (2026-11-21T13:40:54-05:00)
+
+Unit results from `game/reports/_runs/20261121-132430/unit.log`. 26 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C12 Spigot Flow | change | Patricia | done | ✓ config spigot_flow_max_level, ✓ config spigot_flow_cut_per_level, ✓ test t_spigot_cost_floor_levels, ✓ test t_spigot_bottling_time_by_level, ✓ test t_spigot_jar_flight_unchanged, ✓ ledger 0.2 |
+| CFG Config and Dev mode | change | Patricia | done | 37/37 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^level` (floore | test | Quinn | done | ✓ test t_spigot_cost_floor_levels, ✓ test t_spigot_bottling_time_by_level, ✓ test t_spigot_jar_flight_unchanged, ✓ ledger 81f0997 |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 34/34 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T13.1 --max-goals 1` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 34: scan (2026-11-21T13:40:56-05:00)
+
+Unit results from `game/reports/_runs/20261121-132430/unit.log`. 26 of 34 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+### Order: new or rescored (4 of 4)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T10.1 item 10: after a drag release the fork prop is hid | 5.72 | 0 | 3 | 0.28 | 1 | play-test fix; cost 0.28 (Quinn) |
+| 2 | T13.1 item 13: with a jar in flight to the bed, a Sell p | 5.72 | 0 | 3 | 0.28 | 1 | play-test fix; cost 0.28 (Quinn) |
+| 3 | T14.1 item 14: the shop panel has no scroll container, a | 5.72 | 0 | 3 | 0.28 | 1 | play-test fix; cost 0.28 (Quinn) |
+| 4 | T9.1 item 9: the bucket filling during the first zoom l | 5.72 | 0 | 3 | 0.28 | 1 | play-test fix; cost 0.28 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T13.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
+
+### Step: T13.1 (2026-11-21T13:40:56-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T13.1-quinn.md` (3856 chars)
+- Budget guard for Quinn: allow (reading 0 min old)
+
+**Quinn** (534,742 tokens, 25 turns, 95 s):
+
+Four tests for T13.1 are written and registered. None were run. `--check-only` parses clean.
+
+**Files changed**
+- `game/tests/test_truck_wait.gd` (new, extends `test_spigot.gd`). `run_tests.gd` now extends it.
+- `game/tests/test_helpers_3.gd`: added `_bed_last_jar_in_flight` and `_advance_until`.
+- `game/tests/run_tests.gd`: the four names, under the `# 0.2 item 13 (written from …)` comment.
+- `game/tests/mutations.json`: three mutations. One makes the truck leave without waiting for the jar. One sends a jar bottled after departure to the bed. One never clears `_departure_pending`, which the twice test should catch.
+
+**Tests** (each has `# goal T13.1` above it)
+- `t_truck_sell_waits_for_jar_in_flight`
+- `t_truck_autosell_waits_for_jar_in_flight`
+- `t_truck_jar_after_departure_goes_to_crate`
+- `t_truck_sell_with_jar_in_flight_twice_matches`
+
+**Node names used:** `Truck` and its `BedJars`.
+
+**Open questions**
+- Item 13: what happens to a jar bottled between the Sell press and departure? Does it go to the bed or the crate?
+- Item 13: what happens to the waiting truck on Back, zoom out or app pause mid-way? I assume it keeps waiting and then leaves.
+- Sell is called through `sell()`, not real input. I did not find a real-input helper for the Sell icon.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 13 (cap 30; CLI num_turns 25); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Green: checkpoint `b4529db` on `milestone/0.2`
+
+**Stop:** stopped after 1 goal(s) (--max-goals).
+
+## Pass 35: scan (2026-11-21T13:58:19-05:00)
+
+Unit results from `game/reports/_runs/20261121-134236/unit.log`. 28 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C13 No jar flies after a leaving truck | change | Patricia | done | ✓ test t_truck_sell_waits_for_jar_in_flight, ✓ test t_truck_autosell_waits_for_jar_in_flight, ✓ test t_truck_jar_after_departure_goes_to_crate, ✓ test t_truck_sell_with_jar_in_flight_twice_matches, ✓ ledger 0.2 |
+| CFG Config and Dev mode | change | Patricia | done | 41/41 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T13.1 item 13: with a jar in flight to the bed, a Sell press (and  | test | Quinn | done | ✓ test t_truck_sell_waits_for_jar_in_flight, ✓ test t_truck_autosell_waits_for_jar_in_flight, ✓ test t_truck_jar_after_departure_goes_to_crate, ✓ test t_truck_sell_with_jar_in_flight_twice_matches, ✓ ledger b4529db |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 38/38 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+## Result
+
+Last invocation (2026-11-21T13:58:19-05:00): stopped after 1 goal(s) (--max-goals).
+
+Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
+
+| Call | Total processed | Final context | Turns | Duration |
+|---|---|---|---|---|
+| Patricia, H | 145,622 | 39,495 | 9 | 36 s |
+| Patricia, C4 | 128,981 | 64,921 | 2 | 5 s |
+| Patricia, C4 fix 1 | 44,493 | 16,405 | 5 | 8 s |
+| Bob, C4 fix 2 | 315,858 | 48,723 | 16 | 82 s |
+| Bob, C3 | 1,092,917 | 64,182 | 47 | 92 s |
+| Patricia, C3 | 90,813 | 45,834 | 3 | 5 s |
+| Bob, C3 fix 1 | 105,221 | 19,899 | 9 | 16 s |
+| Bob, C3 fix 2 | 64,220 | 18,255 | 7 | 15 s |
+| Patricia, C1 | 128,628 | 32,719 | 12 | 14 s |
+| Bob, C1 | 171,980 | 22,145 | 11 | 30 s |
+| Quinn, C1 fix 1 | 82,925 | 20,798 | 6 | 16 s |
+| Patricia, C1 fix 1 | 165,546 | 28,457 | 13 | 21 s |
+| Quinn, C1 fix 2 | 69,434 | 20,193 | 8 | 17 s |
+| Bob, C1 fix 2 | 133,709 | 22,738 | 9 | 19 s |
+| Bob, C6 | 84,741 | 20,580 | 7 | 15 s |
+| Patricia, C6 | 90,946 | 20,971 | 12 | 17 s |
+| Bob, C6 fix 1 | 40,960 | 14,537 | 4 | 8 s |
+| Bob, C7 | 86,223 | 20,455 | 6 | 11 s |
+| Patricia, C7 | 152,741 | 27,551 | 19 | 29 s |
+| Bob, C8 | 110,763 | 22,489 | 10 | 21 s |
+| Patricia, C8 | 72,959 | 36,963 | 2 | 5 s |
+| Quinn, T1.1, T.1 | 996,332 | 79,607 | 33 | 114 s |
+| Patricia, T1.1, T.1 fix 1 | 65,531 | 18,495 | 7 | 10 s |
+| Bob, T1.1, T.1 fix 2 | 26,930 | 14,541 | 3 | 7 s |
+| Quinn, T4.1, T4.2 | 813,108 | 66,788 | 31 | 107 s |
+| Quinn, T4.1, T4.2 fix 1 | 43,095 | 15,154 | 4 | 7 s |
+| Quinn, T5.1, T5.2 | 518,408 | 44,605 | 30 | 59 s |
+| Quinn, T6.1 | 317,803 | 41,839 | 16 | 46 s |
+| Patricia, T6.1 fix 1 | 88,678 | 20,162 | 6 | 12 s |
+| Quinn, T6.1 fix 2 | 70,173 | 21,704 | 8 | 14 s |
+| Quinn, T7.1 | 301,167 | 34,142 | 21 | 52 s |
+| Quinn, T7.1 fix 1 | 86,082 | 20,246 | 6 | 16 s |
+| Quinn, T8.1 | 375,981 | 42,911 | 19 | 64 s |
+| Patricia, T8.1 fix 1 | 27,646 | 15,269 | 2 | 7 s |
+| Bob, T8.1 fix 2 | 12,681 | 12,681 | 1 | 6 s |
+| Patricia, C10 | 596,687 | 37,509 | 43 | 712 s |
+| Patricia, C10 | 101,892 | 23,368 | 9 | 15 s |
+| Quinn, C10 fix 1 | 318,689 | 32,052 | 16 | 38 s |
+| Patricia, C10 fix 1 | 415,357 | 38,997 | 23 | 48 s |
+| Patricia, C11 | 123,536 | 23,429 | 9 | 20 s |
+| Patricia, C12 | 199,654 | 32,305 | 23 | 33 s |
+| Patricia, C12 fix 1 | 30,878 | 17,872 | 2 | 7 s |
+| Quinn, C12 fix 1 | 90,999 | 29,622 | 10 | 19 s |
+| Patricia, C13 | 131,316 | 26,513 | 14 | 30 s |
+| Patricia, C9 | 149,095 | 25,411 | 17 | 26 s |
+| Patricia, C9 fix 1 | 45,768 | 16,693 | 3 | 12 s |
+| Quinn, C9 fix 1 | 366,652 | 38,507 | 20 | 54 s |
+| Patricia, C9 fix 2 | 47,328 | 17,881 | 4 | 11 s |
+| Quinn, C9 fix 2 | 462,425 | 49,946 | 28 | 77 s |
+| Patricia, C14 | 114,001 | 21,968 | 8 | 18 s |
+| Bob, C14 | 129,301 | 26,829 | 12 | 29 s |
+| Quinn, C14 fix 1 | 52,608 | 19,963 | 4 | 13 s |
+| Patricia, C14 fix 1 | 146,929 | 26,135 | 8 | 20 s |
+| Quinn, C14 fix 2 | 101,697 | 23,642 | 10 | 24 s |
+| Bob, C14 fix 2 | 189,457 | 25,599 | 13 | 37 s |
+| Quinn, T10.1 | 1,255,309 | 82,567 | 33 | 120 s |
+| Patricia, T10.1 fix 1 | 157,002 | 29,827 | 13 | 25 s |
+| Patricia, T10.1 fix 2 | 251,940 | 33,064 | 19 | 41 s |
+| Quinn, T11.1 | 706,295 | 53,624 | 32 | 79 s |
+| Quinn, T11.1 fix 1 | 92,390 | 21,098 | 6 | 16 s |
+| Patricia, T11.1 fix 2 | 216,266 | 41,028 | 14 | 62 s |
+| Quinn, T12.1 | 459,015 | 41,960 | 26 | 71 s |
+| Patricia, T12.1 fix 1 | 67,231 | 19,477 | 7 | 12 s |
+| Quinn, T12.1 fix 2 | 92,356 | 21,722 | 7 | 28 s |
+| Quinn, T13.1 | 534,742 | 54,755 | 25 | 95 s |
+| **Total** | **14,770,110** | | | |
