@@ -1,7 +1,7 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-21T14:29:23-05:00",
+ "at": "2026-11-21T14:29:30-05:00",
  "unit_log": "game/reports/_runs/20261121-141430/unit.log",
  "goals": {
   "H": {
@@ -2230,22 +2230,22 @@
  "order": [
   {
    "id": "T10.1",
-   "score": 5.71,
+   "score": 5.72,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.29,
+    "cost": 0.28,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T9.1",
-   "score": 5.71,
+   "score": 5.72,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.29,
+    "cost": 0.28,
     "ready": 1,
     "blocked_by": []
    }

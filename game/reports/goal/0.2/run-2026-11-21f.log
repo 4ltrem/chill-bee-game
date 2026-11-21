@@ -52,3 +52,6 @@ Order:
    2. T14.1    5.71  play-test fix; cost 0.29 (Quinn)
    3. T9.1     5.71  play-test fix; cost 0.29 (Quinn)
 gaps.json: game/reports/goal/0.2/gaps.json
+goal_agent: state committed
+goal_agent: stopped after 1 goal(s) (--max-goals). Blackboard: game/reports/goal/0.2/blackboard.md
+=== T9.1

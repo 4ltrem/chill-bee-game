@@ -3,7 +3,7 @@ spec: 0.2-first-automation.md
 version: 0.2
 run: 0.2
 started: 2026-11-09
-result: stopped
+result: paused
 ---
 # Goal agent: 0.2-first-automation.md (run 0.2)
 
@@ -3341,9 +3341,38 @@ Unit results from `game/reports/_runs/20261121-141430/unit.log`. 29 of 34 goals 
 
 No score changed.
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T9.1 --max-goals 1` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 38: scan (2026-11-21T14:29:30-05:00)
+
+Unit results from `game/reports/_runs/20261121-141430/unit.log`. 29 of 34 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+### Order: new or rescored (2 of 2)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T10.1 item 10: after a drag release the fork prop is hid | 5.72 | 0 | 3 | 0.28 | 1 | play-test fix; cost 0.28 (Quinn) |
+| 2 | T9.1 item 9: the bucket filling during the first zoom l | 5.72 | 0 | 3 | 0.28 | 1 | play-test fix; cost 0.28 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T9.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
+
+### Step: T9.1 (2026-11-21T14:29:30-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T9.1-quinn.md` (4069 chars)
+
+**Paused:** Budget guard: 5-hour usage is 69% and a qa-build-engineer run costs 30% on average, over the 95% cap (reading 3 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
 ## Result
 
-Last invocation (2026-11-21T14:29:23-05:00): stopped after 1 goal(s) (--max-goals).
+Last invocation (2026-11-21T14:29:31-05:00): paused.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 
