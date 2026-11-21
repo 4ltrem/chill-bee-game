@@ -7,6 +7,7 @@
 # be read (no renderer) FAILS. Exit code 0 only if every check holds AND the last line "COMPLETED" printed.
 extends SceneTree
 
+const Flow := preload("res://tests/flow.gd")
 var fails: int = 0
 var checks: int = 0
 
@@ -50,6 +51,7 @@ func _run() -> void:
 	main.find_child("Hive", true, false).call("fill_now")
 	root.get_node("Economy").get("config").set("base_seconds_per_jar", 1.0e9)
 	await _frames(6)
+	await Flow.shop_open(main)   # item 14: UpgradeButton sits in the shop sheet, hidden on the farm; open before the off frame so both frames match
 	var panel: Node = null
 	for n in root.find_children("*", "", true, false):
 		var s: Variant = n.get_script()

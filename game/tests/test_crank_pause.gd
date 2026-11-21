@@ -12,9 +12,7 @@ func _cranking_at_second_stop() -> Dictionary:
 	var m: Node = s["m"]
 	var p: Dictionary = s["p"]
 	var cen: Node = p["Centrifuge"]
-	var spin: Control = p["CentrifugeIcon"]
-	ck(_shown(spin), "Spin shows at the second stop")
-	await fi.tap_at(spin.get_global_rect().get_center())
+	# 0.2 item 9: the second stop is reached only by the Spin tap (done in _second_stop_with_capped), which starts the crank there
 	await _frames(3)
 	eq(cen.get("state"), _st(cen, "CRANKING"), "a real tap on Spin starts the crank at the second stop")
 	return {"m": m, "p": p, "cen": cen}

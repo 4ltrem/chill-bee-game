@@ -237,6 +237,13 @@ func _go_second_stop(speed: float = 1.0, pan_seconds: float = -1.0) -> Dictionar
 		if k < frames_needed - 1:
 			ck(await _next_frame(tr, f), "frame %d done: the next frame rose" % f)
 	var secs: float = float(cv("camera_pan_seconds"))
+	# 0.2 item 9: "The camera goes to the second stop only when Spin is tapped": all frames done, the zoom ends on the farm view, then a real Spin tap
+	await _until(func() -> bool: return _cam().size > float(cv("pan_zoom_size")) + 0.5 and not bool(m.call("at_second_stop")), float(cv("zoom_seconds")) + _zoom_settle() + 8.0)
+	await _wait(_zoom_settle() + 0.3)
+	# the pan under test is farm view -> second stop (0.2 item 9): measure from the Spin tap, not from the zoom close
+	pose0 = _pose(_cam())
+	(rec["s"] as Array).clear()
+	await fi.tap_at(((p["CentrifugeIcon"]) as Control).get_global_rect().get_center())
 	var reached: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01, secs / speed * 3.0 + 8.0)
 	await _wait(0.4)
 	process_frame.disconnect(cb)
@@ -423,7 +430,8 @@ func t_camera_second_stop_hud_clear() -> void:
 	for c in _hud_controls(m):
 		# 0.1.4 spec item 2: Spin sits "just above the centrifuge lid" on its anchor in every view, so an anchored button may
 		# meet a prop's screen rect; only the other controls (Back, top info, shop) must stay clear. Anchors: t_second_stop_spin_icon_tap.
-		if not (c is FloatingIcon):
+		# spec 0.1.4 item 13: CentrifugeLabel "follows the centrifuge anchor" (shown while cranking at the second stop), so it too may meet the props' rects
+		if not (c is FloatingIcon) and (c as Node).name != "CentrifugeLabel":
 			controls.append(c)
 	ck(controls.size() > 0, "HUD controls are visible at the second stop (%d)" % controls.size())
 	# 0.1.4 spec item 3: Back is "a screen-space button in the top-right corner in the first zoom and at the second stop", and the
@@ -481,7 +489,8 @@ func t_camera_pan_seconds() -> void:
 		var want: float = float(cv("camera_pan_seconds"))
 		var tol: float = float(sp["worst"]) + 0.01
 		ck(absf(float(sp["secs"]) - want) <= tol, "the pan took %.3f s; camera_pan_seconds is %.3f s +- %.3f s (one frame)" % [float(sp["secs"]), want, tol])
-		near(float((s["pose0"] as Dictionary)["size"]), float(cv("zoom_size")), 0.05, "the pan started from the first stop (size zoom_size)")
+		# 0.2 item 9: the second stop is reached from the farm view by Spin, so the pan starts wider than the second stop
+		ck(float((s["pose0"] as Dictionary)["size"]) > float(cv("pan_zoom_size")) + 0.5, "the pan started from the farm view")
 	# a live change: 2.5 s is read when the pan starts (a fresh scene)
 	_cleanup()
 	_eco_reset()

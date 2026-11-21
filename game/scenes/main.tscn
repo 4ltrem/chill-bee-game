@@ -242,7 +242,7 @@ visible = false
 
 [node name="ZoomFraming" type="Marker3D" parent="FarmWorld"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.003879, 1.024243, -1.027997)
-metadata/zoom_size = 6.966
+metadata/zoom_size = 9.0
 
 [node name="FarmUIRoot" type="CanvasLayer" parent="."]
 
@@ -330,45 +330,38 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 8
 
-[node name="ShopScroll" type="ScrollContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
-custom_minimum_size = Vector2(0, 128)
-layout_mode = 2
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 1
-
-[node name="ShopRows" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll"]
+[node name="ShopRows" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
-[node name="RowTemplate" type="PanelContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll/ShopRows"]
+[node name="RowTemplate" type="PanelContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows"]
 visible = false
 layout_mode = 2
 
-[node name="RowBox" type="HBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll/ShopRows/RowTemplate"]
+[node name="RowBox" type="HBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Info" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll/ShopRows/RowTemplate/RowBox"]
+[node name="Info" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 
-[node name="NameLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll/ShopRows/RowTemplate/RowBox/Info"]
+[node name="NameLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox/Info"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "Worker Swarm Count"
 autowrap_mode = 3
 
-[node name="LevelLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll/ShopRows/RowTemplate/RowBox/Info"]
+[node name="LevelLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox/Info"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 24
 text = "Lv 0 / 5"
 
-[node name="GateLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll/ShopRows/RowTemplate/RowBox/Info"]
+[node name="GateLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox/Info"]
 visible = false
 layout_mode = 2
 mouse_filter = 2
@@ -376,9 +369,9 @@ theme_override_font_sizes/font_size = 22
 text = "Needs Faster Delivery 1"
 autowrap_mode = 3
 
-[node name="BuyButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopScroll/ShopRows/RowTemplate/RowBox"]
+[node name="BuyButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox"]
 focus_mode = 0
-custom_minimum_size = Vector2(160, 120)
+custom_minimum_size = Vector2(160, 64)
 layout_mode = 2
 theme_override_colors/font_disabled_color = Color(1, 0.96, 0.86, 1)
 theme_override_font_sizes/font_size = 36
@@ -396,7 +389,7 @@ text = "$40"
 
 [node name="JournalButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
 focus_mode = 0
-custom_minimum_size = Vector2(120, 120)
+custom_minimum_size = Vector2(120, 64)
 layout_mode = 2
 theme_override_colors/font_disabled_color = Color(1, 0.96, 0.86, 1)
 theme_override_font_sizes/font_size = 36

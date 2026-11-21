@@ -6,12 +6,15 @@
 # (one real hold in round 2), bottling by itself (0.1.2: no Continue), (floor(jars) with the carried leftover), the pile loading into the empty bucket,
 # a Worker Swarm Count purchase mid-harvest, Sell. Screenshots: every centrifuge state on the farm, the zoom with a risen
 # frame, a cell in flight, a pile, Show UI bounds. Exit code 0 only if no check failed AND the final "COMPLETED" line printed.
+# 0.2.1 rewrite: Spin from the farm view pans to the second stop and the crank starts after the pan (item 9); Back there pauses the crank and Spin
+# resumes it (0.1.4 item 15); a reloaded bucket stays CRANKING by itself (item 7); the truck leaves after the jars in flight land (item 13).
 # CHEATS (Dev mode actions, all marked "CHEAT" below, config restored at the end): the hive is filled with fill_now and its
 # fill frozen (base_seconds_per_jar huge) so nothing arrives behind the test; bottling is 1 s per jar; truck_trip_seconds is
 # doubled so the truck is still away while round 2 bottles.
 extends SceneTree
 
 const FarmInput := preload("res://tests/farm_input.gd")
+const Flow := preload("res://tests/flow.gd")
 const MAIN_SCENE := "res://scenes/main.tscn"
 const SHOT_DIR := "res://reports/_runs/shots/play_loop/"
 # r3 numbers for the disabled UpgradeButton at $0 (reports/2026-11-04-prototype-0-r3.md): background (97, 87, 76)
@@ -191,7 +194,8 @@ func _open_zoom(tag: String) -> bool:
 	ck(raised, "%s: tapping the fork raised a frame" % tag)
 	var cam: Camera3D = root.get_viewport().get_camera_3d()
 	near(cam.size, float(_cv("zoom_size")), "%s: the camera is at zoom_size" % tag, 0.05)
-	ck(not _vis(fork) and not _vis(P["UpgradeButton"]) and not _vis(P["CentrifugeIcon"]), "%s: the farm UI is hidden in the zoom" % tag)
+	# 0.1.3c: a paused crank (Back at the second stop, item 15) keeps Spin on screen in the first zoom, so only the other farm UI must be hidden then
+	ck(not _vis(fork) and not _vis(P["UpgradeButton"]) and (tag.contains("paused") or not _vis(P["CentrifugeIcon"])), "%s: the farm UI is hidden in the zoom" % tag)
 	ck(_vis(P["BackButton"]), "%s: BackButton shows" % tag)
 	return raised
 
@@ -238,9 +242,11 @@ func _crank(tag: String, use_hold: bool) -> void:
 	ck(cicon.size.x >= 120.0 and cicon.size.y >= 120.0, "%s: Spin touch area at least 120 x 120 (%s)" % [tag, str(cicon.size)])
 	var cells: int = int(cen.get("cells"))
 	await fi.click_icon(cicon)
-	await _frames(3)
 	var cranking: int = _st(cen, "CRANKING")
-	eq(cen.get("state"), cranking, "%s: tapping Spin starts CRANKING" % tag)
+	# 0.2 item 9 (0.1.4 item 11): Spin from the farm view pans to the second stop first; the crank starts when the pan ends
+	await _until(func() -> bool: return int(cen.get("state")) == cranking, float(_cv("camera_pan_seconds")) + 4.0)
+	await _frames(3)
+	eq(cen.get("state"), cranking, "%s: tapping Spin starts CRANKING (after the pan to the second stop)" % tag)
 	ck(not _vis(cicon), "%s: Spin hides while cranking" % tag)
 	var spot: Vector2 = fi.free_spot(main)
 	var rate: float = float(_cv("max_tap_rate"))
@@ -366,13 +372,16 @@ func _run() -> void:
 	ck(main.find_child("SummaryBonusLabel", true, false) == null, "0.1.2 change 7: there is no SummaryBonusLabel node")
 	eq((P["MoneyLabel"] as Label).text, "$0", "MoneyLabel at start")
 	eq((P["BeeCountLabel"] as Label).text, "Bees: %d" % bees_base, "BeeCountLabel at start")
+	await Flow.shop_open(main, fi, true)   # item 14: the sheet is closed on the farm; a real Shop tap opens it
 	ck(upgrade.disabled, "UpgradeButton disabled with $0")
 	upgrade.grab_focus()
 	await _frames(3)
 	ck(not upgrade.has_focus(), "item 7: grab_focus() did not focus the disabled UpgradeButton (focus_mode None)")
 	var img0: Image = await _shot("r4-0-farm-start")
-	var bg: Color = _dominant(img0, upgrade.get_global_rect())
+	var ur: Rect2 = upgrade.get_global_rect()   # in the shop sheet the drawn pill is thin inside a taller rect: sample a strip at the left of its centre line, clear of the price text
+	var bg: Color = _dominant(img0, Rect2(ur.position.x + 6.0, ur.get_center().y - 3.0, 20.0, 6.0))
 	ck(absf(bg.r8 - DISABLED_BG.r8) <= 2 and absf(bg.g8 - DISABLED_BG.g8) <= 2 and absf(bg.b8 - DISABLED_BG.b8) <= 2, "item 7: the disabled UpgradeButton renders the disabled style (97, 87, 76) +-2 (got %d, %d, %d)" % [bg.r8, bg.g8, bg.b8])
+	await Flow.shop_close(main)
 	_set_cfg("bottling_seconds_per_jar", 1.0)   # CHEAT: quicker bottling
 	var spj: float = float(_cv("bottling_seconds_per_jar"))
 
@@ -429,18 +438,34 @@ func _run() -> void:
 			await _shot("r4-4-farm-full-spin-and-fork")
 
 		# ---- Spin (CRANKING), then the fork again: cells pile up while cranking, crank clicks do not count in the zoom
+		# 0.2 item 9: Spin from the farm view pans to the second stop first, the crank starts after the pan (wait for CRANKING, as r4_measure.gd does)
 		await fi.click_icon(P["CentrifugeIcon"] as Control)
+		var cr_state: int = _st(cen, "CRANKING")
+		await _until(func() -> bool: return int(cen.get("state")) == cr_state, float(_cv("camera_pan_seconds")) + 4.0)
 		await _frames(3)
-		eq(cen.get("state"), _st(cen, "CRANKING"), "%s: CRANKING" % T)
+		eq(cen.get("state"), cr_state, "%s: CRANKING after the pan to the second stop" % T)
+		ck(bool(main.call("at_second_stop")), "%s: Spin panned to the second stop" % T)
+		ck(not _vis(P["ForkIcon"]), "%s: the fork is hidden at the second stop" % T)
 		if rnd == 1:
 			await _shot("r4-5-farm-cranking-with-fork")
 		var spot: Vector2 = fi.free_spot(main)
 		await fi.click_at(spot)
 		var turns1: int = int(cen.get("turns_counted"))
-		eq(turns1, 1, "%s: one real click on the farm counted one turn" % T)
+		eq(turns1, 1, "%s: one real click at the second stop counted one turn" % T)
 		await _wait(1.0 / float(_cv("max_tap_rate")) + 0.05)
+		# 0.1.4 item 15: Back at the second stop pauses the crank (progress kept); the camera returns to the farm view, where the fork shows again
+		ck(_vis(P["BackButton"]), "%s: BackButton shows at the second stop" % T)
+		await fi.click_ctl(P["BackButton"] as Control)
+		await _wait(float(_cv("zoom_seconds")) + 0.5)
+		eq(cen.get("state"), cr_state, "%s: Back left the bucket CRANKING (paused)" % T)
+		eq(cen.get("crank_enabled"), false, "%s: Back paused the crank (no turn counts off the second stop)" % T)
+		# the spot found at the second stop can sit under Spin on the farm view (it would pan back and resume): pick a spot on the farm view
+		await fi.click_at(fi.free_spot(main))
+		await _wait(1.0 / float(_cv("max_tap_rate")) + 0.05)
+		eq(cen.get("turns_counted"), turns1, "%s: a click on the farm view while paused counted no turn" % T)
+		ck(not bool(main.call("at_second_stop")), "%s: a click on the farm view stayed on the farm view" % T)
 		tr["raised"] = []
-		ck(await _open_zoom(T + " (return, CRANKING)"), "%s: the fork opened the zoom while CRANKING" % T)
+		ck(await _open_zoom(T + " (return, paused crank)"), "%s: the fork opened the zoom with the crank paused" % T)
 		eq(tr["risen"], 1, "%s: the half frame rises first on the return" % T)
 		for i in 4:
 			await fi.click_at(fi.free_spot(main))
@@ -461,7 +486,15 @@ func _run() -> void:
 		if rnd == 1:
 			await _shot("r4-6-farm-pile-while-cranking")
 		eq(cen.get("state"), _st(cen, "CRANKING"), "%s: still CRANKING after the zoom" % T)
-		eq(cen.get("crank_enabled"), true, "%s: cranking counts again on the farm" % T)
+		eq(cen.get("crank_enabled"), false, "%s: the crank is still paused on the farm view" % T)
+		# 0.1.4 item 15: Spin on the paused crank pans back to the second stop and the crank resumes where it stopped
+		ck(_vis(P["CentrifugeIcon"]), "%s: Spin shows for the paused crank" % T)
+		await fi.click_icon(P["CentrifugeIcon"] as Control)
+		await _until(func() -> bool: return bool(cen.get("crank_enabled")), float(_cv("camera_pan_seconds")) + 4.0)
+		eq(cen.get("crank_enabled"), true, "%s: cranking counts again after Spin pans back" % T)
+		ck(bool(main.call("at_second_stop")), "%s: Spin on the paused crank went to the second stop" % T)
+		eq(cen.get("turns_counted"), turns1, "%s: the crank resumed where it stopped" % T)
+		await _frames(3)
 
 		# ---- finish this batch, bottle it; the pile loads in; repeat until everything is bottled
 		var batch: int = 0
@@ -476,6 +509,7 @@ func _run() -> void:
 				var gap: float = 1.0 / float(_cv("max_tap_rate")) + 0.03
 				var need: int = _turns_for(cells)
 				var cranking: int = _st(cen, "CRANKING")
+				var tc0: int = int(cen.get("turns_counted"))   # turns already counted (batch 1: the one click; a reloaded bucket: none)
 				if rnd == 2 and batch == 1:
 					var expected: float = float(need - int(cen.get("turns_counted")) - 1) / float(_cv("max_tap_rate"))
 					var t0: int = Time.get_ticks_msec()
@@ -491,7 +525,7 @@ func _run() -> void:
 						await fi.click_at(spot2)
 						await _wait(gap)
 						sent += 1
-					eq(sent + int(turns1 if batch == 1 else 0), need, "%s: ceil(jars x taps_per_jar) = %d turns in all" % [TB, need])
+					eq(sent + tc0, need, "%s: ceil(jars x taps_per_jar) = %d turns in all" % [TB, need])
 				ck(_extracted(cen), "%s: extraction done" % TB)
 				await _frames(4)
 			else:
@@ -504,6 +538,7 @@ func _run() -> void:
 					# the shop works whenever the farm UI shows, mid-harvest, while bottling
 					var cost: int = int(eco.call("swarm_cost"))
 					ck(int(eco.get("money")) >= cost, "%s: money %s covers the swarm cost %d" % [TB, str(eco.get("money")), cost])
+					await Flow.shop_open(main, fi, true)
 					ck(not upgrade.disabled, "%s: UpgradeButton enabled while bottling" % TB)
 					var before: int = int(eco.get("money"))
 					await fi.click_ctl(upgrade)
@@ -512,6 +547,7 @@ func _run() -> void:
 					eq(eco.get("money"), before - cost, "%s: money after the purchase" % TB)
 					eq((P["BeeCountLabel"] as Label).text, "Bees: %d" % (bees_base + int(_cv("bees_per_swarm_level"))), "%s: BeeCountLabel after the purchase" % TB)
 					eq(cen.get("state"), _st(cen, "BOTTLING"), "%s: the purchase did not disturb bottling" % TB)
+					await Flow.shop_close(main)
 			if rnd == 1 and batch == 1:
 				await _shot("r4-8-farm-bottling")
 			bottled_total += await _bottle(TB, mid)
@@ -520,7 +556,9 @@ func _run() -> void:
 				# the pile loaded into the empty bucket by itself
 				ck(int(cen.get("cells")) > 0, "%s: the pile loaded into the empty bucket" % TB)
 				eq(cen.get("lid_open"), false, "%s: the bucket closed after the load (full, or no zoom open)" % TB)
-				eq(cen.get("state"), _st(cen, "FULL"), "%s: FULL, Spin shows" % TB)
+				# 0.1.4 item 7: at the second stop the reloaded bucket stays CRANKING by itself (no Spin prompt); the loop's next pass cranks it
+				eq(cen.get("state"), _st(cen, "CRANKING"), "%s: the reloaded bucket is CRANKING by itself" % TB)
+				ck(not _vis(P["CentrifugeIcon"]), "%s: no Spin prompt for the reloaded bucket" % TB)
 				if rnd == 1 and batch == 1:
 					ck(int(cen.get("cells")) == mini(CAP_CELLS, TOTAL - in_bucket), "%s: the pile loaded up to the bucket's capacity" % TB)
 					await _shot("r4-9-farm-pile-loaded")
@@ -535,6 +573,9 @@ func _run() -> void:
 		eq(pile.get("cells"), 0, "%s: pile empty at the end" % T)
 
 		# ---- Sell (round 1) / the truck is away (round 2)
+		# spin mode ends with the last batch: the camera pans back to the farm view, where the Sell icon shows
+		await _until(func() -> bool: return not bool(main.call("at_second_stop")), 4.0)
+		await _wait(float(_cv("zoom_seconds")) + 0.5)
 		if rnd == 1:
 			ck(_vis(P["SellIcon"]), "round 1: the Sell icon floats above the full truck")
 			eq(truck.get("loaded_jars"), TRUCK_CAP, "round 1: the truck holds 10 jars")
@@ -543,7 +584,8 @@ func _run() -> void:
 			await fi.click_icon(P["SellIcon"] as Control)
 			await _frames(2)
 			eq(eco.get("money"), m0 + TRUCK_CAP * PER, "round 1: money credited at the tap")
-			ck(truck.get("away"), "round 1: the truck is away")
+			# 0.2 item 13: the truck leaves once every jar in flight to its bed has landed
+			ck(await _until(func() -> bool: return bool(truck.get("away")), 5.0), "round 1: the truck is away (after the jars in flight landed)")
 			await _summary_after_sell("round 1", TRUCK_CAP, PER)
 			await _shot("r4-10-farm-truck-away")
 		else:
@@ -578,16 +620,12 @@ func _run() -> void:
 		var fk: int = await _scrape_risen()
 		if k < n_fill - 1:
 			ck(await _next_frame(fk), "stops: frame %d done, the next rose" % fk)
-	var panned: bool = await _until(func() -> bool: return absf(camc.size - float(_cv("pan_zoom_size"))) < 0.02, float(_cv("camera_pan_seconds")) + 8.0)
-	ck(panned, "stops: the bucket is full and the camera panned to pan_zoom_size (%s, now %s)" % [str(_cv("pan_zoom_size")), str(camc.size)])
-	await _wait(0.5)
-	eq(cen.get("cells"), CAP_CELLS, "stops: the bucket holds its capacity at the second stop")
-	ck(_vis(P["BackButton"]), "stops: BackButton shows at the second stop")
-	await _shot("r4-12-second-stop")
-	if _vis(P["BackButton"]):
-		await fi.click_ctl(P["BackButton"] as Control)
+	# 0.2 item 9: a full bucket does not pan; the zoom ends on the farm view after the last frame and only Spin goes to the second stop
 	await _zoom_out_wait()
-	near(camc.size, size_farm, "stops: Back from the second stop returns to the farm view", 0.05)
+	await _wait(float(_cv("camera_pan_seconds")) + 0.5)
+	eq(cen.get("cells"), CAP_CELLS, "stops: the bucket holds its capacity")
+	ck(not bool(main.call("at_second_stop")), "stops: the full bucket did not pan to the second stop (0.2 item 9)")
+	near(camc.size, size_farm, "stops: the zoom ended on the farm view", 0.05)
 	ck(_vis(P["MoneyLabel"]), "stops: the farm UI is back")
 	eq(cen.get("state"), _st(cen, "FULL"), "stops: FULL after Back (Spin waits)")
 	await _crank("stops", false)

@@ -28,6 +28,8 @@ func _ready() -> void:
 func open() -> void:
 	_refresh_text()
 	if _panel != null:
+		_panel.z_index = 60   # above the shop sheet (z 51) and its dim (z 50) so Close takes the press
+		_panel.top_level = true   # GUI root sorted by z, like ShopPanel: tree order does not decide picking
 		_panel.visible = true
 
 

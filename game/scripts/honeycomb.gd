@@ -35,7 +35,12 @@ const POP_SECONDS: float = 0.18
 @export var cell_radius: float = 0.46
 @export var cell_pitch: float = DEFAULT_CELL_PITCH   # frame-local units; 1.865 fills Bob's 9 x 4.82 frame edge to edge (item 14)
 ## Drags only uncap while true (hive.gd turns it on while a frame is risen).
-@export var active: bool = true
+@export var active: bool = true:
+	set(value):
+		if not value and _dragging:
+			_dragging = false
+			drag_ended.emit()   # 0.2 item 10: going inactive mid-drag ends the drag (the fork hides)
+		active = value
 
 ## One byte per cell: 0 Capped, 1 Uncapped, 2 Extracted.
 var cells: PackedByteArray = PackedByteArray()
@@ -148,6 +153,9 @@ func reset() -> void:
 ## Shows one frame of the hive. Cells still popping from the previous frame leave first.
 func load_frame(hive_node: Hive, index: int) -> void:
 	_flush_departures()
+	if _dragging:
+		_dragging = false
+		drag_ended.emit()
 	_dragging = false
 	hive = hive_node
 	frame_index = index

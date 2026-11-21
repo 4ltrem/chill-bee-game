@@ -24,8 +24,12 @@ func t_zoom_ui_and_camera() -> void:
 		return
 	var size0: float = cam.size
 	var farm_ui: Array = ["MoneyLabel", "HiveCountLabel", "BeeCountLabel", "UpgradeButton", "ShopPanel"]
+	var sheet: bool = int(cv("shop_layout")) == 1   # item 14: in the sheet layout the shop panel (and its UpgradeButton) is hidden on the farm
 	for nm in farm_ui:
-		ck(_shown(p[nm]), "%s shows on the farm before the zoom" % nm)
+		if sheet and (nm == "UpgradeButton" or nm == "ShopPanel"):
+			ck(not _shown(p[nm]), "%s is hidden on the farm before the zoom (sheet layout)" % nm)
+		else:
+			ck(_shown(p[nm]), "%s shows on the farm before the zoom" % nm)
 	ck(_shown(p["ForkIcon"]), "fork shows at a full hive")
 	ck(not _shown(p["BackButton"]) and not _shown(p["HintLabel"]), "BackButton and hint are hidden on the farm")
 	ck((p["ForkIcon"] as Control).size.x >= 120.0 and (p["ForkIcon"] as Control).size.y >= 120.0, "fork icon touch area at least 120 x 120 (%s)" % str((p["ForkIcon"] as Control).size))
@@ -60,7 +64,10 @@ func t_zoom_ui_and_camera() -> void:
 	eq(tr["lid"], [true, false], "the hive lid went back on (lid_moved(false))")
 	eq(tr["risen"], -1, "the risen frame slid back down")
 	for nm in farm_ui:
-		ck(_shown(p[nm]), "%s is back after the zoom" % nm)
+		if sheet and (nm == "UpgradeButton" or nm == "ShopPanel"):
+			ck(not _shown(p[nm]), "%s stays hidden after the zoom (sheet layout)" % nm)
+		else:
+			ck(_shown(p[nm]), "%s is back after the zoom" % nm)
 	ck(_shown(p["ForkIcon"]), "fork shows after Back: Capped cells remain")
 	ck(not _shown(p["BackButton"]), "BackButton hidden again on the farm")
 	_fin()
@@ -137,7 +144,8 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 	near(_jars_everywhere(p), jars0, 1e-6, "all 10 jars accounted for: 4 in the bucket, 6 in the pile")
 	ck(_shown(p["CentrifugeIcon"]), "the zoom ended on its own: Spin shows")
 	ck(_shown(p["MoneyLabel"]), "the farm UI is back")
-	ck(not _shown(p["ForkIcon"]), "the hive is empty and no Back was used: the fork is hidden")
+	# 0.2 item 9: the zoom ends on the farm view (no pan to the second stop); 0.1.4 item 1: the fork always shows there, pressable only by the fork rule
+	ck((p["ForkIcon"] as Button).disabled, "the hive is empty and no Back was used: the fork is disabled (nothing to harvest)")
 	eq(cen.get("state"), _st(cen, "FULL"), "bucket FULL after the zoom")
 	# three rounds of spin and bottle: 70 + 70 + 35 cells = 4 + 4 + 2 jars
 	var spot: Vector2 = fi.free_spot(m)
@@ -153,6 +161,8 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 		if round_i == 0:
 			ck(_shown(p["CentrifugeIcon"]), "round 1: Spin shows")
 			await fi.click_icon(p["CentrifugeIcon"] as Control)
+			# 0.2 item 9: Spin from the farm view pans to the second stop first, the crank starts there
+			ck(await _until(func() -> bool: return bool(m.call("at_second_stop")) and absf(root.get_viewport().get_camera_3d().size - float(cv("pan_zoom_size"))) < 0.01, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0), "round 1: Spin panned to the second stop")
 		await _frames(3)
 		eq(cen.get("state"), _st(cen, "CRANKING"), "round %d: tapping Spin starts CRANKING" % (round_i + 1))
 		var turns: int = _turns_for(cells_now)

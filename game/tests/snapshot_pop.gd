@@ -27,7 +27,7 @@ extends SceneTree
 const SCALE: float = 0.05
 const TIMES: Array[float] = [0.0, 0.015, 0.03, 0.045, 0.06, 0.075, 0.09, 0.105, 0.12, 0.135, 0.15, 0.165, 0.18, 0.21, 0.30]
 const IDX_LAST_IN_POP: int = 11             # TIMES[11] = 0.165 s
-const CELL: int = 17                       # row 2, column 3 of the 7 x 5 frame: the middle, all eight neighbours Capped
+const CELL: int = 7                        # spec 0.1.4 C5 round 9: a frame is 5 x 2 = 10 cells, so 17 is gone; 7 is the second row's third cell
 const REF_CSV := "res://tests/snapshots/pop-r3-reference.csv"
 const TOL_PROJECTED: float = 0.02
 const TOL_PIXELS: float = 0.12
@@ -176,6 +176,12 @@ func _run() -> void:
 	_tag = OS.get_environment("CB_TAG") if OS.get_environment("CB_TAG") != "" else "r4"
 	_out = OS.get_environment("CB_OUT") if OS.get_environment("CB_OUT") != "" else ProjectSettings.globalize_path("res://reports/_runs/snapshots/%s/" % _tag)
 	DirAccess.make_dir_recursive_absolute(_out)
+	# A screen shorter than 1280 px makes Windows clamp the window (720 x 1175 here): go borderless and ask for 720 x 1280 again (as style_shots.gd does).
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
+	await _frames(3)
+	DisplayServer.window_set_position(Vector2i(0, 0))
+	DisplayServer.window_set_size(Vector2i(720, 1280))
+	await _frames(5)
 	# Reset to defaults equivalent (a stale user://dev_config.tres would override the default values)
 	if FileAccess.file_exists(GameConfig.DEV_PATH):
 		print("a stale %s was FOUND and removed" % GameConfig.DEV_PATH)
@@ -264,7 +270,7 @@ func _process(d: float) -> void:
 			var img: Image = root.get_texture().get_image()
 			var blob: Dictionary = _blob(img, centre_px)
 			var wv: float = _face_width(mesh, cam)
-			samples.append({"t": sim, "want": TIMES[ti], "w": wv, "sc": mesh.scale.x, "area": int(blob["area"]), "bw": int(blob["w"]), "bh": int(blob["h"])})
+			samples.append({"t": sim, "want": TIMES[ti], "w": wv, "sc": mesh.scale.x / float(cfg.get("frame_scale")), "area": int(blob["area"]), "bw": int(blob["w"]), "bh": int(blob["h"])})
 			_save_crop(img, centre_px, "%spop-%s-t%03d.png" % [_out, _tag, int(round(TIMES[ti] * 1000.0))])
 			ti += 1
 			continue
@@ -317,7 +323,8 @@ func _process(d: float) -> void:
 		var wx_t: float = 0.0
 		for i in curve.size():
 			var t: float = float(curve[i]["t"])
-			var dp: float = absf(float(curve[i]["proj"]) - _interp(ref, t, "proj"))
+			# a sample earlier than the reference's first one (T = 0.0070 s) has nothing to interpolate from (_interp clamps): skip it
+			var dp: float = absf(float(curve[i]["proj"]) - _interp(ref, t, "proj")) if t >= float(ref[0]["t"]) else 0.0
 			var dx: float = absf(float(curve[i]["pix"]) - _interp(ref, t, "pix")) if i <= IDX_LAST_IN_POP else 0.0   # inside the pop only
 			if dp > worst_p:
 				worst_p = dp

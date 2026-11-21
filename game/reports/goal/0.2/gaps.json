@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-09T23:56:21-05:00",
- "unit_log": "game/reports/_runs/20261109-223506/unit.log",
+ "at": "2026-11-21T10:47:25-05:00",
+ "unit_log": "game/reports/_runs/20261121-102318/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -78,12 +78,12 @@
     {
      "kind": "config",
      "name": "spigot_flow_base_cost",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "spigot_flow_cost_growth",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
@@ -127,20 +127,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "ledger",
@@ -163,7 +163,7 @@
     2
    ],
    "depends": [],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -197,20 +197,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -225,7 +225,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -242,7 +242,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -301,20 +301,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -347,7 +347,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -364,7 +364,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -403,20 +403,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -455,7 +455,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -472,7 +472,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -526,20 +526,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -566,7 +566,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -583,7 +583,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -617,20 +617,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -663,7 +663,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -680,7 +680,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -709,20 +709,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -743,7 +743,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -760,7 +760,7 @@
    "depends": [
     "H"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -789,20 +789,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -819,8 +819,8 @@
     {
      "kind": "test",
      "name": "t_journal_panel_text_matches_csv_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -835,7 +835,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -849,10 +849,16 @@
     9
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "0.2",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -866,16 +872,21 @@
     10
    ],
    "depends": [],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
      "name": "fork_return_seconds",
-     "ok": false
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "0.2",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -895,10 +906,15 @@
      "kind": "node",
      "name": "LidDisc",
      "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "0.2",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -912,21 +928,26 @@
     12
    ],
    "depends": [],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
      "name": "spigot_flow_max_level",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "config",
      "name": "spigot_flow_cut_per_level",
-     "ok": false
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "0.2",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -940,10 +961,16 @@
     13
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "0.2",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -951,18 +978,21 @@
    "kind": "change",
    "title": "The shop shows every row without scrolling",
    "owners": [
-    "Patricia"
+    "Patricia",
+    "Bob"
    ],
    "items": [
     14
    ],
-   "depends": [],
-   "status": "partial",
+   "depends": [
+    "H"
+   ],
+   "status": "missing",
    "evidence": [
     {
      "kind": "node",
      "name": "ShopScroll",
-     "ok": true
+     "ok": false
     }
    ],
    "built": false,
@@ -978,7 +1008,7 @@
    ],
    "items": [],
    "depends": [],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -1022,20 +1052,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -1166,8 +1196,8 @@
     {
      "kind": "test",
      "name": "t_journal_panel_text_matches_csv_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -1193,7 +1223,7 @@
    "depends": [
     "C1"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -1222,20 +1252,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "ledger",
@@ -1244,7 +1274,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -1579,7 +1609,7 @@
    "depends": [
     "C8"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -1596,8 +1626,8 @@
     {
      "kind": "test",
      "name": "t_journal_panel_text_matches_csv_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -1612,7 +1642,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -1768,7 +1798,7 @@
     "C13",
     "C14"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -1797,20 +1827,20 @@
     {
      "kind": "test",
      "name": "t_shop_auto_sell_locked_until_delivery_1",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_buy_button_real_click_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
      "name": "t_shop_no_row_overlaps_other_controls",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -1941,8 +1971,8 @@
     {
      "kind": "test",
      "name": "t_journal_panel_text_matches_csv_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
@@ -1959,142 +1989,105 @@
  },
  "order": [
   {
-   "id": "C10",
-   "score": 8.54,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C11",
-   "score": 8.54,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C12",
-   "score": 8.54,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C13",
-   "score": 8.54,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C14",
-   "score": 8.54,
+   "score": 11.31,
    "factors": {
-    "unblocks": 1,
+    "unblocks": 2,
     "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C9",
-   "score": 8.54,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.46,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T11.1",
-   "score": 5.64,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.36,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T14.1",
-   "score": 5.64,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.36,
+    "cost": 0.69,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T10.1",
-   "score": 0.0,
+   "score": 5.7,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.36,
-    "ready": 0,
-    "blocked_by": [
-     "C10"
-    ]
+    "cost": 0.3,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T11.1",
+   "score": 5.7,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.3,
+    "ready": 1,
+    "blocked_by": []
    }
   },
   {
    "id": "T12.1",
-   "score": 0.0,
+   "score": 5.7,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.36,
-    "ready": 0,
-    "blocked_by": [
-     "C12"
-    ]
+    "cost": 0.3,
+    "ready": 1,
+    "blocked_by": []
    }
   },
   {
    "id": "T13.1",
-   "score": 0.0,
+   "score": 5.7,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.36,
-    "ready": 0,
-    "blocked_by": [
-     "C13"
-    ]
+    "cost": 0.3,
+    "ready": 1,
+    "blocked_by": []
    }
   },
   {
    "id": "T9.1",
+   "score": 5.7,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.3,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "CFG",
+   "score": 3.62,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.38,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.3,
+    "ready": 0,
+    "blocked_by": [
+     "C14"
+    ]
+   }
+  },
+  {
+   "id": "T14.1",
    "score": 0.0,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.36,
+    "cost": 0.3,
     "ready": 0,
     "blocked_by": [
-     "C9"
+     "C14"
     ]
    }
   }

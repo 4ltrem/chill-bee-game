@@ -444,13 +444,14 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	await fi.click_ctl(p["BackButton"] as Control)
 	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + _lid_t())
 	eq(m.get("resume_pending"), true, "Back set resume_pending")
-	# 0.1.4 spec item 2: Harvest "is hidden at the second stop" (the full bucket pans there after Back); _open_zoom taps Back to the farm view
-	eq(m.call("at_second_stop"), true, "Back: the full bucket panned to the second stop")
-	ck(not _shown(p["ForkIcon"]) and m.call("fork_available"), "Back: the fork is hidden at the second stop (frames 4 and 5 hold Capped cells)")
+	# 0.2 item 9: "when the zoom ends (all frames done, or Back) the camera returns to the farm view. The camera goes to the second stop only when Spin is tapped"
+	eq(m.call("at_second_stop"), false, "Back: the full bucket did not pan; the camera is on the farm view")
+	ck(_shown(p["ForkIcon"]) and m.call("fork_available"), "Back: the fork shows on the farm view (frames 4 and 5 hold Capped cells)")
 	eq(cen.get("state"), _st(cen, "FULL"), "Back: bucket FULL")
 	near(_jars_everywhere(p) + float(truck_jars.call()), jars0, 1e-9, "zoom 1: jars conserved")
 	# ---- spin and bottle
 	await fi.click_icon(p["CentrifugeIcon"] as Control)
+	await _until(func() -> bool: return bool(m.call("at_second_stop")) and absf(root.get_viewport().get_camera_3d().size - float(cv("pan_zoom_size"))) < 0.01, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
 	await _frames(3)
 	eq(cen.get("state"), _st(cen, "CRANKING"), "Spin: CRANKING")
 	var sent: int = await _crank_done(cen)
@@ -493,12 +494,11 @@ func t_resume_pending_pile_loads_while_zoom_open() -> void:
 	eq(pile.get("cells"), cpf, "frame 5's cells went to the pile")
 	eq(fi.capped_total(hive, _frames_n()), 0, "no Capped cell left")
 	eq(m.get("resume_pending"), false, "the zoom ended on its own: resume_pending cleared")
-	ck(not _shown(p["ForkIcon"]), "the fork is gone: hive not full and resume_pending false")
-	# 0.1.3c: the bucket filled in this zoom, so the zoom ended at the second stop (Back shows there); Back returns to the farm view
-	ck(_shown(p["MoneyLabel"]) and not _shown(p["HintLabel"]), "the farm UI is back (the second stop shows it with Back)")
-	await fi.click_ctl(p["BackButton"] as Control)
-	await _wait(_zoom_settle() + float(cv("zoom_seconds")) + float(cv("camera_pan_seconds")))
-	ck(_shown(p["MoneyLabel"]) and not _shown(p["BackButton"]), "after Back the farm view is back")
+	# 0.1.4 item 1: Harvest always shows on the farm view (it is the honey meter); "the fork is gone" means not pressable
+	ck(not m.call("fork_available") and (p["ForkIcon"] as Button).disabled, "the fork is gone: hive not full and resume_pending false (Harvest disabled)")
+	# 0.2 item 9: the zoom ended on its own and the camera returned to the farm view (no second stop, no Back to press)
+	eq(m.call("at_second_stop"), false, "the zoom ended on the farm view, not at the second stop")
+	ck(_shown(p["MoneyLabel"]) and not _shown(p["HintLabel"]) and not _shown(p["BackButton"]), "the farm UI is back")
 	eq(cen.get("lid_open"), false, "lid on")
 	eq(cen.get("state"), _st(cen, "FULL"), "FULL after the zoom")
 	ck(_shown(p["CentrifugeIcon"]), "Spin shows")

@@ -478,8 +478,13 @@ func t_dev_ui_bounds_collects_controls() -> void:
 			visible_named += 1
 			ck(got.has(n), "collect_controls() includes the visible Control '%s'" % nm)
 	ck(visible_named >= 4, "at least 4 named Controls were visible to be collected (%d)" % visible_named)
-	for nm in ["ForkIcon", "UpgradeButton", "MoneyLabel"]:
+	var names14: Array = ["ForkIcon", "MoneyLabel"]
+	if int(cv("shop_layout")) != 1:
+		names14.append("UpgradeButton")   # item 14: in the sheet layout the shop (and UpgradeButton) is hidden on the farm
+	for nm in names14:
 		ck(got.has(p[nm]), "collect_controls() includes %s (fork shows at a full hive; Upgrade and Money are farm UI)" % nm)
+	if int(cv("shop_layout")) == 1:
+		ck(not got.has(p["UpgradeButton"]), "the hidden UpgradeButton (closed shop sheet) is not collected")
 	# it must not list a hidden Control
 	ck(not got.has(p["BackButton"]), "the hidden BackButton is not collected")
 	btn.pressed.emit()

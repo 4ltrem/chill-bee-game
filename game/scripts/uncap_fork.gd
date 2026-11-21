@@ -18,6 +18,9 @@ var _head_material: StandardMaterial3D
 var _steel: Color
 var _pulse_t: float = 0.0
 var _dragging: bool = false
+var _return_tween: Tween
+var _rest_scale: Vector3 = Vector3.ONE
+var _has_rest_scale: bool = false
 
 
 func _ready() -> void:
@@ -49,6 +52,7 @@ func pulse_seconds() -> float:
 ## The fork follows the drag: shown at `world_position` (the drag point on the combs).
 func follow(world_position: Vector3) -> void:
 	if not _dragging:
+		_cancel_return()
 		_dragging = true
 		_pulse_t = 0.0
 		visible = true
@@ -57,10 +61,47 @@ func follow(world_position: Vector3) -> void:
 
 ## The drag ended: the fork hides and the head returns to steel.
 func release() -> void:
+	_cancel_return()
 	_dragging = false
 	visible = false
 	_pulse_t = 0.0
 	_apply(0.0)
+
+
+## 0.2 item 10: the zoom ended with the fork still shown: it moves to `world_target` (the Harvest icon's spot) and shrinks
+## into it over fork_return_seconds, then hides. No-op when hidden.
+func return_to(world_target: Vector3) -> void:
+	if not visible:
+		return
+	_dragging = false
+	_apply(0.0)
+	if _return_tween != null:
+		_return_tween.kill()
+	var seconds: float = float(config.fork_return_seconds)
+	if seconds <= 0.0:
+		_finish_return()
+		return
+	if not _has_rest_scale:
+		_rest_scale = scale
+		_has_rest_scale = true
+	_return_tween = create_tween().set_parallel(true).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	_return_tween.tween_property(self, "global_position", world_target, seconds)
+	_return_tween.tween_property(self, "scale", _rest_scale * 0.01, seconds)
+	_return_tween.chain().tween_callback(_finish_return)
+
+
+func _cancel_return() -> void:
+	if _return_tween != null:
+		_return_tween.kill()
+		_return_tween = null
+	if _has_rest_scale:
+		scale = _rest_scale
+
+
+func _finish_return() -> void:
+	visible = false
+	if _has_rest_scale:
+		scale = _rest_scale
 
 
 ## 0 at the start, 1 at the peak (half the pulse), 0 at the end: the head's blend toward crank orange at pulse time t.

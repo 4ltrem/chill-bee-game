@@ -46,8 +46,11 @@ func _shot(name: String) -> void:
 	var img: Image = root.get_texture().get_image()
 	var err: int = img.save_png(_path(name + ".png"))
 	print("shot ", name, " ", img.get_size(), " err=", err)
-	if err == OK and img.get_size() == Vector2i(720, 1280):
+	var saved: Image = Image.load_from_file(_path(name + ".png"))
+	if err == OK and saved != null and saved.get_size() == Vector2i(720, 1280):
 		names.append(name + ".png")
+	else:
+		print("BAD SHOT SIZE ", name, " ", saved.get_size() if saved != null else "unreadable")
 
 
 func _cfg() -> Object:
@@ -62,6 +65,35 @@ func _lid_t(c: Object) -> float:
 func _settle() -> float:
 	var c: Object = _cfg()
 	return float(c.get("zoom_seconds")) + _lid_t(c) + float(c.get("slide_seconds")) + 0.6
+
+
+## Crank for real (begin_crank when the bucket is full, then the held crank) until `n` jars are bottled, at most 30 s.
+func _crank_until(cen: Node, n: int) -> void:
+	var t0: int = Time.get_ticks_msec()
+	var last_progress: int = t0
+	var last_turns: int = -1
+	var last_bottled: int = -1
+	while (int(cen.get("jars_bottled")) < n or int(cen.get("state")) < 3) and Time.get_ticks_msec() - t0 < 40000:   # state < 3: a previous batch's count is stale
+		var st: int = int(cen.get("state"))
+		if st == 2:   # State.FULL (LOADING: the combs still fall, wait)
+			cen.call("begin_crank")
+		elif st == 3 and bool(cen.get("crank_enabled")):   # State.CRANKING: (re)assert the hold every frame; a stale mouse source would drop it
+			cen.set("_hold_source", "")
+			if not bool(cen.get("holding")):
+				cen.call("set_holding", true)
+		var prog: int = int(cen.get("turns_counted")) + int(cen.get("jars_bottled")) * 1000 + st * 100000
+		if prog != last_turns:
+			last_turns = prog
+			last_progress = Time.get_ticks_msec()
+		elif Time.get_ticks_msec() - last_progress > 12000:
+			print("stalled: state=", st, " crank_enabled=", cen.get("crank_enabled"), " holding=", cen.get("holding"), " turns=", cen.get("turns_counted"))
+			break
+		last_bottled = int(cen.get("jars_bottled"))
+		await process_frame
+	cen.call("set_holding", false)
+	print("cranked: bottled=", cen.get("jars_bottled"), " state=", cen.get("state"))
+	if int(cen.get("jars_bottled")) < n:
+		_fail("_crank_until(%d) bottled only %d: state=%d crank_enabled=%s holding=%s" % [n, int(cen.get("jars_bottled")), int(cen.get("state")), str(cen.get("crank_enabled")), str(cen.get("holding"))])
 
 
 func _face_size(mi: MeshInstance3D, cam: Camera3D) -> Vector2:
@@ -81,7 +113,14 @@ func _fail(msg: String) -> void:
 
 func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(_path(""))
-	fi = FarmInput.new(self)
+	# A screen shorter than 1280 px makes Windows clamp the window: go borderless and ask for 720 x 1280 again.
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
+	await _frames(3)
+	DisplayServer.window_set_position(Vector2i(0, 0))
+	DisplayServer.window_set_size(Vector2i(720, 1280))
+	await _frames(5)
+	print("after borderless: win=", DisplayServer.window_get_size(), " root.size=", root.size)
+	fi =FarmInput.new(self)
 	FarmInput.reset_dev_config()
 	root.get_node("Economy").call("reset")
 	main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
@@ -97,6 +136,7 @@ func _run() -> void:
 	hive.connect("frame_raised", func(i: Variant) -> void: risen = int(i))
 	hive.connect("frame_lowered", func(_i: Variant) -> void: risen = -1)
 	if root.get_visible_rect().size != Vector2(720, 1280):
+		print("win=", DisplayServer.window_get_size(), " root.size=", root.size, " visible=", root.get_visible_rect().size, " screen=", DisplayServer.screen_get_size())
 		_fail("viewport is not 720 x 1280")
 		return
 	await _shot("01-farm-start")
@@ -145,13 +185,13 @@ func _run() -> void:
 	await _wait(_lid_t(cfg) + 1.0)
 	await _shot("04-bucket-full")
 	# pile: cells piled by the centrifuge while it cranks
-	cen.call("begin_crank")
 	pile.call("add", 30, 30.0 / 35.0)
 	pile.call("land", 30)
-	await _wait(0.8)
+	# the game's own path: hold the crank, extraction ends, the spigot bottles, each full jar flies onto the truck bed
+	await _crank_until(cen, 3)
 	await _shot("05-pile")
-	# truck away after a real Sell
-	for i in int(truck.get("capacity")):
+	# truck away after a real Sell (the bed's remaining places filled by the game's receive_jar)
+	for i in maxi(int(truck.get("capacity")) - int(truck.get("loaded_jars")), 0):
 		truck.call("receive_jar")
 	await _wait(2.5)
 	if not (P["SellIcon"] as CanvasItem).is_visible_in_tree():
@@ -166,6 +206,9 @@ func _run() -> void:
 	if not bool(truck.get("away")):
 		_fail("the truck is not away")
 		return
+	# the pile loaded the bucket when the first batch finished: crank it for real, the jars bottled while the truck is away go to the crate
+	if int(cen.get("state")) in [1, 2]:   # LOADING or FULL: the pile loads the bucket by itself (EMPTY: nothing left to crank)
+		await _crank_until(cen, 2)
 	await _shot("06-truck-away")
 	var j := {"viewport": [720, 1280], "cell_px_min": snappedf(min_w, 0.1), "cell_px_max": snappedf(max_w, 0.1), "shots": names}
 	var f := FileAccess.open(_path("measure.json"), FileAccess.WRITE)

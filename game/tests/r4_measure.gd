@@ -183,6 +183,12 @@ func _fps_while(tag: String, cond: Callable, seconds: float) -> float:
 func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(SHOT_DIR))
 	fi = FarmInput.new(self)
+	# A screen shorter than 1280 px makes Windows clamp the window (720 x 1175 here): go borderless and ask for 720 x 1280 again (as style_shots.gd does).
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
+	await _frames(3)
+	DisplayServer.window_set_position(Vector2i(0, 0))
+	DisplayServer.window_set_size(Vector2i(720, 1280))
+	await _frames(5)
 	var stale: bool = FarmInput.reset_dev_config()
 	print("Dev config reset (equivalent of Reset to defaults): a stale user://dev_config.tres was ", "FOUND and removed" if stale else "not present")
 	root.get_node("Economy").call("reset")
@@ -302,6 +308,12 @@ func _run() -> void:
 	var cicon: Control = main.find_child("CentrifugeIcon", true, false) as Control
 	ck(cicon.is_visible_in_tree(), "Spin shows after Back (bucket full, lid on)")
 	await fi.click_icon(cicon)
+	# 0.2 item 9: Spin from the farm view pans to the second stop first; the crank starts when the pan ends (a press before that counts nothing)
+	var cr_t0: int = Time.get_ticks_msec()
+	var cr_state: int = int(cen.get_script().get_script_constant_map()["State"]["CRANKING"])
+	while int(cen.get("state")) != cr_state and Time.get_ticks_msec() - cr_t0 < int((float(_cv("camera_pan_seconds")) + 4.0) * 1000.0):
+		await process_frame
+	ck(int(cen.get("state")) == cr_state, "Spin started the crank after the pan to the second stop")
 	await _frames(3)
 	var spot: Vector2 = fi.free_spot(main)
 	var rate: float = float(_cv("max_tap_rate"))
@@ -319,10 +331,11 @@ func _run() -> void:
 	var bottling: int = int(cen.get("state"))
 	var bstates: Dictionary = cen.get_script().get_script_constant_map()["State"]
 	var bt0: int = Time.get_ticks_msec()
-	while bottling != int(bstates["BOTTLING"]) and Time.get_ticks_msec() - bt0 < 5000:
+	# DONE lasts one frame; the 5 frames and the shot above may already have seen the whole bottling (state EMPTY again), so accept both
+	while bottling != int(bstates["BOTTLING"]) and bottling != int(bstates["EMPTY"]) and Time.get_ticks_msec() - bt0 < 5000:
 		await process_frame
 		bottling = int(cen.get("state"))
-	ck(bottling == int(bstates["BOTTLING"]), "bottling started by itself, no input after the extraction")
+	ck(bottling == int(bstates["BOTTLING"]) or bottling == int(bstates["EMPTY"]), "bottling started by itself, no input after the extraction (state %s)" % str(bstates.find_key(bottling)))
 	var bot_avg: float = await _fps_while("farm, bottling (honey level dropping, jars filling)", func() -> bool: return int(cen.get("state")) == bottling, 6.0)
 	ck(bot_avg <= 1000.0 / 60.0 + 0.5, "the farm holds 60 FPS while bottling (avg %.2f ms)" % bot_avg)
 

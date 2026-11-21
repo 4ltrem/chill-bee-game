@@ -58,7 +58,7 @@ func buy_swarm() -> bool:
 
 
 # --- 0.2 item 1: one table of upgrades (id, name, config keys, gate); shop_ui.gd builds one row per entry, in this order ---
-const UPGRADE_IDS: Array[String] = ["swarm", "flight", "heated_fork", "gearing", "faster_delivery", "auto_sell"]
+const UPGRADE_IDS: Array[String] = ["swarm", "flight", "heated_fork", "gearing", "spigot_flow", "faster_delivery", "auto_sell"]
 
 signal upgrade_changed(id: String, level: int)
 
@@ -72,6 +72,7 @@ func upgrade_name(id: String) -> String:
 		"flight": return "Flight Endurance"
 		"heated_fork": return "Heated Uncapping Fork"
 		"gearing": return "Centrifuge Gearing"
+		"spigot_flow": return "Spigot Flow"
 		"faster_delivery": return "Faster Delivery"
 		"auto_sell": return "Auto-Sell"
 	return id
@@ -90,6 +91,7 @@ func max_level(id: String) -> int:
 		"flight": return config.flight_max_level
 		"heated_fork": return config.heated_fork_max_level
 		"gearing": return config.gearing_max_level
+		"spigot_flow": return config.spigot_flow_max_level
 		"faster_delivery": return config.faster_delivery_max_level
 		"auto_sell": return 1
 	return 0
@@ -112,6 +114,7 @@ func cost(id: String) -> int:
 		"flight": return floori(config.flight_base_cost * pow(config.flight_cost_growth, lv))
 		"heated_fork": return floori(config.heated_fork_base_cost * pow(config.heated_fork_cost_growth, lv))
 		"gearing": return floori(config.gearing_base_cost * pow(config.gearing_cost_growth, lv))
+		"spigot_flow": return floori(config.spigot_flow_base_cost * pow(config.spigot_flow_cost_growth, lv))
 		"faster_delivery": return floori(config.faster_delivery_base_cost * pow(config.faster_delivery_cost_growth, lv))
 		"auto_sell": return floori(config.auto_sell_cost)
 	return 0

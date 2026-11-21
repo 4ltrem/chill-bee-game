@@ -74,7 +74,10 @@ func _walk_views(visit: Callable) -> void:
 		var f: int = await _scrape_risen(m, p["Hive"], tr)
 		ck(await _next_frame(tr, f), "frame %d done: the next frame rose" % f)
 	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.3)
-	await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
+	# 0.2 item 9: the full bucket no longer pans, so Spin (FULL) shows in the first zoom: measure it there; the second stop has it cranking (no Spin)
+	await visit.call(m, p, "first zoom, bucket full")
+	# 0.2 item 9: "The camera goes to the second stop only when Spin is tapped" (a full bucket and Back no longer pan)
+	await fi.tap_at((p["CentrifugeIcon"] as Control).get_global_rect().get_center())
 	var reached: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
 	await _wait(0.4)
 	ck(reached, "the second stop was reached (size %s)" % str(_cam().size))
@@ -202,7 +205,8 @@ func t_harvest_hidden_at_second_stop() -> void:
 	for i in 5:
 		await _frames(4)
 		ck(not fork.is_visible_in_tree(), "Harvest stays hidden at the second stop (check %d)" % (i + 1))
-	ck((p["CentrifugeIcon"] as Control).is_visible_in_tree(), "self-check: Spin still shows at the second stop, so only Harvest is hidden")
+	# 0.2 item 9: the second stop is reached by the Spin tap, which starts the crank there (so Spin is not a start button any more)
+	eq((p["Centrifuge"] as Node).get("state"), _st(p["Centrifuge"], "CRANKING"), "self-check: the Spin tap that got here started the crank")
 	await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
 	await _until(func() -> bool: return not bool(m.call("at_second_stop")) and _cam().size > float(cv("pan_zoom_size")) + 0.5, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
 	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
@@ -301,9 +305,7 @@ func t_centrifuge_label_on_centrifuge() -> void:
 		return
 	var m: Node = s["m"]
 	var p: Dictionary = s["p"]
-	var spin: Control = p["CentrifugeIcon"]
-	ck(_shown(spin), "Spin shows at the second stop")
-	await fi.tap_at(spin.get_global_rect().get_center())
+	# 0.2 item 9: _second_stop_with_capped already tapped Spin (the only way to the second stop), so the crank runs here
 	await _wait(0.6)
 	await _measure_label(m, p, "second stop")
 	# No farm-view case (orchestrator, 2026-11-08): items 11 and 12 mean the centrifuge never cranks in the farm view in Phase 1,

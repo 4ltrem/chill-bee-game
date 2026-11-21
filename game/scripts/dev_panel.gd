@@ -67,6 +67,7 @@ func _add_dev_button() -> void:
 	_button_layer = CanvasLayer.new()
 	_button_layer.name = "DevButtonLayer"
 	_button_layer.layer = 50
+	_button_layer.add_to_group("dev_button_layer")   # shop_ui hides it while the shop sheet is open
 	var b := Button.new()
 	b.name = "DevButton"
 	b.text = "Dev"
@@ -74,7 +75,17 @@ func _add_dev_button() -> void:
 	b.size = Vector2(80.0, 80.0)
 	b.custom_minimum_size = Vector2(80.0, 80.0)
 	b.focus_mode = Control.FOCUS_NONE
-	b.modulate = Color(1.0, 1.0, 1.0, 0.6)
+	# STYLE_GUIDE tokens: shop panel fill, cream text, ink outline (V10, V12); no dimming so the contrast holds
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = Color(0.30, 0.22, 0.10)
+	fill.set_corner_radius_all(12)
+	for state in ["normal", "hover", "pressed", "focus"]:
+		b.add_theme_stylebox_override(state, fill)
+	for key in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		b.add_theme_color_override(key, Color(1.0, 0.96, 0.86))
+	b.add_theme_color_override("font_outline_color", Color(0.20, 0.12, 0.02))
+	b.add_theme_constant_override("outline_size", 6)
+	b.add_theme_font_size_override("font_size", 32)
 	b.pressed.connect(toggle)
 	_button_layer.add_child(b)
 	host.add_child(_button_layer)

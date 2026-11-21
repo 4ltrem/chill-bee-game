@@ -48,6 +48,7 @@ var _crate_empty_meshes: Array[Node3D] = []
 var _flying_to_bed: int = 0      # jars counted on the truck whose flight has not landed yet
 var _flying_to_crate: int = 0    # jars counted in the crate whose flight has not landed yet
 var _empties_marker: Node3D
+var _departure_pending: bool = false   # item 13: sold, waiting for the bed jars in flight to land
 
 
 ## Where the truck stands at home, in world space (for framing the camera while it is away).
@@ -64,7 +65,7 @@ func is_full() -> bool:
 
 ## Full and home: the Sell icon may show.
 func can_sell() -> bool:
-	if away:
+	if away or _departure_pending:
 		return false
 	if is_full():
 		return true
@@ -80,7 +81,7 @@ func load_value() -> int:
 ## flies there after `delay`; without it the jar simply appears. `carrier` is the jar already at the spigot (JarFlight.fetch), which
 ## is the one that flies on; without one a new jar is drawn.
 func receive_jar(from: Variant = null, delay: float = 0.0, carrier: Node3D = null) -> void:
-	var to_bed: bool = not away and loaded_jars < capacity
+	var to_bed: bool = not away and not _departure_pending and loaded_jars < capacity
 	if to_bed:
 		loaded_jars += 1
 	else:
@@ -120,6 +121,7 @@ func _fly(from: Vector3, to: Vector3, delay: float, target: Node3D, to_bed: bool
 		else:
 			_flying_to_crate = maxi(_flying_to_crate - 1, 0)
 		_refresh_jars()
+		_try_depart()
 	if carrier != null:
 		JarFlight.send(self, carrier, to, config.jar_fly_seconds, config.cell_fly_arc, delay, jar_scale, landed)
 	else:
@@ -134,17 +136,27 @@ func sell() -> int:
 	var economy: Node = get_node_or_null("/root/Economy")   # looked up by path so the script also compiles in --script test runs
 	if economy != null:
 		economy.earn(amount)
+	_departure_pending = true   # 0.2 item 13: the truck leaves only once every jar flying to its bed has landed
+	_try_depart()
+	return amount
+
+
+## Item 13: sends the sold truck off once no jar is still flying to its bed.
+func _try_depart() -> void:
+	if not _departure_pending or _flying_to_bed > 0:
+		return
+	_departure_pending = false
 	loaded_jars = 0
 	away = true
 	trip_elapsed = 0.0
 	departed.emit()
 	_changed()
-	return amount
 
 
 ## Dev mode: empties the truck and brings it home (the crate is kept).
 func reset_home() -> void:
 	loaded_jars = 0
+	_departure_pending = false
 	away = false
 	trip_elapsed = 0.0
 	position = _home
@@ -153,6 +165,9 @@ func reset_home() -> void:
 
 ## Per-frame logic, separate from _process so it can be tested headless.
 func advance(delta: float) -> void:
+	if _departure_pending:
+		_try_depart()
+		return
 	if not away:
 		# 0.1.4 item 21: a home truck with room takes every waiting crate jar (Dev reset_home or a raised capacity left them behind)
 		var room: int = mini(crate_jars, maxi(capacity - loaded_jars, 0))

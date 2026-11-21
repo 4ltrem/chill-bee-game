@@ -3,16 +3,18 @@ extends "res://tests/test_lid_clip.gd"
 # Quinn: 0.2 item 1 (upgrade shop rows), written from game/specs/0.2-first-automation.md (item 1) and game/specs/0.2-node-handoff.md.
 # Every expected number is read from the config: floori(base * growth^level), the max level, the Auto-Sell gate level.
 
-const _SHOP_ORDER: Array[String] = ["Worker Swarm Count", "Flight Endurance", "Heated Uncapping Fork", "Centrifuge Gearing", "Faster Delivery", "Auto-Sell"]
+const _SHOP_ORDER: Array[String] = ["Worker Swarm Count", "Flight Endurance", "Heated Uncapping Fork", "Centrifuge Gearing", "Spigot Flow", "Faster Delivery", "Auto-Sell"]
+# spec 0.2 item 12: "Spigot Flow ... A new shop row after Centrifuge Gearing: base $30, 1.20x growth, max level 5" (seven rows now)
 # id -> [base key, growth key, max key]; Auto-Sell is a one-time buy (max 1, price auto_sell_cost, no growth)
 const _SHOP_KEYS: Dictionary = {
 	"swarm": ["swarm_base_cost", "swarm_cost_growth", "swarm_max_level"],
 	"flight": ["flight_base_cost", "flight_cost_growth", "flight_max_level"],
 	"heated_fork": ["heated_fork_base_cost", "heated_fork_cost_growth", "heated_fork_max_level"],
 	"gearing": ["gearing_base_cost", "gearing_cost_growth", "gearing_max_level"],
+	"spigot_flow": ["spigot_flow_base_cost", "spigot_flow_cost_growth", "spigot_flow_max_level"],
 	"faster_delivery": ["faster_delivery_base_cost", "faster_delivery_cost_growth", "faster_delivery_max_level"],
 }
-const _SHOP_IDS: Array[String] = ["swarm", "flight", "heated_fork", "gearing", "faster_delivery", "auto_sell"]
+const _SHOP_IDS: Array[String] = ["swarm", "flight", "heated_fork", "gearing", "spigot_flow", "faster_delivery", "auto_sell"]
 
 
 func _shop_expect_cost(id: String, lvl: int) -> int:
@@ -35,6 +37,19 @@ func _shop_zero() -> Node:
 	var e: Node = _eco()
 	e.call("reset")
 	return e
+
+
+## Item 14: makes the shop reachable under either shop_layout. Sheet: a real tap on the Shop button (real=true) or set_sheet_open(true); compact: nothing to do.
+func _shop_open(m: Node, real: bool = false) -> void:
+	var panel: Node = m.find_child("ShopPanel", true, false)
+	if panel == null or not panel.has_method("set_sheet_open") or panel.visible:
+		return
+	var sb: Control = m.find_child("ShopButton", true, false) as Control
+	if real and sb != null and sb.is_visible_in_tree():
+		await fi.tap_at(sb.get_global_rect().get_center())
+	else:
+		panel.call("set_sheet_open", true)
+	await _frames(3)
 
 
 ## The visible rows of the shop list, in order (RowTemplate is hidden; handoff: ShopRows holds the rows).
@@ -142,7 +157,7 @@ func t_shop_buttons_disabled_unaffordable_maxed_locked() -> void:
 	e.set("money", 100000000)
 	e.emit_signal("money_changed", 100000000)
 	await _frames(2)
-	ck(_row_buy(rows[5]).disabled, "Auto-Sell: disabled while locked, even with a fortune")
+	ck(_row_buy(rows[6]).disabled, "Auto-Sell: disabled while locked, even with a fortune")
 	_fin()
 
 
@@ -188,12 +203,13 @@ func t_shop_auto_sell_locked_until_delivery_1() -> void:
 	e.set("money", 100000000)
 	e.emit_signal("money_changed", 100000000)
 	await _frames(2)
+	await _shop_open(m)
 	var rows: Array = _shop_rows(m)
 	if rows.size() != _SHOP_IDS.size():
-		ck(false, "six rows expected, got %d" % rows.size())
+		ck(false, "seven rows expected, got %d" % rows.size())
 		_fin()
 		return
-	var row: Node = rows[5]
+	var row: Node = rows[6]
 	var gate: Label = _row_text(row, "GateLabel")
 	ck(gate != null and gate.is_visible_in_tree(), "step locked: the Auto-Sell gate label shows")
 	if gate != null:
@@ -202,7 +218,7 @@ func t_shop_auto_sell_locked_until_delivery_1() -> void:
 	ck(not bool(e.call("buy", "auto_sell")), "step locked: buy('auto_sell') refused")
 	eq(int(e.get("money")), 100000000, "step locked: money untouched by the refused buy")
 	eq(int(e.call("level", "auto_sell")), 0, "step locked: Auto-Sell still not owned")
-	for i in 5:
+	for i in 6:
 		var g: Label = _row_text(rows[i], "GateLabel")
 		ck(g == null or not g.is_visible_in_tree(), "%s has no gate" % _SHOP_IDS[i])
 	# one level short of the gate (when the gate is above 1), then the gate level
@@ -234,6 +250,7 @@ func t_shop_buy_button_real_click_twice() -> void:
 	e.set("money", c0 + c1 + 5)
 	e.emit_signal("money_changed", c0 + c1 + 5)
 	await _frames(3)
+	await _shop_open(m, true)   # item 14: a real tap on the Shop button (sheet layout)
 	var rows: Array = _shop_rows(m)
 	if rows.is_empty():
 		ck(false, "no rows")
@@ -267,8 +284,11 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 		_fin()
 		return
 	await _frames(2)
-	var scroll: ScrollContainer = m.find_child("ShopScroll", true, false) as ScrollContainer
-	ck(scroll != null, "ShopScroll exists (handoff item 1)")
+	await _shop_open(m)
+	# spec 0.2 item 14: "The shop panel is tall enough to show all seven rows at once at 720 × 1280, with no scroll container" (replaces item 1's "the panel scrolls")
+	ck(m.find_child("ShopScroll", true, false) == null, "no ShopScroll container (item 14)")
+	var scroll: Control = m.find_child("ShopRows", true, false) as Control
+	ck(scroll != null, "ShopRows exists")
 	if scroll == null:
 		_fin()
 		return
@@ -283,7 +303,7 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 	for nm in ["TopInfo", "SellIcon", "ForkIcon", "CentrifugeIcon", "BackButton", "HiveCountLabel", "HintLabel"]:
 		var c: Control = m.find_child(nm, true, false) as Control
 		if c != null and c.is_visible_in_tree() and c.get_global_rect().size.x > 0.0:
-			if panel != null and panel.is_ancestor_of(c):
+			if panel != null and (panel.is_ancestor_of(c) or panel.top_level):   # item 14: an open sheet floats over the farm icons by design
 				continue
 			others.append([nm, c.get_global_rect()])
 	var jb: Control = m.find_child("JournalButton", true, false) as Control
@@ -292,8 +312,7 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 	var rows: Array = _shop_rows(m)
 	eq(rows.size(), _SHOP_IDS.size(), "six rows")
 	# at the top, then scrolled to the bottom: every row's on-screen part (clipped to the list) is clear of the other controls and of its neighbours
-	for pos in [0, 100000]:
-		scroll.scroll_vertical = pos
+	for pos in [0]:   # item 14: no scrolling, every row is on screen at once
 		await _frames(3)
 		var shown: Array = []
 		for i in rows.size():
@@ -306,7 +325,6 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 		for i in shown.size():
 			for j in range(i + 1, shown.size()):
 				ck(not (shown[i][1] as Rect2).intersects(shown[j][1] as Rect2), "scroll %d: rows '%s' and '%s' overlap" % [pos, shown[i][0], shown[j][0]])
-		if pos > 0 and rows.size() > 0:
-			var last: Rect2 = (rows[rows.size() - 1] as Control).get_global_rect()
-			ck(sr.encloses(last), "scrolled to the end: the last row %s is whole inside the list %s (the list scrolls)" % [str(last), str(sr)])
+		for rw in rows:
+			ck(view.encloses((rw as Control).get_global_rect()), "row '%s' is whole on screen without scrolling (item 14)" % _row_name(rw))
 	_fin()

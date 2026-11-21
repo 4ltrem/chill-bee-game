@@ -17,6 +17,8 @@ const BOTTLING: int = 5
 # plus its step function; nothing else changes. The 9 names are fixed so versions line up on the Design Votes page.
 const MOMENTS: Array = [
 	{"name": "1-farm-start", "caption": "the farm at launch (fresh state, shipped defaults)", "step": "_step_farm_start"},
+	{"name": "1b-shop-closed", "caption": "0.2.1 shop, closed / at rest: the farm as first seen (compact: panel showing; sheet: Shop button)", "step": "_step_shop_closed"},
+	{"name": "1c-shop-open", "caption": "0.2.1 shop open, all seven rows (sheet: opened with the Shop button; compact: same view as 1b)", "step": "_step_shop_open"},
 	{"name": "2-farm-hive-full", "caption": "hive full, Harvest (fork) button showing", "step": "_step_hive_full"},
 	{"name": "3-zoom-hive", "caption": "first zoom on the hive, rack risen and settled, Back visible", "step": "_step_zoom_hive"},
 	{"name": "4-zoom-scraping", "caption": "rack risen, a row scraped, cells flying to the bucket (slowed 0.1x for the shot)", "step": "_step_zoom_scraping"},
@@ -220,7 +222,27 @@ func _step_farm_start() -> Dictionary:
 	return {}
 
 
+## 0.2.1 shop layout (config shop_layout 0 = compact panel, 1 = sheet behind the Shop button).
+func _step_shop_closed() -> Dictionary:
+	await _gwait(0.5)
+	var layout: int = int(cfg.get("shop_layout")) if "shop_layout" in cfg else 0
+	return {"expect": ["ShopButton"] if layout == 1 else ["ShopPanel"]}
+
+
+func _step_shop_open() -> Dictionary:
+	var shop: Node = main.find_child("ShopPanel", true, false)
+	if shop == null or not shop.has_method("set_sheet_open"):
+		return {"missing": "this version has no shop layout option"}
+	if int(cfg.get("shop_layout")) == 1:
+		shop.call("set_sheet_open", true)
+	await _gwait(0.8)
+	return {}
+
+
 func _step_hive_full() -> Dictionary:
+	var shop: Node = main.find_child("ShopPanel", true, false)
+	if shop != null and shop.has_method("set_sheet_open"):
+		shop.call("set_sheet_open", false)   # close the sheet shot 1c opened
 	hive.call("fill_now")
 	await _until(func() -> bool: return _visible("ForkIcon"), 5.0)
 	await _gwait(0.8)

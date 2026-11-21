@@ -297,6 +297,10 @@ func t_fork_head_colour_by_level() -> void:
 			_fork_drop(s)
 			continue
 		var wood: Color = (handles[0] as StandardMaterial3D).albedo_color
+		# Spec 0.2 item 10: "it hides ... when the frame or zoom ends during a drag". At Heated 3 the wide reach can finish the whole
+		# frame on the press and hide the fork, so keep the reach at level 0 (honeycomb hook) and the pulse at `level` (fork hook).
+		(fork as UncapFork).heated_level_override = level
+		s["hc"].heated_level_override = 0
 		var pt: Vector2 = s["cells"][_fork_mid_cell(s)]["screen"]
 		fi.mouse_button(pt, true)
 		await _frames(1)

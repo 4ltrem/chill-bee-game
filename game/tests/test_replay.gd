@@ -28,17 +28,18 @@ func t_replay_fill_and_back() -> void:
 	var seen: Dictionary = {}
 	for s in states:
 		seen[str((s as Dictionary)["stop"])] = true
-	ck(seen.has("farm") and seen.has("zoom") and seen.has("second"), "the states went farm -> zoom -> second stop (%s)" % str(seen.keys()))
+	# 0.2 item 9: "A full bucket no longer ends the first zoom or pans the camera ... when the zoom ends (all frames done, or Back) the camera returns to the farm view"
+	ck(seen.has("farm") and seen.has("zoom") and not seen.has("second"), "the states went farm -> zoom -> farm, never the second stop (%s)" % str(seen.keys()))
 	if states.is_empty():
 		_fin()
 		return
 	var last: Dictionary = states[states.size() - 1]
-	eq(last["stop"], "second", "the replay ends at the second stop (bucket full, Back pressed)")
+	eq(last["stop"], "farm", "the replay ends on the farm view (bucket full, Back pressed, Spin not tapped)")
 	eq(last["zoom"], "NONE", "the zoom is closed at the end")
 	eq(last["bucket"], _bucket_cells(), "the bucket holds %d frames (%d cells)" % [int(cv("centrifuge_capacity_frames")), _bucket_cells()])
 	ck((last["icons"] as Array).has("Centrifuge"), "Spin shows at the end (icons %s)" % str(last["icons"]))
 	var line: String = (core.lines[core.lines.size() - 1] as String)
-	ck(line.begins_with("STATE t=") and line.contains("stop=second"), "the printed line has the STATE format (%s)" % line)
+	ck(line.begins_with("STATE t=") and line.contains("stop=farm"), "the printed line has the STATE format (%s)" % line)
 	_fin()
 
 

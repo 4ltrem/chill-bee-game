@@ -58,7 +58,7 @@ extends Resource
 @export var pile_load_stagger_seconds: float = 0.03    # PLACEHOLDER (GDD TBD; Patricia): delay between pile cells flying into the bucket
 @export var icon_visual_px: int = 88                   # visible icon size; the touch area stays at least 120 (GDD 8)
 @export var min_cell_px: int = 20                      # the smallest cell allowed on screen at the zoom (a check, not a look tunable)
-@export var zoom_size: float = 6.966                    # PLACEHOLDER (GDD TBD; 0.1.1: Bob's tighter value to come): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
+@export var zoom_size: float = 9.0                   # PLACEHOLDER (GDD TBD; 0.1.1: Bob's tighter value to come): camera ortho size at the zoom (Bob's value from ZoomFraming metadata); 0 = read that metadata instead
 
 # --- 0.1.3 (game/specs/0.1.3-next-revision.md, item 2): the bigger hive and the two camera stops ---
 @export var hive_scale: float = 1.4                    # the hive node's uniform scale (round 4, layout C); read when used, live in Dev mode
@@ -90,7 +90,10 @@ extends Resource
 @export var heated_fork_max_level: int = 5             # spec 0.2: Heated Fork's highest level
 @export var heated_fork_post_auto_yield_bonus_per_level: float = 0.04   # spec 0.2: yield bonus per level, only with the auto-scraper owned (no effect in 0.2)
 @export var fork_pulse_seconds: float = 1.0            # PLACEHOLDER (spec 0.2): one steel -> crank orange -> steel head pulse
-@export var faster_delivery_max_level: int = 4          # PLACEHOLDER (spec 0.2 item 5): Faster Delivery's highest level
+@export var fork_return_seconds: float = 0.35          # PLACEHOLDER (spec 0.2 item 10): the fork shrinks into the Harvest icon over this long when the zoom ends
+@export var spigot_flow_max_level: int = 5              # PLACEHOLDER (spec 0.2 item 12): Spigot Flow's highest level
+@export var spigot_flow_cut_per_level: float = 0.12     # PLACEHOLDER (spec 0.2 item 12): bottling time x (1 - this x level): 3.0 -> 1.8 s at level 5
+@export var faster_delivery_max_level: int = 4         # PLACEHOLDER (spec 0.2 item 5): Faster Delivery's highest level
 @export var faster_delivery_trip_cut_per_level: float = 0.15   # PLACEHOLDER (spec 0.2 item 5): trip time x (1 - this x level): 30 -> 25.5 -> 21 -> 16.5 -> 12 s
 @export var dev_own_auto_scraper: bool = false        # Dev toggle "own auto-scraper": acts as if the auto-scraper were owned (it arrives after 0.2)
 
@@ -101,10 +104,17 @@ extends Resource
 @export var heated_fork_cost_growth: float = 1.22      # PLACEHOLDER (spec 0.2 item 3)
 @export var gearing_base_cost: float = 35.0            # PLACEHOLDER (spec 0.2 item 4)
 @export var gearing_cost_growth: float = 1.20          # PLACEHOLDER (spec 0.2 item 4)
-@export var faster_delivery_base_cost: float = 60.0    # PLACEHOLDER (spec 0.2 item 5)
+@export var spigot_flow_base_cost: float = 30.0       # PLACEHOLDER (spec 0.2 item 12, erring slow; Terry checks before 0.3.0)
+@export var spigot_flow_cost_growth: float = 1.20     # PLACEHOLDER (spec 0.2 item 12)
+@export var faster_delivery_base_cost: float = 60.0   # PLACEHOLDER (spec 0.2 item 5)
 @export var faster_delivery_cost_growth: float = 1.30  # PLACEHOLDER (spec 0.2 item 5)
 @export var auto_sell_unlock_delivery_level: int = 1    # PLACEHOLDER (spec 0.2 item 6): Faster Delivery level that unlocks Auto-Sell
 @export var auto_sell_cost: float = 250.0             # PLACEHOLDER (spec 0.2 item 6): one-time price; unlocks at Faster Delivery 1
+
+# --- 0.2 item 14: shop layout, pending the designer's Design Votes pick (0 = compact, always-on panel; 1 = sheet, opens from a Shop button) ---
+@export_enum("compact", "sheet") var shop_layout: int = 1   # PLACEHOLDER (designer vote): compact overlaps Spin in the farm view, so the default is sheet
+@export var shop_row_height: int = 64                    # PLACEHOLDER (item 14, Bob's value): px of each shop row's buy button
+@export var shop_font_size: int = 24                     # PLACEHOLDER (item 14, Bob's value): font of each row's name and level labels
 
 const DEFAULT_PATH :="res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read

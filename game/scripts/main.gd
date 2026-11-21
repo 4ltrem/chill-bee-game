@@ -23,6 +23,7 @@ var _centrifuge: Centrifuge
 var _truck: Truck
 var _pile: Pile
 var _zoom_framing: Node3D
+var _fork_prop: UncapFork
 var _fork_icon: FloatingIcon
 var _centrifuge_icon: FloatingIcon
 var _sell_icon: FloatingIcon
@@ -45,7 +46,6 @@ var _auto_spin: bool = false          # the pile is reloading after a pour in sp
 var _spin_pending: bool = false       # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
 var _crank_paused: bool = false      # 0.1.4 item 15: Back at the second stop while cranking; Spin on the farm resumes
 var _spin_pan_timer: float = 0.0    # 0.1.4 item 11: Spin tapped on the farm view: seconds left of the pan to the second stop
-var _filled_in_zoom: bool = false    # the bucket became full while this zoom was open: the zoom ends after its frame and pans to the second stop
 
 
 func _ready() -> void:
@@ -80,6 +80,7 @@ func _ready() -> void:
 		_honeycomb.cell_scraped.connect(_on_cell_scraped)
 		_honeycomb.frame_done.connect(_on_frame_done)
 		var fork_prop: UncapFork = find_child("UncapFork", true, false) as UncapFork   # 0.2 item 3 look: follows the drag, hides when it ends
+		_fork_prop = fork_prop
 		if fork_prop != null:
 			_honeycomb.drag_point.connect(fork_prop.follow)
 			_honeycomb.drag_ended.connect(fork_prop.release)
@@ -161,8 +162,6 @@ func _refresh_icons() -> void:
 
 
 func _on_centrifuge_state(state_now: int) -> void:
-	if state_now == Centrifuge.State.FULL and zoom != Zoom.NONE and zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING:
-		_filled_in_zoom = true
 	if state_now == Centrifuge.State.CRANKING:
 		_auto_spin = false
 		_set_spin_text_kept(false)
@@ -179,7 +178,7 @@ func _on_centrifuge_state(state_now: int) -> void:
 func _on_jar_requested(delay: float) -> void:
 	var config: GameConfig = Economy.config
 	var jar: Node3D = JarFlight.fetch(self, _truck.empties_position(), _centrifuge.spigot_position(), config.jar_fly_seconds,
-			config.cell_fly_arc, delay, _centrifuge.spigot_jar_scale(), maxf(config.bottling_seconds_per_jar - config.jar_fly_seconds, 0.001))
+			config.cell_fly_arc, delay, _centrifuge.spigot_jar_scale(), maxf(_centrifuge.bottling_seconds() - config.jar_fly_seconds, 0.001))
 	if jar != null:
 		_trips.append(jar)
 
@@ -264,7 +263,6 @@ func open_zoom() -> bool:
 	_sync_cell_size()
 	_going_back = false
 	_leave_second_stop_hud()
-	_filled_in_zoom = false
 	_spin_pending = false
 	_spin_pan_timer = 0.0
 	zoom = Zoom.OPENING
@@ -415,10 +413,10 @@ func _on_frame_done() -> void:
 func _start_closing(on_own: bool) -> void:
 	zoom = Zoom.CLOSING
 	_timer = maxf(Economy.config.zoom_seconds, Economy.config.lid_move_seconds())
-	resume_pending = not on_own or (_filled_in_zoom and _hive.has_capped_cells())   # all frames done: nothing left to resume
+	resume_pending = not on_own   # all frames done: nothing left to resume
 	_hive.close_lid()
 	_centrifuge.close_lid()
-	_closing_to_second = _bucket_is_full() or _spin_pending   # 0.1.3 play-test: a bucket already full when the zoom opened (Back, then Harvest again) pans too
+	_closing_to_second = _spin_pending   # 0.2 item 9: only a Spin tap sends the camera to the second stop; a full bucket does not
 	if _closing_to_second:
 		_timer = maxf(Economy.config.camera_pan_seconds, Economy.config.lid_move_seconds())
 		_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)
@@ -435,6 +433,7 @@ func _finish_zoom() -> void:
 	if _bees != null:
 		_bees.clear_avoid()
 	_centrifuge.crank_enabled = not _crank_paused
+	_return_fork_to_icon()
 	if _closing_to_second:
 		_closing_to_second = false
 		_enter_second_stop_hud()
@@ -446,6 +445,15 @@ func _finish_zoom() -> void:
 		_spin_pending = false
 		_spin_mode = true
 		_centrifuge.begin_crank()
+
+
+## 0.2 item 10: a fork still on screen when the zoom ends flies into the Harvest icon's spot, shrinking, then hides.
+func _return_fork_to_icon() -> void:
+	if _fork_prop == null or not _fork_prop.visible or _farm_camera == null or _fork_icon == null:
+		return
+	var screen_pt: Vector2 = _fork_icon.get_global_rect().get_center()
+	var depth: float = maxf((_fork_prop.global_position - _farm_camera.global_position).dot(-_farm_camera.global_transform.basis.z), 0.1)
+	_fork_prop.return_to(_farm_camera.project_position(screen_pt, depth))
 
 
 ## A scraped cell: its jar value already left the hive. It goes to the bucket if the bucket is open with room, otherwise to the pile.
@@ -507,10 +515,6 @@ func _move_camera_to(pose: Dictionary, seconds: float) -> void:
 
 
 # --- the second camera stop (0.1.3 item 2): centrifuge, crate and truck framed at pan_zoom_size, the hive partly in the upper-right ---
-
-## True when the bucket holds a full load. This one function is the trigger: a zoom that ends with a full bucket pans to the second stop.
-func _bucket_is_full() -> bool:
-	return _centrifuge != null and _centrifuge.state == Centrifuge.State.FULL and _centrifuge.cells >= _centrifuge.capacity_cells()
 
 
 func at_second_stop() -> bool:
@@ -592,7 +596,7 @@ func second_stop_pose() -> Dictionary:
 	rect = rect.merge(_plane_rect(_mesh_box(_truck, _truck.home_global_position() - _truck.global_position), right, up))
 	rect = rect.grow_individual(config.pan_margin * size * aspect, config.pan_margin * size, config.pan_margin * size * aspect, config.pan_margin * size)
 	var shop: Control = find_child("ShopPanel", true, false) as Control
-	var shop_share: float = clampf((view.y - shop.global_position.y) / view.y, 0.0, 0.9) if shop != null else 0.0
+	var shop_share: float = clampf((view.y - shop.global_position.y) / view.y, 0.0, 0.9) if shop != null and shop.visible and not shop.top_level else 0.0   # item 14: a hidden or open sheet takes no farm room
 	var width: float = size * aspect
 	var fits: bool = rect.size.x <= width and rect.size.y <= size * (1.0 - shop_share)
 	if not fits:

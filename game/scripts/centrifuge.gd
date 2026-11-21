@@ -80,6 +80,7 @@ var _honey_level: MeshInstance3D
 var _honey_bottom: Node3D
 var _honey_top: Node3D
 var _spigot_jar: Node3D
+var _crank: Node3D   # Lid/.../Crank (0.2 item 11): turns with Gear1 at the same rate and direction
 var _gears: Array[Node3D] = []   # Lid/Gears/Gear1..Gear6 (0.2 item 4), found by name
 var _fetch_remaining: float = 0.0  # seconds before the next empty jar is at the spigot (its delay plus jar_fly_seconds); the fill waits for it
 ## True when main.gd draws the jars itself (a traveling jar per fetch): the SpigotJar node then stays hidden.
@@ -257,9 +258,20 @@ func ramp_seconds() -> float:
 	return config.hold_ramp_seconds * gearing_multiplier() * post_auto_multiplier()
 
 
+## Test hook: a level >= 0 replaces the Economy's Spigot Flow level.
+var spigot_level_override: int = -1
+
+
+## 0.2 item 12: share of the bottling time that remains, 1 - spigot_flow_cut_per_level x level (level clamped to the max).
+func spigot_multiplier() -> float:
+	var level: int = spigot_level_override if spigot_level_override >= 0 else UpgradeLevel.of("spigot_flow")
+	level = clampi(level, 0, config.spigot_flow_max_level)
+	return maxf(1.0 - config.spigot_flow_cut_per_level * float(level), 0.0)
+
+
 ## Bottling seconds per jar: unchanged by Gearing, except the after-automation cut when gearing_post_auto_cut_includes_bottling.
 func bottling_seconds() -> float:
-	var s: float = config.bottling_seconds_per_jar
+	var s: float = config.bottling_seconds_per_jar * spigot_multiplier()   # 0.2 item 12: Spigot Flow cut
 	if config.gearing_post_auto_cut_includes_bottling:
 		s *= post_auto_multiplier()
 	return s
@@ -479,6 +491,7 @@ func _press(pressed: bool, source: String) -> void:
 func _ready() -> void:
 	_spinner = find_child("Spinner", true, false) as Node3D
 	_lid = find_child("Lid", true, false) as Node3D
+	_crank = find_child("Crank", true, false) as Node3D
 	_lid_spot = find_child("LidLeanSpot", true, false) as Node3D   # 0.1.3c: the lid leans against the bucket like the hive's (shared LidMotion)
 	if _lid_spot == null:
 		_lid_spot = find_child("CentrifugeLidSpot", true, false) as Node3D
@@ -531,8 +544,8 @@ func _process(delta: float) -> void:
 	if spin_speed > 0.0:
 		if _spinner != null and not easing:
 			_spinner.rotate_y(spin_speed * delta)
-		if _lid != null and not lid_open:
-			_lid.rotate_y(spin_speed * delta)
+		if _crank != null and not lid_open:
+			_crank.rotate_y(spin_speed * delta)   # 0.2 item 11: the lid stays still; only the Crank turns about its own pivot
 	_update_gears(delta)
 	_update_heap()
 	_update_honey_level()

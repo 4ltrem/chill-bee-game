@@ -20,7 +20,9 @@ func _stealers(m: Node, target: Control, pt: Vector2) -> Array:
 
 
 ## The bucket filled in a zoom with frames still Capped: Back, and the zoom closes to the second stop. {m, p, tr} or {}.
-func _second_stop_with_capped() -> Dictionary:
+## Spec 0.2 item 9: "A full bucket no longer ends the first zoom or pans the camera ... The camera goes to the second stop only when Spin
+## is tapped". So the second stop is reached by a real tap on Spin in the zoom (the crank starts there); via_spin false: Back, to the farm view.
+func _second_stop_with_capped(via_spin: bool = true) -> Dictionary:
 	_portrait()
 	var z: Dictionary = await _zoom_open_main()
 	if z.is_empty():
@@ -36,10 +38,16 @@ func _second_stop_with_capped() -> Dictionary:
 	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.3)
 	eq(cen.get("state"), _st(cen, "FULL"), "the bucket is full with Capped frames left")
 	near(_cam().size, float(cv("zoom_size")), 0.05, "the camera stays on the first zoom while frames remain (finish, then pan)")
-	await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
+	if not via_spin:
+		await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
+		var farm: bool = await _until(func() -> bool: return _cam().size > float(cv("pan_zoom_size")) + 0.5 and not bool(m.call("at_second_stop")), float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
+		await _wait(_zoom_settle() + float(cv("zoom_seconds")))
+		ck(farm, "Back with the bucket full returns to the farm view, not the second stop (size %s)" % str(_cam().size))
+		return {"m": m, "p": p, "tr": tr} if farm else {}
+	await fi.tap_at((p["CentrifugeIcon"] as Control).get_global_rect().get_center())
 	var reached: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
 	await _wait(0.4)
-	ck(reached, "Back with the bucket full pans to the second stop (size %s)" % str(_cam().size))
+	ck(reached, "Spin with the bucket full pans to the second stop (size %s)" % str(_cam().size))
 	if not reached:
 		return {}
 	return {"m": m, "p": p, "tr": tr}
@@ -76,7 +84,8 @@ func t_second_stop_back_tap() -> void:
 
 ## Spin at the second stop: left of the centrifuge, on screen, untouched by other controls; a real tap starts the crank.
 func t_second_stop_spin_icon_tap() -> void:
-	var s: Dictionary = await _second_stop_with_capped()
+	# 0.2 item 9: the second stop is reached only by Spin, which starts the crank; Spin's own placement and tap are checked on the farm view
+	var s: Dictionary = await _second_stop_with_capped(false)
 	if s.is_empty():
 		_fin()
 		return
@@ -84,7 +93,7 @@ func t_second_stop_spin_icon_tap() -> void:
 	var p: Dictionary = s["p"]
 	var spin: Control = p["CentrifugeIcon"]
 	var cen: Node = p["Centrifuge"]
-	ck(_shown(spin), "Spin shows at the second stop (bucket FULL)")
+	ck(_shown(spin), "Spin shows on the farm view (bucket FULL)")
 	var r: Rect2 = spin.get_global_rect()
 	ck(_vp().encloses(r), "Spin is wholly on screen (%s)" % str(r))
 	# 0.1.4 spec item 2: "Each button follows one anchor point on its prop ... No per-view offsets"; "Spin: just above the centrifuge lid":
@@ -93,7 +102,10 @@ func t_second_stop_spin_icon_tap() -> void:
 	ck(gap <= float(cv("button_screen_margin")), "Spin sits at its anchor's projected point or clamped inside the screen (off by %.0f px)" % gap)
 	eq(_stealers(m, spin, r.get_center()), [], "no other control takes a press at Spin's centre")
 	await fi.tap_at(r.get_center())
+	# spec 0.1.4 item 11 / 0.2 item 9: Spin from the farm view pans to the second stop, then the crank starts there
+	await _until(func() -> bool: return bool(m.call("at_second_stop")) and absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
 	await _frames(3)
+	eq(bool(m.call("at_second_stop")), true, "a real tap on Spin on the farm view pans to the second stop")
 	eq(cen.get("state"), _st(cen, "CRANKING"), "a real tap on Spin at the second stop starts the crank")
 	_fin()
 
@@ -243,13 +255,14 @@ func t_icons_never_overlap() -> void:
 		var f: int = await _scrape_risen(m, p["Hive"], tr)
 		ck(await _next_frame(tr, f), "frame %d done: the next frame rose" % f)
 	await _wait(float(cv("cell_fly_seconds")) + _lid_t() + 0.3)
-	await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
+	await fi.tap_at((p["CentrifugeIcon"] as Control).get_global_rect().get_center())   # 0.2 item 9: only Spin goes to the second stop
 	var reached: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
 	await _wait(0.4)
 	ck(reached, "the second stop was reached (size %s)" % str(_cam().size))
 	if reached:
 		var n_second: int = await _icons_state(m, p, "second stop", true)
-		ck(n_second >= 1, "second stop: at least one icon shows (%d)" % n_second)
+		# Spin starts the crank, and Spin shows only while FULL (main.gd _refresh_icons spin_ok); Harvest is hidden at the second stop
+		eq(n_second, 0, "second stop, cranking: no icon shows (Harvest hidden, Spin gone once the crank starts) (%d)" % n_second)
 	ck(n_zoom >= 0, "first zoom measured")
 	_fin()
 
@@ -268,7 +281,12 @@ func _uncap_all(m: Node, p: Dictionary, tr: Dictionary) -> bool:
 
 
 ## From the last uncapped cell the camera must be at the second stop within camera_pan_seconds + 1 s (the pan, never skipped).
-func _pan_follows(m: Node, label: String) -> void:
+func _pan_follows(m: Node, label: String, p: Dictionary) -> void:
+	# 0.2 item 9: the zoom ends on the farm view by itself and "The camera goes to the second stop only when Spin is tapped"
+	var farm: bool = await _until(func() -> bool: return _cam().size > float(cv("pan_zoom_size")) + 0.5 and not bool(m.call("at_second_stop")), float(cv("zoom_seconds")) + _zoom_settle() + 8.0)
+	ck(farm, "%s: the camera is on the farm view when the zoom ends, not at the second stop (size %s)" % [label, str(_cam().size)])
+	await _wait(_zoom_settle() + 0.3)
+	await fi.tap_at((p["CentrifugeIcon"] as Control).get_global_rect().get_center())
 	var secs: float = float(cv("camera_pan_seconds")) + 1.0
 	var reached: bool = await _until(func() -> bool: return absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01 and bool(m.call("at_second_stop")), secs)
 	ck(reached, "%s: the camera is at the second stop within camera_pan_seconds + 1 s of the last cell (size %s, at_second_stop %s)" % [label, str(_cam().size), str(m.call("at_second_stop"))])
@@ -286,13 +304,13 @@ func t_pan_after_all_frames_uncapped() -> void:
 	ck(done, "every frame of the hive was uncapped with real drags")
 	var cen: Node = (z["p"] as Dictionary)["Centrifuge"]
 	eq(cen.get("state"), _st(cen, "FULL"), "the bucket is full")
-	await _pan_follows(m, "all frames uncapped")
+	await _pan_follows(m, "all frames uncapped", z["p"])
 	_fin()
 
 
 ## Back pressed once the bucket filled (Capped frames left), Harvest again, then uncap everything: the pan still happens.
 func t_pan_after_back_then_harvest_again() -> void:
-	var s: Dictionary = await _second_stop_with_capped()
+	var s: Dictionary = await _second_stop_with_capped(false)   # 0.2 item 9: Back lands on the farm view
 	if s.is_empty():
 		_fin()
 		return
@@ -307,7 +325,7 @@ func t_pan_after_back_then_harvest_again() -> void:
 	ck(back_in, "the camera went back to the first zoom")
 	var done: bool = await _uncap_all(m, p, tr)
 	ck(done, "every remaining frame was uncapped")
-	await _pan_follows(m, "after Back and Harvest again")
+	await _pan_follows(m, "after Back and Harvest again", p)
 	_fin()
 
 
@@ -407,16 +425,13 @@ func _ck_spin_ended_at_second_stop(m: Node, cen: Node, where: String) -> void:
 
 ## From the farm view with the bucket FULL (Back from the second stop first): a real tap on Spin pans to the second stop and spins there.
 func t_spin_from_farm_goes_to_second_stop() -> void:
-	var s: Dictionary = await _second_stop_with_capped()
+	var s: Dictionary = await _second_stop_with_capped(false)   # 0.2 item 9: Back from the zoom lands on the farm view
 	if s.is_empty():
 		_fin()
 		return
 	var m: Node = s["m"]
 	var p: Dictionary = s["p"]
 	var cen: Node = p["Centrifuge"]
-	await fi.tap_at((p["BackButton"] as Control).get_global_rect().get_center())
-	await _until(func() -> bool: return not bool(m.call("at_second_stop")) and _cam().size > float(cv("pan_zoom_size")) + 0.5, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
-	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
 	var spin: Control = p["CentrifugeIcon"]
 	eq(bool(m.call("at_second_stop")), false, "precondition: back on the farm view")
 	ck(_cam().size > float(cv("pan_zoom_size")) + 0.5, "precondition: the camera is on the farm view (size %.3f)" % _cam().size)

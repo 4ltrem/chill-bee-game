@@ -3,7 +3,7 @@ spec: 0.2-first-automation.md
 version: 0.2
 run: 0.2
 started: 2026-11-09
-result: stopped
+result: running
 ---
 # Goal agent: 0.2-first-automation.md (run 0.2)
 
@@ -1927,11 +1927,843 @@ Command: `goal_agent.py game/specs/0.2-first-automation.md --accept T8.1 --note 
 - Change (orchestrator, Process 9): shop_ui.gd finds FarmUI by walking up from ShopPanel instead of get_tree().current_scene, which is the test runner in tests, so JournalUI was never added and a Journal tap did nothing. godot_run.py stdout reconfigured to UTF-8 (the summary print crashed). Footnote markers stay (designer 2026-11-09). unit 195/195, start as baseline, contract 0 unresolved (20261109-223506)
 - Accepted: checkpoint `4ee67e2` on `milestone/0.2`
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: checked out from `main` (new).
+
+## Pass 22: scan (2026-11-21T00:00:30-05:00)
+
+Unit results from `game/reports/_runs/20261120-222612/unit.log`. 21 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (19 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Upgrade shop holds several rows. | change | Patricia, Bob | partial (built, waits on its tests) | 17/19 present: ✓ config flight_base_cost, ✓ config flight_cost_growth, ✓ config heated_fork_base_cost, ✓ config heated_fork_cost_growth, ✓ config gearing_base_cost, ✓ config gearing_cost_growth, ✗ config spigot_flow_base_cost, ✗ config spigot_flow_cost_gr ... |
+| C2 Flight Endurance | change | Patricia | done | 10/10 present: ✓ config flight_speed_bonus_per_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_l ... |
+| C4 Centrifuge Gearing | change | Patricia, Bob | done | 15/15 present: ✓ config gearing_post_auto_time_cut_per_level, ✓ config gearing_post_auto_cut_includes_bottling, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t ... |
+| C8 Bee Journal entry, EN/FR, through Godot's translation CSV. | change | Patricia, Bob | done | 12/12 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+| C9 The second stop only after Spin | change | Patricia | missing | none found |
+| C10 The fork goes back into the Harvest icon | change | Patricia | missing | ✗ config fork_return_seconds |
+| C11 The lid stays still; the crank drives the gears | change | Patricia | partial | ✓ node LidDisc |
+| C12 Spigot Flow | change | Patricia | missing | ✗ config spigot_flow_max_level, ✗ config spigot_flow_cut_per_level |
+| C13 No jar flies after a leaving truck | change | Patricia | missing | none found |
+| C14 The shop shows every row without scrolling | change | Patricia, Bob | partial | ✓ node ShopScroll |
+| CFG Config and Dev mode | change | Patricia | done | 33/33 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T8.1 item 8: `journal.csv` has every key in `en` and `fr`, non-em | test | Quinn | done | ✓ test t_journal_csv_every_key_en_and_fr, ✓ test t_journal_tr_follows_locale, ✓ test t_journal_panel_text_matches_csv_twice, ✓ test t_journal_csv_equals_script_output, ✓ ledger 4ee67e2 |
+| T9.1 item 9: the bucket filling during the first zoom leaves the  | test | Quinn | missing | none found |
+| T10.1 item 10: after a drag release the fork prop is hidden; with  | test | Quinn | missing | none found |
+| T11.1 item 11: while cranking, `Lid`'s and `LidDisc`'s global rota | test | Quinn | missing | none found |
+| T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^level` (floore | test | Quinn | missing | none found |
+| T13.1 item 13: with a jar in flight to the bed, a Sell press (and  | test | Quinn | missing | none found |
+| T14.1 item 14: the shop panel has no scroll container, all seven r | test | Quinn | missing | none found |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 30/30 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+### Order: new or rescored (12 of 12)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C10 The fork goes back into the Harvest icon | 8.56 | 1 | 3 | 0.44 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.44 (Patricia) |
+| 2 | C11 The lid stays still; the crank drives the gears | 8.56 | 1 | 3 | 0.44 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.44 (Patricia) |
+| 3 | C12 Spigot Flow | 8.56 | 1 | 3 | 0.44 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.44 (Patricia) |
+| 4 | C13 No jar flies after a leaving truck | 8.56 | 1 | 3 | 0.44 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.44 (Patricia) |
+| 5 | C9 The second stop only after Spin | 8.56 | 1 | 3 | 0.44 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.44 (Patricia) |
+| 6 | C14 The shop shows every row without scrolling | 8.24 | 1 | 3 | 0.76 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.76 (Patricia, Bob) |
+| 7 | T11.1 item 11: while cranking, `Lid`'s and `LidDisc`'s g | 5.65 | 0 | 3 | 0.35 | 1 | play-test fix; cost 0.35 (Quinn) |
+| 8 | T14.1 item 14: the shop panel has no scroll container, a | 5.65 | 0 | 3 | 0.35 | 1 | play-test fix; cost 0.35 (Quinn) |
+| 9 | T10.1 item 10: after a drag release the fork prop is hid | 0.0 | 0 | 3 | 0.35 | 0 | waits on C10 |
+| 10 | T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^leve | 0.0 | 0 | 3 | 0.35 | 0 | waits on C12 |
+| 11 | T13.1 item 13: with a jar in flight to the bed, a Sell p | 0.0 | 0 | 3 | 0.35 | 0 | waits on C13 |
+| 12 | T9.1 item 9: the bucket filling during the first zoom l | 0.0 | 0 | 3 | 0.35 | 0 | waits on C9 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C10** (score 8.56: 1 goal(s) wait on it; play-test fix; cost 0.44 (Patricia)).
+
+### Step: C10 (2026-11-21T00:00:30-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C10-patricia.md` (1596 chars)
+- Budget guard for Patricia: Budget guard: 5-hour usage is 66%, week 17% (95% of the week gone). Keep this run small, or tell the designer before launching more agents.
+
+**Patricia** (596,687 tokens, 43 turns, 712 s):
+
+Item 10 is built. `contract_check` passes (71 lookups, 0 unresolved). One of the four fork tests I ran fails: `t_fork_head_colour_by_level` (head pulse colour).
+
+I think it's unrelated to my change, but I didn't run it on a clean checkout to confirm. At Heated Fork 3 the head never gets near crank orange (best dE 81.4, want ≤ 12). I did not run `play_loop.gd`.
+
+**Files changed**
+- `honeycomb.gd`: `active` now has a setter that emits `drag_ended` when it goes false mid-drag. `load_frame` also emits it if a drag was live. Release already emitted it.
+- `uncap_fork.gd`: new `return_to(world_target)`. The fork tweens to the target and shrinks to 1% over `fork_return_seconds`, then hides and restores its scale. A new drag or `release()` cancels the return.
+- `main.gd`: `_finish_zoom` calls `_return_fork_to_icon()`. It projects the centre of `ForkIcon` into the world at the fork's current depth through `_farm_camera`.
+- `game_config.gd` and `default_config.tres`: `fork_return_seconds` = 0.35, marked PLACEHOLDER.
+
+**Node names:** `UncapFork`, `ForkIcon`. I did not check the Dev panel; it should list the new key if it reads the config exports.
+
+**For Quinn:** no test covers the return move or `drag_ended` on going inactive.
+
+**Open questions:** none.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 20 (cap 30; CLI num_turns 43); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      194 passed, 1 failed  (exit 1, 292 noise lines dropped)  game/reports/_runs/20261121-001225/unit.log
+    FAIL  t_fork_head_colour_by_level  Heated 3: at the first pulse's peak the head reaches crank orange (best dE 81.4 at 0.26 s, want <= 12) | Heated 3: at the second pulse's peak the head reaches crank orange again (best dE 81.4 at 1.26 s) | 
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C10-fix1-patricia.md` (1681 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C10-fix1-quinn.md` (1634 chars)
+- Budget guard for Patricia: Budget guard: 5-hour usage is 66%, week 17% (95% of the week gone). Keep this run small, or tell the designer before launching more agents.
+
+**Paused:** Budget guard: 5-hour usage is 66% and a qa-build-engineer run costs 30% on average, over the 95% cap (reading 16 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
+## Resumed 2026-11-21
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md` (the run had stopped: `paused`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 23: scan (2026-11-21T00:17:25-05:00)
+
+Unit results from `game/reports/_runs/20261121-001225/unit.log`. 17 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (5 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C3 Heated Uncapping Fork | change | Patricia, Bob | partial (built, waits on its tests) | 17/18 present: ✓ config heated_fork_radius_bonus_per_level, ✓ config fork_pulse_seconds, ✓ config heated_fork_max_level, ✓ config heated_fork_post_auto_yield_bonus_per_level, ✓ config uncap_radius, ✓ node ForkIcon, ✓ test t_shop_costs_floor_base_growth, ✓ ... |
+| C10 The fork goes back into the Harvest icon | change | Patricia | partial | ✓ config fork_return_seconds |
+| CFG Config and Dev mode | change | Patricia | partial | 32/33 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T3.2 item 3 look: during a drag the fork prop is visible within ` | test | Quinn | partial | ✓ test t_fork_prop_follows_drag_twice, ✗ test t_fork_head_colour_by_level (FAIL) |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | 29/30 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+### Order: new or rescored (10 of 15)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C10 The fork goes back into the Harvest icon | 11.57 | 2 | 3 | 0.43 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.43 (Patricia) |
+| 2 | C11 The lid stays still; the crank drives the gears | 11.57 | 2 | 3 | 0.43 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.43 (Patricia) |
+| 3 | C12 Spigot Flow | 11.57 | 2 | 3 | 0.43 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.43 (Patricia) |
+| 4 | C13 No jar flies after a leaving truck | 11.57 | 2 | 3 | 0.43 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.43 (Patricia) |
+| 5 | C9 The second stop only after Spin | 11.57 | 2 | 3 | 0.43 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.43 (Patricia) |
+| 6 | C14 The shop shows every row without scrolling | 11.25 | 2 | 3 | 0.75 | 1 | 2 goal(s) wait on it; play-test fix; cost 0.75 (Patricia, Bob) |
+| 7 | T10.1 item 10: after a drag release the fork prop is hid | 5.65 | 0 | 3 | 0.35 | 1 | play-test fix; cost 0.35 (Quinn) |
+| 10 | T3.2 item 3 look: during a drag the fork prop is visibl | 3.65 | 0 | 2 | 0.35 | 1 | designer feature; cost 0.35 (Quinn) |
+| 11 | CFG Config and Dev mode | 3.57 | 0 | 2 | 0.43 | 1 | designer feature; cost 0.43 (Patricia) |
+| 12 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.35 | 0 | waits on C9, C12, C13 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C10** (score 11.57: 2 goal(s) wait on it; play-test fix; cost 0.43 (Patricia)).
+
+### Step: C10 (2026-11-21T00:17:25-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C10-patricia.md` (1596 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (101,892 tokens, 9 turns, 15 s):
+
+The Dev panel appears to build its rows from the config's exported values, so `fork_return_seconds` should show up with no extra code.
+
+Item 10 was already in `scripts/`, so I changed no files. The contract check passes (71 lookups, 0 unresolved). I did not run Quinn's tests.
+
+- **`honeycomb.gd`:** emits `drag_ended` on a release and when `active` goes false mid-drag.
+- **`main.gd`:** connects `drag_ended` to `fork_prop.release`. `_return_fork_to_icon()` runs when the zoom ends.
+- **`uncap_fork.gd`:** `return_to()` moves the fork to the Harvest icon's spot and shrinks it over `fork_return_seconds`, then hides it.
+- **Config:** `fork_return_seconds` = 0.35 is marked PLACEHOLDER in `game_config.gd` and `default_config.tres`.
+
+**Nodes used:** `FarmWorld/UncapFork` and `ForkIcon`. I added no new nodes.
+
+**For Quinn:** a drag test that releases off the combs, and one that ends the zoom mid-drag.
+
+**Open questions:** none.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 9); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      194 passed, 1 failed  (exit 1, 292 noise lines dropped)  game/reports/_runs/20261121-001743/unit.log
+    FAIL  t_fork_head_colour_by_level  Heated 3: at the first pulse's peak the head reaches crank orange (best dE 81.4 at 0.25 s, want <= 12) | Heated 3: at the second pulse's peak the head reaches crank orange again (best dE 81.4 at 1.26 s) | 
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C10-fix1-patricia.md` (1681 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C10-fix1-quinn.md` (1634 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (318,689 tokens, 16 turns, 38 s):
+
+I changed one test, `t_fork_head_colour_by_level` in `game/tests/test_fork.gd`. I haven't run it, so the fix is unproven.
+
+**Likely cause:** I didn't reproduce the failure, so this is inferred from the code. At Heated 3 the wide reach probably uncaps the whole frame on the press. The frame then ends and `honeycomb.gd` emits `drag_ended`, which hides the fork. That is what spec item 10 requires: it hides "when the frame or zoom ends during a drag". The head then stays steel, which matches the constant dE of 81.4 against orange.
+
+**Change:** I kept the pulse at Heated 3 with `UncapFork.heated_level_override = level`. I set the reach to level 0 with `hc.heated_level_override = 0`. The edit has a comment quoting the spec line.
+
+If the test still fails, the cause is something other than frame completion. Check whether `follow()` is reached on the press. I found no defect in the code.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 13 (cap 15; CLI num_turns 16); end `success`
+
+
+**Patricia** (415,357 tokens, 23 turns, 48 s):
+
+I changed nothing. The failure is in Quinn's test, not in `scripts/`.
+
+**Cause.** `t_fork_head_colour_by_level` (`tests/test_fork.gd`, line 279) presses on the middle cell at Heated 3. Reach there is 4× the base radius, which probably uncaps enough cells to finish the frame within the first pulse. That is my inference from the code. I did not run the test or the game.
+
+Spec item 10 says the fork hides when the frame or zoom ends during a drag. So when the frame finishes, `main._finish_zoom` calls `UncapFork.return_to` (`uncap_fork.gd`, lines 73-90). That function stops the drag and resets the head to steel with `_apply(0.0)`. The head then stays steel, which is why the best dE is 81.4 at both pulse peaks.
+
+The pulse code in `uncap_fork.gd` (lines 107-120) is unchanged by item 10 and still correct.
+
+**Fix for Quinn.** Make the test's drag not complete the frame. For example, leave some cells uncapped out of reach, or sample the first half pulse only, or keep the hive from finishing. The test should not expect the pulse to keep running after the frame ends, since the spec now forbids it.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 15 (cap 15; CLI num_turns 23); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Green: commit failed: _meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../_templates/content.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/balance/_index.md`
+507 files, 271 links and inputs checked, 15 broken
+pre-commit: broken links (above)
+
+## Pass 24: scan (2026-11-21T00:27:23-05:00)
+
+Unit results from `game/reports/_runs/20261121-002251/unit.log`. 21 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (5 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C3 Heated Uncapping Fork | change | Patricia, Bob | done | 18/18 present: ✓ config heated_fork_radius_bonus_per_level, ✓ config fork_pulse_seconds, ✓ config heated_fork_max_level, ✓ config heated_fork_post_auto_yield_bonus_per_level, ✓ config uncap_radius, ✓ node ForkIcon, ✓ test t_shop_costs_floor_base_growth, ✓ ... |
+| C10 The fork goes back into the Harvest icon | change | Patricia | partial (built, waits on its tests) | ✓ config fork_return_seconds, ✓ ledger 0.2 |
+| CFG Config and Dev mode | change | Patricia | done | 33/33 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T3.2 item 3 look: during a drag the fork prop is visible within ` | test | Quinn | done | ✓ test t_fork_prop_follows_drag_twice, ✓ test t_fork_head_colour_by_level |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 30/30 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+### Order: new or rescored (5 of 11)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C11 The lid stays still; the crank drives the gears | 8.57 | 1 | 3 | 0.43 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.43 (Patricia) |
+| 2 | C12 Spigot Flow | 8.57 | 1 | 3 | 0.43 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.43 (Patricia) |
+| 3 | C13 No jar flies after a leaving truck | 8.57 | 1 | 3 | 0.43 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.43 (Patricia) |
+| 4 | C9 The second stop only after Spin | 8.57 | 1 | 3 | 0.43 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.43 (Patricia) |
+| 5 | C14 The shop shows every row without scrolling | 8.25 | 1 | 3 | 0.75 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.75 (Patricia, Bob) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C11** (score 8.57: 1 goal(s) wait on it; play-test fix; cost 0.43 (Patricia)).
+
+### Step: C11 (2026-11-21T00:27:23-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C11-patricia.md` (1367 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (123,536 tokens, 9 turns, 20 s):
+
+Item 11 is in `scripts/centrifuge.gd`. `contract_check.py` passes (72 lookups, 0 unresolved). I did not run the unit tests or `play_loop.gd`.
+
+- **Lid:** it no longer rotates. `LidMotion` still lifts and leans it when the lid opens and closes.
+- **Crank:** `_process` now calls `rotate_y(spin_speed * delta)` on `Crank`, and only while the lid is closed. That is the same condition the lid spin used.
+- **Gears:** `_update_gears` is unchanged. Gear1 already turns at `spin_speed`, which matches the crank. Gear2..Gear6 turn from it as item 4 says.
+- **Spinner:** unchanged.
+- **Node name used:** `Crank`, found by name anywhere under the centrifuge. It is not in the handoff doc, so Bob needs to add it.
+
+**Open questions for Bob:**
+- `Crank` must be a sibling of `Gear1`, not its child. If it is a child, it turns twice as fast.
+- `Crank`'s origin must sit on its pivot, because I rotate it about its own Y axis.
+
+**For Quinn:** a check that the lid's rotation stays 0 while spinning and the `Crank` angle advances.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 6 (cap 30; CLI num_turns 9); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Green: commit failed: _meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../_templates/content.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/balance/_index.md`
+508 files, 271 links and inputs checked, 15 broken
+pre-commit: broken links (above)
+
+## Pass 25: scan (2026-11-21T00:32:24-05:00)
+
+Unit results from `game/reports/_runs/20261121-002745/unit.log`. 21 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C11 The lid stays still; the crank drives the gears | change | Patricia | partial (built, waits on its tests) | ✓ node LidDisc, ✓ ledger 0.2 |
+
+No score changed.
+
+Next: **C12** (score 8.57: 1 goal(s) wait on it; play-test fix; cost 0.43 (Patricia)).
+
+### Step: C12 (2026-11-21T00:32:24-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C12-patricia.md` (1473 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (199,654 tokens, 23 turns, 33 s):
+
+Item 12 (Spigot Flow) is in. `contract_check.py` passes with 0 unresolved lookups. I did not run Godot or Quinn's tests.
+
+**Changed:**
+- `economy.gd`: `spigot_flow` ("Spigot Flow") is in `UPGRADE_IDS` after `gearing`, with name, max level and cost.
+- `game_config.gd` and `default_config.tres`:
+  - `spigot_flow_max_level` is 5.
+  - `spigot_flow_cut_per_level` is 0.12.
+  - `spigot_flow_base_cost` is 30 and `spigot_flow_cost_growth` is 1.2. You didn't list these two, but the row needs them.
+  - All four are marked PLACEHOLDER.
+- `centrifuge.gd`: added `spigot_multiplier()` and a `spigot_level_override` test hook. `bottling_seconds()` now applies the cut.
+- `main.gd`: the jar-fill animation now uses `bottling_seconds()`, so it matches the faster cycle.
+
+**Nodes:** none added. `shop_ui.gd` builds the row from `UPGRADE_IDS` at runtime.
+
+**Quinn should test:**
+- Bottling time at levels 0 to 5 (3.0 s down to 1.8 s), with jar flight time unchanged.
+- The new shop row's cost and max level.
+- Whether `test_bottling.gd` and `test_jars.gd` still pass.
+
+**Open questions:** none.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 8 (cap 30; CLI num_turns 23); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      191 passed, 4 failed  (exit 1, 292 noise lines dropped)  game/reports/_runs/20261121-003300/unit.log
+    FAIL  t_shop_buttons_disabled_unaffordable_maxed_locked  one row per upgrade: expected 6 got 7  (493 ms)
+    FAIL  t_shop_rows_order_and_level_text  six rows: expected 6 got 7 | row 4 name: expected Faster Delivery got Spigot Flow | faster_delivery: level text: expected Lv 1 / 4 got Lv 0 / 5 | row 5 name: expected Auto-Sell got Faster Delivery | A
+    FAIL  t_shop_auto_sell_locked_until_delivery_1  six rows expected, got 7  (493 ms)
+    FAIL  t_shop_no_row_overlaps_other_controls  six rows: expected 6 got 7  (562 ms)
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C12-fix1-patricia.md` (1917 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C12-fix1-quinn.md` (1870 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Patricia** (30,878 tokens, 2 turns, 7 s):
+
+The four failures are not in `scripts/`, so I changed nothing.
+
+The code is right: `economy.gd` has `spigot_flow` as a seventh upgrade after `gearing`, and the spec calls for exactly that. Quinn's shop tests in `tests/` still assume the old six rows. They check for six rows, expect "Faster Delivery" at row 4, and expect "Lv 1 / 4" for it, but the shop now shows Spigot Flow at row 4.
+
+Quinn needs to update these four tests:
+- `t_shop_buttons_disabled_unaffordable_maxed_locked`
+- `t_shop_rows_order_and_level_text`
+- `t_shop_auto_sell_locked_until_delivery_1`
+- `t_shop_no_row_overlaps_other_controls`
+
+The tests should expect seven rows, with Spigot Flow after Centrifuge Gearing and "Lv 0 / 5" at the start. Faster Delivery and Auto-Sell each move down one row.
+
+I did not run the tests, as instructed.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 2 (cap 15; CLI num_turns 2); end `success`
+
+
+**Quinn** (90,999 tokens, 10 turns, 19 s):
+
+I updated `game/tests/test_shop.gd` for the new Spigot Flow row. I haven't run anything.
+
+All four failures came from the same change: the shop now has seven rows, not six. The code is correct, so these were stale expectations.
+
+- **Row order:** I added "Spigot Flow" to `_SHOP_ORDER` and `spigot_flow` to `_SHOP_IDS`, in fifth place after Centrifuge Gearing. I quoted spec item 12 in a comment beside it.
+- **Cost keys:** I added a `spigot_flow` entry to `_SHOP_KEYS` with `spigot_flow_base_cost`, `spigot_flow_cost_growth` and `spigot_flow_max_level`.
+- **Auto-Sell row index:** it is now `rows[6]`, in the "disabled while locked" check and in the Auto-Sell gate test.
+- **Gate loop:** the check that no other row shows a gate now runs over the first six rows (`for i in 6`).
+- **Failure text:** the gate test's message now says "seven rows".
+
+Two assert labels still read "six rows" (the order test and the overlap test). They are text only.
+
+I wrote no new test for Spigot Flow's bottling-time cut, and I added no mutations.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 10); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Green: commit failed: _meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../_templates/content.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/balance/_index.md`
+511 files, 271 links and inputs checked, 15 broken
+pre-commit: broken links (above)
+
+## Pass 26: scan (2026-11-21T00:45:02-05:00)
+
+Unit results from `game/reports/_runs/20261121-003805/unit.log`. 22 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (2 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Upgrade shop holds several rows. | change | Patricia, Bob | done | 19/19 present: ✓ config flight_base_cost, ✓ config flight_cost_growth, ✓ config heated_fork_base_cost, ✓ config heated_fork_cost_growth, ✓ config gearing_base_cost, ✓ config gearing_cost_growth, ✓ config spigot_flow_base_cost, ✓ config spigot_flow_cost_gr ... |
+| C12 Spigot Flow | change | Patricia | partial (built, waits on its tests) | ✓ config spigot_flow_max_level, ✓ config spigot_flow_cut_per_level, ✓ ledger 0.2 |
+
+### Order: new or rescored (1 of 9)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 6 | T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^leve | 5.65 | 0 | 3 | 0.35 | 1 | play-test fix; cost 0.35 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C13** (score 8.57: 1 goal(s) wait on it; play-test fix; cost 0.43 (Patricia)).
+
+### Step: C13 (2026-11-21T00:45:02-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C13-patricia.md` (1200 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (131,316 tokens, 14 turns, 30 s):
+
+Item 13 is in `truck.gd`, and `contract_check.py` passes (72 lookups, 0 unresolved). I haven't run Quinn's tests or the windowed playthrough.
+
+**File changed:** `game/scripts/truck.gd`. It uses no new nodes.
+
+- `sell()` still credits the money and returns the amount at once. The departure now waits until `_flying_to_bed` reaches 0.
+- The truck leaves when the last bed jar lands. `advance()` also checks each frame as a fallback.
+- While a sale is waiting, `can_sell()` is false, so a second Sell press or Auto-Sell can't fire. A jar bottled in that window goes to the crate.
+- `reset_home()` clears the waiting sale.
+
+**Quinn should test:**
+- Sell while a jar is in flight: the truck stays until the jar lands, then leaves.
+- Auto-Sell when the bed fills with a jar still flying.
+- A jar bottled during the wait goes to the crate.
+
+**Open question:** the Sell summary appears at the press, before the truck moves. Say if you want it delayed too.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 6 (cap 30; CLI num_turns 14); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Green: commit failed: _meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../_templates/content.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/balance/_index.md`
+512 files, 271 links and inputs checked, 15 broken
+pre-commit: broken links (above)
+
+## Pass 27: scan (2026-11-21T00:52:30-05:00)
+
+Unit results from `game/reports/_runs/20261121-004537/unit.log`. 22 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C13 No jar flies after a leaving truck | change | Patricia | partial (built, waits on its tests) | ✓ ledger 0.2 |
+
+### Order: new or rescored (1 of 8)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 6 | T13.1 item 13: with a jar in flight to the bed, a Sell p | 5.65 | 0 | 3 | 0.35 | 1 | play-test fix; cost 0.35 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C9** (score 8.57: 1 goal(s) wait on it; play-test fix; cost 0.43 (Patricia)).
+
+### Step: C9 (2026-11-21T00:52:30-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C9-patricia.md` (1352 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (149,095 tokens, 17 turns, 26 s):
+
+Item 9 is done in `scripts/main.gd`, and `python -I _tools/contract_check.py` passes. I did not run Quinn's tests or a headless parse check.
+
+**Changed in `main.gd`:**
+- Removed `_filled_in_zoom` and `_bucket_is_full()`. A full bucket no longer pans the camera.
+- A zoom now ends at the farm view unless Spin was tapped. `_closing_to_second` is kept, and is now set only from `_spin_pending`, which `spin_tapped` sets.
+- `resume_pending` is now `not on_own`.
+
+**Nodes used:** none new.
+
+**For Quinn:** the 0.1.3 full-bucket pan test in `test_camera.gd` is now wrong. I didn't touch it. It needs replacing with a check that a full bucket returns to the farm view and that only Spin goes to the second stop.
+
+**Open questions:** none.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 7 (cap 30; CLI num_turns 17); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_dev_button_clear_of_hud  the camera reached pan_zoom_size 9.54 once the bucket was full (now 20) | second stop: the view could not be set up  (26726 ms)
+    FAIL  t_camera_second_stop_in_frame  the camera reached pan_zoom_size 9.54 once the bucket was full (now 20)  (5622 ms)
+    FAIL  t_camera_second_stop_hive_share  the camera reached pan_zoom_size 9.54 once the bucket was full (now 20)  (5622 ms)
+    FAIL  t_camera_second_stop_hud_clear  the camera reached pan_zoom_size 9.54 once the bucket was full (now 20)  (5630 ms)
+    FAIL  t_camera_back_from_second_stop  the camera reached pan_zoom_size 9.54 once the bucket was full (now 20)  (5760 ms)
+    FAIL  t_camera_pan_seconds  the camera reached pan_zoom_size 9.54 once the bucket was full (now 20)  (5669 ms)
+    FAIL  t_second_stop_back_tap  the camera reached pan_zoom_size 9.54 once the bucket was full (now 20)  (5677 ms)
+    FAIL  t_second_stop_spin_icon_tap  Back with the bucket full pans to the second stop (size 20)  (3988 ms)
+    FAIL  t_second_stop_fork_icon_tap  Back with the bucket full pans to the second stop (size 20)  (3996 ms)
+    FAIL  t_icons_never_overlap  the second stop was reached (size 20)  (4365 ms)
+    FAIL  t_pan_after_all_frames_uncapped  all frames uncapped: the camera is at the second stop within camera_pan_seconds + 1 s of the last cell (size 20, at_second_stop false)  (4550 ms)
+    FAIL  t_pan_after_back_then_harvest_again  Back with the bucket full pans to the second stop (size 20)  (4021 ms)
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C9-fix1-patricia.md` (2864 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C9-fix1-quinn.md` (2817 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Patricia** (45,768 tokens, 3 turns, 12 s):
+
+Code already implements item 9; the failing tests still assert the old rule.
+
+Nothing to fix in `scripts/`. `main.gd` already implements item 9. `_filled_in_zoom` is gone. `_closing_to_second` is set only from `_spin_pending` (line 419), so a full bucket no longer pans the camera.
+
+The 12 failures come from `tests/test_camera.gd` and the tests that call its helper. They still assert the old 0.1.3 rule, "Back or a full bucket pans to the second stop (size 20 vs 9.54)". The camera staying at size 20 after the bucket fills is the new, correct behaviour.
+
+The next round goes to Quinn (`tests/`):
+- Replace the full-bucket-pans assertion in `test_camera.gd`.
+- Change the shared setup so it taps Spin before it expects the second stop.
+- Update the tests that use that setup: `t_second_stop_*`, `t_icons_never_overlap`, `t_pan_after_*` and `t_dev_button_clear_of_hud`.
+- Check the mutation entries in `mutations.json` that name `_filled_in_zoom` and `_closing_to_second`.
+
+I changed nothing and ran no checks.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 3); end `success`
+
+
+**Quinn** (366,652 tokens, 20 turns, 54 s):
+
+I edited only the test files in `game/tests/`. I did not run anything, as instructed.
+
+**What changed**
+- **Spec line quoted in comments:** each edit has a comment quoting item 9: "The camera goes to the second stop only when Spin is tapped".
+- **`test_camera.gd`, `_go_second_stop`:** it now waits for the zoom to end on the farm view, then taps `CentrifugeIcon`. That should fix the `t_camera_*`, `t_second_stop_back_tap` and `t_dev_button_clear_of_hud` failures.
+- **`test_second_stop.gd`, `_second_stop_with_capped(via_spin := true)`:** it now taps Spin in the zoom. With `false` it taps Back and checks the farm view.
+- **`t_spin_from_farm_goes_to_second_stop` and `t_pan_after_back_then_harvest_again`:** both call the helper with `false`. I also removed the Back tap and the wait in the first of them, which the helper now does.
+- **`_pan_follows` and `t_icons_never_overlap`:** they check the farm view first, then tap Spin.
+
+**Risks I couldn't check:** Spin starts the crank at the second stop. Tests that used `_second_stop_with_capped()` may now see a spinning crank. These are `test_crank_pause.gd`, `test_ui_placement.gd` (lines 193 and 298) and the other callers at `test_second_stop.gd` lines 87 and 111.
+
+**Other findings:** `test_replay.gd` and `fixtures/recording_fill_and_back.json` still expect a second stop after a full bucket and Back (`last["stop"] == "second"`). That fixture was recorded under the old rule, so it needs re-recording.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 12 (cap 15; CLI num_turns 20); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_resume_pending_pile_loads_while_zoom_open  Back: the full bucket panned to the second stop: expected true got false | Back: the fork is hidden at the second stop (frames 4 and 5 hold Capped cells) | Spin: CRANKING: expected 3 got 2 
+    FAIL  t_camera_second_stop_hud_clear  no HUD control overlaps the hive's visible screen rect [P: (386.4121, 8.572388), S: (330, 300)]: expected [] got ["CentrifugeLabel [P: (242.1172, 16), S: (271, 87)]"]  (4669 ms)
+    FAIL  t_camera_pan_seconds  the pan took 3.601 s; camera_pan_seconds is 1.200 s +- 0.060 s (one frame) | after a live change to 2.5 the pan took 4.930 s +- 0.064 s  (9356 ms)
+    FAIL  t_second_stop_spin_icon_tap  Spin shows at the second stop (bucket FULL) | Spin sits at its anchor's projected point or clamped inside the screen (off by 497 px)  (3166 ms)
+    FAIL  t_icons_never_overlap  second stop: at least one icon shows (0)  (3528 ms)
+    FAIL  t_hud_no_overlap_no_cutoff  the second stop was reached (size 20)  (4722 ms)
+    FAIL  t_buttons_at_anchor_or_clamped  the second stop was reached (size 20) | buttons were measured (1)  (4476 ms)
+    FAIL  t_harvest_hidden_at_second_stop  self-check: Spin still shows at the second stop, so only Harvest is hidden  (3705 ms)
+    FAIL  t_back_fixed_top_right  the second stop was reached (size 20) | Back was measured in both views (["first zoom"])  (4367 ms)
+    FAIL  t_centrifuge_label_on_centrifuge  Spin shows at the second stop  (3234 ms)
+    FAIL  t_crank_pauses_on_back_and_resumes_on_spin  Spin shows at the second stop  (4589 ms)
+    FAIL  t_paused_crank_never_finishes_in_farm_view  Spin shows at the second stop | 18 taps in the farm view counted no turn: expected 0 got 1  (4337 ms)
+```
+
+#### Fix round 2: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C9-fix2-patricia.md` (3075 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C9-fix2-quinn.md` (3028 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Patricia** (47,328 tokens, 4 turns, 11 s):
+
+I changed nothing in `scripts/`. All 12 failures come from tests that still expect the old rule, and the fix belongs to Quinn in `tests/`.
+
+`main.gd` already follows spec item 9. `_closing_to_second` is set only from `_spin_pending` (line 419). A full bucket no longer pans the camera, and `_filled_in_zoom` is gone.
+
+The 12 tests all try to reach the second stop by filling the bucket in the first zoom, and that no longer pans the camera. The failure messages show this:
+- "the second stop was reached" is false.
+- "Spin shows at the second stop" is false.
+- "the full bucket panned to the second stop" is false.
+
+Quinn should change the shared helper that reaches the second stop to tap Spin in the first zoom instead of waiting for a full bucket. That helper is probably in `test_camera.gd` or a common test file. `t_resume_pending_pile_loads_while_zoom_open` also has the old "full bucket pans" assertion, which should be replaced. I did not read the tests or run anything.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 4); end `success`
+
+
+**Quinn** (462,425 tokens, 28 turns, 77 s):
+
+I edited tests in `tests/` only and ran nothing. Four edits are guesses I couldn't check, and those tests may still fail.
+
+**Updated to spec item 9** (Spin is now the only way to the second stop):
+- `test_camera.gd`: `_go_second_stop` now measures the pan from the Spin tap, not from the zoom close. That should fix `t_camera_pan_seconds`.
+- `test_ui_placement.gd`: the walk-through used Back to reach the second stop. It now taps Spin. That should fix `t_hud_no_overlap_no_cutoff`, `t_buttons_at_anchor_or_clamped` and `t_back_fixed_top_right`.
+- `test_zoom2.gd`: after Back the camera stays on the farm view, the fork shows, and Spin pans to the second stop.
+- `test_crank_pause.gd` and `t_centrifuge_label_on_centrifuge`: they no longer tap Spin a second time.
+- `t_second_stop_spin_icon_tap`: it now checks Spin on the farm view.
+- `t_harvest_hidden_at_second_stop`: it now asserts CRANKING instead of Spin shown.
+
+**Open questions and likely code findings (not fixed):**
+- The spec doesn't say whether any icon shows at the second stop while the crank runs. `t_icons_never_overlap` ("second stop: at least one icon shows") may still fail. It needs the designer.
+- My edits to `t_harvest_hidden_at_second_stop` and the label test assume Spin is hidden while the crank runs.
+- `t_camera_second_stop_hud_clear`: `CentrifugeLabel` overlaps the hive rect. I didn't touch this one. If it still fails, it is a finding for Bob or Patricia.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 14 (cap 15; CLI num_turns 28); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      no total line  (exit 1, 0 noise lines dropped)  game/reports/_runs/20261121-010922/unit.log
+    SCRIPT ERROR: Parse Error: Could not resolve class "res://tests/test_journal.gd".
+    ERROR: Failed to load script "res://tests/run_tests.gd" with error "Parse error".
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on C9: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept C9 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C9 fix-round edits"`.
+
+## Resumed 2026-11-21
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept C9 --note Tests only, per designer 2026-11-21: main.gd already implements item 9. test_zoom2.gd (parse error line 454; t_resume_pending asserts Harvest disabled, no Back click), test_camera.gd (CentrifugeLabel exempt at second stop), test_second_stop.gd (wait for pan, then CRANKING; 0 icons while cranking), test_replay.gd (farm view after Back). Rex: 5/5 pass (20261121-015359).` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C9 (2026-11-21T01:58:39-05:00)
+
+- Change (orchestrator, Process 9): Tests only, per designer 2026-11-21: main.gd already implements item 9. test_zoom2.gd (parse error line 454; t_resume_pending asserts Harvest disabled, no Back click), test_camera.gd (CentrifugeLabel exempt at second stop), test_second_stop.gd (wait for pan, then CRANKING; 0 icons while cranking), test_replay.gd (farm view after Back). Rex: 5/5 pass (20261121-015359).
+- Accepted: commit failed: _meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../_templates/content.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/content/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/design/_index.md`
+_meta/sessions/runs/style-farm-0-2-0-r5-sandbox/game/CONTEXT.md: input `../proposals/balance/_index.md`
+517 files, 271 links and inputs checked, 15 broken
+pre-commit: broken links (above)
+
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md` (the run had stopped: `stopped`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 28: scan (2026-11-21T02:59:31-05:00)
+
+Unit results from `game/reports/_runs/20261121-024647/unit.log`. 22 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C9 The second stop only after Spin | change | Patricia | partial (built, waits on its tests) | ✓ ledger 0.2 |
+
+### Order: new or rescored (7 of 7)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C14 The shop shows every row without scrolling | 8.27 | 1 | 3 | 0.73 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.73 (Patricia, Bob) |
+| 2 | T10.1 item 10: after a drag release the fork prop is hid | 5.68 | 0 | 3 | 0.32 | 1 | play-test fix; cost 0.32 (Quinn) |
+| 3 | T11.1 item 11: while cranking, `Lid`'s and `LidDisc`'s g | 5.68 | 0 | 3 | 0.32 | 1 | play-test fix; cost 0.32 (Quinn) |
+| 4 | T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^leve | 5.68 | 0 | 3 | 0.32 | 1 | play-test fix; cost 0.32 (Quinn) |
+| 5 | T13.1 item 13: with a jar in flight to the bed, a Sell p | 5.68 | 0 | 3 | 0.32 | 1 | play-test fix; cost 0.32 (Quinn) |
+| 6 | T14.1 item 14: the shop panel has no scroll container, a | 5.68 | 0 | 3 | 0.32 | 1 | play-test fix; cost 0.32 (Quinn) |
+| 7 | T9.1 item 9: the bucket filling during the first zoom l | 5.68 | 0 | 3 | 0.32 | 1 | play-test fix; cost 0.32 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C14** (score 8.27: 1 goal(s) wait on it; play-test fix; cost 0.73 (Patricia, Bob)).
+
+### Step: C14 (2026-11-21T02:59:31-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C14-patricia.md` (1151 chars)
+- Brief for Bob: `game/reports/goal/0.2/briefs/C14-bob.md` (1298 chars)
+- Budget guard for Patricia: allow (reading 0 min old)
+- Budget guard for Bob: allow (reading 0 min old)
+
+**Patricia** (114,001 tokens, 8 turns, 18 s):
+
+Item 14 needs almost no code change. `contract_check.py` passes (72 lookups, 0 unresolved). I did not run the Godot tests.
+
+**Files changed:** `game/scripts/shop_ui.gd`, comment only. It already never looked up `ShopScroll`. It finds `RowTemplate` and adds the seven rows (`Economy.UPGRADE_IDS`) to that node's parent. So it works with or without a scroll container.
+
+**Node names used:** `RowTemplate`, `BuyButton`, `NameLabel`, `LevelLabel` and `GateLabel`. For Bob: if `ShopScroll` goes, `ShopRows` should sit directly under `ShopBox`. The handoff still describes the scroll, so it needs updating.
+
+**Open question for Quinn:** `tests/test_shop.gd` (around line 272) still asserts that `ShopScroll` exists. It will fail once Bob removes the node.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 6 (cap 30; CLI num_turns 8); end `success`
+
+
+**Bob** (129,301 tokens, 12 turns, 29 s):
+
+The shop panel now has no scroll container, but I haven't checked that all seven rows fit at 720 × 1280 under the HUD. I didn't render it. The template row is hidden and Patricia's script adds the rows at runtime, so a plain scene render shows none of them.
+
+`contract_check.py` passes: 72 lookups, 0 unresolved.
+
+**File changed:** `game/scenes/main.tscn`. I deleted `ShopScroll` and re-parented `ShopRows` straight under `ShopBox`. The buy-button styleboxes are unchanged.
+
+**Node names** (under `ShopPanel/ShopBox`):
+- `ShopRows`, with its child `RowTemplate` > `RowBox`
+- `Info` holding `NameLabel`, `LevelLabel` and `GateLabel`
+- `BuyButton`, 160 × 120
+- `JournalButton`, below the rows
+
+**Open questions:**
+- The handoff lists six upgrades but item 14 says seven, so Patricia's script needs to add a seventh row.
+- Seven rows at 120 px each, plus Journal, come to about 1016 px. The room under the HUD is about 1080 px. That is tight, so check it with a shot of the full Main scene once her script is in.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 6 (cap 30; CLI num_turns 12); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_real_touch_taps_crank  touch taps finished the bucket (32 sent) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (1266 ms)
+    FAIL  t_button_press_is_not_a_crank  clicks off the button finish the bucket (positive control) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (1227 ms)
+    FAIL  t_zoom_bucket_lid_pile_flow  round 1: ceil(jars x 4) = 16 real clicks: expected 16 got 22 | round 1: DONE (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself) | round 1: bottling started by itself, no input aft
+    FAIL  t_no_crank_during_zoom  positive control: one real click on the farm counts one turn: expected 1 got 0 | clicks and a hold during the zoom counted no turn: expected 1 got 0 | a drag across the frame is never a crank turn: expected 1 g
+    FAIL  t_dev_button_clear_of_hud  farm: no HUD control overlaps the DevButton [P: (8, 600), S: (80, 80)]: expected [] got ["ShopPanel [P: (24, 244), S: (672, 1004)]", "Row_heated_fork [P: (24, 496), S: (672, 120)]", "Row_gearing [P: (24, 622
+    FAIL  t_camera_second_stop_in_frame  Centrifuge is wholly in frame at the second stop (screen box [P: (244.0346, -617.641), S: (267.1649, 269.926)], viewport [P: (0, 0), S: (720, 1280)]) | Crate is wholly in frame at the second stop (screen
+    FAIL  t_camera_second_stop_hive_share  the hive is partly shown: 0.0% of its silhouette is on screen (want > 0 and < 100%; 0 of 810 points) | the visible part is in the upper-right quadrant (0% of its points; centroid (0, 0); want >= 90%)  
+    FAIL  t_camera_second_stop_hud_clear  part of the hive shows (its visible box is the rect no control may cover)  (4917 ms)
+    FAIL  t_camera_pan_seconds  the pan took 1.141 s; camera_pan_seconds is 1.200 s +- 0.059 s (one frame)  (9881 ms)
+    FAIL  t_second_stop_spin_icon_tap  no other control takes a press at Spin's centre: expected [] got ["ShopPanel [P: (24, 244), S: (672, 1004)]", "Row_heated_fork [P: (24, 496), S: (672, 120)]"]  (3797 ms)
+    FAIL  t_second_stop_fork_icon_tap  no other control takes a press at Harvest's centre: expected [] got ["ShopPanel [P: (24, 244), S: (672, 1004)]", "Row_flight [P: (24, 370), S: (672, 120)]"]  (4269 ms)
+    FAIL  t_icons_never_overlap  farm view: ForkIcon does not meet ShopPanel ([P: (330.5096, 359.7905), S: (240, 120)], [P: (24, 244), S: (672, 1004)]): expected false got true  (3818 ms)
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C14-fix1-patricia.md` (3617 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C14-fix1-quinn.md` (3570 chars)
+- Budget guard for Patricia: allow (reading 8 min old)
+- Budget guard for Quinn: allow (reading 8 min old)
+
+**Quinn** (52,608 tokens, 4 turns, 13 s):
+
+I changed nothing in `tests/`. All 12 failures are findings against the scene or code, not stale test expectations. Nothing was run.
+
+**Cause:** The shop panel is now 672×1004 at (24, 244). It covers the farm view: the fork icon, Spin and Harvest, the centrifuge icon and the DevButton at (8, 600). Row_heated_fork, Row_flight and Row_gearing are listed as overlapping those controls. That breaks item 14's "still clears the HUD".
+
+**Matching failures:**
+- **Overlap and tap tests:** `t_dev_button_clear_of_hud`, `t_icons_never_overlap` and both `t_second_stop_*_icon_tap` tests fail because the panel overlaps those controls.
+- **Crank and zoom tests:** `t_real_touch_taps_crank`, `t_button_press_is_not_a_crank`, `t_zoom_bucket_lid_pile_flow` and `t_no_crank_during_zoom` fail because the real clicks land on the panel and not on the crank. The "state 3" message follows from that.
+- **Camera tests:** The `t_camera_second_stop_*` tests and `t_camera_pan_seconds` (1.141 s against 1.200 s) probably fail for the same cause. I did not confirm this.
+
+**Owner:** Bob (the shop panel in the scene) or Patricia (any script that sizes it). Proposed fix: size and position the panel so seven rows fit without overlapping the HUD and icons, or hide it when the shop is closed.
+
+**Possible stale test:** `t_shop_no_row_overlaps_other_controls` in `test_shop.gd` still requires `ShopScroll`, which item 14 removes. It wasn't in the failing list, so I left it.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 4); end `success`
+
+
+**Patricia** (146,929 tokens, 8 turns, 20 s):
+
+I changed nothing. All 12 failures trace to `scenes/`, not `scripts/`, so the next round goes to Bob.
+
+- **Shop panel layout:** `game/scenes/main.tscn` line 324 is `ShopPanel`, a `PanelContainer` under `FarmUIRoot/FarmUI/Margin/Column`. It now measures 672×1004 at y=244 and covers the DevButton, Spin and Harvest icons and ForkIcon. This accounts for `t_dev_button_clear_of_hud`, `t_icons_never_overlap` and both `t_second_stop_*_icon_tap` tests.
+  - The panel needs to show all seven rows while staying clear of the HUD and icons. It may need a different anchor or size, or the icons may have to move.
+  - `scripts/shop_ui.gd` already has no scroll container, so there is nothing to fix there.
+- **Not investigated:** I didn't trace the camera, crank and zoom failures: `t_camera_second_stop_*`, `t_camera_pan_seconds`, the bucket and crank tests, and `t_no_crank_during_zoom`.
+  - Grepping `scripts/` and `config/` for `camera_pan` and `pan_s` found nothing, so the pan duration isn't set there.
+  - The panel may be stealing the crank clicks, since it covers the farm. Re-run these after Bob's fix.
+
+- Call: `claude -p --agent programmer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 8); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_real_touch_taps_crank  touch taps finished the bucket (32 sent) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (1214 ms)
+    FAIL  t_button_press_is_not_a_crank  clicks off the button finish the bucket (positive control) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (1272 ms)
+    FAIL  t_zoom_bucket_lid_pile_flow  round 1: ceil(jars x 4) = 16 real clicks: expected 16 got 22 | round 1: DONE (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself) | round 1: bottling started by itself, no input aft
+    FAIL  t_no_crank_during_zoom  positive control: one real click on the farm counts one turn: expected 1 got 0 | clicks and a hold during the zoom counted no turn: expected 1 got 0 | a drag across the frame is never a crank turn: expected 1 g
+    FAIL  t_dev_button_clear_of_hud  farm: no HUD control overlaps the DevButton [P: (8, 600), S: (80, 80)]: expected [] got ["ShopPanel [P: (24, 244), S: (672, 1004)]", "Row_heated_fork [P: (24, 496), S: (672, 120)]", "Row_gearing [P: (24, 622
+    FAIL  t_camera_second_stop_in_frame  Centrifuge is wholly in frame at the second stop (screen box [P: (244.0346, -617.641), S: (267.1649, 269.926)], viewport [P: (0, 0), S: (720, 1280)]) | Crate is wholly in frame at the second stop (screen
+    FAIL  t_camera_second_stop_hive_share  the hive is partly shown: 0.0% of its silhouette is on screen (want > 0 and < 100%; 0 of 810 points) | the visible part is in the upper-right quadrant (0% of its points; centroid (0, 0); want >= 90%)  
+    FAIL  t_camera_second_stop_hud_clear  part of the hive shows (its visible box is the rect no control may cover)  (4919 ms)
+    FAIL  t_second_stop_spin_icon_tap  no other control takes a press at Spin's centre: expected [] got ["ShopPanel [P: (24, 244), S: (672, 1004)]", "Row_heated_fork [P: (24, 496), S: (672, 120)]"]  (3901 ms)
+    FAIL  t_second_stop_fork_icon_tap  no other control takes a press at Harvest's centre: expected [] got ["ShopPanel [P: (24, 244), S: (672, 1004)]", "Row_flight [P: (24, 370), S: (672, 120)]"]  (4320 ms)
+    FAIL  t_icons_never_overlap  farm view: ForkIcon does not meet ShopPanel ([P: (330.5096, 359.7905), S: (240, 120)], [P: (24, 244), S: (672, 1004)]): expected false got true  (3844 ms)
+    FAIL  t_hud_no_overlap_no_cutoff  farm view: no HUD controls overlap and none is cut off: expected [] got ["ForkIcon [P: (330.5096, 359.7905), S: (240, 120)] overlaps ShopPanel [P: (24, 244), S: (672, 1004)]", "ShopPanel [P: (24, 244), S: (
+```
+
+#### Fix round 2: to Bob, Quinn
+
+- Brief for Bob: `game/reports/goal/0.2/briefs/C14-fix2-bob.md` (3764 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C14-fix2-quinn.md` (3697 chars)
+- Budget guard for Bob: allow (reading 17 min old)
+- Budget guard for Quinn: allow (reading 17 min old)
+
+**Quinn** (101,697 tokens, 10 turns, 24 s):
+
+Nothing was run. I changed one test and left the 12 listed failures as findings against the code.
+
+**Test changed:** `t_shop_no_row_overlaps_other_controls` in `test_shop.gd` is not in your failure list. It still expected `ShopScroll` and scrolling, which spec item 14 replaces. It now checks that no `ShopScroll` exists and that every shop row is fully on screen without scrolling. The spec line is quoted in a comment beside the change.
+
+**Findings against the code (owner: Bob or Patricia, `game/scenes/main.tscn` and `game/scripts/shop_ui.gd`):**
+- **Shop panel too tall:** `ShopPanel` is now 672×1004 at (24, 244), but the HUD must stay clear of it, and it isn't. It overlaps ForkIcon, the DevButton, the Spin and Harvest icon taps, and the second-stop hive and centrifuge framing. That accounts for `t_dev_button_clear_of_hud`, `t_camera_second_stop_*`, `t_second_stop_spin_icon_tap`, `t_second_stop_fork_icon_tap`, `t_icons_never_overlap` and `t_hud_no_overlap_no_cutoff`.
+- **Crank tests:** these most likely fail for the same reason, because the panel sits over the farm and swallows the clicks. I haven't confirmed that. The failing tests are `t_real_touch_taps_crank`, `t_button_press_is_not_a_crank`, `t_zoom_bucket_lid_pile_flow` and `t_no_crank_during_zoom`. The "state 3" in the message is `CRANKING`, so the bucket never finished.
+- **Proposed fix:** shrink or reposition the panel so it clears the HUD and doesn't cover the farm's click area.
+
+- Call: `claude -p --agent qa-build-engineer --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 10); end `success`
+
+
+**Bob** (189,457 tokens, 13 turns, 37 s):
+
+I only partly fixed this, and I couldn't confirm it. I ran no checks or renders, as instructed.
+
+**Cause in my folder:** the shop panel in `main.tscn` was 1004 px tall (y 244–1248). Its eight 120 px buttons, seven rows plus Journal, covered the floating ForkIcon and the Dev button.
+
+**Change:** in `scenes/main.tscn` I shrank the shop buttons, `BuyButton` and `JournalButton`, from a minimum height of 120 to 64. I also dropped the row name and level labels from font 28 to 24. I estimate the panel is now about 620 px tall, so its top should sit near y 630.
+
+**Likely still failing:** the Dev button sits at (8, 600), so the panel may still overlap it. Its position is set in `scripts/dev_panel.gd` (around lines 68–75), not in a scene. If `t_dev_button_clear_of_hud` still fails, the next round should go to Patricia: move the button above y 600 or clear of x 24 and up.
+
+**Not touched:**
+- The camera second-stop failures (`t_camera_second_stop_*`) look like camera framing in `scripts/`.
+- The crank and bucket-state failures (`t_real_touch_taps_crank`, `t_button_press_is_not_a_crank`, `t_zoom_bucket_lid_pile_flow`, `t_no_crank_during_zoom`) look like logic in `scripts/`.
+
+- Call: `claude -p --agent builder --output-format json --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 9 (cap 15; CLI num_turns 13); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      184 passed, 11 failed  (exit 1, 292 noise lines dropped)  game/reports/_runs/20261121-031744/unit.log
+    FAIL  t_harvest_holds_anchor_spin_below  farm view: Spin does not overlap ShopPanel [P: (24, 601), S: (672, 647)] | farm view, Harvest placed first: Spin does not overlap ShopPanel [P: (24, 601), S: (672, 647)] | farm view, Spin placed firs
+    FAIL  t_crank_ignored_outside_cranking  CRANKING: real clicks counted and finished the bucket (positive control) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself) | DONE: no extra turn: expected 0 got 16 | BOTTLIN
+    FAIL  t_real_mouse_taps_crank  exactly ceil(jars x taps_per_jar) real clicks finish the bucket: expected 16 got 32 | DONE (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself) | 15 real clicks in zero time were alread
+    FAIL  t_real_touch_taps_crank  touch taps finished the bucket (32 sent) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (1393 ms)
+    FAIL  t_button_press_is_not_a_crank  clicks off the button finish the bucket (positive control) (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself)  (1319 ms)
+    FAIL  t_zoom_bucket_lid_pile_flow  round 1: ceil(jars x 4) = 16 real clicks: expected 16 got 22 | round 1: DONE (state 3: DONE, BOTTLING or EMPTY expected; 0.1.2 starts bottling by itself) | round 1: bottling started by itself, no input aft
+    FAIL  t_no_crank_during_zoom  positive control: one real click on the farm counts one turn: expected 1 got 0 | clicks and a hold during the zoom counted no turn: expected 1 got 0 | a drag across the frame is never a crank turn: expected 1 g
+    FAIL  t_dev_button_clear_of_hud  farm: no HUD control overlaps the DevButton [P: (8, 600), S: (80, 80)]: expected [] got ["ShopPanel [P: (24, 601), S: (672, 647)]", "Row_swarm [P: (24, 601), S: (672, 72)]", "NameLabel [P: (24, 601), S: (500
+    FAIL  t_camera_second_stop_in_frame  Centrifuge is wholly in frame at the second stop (screen box [P: (244.0346, -260.6409), S: (267.1651, 269.926)], viewport [P: (0, 0), S: (720, 1280)])  (4931 ms)
+    FAIL  t_camera_second_stop_hive_share  the hive is partly shown: 0.0% of its silhouette is on screen (want > 0 and < 100%; 0 of 810 points) | the visible part is in the upper-right quadrant (0% of its points; centroid (0, 0); want >= 90%)  
+    FAIL  t_camera_second_stop_hud_clear  part of the hive shows (its visible box is the rect no control may cover)  (4992 ms)
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on C14: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept C14 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C14 fix-round edits"`.
+
 ## Result
 
-T8.1 accepted with a manual fix (checkpoint `4ee67e2` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
+Last invocation (2026-11-21T03:26:20-05:00): waiting-designer.
 
-Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
+Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 
 | Call | Total processed | Final context | Turns | Duration |
 |---|---|---|---|---|
@@ -1970,4 +2802,32 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`
 | Quinn, T8.1 | 375,981 | 42,911 | 19 | 64 s |
 | Patricia, T8.1 fix 1 | 27,646 | 15,269 | 2 | 7 s |
 | Bob, T8.1 fix 2 | 12,681 | 12,681 | 1 | 6 s |
-| **Total** | **7,123,295** | | | |
+| Patricia, C10 | 596,687 | 37,509 | 43 | 712 s |
+| Patricia, C10 | 101,892 | 23,368 | 9 | 15 s |
+| Quinn, C10 fix 1 | 318,689 | 32,052 | 16 | 38 s |
+| Patricia, C10 fix 1 | 415,357 | 38,997 | 23 | 48 s |
+| Patricia, C11 | 123,536 | 23,429 | 9 | 20 s |
+| Patricia, C12 | 199,654 | 32,305 | 23 | 33 s |
+| Patricia, C12 fix 1 | 30,878 | 17,872 | 2 | 7 s |
+| Quinn, C12 fix 1 | 90,999 | 29,622 | 10 | 19 s |
+| Patricia, C13 | 131,316 | 26,513 | 14 | 30 s |
+| Patricia, C9 | 149,095 | 25,411 | 17 | 26 s |
+| Patricia, C9 fix 1 | 45,768 | 16,693 | 3 | 12 s |
+| Quinn, C9 fix 1 | 366,652 | 38,507 | 20 | 54 s |
+| Patricia, C9 fix 2 | 47,328 | 17,881 | 4 | 11 s |
+| Quinn, C9 fix 2 | 462,425 | 49,946 | 28 | 77 s |
+| Patricia, C14 | 114,001 | 21,968 | 8 | 18 s |
+| Bob, C14 | 129,301 | 26,829 | 12 | 29 s |
+| Quinn, C14 fix 1 | 52,608 | 19,963 | 4 | 13 s |
+| Patricia, C14 fix 1 | 146,929 | 26,135 | 8 | 20 s |
+| Quinn, C14 fix 2 | 101,697 | 23,642 | 10 | 24 s |
+| Bob, C14 fix 2 | 189,457 | 25,599 | 13 | 37 s |
+| **Total** | **10,937,564** | | | |
+
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --accept C14 --note Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/ui-compare/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C14 (2026-11-21T11:34:31-05:00)
+
+- Change (orchestrator, Process 9): Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/ui-compare/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/

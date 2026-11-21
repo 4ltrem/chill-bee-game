@@ -108,8 +108,7 @@ func _run() -> void:
 						"t_crank_pauses_on_back_and_resumes_on_spin", "t_paused_crank_never_finishes_in_farm_view",
 						# 0.2 items 1, 2, 3, 4, 5, 6, 7, 8 (written from game/specs/0.2-first-automation.md before the code)
 						"t_shop_costs_floor_base_growth", "t_shop_buy_deducts_and_levels", "t_shop_buttons_disabled_unaffordable_maxed_locked",
-						"t_shop_rows_order_and_level_text", "t_shop_auto_sell_locked_until_delivery_1", "t_shop_buy_button_real_click_twice",
-						"t_shop_no_row_overlaps_other_controls",
+						"t_shop_rows_order_and_level_text", "t_shop_auto_sell_locked_until_delivery_1", "t_shop_buy_button_real_click_twice",						"t_shop_no_row_overlaps_other_controls",
 						# 0.2 item 2 (written from game/specs/0.2-first-automation.md before the code)
 						"t_flight_fill_rate_level3",
 						# 0.2 item 3 (written from game/specs/0.2-first-automation.md before the code)
