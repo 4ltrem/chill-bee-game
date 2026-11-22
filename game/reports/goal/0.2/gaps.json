@@ -1,7 +1,7 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-22T00:51:49-05:00",
+ "at": "2026-11-22T01:11:29-05:00",
  "unit_log": "game/reports/_runs/20261121-224553/unit.log",
  "goals": {
   "H": {
@@ -1089,6 +1089,24 @@
      "ok": true
     },
     {
+     "kind": "test",
+     "name": "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_at_second_stop_buy_blocks_crank_closes_on_back",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_compact_layout_nothing_in_zoom",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
      "name": "daf2d7c",
      "ok": true
@@ -1372,6 +1390,24 @@
     {
      "kind": "test",
      "name": "t_zoom_end_farm_pose_then_spin_second_stop_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_at_second_stop_buy_blocks_crank_closes_on_back",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_compact_layout_nothing_in_zoom",
      "ok": true,
      "result": "PASS"
     }
@@ -2033,9 +2069,33 @@
    "depends": [
     "C15"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_at_second_stop_buy_blocks_crank_closes_on_back",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_compact_layout_nothing_in_zoom",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "0.2",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -2327,6 +2387,24 @@
      "name": "t_zoom_end_farm_pose_then_spin_second_stop_twice",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_at_second_stop_buy_blocks_crank_closes_on_back",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_shop_compact_layout_nothing_in_zoom",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -2335,18 +2413,6 @@
    "ambiguous": false
   }
  },
- "order": [
-  {
-   "id": "T15.1",
-   "score": 1.72,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.28,
-    "ready": 1,
-    "blocked_by": []
-   }
-  }
- ],
+ "order": [],
  "ambiguous": []
 }

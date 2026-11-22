@@ -4240,14 +4240,29 @@ no changes added to commit (use "git add" and/or "git commit -a")
 docs agree with code and config
 contract: 78 lookups in 72 top-level scenes, 0 unresolved
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --goal C15,T15.1` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 50: scan (2026-11-22T01:11:29-05:00)
+
+Unit results from `game/reports/_runs/20261121-224553/unit.log`. 34 of 36 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 36)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C15 Shop stays available in both zooms | change | Patricia | partial (built, waits on its tests) | ✗ node ShopButton, ✓ node ShopPanel, ✓ test t_shop_in_first_zoom_buy_blocks_input_closes_on_exit, ✓ test t_shop_at_second_stop_buy_blocks_crank_closes_on_back, ✓ test t_shop_compact_layout_nothing_in_zoom, ✓ ledger daf2d7c |
+| CFG Config and Dev mode | change | Patricia | done | 48/48 present: ✓ config flight_max_level, ✓ config fork_return_seconds, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_ma ... |
+| T15.1 item 15: in each zoom (first zoom, second stop), three times | test | Quinn | done | ✓ test t_shop_in_first_zoom_buy_blocks_input_closes_on_exit, ✓ test t_shop_at_second_stop_buy_blocks_crank_closes_on_back, ✓ test t_shop_compact_layout_nothing_in_zoom, ✓ ledger 0.2 |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 44/44 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+Nothing left to build.
+
 ## Result
 
-T15.1 accepted with a manual fix (commit failed: 	modified:   game/reports/goal/0.2/blackboard.md
-	modified:   game/reports/goal/ledger.json
-
-no changes added to commit (use "git add" and/or "git commit -a")
-docs agree with code and config
-contract: 78 lookups in 72 top-level scenes, 0 unresolved). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
+Last invocation (2026-11-22T01:11:29-05:00): stopped (C15 is not ready).
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`, `_meta/sessions/runs/2026-11-22-goal-0.2/`
 
