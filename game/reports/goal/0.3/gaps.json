@@ -1,0 +1,450 @@
+{
+ "spec": "0.3-course-build.md",
+ "version": "0.3",
+ "at": "2026-11-22T13:14:53-05:00",
+ "unit_log": "game/reports/_runs/20261122-011146/unit.log",
+ "goals": {
+  "C1": {
+   "kind": "change",
+   "title": "Welcome screen.",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C2": {
+   "kind": "change",
+   "title": "Habitat Health.",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C3": {
+   "kind": "change",
+   "title": "Plant wildflower patch.",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C4": {
+   "kind": "change",
+   "title": "The bumble bee visitor.",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C5": {
+   "kind": "change",
+   "title": "Victory screen.",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C6": {
+   "kind": "change",
+   "title": "Skip to ending.",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T1.1": {
+   "kind": "test",
+   "title": "every test run sets `show_welcome = false` except the welcome tests; e",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "C1"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T1.2": {
+   "kind": "test",
+   "title": "item 1: at launch with `show_welcome = true` the overlay shows the tit",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "C1"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.1": {
+   "kind": "test",
+   "title": "item 2: Health starts at `habitat_health_start`; `thriving` fires exac",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.1": {
+   "kind": "test",
+   "title": "item 3: the row's cost equals `40 × 1.25^n` (floored) for n = 0..5; ea",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T4.1": {
+   "kind": "test",
+   "title": "item 4: before thriving the Journal button is hidden; at thriving the ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "C4"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T5.1": {
+   "kind": "test",
+   "title": "item 5: reaching thriving during a zoom shows no victory until the far",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "C5"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T6.1": {
+   "kind": "test",
+   "title": "item 6: the skip icon reaches thriving with money unchanged, the victo",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [
+    "C6"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T.1": {
+   "kind": "test",
+   "title": "mutations in `tests/mutations.json` prove the new tests (at least: the",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "depends": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  }
+ },
+ "order": [
+  {
+   "id": "C1",
+   "score": 12.67,
+   "factors": {
+    "unblocks": 3,
+    "value": 2,
+    "cost": 0.33,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C2",
+   "score": 9.67,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.33,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C3",
+   "score": 9.67,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.33,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C4",
+   "score": 9.67,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.33,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C5",
+   "score": 9.67,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.33,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C6",
+   "score": 9.67,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.33,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.27,
+    "ready": 0,
+    "blocked_by": [
+     "C1",
+     "C2",
+     "C3",
+     "C4",
+     "C5",
+     "C6"
+    ]
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 0,
+    "blocked_by": [
+     "C1"
+    ]
+   }
+  },
+  {
+   "id": "T1.2",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 0,
+    "blocked_by": [
+     "C1"
+    ]
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 0,
+    "blocked_by": [
+     "C2"
+    ]
+   }
+  },
+  {
+   "id": "T3.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 0,
+    "blocked_by": [
+     "C3"
+    ]
+   }
+  },
+  {
+   "id": "T4.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 0,
+    "blocked_by": [
+     "C4"
+    ]
+   }
+  },
+  {
+   "id": "T5.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 0,
+    "blocked_by": [
+     "C5"
+    ]
+   }
+  },
+  {
+   "id": "T6.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 0,
+    "blocked_by": [
+     "C6"
+    ]
+   }
+  }
+ ],
+ "ambiguous": []
+}

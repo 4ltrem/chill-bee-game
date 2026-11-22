@@ -32,4 +32,5 @@
 - [Ask with quiz tool](ask-with-quiz-tool.md) — open questions for the designer go in AskUserQuestion, never a text list
 - [Repo only](repo-only.md) — write only inside the repo (hook-enforced); reading outside is fine; moving/deleting outside files needs a yes
 - [GDD review decisions](gdd-review-decisions.md) — GDD is a first draft; leaderboard split by purchase status, habitat health in Flora slot
+- [French house style](french-house-style.md) — FR UI text uses "vous"; Bee Journal = "Carnet des abeilles"
 - [ICM run phases](icm-run-phases.md) — tag agent runs pre-ICM / post-ICM in _meta/agent-runs.md

@@ -1,0 +1,34 @@
+[
+ {
+  "call": "William, round 1",
+  "tokens": 198249,
+  "final": 35182,
+  "turns": 16,
+  "seconds": 39,
+  "transcripts": "_meta/sessions/runs/2026-11-22-course-ending-text-run-1"
+ },
+ {
+  "call": "Critic, round 1",
+  "tokens": 92128,
+  "final": 29290,
+  "turns": 8,
+  "seconds": 25,
+  "transcripts": "_meta/sessions/runs/2026-11-22-course-ending-text-run-1"
+ },
+ {
+  "call": "William, round 2",
+  "tokens": 37401,
+  "final": 13540,
+  "turns": 4,
+  "seconds": 8,
+  "transcripts": "_meta/sessions/runs/2026-11-22-course-ending-text-run-1"
+ },
+ {
+  "call": "Critic, round 2",
+  "tokens": 33100,
+  "final": 19078,
+  "turns": 2,
+  "seconds": 10,
+  "transcripts": "_meta/sessions/runs/2026-11-22-course-ending-text-run-1"
+ }
+]
