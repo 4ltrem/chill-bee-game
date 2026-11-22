@@ -1,0 +1,16 @@
+goal_agent: spec_lint 0.2-first-automation.md: no FAIL or WARN
+0.2-first-automation.md: 26/34 goals done (H, C1, C2, C3, C4, C5, C6, C7, C8, C11, C12, C13, T1.1, T2.1, T3.1, T3.2, T4.1, T5.1, T4.2, T5.2, T6.1, T7.1, T8.1, T11.1, T12.1, T13.1)
+  C9     partial  (built, waits on tests) The second stop only after Spin
+  C10    partial  (built, waits on tests) The fork goes back into the Harvest icon
+  C14    partial  (built, waits on tests) The shop shows every row without scrolling
+  CFG    partial  Config and Dev mode
+  T9.1   missing  item 9: the bucket filling during the first zoom leaves the 
+  T10.1  partial  item 10: after a drag release the fork prop is hidden; with 
+  T14.1  partial  (built, waits on tests) item 14: the shop panel has no scroll container, all seven r
+  T.1    partial  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. T10.1    5.72  play-test fix; cost 0.28 (Quinn)
+   2. T9.1     5.72  play-test fix; cost 0.28 (Quinn)
+   3. CFG      3.65  designer feature; cost 0.35 (Patricia)
+   4. T.1      1.72  housekeeping/handoff; cost 0.28 (Quinn)
+gaps.json: game/reports/goal/0.2/gaps.json

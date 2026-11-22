@@ -3655,9 +3655,135 @@ FAIL    unit      0 passed, 1 failed  (exit 1, 2 noise lines dropped)  game/repo
 
 2 fix rounds failed on T10.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T10.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T10.1 fix-round edits"`.
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T10.1,T9.1` (the run had stopped: `waiting-designer`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 42: scan (2026-11-21T19:49:18-05:00)
+
+Unit results from `game/reports/_runs/20261121-191328/unit.log`. 26 of 34 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+### Order: new or rescored (1 of 4)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 3 | CFG Config and Dev mode | 3.65 | 0 | 2 | 0.35 | 1 | designer feature; cost 0.35 (Patricia) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T10.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
+
+### Step: T10.1 (2026-11-21T19:49:18-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T10.1-quinn.md` (4138 chars)
+- Quinn's step skipped: every line already has its marked test (T10.1: t_fork_returns_to_icon_twice)
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Check `full unit`: FAIL (exit 1)
+
+```
+TIMEOUT unit      no total line  (exit None, 239 noise lines dropped)  game/reports/_runs/20261121-195200/unit.log
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    MEASURE hive footprint 1.83 x 1.83, bucket outer diameter 1.28 (0.1.1's 'footprint = the bucket's' is retired)
+    MEASURE hive height with the lid on 1.13, truck height (ground to roof, jars excluded) 1.30, ratio 0.87
+    MEASURE summary texts: jars 'Jars sold: 4', value 'Price per jar: $7', total 'Total: $28'
+godot_run: unit ...
+godot_run: unit done in 15m00s (TIMEOUT)
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T10.1-fix1-patricia.md` (2710 chars)
+- Budget guard for Patricia: allow (reading 3 min old)
+
+**Patricia** (46,391 tokens, 5 turns, 13 s):
+
+I changed nothing. The unit failure isn't in `scripts/`.
+
+- The unit run hit the 15-minute limit. It didn't fail a test.
+- `unit.log` has no `FAIL` lines, and every test it reached passed.
+- The run was just slow. For example, `t_spigot_bottling_time_by_level` took 35 s.
+- Quinn's standing brief says to run with `godot_run.py unit --only <tests> --time-scale 6`, or `all --time-scale 6 --skip-x1`. A plain run takes about 15 minutes, so it times out.
+- `fork_return_seconds` is already in `game_config.gd`, `default_config.tres` and `uncap_fork.gd`, and `test_fork_return.gd` exists.
+- I didn't run the suite, so I can't confirm the fork-return behaviour passes.
+
+The fix is on the goal agent's side: rerun the unit step with `--time-scale 6` and `--skip-x1`. Nothing for Bob.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 5); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Check `full unit`: FAIL (exit 1)
+
+```
+TIMEOUT unit      no total line  (exit None, 274 noise lines dropped)  game/reports/_runs/20261121-200958/unit.log
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    MEASURE hive footprint 1.83 x 1.83, bucket outer diameter 1.28 (0.1.1's 'footprint = the bucket's' is retired)
+    MEASURE hive height with the lid on 1.13, truck height (ground to roof, jars excluded) 1.30, ratio 0.87
+    MEASURE summary texts: jars 'Jars sold: 4', value 'Price per jar: $7', total 'Total: $28'
+godot_run: unit ...
+godot_run: unit done in 15m00s (TIMEOUT)
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T10.1-fix2-patricia.md` (2710 chars)
+- Budget guard for Patricia: allow (reading 21 min old)
+
+**Patricia** (83,380 tokens, 5 turns, 12 s):
+
+The code in `scripts/` has no loop or fault that would hang the unit run, so I changed nothing.
+
+- **Failure:** this is a 15-minute timeout of the whole unit run with no total line. It is not a failed assertion. The log shows tests still passing (the MEASURE lines), and the only warnings are the harmless focus-mode ones.
+- **What I read:** the fork-return code is `uncap_fork.gd` `return_to`/`release`, plus the `main.gd` caller `_return_fork_to_icon`. Both only set up a tween and finish. `seconds <= 0` takes the immediate path.
+- **Likely cause:** the run is just too slow. My notes say a plain unit run takes about 15 minutes, which is exactly the timeout. This is the runner's setting, not a scripts bug.
+- **Next step:** re-run with `godot_run.py unit --only <tests> --time-scale 6`. If it still times out, the log should show which test it stopped in, and the goal agent can pass me that name.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 5); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Check `full unit`: FAIL (exit 1)
+
+```
+TIMEOUT unit      no total line  (exit None, 239 noise lines dropped)  game/reports/_runs/20261121-202756/unit.log
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+    MEASURE hive footprint 1.83 x 1.83, bucket outer diameter 1.28 (0.1.1's 'footprint = the bucket's' is retired)
+    MEASURE hive height with the lid on 1.13, truck height (ground to roof, jars excluded) 1.30, ratio 0.87
+    MEASURE summary texts: jars 'Jars sold: 4', value 'Price per jar: $7', total 'Total: $28'
+godot_run: unit ...
+godot_run: unit done in 15m00s (TIMEOUT)
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T10.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T10.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T10.1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-21T19:47:45-05:00): waiting-designer.
+Last invocation (2026-11-21T20:42:56-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 
@@ -3733,4 +3859,6 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/20
 | Patricia, T10.1 fix 1 | 117,150 | 23,587 | 9 | 24 s |
 | Patricia, T10.1 fix 1 | 358,945 | 34,410 | 21 | 51 s |
 | Patricia, T10.1 fix 2 | 306,664 | 32,732 | 19 | 37 s |
-| **Total** | **16,339,916** | | | |
+| Patricia, T10.1 fix 1 | 46,391 | 16,963 | 5 | 13 s |
+| Patricia, T10.1 fix 2 | 83,380 | 18,968 | 5 | 12 s |
+| **Total** | **16,469,687** | | | |

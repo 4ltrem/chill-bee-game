@@ -1,7 +1,7 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-21T19:44:06-05:00",
+ "at": "2026-11-21T19:49:18-05:00",
  "unit_log": "game/reports/_runs/20261121-191328/unit.log",
  "goals": {
   "H": {
@@ -2277,11 +2277,11 @@
   },
   {
    "id": "CFG",
-   "score": 3.64,
+   "score": 3.65,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.36,
+    "cost": 0.35,
     "ready": 1,
     "blocked_by": []
    }
