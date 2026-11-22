@@ -14,7 +14,7 @@ func _cranking_at_second_stop() -> Dictionary:
 	var cen: Node = p["Centrifuge"]
 	# 0.2 item 9: the second stop is reached only by the Spin tap (done in _second_stop_with_capped), which starts the crank there
 	await _frames(3)
-	eq(cen.get("state"), _st(cen, "CRANKING"), "a real tap on Spin starts the crank at the second stop")
+	eq(cen.get("state"), _st(cen, "CRANKING"), "a real tap on Spin starts the crank at the second stop (diag: state=%s, cranking=%s)" % [str(cen.get("state")), str(_st(cen, "CRANKING"))])
 	return {"m": m, "p": p, "cen": cen}
 
 

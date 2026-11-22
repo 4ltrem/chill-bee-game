@@ -472,6 +472,15 @@ func _start_closing(on_own: bool) -> void:
 	_refresh_icons()
 
 
+## 0.3 item 5: the victory may show only on the farm view: no zoom (so no harvest or uncap drag), not at the second stop, no Shop sheet,
+## no welcome hold.
+func farm_view_idle() -> bool:
+	if zoom != Zoom.NONE or _at_second_stop or welcome_active():
+		return false
+	var shop: ShopUI = find_child("ShopPanel", true, false) as ShopUI
+	return shop == null or not shop.is_sheet_open()
+
+
 func _close_shop_sheet() -> void:
 	var shop: ShopUI = find_child("ShopPanel", true, false) as ShopUI
 	if shop != null and shop.is_sheet_open():

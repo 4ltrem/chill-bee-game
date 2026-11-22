@@ -128,11 +128,12 @@ func t_shop_buttons_disabled_unaffordable_maxed_locked() -> void:
 	e.call("set_level", "faster_delivery", _shop_unlock_level())
 	await _frames(2)
 	var rows: Array = _shop_rows(m)
-	eq(rows.size(), _SHOP_IDS.size(), "one row per upgrade")
-	if rows.size() != _SHOP_IDS.size():
+	# spec 0.3 item 3: plant_patch is an eighth row after Auto-Sell; this test covers the seven upgrade rows
+	eq(rows.size(), _SHOP_IDS.size() + 1, "one row per upgrade")
+	if rows.size() != _SHOP_IDS.size() + 1:
 		_fin()
 		return
-	for i in rows.size():
+	for i in _SHOP_IDS.size():
 		var id: String = _SHOP_IDS[i]
 		var btn: Button = _row_buy(rows[i])
 		ck(btn != null, "%s: the row has a buy button" % id)
@@ -179,7 +180,8 @@ func t_shop_rows_order_and_level_text() -> void:
 	e.call("set_level", "faster_delivery", _shop_unlock_level())
 	await _frames(2)
 	var rows: Array = _shop_rows(m)
-	eq(rows.size(), _SHOP_ORDER.size(), "six rows")
+	# spec 0.3 item 3: plant_patch is an eighth row after Auto-Sell; the order list covers the seven before it
+	eq(rows.size(), _SHOP_ORDER.size() + 1, "rows: seven upgrades plus plant_patch")
 	for i in mini(rows.size(), _SHOP_ORDER.size()):
 		eq(_row_name(rows[i]), _SHOP_ORDER[i], "row %d name" % i)
 		var lab: Label = _row_text(rows[i], "LevelLabel")
