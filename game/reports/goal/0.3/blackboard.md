@@ -1652,9 +1652,115 @@ Fix round 2 on T2.1 needs a visual number the designer has not voted on (sizes, 
 
 Comparison pages:
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note placeholder kept (designer 2026-11-22: placeholders close to UI_DESIGN are fine, confirmed at play-test): HabitatIcon is a 40x40 TextureRect, yellow-to-pink radial gradient in palette colours, between the number and +.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: placeholder kept (designer 2026-11-22: placeholders close to UI_DESIGN are fine, confirmed at play-test): HabitatIcon is a 40x40 TextureRect, yellow-to-pink radial gradient in palette colours, between the number and +.
+Branch `main`: stays on it.
+
+## Pass 17: scan (2026-11-22T15:55:48-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 3 of 14 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - Question: The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+Next: **T2.1** (score 3.77: designer feature; cost 0.23 (Quinn)).
+
+### Step: T2.1 (2026-11-22T15:55:48-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T2.1-quinn.md` (3843 chars)
+- Quinn's step skipped: every line already has its marked test (T2.1: t_flight_fill_rate_level3, t_habitat_start_cap_thriving_once, t_habitat_pill_order_plus_opens_shop_twice)
+- Tests this round (3): own (3): `t_flight_fill_rate_level3`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T2.1-fix1-quinn.md` (1500 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (67,387 tokens, 6 turns, 15 s):
+
+I changed nothing, because no test is failing in `tests/`. The only failing row is `mutate: no mutations to run`, and it comes from how the check was run, not from a test.
+
+`_tools/mutate.py` prints that message when its list is empty, and `--since` can empty it. `game/tests/mutations.json` already holds the T2.1 mutations:
+- `Health has no cap`
+- `thriving fires on every add at the cap`
+- `a new farm cannot reach thriving again`
+- `the + does not open the Shop`
+- `the number never refreshes`
+
+They name `t_habitat_start_cap_thriving_once` and `t_habitat_pill_order_plus_opens_shop_twice`. If the check used `--since`, my guess is that these entries were already in the reference version, so the filter dropped them. I didn't run `mutate.py`, so I can't confirm that.
+
+Next check: run `mutate.py` without `--since`, or with `--names` for those five.
+
+I ran no tests, mutations or shots, and I didn't commit.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 6); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (3): own (3): `t_flight_fill_rate_level3`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T2.1-fix2-quinn.md` (1500 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (92,188 tokens, 7 turns, 16 s):
+
+I couldn't tell which check failed. The prompt gave no failure message, and the only line under "mutations:" was "no mutations to run". I read `tests/test_habitat.gd` and compared it with the scene and scripts. The node names and the `add_habitat` and `thriving` API match. I found no defect in the tests, so I changed no test logic and ran nothing.
+
+I extended two FAIL messages in `t_habitat_pill_order_plus_opens_shop_twice` with a `diag:` part:
+- **Pill clearance:** the "the pill clears %s" message now prints the pill's rect and the rect of the icon it overlaps.
+- **Tap on +:** the "a real tap on + opens the Shop" message now prints the panel, the + button's rect, and whether it is disabled and visible.
+
+The next check will print these. If the failure is elsewhere, please send the failure text.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 7); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (3): own (3): `t_flight_fill_rate_level3`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`; changed in `tests/test_habitat.gd` (1): `t_habitat_pill_order_plus_opens_shop_twice`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T2.1: `mutations` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T2.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T2.1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-22T15:55:19-05:00): waiting-designer.
+Last invocation (2026-11-22T15:58:41-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -1699,4 +1805,6 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Patricia, T2.1 fix 2 | 29,511 | 16,509 | 2 | 8 s |
 | Patricia, T2.1 fix 1 | 70,168 | 21,179 | 6 | 12 s |
 | Bob, T2.1 fix 2 | 144,940 | 24,469 | 12 | 23 s |
-| **Total** | **6,135,960** | | | |
+| Quinn, T2.1 fix 1 | 67,387 | 18,823 | 6 | 15 s |
+| Quinn, T2.1 fix 2 | 92,188 | 21,867 | 7 | 16 s |
+| **Total** | **6,295,535** | | | |
