@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L48 · 2026-11-22 · goal_agent stopped twice on code that was fine: Godot's class cache was stale
+- **What broke:** the 0.3 run stopped `waiting-designer` on C1 and again on C3 after 2 fix rounds each: "Could not find type WelcomeOverlay" (then "PatchSlots"), `main.gd` / `flower_patch.gd` failing to load, and `tr(welcome_play)` returning the key. The fix rounds changed code that had no bug.
+- **How noticed:** the blackboard's test output; Quinn's C1 fix-round reply named the stale global class cache.
+- **Cause:** a step that adds a script with a new `class_name`, or a translation CSV row, needs Godot's import and class cache rebuilt; the step's `tests` check ran `godot_run.py unit start` without `--refresh`, so Godot never saw the new class or key.
+- **How fixed:** C1 accepted with no code change after Rex ran `start --refresh` and the 7 tests went green (`_runs/20261122-132648/`, `04f72f9`).
+- **Prevention:** `goal_agent.checks()` runs `godot_run.py --refresh unit start ...` every step (about 30 s). Test: the `--refresh` assert in `test_the_impact_list_briefs_quinn_beside_the_build` (66/66).
+
 ## L47 · 2026-11-22 · Two goal_agent fix rounds guessed at T15.1's failures; the bugs were in the new tests
 - **What broke:** item 15's run stopped `waiting-designer` with 2 of 3 new tests red after Quinn's and Patricia's fix rounds. Both replies said "I'm guessing" and ran nothing; Patricia's `back()` fix was real, the rest missed. Separately, `checkpoint.py` labelled both WIP commits "(unit green)" from the last full run while 3 tests were red.
 - **How noticed:** the blackboard's fix-round replies (D259).

@@ -96,6 +96,8 @@ func t_journal_panel_text_matches_csv_twice() -> void:
 		TranslationServer.set_locale(old)
 		_fin()
 		return
+	# spec 0.3 item 4: "Before thriving the Journal button is hidden; from thriving on it shows and opens the entry as in 0.2."
+	await _reach_thriving(m)
 	await _shop_open(m, true)   # item 14: the Journal button sits in the shop; open the sheet by a real Shop tap
 	var btn: Button = _nn(m, "JournalButton") as Button
 	var panel: Control = _nn(m, "JournalPanel") as Control

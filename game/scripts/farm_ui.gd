@@ -74,6 +74,7 @@ func _ready() -> void:
 	if _phase_toast != null:
 		_phase_toast.visible = false
 	Economy.phase_changed.connect(_on_phase_changed)
+	Economy.thriving.connect(_on_thriving)
 	_refresh_bees()
 	_refresh_money()
 	_refresh_hive()
@@ -86,6 +87,18 @@ func _on_phase_changed(new_phase: int) -> void:
 	_phase_toast_shown = true
 	if _phase_toast_label != null:
 		_phase_toast_label.text = tr("Phase 2: your farm starts running itself")
+	_phase_toast.visible = true
+	get_tree().create_timer(PHASE_TOAST_SECONDS).timeout.connect(func() -> void:
+		if is_instance_valid(_phase_toast):
+			_phase_toast.visible = false)
+
+
+## 0.3 item 4: toast on thriving (reuses PhaseToast / ToastLabel); key text lives in content/course-ending-text.md.
+func _on_thriving() -> void:
+	if _phase_toast == null:
+		return
+	if _phase_toast_label != null:
+		_phase_toast_label.text = tr("toast_bumble_visitor")
 	_phase_toast.visible = true
 	get_tree().create_timer(PHASE_TOAST_SECONDS).timeout.connect(func() -> void:
 		if is_instance_valid(_phase_toast):

@@ -668,6 +668,7 @@ class Loop(unittest.TestCase):
         self.assertNotIn("t_untouched", quinn)
         test_cmd = next(c for c in self.cmds if any("godot_run.py" in x for x in c))
         self.assertEqual(test_cmd[-8:], ["unit", "start", "play", *ga.ONLY_FLAGS, "--only", "t_old_bar"])   # L40, L41
+        self.assertIn("--refresh", test_cmd)   # L48: a step's new class_name or CSV key needs the import rebuilt
         gate = [c for c in self.cmds if any("godot_run.py" in x for x in c) and "--only" not in c]
         self.assertEqual([c[-4:] for c in gate], [ga.FULL_SUITE])            # L42: no step gate; the run's end, once
 

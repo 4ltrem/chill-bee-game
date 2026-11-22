@@ -1288,7 +1288,7 @@ def checks(spec, goal, base, version, suites=()):
     impact list reaches (L39), run with unit so a change that breaks play, measure or snapshot is seen in its step."""
     py = [sys.executable, "-I"]
     out = [("contract", py + ["_tools/contract_check.py"], None),
-           ("tests", py + ["_tools/godot_run.py", "unit", "start", *suites, *ONLY_FLAGS], ENV)]   # L41: flags, not env alone
+           ("tests", py + ["_tools/godot_run.py", "--refresh", "unit", "start", *suites, *ONLY_FLAGS], ENV)]   # L41: flags, not env alone; L48: a new class_name or CSV key needs the import rebuilt
     if goal["kind"] == "change" and "Bob" in goal["owners"]:
         out.append(("ui shots", py + ["_tools/ui_shots.py", f"{version}={ROOT}"], None))
         # one style-loop round (render, style_check, Vera; no Bob): a FAIL goes to Bob in the fix round. Each fix

@@ -13,7 +13,8 @@ const AUTHORED_RADIUS: float = 0.9
 
 
 func _ready() -> void:
-	add_to_group("flower_patch")
+	if not (get_parent() is PatchSlots):   # 0.3 item 3: a hidden slot joins the group only when planted (patch_slots.gd)
+		add_to_group("flower_patch")
 	var k: float = radius / AUTHORED_RADIUS
 	var base: MeshInstance3D = find_child("Base", true, false) as MeshInstance3D
 	var stems: Node3D = find_child("Stems", true, false) as Node3D

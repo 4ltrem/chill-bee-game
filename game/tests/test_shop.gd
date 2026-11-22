@@ -52,6 +52,13 @@ func _shop_open(m: Node, real: bool = false) -> void:
 	await _frames(3)
 
 
+## 0.3 item 4: the Journal button shows only from `thriving` on; reaches thriving through the economy's own API (add_habitat up to habitat_thriving).
+func _reach_thriving(m: Node) -> void:
+	var e: Node = _eco()
+	e.call("add_habitat", int(cv("habitat_thriving")))
+	await _frames(3)
+
+
 ## The visible rows of the shop list, in order (RowTemplate is hidden; handoff: ShopRows holds the rows).
 func _shop_rows(m: Node) -> Array:
 	var out: Array = []
@@ -205,8 +212,9 @@ func t_shop_auto_sell_locked_until_delivery_1() -> void:
 	await _frames(2)
 	await _shop_open(m)
 	var rows: Array = _shop_rows(m)
-	if rows.size() != _SHOP_IDS.size():
-		ck(false, "seven rows expected, got %d" % rows.size())
+	# spec 0.3 item 3: plant_patch is an eighth row after Auto-Sell (index 6 stays Auto-Sell)
+	if rows.size() != _SHOP_IDS.size() + 1:
+		ck(false, "eight rows expected, got %d" % rows.size())
 		_fin()
 		return
 	var row: Node = rows[6]
@@ -306,11 +314,14 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 			if panel != null and (panel.is_ancestor_of(c) or panel.top_level):   # item 14: an open sheet floats over the farm icons by design
 				continue
 			others.append([nm, c.get_global_rect()])
+	# spec 0.3 item 4: the Journal button is hidden before thriving; check it at thriving so its rect is still tested
+	await _reach_thriving(m)
 	var jb: Control = m.find_child("JournalButton", true, false) as Control
 	if jb != null and jb.is_visible_in_tree():
 		others.append(["JournalButton", jb.get_global_rect()])
 	var rows: Array = _shop_rows(m)
-	eq(rows.size(), _SHOP_IDS.size(), "six rows")
+	# spec 0.3 item 3: "all eight rows show at 720 × 1280" (plant_patch is the eighth row)
+	eq(rows.size(), _SHOP_IDS.size() + 1, "eight rows")
 	# at the top, then scrolled to the bottom: every row's on-screen part (clipped to the list) is clear of the other controls and of its neighbours
 	for pos in [0]:   # item 14: no scrolling, every row is on screen at once
 		await _frames(3)
@@ -352,7 +363,8 @@ func t_shop_seven_rows_on_screen_no_scroll() -> void:
 	await _frames(3)
 	ck(panel.find_children("*", "ScrollContainer", true, false).is_empty(), "no ScrollContainer anywhere under ShopPanel (item 14)")
 	var rows: Array = _shop_rows(m)
-	eq(rows.size(), _SHOP_IDS.size(), "all %d rows are shown at once" % _SHOP_IDS.size())
+	# spec 0.3 goal C4 item 3: "with `shop_layout = 0` all eight rows show at 720 × 1280 with no scroll container" (plant_patch is the eighth row)
+	eq(rows.size(), _SHOP_IDS.size() + 1, "all %d rows are shown at once" % (_SHOP_IDS.size() + 1))
 	var view: Rect2 = _vp()
 	var pr: Rect2 = panel.get_global_rect()
 	ck(view.encloses(pr), "the shop panel is on screen %s in %s" % [str(pr), str(view)])

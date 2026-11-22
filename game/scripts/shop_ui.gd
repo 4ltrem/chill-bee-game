@@ -266,7 +266,9 @@ func _refresh() -> void:
 		var gate_label: Label = r["gate"]
 		var buy: Button = r["buy"]
 		if level_label != null:
-			if Economy.is_one_time(id):
+			if id == "plant_patch":
+				level_label.text = "%d / %d" % [lv, Economy.max_level(id)]   # 0.3 item 3
+			elif Economy.is_one_time(id):
 				level_label.text = "Owned" if lv >= 1 else "Not owned"
 			else:
 				level_label.text = "Lv %d / %d" % [lv, Economy.max_level(id)]
@@ -275,4 +277,4 @@ func _refresh() -> void:
 			gate_label.visible = gate != ""
 		if buy != null:
 			buy.disabled = not Economy.can_buy(id)
-			buy.text = "Max" if maxed else "$%d" % Economy.cost(id)
+			buy.text = ("Thriving" if id == "plant_patch" else "Max") if maxed else "$%d" % Economy.cost(id)

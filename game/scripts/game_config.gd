@@ -116,6 +116,13 @@ extends Resource
 @export var habitat_health_max: int = 100
 @export var habitat_thriving: int = 100
 
+# --- 0.3 item 3: wildflower patches (values from the spec / Terry's course-ending balance; grow-in time is a placeholder) ---
+@export var patch_slots: int = 6
+@export var patch_base_cost: float = 40.0
+@export var patch_cost_growth: float = 1.25
+@export var habitat_health_per_patch: int = 15
+@export var patch_grow_seconds: float = 0.18   # PLACEHOLDER: the existing pop tween's length (honeycomb.gd)
+
 # --- 0.2 item 14: shop layout, pending the designer's Design Votes pick (0 = compact, always-on panel; 1 = sheet, opens from a Shop button) ---
 @export_enum("compact", "sheet") var shop_layout: int = 1   # PLACEHOLDER (designer vote): compact overlaps Spin in the farm view, so the default is sheet
 @export var shop_row_height: int = 64                    # PLACEHOLDER (item 14, Bob's value): px of each shop row's buy button

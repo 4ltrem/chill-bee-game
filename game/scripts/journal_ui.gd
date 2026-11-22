@@ -9,6 +9,7 @@ const ENTRY_ID: String = "BUMBLE_BEES"
 var _panel: Control
 var _title: Label
 var _body: Label
+var _open_button: Button
 
 
 func _ready() -> void:
@@ -21,8 +22,21 @@ func _ready() -> void:
 		_panel.visible = false
 	if open_button != null:
 		open_button.pressed.connect(open)
+		# 0.3 item 4: hidden until Habitat Health is thriving; habitat_changed also covers Reset.
+		_open_button = open_button
+		Economy.habitat_changed.connect(func(_h: int) -> void: _refresh_button())
+		_refresh_button()
 	if close_button != null:
 		close_button.pressed.connect(close)
+
+
+func _refresh_button() -> void:
+	if _open_button == null:
+		return
+	var unlocked: bool = Economy.habitat_health >= Economy.config.habitat_thriving
+	_open_button.visible = unlocked
+	if not unlocked:
+		close()
 
 
 func open() -> void:

@@ -34,12 +34,24 @@ func _ready() -> void:
 	for node in get_tree().get_nodes_in_group("bee_home"):
 		_home = to_local((node as Node3D).global_position)
 		break
+	refresh_patches()
+	_resize_flock()
+	Economy.swarm_level_changed.connect(func(_l: int) -> void: _resize_flock())
+	Economy.upgrade_changed.connect(_on_upgrade_changed)   # 0.3 item 3: a planted patch joins the foraging
+
+
+func _on_upgrade_changed(id: String, _l: int) -> void:
+	if id == "plant_patch" and is_inside_tree():
+		refresh_patches.call_deferred()   # deferred: patch_slots.gd updates the group on the same signal
+
+
+## Rebuilds the forage targets from group "flower_patch" (0.3 item 3: called when a patch is planted or hidden again).
+func refresh_patches() -> void:
+	_targets.clear()
 	for node in get_tree().get_nodes_in_group("flower_patch"):
 		_targets.append(to_local((node as Node3D).global_position))
 	if _targets.is_empty():
 		_targets.append(_home + Vector3(2.0, 0.0, 2.0))
-	_resize_flock()
-	Economy.swarm_level_changed.connect(func(_l: int) -> void: _resize_flock())
 
 
 ## While the zoom is open: bees keep flying but their paths are pushed (in the camera's plane, so depth is kept) out of the screen

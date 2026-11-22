@@ -58,7 +58,7 @@ func buy_swarm() -> bool:
 
 
 # --- 0.2 item 1: one table of upgrades (id, name, config keys, gate); shop_ui.gd builds one row per entry, in this order ---
-const UPGRADE_IDS: Array[String] = ["swarm", "flight", "heated_fork", "gearing", "spigot_flow", "faster_delivery", "auto_sell"]
+const UPGRADE_IDS: Array[String] = ["swarm", "flight", "heated_fork", "gearing", "spigot_flow", "faster_delivery", "auto_sell", "plant_patch"]   # 0.3 item 3: plant_patch is Tree C, last row
 
 signal upgrade_changed(id: String, level: int)
 
@@ -75,6 +75,7 @@ func upgrade_name(id: String) -> String:
 		"spigot_flow": return "Spigot Flow"
 		"faster_delivery": return "Faster Delivery"
 		"auto_sell": return "Auto-Sell"
+		"plant_patch": return "Plant wildflower patch"
 	return id
 
 
@@ -94,6 +95,7 @@ func max_level(id: String) -> int:
 		"spigot_flow": return config.spigot_flow_max_level
 		"faster_delivery": return config.faster_delivery_max_level
 		"auto_sell": return 1
+		"plant_patch": return config.patch_slots
 	return 0
 
 
@@ -117,6 +119,7 @@ func cost(id: String) -> int:
 		"spigot_flow": return floori(config.spigot_flow_base_cost * pow(config.spigot_flow_cost_growth, lv))
 		"faster_delivery": return floori(config.faster_delivery_base_cost * pow(config.faster_delivery_cost_growth, lv))
 		"auto_sell": return floori(config.auto_sell_cost)
+		"plant_patch": return floori(config.patch_base_cost * pow(config.patch_cost_growth, lv))
 	return 0
 
 
