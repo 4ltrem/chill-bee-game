@@ -1,0 +1,15 @@
+Goal agent run `0.3`, spec `game/specs/0.3-course-build.md`, goal C3. Work in the main folder on branch `main`; do not commit, switch branch or edit outside your folder. Follow `game/CONTEXT.md` (Process 2-5, 8). Read only the spec text below, not the whole spec.
+
+Patricia and Bob are building this change in parallel (Patricia). These existing tests read names it touches:
+- `tests/test_dev.gd` [unit]: `t_dev_ui_bounds_collects_controls` (shop_layout)
+- `tests/test_economy.gd` [unit]: `t_node_contract` (flower_patch), `_fp_prop` (flower_patch), `_fp_prop_contract` (flower_patch), `_fp_main` (flower_patch)
+- `tests/test_shop_zoom.gd` [unit]: `t_shop_compact_layout_nothing_in_zoom` (shop_layout)
+- `tests/test_zoom.gd` [unit]: `t_zoom_ui_and_camera` (shop_layout)
+- `tests/test_zoom2.gd` [unit]: `t_pop_tween_unchanged` (pop_tween)
+
+For each, compare what it expects with the spec text below. Update only a test whose expectation this change replaces (a flow step it now takes differently, a node it renames or removes, a value it changes), and quote the spec line in a comment beside it; most names on the list are only read, so leave those tests as they are. Change no expectation the spec does not change, and write no new tests (the contract lines do that). Do not run the tests: the goal agent runs them, with the windowed suites this list names, after the build. Test rules (L39): a flow step that several tests take (reach the second stop, open the shop, fill the bucket, wait for CRANKING) goes through one shared helper (unit: `tests/test_helpers_*.gd`; the windowed suites, which extend SceneTree: a static func in `tests/flow.gd`, preloaded, created on first need); reuse it, add it if it is missing, and never copy the steps inline, so a change to that step is fixed in one place. No literal cell index, node count or screen size: read it from the config, the scene, or ProjectSettings (`display/window/size/viewport_width` and `_height`).
+
+Spec text:
+3. **Plant wildflower patch.** A new Shop row in its own Tree C group under the Tree A/B rows: "Plant wildflower patch", level "n / 6", cost `patch_base_cost × patch_cost_growth^planted` ($40 × 1.25^n, floored; $449 for all six), available from the start (no gate). A purchase shows the next of `patch_slots` (6) hidden patches placed in `main.tscn` (instances of `scenes/props/flower_patch.tscn`), with a grow-in (scale 0 → 1, the existing pop tween family), adds it to group `flower_patch` so the bees forage on it, adds `habitat_health_per_patch` (15) to Health, and shows the toast `toast_patch_planted`. At 6 / 6 the row shows "Thriving" in place of a price. Patches raise habitat only: no honey effect. The slots sit clear of both camera stops' framing and of the truck's path. With `shop_layout = 0` (compact panel) the row is the panel's eighth row and all eight rows still show at 720 × 1280 without scrolling (0.2 item 14).
+
+Reply in at most 150 words: files changed, node names used, open questions.

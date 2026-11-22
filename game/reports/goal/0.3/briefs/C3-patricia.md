@@ -1,0 +1,12 @@
+Goal agent run `0.3`, spec `game/specs/0.3-course-build.md`, goal C3. Work in the main folder on branch `main`; do not commit, switch branch or edit outside your folder. Follow `game/CONTEXT.md` (Process 2-5, 8). Read only the spec text below, not the whole spec.
+
+Build your part (scripts/) of this change. Bob works on the scenes in parallel; the handoff is your contract. Run `python -I _tools/contract_check.py` before you finish.
+
+Your contract lines:
+- Item 3: `plant_patch` on the `Economy` upgrade table (cost, max level `patch_slots`, no gate); a patch-slots script that shows the next hidden slot with the grow-in and adds it to `flower_patch`; `bees.gd` refreshes its patch list when a patch is added.
+- Item 6: the skip icon script, using the same plant path as item 3 at no cost.
+
+Spec text:
+3. **Plant wildflower patch.** A new Shop row in its own Tree C group under the Tree A/B rows: "Plant wildflower patch", level "n / 6", cost `patch_base_cost × patch_cost_growth^planted` ($40 × 1.25^n, floored; $449 for all six), available from the start (no gate). A purchase shows the next of `patch_slots` (6) hidden patches placed in `main.tscn` (instances of `scenes/props/flower_patch.tscn`), with a grow-in (scale 0 → 1, the existing pop tween family), adds it to group `flower_patch` so the bees forage on it, adds `habitat_health_per_patch` (15) to Health, and shows the toast `toast_patch_planted`. At 6 / 6 the row shows "Thriving" in place of a price. Patches raise habitat only: no honey effect. The slots sit clear of both camera stops' framing and of the truck's path. With `shop_layout = 0` (compact panel) the row is the panel's eighth row and all eight rows still show at 720 × 1280 without scrolling (0.2 item 14).
+
+Reply in at most 150 words: files changed, node names used, open questions.

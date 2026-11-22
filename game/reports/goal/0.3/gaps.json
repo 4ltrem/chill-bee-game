@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T13:24:01-05:00",
+ "at": "2026-11-22T13:34:55-05:00",
  "unit_log": "game/reports/_runs/20261122-011146/unit.log",
  "goals": {
   "C1": {
@@ -14,10 +14,16 @@
     1
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "04f72f9",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -31,10 +37,16 @@
     2
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "3cd0470",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -271,67 +283,78 @@
  },
  "order": [
   {
-   "id": "C1",
-   "score": 12.67,
-   "factors": {
-    "unblocks": 3,
-    "value": 2,
-    "cost": 0.33,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C2",
-   "score": 9.67,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.33,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C3",
-   "score": 9.67,
+   "score": 9.68,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.33,
+    "cost": 0.32,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C4",
-   "score": 9.67,
+   "score": 9.68,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.33,
+    "cost": 0.32,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C5",
-   "score": 9.67,
+   "score": 9.68,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.33,
+    "cost": 0.32,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C6",
-   "score": 9.67,
+   "score": 9.68,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.33,
+    "cost": 0.32,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 3.74,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.26,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.2",
+   "score": 3.74,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.26,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 3.74,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.26,
     "ready": 1,
     "blocked_by": []
    }
@@ -345,51 +368,10 @@
     "cost": 0.26,
     "ready": 0,
     "blocked_by": [
-     "C1",
-     "C2",
      "C3",
      "C4",
      "C5",
      "C6"
-    ]
-   }
-  },
-  {
-   "id": "T1.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.26,
-    "ready": 0,
-    "blocked_by": [
-     "C1"
-    ]
-   }
-  },
-  {
-   "id": "T1.2",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.26,
-    "ready": 0,
-    "blocked_by": [
-     "C1"
-    ]
-   }
-  },
-  {
-   "id": "T2.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.26,
-    "ready": 0,
-    "blocked_by": [
-     "C2"
     ]
    }
   },
