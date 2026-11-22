@@ -1,14 +1,15 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T15:48:26-05:00",
+ "at": "2026-11-22T15:52:53-05:00",
  "unit_log": "game/reports/_runs/20261122-145415/unit.log",
  "goals": {
   "C1": {
    "kind": "change",
    "title": "Welcome screen.",
    "owners": [
-    "Patricia"
+    "Patricia",
+    "Bob"
    ],
    "items": [
     1
@@ -16,6 +17,11 @@
    "depends": [],
    "status": "done",
    "evidence": [
+    {
+     "kind": "node",
+     "name": "WelcomeOverlay",
+     "ok": true
+    },
     {
      "kind": "test",
      "name": "t_welcome_shows_title_and_play_only",
@@ -55,7 +61,8 @@
    "kind": "change",
    "title": "Habitat Health.",
    "owners": [
-    "Patricia"
+    "Patricia",
+    "Bob"
    ],
    "items": [
     2
@@ -63,6 +70,28 @@
    "depends": [],
    "status": "partial",
    "evidence": [
+    {
+     "kind": "node",
+     "name": "HabitatPill",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "TopInfo",
+     "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_habitat_start_cap_thriving_once",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_habitat_pill_order_plus_opens_shop_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
     {
      "kind": "ledger",
      "name": "3cd0470",
@@ -78,7 +107,8 @@
    "kind": "change",
    "title": "Plant wildflower patch.",
    "owners": [
-    "Patricia"
+    "Patricia",
+    "Bob"
    ],
    "items": [
     3
@@ -116,7 +146,8 @@
    "kind": "change",
    "title": "Victory screen.",
    "owners": [
-    "Patricia"
+    "Patricia",
+    "Bob"
    ],
    "items": [
     5
@@ -139,7 +170,8 @@
    "kind": "change",
    "title": "Skip to ending.",
    "owners": [
-    "Patricia"
+    "Patricia",
+    "Bob"
    ],
    "items": [
     6
@@ -230,8 +262,21 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_habitat_start_cap_thriving_once",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_habitat_pill_order_plus_opens_shop_twice",
+     "ok": false,
+     "result": "FAIL"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -335,7 +380,7 @@
     "C5",
     "C6"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -360,6 +405,18 @@
      "name": "t_welcome_play_text_translated_title_not",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_habitat_start_cap_thriving_once",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_habitat_pill_order_plus_opens_shop_twice",
+     "ok": false,
+     "result": "FAIL"
     }
    ],
    "built": false,
@@ -389,6 +446,21 @@
     "cost": 0.23,
     "ready": 1,
     "blocked_by": []
+   }
+  },
+  {
+   "id": "T.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.23,
+    "ready": 0,
+    "blocked_by": [
+     "C3",
+     "C4",
+     "C6"
+    ]
    }
   },
   {

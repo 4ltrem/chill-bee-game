@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/props/jar_crate.tscn" id="9_crate"]
 [ext_resource type="PackedScene" path="res://scenes/props/flower_patch.tscn" id="10_patch"]
 [ext_resource type="Script" path="res://scripts/pile.gd" id="11_pile"]
+[ext_resource type="Script" path="res://scripts/habitat_pill.gd" id="habitat_pill_script"]
 [ext_resource type="Script" path="res://scripts/harvest_ui.gd" id="12_hui"]
 [ext_resource type="Script" path="res://scripts/floating_icon.gd" id="8_icon"]
 [ext_resource type="PackedScene" path="res://scenes/props/uncapping_fork.tscn" id="uncap_fork_scene"]
@@ -295,6 +296,35 @@ theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 32
 text = "Bees: 20"
+
+[node name="HabitatPill" type="HBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+script = ExtResource("habitat_pill_script")
+
+[node name="HabitatCountLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/HabitatPill"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 40
+text = "0"
+
+[node name="HabitatIcon" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/HabitatPill"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.97, 0.66, 0.78, 1)
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 40
+text = "✿"
+
+[node name="HabitatPlusButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/HabitatPill"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "+"
 
 [node name="DevSpeedTag" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 visible = false

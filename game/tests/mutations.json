@@ -1677,5 +1677,55 @@
    "t_welcome_play_text_translated_title_not"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.3 item 2 Health has no cap",
+  "file": "scripts/economy.gd",
+  "find": "habitat_health = mini(habitat_health + amount, config.habitat_health_max)",
+  "replace": "habitat_health = habitat_health + amount",
+  "expect": [
+   "t_habitat_start_cap_thriving_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 2 twice step: thriving fires on every add at the cap",
+  "file": "scripts/economy.gd",
+  "find": "if habitat_health >= config.habitat_thriving and not _thriving_fired:",
+  "replace": "if habitat_health >= config.habitat_thriving:",
+  "expect": [
+   "t_habitat_start_cap_thriving_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 2 leave step: a new farm cannot reach thriving again",
+  "file": "scripts/economy.gd",
+  "find": "\thabitat_health = config.habitat_health_start\n\t_thriving_fired = false",
+  "replace": "\thabitat_health = config.habitat_health_start",
+  "expect": [
+   "t_habitat_start_cap_thriving_once"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 2 the + does not open the Shop",
+  "file": "scripts/habitat_pill.gd",
+  "find": "\t\tshop.set_sheet_open(true)",
+  "replace": "\t\tpass",
+  "expect": [
+   "t_habitat_pill_order_plus_opens_shop_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 2 the number never refreshes",
+  "file": "scripts/habitat_pill.gd",
+  "find": "Economy.habitat_changed.connect(func(_h: int) -> void: _refresh())",
+  "replace": "pass",
+  "expect": [
+   "t_habitat_pill_order_plus_opens_shop_twice"
+  ],
+  "suite": "unit"
  }
 ]
