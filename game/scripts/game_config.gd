@@ -111,6 +111,11 @@ extends Resource
 @export var auto_sell_unlock_delivery_level: int = 1    # PLACEHOLDER (spec 0.2 item 6): Faster Delivery level that unlocks Auto-Sell
 @export var auto_sell_cost: float = 250.0             # PLACEHOLDER (spec 0.2 item 6): one-time price; unlocks at Faster Delivery 1
 
+# --- 0.3 item 2: Habitat Health (values from the spec) ---
+@export var habitat_health_start: int = 10
+@export var habitat_health_max: int = 100
+@export var habitat_thriving: int = 100
+
 # --- 0.2 item 14: shop layout, pending the designer's Design Votes pick (0 = compact, always-on panel; 1 = sheet, opens from a Shop button) ---
 @export_enum("compact", "sheet") var shop_layout: int = 1   # PLACEHOLDER (designer vote): compact overlaps Spin in the farm view, so the default is sheet
 @export var shop_row_height: int = 64                    # PLACEHOLDER (item 14, Bob's value): px of each shop row's buy button

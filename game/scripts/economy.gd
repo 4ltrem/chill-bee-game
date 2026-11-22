@@ -174,7 +174,27 @@ func earn(amount: int) -> void:
 	money_changed.emit(money)
 
 
+## 0.3 item 2: Habitat Health. Nothing lowers it; capped at habitat_health_max; `thriving` fires once per farm.
+signal habitat_changed(health: int)
+signal thriving
+var habitat_health: int = config.habitat_health_start
+var _thriving_fired: bool = false
+
+
+func add_habitat(amount: int) -> void:
+	if amount <= 0:
+		return
+	habitat_health = mini(habitat_health + amount, config.habitat_health_max)
+	habitat_changed.emit(habitat_health)
+	if habitat_health >= config.habitat_thriving and not _thriving_fired:
+		_thriving_fired = true
+		thriving.emit()
+
+
 func reset() -> void:
+	habitat_health = config.habitat_health_start
+	_thriving_fired = false
+	habitat_changed.emit(habitat_health)
 	money = 0
 	swarm_level = 0
 	flight_level = 0
