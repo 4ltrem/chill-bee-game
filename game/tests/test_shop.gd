@@ -371,13 +371,12 @@ func t_shop_seven_rows_on_screen_no_scroll() -> void:
 	var pr: Rect2 = panel.get_global_rect()
 	ck(view.encloses(pr), "the shop panel is on screen %s in %s" % [str(pr), str(view)])
 	var others: Array = []
-	for nm in ["TopInfo", "SellIcon", "ForkIcon", "CentrifugeIcon", "BackButton", "HiveCountLabel", "HintLabel"]:
+	# spec 0.3 goal C3 item 3: "The open Shop may cover the Harvest, Sell and Spin icons ... this replaces 0.2 item 14's 'still clears the HUD'":
+	# the three icons and the HUD-clearance check are gone; rows still must not overlap each other and must stay on screen
+	for nm in ["BackButton", "HiveCountLabel", "HintLabel"]:
 		var c: Control = m.find_child(nm, true, false) as Control
 		if c != null and c.is_visible_in_tree() and c.get_global_rect().size.x > 0.0 and not panel.is_ancestor_of(c):
 			others.append([nm, c.get_global_rect()])
-	var top: Control = m.find_child("TopInfo", true, false) as Control
-	if top != null:
-		ck(pr.position.y >= top.get_global_rect().end.y, "the panel top %s clears the HUD (TopInfo bottom %s)" % [str(pr.position.y), str(top.get_global_rect().end.y)])
 	for i in rows.size():
 		var r: Rect2 = (rows[i] as Control).get_global_rect()
 		ck(pr.encloses(r), "row '%s' %s is inside the panel %s" % [_row_name(rows[i]), str(r), str(pr)])

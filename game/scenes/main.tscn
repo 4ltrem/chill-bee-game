@@ -1,8 +1,9 @@
-[gd_scene load_steps=50 format=3 uid="uid://ub4nv2k6wxgl"]
+[gd_scene load_steps=49 format=3 uid="uid://ub4nv2k6wxgl"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/welcome_overlay.gd" id="welcome_script"]
 [ext_resource type="Script" path="res://scripts/victory_overlay.gd" id="victory_script"]
+[ext_resource type="Script" path="res://scripts/skip_icon.gd" id="skip_icon_script"]
 [ext_resource type="PackedScene" path="res://scenes/props/hive.tscn" id="2_hive"]
 [ext_resource type="Script" path="res://scripts/bees.gd" id="3_bees"]
 [ext_resource type="Script" path="res://scripts/farm_ui.gd" id="4_farmui"]
@@ -12,22 +13,18 @@
 [ext_resource type="PackedScene" path="res://scenes/props/jar_crate.tscn" id="9_crate"]
 [ext_resource type="PackedScene" path="res://scenes/props/flower_patch.tscn" id="10_patch"]
 [ext_resource type="Script" path="res://scripts/pile.gd" id="11_pile"]
+[ext_resource type="Script" path="res://scripts/patch_slots.gd" id="patch_slots_script"]
 [ext_resource type="Script" path="res://scripts/habitat_pill.gd" id="habitat_pill_script"]
 [ext_resource type="Script" path="res://scripts/harvest_ui.gd" id="12_hui"]
 [ext_resource type="Script" path="res://scripts/floating_icon.gd" id="8_icon"]
 [ext_resource type="PackedScene" path="res://scenes/props/uncapping_fork.tscn" id="uncap_fork_scene"]
 
-[sub_resource type="Gradient" id="Gradient_wildflower"]
-offsets = PackedFloat32Array(0, 0.45, 0.5, 1)
-colors = PackedColorArray(1, 0.85, 0.3, 1, 1, 0.85, 0.3, 1, 0.97, 0.66, 0.78, 1, 0.97, 0.66, 0.78, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_wildflower"]
-gradient = SubResource("Gradient_wildflower")
-width = 40
-height = 40
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(1, 0.5)
+[sub_resource type="StyleBoxFlat" id="StyleBox_wildflower"]
+bg_color = Color(0.97, 0.66, 0.78, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 
 [sub_resource type="Environment" id="Environment_sky"]
 background_mode = 1
@@ -236,6 +233,39 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, 0)
 color = Color(1, 0.85, 0.3, 1)
 radius = 0.7
 
+[node name="PatchSlots" type="Node3D" parent="FarmWorld"]
+script = ExtResource("patch_slots_script")
+
+[node name="PatchSlot1" parent="FarmWorld/PatchSlots" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -1.5)
+color = Color(0.97, 0.66, 0.78, 1)
+radius = 0.8
+
+[node name="PatchSlot2" parent="FarmWorld/PatchSlots" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 3.5)
+color = Color(1, 0.85, 0.3, 1)
+radius = 0.8
+
+[node name="PatchSlot3" parent="FarmWorld/PatchSlots" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, -6.5)
+color = Color(0.78, 0.7, 0.93, 1)
+radius = 0.8
+
+[node name="PatchSlot4" parent="FarmWorld/PatchSlots" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, 0, -5)
+color = Color(1, 0.85, 0.3, 1)
+radius = 0.8
+
+[node name="PatchSlot5" parent="FarmWorld/PatchSlots" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0, -6)
+color = Color(0.97, 0.66, 0.78, 1)
+radius = 0.8
+
+[node name="PatchSlot6" parent="FarmWorld/PatchSlots" instance=ExtResource("10_patch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, -2.5)
+color = Color(0.78, 0.7, 0.93, 1)
+radius = 0.8
+
 [node name="Bees" type="MultiMeshInstance3D" parent="FarmWorld"]
 script = ExtResource("3_bees")
 
@@ -324,16 +354,15 @@ theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 40
 text = "0"
 
-[node name="HabitatIcon" type="TextureRect" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/HabitatPill"]
+[node name="HabitatIcon" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/HabitatPill"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
-texture = SubResource("GradientTexture2D_wildflower")
-expand_mode = 1
+theme_override_styles/panel = SubResource("StyleBox_wildflower")
 
 [node name="HabitatPlusButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/HabitatPill"]
-custom_minimum_size = Vector2(64, 64)
+custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "+"
@@ -394,14 +423,14 @@ mouse_filter = 2
 [node name="NameLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox/Info"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "Worker Swarm Count"
 autowrap_mode = 3
 
 [node name="LevelLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox/Info"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "Lv 0 / 5"
 
 [node name="GateLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox/Info"]
@@ -414,7 +443,7 @@ autowrap_mode = 3
 
 [node name="BuyButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox"]
 focus_mode = 0
-custom_minimum_size = Vector2(160, 64)
+custom_minimum_size = Vector2(160, 120)
 layout_mode = 2
 theme_override_colors/font_disabled_color = Color(1, 0.96, 0.86, 1)
 theme_override_font_sizes/font_size = 36
@@ -432,7 +461,7 @@ text = "$40"
 
 [node name="JournalButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
 focus_mode = 0
-custom_minimum_size = Vector2(120, 64)
+custom_minimum_size = Vector2(120, 120)
 layout_mode = 2
 theme_override_colors/font_disabled_color = Color(1, 0.96, 0.86, 1)
 theme_override_font_sizes/font_size = 36
@@ -544,6 +573,31 @@ text = "Sell $30"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../../FarmWorld/Truck/SellAnchor")
 screen_offset = Vector2(0, 0)
+
+[node name="SkipIcon" type="Button" parent="FarmUIRoot/FarmUI"]
+focus_mode = 0
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -144.0
+offset_top = 32.0
+offset_right = -24.0
+offset_bottom = 152.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBox_circle")
+theme_override_styles/hover = SubResource("StyleBox_circle")
+theme_override_styles/pressed = SubResource("StyleBox_circle_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = ">>"
+script = ExtResource("skip_icon_script")
 
 [node name="AutoTag" type="Label" parent="FarmUIRoot/FarmUI"]
 visible = false

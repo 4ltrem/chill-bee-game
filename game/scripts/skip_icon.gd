@@ -10,6 +10,8 @@ const LABEL_KEY: String = "skip_icon_label"
 
 func _ready() -> void:
 	tooltip_text = tr(LABEL_KEY)
+	if "accessibility_name" in self:
+		set("accessibility_name", tr(LABEL_KEY))
 	focus_mode = Control.FOCUS_NONE
 	pressed.connect(_on_pressed)
 	Economy.habitat_changed.connect(func(_h: int) -> void: _sync())
@@ -22,13 +24,18 @@ func _notification(what: int) -> void:
 
 
 func _on_pressed() -> void:
-	if is_thriving():
+	if is_thriving() or _welcome_up():
 		return
 	Economy.set_level("plant_patch", Economy.max_level("plant_patch"))   # free: no money taken
 
 
 func is_thriving() -> bool:
 	return Economy.habitat_health >= Economy.config.habitat_thriving
+
+
+func _welcome_up() -> bool:
+	var m: Node = get_tree().current_scene
+	return m != null and m.has_method("welcome_active") and m.welcome_active()
 
 
 func _sync() -> void:

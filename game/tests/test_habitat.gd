@@ -58,7 +58,7 @@ func t_habitat_pill_order_plus_opens_shop_twice() -> void:
 	ck(pill.is_visible_in_tree(), "the pill shows in the farm view")
 	var lab: Label = pill.find_child("HabitatCountLabel", true, false) as Label
 	var plus: Button = pill.find_child("HabitatPlusButton", true, false) as Button
-	var icons: Array = pill.find_children("*", "TextureRect", true, false)
+	var icons: Array = pill.find_children("HabitatIcon", "Control", true, false)   # a flat Panel, no texture (designer 2026-11-22, V4)
 	ck(lab != null and plus != null and not icons.is_empty(), "number label, icon and + button all exist")
 	if lab == null or plus == null or icons.is_empty():
 		_fin()
