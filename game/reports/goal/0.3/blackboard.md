@@ -1417,9 +1417,128 @@ Fix round 2 on T1.1, T1.2 raised a question the spec does not answer, about how 
 |---|---|---|
 | 1 | Quinn | I found no game bug and no open spec question, so nothing is marked `(designer)`. |
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note no designer question: Quinn's line only mentioned the (designer) tag (L49, detector fixed). His fix (Flow.no_welcome in ui_bounds_pixels.gd) is in place and not yet run.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: no designer question: Quinn's line only mentioned the (designer) tag (L49, detector fixed). His fix (Flow.no_welcome in ui_bounds_pixels.gd) is in place and not yet run.
+Branch `main`: stays on it.
+
+## Pass 15: scan (2026-11-22T15:48:26-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 4 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Welcome screen. | change | Patricia | done | ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ ledger 04f72f9 |
+| T1.1 every test run sets `show_welcome = false` except the welcom | test | Quinn | done | ✓ test t_welcome_off_by_default_in_tests |
+| T1.2 item 1: at launch with `show_welcome = true` the overlay sho | test | Quinn | done | ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_play_text_translated_title_not |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | done | ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not |
+
+### Order: new or rescored (5 of 5)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T2.1 item 2: Health starts at `habitat_health_start`; ` | 3.77 | 0 | 2 | 0.23 | 1 | designer feature; cost 0.23 (Quinn) |
+| 2 | T5.1 item 5: reaching thriving during a zoom shows no v | 3.77 | 0 | 2 | 0.23 | 1 | designer feature; cost 0.23 (Quinn) |
+| 3 | T3.1 item 3: the row's cost equals `40 × 1.25^n` (floor | 0.0 | 0 | 2 | 0.23 | 0 | waits on C3 |
+| 4 | T4.1 item 4: before thriving the Journal button is hidd | 0.0 | 0 | 2 | 0.23 | 0 | waits on C4 |
+| 5 | T6.1 item 6: the skip icon reaches thriving with money  | 0.0 | 0 | 2 | 0.23 | 0 | waits on C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - Question: The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+Next: **T2.1** (score 3.77: designer feature; cost 0.23 (Quinn)).
+
+### Step: T2.1 (2026-11-22T15:48:26-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T2.1-quinn.md` (3843 chars)
+- Quinn's step skipped: every line already has its marked test (T2.1: t_flight_fill_rate_level3)
+- Tests this round (1): own (1): `t_flight_fill_rate_level3`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T2.1-fix1-quinn.md` (1500 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (270,880 tokens, 20 turns, 50 s):
+
+The "no mutations to run" failure came from missing 0.3 item 2 coverage in `tests/`. There were no Habitat Health tests or mutations at all. I ran nothing, as instructed.
+
+**Added:**
+- `game/tests/test_habitat.gd`, extending `test_welcome.gd`, with two tests tagged `# goal T2.1`:
+  - `t_habitat_start_cap_thriving_once` checks the start value, the cap and that nothing lowers Health. It also checks that `thriving` fires once per farm, and again after a reset.
+  - `t_habitat_pill_order_plus_opens_shop_twice` checks that `HabitatPill` sits in `TopInfo` and shows the Health number. It checks the order (number, icon, +) and that the pill clears the Harvest, Spin and Sell icons. It then taps + with real input twice and checks the Shop opens each time.
+- Both tests are registered in `run_tests.gd`, and its `extends` now points at `test_habitat.gd`.
+- Five mutations in `mutations.json`: no cap, `thriving` firing repeatedly, `thriving` not re-armed after a reset, + not opening the Shop, and the number never refreshing.
+
+**Not mine to fix:** `main.tscn` has no `HabitatPill` node yet. That is Bob's scene work. Until he adds it, the pill test fails with "HabitatPill exists".
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 8 (cap 15; CLI num_turns 20); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (3): own (3): `t_flight_fill_rate_level3`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`; changed in `tests/run_tests.gd` (2): `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`; changed in `tests/test_habitat.gd` (2): `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      2 passed, 1 failed  (godot exit 1, 6 noise lines dropped)  game/reports/_runs/20261122-155004/unit.log
+    FAIL  t_habitat_pill_order_plus_opens_shop_twice  HabitatPill exists | the pill is in TopInfo  (1232 ms)
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/T2.1-fix2-patricia.md` (2036 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (29,511 tokens, 2 turns, 8 s):
+
+The blackboard already says the cause: `main.tscn` has no `HabitatPill` node. That's scene work in `scenes/`, which is Bob's folder, so I changed nothing. `scripts/habitat_pill.gd` exists with `class_name HabitatPill`, and the test finds it by node name.
+
+**Not fixed (Bob, `game/scenes/main.tscn`):** add a `HabitatPill` Control under `TopInfo` with `habitat_pill.gd` attached. Its children must be `HabitatCountLabel` (Label) and `HabitatPlusButton` (Button), plus a wildflower icon between them. The order is number, icon, +. The pill must clear the Harvest, Spin and Sell anchors.
+
+I didn't run any tests, mutations or shots.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 2 (cap 15; CLI num_turns 2); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (3): own (3): `t_flight_fill_rate_level3`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`; changed in `tests/run_tests.gd` (2): `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`; changed in `tests/test_habitat.gd` (2): `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`; last failures (1): `t_habitat_pill_order_plus_opens_shop_twice`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      2 passed, 1 failed  (godot exit 1, 6 noise lines dropped)  game/reports/_runs/20261122-155101/unit.log
+    FAIL  t_habitat_pill_order_plus_opens_shop_twice  HabitatPill exists | the pill is in TopInfo  (1284 ms)
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T2.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T2.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T2.1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-22T15:46:52-05:00): waiting-designer.
+Last invocation (2026-11-22T15:51:43-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -1460,4 +1579,6 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Quinn, T1.1, T1.2 | 1,367,627 | 81,241 | 52 | 130 s |
 | Patricia, T1.1, T1.2 fix 1 | 70,231 | 20,650 | 6 | 16 s |
 | Quinn, T1.1, T1.2 fix 2 | 52,880 | 19,293 | 4 | 9 s |
-| **Total** | **5,620,461** | | | |
+| Quinn, T2.1 fix 1 | 270,880 | 48,881 | 20 | 50 s |
+| Patricia, T2.1 fix 2 | 29,511 | 16,509 | 2 | 8 s |
+| **Total** | **5,920,852** | | | |
