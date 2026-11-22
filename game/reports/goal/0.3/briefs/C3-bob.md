@@ -1,0 +1,11 @@
+Goal agent run `0.3`, spec `game/specs/0.3-course-build.md`, goal C3. Work in the main folder on branch `main`; do not commit, switch branch or edit outside your folder. Follow `game/CONTEXT.md` (Process 2-5, 8). Read only the spec text below, not the whole spec.
+
+Build your part (scenes/ and materials/) of this change. Patricia works on the scripts in parallel; the handoff is your contract. Run `python -I _tools/contract_check.py` before you finish.
+
+Your contract lines:
+- Item 3: six hidden `flower_patch.tscn` slots in `main.tscn`, clear of both camera stops and the truck's path; the Shop row, and the compact panel grown for its eighth row.
+
+Spec text:
+3. **Plant wildflower patch.** A new Shop row in its own Tree C group under the Tree A/B rows: "Plant wildflower patch", level "n / 6", cost `patch_base_cost × patch_cost_growth^planted` ($40 × 1.25^n, floored; $449 for all six), available from the start (no gate). A purchase shows the next of `patch_slots` (6) hidden patches placed in `main.tscn` (instances of `scenes/props/flower_patch.tscn`, children of a `PatchSlots` node using `patch_slots.gd`, planted in child order; a hidden slot is not in group `flower_patch` until planted, so at start the group still holds only the three decorative patches), with a grow-in (scale 0 → 1, the existing pop tween family), adds it to group `flower_patch` so the bees forage on it, adds `habitat_health_per_patch` (15) to Health, and shows the toast `toast_patch_planted`. At 6 / 6 the row shows "Thriving" in place of a price. Patches raise habitat only: no honey effect. The slots sit clear of both camera stops' framing and of the truck's path. With `shop_layout = 0` (compact panel) the row is the panel's eighth row and all eight rows still show at 720 × 1280 without scrolling (0.2 item 14). The open Shop (panel or sheet) may cover the Harvest, Sell and Spin icons (designer, 2026-11-22: "the shop screen can overlap any harvest, sell or spin icons as it takes most of the screen"), so the panel grows taller for the eighth row rather than shrinking rows or scrolling; this replaces 0.2 item 14's "still clears the HUD". Its rows must not overlap each other, and every row stays on screen.
+
+Reply in at most 150 words: files changed, node names used, open questions.

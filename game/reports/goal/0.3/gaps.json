@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T16:18:36-05:00",
+ "at": "2026-11-22T16:19:05-05:00",
  "unit_log": "game/reports/_runs/20261122-145415/unit.log",
  "goals": {
   "C1": {
@@ -137,10 +137,16 @@
     4
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "8b8a767",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -475,17 +481,6 @@
  },
  "order": [
   {
-   "id": "C4",
-   "score": 6.72,
-   "factors": {
-    "unblocks": 1,
-    "value": 2,
-    "cost": 0.28,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C3",
    "score": 6.42,
    "factors": {
@@ -508,6 +503,17 @@
    }
   },
   {
+   "id": "T4.1",
+   "score": 3.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T3.1",
    "score": 0.0,
    "factors": {
@@ -517,19 +523,6 @@
     "ready": 0,
     "blocked_by": [
      "C3"
-    ]
-   }
-  },
-  {
-   "id": "T4.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C4"
     ]
    }
   },

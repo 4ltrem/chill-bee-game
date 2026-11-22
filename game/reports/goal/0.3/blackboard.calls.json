@@ -374,5 +374,37 @@
   "turns": 8,
   "seconds": 25,
   "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Patricia, C3",
+  "tokens": 89240,
+  "final": 26082,
+  "turns": 5,
+  "seconds": 15,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Quinn, C3",
+  "tokens": 219847,
+  "final": 33228,
+  "turns": 10,
+  "seconds": 38,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Bob, C3",
+  "tokens": 487497,
+  "final": 45849,
+  "turns": 23,
+  "seconds": 80,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Bob, C3 fix 1",
+  "tokens": 47938,
+  "final": 17380,
+  "turns": 3,
+  "seconds": 14,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
  }
 ]

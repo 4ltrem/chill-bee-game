@@ -3,7 +3,7 @@ spec: 0.3-course-build.md
 version: 0.3
 run: 0.3
 started: 2026-11-22
-result: stopped
+result: waiting-designer
 ---
 # Goal agent: 0.3-course-build.md (run 0.3)
 
@@ -2199,9 +2199,162 @@ Command: `goal_agent.py game/specs/0.3-course-build.md --accept C4 --note built 
 - Change (orchestrator, Process 9): built earlier (journal_ui.gd hides JournalButton until thriving and on reset; farm_ui.gd shows toast_bumble_visitor on Economy.thriving), committed in e9fe638; contract check clean; T4.1 tests follow
 - Accepted: checkpoint `8b8a767` on `main`
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 23: scan (2026-11-22T16:19:05-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 8 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C3 Plant wildflower patch. | change | Patricia, Bob | missing | ✗ node PatchSlots |
+| C4 The bumble bee visitor. | change | Patricia | partial (built, waits on its tests) | ✓ ledger 8b8a767 |
+| C6 Skip to ending. | change | Patricia, Bob | missing | ✗ node SkipIcon |
+
+### Order: new or rescored (3 of 5)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C3 Plant wildflower patch. | 6.42 | 1 | 2 | 0.58 | 1 | 1 goal(s) wait on it; designer feature; cost 0.58 (Patricia, Bob) |
+| 2 | C6 Skip to ending. | 6.42 | 1 | 2 | 0.58 | 1 | 1 goal(s) wait on it; designer feature; cost 0.58 (Patricia, Bob) |
+| 3 | T4.1 item 4: before thriving the Journal button is hidd | 3.78 | 0 | 2 | 0.22 | 1 | designer feature; cost 0.22 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C3** (score 6.42: 1 goal(s) wait on it; designer feature; cost 0.58 (Patricia, Bob)).
+
+### Step: C3 (2026-11-22T16:19:09-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C3-patricia.md` (2423 chars)
+- Brief for Bob: `game/reports/goal/0.3/briefs/C3-bob.md` (2281 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C3-quinn.md` (3673 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+- Budget guard for Quinn: override
+
+**Patricia** (89,240 tokens, 5 turns, 15 s):
+
+Items 3 and 6 were already built in earlier steps of this run. I checked them against the contract and changed nothing.
+
+**What's in place**
+- `economy.gd` has `plant_patch` as the last upgrade row. Its cost is `patch_base_cost × patch_cost_growth^level`, floored, and its max level is `patch_slots`, with no gate.
+- `patch_slots.gd` (`PatchSlots`) grows the next hidden slot in, adds it to group `flower_patch`, adds the Health, and emits `toast_requested("toast_patch_planted")`.
+- `skip_icon.gd` (`SkipIcon`) plants the remaining patches through the same path at no cost.
+- `bees.gd` calls `refresh_patches()` when `plant_patch` changes.
+- `shop_ui.gd` shows "n / 6" and "Thriving" at max.
+
+`python -I _tools/contract_check.py` passes: 88 lookups, 0 unresolved. I did not run Quinn's tests.
+
+**Node names:** `PatchSlots` (Node3D, six `flower_patch.tscn` children) and `SkipIcon` (Button under FarmUI).
+
+**For Quinn:** the skip icon's real press and the shop buy path have no input tests yet.
+
+**Open question:** `journal.csv` has no `toast_*` rows, so `tr()` returns the raw key until the exporter covers them. I left that alone because the exporter is outside my folder.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 4 (cap 30; CLI num_turns 5); end `success`
+
+
+**Quinn** (219,847 tokens, 10 turns, 38 s):
+
+I changed one test file, `game/tests/test_shop.gd`, and ran nothing.
+
+**What I changed:** In the compact-panel test at about line 350, the spec replaces 0.2 item 14's "still clears the HUD". So I removed the "panel top clears the HUD (TopInfo)" check. I also dropped `TopInfo`, `SellIcon`, `ForkIcon` and `CentrifugeIcon` from the list of controls the rows are checked against. The spec line is quoted in a comment beside the edit. The rows-inside-panel, rows-on-screen and rows-don't-overlap-each-other checks stay as they were.
+
+**Left alone:** I compared the other listed tests with the spec and changed none of them.
+- `t_shop_rows_order_and_level_text` and the eight-row count already expect the eighth row.
+- `test_economy.gd` line 391 still expects 3 nodes in group `flower_patch` at start, which matches the spec.
+- `t_dev_ui_bounds_collects_controls`, `t_zoom_ui_and_camera`, `t_pop_tween_unchanged` and the `_fp_*` helpers don't conflict.
+
+**Node names used:** `ShopPanel`, `BackButton`, `HiveCountLabel`, `HintLabel`. I didn't check for `PatchSlots` or `plant_patch` in the scene.
+
+**Open question:** The spec only lets the open Shop cover the Harvest, Sell and Spin icons. The taller panel may also cover `HiveCountLabel` and `HintLabel`, which are still checked. I kept them because the spec doesn't permit that.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 8 (cap 30; CLI num_turns 10); end `success`
+
+
+**Bob** (487,497 tokens, 23 turns, 80 s):
+
+The six hidden slots are in `main.tscn`. I did not touch the Shop row or the compact panel, so the eighth row and the compact fit are unchecked. `contract_check` reports 0 unresolved.
+
+- **File changed:** `game/scenes/main.tscn` only. I added the ext_resource `patch_slots_script` (`scripts/patch_slots.gd`).
+- **Nodes:** `FarmWorld/PatchSlots` (Node3D) with children `PatchSlot1` to `PatchSlot6`, each an instance of `flower_patch.tscn`, in planting order.
+- **Placement:** all six sit on the west and back side of the ground. Each is more than 5 units from `ZoomFraming` (the hive stop), and the truck drives +x along z≈5.2, so none are near its path. They are inside the farm camera's frame, so planted patches show.
+- **Shop row:** `shop_ui.gd` builds rows at runtime from `Economy`, so `main.tscn` needs no new row node. With `shop_layout = 0` the panel grows into the Spacer's space.
+- **Render:** the shot (now deleted) showed the farm behind the welcome overlay, with the six slots hidden and the existing patches unchanged.
+
+**Open question:** should I render `shop_layout = 0` to confirm eight rows fit at 720×1280? I didn't, because render.gd has no layout argument.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 13 (cap 30; CLI num_turns 23); end `success`
+
+- Tests this round (9): own (6): `t_dev_ui_bounds_collects_controls`, `t_node_contract`, `t_pop_tween_unchanged`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_rows_order_and_level_text`, `t_zoom_ui_and_camera`; changed in `tests/test_shop.gd` (1): `t_shop_seven_rows_on_screen_no_scroll`; impacted by `scenes/main.tscn` (via `FarmWorld`) (3): `t_fork_prop_follows_drag_twice`, `t_fork_returns_to_icon_twice`, `t_node_contract`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: FAIL (exit 1)
+
+```
+Style board `game/reports/style/0.3-goal-c3/run-1/blackboard.md`, Result:
+
+Still FAIL after round 1 (max rounds 1 or the token cap). Open rows:
+
+| # | Rule | Where | Finding | Fix |
+|---|---|---|---|---|
+| 1 | V4 | `scenes/main.tscn:25` | `GradientTexture2D` `GradientTexture2D_wildflower` is not a primitive mesh | use BoxMesh, CylinderMesh, SphereMesh, PlaneMesh, PrismMesh or CapsuleMesh |
+| 2 | V11 | `scenes/main.tscn:370` | Button `HabitatPlusButton` touch area width 64, height 64 px < 120 | raise `custom_minimum_size` to at least 120 in each dimension |
+| 3 | V11 | `scenes/main.tscn:451` | Button `BuyButton` touch area height 64 px < 120 | raise `custom_minimum_size` to at least 120 in each dimension |
+| 4 | V11 | `scenes/main.tscn:469` | Button `JournalButton` touch area height 64 px < 120 | raise `custom_minimum_size` to at least 120 in each dimension |
+| 5 | V12 | `scenes/main.tscn:431` | Label `NameLabel` font size 24 px < 28 | set `theme_override_font_sizes/font_size = 28` or more |
+| 6 | V12 | `scenes/main.tscn:438` | Label `LevelLabel` font size 24 px < 28 | set `theme_override_font_sizes/font_size = 28` or more |
+
+The game was not changed, and the sandbox has no changes to propose.
+
+Transcripts: `_meta/sessions/runs/2026-11-22-style-0.3-goal-c3-run-1/`
+
+|---|---|---|---|---|
+
+(6 older row(s) about files this step did not change were left out: not yours this round, change nothing for them.)
+```
+
+#### Fix round 1: to Bob
+
+- Brief for Bob: `game/reports/goal/0.3/briefs/C3-fix1-bob.md` (4476 chars)
+- Budget guard for Bob: override
+
+**Bob** (47,938 tokens, 3 turns, 14 s):
+
+I changed nothing this round. Each of the six open rows is either a visual number or needs a decision first.
+
+- **Row 1 (V4):** `GradientTexture2D_wildflower` at `main.tscn:25` is the texture on the `HabitatIcon` TextureRect (line 366). It is a UI icon, not a 3D mesh, so the rule's list of primitive meshes doesn't fit it. Swapping the icon would change what the designer sees. The designer or the style check should decide: A: exempt UI icon textures from V4. B: replace the icon with a different primitive-based or flat-colour icon. (designer)
+- **Rows 2–4 (V11):** `HabitatPlusButton` (64×64), `BuyButton` (height 64) and `JournalButton` (height 64) are below the 120 px touch minimum. Raising `custom_minimum_size` changes sizes the designer voted on in item 12. A: raise all three to 120. B: keep the voted sizes and relax V11 for these buttons. (designer)
+- **Rows 5–6 (V12):** `NameLabel` and `LevelLabel` are at font size 24, below 28. This is a font-size change, so it's also the designer's. A: set both to 28. B: keep 24 and relax V12. (designer)
+
+The failures are all in `scenes/main.tscn`. Nothing is in `scripts/`.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 3); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: STOP (3 for the designer)
+
+## Waiting for the designer
+
+Fix round 1 on C3 needs a visual number the designer has not voted on (sizes, scales, offsets, fonts and margins are the designer's). Each row becomes a question with votes on the Design Votes page (`_tools/compare_page.py add`); its link goes here. A `changed` row is already in the tree, uncommitted: undo it if the vote keeps the old value. Then rerun `goal_agent.py 0.3-course-build.md --note "<the pick>"`.
+
+| # | Who | Row |
+|---|---|---|
+| 1 | Bob | Row 1 (V4):** `GradientTexture2D_wildflower` at `main.tscn:25` is the texture on the `HabitatIcon` TextureRect (line 366). It is a UI icon, not a 3D mesh, so the rule's list of primitive meshes doesn't fit it. Swapping the icon would change what the designer sees. The designer or the style check should decide: A: exempt UI icon textures from V4. B: replace the icon with a different primitive-based or flat-colour icon. (designer) |
+| 2 | Bob | Rows 2–4 (V11):** `HabitatPlusButton` (64×64), `BuyButton` (height 64) and `JournalButton` (height 64) are below the 120 px touch minimum. Raising `custom_minimum_size` changes sizes the designer voted on in item 12. A: raise all three to 120. B: keep the voted sizes and relax V11 for these buttons. (designer) |
+| 3 | Bob | Rows 5–6 (V12):** `NameLabel` and `LevelLabel` are at font size 24, below 28. This is a font-size change, so it's also the designer's. A: set both to 28. B: keep 24 and relax V12. (designer) |
+
+Comparison pages:
+
 ## Result
 
-C4 accepted with a manual fix (checkpoint `8b8a767` on `main`). Rerun `goal_agent.py 0.3-course-build.md` to build the rest.
+Last invocation (2026-11-22T16:33:11-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -2254,4 +2407,8 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Bob, T5.1 fix 2 | 29,706 | 16,587 | 2 | 6 s |
 | Quinn, T5.1 fix 1 | 109,852 | 21,335 | 8 | 18 s |
 | Quinn, T5.1 fix 2 | 126,360 | 28,455 | 8 | 25 s |
-| **Total** | **7,174,303** | | | |
+| Patricia, C3 | 89,240 | 26,082 | 5 | 15 s |
+| Quinn, C3 | 219,847 | 33,228 | 10 | 38 s |
+| Bob, C3 | 487,497 | 45,849 | 23 | 80 s |
+| Bob, C3 fix 1 | 47,938 | 17,380 | 3 | 14 s |
+| **Total** | **8,018,825** | | | |
