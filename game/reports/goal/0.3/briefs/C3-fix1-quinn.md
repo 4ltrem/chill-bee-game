@@ -3,16 +3,12 @@ Goal agent run `0.3`, fix round 1 for goal C3 of `game/specs/0.3-course-build.md
 Your folder: tests/. Update only a test whose expectation this change of the spec replaces, and quote the spec line in a comment beside it. Any other failure is a finding against the code: leave the test and say which. If neither the failure message nor the code shows why a test fails, do not guess a fix: extend that test's FAIL message with one `diag:` part printing the state that would explain it (the state machine's value, counts on each side, elapsed vs. cap time), change nothing else for it, and say so; the next check prints it. Do not run the tests: the goal agent runs them after you. Test rules (L39): a flow step that several tests take (reach the second stop, open the shop, fill the bucket, wait for CRANKING) goes through one shared helper (unit: `tests/test_helpers_*.gd`; the windowed suites, which extend SceneTree: a static func in `tests/flow.gd`, preloaded, created on first need); reuse it, add it if it is missing, and never copy the steps inline, so a change to that step is fixed in one place. No literal cell index, node count or screen size: read it from the config, the scene, or ProjectSettings (`display/window/size/viewport_width` and `_height`).
 
 tests:
-    FAIL  t_shop_rows_order_and_level_text  six rows: expected 7 got 8  (1017 ms)
-    FAIL  t_shop_auto_sell_locked_until_delivery_1  seven rows expected, got 8  (806 ms)
-    FAIL  t_shop_no_row_overlaps_other_controls  six rows: expected 7 got 8  (1172 ms)
-    FAIL  t_shop_seven_rows_on_screen_no_scroll  all 7 rows are shown at once: expected 7 got 8 | row 'Worker Swarm Count' overlaps ForkIcon  (1286 ms)
-    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
     SCRIPT ERROR: Parse Error: Could not find type "PatchSlots" in the current scope.
     ERROR: Failed to load script "res://scripts/flower_patch.gd" with error "Parse error".
     SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
     SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
-FAIL    start     2 errors  (godot exit 1 (1 is normal here), 2 noise lines dropped)  game/reports/_runs/20261122-133635/start.log
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+FAIL    start     2 errors  (godot exit 1 (1 is normal here), 2 noise lines dropped)  game/reports/_runs/20261122-145155/start.log
     SCRIPT ERROR: Parse Error: Could not find type "PatchSlots" in the current scope.
     ERROR: Failed to load script "res://scripts/flower_patch.gd" with error "Parse error".
 

@@ -3,7 +3,7 @@ spec: 0.3-course-build.md
 version: 0.3
 run: 0.3
 started: 2026-11-22
-result: paused
+result: waiting-designer
 ---
 # Goal agent: 0.3-course-build.md (run 0.3)
 
@@ -621,9 +621,178 @@ Next: **C3** (score 9.68: 2 goal(s) wait on it; designer feature; cost 0.32 (Pat
 **Paused:** Budget guard: weekly usage is 33% with 18% of the week gone, more than 10 points ahead of pace, so heavy agents (programmer) wait (reading 0 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
 Run the same command again to resume.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md` (the run had stopped: `paused`).
+Branch `main`: stays on it.
+
+## Pass 7: scan (2026-11-22T14:51:29-05:00)
+
+Unit results from `game/reports/_runs/20261122-011146/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+Next: **C3** (score 9.68: 2 goal(s) wait on it; designer feature; cost 0.32 (Patricia)).
+
+### Step: C3 (2026-11-22T14:51:31-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C3-patricia.md` (1815 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C3-quinn.md` (2980 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (69,815 tokens, 5 turns, 15 s):
+
+No test changed, and I wrote no new tests, so I changed no files and used no node names. I ran nothing.
+
+I checked all seven names against spec item 3. None of them expects something the spec replaces.
+
+- **`t_dev_ui_bounds_collects_controls`**, **`t_shop_compact_layout_nothing_in_zoom`** and **`t_zoom_ui_and_camera`**: none counts shop rows or hard-codes an eighth row. The "eight rows without scrolling at 720 × 1280" check belongs in a new contract line, not in these tests.
+- **`t_node_contract`**, **`_fp_prop`**, **`_fp_prop_contract`**, **`_fp_main`**: they cover `flower_patch.tscn`, the group `flower_patch`, and `FlowerPatch1`–`FlowerPatch3` in `main.tscn`. The spec doesn't rename or remove any of these.
+- **`t_pop_tween_unchanged`**: it covers the honeycomb pop tween, which the spec leaves unchanged.
+
+**Open questions:**
+- Do the six new hidden slots keep `FlowerPatch1`–`FlowerPatch3` and add more, or replace them? If they replace them, `_fp_main` and `test_layout.gd` lines 226–233 need updating.
+- What are the slot nodes called?
+- Do hidden slots stay out of the `flower_patch` group until planted? The spec implies they do.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 3 (cap 30; CLI num_turns 5); end `success`
+
+
+**Patricia** (84,392 tokens, 7 turns, 17 s):
+
+Items 3 and 6 were already written in `scripts/` when I started. I changed no files. `python -I _tools/contract_check.py` passes (81 lookups, 0 unresolved). I did not run Godot or Quinn's tests: a hook blocks `godot_run.py` in my shell, so Rex needs to run it, with `--refresh` for the new `class_name`s.
+
+**Files in place:**
+- `economy.gd`: `plant_patch` is the last upgrade row. Max level is `patch_slots`, there is no gate, and cost is `floori(patch_base_cost × patch_cost_growth^lv)`.
+- `game_config.gd`: `patch_slots`, `patch_base_cost`, `patch_cost_growth`, `habitat_health_per_patch`, `patch_grow_seconds`.
+- `patch_slots.gd` (new): grows in the next slot, adds it to group `flower_patch`, adds Health and emits `toast_requested("toast_patch_planted")`.
+- `skip_icon.gd` (new): sets `plant_patch` to max for free and hides once thriving.
+- `bees.gd`: `refresh_patches()` runs on `upgrade_changed`.
+- `flower_patch.gd`: patches under `PatchSlots` join the group only when planted.
+- `shop_ui.gd`: the row shows "Thriving" at max.
+
+**Node names for Bob:** `PatchSlots` (Node3D) with six `flower_patch.tscn` children, and `SkipIcon` (Button).
+
+**Placeholder:** `patch_grow_seconds` = 0.18, matching the existing pop tween.
+
+**Open questions:** none. The toast owner must connect `PatchSlots.toast_requested`.
+
+**For Quinn:** the skip icon press and the shop buy path have no input tests yet.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 4 (cap 30; CLI num_turns 7); end `success`
+
+- Tests this round (5): own (5): `t_dev_ui_bounds_collects_controls`, `t_node_contract`, `t_pop_tween_unchanged`, `t_shop_compact_layout_nothing_in_zoom`, `t_zoom_ui_and_camera`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    SCRIPT ERROR: Parse Error: Could not find type "PatchSlots" in the current scope.
+    ERROR: Failed to load script "res://scripts/flower_patch.gd" with error "Parse error".
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+FAIL    start     2 errors  (godot exit 1 (1 is normal here), 2 noise lines dropped)  game/reports/_runs/20261122-145155/start.log
+    SCRIPT ERROR: Parse Error: Could not find type "PatchSlots" in the current scope.
+    ERROR: Failed to load script "res://scripts/flower_patch.gd" with error "Parse error".
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C3-fix1-patricia.md` (2886 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C3-fix1-quinn.md` (3229 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (51,225 tokens, 3 turns, 11 s):
+
+I changed nothing in `tests/`. This failure isn't in a test, and no test expectation changed.
+
+**Finding (for Patricia, `game/scripts/`):** `start` fails with `Could not find type "PatchSlots"` in `scripts/flower_patch.gd`, line 16: `if not (get_parent() is PatchSlots)`. The class itself looks fine. `scripts/patch_slots.gd` declares `class_name PatchSlots` on line 6, which is valid.
+
+**Likely cause:** `patch_slots.gd` is a new file. Godot's global class cache (`.godot/global_script_class_cache.cfg`) doesn't list it, because the project hasn't been re-imported since the file was added. `flower_patch.gd` therefore can't resolve the type. The later `refresh_patches` errors follow from that script failing to load.
+
+**Proposed fixes, either one:**
+- Run `godot --headless --import` once so the cache picks up `PatchSlots`.
+- Make the code independent of the cache: in `flower_patch.gd`, replace the `is PatchSlots` check with `preload("res://scripts/patch_slots.gd")`, or a `get_parent().has_signal("toast_requested")` test.
+
+I haven't run any tests.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 3); end `success`
+
+
+**Patricia** (46,346 tokens, 4 turns, 12 s):
+
+`PatchSlots` is declared in `game/scripts/patch_slots.gd` line 6 (`class_name PatchSlots`), and the code is correct. I changed nothing.
+
+The failure looks like a stale global class cache. The new `class_name` isn't registered, so `flower_patch.gd` line 16 can't resolve `PatchSlots`. The `refresh_patches` errors follow from that, because the script never loads.
+
+The fix is to regenerate the cache with `python -I _tools/godot_run.py unit start --refresh`. A hook blocked me from running it, because that script has to go through Rex. The goal agent or Rex should run it.
+
+If the parse error persists after the refresh, the cause is something else. In that case, `diag needed`: the first error lines from the refreshed `start.log`.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 4); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (5): own (5): `t_dev_ui_bounds_collects_controls`, `t_node_contract`, `t_pop_tween_unchanged`, `t_shop_compact_layout_nothing_in_zoom`, `t_zoom_ui_and_camera`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    SCRIPT ERROR: Parse Error: Could not find type "PatchSlots" in the current scope.
+    ERROR: Failed to load script "res://scripts/flower_patch.gd" with error "Parse error".
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+FAIL    start     2 errors  (godot exit 1 (1 is normal here), 2 noise lines dropped)  game/reports/_runs/20261122-145227/start.log
+    SCRIPT ERROR: Parse Error: Could not find type "PatchSlots" in the current scope.
+    ERROR: Failed to load script "res://scripts/flower_patch.gd" with error "Parse error".
+```
+
+#### Fix round 2: to Quinn (Patricia put the fault in tests/)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C3-fix2-quinn.md` (4332 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (32,509 tokens, 2 turns, 8 s):
+
+This failure isn't in `tests/`, so I changed nothing.
+
+- **Cause:** `game/scripts/flower_patch.gd` line 16 uses `get_parent() is PatchSlots`. `PatchSlots` is declared at `game/scripts/patch_slots.gd` line 6 (`class_name PatchSlots`). I found no other references in `game/`, so no test uses the class.
+- **Likely reason:** the global class cache is stale, as Patricia said. The `refresh_patches` errors follow, because `flower_patch.gd` never loads.
+- **Next step (Rex):** run `python -I _tools/godot_run.py unit start --refresh`. That is a refresh run, so it goes through Rex.
+- **If the parse error persists:** the cause is something else. In that case, `diag needed`: the first lines of the refreshed `start.log`.
+- **Spec check:** the spec text for item 3 doesn't conflict with any test. I made no test edits and ran nothing, as instructed.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 2 (cap 15; CLI num_turns 2); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (5): own (5): `t_dev_ui_bounds_collects_controls`, `t_node_contract`, `t_pop_tween_unchanged`, `t_shop_compact_layout_nothing_in_zoom`, `t_zoom_ui_and_camera`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    SCRIPT ERROR: Parse Error: Could not find type "PatchSlots" in the current scope.
+    ERROR: Failed to load script "res://scripts/flower_patch.gd" with error "Parse error".
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+FAIL    start     2 errors  (godot exit 1 (1 is normal here), 2 noise lines dropped)  game/reports/_runs/20261122-145255/start.log
+    SCRIPT ERROR: Parse Error: Could not find type "PatchSlots" in the current scope.
+    ERROR: Failed to load script "res://scripts/flower_patch.gd" with error "Parse error".
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on C3: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept C3 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C3 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-22T14:50:27-05:00): paused.
+Last invocation (2026-11-22T14:53:09-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -642,4 +811,9 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Patricia, C2 | 189,238 | 25,625 | 17 | 33 s |
 | Quinn, C3 | 88,095 | 30,519 | 9 | 17 s |
 | Patricia, C3 | 640,176 | 52,441 | 41 | 89 s |
-| **Total** | **1,848,766** | | | |
+| Quinn, C3 | 69,815 | 28,543 | 5 | 15 s |
+| Patricia, C3 | 84,392 | 25,043 | 7 | 17 s |
+| Quinn, C3 fix 1 | 51,225 | 18,758 | 3 | 11 s |
+| Patricia, C3 fix 1 | 46,346 | 16,612 | 4 | 12 s |
+| Quinn, C3 fix 2 | 32,509 | 17,535 | 2 | 8 s |
+| **Total** | **2,133,053** | | | |
