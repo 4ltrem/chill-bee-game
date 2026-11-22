@@ -294,5 +294,21 @@
   "turns": 2,
   "seconds": 8,
   "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Patricia, T2.1 fix 1",
+  "tokens": 70168,
+  "final": 21179,
+  "turns": 6,
+  "seconds": 12,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Bob, T2.1 fix 2",
+  "tokens": 144940,
+  "final": 24469,
+  "turns": 12,
+  "seconds": 23,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
  }
 ]

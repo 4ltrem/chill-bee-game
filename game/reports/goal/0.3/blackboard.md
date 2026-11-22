@@ -1536,9 +1536,125 @@ FAIL    unit      2 passed, 1 failed  (godot exit 1, 6 noise lines dropped)  gam
 
 2 fix rounds failed on T2.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T2.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T2.1 fix-round edits"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note the missing HabitatPill node was scene work: Bob added it under TopInfo (HabitatCountLabel, HabitatIcon glyph, HabitatPlusButton; placeholder sizes). Spec now lists Bob's work per item, so scene fixes route to him.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: the missing HabitatPill node was scene work: Bob added it under TopInfo (HabitatCountLabel, HabitatIcon glyph, HabitatPlusButton; placeholder sizes). Spec now lists Bob's work per item, so scene fixes route to him.
+Branch `main`: stays on it.
+
+## Pass 16: scan (2026-11-22T15:53:11-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 3 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Welcome screen. | change | Patricia, Bob | done | ✓ node WelcomeOverlay, ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ ledger 04f72f9 |
+| C2 Habitat Health. | change | Patricia, Bob | partial (built, waits on its tests) | ✓ node HabitatPill, ✓ node TopInfo, ✓ test t_habitat_start_cap_thriving_once, ✗ test t_habitat_pill_order_plus_opens_shop_twice (FAIL), ✓ ledger 3cd0470 |
+| T2.1 item 2: Health starts at `habitat_health_start`; `thriving`  | test | Quinn | partial | ✓ test t_habitat_start_cap_thriving_once, ✗ test t_habitat_pill_order_plus_opens_shop_twice (FAIL) |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | partial | ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ test t_habitat_start_cap_thriving_once, ✗ test t_habitat_pill_order_plus_opens_shop_twice (FAIL) |
+
+### Order: new or rescored (1 of 6)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 3 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.23 | 0 | waits on C3, C4, C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - Question: The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+Next: **T2.1** (score 3.77: designer feature; cost 0.23 (Quinn)).
+
+### Step: T2.1 (2026-11-22T15:53:11-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T2.1-quinn.md` (3843 chars)
+- Quinn's step skipped: every line already has its marked test (T2.1: t_flight_fill_rate_level3, t_habitat_start_cap_thriving_once, t_habitat_pill_order_plus_opens_shop_twice)
+- Tests this round (3): own (3): `t_flight_fill_rate_level3`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      2 passed, 1 failed  (godot exit 1, 6 noise lines dropped)  game/reports/_runs/20261122-155313/unit.log
+    FAIL  t_habitat_pill_order_plus_opens_shop_twice  number label, icon and + button all exist  (1193 ms)
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/T2.1-fix1-patricia.md` (2034 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (70,168 tokens, 6 turns, 12 s):
+
+I changed nothing. The failure isn't in `scripts/`.
+
+The failing check is `game/tests/test_habitat.gd:62`. It needs `HabitatCountLabel`, `HabitatPlusButton` and at least one `TextureRect` under `HabitatPill`. The pill, the label and the + button all exist. The icon is a `Label` with a "✿" glyph, named `HabitatIcon`, at `game/scenes/main.tscn:314-321`, so the test finds no `TextureRect`.
+
+`scripts/habitat_pill.gd` only wires the label and the + button, and it works as intended.
+
+Two ways to fix it, in other folders:
+- **Bob (`scenes/`):** change `HabitatIcon` at `main.tscn:314` to a `TextureRect` with a wildflower texture.
+- **Quinn (`tests/`):** accept the Label glyph as the icon at `test_habitat.gd:61-62`.
+
+Choosing between them is a spec decision. The spec says "a wildflower icon". UI_DESIGN.md prefers icons, which favours a `TextureRect`.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 6); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (3): own (3): `t_flight_fill_rate_level3`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`; last failures (1): `t_habitat_pill_order_plus_opens_shop_twice`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      2 passed, 1 failed  (godot exit 1, 6 noise lines dropped)  game/reports/_runs/20261122-155411/unit.log
+    FAIL  t_habitat_pill_order_plus_opens_shop_twice  number label, icon and + button all exist  (1248 ms)
+```
+
+#### Fix round 2: to Bob
+
+- Brief for Bob: `game/reports/goal/0.3/briefs/T2.1-fix2-bob.md` (2054 chars)
+- Budget guard for Bob: override
+
+**Bob** (144,940 tokens, 12 turns, 23 s):
+
+I changed `game/scenes/main.tscn` to fix `t_habitat_pill_order_plus_opens_shop_twice`. I haven't run or rendered anything, as instructed.
+
+**Cause:** the test looks for a `TextureRect` icon inside `HabitatPill`. The icon was a `Label` showing "✿", so the check "number label, icon and + button all exist" failed.
+
+**Fix:** `HabitatIcon` is now a `TextureRect`. It uses an inline `GradientTexture2D`, a pink flower with a yellow centre, in a 40×40 box. It stays between the count label and the + button. I made no other changes, and the font sizes and the + button are untouched.
+
+**Missing asset:** `game/assets/` has no wildflower icon texture, and I didn't invent a path. The gradient is a stand-in until a real icon is added.
+
+**Not checked:** the 40×40 box matches the old font size, but I haven't confirmed it clears the Harvest, Spin and Sell anchors.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 12); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: STOP (1 for the designer)
+
+## Waiting for the designer
+
+Fix round 2 on T2.1 needs a visual number the designer has not voted on (sizes, scales, offsets, fonts and margins are the designer's). Each row becomes a question with votes on the Design Votes page (`_tools/compare_page.py add`); its link goes here. A `changed` row is already in the tree, uncommitted: undo it if the vote keeps the old value. Then rerun `goal_agent.py 0.3-course-build.md --note "<the pick>"`.
+
+| # | Who | Row |
+|---|---|---|
+| 1 | changed | `game/scenes/main.tscn`: `(none)` -> `width = 40`; `height = 40`; `custom_minimum_size = Vector2(40, 40)`; `size_flags_vertical = 4` |
+
+Comparison pages:
+
 ## Result
 
-Last invocation (2026-11-22T15:51:43-05:00): waiting-designer.
+Last invocation (2026-11-22T15:55:19-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -1581,4 +1697,6 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Quinn, T1.1, T1.2 fix 2 | 52,880 | 19,293 | 4 | 9 s |
 | Quinn, T2.1 fix 1 | 270,880 | 48,881 | 20 | 50 s |
 | Patricia, T2.1 fix 2 | 29,511 | 16,509 | 2 | 8 s |
-| **Total** | **5,920,852** | | | |
+| Patricia, T2.1 fix 1 | 70,168 | 21,179 | 6 | 12 s |
+| Bob, T2.1 fix 2 | 144,940 | 24,469 | 12 | 23 s |
+| **Total** | **6,135,960** | | | |
