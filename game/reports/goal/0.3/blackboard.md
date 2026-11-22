@@ -2110,9 +2110,52 @@ mutate 2/3: 0.3 item 5 victory shows again in the same farm ... CAUGHT in 17s
 
 2 fix rounds failed on T5.1: `mutations` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T5.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T5.1 fix-round edits"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note mutations: the orchestrator fixed the indentation of two item 5 mutation find strings (victory_overlay.gd changed after they were written); now 2 of 3 caught. Still MISSED: '0.3 item 5 victory ignores the farm view' (_farm_view_idle returns true) leaves t_victory_waits_for_farm_view passing. Quinn: find why (add a diag: line with the overlay's _queued, _wait, main.farm_view_idle() and zoom/sheet state at the 'step sheet' and 'step zoom' checks); the test must fail when the overlay ignores farm_view_idle.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: mutations: the orchestrator fixed the indentation of two item 5 mutation find strings (victory_overlay.gd changed after they were written); now 2 of 3 caught. Still MISSED: '0.3 item 5 victory ignores the farm view' (_farm_view_idle returns true) leaves t_victory_waits_for_farm_view passing. Quinn: find why (add a diag: line with the overlay's _queued, _wait, main.farm_view_idle() and zoom/sheet state at the 'step sheet' and 'step zoom' checks); the test must fail when the overlay ignores farm_view_idle.
+Branch `main`: stays on it.
+
+## Pass 21: scan (2026-11-22T16:17:04-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 8 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C5 Victory screen. | change | Patricia, Bob | done | ✓ test t_victory_delay_show_close_once_per_farm, ✓ test t_victory_waits_for_farm_view, ✓ ledger 8297ded |
+| T5.1 item 5: reaching thriving during a zoom shows no victory unt | test | Quinn | done | ✓ test t_victory_delay_show_close_once_per_farm, ✓ test t_victory_waits_for_farm_view |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | done | 8/8 present: ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_p ... |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - Question: The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+## Waiting for the designer
+
+Every goal left waits on an open question (Process 1):
+
+- C3: Plant wildflower patch.
+  - The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+Answer each in the spec, or mark it "(answered: ...)" in the handoff, then rerun `goal_agent.py 0.3-course-build.md --note "<the answer>"`.
+
 ## Result
 
-Last invocation (2026-11-22T16:14:39-05:00): waiting-designer.
+Last invocation (2026-11-22T16:17:04-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 

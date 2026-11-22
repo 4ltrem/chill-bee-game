@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T16:08:34-05:00",
+ "at": "2026-11-22T16:17:04-05:00",
  "unit_log": "game/reports/_runs/20261122-145415/unit.log",
  "goals": {
   "C1": {
@@ -153,13 +153,13 @@
     5
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_victory_delay_show_close_once_per_farm",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -174,7 +174,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -349,13 +349,13 @@
    "depends": [
     "C5"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_victory_delay_show_close_once_per_farm",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -410,7 +410,7 @@
     "C5",
     "C6"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -451,8 +451,8 @@
     {
      "kind": "test",
      "name": "t_victory_delay_show_close_once_per_farm",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -468,32 +468,6 @@
   }
  },
  "order": [
-  {
-   "id": "T5.1",
-   "score": 3.78,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.22,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C3",
-     "C4",
-     "C6"
-    ]
-   }
-  },
   {
    "id": "T3.1",
    "score": 0.0,
