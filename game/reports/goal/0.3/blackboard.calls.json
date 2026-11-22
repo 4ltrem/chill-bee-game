@@ -1,0 +1,34 @@
+[
+ {
+  "call": "Quinn, C1",
+  "tokens": 120080,
+  "final": 23562,
+  "turns": 8,
+  "seconds": 22,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Patricia, C1",
+  "tokens": 235836,
+  "final": 29261,
+  "turns": 20,
+  "seconds": 44,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Patricia, C1 fix 1",
+  "tokens": 28577,
+  "final": 15641,
+  "turns": 2,
+  "seconds": 7,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Bob, C1 fix 2",
+  "tokens": 99327,
+  "final": 23121,
+  "turns": 10,
+  "seconds": 19,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ }
+]
