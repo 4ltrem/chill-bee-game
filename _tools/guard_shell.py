@@ -29,6 +29,9 @@ Each refusal names the rule and the right way to do it, so the caller rewrites t
      probes while the operator's allow file `_meta/usage/quinn-probes.allow` is fresh. The operator writes it with
      `python -I _tools/guard_shell.py --allow-quinn-probes 60` (minutes) when the brief allows probes. Full-suite
      runs (`all`, or no `--only`) and the other scripts stay Rex-only.
+  8. link-delete (L45): no recursive delete (`git worktree remove`, `rm -r`, `Remove-Item -Recurse`, `rmdir /s`)
+     of a folder that holds a junction or symlink: the delete can follow it and empty the target (a worktree's
+     Godot junction emptied the repo's Godot folder, 2026-11-21). Remove the link alone first (`cmd //c rmdir LINK`).
 Fails open: a hook input it can't read allows the call. Standard library only.
 """
 import json
@@ -164,11 +167,64 @@ def rex_only(cmd, agent, repo=REPO):
     return None
 
 
+# L45: `git worktree remove --force` on m02-play followed its Godot junction and emptied the repo's own Godot folder.
+TREE_DELETE = re.compile(r"\bgit\b.*\bworktree\s+remove\b|\brm\s+-\w*r|\bRemove-Item\b.*-Recurse|\brmdir\s+/s\b|"
+                         r"\brd\s+/s\b|shutil\.rmtree", re.I)
+REPARSE = 0x400   # FILE_ATTRIBUTE_REPARSE_POINT: a junction or a symlink on Windows
+
+
+def is_link(entry):
+    try:
+        if entry.is_symlink():
+            return True
+        return bool(getattr(entry.stat(follow_symlinks=False), "st_file_attributes", 0) & REPARSE)
+    except OSError:
+        return False
+
+
+def links_inside(folder, limit=20):
+    """Junctions and symlinks under `folder`, never descending into one."""
+    found, stack = [], [folder]
+    while stack and len(found) < limit:
+        try:
+            entries = list(os.scandir(stack.pop()))
+        except OSError:
+            continue
+        for e in entries:
+            if is_link(e):
+                found.append(e.path)
+            elif e.is_dir(follow_symlinks=False) and e.name != ".git":
+                stack.append(e.path)
+    return found
+
+
+def link_delete(cmd, repo=REPO):
+    """Rule 8: refuse deleting a folder that holds a junction or symlink, since a recursive delete can follow it."""
+    for seg in re.split(r"[;&|\n]+", cmd):
+        if not TREE_DELETE.search(seg):
+            continue
+        for tok in re.findall(r"\"[^\"]+\"|'[^']+'|\S+", seg):
+            tok = tok.strip("\"'")
+            if tok.startswith(("-", "/")) and not os.path.isabs(tok):
+                continue
+            path = tok if os.path.isabs(tok) else os.path.join(repo, tok)
+            if not os.path.isdir(path) or os.path.normcase(os.path.abspath(path)) == os.path.normcase(repo):
+                continue
+            links = ([path] if os.path.islink(path) else []) or links_inside(path)
+            if links:
+                rel = [os.path.relpath(l, repo).replace("\\", "/") for l in links]
+                return ("link-delete (L45): " + tok + " holds a junction or symlink (" + ", ".join(rel[:5]) +
+                        "). A recursive delete can follow it and empty the folder it points to (it emptied the "
+                        "repo's Godot folder on 2026-11-21). Remove each link alone first, which leaves its target: "
+                        + "; ".join(f'cmd //c rmdir "{r}"' for r in rel[:5]) + ". Then retry the delete.")
+    return None
+
+
 def decide(tool, inp, repo=REPO, agent=None):
     """The refusal reason for this call, or None to let it through. agent: the hook input's agent_type."""
     if tool in ("Bash", "PowerShell"):
         cmd = inp.get("command") or ""
-        return shell(cmd, repo) or rex_only(cmd, agent, repo)
+        return shell(cmd, repo) or rex_only(cmd, agent, repo) or link_delete(cmd, repo)
     if tool in ("Write", "Edit"):
         return write(tool, inp.get("file_path") or "", repo)
     if tool == "Artifact":

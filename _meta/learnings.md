@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L45 · 2026-11-21 · Removing a worktree emptied the repo's Godot folder through a junction
+- **What broke:** at 23:19 Oscar's branch cleanup ran `git worktree remove --force .claude/worktrees/m02-play` (designer's yes). The worktree held a junction `Godot_v4.2.1-stable_win64.exe` pointing at the repo root's Godot folder, made on 2026-11-20 so the worktree could run tests without a copy. The forced remove deleted through it, leaving the root folder empty; every Godot run then failed with `FileNotFoundError`.
+- **How noticed:** Rex's `ui_shots.py` check after the naming restructure; the folder's mtime (23:19:22) matched the cleanup command in the session transcript (23:19:07).
+- **Cause:** a recursive delete on Windows follows a directory junction into its target; nothing checked a folder for links before deleting it, and the junction was not recorded anywhere.
+- **How fixed:** the designer re-unpacked Godot 4.2.1 (2026-11-22); Rex: `start --refresh`, then `ui_shots.py 0.2.1=.` wrote 12 shots to `builds/0.2.1/ui/`.
+- **Prevention:** `guard_shell.py` rule 8 (link-delete) refuses `git worktree remove`, `rm -r`, `Remove-Item -Recurse` and `rmdir /s` on a folder that holds a junction or symlink, naming each link and the `cmd //c rmdir LINK` that removes the link alone. Test: `test_guard_shell_refuses_deleting_a_folder_that_holds_a_junction` (makes a real junction; 92/92). A worktree should find Godot through `godot_path.py` (`GODOT` env var) rather than a junction.
+
 ## L44 · 2026-11-21 · After an `--only` step the scan read an older full unit log and held a green goal
 - **What broke:** T9.1's step passed on its own tests (21:47-21:55), but the next scan pass read the 21:08 full `unit.log`, where T9.1 still failed. It marked T9.1 "partial AMBIGUOUS", made no goal commit and skipped the end-of-run suite (obstacles item 23).
 - **How noticed:** Oscar, reading the run's board after the stop.

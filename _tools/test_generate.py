@@ -15,6 +15,7 @@ import contextlib
 import datetime
 import io
 import json
+import os
 import re
 import shutil
 import sys
@@ -916,6 +917,33 @@ class BuildToolsTest(unittest.TestCase):
             self.assertEqual(costs["programmer"], 6)
             self.assertEqual(costs["builder"], b.COST["builder"])          # no logged run: the fixed table
             self.assertEqual(b.decide(r(85, 50), "programmer", t, reset=reset, costs=costs)[0], "warn")   # 85 + 6 <= 95
+
+    def test_guard_shell_refuses_deleting_a_folder_that_holds_a_junction(self):
+        """L45: a worktree's Godot junction was followed by `git worktree remove --force` and emptied the target."""
+        import subprocess, guard_shell as gs
+        with tempfile.TemporaryDirectory() as d:
+            repo = Path(d) / "Repo"
+            target, tree = repo / "Godot", repo / ".claude" / "worktrees" / "w"
+            target.mkdir(parents=True)
+            (target / "godot.exe").write_text("x", encoding="utf-8")
+            (tree / "game").mkdir(parents=True)
+            link = tree / "Godot"
+            made = subprocess.run(["cmd", "/c", "mklink", "/J", str(link), str(target)], capture_output=True)
+            if made.returncode:
+                try:
+                    os.symlink(target, link, target_is_directory=True)
+                except (OSError, NotImplementedError):
+                    self.skipTest("no junction or symlink can be made here")
+            for cmd in ("git worktree remove --force .claude/worktrees/w", "rm -rf .claude/worktrees/w",
+                        "Remove-Item -Recurse -Force .claude/worktrees/w"):
+                reason = gs.decide("Bash", {"command": cmd}, str(repo))
+                self.assertIn("link-delete", reason or "", cmd)
+                self.assertIn(".claude/worktrees/w/Godot", reason)
+            self.assertIsNone(gs.decide("Bash", {"command": "rm -rf .claude/worktrees/w/game"}, str(repo)))
+            self.assertIsNone(gs.decide("Bash", {"command": "git worktree list"}, str(repo)))
+            subprocess.run(["cmd", "/c", "rmdir", str(link)], capture_output=True)   # the link alone
+            self.assertTrue((target / "godot.exe").is_file())
+            self.assertIsNone(gs.decide("Bash", {"command": "git worktree remove --force .claude/worktrees/w"}, str(repo)))
 
     def test_guard_shell_refuses_the_standing_rules_and_lets_normal_calls_through(self):
         import guard_shell as gs
