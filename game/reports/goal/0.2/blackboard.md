@@ -3992,9 +3992,18 @@ No score changed.
 
 **Stop:** stopped after 0 goal(s) (--goal list done).
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --accept C14 --note Re-recorded: accepted 2026-11-21 (0628fc6), shop_layout config (sheet default, vote pending in game/reports/ui-compare/shop-layout/vote.html); T14.1 green. Full suite green: game/reports/_runs/20261121-221056/` (the run had stopped: `stopped`).
+
+### Manual fix: C14 (2026-11-21T22:33:53-05:00)
+
+- Change (orchestrator, Process 9): Re-recorded: accepted 2026-11-21 (0628fc6), shop_layout config (sheet default, vote pending in game/reports/ui-compare/shop-layout/vote.html); T14.1 green. Full suite green: game/reports/_runs/20261121-221056/
+- Accepted: checkpoint `cce1e86` on `milestone/0.2`
+
 ## Result
 
-Last invocation (2026-11-21T21:54:59-05:00): stopped after 0 goal(s) (--goal list done).
+C14 accepted with a manual fix (checkpoint `cce1e86` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 

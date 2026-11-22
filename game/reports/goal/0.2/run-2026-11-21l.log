@@ -1,0 +1,25 @@
+goal_agent: spec_lint 0.2-first-automation.md: no FAIL or WARN
+0.2-first-automation.md: 29/34 goals done (H, C1, C2, C3, C4, C5, C6, C7, C8, C10, C11, C12, C13, T1.1, T2.1, T3.1, T3.2, T4.1, T5.1, T4.2, T5.2, T6.1, T7.1, T8.1, T10.1, T11.1, T12.1, T13.1, T14.1)
+  C9     partial  (built, waits on tests) The second stop only after Spin
+  C14    partial  (built, waits on tests) The shop shows every row without scrolling
+  CFG    partial  Config and Dev mode
+  T9.1   partial  item 9: the bucket filling during the first zoom leaves the 
+  T.1    partial  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. T9.1     5.72  play-test fix; cost 0.28 (Quinn)
+   2. CFG      3.66  designer feature; cost 0.34 (Patricia)
+   3. T.1      1.72  housekeeping/handoff; cost 0.28 (Quinn)
+gaps.json: game/reports/goal/0.2/gaps.json
+0.2-first-automation.md: 29/34 goals done (H, C1, C2, C3, C4, C5, C6, C7, C8, C10, C11, C12, C13, T1.1, T2.1, T3.1, T3.2, T4.1, T5.1, T4.2, T5.2, T6.1, T7.1, T8.1, T10.1, T11.1, T12.1, T13.1, T14.1)
+  C9     partial  (built, waits on tests) The second stop only after Spin
+  C14    partial  (built, waits on tests) The shop shows every row without scrolling
+  CFG    partial  Config and Dev mode
+  T9.1   partial  item 9: the bucket filling during the first zoom leaves the 
+  T.1    partial  mutations in `tests/mutations.json` prove the new tests.
+Order:
+   1. CFG      3.66  designer feature; cost 0.34 (Patricia)
+   2. T.1      1.72  housekeeping/handoff; cost 0.28 (Quinn)
+Ambiguous: T9.1
+gaps.json: game/reports/goal/0.2/gaps.json
+goal_agent: state committed
+goal_agent: stopped after 0 goal(s) (--goal list done). Blackboard: game/reports/goal/0.2/blackboard.md
