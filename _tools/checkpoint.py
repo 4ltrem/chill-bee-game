@@ -1,9 +1,11 @@
-"""Commit work in progress on the milestone branch, with the last unit run's counts in the message (learnings L1).
+"""Commit work in progress on the current branch (`main`), with the last unit run's counts in the message (learnings L1).
 
     python -I _tools/checkpoint.py "item 14 fix-round edits" [--dry-run] [path ...]
 
-Paths default to the build folders (game/scripts, scenes, materials, tests, specs) and _tools/. It refuses off a
-`milestone/*` branch and while a goal run holds its lock (the goal agent owns game/ then). Never pushes.
+Paths default to the build folders (game/scripts, scenes, materials, tests, specs) and _tools/. The subject starts
+with the milestone number from `game/project.godot` (0.2.0 -> 0.2). It refuses on a detached HEAD and while a goal run
+holds its lock (the goal agent owns game/ then). Never pushes: origin gets a push only when green, with the designer's
+yes (milestone branches dropped, designer 2026-11-21).
 """
 import argparse
 import re
@@ -34,6 +36,13 @@ def unit_counts(root=None):
     return None
 
 
+def milestone(root=None):
+    """`0.2` from `config/version="0.2.1"` in game/project.godot; `wip` when there is none."""
+    proj = (root or ROOT) / "game" / "project.godot"
+    m = re.search(r'^config/version="(\d+\.\d+)', proj.read_text(encoding="utf-8"), re.M) if proj.is_file() else None
+    return m.group(1) if m else "wip"
+
+
 def message(version, note, counts):
     state = (f"WIP, {counts[1]} unit fails" if counts[1] else "unit green") if counts else "WIP, no unit run"
     body = f"Last unit run: {counts[0]} passed, {counts[1]} failed ({counts[2]}).\n\n" if counts else ""
@@ -47,15 +56,15 @@ def main(argv=None, root=None):
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args(argv)
     root = root or ROOT
-    _, branch = git("symbolic-ref", "--short", "HEAD", root=root)   # also names a branch with no commit yet
-    if not branch.startswith("milestone/"):
-        print(f"checkpoint: on `{branch}`, not a milestone branch; refused")
+    code, branch = git("symbolic-ref", "--short", "HEAD", root=root)   # also names a branch with no commit yet
+    if code or not branch:
+        print("checkpoint: detached HEAD, not on a branch; refused")
         return 2
     if (root / LOCK).exists():
         print(f"checkpoint: a goal run is live ({LOCK}); it commits its own checkpoints; refused")
         return 2
     paths = a.paths or [p for p in DEFAULT_PATHS if (root / p).exists()]
-    msg = message(branch.split("/", 1)[1], a.note, unit_counts(root))
+    msg = message(milestone(root), a.note, unit_counts(root))
     _, changed = git("status", "--porcelain", "--", *paths, root=root)
     if not changed:
         print("checkpoint: nothing to commit in " + ", ".join(paths))

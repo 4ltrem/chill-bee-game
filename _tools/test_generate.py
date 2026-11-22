@@ -697,34 +697,6 @@ class LogSubagentTest(unittest.TestCase):
         good = ["_meta/sessions/x/decisions.md", "_meta/sessions/decision-comb.html"]
         self.assertEqual([bool(end_of_day.NEVER_STAGED.search(p)) for p in bad + good], [True] * 4 + [False] * 2)
 
-    def test_commit_main_commits_named_files_to_main_and_leaves_this_branch(self):
-        import subprocess, commit_main
-        r = self.root / "repo"
-        r.mkdir()
-        run = lambda *a: subprocess.run(["git", "-C", str(r), *a], capture_output=True, text=True, check=True).stdout
-        run("init", "-q", "-b", "main")
-        run("config", "user.email", "t@t")
-        run("config", "user.name", "t")
-        (r / ".claude").mkdir()
-        (r / ".claude" / "a.md").write_text("one\n", encoding="utf-8")
-        (r / "gone.md").write_text("x\n", encoding="utf-8")
-        run("add", "-A")
-        run("commit", "-q", "-m", "first")
-        run("switch", "-q", "-c", "milestone/9.9")
-        (r / ".claude" / "a.md").write_text("two\n", encoding="utf-8")
-        (r / "gone.md").unlink()
-        (r / "other.md").write_text("stays here\n", encoding="utf-8")
-        code, text = commit_main.commit_main(r, "fix a", [".claude/a.md", "gone.md"])
-        self.assertEqual(code, 0, text)
-        self.assertIn("committed to main", text)
-        self.assertEqual(run("show", "main:.claude/a.md"), "two\n")
-        self.assertEqual(run("ls-tree", "--name-only", "main"), ".claude\n")     # gone.md deleted, other.md not taken
-        self.assertEqual(run("rev-parse", "--abbrev-ref", "HEAD").strip(), "milestone/9.9")
-        self.assertFalse((r / commit_main.WT).exists())                        # worktree removed
-        self.assertEqual(commit_main.commit_main(r, "again", [".claude/a.md"])[1],
-                         "nothing to commit: main already has these files as they are")
-        self.assertEqual(commit_main.commit_main(r, "x", ["../out.md"])[0], 2)
-
     def test_display_names_come_from_the_agent_files(self):
         import live
         self.assertEqual((live.display("programmer"), live.display("content-critic"), live.display("nope")),

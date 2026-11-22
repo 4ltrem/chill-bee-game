@@ -13,8 +13,7 @@
 - [Edit lines only](edit-lines-only.md) — change only the needed lines with Edit; no whole-file rewrite scripts
 - [itch upload rule](itch-upload-rule.md) — itch only at a new milestone number (0.2.0, 0.3.0), or when the build is an assignment demo (0.1.4 = A5)
 - [Test speed fixes](test-speed-fixes.md) — always brief Rex with `godot_run.py unit --only <tests> --time-scale 6` (iterating) or `all --time-scale 6 --skip-x1` (checkpoint); never VAR= prefixes; plain runs take 15 min
-- [One folder rule](one-folder-rule.md) — main folder on the milestone branch; worktree only for parallel work, removed when merged
-- [Commit to main](commit-to-main.md) — `python -I _tools/commit_main.py -m msg FILE...` (worktree, main's gate, non-hanging `--push`)
+- [One folder rule](one-folder-rule.md) — main folder on `main` (no milestone branches since 11/21); tags mark shipped states; worktree only for parallel work
 - [Scripted shots](scripted-shots.md) — same moments = `_tools/ui_shots.py`; agent only when a new screen/phase/menu is added; gradual animations shot at several points
 - [Variant shots](variant-shots.md) — Milo's variants: one shared grid, one load, close-up shot of each
 - [Compose variants](compose-variants.md) — recombination rounds = `compose_variant.py` recipes; Milo only for new shapes, features as named groups

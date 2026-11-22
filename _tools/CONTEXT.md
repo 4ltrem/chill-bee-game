@@ -39,7 +39,6 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | Live view | `watch.py` | follows `live.log` in a terminal split, one line per event (`--once` prints and exits) |
 | Live view | `live-pane/` | the Claude Code side pane (a mod) on the same files; load with `claude --plugin-dir _tools/live-pane`, reopen with `/live` |
 | Status | `status.py` | branch and sync, uncommitted work, last commits, goal runs, newest test run, open STOPs, next decision ID, usage, what runs now (`/status`; `--markdown` for the handoff) |
-| Git | `commit_main.py` | commits named files to `main` from the milestone folder: worktree in `.claude/worktrees/`, main's own gate, `--push` that can't hang on a login (L24), worktree removed |
 | Usage | `budget_guard.py` | PreToolUse hook on Agent/Workflow: blocks a new agent when its average logged cost (`budget_guard.py --costs` lists them) would take the 5-hour window past 95%, at 95% of the week, or (heavy agents: 10% or more on average, today general-purpose and Workflow) when the week runs 10 points ahead of pace |
 | Rules | `guard_shell.py` | PreToolUse hook on Bash/PowerShell/Write/Edit/Artifact: refuses inline interpreter code, in-place and whole-file rewrites, `cd`/absolute repo paths, writes outside the repo, any votes page that isn't the one Design Votes artifact, and the Godot test/build/mutation/shot scripts outside Rex's shell (L21) |
 | End of day | `export_session.py`, `decision_page.py` | serve the end-of-day routine |

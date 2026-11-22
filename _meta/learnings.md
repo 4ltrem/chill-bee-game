@@ -135,7 +135,7 @@ Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Pre
 - **How noticed:** the commit was rejected and the push never returned; the designer logged in and the retry went through.
 - **Cause:** the hooks path setting points at the milestone branch's hooks; Git Credential Manager prompts non-interactively.
 - **How fixed:** `-c core.hooksPath=.githooks` on the commit, `GCM_INTERACTIVE=never` on the push.
-- **Prevention:** `_tools/commit_main.py` (2026-11-21, queue #7): worktree, main's gate and the non-interactive push in one script, with a test.
+- **Prevention:** `_tools/commit_main.py` (2026-11-21, queue #7), then retired the same day: milestone branches were dropped (designer, 2026-11-21), so every commit is on `main` with one gate. The push rule stays in the end-of-day skill: `env GCM_INTERACTIVE=never timeout 90 git push`.
 
 ## L23 · 2026-11-08 · `/goal finish 0.1.4` was judged unmet 16 times
 - **What broke:** with the code done and green, the goal judge kept sending the session back for the designer's play-test, web check and itch upload.

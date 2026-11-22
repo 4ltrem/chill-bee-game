@@ -37,7 +37,7 @@ A read that needs any of these goes to a subagent that returns at most 150 words
    - A FAIL: send it back to its owner (D48), then go back to step 4.
    - The same failure twice, or a designer stop: hand it off (`escalate.md`).
 6. Do the mechanical upkeep the job leaves:
-   - checkpoint commits on a milestone branch (`python -I _tools/checkpoint.py`)
+   - checkpoint commits on `main` (`python -I _tools/checkpoint.py`)
    - the handoff line for the next session
    - the status in `queue.md`
    - a vote section published: fetch the live Design Votes page with ArtifactData, run `compare_page.py add`, publish to the same URL; the operator does this itself
@@ -56,7 +56,7 @@ Hard limits:
 - The owner's output, written to the owner's own shelf; the operator writes none of it.
 - `queue.md`: the changed status lines.
 - `../_meta/memory/session-handoff.md`: the "Next" line, plus any stop handed off.
-- Checkpoint commits on milestone branches only. Other commits wait for end-of-day.
+- Checkpoint commits on `main` (`checkpoint.py`) only. Other commits wait for end-of-day.
 
 ## Check
 - **Per job:** the owner's own check passed (Quinn's report, Clara's or Vera's PASS, Rex's counts), or the job is recorded as a stop in the handoff.

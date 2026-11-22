@@ -473,7 +473,7 @@ class Loop(unittest.TestCase):
         self.assertEqual(sorted(fix), sorted([ga.PROGRAMMER, ga.QA]))      # one code owner, plus Quinn's own folder
         self.assertIn("quote the spec line", next(p for a, p in self.calls if a == ga.QA))
 
-    def test_checkpoint_commits_wip_on_a_milestone_branch_only(self):
+    def test_checkpoint_commits_wip_on_main_never_detached(self):
         import checkpoint, subprocess
         repo = self.tmp / "repo"
         (repo / "game" / "scripts").mkdir(parents=True)
@@ -483,10 +483,12 @@ class Loop(unittest.TestCase):
         (repo / "README.md").write_text("r\n", encoding="utf-8")
         run("add", "README.md"); run("commit", "-q", "-m", "first")           # a branch needs a commit to leave
         (repo / "game" / "scripts" / "a.gd").write_text("x\n", encoding="utf-8")
+        (repo / "game" / "project.godot").write_text('[application]\nconfig/version="9.9.3"\n', encoding="utf-8")
         said = io.StringIO()
         with contextlib.redirect_stdout(said):
-            self.assertEqual(checkpoint.main(["wip"], root=repo), 2)               # main: refused
-            run("checkout", "-q", "-b", "milestone/9.9")
+            run("checkout", "-q", "--detach")
+            self.assertEqual(checkpoint.main(["wip"], root=repo), 2)               # detached: refused
+            run("checkout", "-q", "main")
             log = repo / "game" / "reports" / "_runs" / "1" / "unit.log"
             log.parent.mkdir(parents=True)
             log.write_text("PASS  t_a  (1 ms)\nFAIL  t_b  no  (1 ms)\n", encoding="utf-8")
@@ -495,6 +497,7 @@ class Loop(unittest.TestCase):
         subject = run("log", "-1", "--format=%s").stdout.strip()
         self.assertEqual(subject, "9.9 checkpoint: lid edits (WIP, 1 unit fails)")
         self.assertNotIn("reports", run("show", "--name-only", "--format=").stdout)  # reports stay out
+        self.assertEqual(run("rev-parse", "--abbrev-ref", "HEAD").stdout.strip(), "main")
 
     def test_one_owner_follows_the_folder_the_failure_names(self):
         self.assertEqual(ga.one_owner("FAIL lid clips; see scenes/props/hive.tscn", 1), ga.BUILDER)

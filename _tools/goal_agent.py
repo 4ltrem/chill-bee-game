@@ -33,7 +33,7 @@ rounds, then the run stops for the designer. A fix round that changes a visual n
 margin) the spec does not name, or replies with a `(designer)` row naming one, stops for a Design Votes question; any
 other `(designer)` row stops as a plain designer question. An agent call
 that fails on a network or API error is retried once, then the run pauses (resumable). A green step gets a ledger line and a checkpoint commit on the
-milestone branch (never main, never a push); a step green only because no file changed is held for the
+current branch, `main` since 2026-11-21 (never a push, never a detached HEAD); a step green only because no file changed is held for the
 designer instead, like an open question, until its spec text changes or --accept. When nothing is left (or a --goal
 list or --max-goals stop built something) it runs every suite (`all --time-scale 6 --skip-x1`), or reuses a green one
 newer than every build change: red gets one Quinn round for stale tests, then waits for the designer.
@@ -1458,10 +1458,10 @@ def hold(spec, goal, run, ledger_path, question):
 
 
 def checkpoint(spec, batch, run, folder, ledger_path):
-    """Record the goals in the ledger and make a checkpoint commit of the game folders (never main, never a push)."""
+    """Record the goals in the ledger and make a checkpoint commit of the game folders (never a push)."""
     code, branch = git("rev-parse", "--abbrev-ref", "HEAD")
     branch = branch.strip()
-    if code or branch in ("main", "master"):
+    if code or branch == "HEAD":   # detached: nowhere to commit
         return f"no commit: on `{branch}`"
     ledger = json.loads(ledger_path.read_text(encoding="utf-8")) if ledger_path.is_file() else {}
     for b in batch:
@@ -1486,9 +1486,9 @@ def checkpoint(spec, batch, run, folder, ledger_path):
 
 def commit_state(spec, run, folder, ledger_path, result):
     """One commit of the run's state (ledger.json and the run folder: blackboard, gaps, briefs) when the run ends,
-    instead of a copy in every goal checkpoint (queue #5). Only those paths (`--only`), never on main."""
+    instead of a copy in every goal checkpoint (queue #5). Only those paths (`--only`), never on a detached HEAD."""
     code, branch = git("rev-parse", "--abbrev-ref", "HEAD")
-    if code or branch.strip() in ("main", "master"):
+    if code or branch.strip() == "HEAD":
         return "no state commit: on " + branch.strip()
     paths = [p.relative_to(ROOT).as_posix() for p in (ledger_path, folder) if p.exists()]
     if not paths:
@@ -1503,15 +1503,11 @@ def commit_state(spec, run, folder, ledger_path, result):
 
 
 def ensure_branch(version):
-    branch = f"milestone/{version}"
-    _, cur = git("rev-parse", "--abbrev-ref", "HEAD")
-    if cur.strip() == branch:
-        return branch, "already on it"
-    exists = git("rev-parse", "--verify", "--quiet", branch)[0] == 0
-    code, out = git("checkout", branch) if exists else git("checkout", "-b", branch)
-    if code:
-        raise SystemExit(f"goal_agent: cannot check out {branch}: {out.strip()}")
-    return branch, f"checked out from `{cur.strip()}`" + ("" if exists else " (new)")
+    """The run commits on the branch the folder is on (`main`; milestone branches dropped, designer 2026-11-21)."""
+    code, cur = git("rev-parse", "--abbrev-ref", "HEAD")
+    if code or cur.strip() == "HEAD":
+        raise SystemExit(f"goal_agent: not on a branch (detached HEAD); check out `main` first")
+    return cur.strip(), "stays on it" + ("" if cur.strip() == "main" else " (not main: merge it after the run)")
 
 
 def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
@@ -2079,7 +2075,7 @@ def main(argv=None):
     if wanted and [x for x in wanted if x not in spec["goals"]]:
         print(f"goal_agent: not a goal of {spec['file']}: {', '.join(x for x in wanted if x not in spec['goals'])}")
         return 2
-    branch = f"milestone/{spec['version']}"
+    branch = "main"
     if not (a.plan or a.dry_run):
         branch, note = ensure_branch(spec["version"])
         say(board, f"Branch `{branch}`: {note}.\n")

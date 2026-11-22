@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: b89522de-aba2-47a2-852d-34d76b9bf1f3
-  modified: 2026-11-08T07:32:40.797Z
+  modified: 2026-11-22T04:33:17.370Z
 ---
 
 When the designer says "end of work day" (or "done for the day", "wrap up"), invoke the `end-of-day` project skill
@@ -15,7 +15,7 @@ decision page, run the checks, commit.
 **Why:** the designer keeps every session for analysis and a future episodic-memory upgrade, works on more than one
 machine (a desktop PC and a laptop), and wants the record to cover the whole day.
 
-Checkpoint commits on a `milestone/<version>` branch after each green build step are allowed mid-session (designer, 2026-11-04, `game/CONTEXT.md` Process 4); the end-of-day commit still covers the day, and the branch merges into `main` when the milestone passes.
+Checkpoint commits on `main` after each green build step are allowed mid-session (designer, 2026-11-04; one branch since 2026-11-21, `game/CONTEXT.md` Process 4); the end-of-day commit still covers the day, and a played milestone gets a tag ([[one-folder-rule]]).
 
 "Time to close this session" is NOT end of day (2026-11-08: I started the routine and the designer stopped it: "not done working just need to move onto the next task"). Closing a session means: rewrite [[session-handoff]] to the current state so the next session can resume, nothing more. Only the explicit end-of-day phrases run the skill.
 
