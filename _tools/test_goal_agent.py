@@ -408,6 +408,20 @@ class Loop(unittest.TestCase):
         self.assertNotIn("CB_ONLY", newest.read_text(encoding="utf-8"))
         self.assertIn("CB_ONLY", ga.newest_unit_log(self.tmp / "game", partial=True).read_text(encoding="utf-8"))
 
+    def test_the_scan_takes_each_tests_newest_result_across_only_logs(self):
+        """Obstacles item 23: a newer `--only` PASS overrides the full log's FAIL; a partial log older than the
+        newest full log is not read."""
+        runs = self.tmp / "game" / "reports" / "_runs"
+        logs = {"20990101-000001": "CB_ONLY: running t_a\nFAIL  t_a  old\n",
+                "20990101-000002": "PASS  t_b  (1 ms)\nFAIL  t_a  stale\n",
+                "20990101-000003": "CB_ONLY: running t_a\nPASS  t_a  (1 ms)\n"}
+        for name, text in logs.items():
+            (runs / name).mkdir(parents=True)
+            (runs / name / "unit.log").write_text(text, encoding="utf-8")
+        self.assertEqual(ga.unit_results(self.tmp / "game"), {"t_a": "PASS", "t_b": "PASS"})
+        (runs / "20990101-000003" / "unit.log").unlink()
+        self.assertEqual(ga.unit_results(self.tmp / "game")["t_a"], "FAIL")
+
     def test_tests_already_written_skip_quinn_and_go_to_the_code_owners(self):
         self.fail_first_fixture()                                           # test_frames.gd marks T3.1 already
         self.check_codes = [0, 1, 1, 0, 0, 0, 0]                            # t_x red again on its rerun: not flaky

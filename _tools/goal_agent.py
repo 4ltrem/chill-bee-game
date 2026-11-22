@@ -380,6 +380,21 @@ def newest_unit_log(game, partial=False):
     return None
 
 
+def unit_results(game):
+    """{test: PASS|FAIL}, each test's newest result: the newest full unit log, then every newer `--only` log laid
+    over it (obstacles item 23: after an `--only` step the scan read T9.1's older full-log FAIL and held it)."""
+    logs = sorted((Path(game) / "reports" / "_runs").glob("*/unit.log"), key=lambda p: p.parent.name)
+    full = newest_unit_log(game)
+    start = logs.index(full) if full in logs else 0
+    results = {}
+    for log in logs[start:]:
+        for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
+            m = re.match(r"^(PASS|FAIL)\s+(t_\w+)", line)
+            if m:
+                results[m.group(2)] = m.group(1)
+    return results
+
+
 def scan(game, ledger_path=None):
     """What exists in the game: config keys, node names, registered tests by group comment, last unit results."""
     game = Path(game)
@@ -407,12 +422,7 @@ def scan(game, ledger_path=None):
                 if not groups:
                     groups.append(("", []))
                 groups[-1][1].extend(re.findall(r'"(t_\w+)"', s))
-    results, log = {}, newest_unit_log(game)
-    if log:
-        for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
-            m = re.match(r"^(PASS|FAIL)\s+(t_\w+)", line)
-            if m:
-                results[m.group(2)] = m.group(1)
+    results, log = unit_results(game), newest_unit_log(game)
     marks = {}   # {goal id: [tests]} from Quinn's `# goal <ID>` line above each test function
     for f in sorted((game / "tests").glob("*.gd")):
         for gid, t in re.findall(r"^\s*#\s*goal\s+(\S+).*\n(?:[ \t]*#(?![ \t]*goal\b).*\n)*[ \t]*func\s+(t_\w+)", f.read_text(encoding="utf-8", errors="replace"), re.M):

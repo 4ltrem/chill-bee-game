@@ -4,6 +4,20 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L44 · 2026-11-21 · After an `--only` step the scan read an older full unit log and held a green goal
+- **What broke:** T9.1's step passed on its own tests (21:47-21:55), but the next scan pass read the 21:08 full `unit.log`, where T9.1 still failed. It marked T9.1 "partial AMBIGUOUS", made no goal commit and skipped the end-of-run suite (obstacles item 23).
+- **How noticed:** Oscar, reading the run's board after the stop.
+- **Cause:** `scan()` took results only from the newest full unit log; L42 made steps run `--only`, so a step's own results were never in a full log until the run's end.
+- **How fixed (2026-11-21, Opus session):** `goal_agent.unit_results()`: the newest full log, then every newer `--only` log laid over it, so each test has its newest result; older partial logs are not read.
+- **Prevention:** `test_goal_agent.py` `test_the_scan_takes_each_tests_newest_result_across_only_logs` (64/64). Still open from item 23: the plan count no longer lists C14 (`--accept`ed), CFG or T.1.
+
+## L43 · 2026-11-20 · The style loop's refiner broke more than it fixed: truck motion and size, jars, the Spin icon
+- **What broke:** in the first 0.2 style runs (`game/reports/style/0.2.0-farm/run-1`, `run-2`), Bob, fixing Vera's rows, shrank and moved the truck (0.93 to 0.7) and gave it a diagonal exit, enlarged the 7 crate jars until they overhung the crate, and moved the Spin icon. All of it was in `game/scenes/main.tscn` and two materials of the live game.
+- **How noticed:** the designer, watching the renders ("Bob is breaking more than he's fixing"); then the unit suite caught the truck off its cell and the overhanging jars.
+- **Cause:** the loop let Bob edit the live game with no check between rounds. Nothing kept motion, the size and place of props the designer had picked, or the UI (not Bob's folder) out of his reach, and Vera's rows invited shape and layout changes.
+- **How fixed:** all of Bob's edits restored to HEAD (designer). `style_loop.py` now works on a sandbox copy (`_meta/sessions/runs/style-<slug>-run-N-sandbox/`) and ends with `sandbox.patch` for the designer. After each Bob turn, `guard_motion` puts back motion, picked-prop size and place, added parts on picked props and any UI change, and the unit suite runs on the copy, compared with a baseline run (a turn that fails is undone). UI rows go to Patricia (`UI_FIXER`).
+- **Prevention:** `test_generate.py` StyleLoop cases (sandbox, guard, gate and undo; 79/79 when built, 91/91 now). The A6 demo run `0.2.0-farm/run-5` passed every gate and changed nothing in the game. Still open: the gate undoes a turn on a flaky timing test too (STYLE_LOOP.md, "limits").
+
 ## L42 · 2026-11-21 · Each goal step still ran the full unit suite; T9.1's fix rounds were misrouted and its stop was a false vote
 - **What broke:** (a) after L40/L41 every step still ran one full unit run (~220 tests, up to 27 min) as its gate, most of the 0.2.1 build's wall time (`game/reports/_runs/20261121-*`); T9.1's first check also ran all 206 tests, because its `# goal T9.1` mark sat above two `##` doc lines and `marked_tests()` found no own test. (b) T9.1's two fix rounds went to Patricia, though the only failing test was in Quinn's new `tests/test_zoom_end.gd` and she said so both times. (c) Fix round 2 then stopped as a Design Votes visual row on "A: keep the paused crank; B: reset the crank", a behaviour question with no visual number (`game/reports/goal/0.2/blackboard.md`, step T9.1 at 21:06).
 - **How noticed:** the designer: "these test runs take a long time and is dragging down dev time, we don't need to test things we know work already, or won't be affected by a change"; the T9.1 board.
