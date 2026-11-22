@@ -77,7 +77,7 @@ func t_habitat_pill_order_plus_opens_shop_twice() -> void:
 	for nm in ["ForkIcon", "CentrifugeIcon", "SellIcon"]:
 		var c: Control = m.find_child(nm, true, false) as Control
 		if c != null and c.is_visible_in_tree():
-			ck(not pr.intersects(c.get_global_rect()), "the pill clears %s" % nm)
+			ck(not pr.intersects(c.get_global_rect()), "the pill clears %s; diag: pill %s, %s %s" % [nm, pr, nm, c.get_global_rect()])
 	var panel: Control = m.find_child("ShopPanel", true, false) as Control
 	for run in 2:
 		if panel != null and panel.has_method("set_sheet_open"):
@@ -86,7 +86,7 @@ func t_habitat_pill_order_plus_opens_shop_twice() -> void:
 		ck(panel != null and not panel.visible, "run %d: the Shop is closed before the tap" % (run + 1))
 		await fi.tap_at(plus.get_global_rect().get_center())
 		await _frames(3)
-		ck(panel != null and panel.visible, "run %d: a real tap on + opens the Shop" % (run + 1))
+		ck(panel != null and panel.visible, "run %d: a real tap on + opens the Shop; diag: panel %s, plus rect %s, plus disabled %s, plus visible %s" % [run + 1, panel, plus.get_global_rect(), plus.disabled, plus.is_visible_in_tree()])
 	if panel != null and panel.has_method("set_sheet_open"):
 		panel.call("set_sheet_open", false)
 	_fin()

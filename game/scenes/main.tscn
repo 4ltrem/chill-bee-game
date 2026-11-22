@@ -16,6 +16,18 @@
 [ext_resource type="Script" path="res://scripts/floating_icon.gd" id="8_icon"]
 [ext_resource type="PackedScene" path="res://scenes/props/uncapping_fork.tscn" id="uncap_fork_scene"]
 
+[sub_resource type="Gradient" id="Gradient_wildflower"]
+offsets = PackedFloat32Array(0, 0.45, 0.5, 1)
+colors = PackedColorArray(1, 0.85, 0.3, 1, 1, 0.85, 0.3, 1, 0.97, 0.66, 0.78, 1, 0.97, 0.66, 0.78, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_wildflower"]
+gradient = SubResource("Gradient_wildflower")
+width = 40
+height = 40
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
 [sub_resource type="Environment" id="Environment_sky"]
 background_mode = 1
 background_color = Color(0.79, 0.91, 0.96, 1)
@@ -311,14 +323,13 @@ theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 40
 text = "0"
 
-[node name="HabitatIcon" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/HabitatPill"]
+[node name="HabitatIcon" type="TextureRect" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/HabitatPill"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
+size_flags_vertical = 4
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.97, 0.66, 0.78, 1)
-theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 40
-text = "✿"
+texture = SubResource("GradientTexture2D_wildflower")
+expand_mode = 1
 
 [node name="HabitatPlusButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/HabitatPill"]
 custom_minimum_size = Vector2(64, 64)
