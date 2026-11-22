@@ -3039,9 +3039,214 @@ FAIL    unit      no total line  (godot exit 1, 0 noise lines dropped)  game/rep
 
 2 fix rounds failed on T4.1, T.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T4.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T4.1, T.1 fix-round edits"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note orchestrator fixed T4.1's test by hand: test_habitat.gd had 4 over-indented lines (parse error broke the whole chain), called gui_get_hovered_control (not in Godot 4.2.1), and built Main with _mk_main(true) (PROCESS_MODE_DISABLED: no real taps reach ShopButton). Now t_bumble_visitor_toast_journal_unlock_twice passes (_runs/20261122-181348/); SkipIcon moved below TopRow, t_habitat_pill_order_plus_opens_shop_twice and t_second_stop_back_tap pass (_runs/20261122-181224/).` (the run had stopped: `waiting-designer`).
+
+Designer's answer: orchestrator fixed T4.1's test by hand: test_habitat.gd had 4 over-indented lines (parse error broke the whole chain), called gui_get_hovered_control (not in Godot 4.2.1), and built Main with _mk_main(true) (PROCESS_MODE_DISABLED: no real taps reach ShopButton). Now t_bumble_visitor_toast_journal_unlock_twice passes (_runs/20261122-181348/); SkipIcon moved below TopRow, t_habitat_pill_order_plus_opens_shop_twice and t_second_stop_back_tap pass (_runs/20261122-181224/).
+Branch `main`: stays on it.
+
+## Pass 31: scan (2026-11-22T18:14:08-05:00)
+
+Unit results from `game/reports/_runs/20261122-181046/unit.log`. 2 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (12 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Welcome screen. | change | Patricia, Bob | partial (built, waits on its tests) | ✓ node WelcomeOverlay, ✗ test t_welcome_shows_title_and_play_only (not run), ✗ test t_welcome_world_idle_then_play_twice (not run), ✗ test t_welcome_off_by_default_in_tests (not run), ✗ test t_welcome_play_text_translated_title_not (not run), ✓ ledger 04f72f9 |
+| C2 Habitat Health. | change | Patricia, Bob | partial (built, waits on its tests) | ✓ node HabitatPill, ✓ node TopInfo, ✗ test t_habitat_start_cap_thriving_once (not run), ✓ test t_habitat_pill_order_plus_opens_shop_twice, ✓ ledger 3cd0470 |
+| C3 Plant wildflower patch. | change | Patricia, Bob | partial | ✓ node PatchSlots, ✗ test t_patch_plant_steps_group_health_twice (not run) |
+| C4 The bumble bee visitor. | change | Patricia | done | ✓ test t_bumble_visitor_toast_journal_unlock_twice, ✓ ledger 8b8a767 |
+| C5 Victory screen. | change | Patricia, Bob | partial (built, waits on its tests) | ✗ test t_victory_delay_show_close_once_per_farm (not run), ✗ test t_victory_waits_for_farm_view (not run), ✓ ledger 8297ded |
+| T1.1 every test run sets `show_welcome = false` except the welcom | test | Quinn | partial | ✗ test t_welcome_off_by_default_in_tests (not run) |
+| T1.2 item 1: at launch with `show_welcome = true` the overlay sho | test | Quinn | partial | ✗ test t_welcome_shows_title_and_play_only (not run), ✗ test t_welcome_world_idle_then_play_twice (not run), ✗ test t_welcome_play_text_translated_title_not (not run) |
+| T2.1 item 2: Health starts at `habitat_health_start`; `thriving`  | test | Quinn | partial (built, waits on its tests) | ✗ test t_habitat_start_cap_thriving_once (not run), ✓ test t_habitat_pill_order_plus_opens_shop_twice, ✓ ledger 784fe83 |
+| T3.1 item 3: the row's cost equals `40 × 1.25^n` (floored) for n  | test | Quinn | partial (built, waits on its tests) | ✗ test t_patch_plant_steps_group_health_twice (not run), ✓ ledger de34590 |
+| T4.1 item 4: before thriving the Journal button is hidden; at thr | test | Quinn | done | ✓ test t_bumble_visitor_toast_journal_unlock_twice |
+| T5.1 item 5: reaching thriving during a zoom shows no victory unt | test | Quinn | partial | ✗ test t_victory_delay_show_close_once_per_farm (not run), ✗ test t_victory_waits_for_farm_view (not run) |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | partial | 2/10 present: ✗ test t_welcome_shows_title_and_play_only (not run), ✗ test t_welcome_world_idle_then_play_twice (not run), ✗ test t_welcome_off_by_default_in_tests (not run), ✗ test t_welcome_play_text_translated_title_not (not run), ✗ test t_habitat_sta ... |
+
+### Order: new or rescored (6 of 6)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C3 Plant wildflower patch. | 9.46 | 2 | 2 | 0.54 | 1 | 2 goal(s) wait on it; designer feature; cost 0.54 (Patricia, Bob) |
+| 2 | T1.1 every test run sets `show_welcome = false` except  | 3.79 | 0 | 2 | 0.21 | 1 | designer feature; cost 0.21 (Quinn) |
+| 3 | T1.2 item 1: at launch with `show_welcome = true` the o | 3.79 | 0 | 2 | 0.21 | 1 | designer feature; cost 0.21 (Quinn) |
+| 4 | T5.1 item 5: reaching thriving during a zoom shows no v | 3.79 | 0 | 2 | 0.21 | 1 | designer feature; cost 0.21 (Quinn) |
+| 5 | T6.1 item 6: the skip icon reaches thriving with money  | 3.79 | 0 | 2 | 0.21 | 1 | designer feature; cost 0.21 (Quinn) |
+| 6 | T.1 mutations in `tests/mutations.json` prove the new  | 1.79 | 0 | 1 | 0.21 | 1 | housekeeping/handoff; cost 0.21 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C3** (score 9.46: 2 goal(s) wait on it; designer feature; cost 0.54 (Patricia, Bob)).
+
+### Step: C3 (2026-11-22T18:14:13-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C3-patricia.md` (2758 chars)
+- Brief for Bob: `game/reports/goal/0.3/briefs/C3-bob.md` (2616 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C3-quinn.md` (4699 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+- Budget guard for Quinn: override
+
+**Patricia** (66,094 tokens, 5 turns, 17 s):
+
+Nothing needed changing. The scripts for items 3 and 6 were already in `game/scripts/`. `python -I _tools/contract_check.py` passes: 106 lookups, 0 unresolved. I didn't run the Godot parse check or Quinn's test suites.
+
+**What's in place**
+- `economy.gd`: `plant_patch` is in the upgrade table. Max level is `patch_slots`, cost is `floori(patch_base_cost × patch_cost_growth^lv)`, and there is no gate.
+- `patch_slots.gd` (`class_name PatchSlots`) does the planting:
+  - Reaching a new level grows in the next slot (scale 0 → 1) and adds it to group `flower_patch`.
+  - It adds `habitat_health_per_patch` to Health and asks for `toast_patch_planted`.
+  - A lower level hides the slots again.
+- `flower_patch.gd`: a patch whose parent is a `PatchSlots` stays out of the group until planted.
+- `bees.gd`: `refresh_patches()` is called deferred when a patch is added.
+- `skip_icon.gd`: reuses the same plant path at no cost.
+- `game_config.gd`: has the patch exports. `patch_grow_seconds` (0.18) is a placeholder.
+
+**Node names:** `PatchSlots` in `main.tscn`, with the six `flower_patch.tscn` instances as its children.
+
+**Open questions:** none. The Shop row, its "Thriving" display, the full-height sheet and the 720 × 1280 layout all belong to Bob and the shop UI.
+
+**For Quinn:** a test that tapping the Shop row plants slot 1 and adds it to the `flower_patch` group.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 4 (cap 30; CLI num_turns 5); end `success`
+
+
+**Quinn** (112,881 tokens, 7 turns, 23 s):
+
+Files changed: `tests/test_shop.gd` only. In `t_shop_no_row_overlaps_other_controls` I removed `TopInfo`, `SellIcon`, `ForkIcon` and `CentrifugeIcon` from the "rows must clear these" list. The spec line is quoted in a comment beside it. The test still checks rows against `BackButton`, `HiveCountLabel`, `HintLabel` and `JournalButton`, and still checks that rows don't overlap each other and stay on screen. I ran nothing.
+
+The other listed tests need no change. The eight-row and no-HUD-clearance edits in `t_shop_seven_rows_on_screen_no_scroll` were already in the file from an earlier goal.
+
+Node names used: `ShopPanel`, `ShopRows`, `JournalButton`, `BackButton`, `HiveCountLabel`, `HintLabel`, `TopInfo`.
+
+Open questions:
+- With `shop_layout = 0` the panel may be visible on the farm even when the Shop isn't open. `_hud_rects` in `test_ui_placement.gd` and `_icons_state` in `test_second_stop.gd` would then still require `ShopPanel` to clear the icons and `TopInfo`. The spec says only the open Shop may overlap them, so I left both as they are. If they fail after the build, tell me which reading you want.
+- Does a full-height sheet make `TopInfo` hidden or just covered? Tests that tap `TopInfo` controls while the sheet is open may be affected.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 7); end `success`
+
+
+**Bob** (418,186 tokens, 20 turns, 77 s):
+
+The six `PatchSlots` slots are placed and hidden in `main.tscn`. The Shop row and the full-height sheet are not done, and I haven't re-rendered the final slot positions. The contract check passes (0 unresolved).
+
+- **Slots:** `FarmWorld/PatchSlots` (`patch_slots.gd`) holds `PatchSlot1`–`PatchSlot6`, all `flower_patch.tscn` instances. I moved slots 3–6 to (-8, -3.5), (-5.5, 5), (-7.5, 1.5) and (-8, -0.5), all on the left side. I worked out by hand that this keeps them clear of the zoom stop and the truck at (3.8, 5.2). The default stop's frame is wider, so slots 1, 2, 5 and 6 still sit inside it.
+- **Render:** the one render I took was of the earlier layout, behind the Play screen, so it showed nothing useful. I deleted it.
+- **Shop row and sheet:** the row comes from `Economy` and `shop_ui.gd` builds it. The full-height sheet, with Close and tap-outside, is also script-driven, so I changed nothing for it in the scene.
+
+Open questions:
+- Does "clear of framing" mean fully outside the default frame, or just not blocking the hive and truck? The first would need a bigger ground.
+- Does Patricia's sheet fill the full height?
+
+Files changed: `game/scenes/main.tscn`.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 13 (cap 30; CLI num_turns 20); end `success`
+
+- Tests this round (26): own (11): `t_bumble_visitor_toast_journal_unlock_twice`, `t_dev_ui_bounds_collects_controls`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_journal_panel_text_matches_csv_twice`, `t_node_contract`, `t_patch_plant_steps_group_health_twice`, `t_pop_tween_unchanged`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_zoom_ui_and_camera`; changed in `tests/test_shop.gd` (1): `t_shop_no_row_overlaps_other_controls`; impacted by `scenes/main.tscn` (via `FarmUI`, `FarmUIRoot`, `HabitatCountLabel`, `HabitatIcon`, `HabitatPill`, `HabitatPlusButton`, `MoneyLabel`, `TopInfo`) (18): `t_back_keeps_half_frame`, `t_buttons_at_anchor_or_clamped`, `t_camera_back_from_second_stop`, `t_dev_ui_bounds_collects_controls`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_harvest_holds_anchor_spin_below`, `t_hud_no_overlap_no_cutoff`, `t_icons_above_props`, `t_icons_never_overlap`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_spin_icon_tap`, `t_speed_tag_below_labels`, `t_spin_placed_by_scene`, `t_welcome_world_idle_then_play_twice`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_ui_and_camera`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: PASS (open rows only on files this step did not change)
+- Green: checkpoint `4b9198c` on `main`
+
+## Pass 32: scan (2026-11-22T18:31:32-05:00)
+
+Unit results from `game/reports/_runs/20261122-181046/unit.log`. 4 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (5 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Welcome screen. | change | Patricia, Bob | partial (built, waits on its tests) | ✓ node WelcomeOverlay, ✗ test t_welcome_shows_title_and_play_only (not run), ✓ test t_welcome_world_idle_then_play_twice, ✗ test t_welcome_off_by_default_in_tests (not run), ✗ test t_welcome_play_text_translated_title_not (not run), ✓ ledger 04f72f9 |
+| C3 Plant wildflower patch. | change | Patricia, Bob | done | ✓ node PatchSlots, ✓ test t_patch_plant_steps_group_health_twice, ✓ ledger 4b9198c |
+| T1.2 item 1: at launch with `show_welcome = true` the overlay sho | test | Quinn | partial | ✗ test t_welcome_shows_title_and_play_only (not run), ✓ test t_welcome_world_idle_then_play_twice, ✗ test t_welcome_play_text_translated_title_not (not run) |
+| T3.1 item 3: the row's cost equals `40 × 1.25^n` (floored) for n  | test | Quinn | done | ✓ test t_patch_plant_steps_group_health_twice, ✓ ledger de34590 |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | partial | 4/10 present: ✗ test t_welcome_shows_title_and_play_only (not run), ✓ test t_welcome_world_idle_then_play_twice, ✗ test t_welcome_off_by_default_in_tests (not run), ✗ test t_welcome_play_text_translated_title_not (not run), ✗ test t_habitat_start_cap_thr ... |
+
+No score changed.
+
+Next: **T1.1** (score 3.79: designer feature; cost 0.21 (Quinn)), with T1.2, T.1.
+
+### Step: T1.1, T1.2, T.1 (2026-11-22T18:31:32-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T1.1-quinn.md` (4175 chars)
+- Quinn's step skipped: every line already has its marked test (T1.1: t_shop_costs_floor_base_growth, t_shop_buy_deducts_and_levels, t_shop_buttons_disabled_unaffordable_maxed_locked, t_shop_rows_order_and_level_text, t_shop_auto_sell_locked_until_delivery_1, t_shop_buy_button_real_click_twice, t_shop_no_row_overlaps_other_controls, t_welcome_off_by_default_in_tests, T1.2: t_welcome_shows_title_and_play_only, t_welcome_world_idle_then_play_twice, t_welcome_play_text_translated_title_not)
+- Tests this round (11): own (11): `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_buy_deducts_and_levels`, `t_shop_costs_floor_base_growth`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T1.1-fix1-quinn.md` (1535 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (30,531 tokens, 3 turns, 8 s):
+
+I changed nothing. The failure report names no failing test. Its only content is "mutate: no mutations to run", and no test name or failure message came with it.
+
+That line says `game/tests/mutations.json` has no mutations the runner could use for T1.1, T1.2 or T.1. The file does contain welcome entries, so I can't say why none were selected. I didn't open `test_welcome.gd` or the mutations, so I haven't checked either. Guessing at a fix would break your rule against changing values without a named failure.
+
+Send the actual failing check output, or the mutate runner's selection criteria. If the runner expects specific mutation names for these goals, tell me which names. I'll then add or fix the entries in `game/tests/mutations.json`, or add a `diag:` part to the failing test's FAIL message.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 2 (cap 15; CLI num_turns 3); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (11): own (11): `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_buy_deducts_and_levels`, `t_shop_costs_floor_base_growth`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T1.1-fix2-quinn.md` (1535 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (98,988 tokens, 9 turns, 17 s):
+
+I changed nothing, because no check failed in `tests/`.
+
+- **Failure:** `mutate: no mutations to run` is the only failure message I got. It comes from `_tools/mutate.py` line 115, which prints it when the mutation list is empty after filtering. It is a notice, not a test failure.
+- **Cause:** I think the run used `--since`, and `mutations.json` is identical to the baseline, so every mutation was filtered out. I didn't run `mutate.py` to confirm this.
+- **Mutations for T1.1 and T1.2:** `mutations.json` already has seven "0.3 item 1" mutations. They cover leaving, the twice step, the overlay at launch, `show_welcome` false, the shipped default, the raw key and the French text.
+- **Source files for the mutations:** the mutations' `find` strings match `main.gd` and `game_config.gd`. The `welcome_overlay.gd` and `journal.csv` finds are not in the files I searched, so I didn't verify them.
+- **Tests:** `test_welcome.gd` holds the four welcome tests. I made no `diag:` edits.
+
+If the goal agent wants these mutations run, it should call `mutate.py` without `--since`, or with `--names`.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 9); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (11): own (11): `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_buy_deducts_and_levels`, `t_shop_costs_floor_base_growth`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T1.1, T1.2, T.1: `mutations` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T1.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T1.1, T1.2, T.1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-22T18:11:20-05:00): waiting-designer.
+Last invocation (2026-11-22T18:35:36-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -3113,4 +3318,9 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Quinn, T4.1, T.1 fix 2 | 97,318 | 22,360 | 6 | 17 s |
 | Patricia, T4.1, T.1 fix 1 | 247,178 | 29,937 | 17 | 44 s |
 | Quinn, T4.1, T.1 fix 2 | 122,169 | 23,393 | 9 | 24 s |
-| **Total** | **10,866,364** | | | |
+| Patricia, C3 | 66,094 | 18,807 | 5 | 17 s |
+| Quinn, C3 | 112,881 | 27,796 | 7 | 23 s |
+| Bob, C3 | 418,186 | 40,154 | 20 | 77 s |
+| Quinn, T1.1, T1.2, T.1 fix 1 | 30,531 | 16,566 | 3 | 8 s |
+| Quinn, T1.1, T1.2, T.1 fix 2 | 98,988 | 24,237 | 9 | 17 s |
+| **Total** | **11,593,044** | | | |

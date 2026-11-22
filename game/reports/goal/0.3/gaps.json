@@ -1,8 +1,8 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T18:07:41-05:00",
- "unit_log": "game/reports/_runs/20261122-175323/unit.log",
+ "at": "2026-11-22T18:31:32-05:00",
+ "unit_log": "game/reports/_runs/20261122-181046/unit.log",
  "goals": {
   "C1": {
    "kind": "change",
@@ -15,7 +15,7 @@
     1
    ],
    "depends": [],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "node",
@@ -25,8 +25,8 @@
     {
      "kind": "test",
      "name": "t_welcome_shows_title_and_play_only",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
@@ -37,14 +37,14 @@
     {
      "kind": "test",
      "name": "t_welcome_off_by_default_in_tests",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_welcome_play_text_translated_title_not",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -53,7 +53,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -83,14 +83,14 @@
     {
      "kind": "test",
      "name": "t_habitat_start_cap_thriving_once",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_habitat_pill_order_plus_opens_shop_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -126,9 +126,14 @@
      "name": "t_patch_plant_steps_group_health_twice",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "4b9198c",
+     "ok": true
     }
    ],
-   "built": false,
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -143,13 +148,13 @@
     4
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_bumble_visitor_toast_journal_unlock_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -158,7 +163,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -173,19 +178,19 @@
     5
    ],
    "depends": [],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_victory_delay_show_close_once_per_farm",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_victory_waits_for_farm_view",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -194,7 +199,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -239,13 +244,13 @@
    "depends": [
     "C1"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_welcome_off_by_default_in_tests",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     }
    ],
    "built": false,
@@ -265,13 +270,13 @@
    "depends": [
     "C1"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_welcome_shows_title_and_play_only",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
@@ -282,8 +287,8 @@
     {
      "kind": "test",
      "name": "t_welcome_play_text_translated_title_not",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     }
    ],
    "built": false,
@@ -308,14 +313,14 @@
     {
      "kind": "test",
      "name": "t_habitat_start_cap_thriving_once",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_habitat_pill_order_plus_opens_shop_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -371,13 +376,13 @@
    "depends": [
     "C4"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_bumble_visitor_toast_journal_unlock_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -397,19 +402,19 @@
    "depends": [
     "C5"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_victory_delay_show_close_once_per_farm",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_victory_waits_for_farm_view",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     }
    ],
    "built": false,
@@ -463,8 +468,8 @@
     {
      "kind": "test",
      "name": "t_welcome_shows_title_and_play_only",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
@@ -475,26 +480,26 @@
     {
      "kind": "test",
      "name": "t_welcome_off_by_default_in_tests",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_welcome_play_text_translated_title_not",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_habitat_start_cap_thriving_once",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_habitat_pill_order_plus_opens_shop_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -505,20 +510,20 @@
     {
      "kind": "test",
      "name": "t_bumble_visitor_toast_journal_unlock_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_victory_delay_show_close_once_per_farm",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_victory_waits_for_farm_view",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     }
    ],
    "built": false,
@@ -529,34 +534,56 @@
  },
  "order": [
   {
-   "id": "T4.1",
-   "score": 3.78,
+   "id": "T1.1",
+   "score": 3.79,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.22,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.2",
+   "score": 3.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T5.1",
+   "score": 3.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.21,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T6.1",
-   "score": 3.78,
+   "score": 3.79,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.22,
+    "cost": 0.21,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T.1",
-   "score": 1.78,
+   "score": 1.79,
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.22,
+    "cost": 0.21,
     "ready": 1,
     "blocked_by": []
    }
