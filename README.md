@@ -41,7 +41,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - **Team:** a solo developer directing AI agents in Claude Code. The agent roles are in [_meta/team.md](_meta/team.md).
 - **Engine:** Godot (GDScript). Art comes from purchased low-poly asset packs.
 - **Launch platforms:** iOS and Android, in English and French.
-- **Timeline:** milestone-based, with no fixed date. The first playable is one full rough run in Sunny Meadow.
+- **Timeline:** milestone-based, with no fixed launch date. The course builds have dates up to 0.3.0 (~2026-11-24) in [MILESTONES.md](MILESTONES.md); the first playable is one full rough run in Sunny Meadow.
 - **Launch scope:** Sunny Meadow and Alpine Valley, rewarded ads and the Impact Pass, local personal-best times.
 - **Post-launch:** biomes 3–4, the Patron Pass, online leaderboards, the live Impact Dashboard, and possibly Switch and PC/Mac.
 
@@ -51,20 +51,32 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 
 | Path | Contents |
 |---|---|
-| [AGENTS.md](AGENTS.md) | Entry file for AI agents: where everything lives and where to go for each task. [CONTEXT.md](CONTEXT.md) describes the design loop (request, proposal, decision, apply). |
+| [AGENTS.md](AGENTS.md) | Entry file for AI agents: where everything lives and where to go for each task. |
+| [CONTEXT.md](CONTEXT.md) | The design loop: request, proposal, decision, apply. |
 | [GDD.md](GDD.md) | Game design document |
 | [MILESTONES.md](MILESTONES.md) | Build stages, version numbers (`0.<milestone>.<build>`) and the milestones with their course deliverables |
+| [STYLE_GUIDE.md](STYLE_GUIDE.md) | The approved look and voice rules (V1–V15, T1–T6) and palette tokens that scenes and text are checked against. |
+| [STYLE_LOOP.md](STYLE_LOOP.md) | How the two style loops (visual: Bob, `style_check.py`, Vera; voice: William, Clara) enforce the guide, with the demo runs and their cost. |
+| [UI_DESIGN.md](UI_DESIGN.md) | The designer's UI preferences and the UI canvas map; read before any UI work. |
+| [GOAL_AGENT.md](GOAL_AGENT.md) | The goal agent (`_tools/goal_agent.py`) that builds a milestone spec goal by goal, with the 0.1.4 run and its cost. |
+| [ONBOARDING.md](ONBOARDING.md) | A draft onboarding guide for working in this repository (unfinished). |
 | [gdd-review/reviews/](gdd-review/reviews/) | A multi-agent design review of the first draft. Six reviewer agents each reviewed it independently, then cross-examined each other, and a moderator wrote a synthesis ([SYNTHESIS.md](gdd-review/reviews/SYNTHESIS.md)). It was run with [gdd-review-kit](https://github.com/GixGosu/gdd-review-kit). |
 | [gdd-review/gdd.txt](gdd-review/gdd.txt) | Snapshot of the GDD as it was reviewed. Many review findings have since been addressed in `GDD.md`. |
 | [proposals/design/](proposals/design/) | Feature design proposals, e.g. the capstone [Royal Honey Refinery](proposals/design/capstone-machine.md) (Gerard). |
 | [proposals/balance/](proposals/balance/) | Balance reports, e.g. [Royal Crystal balance](proposals/balance/royal-crystal-balance.md) (Terry). |
 | [CREW.md](CREW.md) | The content crew: three agents (Ruth, William, Clara) and the orchestrator that produce the game's player text, with a diagram and results. |
 | [content/](content/) | Story outlines and Bee Journal text in English and French (William). |
+| [research/](research/) | Checked sources (Ruth): each claim with a verbatim quote, URL and date, for William and Connie. |
 | [audio/](audio/) | Licence-checked sound and music shortlists (Andrew). |
-| [game/](game/) | The Godot project: scripts (Patricia), scenes (Bob), tests and reports (Quinn). |
+| [game/](game/) | The Godot project: scripts (Patricia), scenes (Bob), tests and reports (Quinn); `game/reports/` holds builds, goal runs, style runs, votes and variants. |
+| [_tools/](_tools/CONTEXT.md) | The workspace scripts: checks, the content, style and goal loops, vote pages, Godot test and build runners, usage hooks, end-of-day helpers. |
+| [operator/](operator/CONTEXT.md) | The operator's contract (Oscar, a Sonnet main session that routes the day's work), the stops it hands off and the job queue. |
+| [_templates/](_templates/) | Blank starters for proposals, content, research briefs, audio lists, run blackboards, decision logs and new agents. |
+| [_meta/learnings.md](_meta/learnings.md) | Everything that broke, how it was noticed, its cause, fix and the check that now prevents it. |
+| [_meta/](_meta/) | Workspace records: the roster, run log, learnings, project memories (`memory/`) and each session's decision log (`sessions/`). |
 | [_meta/team.md](_meta/team.md) | The agent roster, each agent's model, and the rules they follow; each has a definition in `.claude/agents/`. |
 | [_meta/agent-runs.md](_meta/agent-runs.md) | Token, tool-call and duration summary of every agent run; the rows are in `agent-runs.csv`. |
-| [.claude/agents/](.claude/agents/) | Runnable Claude Code agent definitions, starting with Connie, the Compliance Officer. |
+| [.claude/agents/](.claude/agents/) | Runnable Claude Code agent definitions, one per role in the roster. |
 | [gdd-review-v2/](gdd-review-v2/) | Second review, of the GDD at commit `8ddb97a` after the first round of fixes and peer feedback. Its [SYNTHESIS.md](gdd-review-v2/reviews/SYNTHESIS.md) compares the results with the first review. |
 
 ---
@@ -116,7 +128,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Guide character's name and personality
 
 ### Production
-- [ ] Milestone dates
+- [ ] Milestone dates after the course (0.4 and later; the course builds are dated in [MILESTONES.md](MILESTONES.md))
 - [ ] Daily token budget: first calibration gives ~2.0M tokens/day (provisional; refine with a larger task, see [_meta/agent-runs.md](_meta/agent-runs.md))
 - [ ] Test device models and visual bee cap
 - [ ] Backend provider (managed game-backend service)

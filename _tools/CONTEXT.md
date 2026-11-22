@@ -7,7 +7,7 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | Docs | `links.py` | checks every link and input path |
 | Docs | `index.py` | rebuilds `_index.md` (`--decisions` prints the ledger) |
 | Docs | `sync_docs.py` | writes the docs' generated sections |
-| Docs | `consistency.py` | checks docs against code (run by the `.githooks/pre-commit` gate) |
+| Docs | `consistency.py` | checks docs against code, and that README.md and AGENTS.md map every top-level tracked file and folder (run by the `.githooks/pre-commit` gate) |
 | Docs | `doc_audit.py` | runs Doris on the day's changes |
 | Content loop | `generate.py` | runs the content loop |
 | Content loop | `voice_check.py` | checks the mechanical voice rules (T5 cited GDD sections, T2 Glossary terms from the GDD and `voice_terms.json`) before Clara; `generate.py` runs it each round |

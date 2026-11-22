@@ -11,6 +11,9 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | [UI_DESIGN.md](UI_DESIGN.md) | the designer's UI preferences (icons over the shots, no nav bar, Harvest fork meter, Royal Jelly icon K) and the UI canvas map; read before any UI work |
 | [STYLE_LOOP.md](STYLE_LOOP.md) | how the two style loops (visual: Bob, `style_check.py`, Vera; voice: William, Clara) enforce the guide, with the demo runs and their cost |
 | [MILESTONES.md](MILESTONES.md) | build stages, version numbers and the milestones, fitted to the course deadlines |
+| [CREW.md](CREW.md) | the content crew write-up (Ruth, William, Clara and `generate.py`), with its diagram and results |
+| [GOAL_AGENT.md](GOAL_AGENT.md) | the goal agent write-up (`_tools/goal_agent.py`): how it builds a spec goal by goal, the 0.1.4 run and its cost |
+| [ONBOARDING.md](ONBOARDING.md) | a draft onboarding guide for working in this repository (unfinished) |
 | [README.md](README.md) | public overview and the Outstanding TBDs checklist |
 | [CONTEXT.md](CONTEXT.md) | the design loop: request, proposal, decision, apply |
 | [proposals/](proposals/CONTEXT.md) | agent proposals, one shelf per agent role, each with a status line |

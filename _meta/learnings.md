@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L46 · 2026-11-22 · README.md fell 12 days behind and no check saw it
+- **What broke:** README.md's Repository Contents had not changed since 2026-11-10: it lacked STYLE_GUIDE.md, STYLE_LOOP.md (the A6 write-up), GOAL_AGENT.md (the A5 write-up), UI_DESIGN.md, research/, operator/, _tools/, _templates/, _meta/learnings.md and CONTEXT.md as a row, still said `.claude/agents/` "starting with Connie" and the timeline had "no fixed date". AGENTS.md's map lacked CREW.md, GOAL_AGENT.md and ONBOARDING.md.
+- **How noticed:** the designer, after the A6 push: "the readme is outdated, why didn't the gate catch that".
+- **Cause:** every layer checks that what a doc says is true, none that it says enough. `consistency.py` checks scripted facts, `links.py` that links resolve, and Doris only statements the day's diff made untrue; an untouched README with missing rows contradicts nothing.
+- **How fixed:** README and AGENTS.md maps completed; the two stale lines fixed.
+- **Prevention:** `consistency.py` `check_readme_map()` (in the pre-commit gate): every top-level tracked file and folder needs a row in README.md's Repository Contents and AGENTS.md's Where things live, with `README_EXEMPT` for deliberate omissions; tests `test_a_top_level_file_missing_from_the_readme_map_fails` and the real-repo check (93/93). Doris's brief gains a coverage pass: each added, renamed or removed file must appear in the map that should list it (`_tools/CONTEXT.md`, AGENTS.md, the owning CONTEXT.md). Still open: the README's Outstanding TBDs list is not checked against the GDD.
+
 ## L45 · 2026-11-21 · Removing a worktree emptied the repo's Godot folder through a junction
 - **What broke:** at 23:19 Oscar's branch cleanup ran `git worktree remove --force .claude/worktrees/m02-play` (designer's yes). The worktree held a junction `Godot_v4.2.1-stable_win64.exe` pointing at the repo root's Godot folder, made on 2026-11-20 so the worktree could run tests without a copy. The forced remove deleted through it, leaving the root folder empty; every Godot run then failed with `FileNotFoundError`.
 - **How noticed:** Rex's `ui_shots.py` check after the naming restructure; the folder's mtime (23:19:22) matched the cleanup command in the session transcript (23:19:07).

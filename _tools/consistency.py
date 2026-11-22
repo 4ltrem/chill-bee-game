@@ -18,6 +18,7 @@ History is not checked: dated logs, blackboards, decision logs, proposals and re
 record what was true when written. Standard library only.
 """
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -160,12 +161,48 @@ def check_estimates(root):
     return problems
 
 
+README_EXEMPT = {"README.md", "CLAUDE.md", "AGENTS.md"}   # the maps themselves; CLAUDE.md only points at AGENTS.md
+MAPS = (("README.md", "## Repository Contents"), ("AGENTS.md", "## Where things live"))
+
+
+def tracked_top(root):
+    """Top-level names git tracks (no dot entries), or None outside a git checkout."""
+    try:
+        p = subprocess.run(["git", "-C", str(root), "ls-files"], capture_output=True, text=True, encoding="utf-8")
+    except OSError:
+        return None
+    if p.returncode or not p.stdout.strip():
+        return None
+    return sorted({l.split("/", 1)[0] for l in p.stdout.splitlines() if l and not l.startswith(".")})
+
+
+def check_readme_map(root, names=None):
+    """Every top-level tracked file and folder has a row in README.md's Repository Contents table and in
+    AGENTS.md's Where things live table (designer, 2026-11-22: the README fell behind by omission, which no other
+    check sees). A row's first cell names it by a link `[x](path)` or a backticked `path`."""
+    names = tracked_top(root) if names is None else names
+    problems = []
+    for doc, heading in MAPS:
+        path = root / doc
+        if not names or not path.is_file():
+            continue
+        table = path.read_text(encoding="utf-8").split(heading, 1)[-1].split("\n## ", 1)[0]
+        listed = set()
+        for first in re.findall(r"^\|([^|]+)\|", table, re.M):
+            for p in re.findall(r"\]\(([^)]+)\)|`([^`]+)`", first):
+                listed.add((p[0] or p[1]).lstrip("./").split("/", 1)[0])
+        problems += [f"{doc}: {heading[3:]} has no row for `{n}` (add one, or add it to README_EXEMPT in "
+                     f"_tools/consistency.py if it is deliberately left out)" for n in names
+                     if n not in listed and n not in README_EXEMPT]
+    return problems
+
+
 def check(root=None):
     root = root or ROOT
     ags = agents(root)
     return (sync_docs.sync(check=True, root=root) + check_roster(root, ags)
             + check_model_mentions(root, ags) + check_numbers(root) + check_agent_count(root, ags)
-            + check_estimates(root))
+            + check_estimates(root) + check_readme_map(root))
 
 
 def main():

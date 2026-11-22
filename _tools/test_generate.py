@@ -778,6 +778,18 @@ class ConsistencyTest(unittest.TestCase):
 
     def test_the_real_docs_are_consistent(self):
         self.assertEqual(self.problems(), "")
+        self.assertEqual(self.cc.check_readme_map(TOOLS.parent), [])   # the copy has no .git: check the real repo
+
+    def test_a_top_level_file_missing_from_the_readme_map_fails(self):
+        names = ["AGENTS.md", "CLAUDE.md", "README.md", "game", "NEW_DOC.md"]
+        found = self.cc.check_readme_map(self.root, names)
+        self.assertEqual(len(found), 2, found)                              # the maps themselves and CLAUDE.md are exempt
+        self.assertTrue(found[0].startswith("README.md:") and "no row for `NEW_DOC.md`" in found[0])
+        self.assertTrue(found[1].startswith("AGENTS.md:"))
+        self.edit("README.md", "| [GDD.md](GDD.md) |", "| [NEW_DOC.md](NEW_DOC.md) | new |\n| [GDD.md](GDD.md) |")
+        self.assertEqual(len(self.cc.check_readme_map(self.root, names)), 1)
+        self.edit("AGENTS.md", "| [CREW.md](CREW.md) |", "| `NEW_DOC.md` | new |\n| [CREW.md](CREW.md) |")
+        self.assertEqual(self.cc.check_readme_map(self.root, names), [])
 
     def test_todays_bug_a_model_change_not_carried_to_the_docs(self):
         self.edit(".claude/agents/research-assistant.md", "model: sonnet", "model: haiku")
