@@ -75,6 +75,7 @@ func _ready() -> void:
 		_phase_toast.visible = false
 	Economy.phase_changed.connect(_on_phase_changed)
 	Economy.thriving.connect(_on_thriving)
+	Economy.habitat_changed.connect(_on_habitat_changed)
 	_refresh_bees()
 	_refresh_money()
 	_refresh_hive()
@@ -91,6 +92,13 @@ func _on_phase_changed(new_phase: int) -> void:
 	get_tree().create_timer(PHASE_TOAST_SECONDS).timeout.connect(func() -> void:
 		if is_instance_valid(_phase_toast):
 			_phase_toast.visible = false)
+
+
+## 0.3 item 4: a reset (health back under thriving) drops a still-showing bumble toast so the next farm starts clean.
+func _on_habitat_changed(h: int) -> void:
+	if _phase_toast != null and h < Economy.config.habitat_thriving and _phase_toast_label != null \
+			and _phase_toast_label.text == tr("toast_bumble_visitor"):
+		_phase_toast.visible = false
 
 
 ## 0.3 item 4: toast on thriving (reuses PhaseToast / ToastLabel); key text lives in content/course-ending-text.md.

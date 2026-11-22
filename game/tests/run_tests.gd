@@ -149,6 +149,8 @@ func _run() -> void:
 		"t_habitat_start_cap_thriving_once", "t_habitat_pill_order_plus_opens_shop_twice",
 		# 0.3 item 3
 		"t_patch_plant_steps_group_health_twice",
+		# 0.3 item 4 (written from game/specs/0.3-course-build.md before the code)
+		"t_bumble_visitor_toast_journal_unlock_twice",
 		# 0.3 item 5
 		"t_victory_delay_show_close_once_per_farm", "t_victory_waits_for_farm_view",
 	]

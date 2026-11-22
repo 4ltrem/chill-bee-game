@@ -1777,5 +1777,35 @@
    "t_patch_plant_steps_group_health_twice"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.3 item 4 leave step: a farm reset leaves the Journal button showing",
+  "file": "scripts/journal_ui.gd",
+  "find": "\t_open_button.visible = unlocked",
+  "replace": "\t_open_button.visible = unlocked or _open_button.visible",
+  "expect": [
+   "t_bumble_visitor_toast_journal_unlock_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 4 twice step: the toast shows only once per session",
+  "file": "scripts/farm_ui.gd",
+  "find": "\t\t_phase_toast_label.text = tr(\"toast_bumble_visitor\")\n\t_phase_toast.visible = true",
+  "replace": "\t\t_phase_toast_label.text = tr(\"toast_bumble_visitor\")\n\tif _phase_toast_shown:\n\t\treturn\n\t_phase_toast_shown = true\n\t_phase_toast.visible = true",
+  "expect": [
+   "t_bumble_visitor_toast_journal_unlock_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 4 the Journal button shows below thriving",
+  "file": "scripts/journal_ui.gd",
+  "find": "Economy.habitat_health >= Economy.config.habitat_thriving\n\t_open_button",
+  "replace": "Economy.habitat_health >= Economy.config.habitat_thriving - 1\n\t_open_button",
+  "expect": [
+   "t_bumble_visitor_toast_journal_unlock_twice"
+  ],
+  "suite": "unit"
  }
 ]

@@ -92,6 +92,82 @@ func t_habitat_pill_order_plus_opens_shop_twice() -> void:
 	_fin()
 
 
+## 0.3 item 4: the Journal button is hidden below habitat_thriving; at thriving the toast shows the toast_bumble_visitor text and a real
+## tap on Journal opens the Bumble Bees entry; a farm reset hides the button again; the second farm does the same.
+# goal T4.1
+func t_bumble_visitor_toast_journal_unlock_twice() -> void:
+	var d: Dictionary = _journal_read()
+	var old: String = TranslationServer.get_locale()
+	if d.is_empty():
+		ck(false, "journal.csv opens")
+		_fin()
+		return
+	var rows: Dictionary = d["rows"]
+	TranslationServer.set_locale("en")
+	var e: Node = _eco()
+	var m: Node = await _mk_main()   # not quiet: a disabled Main takes no real taps (the Shop and Journal taps below)
+	if m == null:
+		TranslationServer.set_locale(old)
+		_fin()
+		return
+	var thr: int = int(cv("habitat_thriving"))
+	var btn: Button = m.find_child("JournalButton", true, false) as Button
+	var panel: Control = m.find_child("JournalPanel", true, false) as Control
+	var title: Label = m.find_child("JournalTitle", true, false) as Label
+	var close: Button = m.find_child("JournalCloseButton", true, false) as Button
+	var toast: Control = m.find_child("PhaseToast", true, false) as Control
+	var toast_label: Label = m.find_child("ToastLabel", true, false) as Label
+	if btn == null or panel == null or title == null or close == null or toast == null or toast_label == null:
+		ck(false, "Journal nodes and the toast exist; diag: btn %s, panel %s, title %s, close %s, toast %s, label %s" % [btn, panel, title, close, toast, toast_label])
+		TranslationServer.set_locale(old)
+		_fin()
+		return
+	var want: String = str(rows["toast_bumble_visitor"]["en"])
+	for run in [1, 2]:
+		e.call("reset")
+		await _frames(3)
+		ck(not btn.visible, "run %d step start: the Journal button is hidden in a new farm" % run)
+		e.call("add_habitat", thr - 1 - int(e.get("habitat_health")))
+		await _frames(3)
+		ck(not btn.visible, "run %d step below: still hidden one point under habitat_thriving; diag: health %d, thr %d" % [run, int(e.get("habitat_health")), thr])
+		ck(not (toast.visible and toast_label.text == want), "run %d step below: no bumble toast yet" % run)
+		e.call("add_habitat", 1)
+		await _frames(3)
+		ck(toast.visible, "run %d step thriving: the toast shows" % run)
+		eq(toast_label.text, want, "run %d step thriving: the toast text is toast_bumble_visitor" % run)
+		ck(btn.visible, "run %d step thriving: the Journal button shows" % run)
+		await _shop_open(m, true)
+		var pn: Control = m.find_child("ShopPanel", true, false) as Control
+		var sx: String = "sheet_open %s; " % [pn.call("is_sheet_open") if pn != null and pn.has_method("is_sheet_open") else "n/a"]
+		var shp: Control = m.find_child("ShopPanel", true, false) as Control
+		var sbn: Control = m.find_child("ShopButton", true, false) as Control
+		var anc: Array = []
+		var an: Node = btn
+		while an != null:
+			anc.append("%s:%s" % [an.name, an.get("visible")])
+			an = an.get_parent()
+		var dg: String = sx + "shop panel visible %s, in tree %s, shop_layout %s; ShopButton in tree %s rect %s; toast rect %s filter %s; Journal visible %s rect %s; ancestors %s" % [
+			shp.visible if shp != null else "none", shp.is_visible_in_tree() if shp != null else "none", str(m.get("shop_layout")),
+			sbn.is_visible_in_tree() if sbn != null else "none", sbn.get_global_rect() if sbn != null else "none",
+			toast.get_global_rect(), toast.mouse_filter, btn.visible, btn.get_global_rect(), anc]
+		ck(btn.is_visible_in_tree(), "run %d step open: the Journal button is on screen in the Shop; diag: %s" % [run, dg])
+		await fi.tap_at(btn.get_global_rect().get_center())
+		await _frames(2)
+		ck(panel.is_visible_in_tree(), "run %d step tap: a real tap on Journal opens the entry" % run)
+		eq(title.text, str(rows["JOURNAL_BUMBLE_BEES_TITLE"]["en"]), "run %d step tap: the Bumble Bees title" % run)
+		await fi.tap_at(close.get_global_rect().get_center())
+		await _frames(2)
+		ck(not panel.visible, "run %d step close: Close hides the entry" % run)
+		var shop: Control = m.find_child("ShopPanel", true, false) as Control
+		if shop != null and shop.has_method("set_sheet_open"):
+			shop.call("set_sheet_open", false)
+		e.call("reset")
+		await _frames(3)
+		ck(not btn.visible, "run %d step reset: a farm reset hides the Journal button again" % run)
+	TranslationServer.set_locale(old)
+	_fin()
+
+
 ## 0.3 item 3: planting. Buying walks the PatchSlots in child order; each purchase joins group flower_patch and adds
 ## habitat_health_per_patch to Health; cost grows per the config; a farm reset hides them again (twice).
 # goal T3.1

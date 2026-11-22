@@ -310,7 +310,9 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 	ck(view.encloses(sr), "the shop list sits inside the 720 x 1280 screen %s" % str(sr))
 	var panel: Control = m.find_child("ShopPanel", true, false) as Control
 	var others: Array = []
-	for nm in ["TopInfo", "SellIcon", "ForkIcon", "CentrifugeIcon", "BackButton", "HiveCountLabel", "HintLabel"]:
+	# spec 0.3 goal C3 item 3: "The open Shop ... may cover the Harvest, Sell and Spin icons" and "Shop covers the whole screen, top info included":
+	# TopInfo and the three icons are no longer cleared by the rows; BackButton, the count and hint labels stay checked
+	for nm in ["BackButton", "HiveCountLabel", "HintLabel"]:
 		var c: Control = m.find_child(nm, true, false) as Control
 		if c != null and c.is_visible_in_tree() and c.get_global_rect().size.x > 0.0:
 			if panel != null and (panel.is_ancestor_of(c) or panel.top_level):   # item 14: an open sheet floats over the farm icons by design
