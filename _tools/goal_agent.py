@@ -138,6 +138,9 @@ VISUAL_RULE = ("Never change a visual number (a size, scale, offset, font size o
                "change nothing for it and write one line ending `(designer)`: the question, with options A: and B:. ")
 # L42: T9.1's fix round 2 stopped for a Design Votes row on "A: keep the paused crank; B: reset the crank", no visual
 # value in it. A `(designer)` row is a vote only when it names one of these; any other is a plain designer question.
+# L49: Quinn's "nothing is marked `(designer)`" stopped the 0.3 run as a question; a tag quoted in backticks is a
+# mention, not a row.
+DESIGNER_ROW = re.compile(r"(?<!`)\(designer\)(?!`)")
 VISUAL_ROW = re.compile(r"\b(?:sizes?|scales?|offsets?|positions?|fonts?|margins?|colou?rs?|px|pixels?|width|height|"
                         r"separation|spacing)\b", re.I)
 # L42: T9.1's two fix rounds went to Patricia, who said each time the fault was in Quinn's new test. A reply like this
@@ -1668,7 +1671,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         say(board, f"- Check `scope`: " + (f"FAIL ({', '.join(f'`{p}`' for p in stray)} changed outside "
                                            f"{', '.join(FOLDERS[a] for a in fix)})\n" if stray else "PASS\n"))
         rows = [(g.NAMES[a], l.strip().lstrip("-* ")) for a, r in replies.items() if a != QA or quinn
-                for l in r.splitlines() if "(designer)" in l]
+                for l in r.splitlines() if DESIGNER_ROW.search(l)]
         votes = [(who, row) for who, row in rows if VISUAL_ROW.search(row)]   # L42: only a visual value is a vote
         asks = [(who, row) for who, row in rows if not VISUAL_ROW.search(row)]
         votes += [("changed", row) for row in visual_changes(looks_before, visual_lines(), spec_slice(spec, goal))]

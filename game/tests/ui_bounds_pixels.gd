@@ -45,6 +45,7 @@ func _diff(a: Color, b: Color) -> int:
 
 func _run() -> void:
 	root.get_node("Economy").call("reset")
+	Flow.no_welcome(self)   # spec 0.3 item 1: "every test run sets it false unless the test is about the welcome screen"
 	var main: Node = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
 	await _frames(10)

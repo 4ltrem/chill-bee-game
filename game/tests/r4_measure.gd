@@ -192,6 +192,7 @@ func _run() -> void:
 	var stale: bool = FarmInput.reset_dev_config()
 	print("Dev config reset (equivalent of Reset to defaults): a stale user://dev_config.tres was ", "FOUND and removed" if stale else "not present")
 	root.get_node("Economy").call("reset")
+	preload("res://tests/flow.gd").no_welcome(self)
 	main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
 	await _frames(10)

@@ -1589,8 +1589,7 @@
  {
   "name": "0.2 item 15 the sheet's dim lets fork and crank input through",
   "file": "scripts/shop_ui.gd",
-  "find": "_dim.mouse_filter = Control.MOUSE_FILTER_STOP",
-  "replace": "_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE",
+  "find": "_dim.mouse_filter = Control.MOUSE_FILTER_STOP",  "replace": "_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE",
   "expect": [
    "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
    "t_shop_at_second_stop_buy_blocks_crank_closes_on_back"
@@ -1604,6 +1603,78 @@
   "replace": "_move_parts.call_deferred(true)",
   "expect": [
    "t_shop_compact_layout_nothing_in_zoom"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 1 leave step: the held world keeps processing under the overlay",
+  "file": "scripts/main.gd",
+  "find": "\t\t\t_held[node] = node.process_mode\n\t\t\tnode.process_mode = Node.PROCESS_MODE_DISABLED",
+  "replace": "\t\t\t_held[node] = node.process_mode\n\t\t\tpass",
+  "expect": [
+   "t_welcome_world_idle_then_play_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 1 twice step: Play does not give the world its processing back",
+  "file": "scripts/main.gd",
+  "find": "\t\t\tnode.process_mode = _held[node]",
+  "replace": "\t\t\tpass",
+  "expect": [
+   "t_welcome_world_idle_then_play_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 1 the overlay is dropped at launch even with show_welcome on",
+  "file": "scripts/main.gd",
+  "find": "\tif not Economy.config.show_welcome:\n\t\tvar skipped",
+  "replace": "\tif true:\n\t\tvar skipped",
+  "expect": [
+   "t_welcome_shows_title_and_play_only",
+   "t_welcome_world_idle_then_play_twice",
+   "t_welcome_play_text_translated_title_not"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 1 show_welcome false is ignored: the overlay and the idle world stay",
+  "file": "scripts/main.gd",
+  "find": "\tif not Economy.config.show_welcome:\n\t\tvar skipped",
+  "replace": "\tif false:\n\t\tvar skipped",
+  "expect": [
+   "t_welcome_off_by_default_in_tests"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 1 the shipped default of show_welcome is false",
+  "file": "scripts/game_config.gd",
+  "find": "@export var show_welcome: bool = true",
+  "replace": "@export var show_welcome: bool = false",
+  "expect": [
+   "t_welcome_off_by_default_in_tests"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 1 the Play button shows the raw key (not through the translation)",
+  "file": "scripts/welcome_overlay.gd",
+  "find": "(_button as Button).text = tr(\"welcome_play\")",
+  "replace": "(_button as Button).text = \"welcome_play\"",
+  "expect": [
+   "t_welcome_shows_title_and_play_only"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 1 the French Play text is wrong",
+  "file": "translations/journal.csv",
+  "find": "welcome_play,Play,Jouer",
+  "replace": "welcome_play,Play,Play",
+  "expect": [
+   "t_welcome_play_text_translated_title_not"
   ],
   "suite": "unit"
  }

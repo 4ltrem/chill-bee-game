@@ -3,6 +3,13 @@ extends RefCounted
 ## 0.2.1 item 14: with shop_layout 1 the shop is hidden on the farm and opens from the ShopButton or ShopUI.set_sheet_open(true).
 
 
+## 0.3 item 1 (T1.1): every windowed run sets show_welcome false before it instantiates main.tscn (the welcome tests set it true themselves).
+static func no_welcome(tree: SceneTree) -> void:
+	var eco: Node = tree.root.get_node_or_null("Economy")
+	if eco != null and eco.get("config") != null and eco.get("config").get("show_welcome") != null:
+		eco.get("config").set("show_welcome", false)
+
+
 ## Opens the shop sheet when the layout has one and it is closed. real = a real tap on the ShopButton (fi: the FarmInput helper), else set_sheet_open(true).
 static func shop_open(main: Node, fi: RefCounted = null, real: bool = false) -> void:
 	var panel: Node = main.find_child("ShopPanel", true, false)

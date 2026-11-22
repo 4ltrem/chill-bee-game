@@ -65,6 +65,7 @@ func play(tree: SceneTree, path: String, tail: float = 4.0) -> Dictionary:
 	for n in GameConfig.value_names(cfg):
 		saved[n] = cfg.get(n)
 	InputRecorder.apply(rec, cfg)
+	preload("res://tests/flow.gd").no_welcome(tree)   # 0.3 item 1: a replay plays the farm, not the welcome overlay
 	var root: Window = tree.root
 	var evs: Array = InputRecorder.events(rec)
 	var view: Vector2 = Vector2(root.get_visible_rect().size)

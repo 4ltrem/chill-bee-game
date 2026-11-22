@@ -41,6 +41,7 @@ var _main: Node
 
 
 func _mk() -> Node:
+	preload("res://tests/flow.gd").no_welcome(self)
 	_main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(_main)   # _process runs, as in the game
 	var c: Node = _main.find_child("Centrifuge", true, false)

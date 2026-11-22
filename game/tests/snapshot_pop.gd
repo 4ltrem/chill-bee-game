@@ -187,6 +187,7 @@ func _run() -> void:
 		print("a stale %s was FOUND and removed" % GameConfig.DEV_PATH)
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(GameConfig.DEV_PATH))
 	root.get_node("Economy").call("reset")
+	preload("res://tests/flow.gd").no_welcome(self)
 	main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
 	await _frames(10)

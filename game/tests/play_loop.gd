@@ -332,6 +332,7 @@ func _run() -> void:
 	if ps == null:
 		_abort("%s failed to load" % MAIN_SCENE)
 		return
+	Flow.no_welcome(self)
 	main = (ps as PackedScene).instantiate()
 	root.add_child(main)
 	await _frames(10)

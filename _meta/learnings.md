@@ -4,6 +4,12 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L49 · 2026-11-22 · goal_agent stopped on a "question" that said there was none
+- **What broke:** the 0.3 run stopped `waiting-designer` on T1.1/T1.2 with the "question" "I found no game bug and no open spec question, so nothing is marked `(designer)`." (Quinn), before his fix (`Flow.no_welcome` in `ui_bounds_pixels.gd`) was ever run.
+- **How noticed:** the blackboard's question table.
+- **Cause:** the fix-round check took any reply line containing `(designer)` as a designer row, including a line that only mentions the tag in backticks.
+- **How fixed / prevention:** `goal_agent.DESIGNER_ROW` matches `(designer)` only when it is not wrapped in backticks. Test: the `DESIGNER_ROW` asserts beside the L42 visual-row checks in `test_goal_agent.py`.
+
 ## L48 · 2026-11-22 · goal_agent stopped twice on code that was fine: Godot's class cache was stale
 - **What broke:** the 0.3 run stopped `waiting-designer` on C1 and again on C3 after 2 fix rounds each: "Could not find type WelcomeOverlay" (then "PatchSlots"), `main.gd` / `flower_patch.gd` failing to load, and `tr(welcome_play)` returning the key. The fix rounds changed code that had no bug.
 - **How noticed:** the blackboard's test output; Quinn's C1 fix-round reply named the stale global class cache.

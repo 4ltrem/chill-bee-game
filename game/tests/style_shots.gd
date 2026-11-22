@@ -123,6 +123,7 @@ func _run() -> void:
 	fi =FarmInput.new(self)
 	FarmInput.reset_dev_config()
 	root.get_node("Economy").call("reset")
+	preload("res://tests/flow.gd").no_welcome(self)
 	main = (load("res://scenes/main.tscn") as PackedScene).instantiate()
 	root.add_child(main)
 	await _frames(10)

@@ -1091,6 +1091,8 @@ class Loop(unittest.TestCase):
                        "Icon colour: A: amber; B: honey (designer)", "Back button offset A: -4 B: 0 (designer)"):
             self.assertTrue(ga.VISUAL_ROW.search(visual), visual)
         self.assertFalse(ga.VISUAL_ROW.search(row))
+        self.assertTrue(ga.DESIGNER_ROW.search(row))
+        self.assertFalse(ga.DESIGNER_ROW.search("I found no game bug, so nothing is marked `(designer)`."))   # L49
 
 
 def datetime_after(stamp):
