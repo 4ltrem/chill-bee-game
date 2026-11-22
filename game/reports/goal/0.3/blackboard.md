@@ -1878,9 +1878,128 @@ Fix round 2 on T5.1 needs a visual number the designer has not voted on (sizes, 
 
 Comparison pages:
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note VictoryOverlay placeholders kept except the column width: 800 > the 720 viewport, set to 640 by the orchestrator (40 px margins). Title 64, body 36, button 320x120 font 40, separation 40: placeholders the designer confirms at play-test.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: VictoryOverlay placeholders kept except the column width: 800 > the 720 viewport, set to 640 by the orchestrator (40 px margins). Title 64, body 36, button 320x120 font 40, separation 40: placeholders the designer confirms at play-test.
+Branch `main`: stays on it.
+
+## Pass 19: scan (2026-11-22T16:04:05-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 5 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C5 Victory screen. | change | Patricia, Bob | partial (built, waits on its tests) | ✗ test t_victory_delay_show_close_once_per_farm (FAIL), ✗ test t_victory_waits_for_farm_view (FAIL), ✓ ledger 8297ded |
+| T5.1 item 5: reaching thriving during a zoom shows no victory unt | test | Quinn | partial | ✗ test t_victory_delay_show_close_once_per_farm (FAIL), ✗ test t_victory_waits_for_farm_view (FAIL) |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | partial | 6/8 present: ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_p ... |
+
+### Order: new or rescored (5 of 5)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T5.1 item 5: reaching thriving during a zoom shows no v | 3.78 | 0 | 2 | 0.22 | 1 | designer feature; cost 0.22 (Quinn) |
+| 2 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.22 | 0 | waits on C3, C4, C6 |
+| 3 | T3.1 item 3: the row's cost equals `40 × 1.25^n` (floor | 0.0 | 0 | 2 | 0.22 | 0 | waits on C3 |
+| 4 | T4.1 item 4: before thriving the Journal button is hidd | 0.0 | 0 | 2 | 0.22 | 0 | waits on C4 |
+| 5 | T6.1 item 6: the skip icon reaches thriving with money  | 0.0 | 0 | 2 | 0.22 | 0 | waits on C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - Question: The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+Next: **T5.1** (score 3.78: designer feature; cost 0.22 (Quinn)).
+
+### Step: T5.1 (2026-11-22T16:04:05-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T5.1-quinn.md` (4036 chars)
+- Quinn's step skipped: every line already has its marked test (T5.1: t_delivery_look_groups_by_level, t_delivery_stacks_not_flame_material, t_victory_delay_show_close_once_per_farm, t_victory_waits_for_farm_view)
+- Tests this round (4): own (4): `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      2 passed, 2 failed  (godot exit 1, 14 noise lines dropped)  game/reports/_runs/20261122-160407/unit.log
+    FAIL  t_victory_delay_show_close_once_per_farm  step text: the title is a translated string; diag: 'victory_title' | step text: the button is a translated string; diag: 'victory_button'  (4258 ms)
+    FAIL  t_victory_waits_for_farm_view  step sheet: not shown while the Shop sheet is open: expected false got true | step zoom: not shown while a zoom is in progress: expected false got true  (4923 ms)
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/T5.1-fix1-patricia.md` (2481 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (115,015 tokens, 11 turns, 21 s):
+
+Two fixes are needed; I made one, and the other is outside `scripts/`. I didn't run any checks.
+
+**Fixed (`scripts/victory_overlay.gd`):** `t_victory_waits_for_farm_view` failed, so the overlay showed while the Shop sheet was open and during a zoom. `_farm_view_idle()` looked for `farm_view_idle()` on `get_tree().current_scene`. A test instances Main itself, so that isn't Main and the check returned true. It now asks the overlay's parent (Main) first and falls back to `current_scene`.
+
+**Not mine (`t_victory_delay_show_close_once_per_farm`):** `game/translations/journal.csv` has no `victory_title`, `victory_body` or `victory_button` rows, so `tr()` returns the raw keys. `_tools/journal_csv.py` doesn't read `content/course-ending-text.md` either. Someone with `_tools/` and `game/translations/` needs to extend the exporter, regenerate the CSV and `.translation` files, and register them in `project.godot` if needed.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 6 (cap 15; CLI num_turns 11); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (7): own (4): `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`; impacted by `scripts/victory_overlay.gd` (via `VictoryOverlay`, `_process`) (4): `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_lid_still_crank_and_gear1_turn_twice`, `t_victory_delay_show_close_once_per_farm`; last failures (2): `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      6 passed, 1 failed  (godot exit 1, 22 noise lines dropped)  game/reports/_runs/20261122-160528/unit.log
+    FAIL  t_victory_delay_show_close_once_per_farm  step text: the title is a translated string; diag: 'victory_title' | step text: the button is a translated string; diag: 'victory_button'  (4408 ms)
+```
+
+#### Fix round 2: to Bob
+
+- Brief for Bob: `game/reports/goal/0.3/briefs/T5.1-fix2-bob.md` (2297 chars)
+- Budget guard for Bob: override
+
+**Bob** (29,706 tokens, 2 turns, 6 s):
+
+Changed nothing. The cause is not in `scenes/` or `materials/`.
+
+`game/translations/journal.csv` has no `victory_title`, `victory_body` or `victory_button` rows. `tr()` therefore returns the raw key, and `test_victory.gd:48` fails on that. `victory_overlay.gd:43` already calls `tr("victory_title")`, so the scene side is fine.
+
+`_tools/journal_csv.py` doesn't read `content/course-ending-text.md` either.
+
+The next round goes to whoever owns `_tools/` and `game/translations/`. They need to:
+- extend the exporter to read those rows,
+- regenerate the CSV and the `.translation` files,
+- register them in `project.godot` if they aren't already.
+
+The spec says to export from the approved rows by script, so don't hand-add the keys.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 2 (cap 15; CLI num_turns 2); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (7): own (4): `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`; impacted by `scripts/victory_overlay.gd` (via `VictoryOverlay`, `_process`) (4): `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_lid_still_crank_and_gear1_turn_twice`, `t_victory_delay_show_close_once_per_farm`; last failures (1): `t_victory_delay_show_close_once_per_farm`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      6 passed, 1 failed  (godot exit 1, 22 noise lines dropped)  game/reports/_runs/20261122-160646/unit.log
+    FAIL  t_victory_delay_show_close_once_per_farm  step text: the title is a translated string; diag: 'victory_title' | step text: the button is a translated string; diag: 'victory_button'  (4570 ms)
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T5.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T5.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T5.1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-22T16:03:31-05:00): waiting-designer.
+Last invocation (2026-11-22T16:07:51-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -1929,4 +2048,6 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Quinn, T2.1 fix 2 | 92,188 | 21,867 | 7 | 16 s |
 | Quinn, T5.1 fix 1 | 334,690 | 35,302 | 25 | 67 s |
 | Bob, T5.1 fix 2 | 163,145 | 28,775 | 12 | 28 s |
-| **Total** | **6,793,370** | | | |
+| Patricia, T5.1 fix 1 | 115,015 | 23,720 | 11 | 21 s |
+| Bob, T5.1 fix 2 | 29,706 | 16,587 | 2 | 6 s |
+| **Total** | **6,938,091** | | | |
