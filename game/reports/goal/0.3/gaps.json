@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T15:05:29-05:00",
+ "at": "2026-11-22T15:33:34-05:00",
  "unit_log": "game/reports/_runs/20261122-145415/unit.log",
  "goals": {
   "C1": {
@@ -65,7 +65,7 @@
    "built": false,
    "waits_on_tests": false,
    "questions": [
-    "The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:05:28-05:00) say why; answer by editing the spec item."
+    "The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item."
    ],
    "ambiguous": true
   },
@@ -83,8 +83,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "C5": {
    "kind": "change",
@@ -96,10 +98,16 @@
     5
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "8297ded",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -117,8 +125,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T1.1": {
    "kind": "test",
@@ -285,67 +295,45 @@
  },
  "order": [
   {
-   "id": "C4",
-   "score": 9.69,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.31,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C5",
-   "score": 9.69,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.31,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C6",
-   "score": 9.69,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.31,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T1.1",
-   "score": 3.75,
+   "score": 3.76,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.25,
+    "cost": 0.24,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T1.2",
-   "score": 3.75,
+   "score": 3.76,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.25,
+    "cost": 0.24,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T2.1",
-   "score": 3.75,
+   "score": 3.76,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.25,
+    "cost": 0.24,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T5.1",
+   "score": 3.76,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.24,
     "ready": 1,
     "blocked_by": []
    }
@@ -356,12 +344,11 @@
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.25,
+    "cost": 0.24,
     "ready": 0,
     "blocked_by": [
      "C3",
      "C4",
-     "C5",
      "C6"
     ]
    }
@@ -372,7 +359,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.25,
+    "cost": 0.24,
     "ready": 0,
     "blocked_by": [
      "C3"
@@ -385,23 +372,10 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.25,
+    "cost": 0.24,
     "ready": 0,
     "blocked_by": [
      "C4"
-    ]
-   }
-  },
-  {
-   "id": "T5.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.25,
-    "ready": 0,
-    "blocked_by": [
-     "C5"
     ]
    }
   },
@@ -411,7 +385,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.25,
+    "cost": 0.24,
     "ready": 0,
     "blocked_by": [
      "C6"
@@ -420,6 +394,8 @@
   }
  ],
  "ambiguous": [
-  "C3"
+  "C3",
+  "C4",
+  "C6"
  ]
 }

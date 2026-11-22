@@ -996,9 +996,430 @@ Fix round 1 on C4 needs a visual number the designer has not voted on (sizes, sc
 
 Comparison pages:
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note designer 2026-11-22: neither A nor B: the open Shop may cover the Harvest, Sell and Spin icons, so the panel grows taller to fit 8 rows (spec item 3 updated). Quinn: update the shop tests from 7 rows to 8, and drop ForkIcon/Spin/Sell from their overlap checks. Patricia: guard the nil bees reference behind 'refresh_patches'. Visual numbers for the taller panel are placeholders the designer confirms at play-test.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: designer 2026-11-22: neither A nor B: the open Shop may cover the Harvest, Sell and Spin icons, so the panel grows taller to fit 8 rows (spec item 3 updated). Quinn: update the shop tests from 7 rows to 8, and drop ForkIcon/Spin/Sell from their overlap checks. Patricia: guard the nil bees reference behind 'refresh_patches'. Visual numbers for the taller panel are placeholders the designer confirms at play-test.
+Branch `main`: stays on it.
+
+## Pass 10: scan (2026-11-22T15:10:34-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C3 Plant wildflower patch. | change | Patricia | missing | none found |
+
+### Order: new or rescored (9 of 12)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C3 Plant wildflower patch. | 9.69 | 2 | 2 | 0.31 | 1 | 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia) |
+| 5 | T1.1 every test run sets `show_welcome = false` except  | 3.76 | 0 | 2 | 0.24 | 1 | designer feature; cost 0.24 (Quinn) |
+| 6 | T1.2 item 1: at launch with `show_welcome = true` the o | 3.76 | 0 | 2 | 0.24 | 1 | designer feature; cost 0.24 (Quinn) |
+| 7 | T2.1 item 2: Health starts at `habitat_health_start`; ` | 3.76 | 0 | 2 | 0.24 | 1 | designer feature; cost 0.24 (Quinn) |
+| 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.24 | 0 | waits on C3, C4, C5, C6 |
+| 9 | T3.1 item 3: the row's cost equals `40 × 1.25^n` (floor | 0.0 | 0 | 2 | 0.24 | 0 | waits on C3 |
+| 10 | T4.1 item 4: before thriving the Journal button is hidd | 0.0 | 0 | 2 | 0.24 | 0 | waits on C4 |
+| 11 | T5.1 item 5: reaching thriving during a zoom shows no v | 0.0 | 0 | 2 | 0.24 | 0 | waits on C5 |
+| 12 | T6.1 item 6: the skip icon reaches thriving with money  | 0.0 | 0 | 2 | 0.24 | 0 | waits on C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C3** (score 9.69: 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia)).
+
+### Step: C3 (2026-11-22T15:10:38-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C3-patricia.md` (2214 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C3-quinn.md` (3379 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (96,360 tokens, 5 turns, 15 s):
+
+No test files changed. None of the seven listed tests has an expectation that this spec item replaces.
+
+- **`t_dev_ui_bounds_collects_controls`, `t_zoom_ui_and_camera`, `t_shop_compact_layout_nothing_in_zoom`**: they read `shop_layout` and the panel's visibility only. Nothing in them depends on the row count, the panel height or the HUD clearance.
+- **`t_pop_tween_unchanged`**: it samples the honeycomb cell pop, not the patch grow-in.
+- **`t_node_contract`, `_fp_prop`, `_fp_prop_contract`**: the prop contract is unchanged.
+- **`_fp_main`**: it reads only `FlowerPatch1` to `FlowerPatch3`.
+
+Node names used: none new.
+
+Open question: `test_economy.gd:391` asserts exactly 3 nodes in group `flower_patch` while main runs.
+- If the six hidden patches join the group only on purchase, as the spec says, this stays correct.
+- If `flower_patch.gd` joins the group in `_ready`, it breaks, because the hidden patches would be counted.
+
+I left the line alone. Patricia and Bob should confirm that the hidden patches stay out of the group until bought.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 4 (cap 30; CLI num_turns 5); end `success`
+
+
+**Patricia** (102,203 tokens, 8 turns, 18 s):
+
+Items 3 and 6 were already in `scripts/`, so I changed no files this run. I didn't run the unit tests, and `contract_check.py` found 0 unresolved lookups.
+
+- **Blocked:** the hook stopped my `godot_run.py unit start --refresh` run. I can't dispatch Rex, so no parse check or test run exists for this code.
+- **`patch_slots.gd`:** the `PatchSlots` Node3D holds the six `flower_patch.tscn` instances as children, planted in child order. It reacts to `Economy.upgrade_changed` for `plant_patch`. A new level shows the next slot with the grow-in and adds it to group `flower_patch`. It then adds `habitat_health_per_patch` to Health and emits `toast_requested("toast_patch_planted")`.
+- **`skip_icon.gd`:** the `SkipIcon` Button sets `plant_patch` to its max level at no cost. It hides once Health is thriving.
+- **Economy and shop:** `economy.gd` has the `plant_patch` row, last in `UPGRADE_IDS`. The shop shows "Thriving" at 6 / 6.
+- **`bees.gd`:** it calls `refresh_patches()` when `plant_patch` changes.
+
+**Placeholder:** `patch_grow_seconds` = 0.18, set to the pop tween's length.
+
+**Open questions:**
+- Who connects `PatchSlots.toast_requested` to the toast?
+- Is the `patch_*` config in the Dev panel? I didn't check `dev_panel.gd`.
+
+**Quinn should test:**
+- A shop buy and a skip-icon press both plant patches.
+- Reset habitat hides the slots again.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 8); end `success`
+
+- Tests this round (5): own (5): `t_dev_ui_bounds_collects_controls`, `t_node_contract`, `t_pop_tween_unchanged`, `t_shop_compact_layout_nothing_in_zoom`, `t_zoom_ui_and_camera`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+
+## Pass 11: scan (2026-11-22T15:11:50-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C3 Plant wildflower patch. | change | Patricia | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+
+Next: **C4** (score 9.69: 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia)).
+
+### Step: C4 (2026-11-22T15:11:50-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C4-patricia.md` (877 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C4-quinn.md` (2030 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (47,894 tokens, 3 turns, 10 s):
+
+Both tests already reflect spec item 4 (comments quote it, and they reach thriving first). No changes needed.
+
+**Files changed:** none.
+
+**Node names used:** `JournalButton`, `JournalPanel`, `JournalTitle`, `JournalBody`, `JournalCloseButton`.
+
+**Findings:**
+- `t_journal_panel_text_matches_csv_twice` (`test_journal.gd` line 99) already quotes spec 0.3 item 4. It reaches thriving before it taps the button.
+- `t_shop_no_row_overlaps_other_controls` (`test_shop.gd` line 317) already quotes the same spec line. It reaches thriving before it reads the button's rect.
+- A helper at `test_shop.gd` line 55 already reaches thriving through the economy API. I didn't check that it uses `habitat_thriving` from config, so I left it.
+
+**Open questions:**
+- The spec says the Journal button is hidden before thriving, but I found no test for that. It is also unclear whether `toast_bumble_visitor` has one. The contract lines should cover both, and I wrote no new tests.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 3 (cap 30; CLI num_turns 3); end `success`
+
+
+**Patricia** (67,568 tokens, 6 turns, 13 s):
+
+Item 4 was already in the scripts, so I made no edits. `python -I _tools/contract_check.py` passes (81 lookups, 0 unresolved). I did not run the unit tests or the playthrough.
+
+- **`journal_ui.gd`:** `JournalButton` is hidden until `habitat_health >= config.habitat_thriving`. It re-checks on `Economy.habitat_changed`, so Reset hides it again and closes the panel. Once thriving it opens the 0.2 Bumble Bees entry as before.
+- **`farm_ui.gd`:** `_on_thriving`, connected to `Economy.thriving`, shows `tr("toast_bumble_visitor")` in the existing `PhaseToast`/`ToastLabel`.
+
+Node names used: `JournalButton`, `JournalPanel`, `JournalCloseButton`, `PhaseToast`, `ToastLabel`.
+
+Open questions:
+- Does `toast_bumble_visitor` exist in a translation CSV? I didn't check. The text is meant to come from `content/course-ending-text.md`.
+- Quinn should test that the Journal button is hidden before thriving, shown after, and hidden again after Reset. Quinn should also test the toast.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 4 (cap 30; CLI num_turns 6); end `success`
+
+- Tests this round (2): own (2): `t_journal_panel_text_matches_csv_twice`, `t_shop_no_row_overlaps_other_controls`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+
+## Pass 12: scan (2026-11-22T15:12:51-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C4 The bumble bee visitor. | change | Patricia | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+
+Next: **C5** (score 9.69: 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia)).
+
+### Step: C5 (2026-11-22T15:12:52-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C5-patricia.md` (1341 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (470,139 tokens, 29 turns, 69 s):
+
+Files changed (scripts/ only):
+- `victory_overlay.gd` (new, `class_name VictoryOverlay`, a `CanvasLayer`).
+- `game_config.gd`: new export `victory_delay_seconds = 4.0`.
+- `main.gd`: new `farm_view_idle()`. It is false during any zoom, at the second stop, with the Shop sheet open, or while the welcome overlay is held.
+
+The overlay queues on `Economy.thriving` and shows once the delay has passed and `farm_view_idle()` is true. It shows once per farm, and a Reset that drops Health below thriving re-arms it. `contract_check` passes. I didn't run the Godot tests, and Quinn needs to add tests for the queue.
+
+**Node names for Bob:** `VictoryOverlay` (the CanvasLayer, script `victory_overlay.gd`, `visible = false`), with children `VictoryTitle` (Label), `VictoryBody` (Label), `VictoryButton` (Button), plus a dim `ColorRect`, which can have any name.
+
+**Open question:** `journal.csv` has no `victory_*`, `toast_*` or `skip_icon_label` rows, so `tr()` returns the raw keys. `_tools/journal_csv.py` and `game/translations/` are outside my folder. Someone needs to extend the exporter to read `content/course-ending-text.md` and regenerate the CSV. `project.godot` may also need the new translation registered.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 13 (cap 30; CLI num_turns 29); end `success`
+
+- Tests this round (209): impacted by `scripts/game_config.gd` (via `DEV_SETTING`, `auto_sell_cost`, `auto_sell_unlock_delivery_level`, `barrel_stop_seconds`, `base_seconds_per_jar`, `bees_per_swarm_level`, `bottling_seconds_per_jar`, `button_screen_margin`, `camera_pan_seconds`, `cell_fly_seconds`, `cell_value`, `cells_per_frame` and 62 more) (207): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`, `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_barrel_eases_to_stop`, `t_became_full_count_full_overflow`, `t_became_full_once_while_filling`, `t_bee_count`, `t_bottling_35_single_cells_is_2_jars`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_time_is_live`, `t_bottling_timing`, `t_bucket_capacity_and_states`, `t_button_press_is_not_a_crank`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_centrifuge_lid_paths`, `t_centrifuge_lid_rests_clear`, `t_combs_fill_frame_and_hive_whole`, `t_combs_visible_in_hive`, `t_config_011`, `t_config_012`, `t_config_placeholders_marked`, `t_config_values`, `t_cost_formula`, `t_cost_max_level`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_crate_fulls_fly_to_truck_on_return`, `t_crate_shows_empties`, `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_delivery_trip_time_by_level`, `t_dev_actions`, `t_dev_backquote_opens`, `t_dev_bottling_seconds`, `t_dev_button_clear_of_hud`, `t_dev_button_opens_panel`, `t_dev_max_tap_rate`, `t_dev_mode_setting`, `t_dev_no_panel_when_off`, `t_dev_panel_has_lid_values`, `t_dev_panel_when_on`, `t_dev_physical_key_toggles`, `t_dev_save_only_edited_values`, `t_dev_save_reset_roundtrip`, `t_dev_show_ui_bounds`, `t_dev_three_finger_opens`, `t_dev_ui_bounds_collects_controls`, `t_dev_user_file_ignored_when_off`, `t_drawn_count_capped`, `t_earn_and_jar_value`, `t_economy_removed_jars`, `t_fill_in_order_slot_by_slot`, `t_fill_multiplier`, `t_fill_multiplier_is_bees_over_base`, `t_fill_time_level0`, `t_fill_time_with_levels`, `t_flight_fill_rate_level3`, `t_flight_judge_can_fail`, `t_flower_patch_b`, `t_focus_styles`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gearing_bottling_time_unchanged`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_gearing_own_motor_cut`, `t_gearing_turns_by_level`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_heap_shows_every_cell`, `t_hive_five_upright_frames_four_walls`, `t_hive_footprint_and_frames`, `t_hive_frames_cells_aligned`, `t_hive_lid_close_path`, `t_hive_lid_leaning_pose`, `t_hive_lid_open_path`, `t_hive_rate_is_live`, `t_hive_size_vs_truck`, `t_hold_at_cap`, `t_hold_never_slower`, `t_hold_ramp_is_visual_only`, `t_hold_release_stops`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_journal_panel_text_matches_csv_twice`, `t_layout_hive_scale_follows_config`, `t_layout_no_jar_outside_crate`, `t_layout_objects_on_cells`, `t_layout_truck_wheels_on_ground`, `t_leftover_adds_no_turns`, `t_lid_close_and_signal`, `t_lid_close_never_clips_hive`, `t_lid_closes_clear_of_walls`, `t_lid_still_crank_and_gear1_turn_twice`, `t_lowered_frame_comes_back_empty_then_fills`, `t_next_frame_to_harvest`, `t_no_continue_button`, `t_no_crank_during_zoom`, `t_no_motor_in_phase_1`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_node_contract_011`, `t_node_contract_012`, `t_overflow_one_hive_then_pause`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_phase2_auto_sell_sets_once_toast_once`, `t_pile_shows_every_cell`, `t_pile_unit`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_retired_api_gone`, `t_risen_frame_never_fills`, `t_scrape_rules`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_scrape_value`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_buy_deducts_and_levels`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_costs_floor_base_growth`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_shop_seven_rows_on_screen_no_scroll`, `t_speed_cell_flight`, `t_speed_hotkeys`, `t_speed_jar_cycle`, `t_speed_lid_lift`, `t_speed_reset`, `t_speed_tag`, `t_speed_tag_below_labels`, `t_spigot_bottling_time_by_level`, `t_spigot_cost_floor_levels`, `t_spigot_jar_flight_unchanged`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_tap_cap`, `t_tap_cap_is_live`, `t_truck_and_crate_jars_full_with_lids`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_crate_while_away`, `t_truck_full_and_can_sell`, `t_truck_home_loads_crate_without_trip`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_return_loads_crate`, `t_truck_sell_credits_at_once`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_truck_trip_time_is_live`, `t_truck_wheels_roll_with_travel`, `t_turns_per_jar`, `t_wheel_rims`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; impacted by `scripts/main.gd` (via `ShopPanel`, `Zoom`, `_process`, `advance`, `camera_pan_seconds`, `resume_pending`, `zoom`, `zoom_seconds`) (132): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`, `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_barrel_eases_to_stop`, `t_became_full_count_full_overflow`, `t_became_full_once_while_filling`, `t_bottling_35_single_cells_is_2_jars`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_time_is_live`, `t_bottling_timing`, `t_button_press_is_not_a_crank`, `t_buttons_at_anchor_or_clamped`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_centrifuge_lid_paths`, `t_combs_visible_in_hive`, `t_config_placeholders_marked`, `t_config_values`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_delivery_trip_time_by_level`, `t_dev_bottling_seconds`, `t_dev_button_clear_of_hud`, `t_dev_max_tap_rate`, `t_fill_in_order_slot_by_slot`, `t_fill_time_level0`, `t_fill_time_with_levels`, `t_flight_fill_rate_level3`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gearing_bottling_time_unchanged`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_gearing_turns_by_level`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hive_rate_is_live`, `t_hold_at_cap`, `t_hold_never_slower`, `t_hold_ramp_is_visual_only`, `t_hold_release_stops`, `t_hud_no_overlap_no_cutoff`, `t_icons_above_props`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_journal_panel_text_matches_csv_twice`, `t_leftover_adds_no_turns`, `t_lid_close_never_clips_hive`, `t_lid_still_crank_and_gear1_turn_twice`, `t_lowered_frame_comes_back_empty_then_fills`, `t_next_frame_to_harvest`, `t_no_crank_during_zoom`, `t_no_spin_first_zoom_without_motor`, `t_overflow_one_hive_then_pause`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_retired_api_gone`, `t_risen_frame_never_fills`, `t_scrape_rules`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_scrape_value`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buy_button_real_click_twice`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_speed_cell_flight`, `t_speed_hotkeys`, `t_speed_jar_cycle`, `t_speed_lid_lift`, `t_speed_tag`, `t_spigot_bottling_time_by_level`, `t_spigot_jar_flight_unchanged`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_summary_after_sell`, `t_tap_cap`, `t_tap_cap_is_live`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_home_loads_crate_without_trip`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_return_loads_crate`, `t_truck_sell_credits_at_once`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_truck_trip_time_is_live`, `t_turns_per_jar`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; impacted by `scripts/victory_overlay.gd` (via `_process`, `_wait`, `close`, `closed`, `habitat_thriving`, `shown`) (94): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_barrel_eases_to_stop`, `t_buttons_at_anchor_or_clamped`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_helpers_can_fail`, `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_centrifuge_lid_paths`, `t_combs_visible_in_hive`, `t_config_011`, `t_config_012`, `t_config_placeholders_marked`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_button_opens_panel`, `t_dev_physical_key_toggles`, `t_dev_ui_bounds_collects_controls`, `t_dev_user_file_ignored_when_off`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hive_lid_close_path`, `t_hive_lid_leaning_pose`, `t_hive_lid_open_path`, `t_hud_no_overlap_no_cutoff`, `t_icons_above_props`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_journal_csv_equals_script_output`, `t_journal_panel_text_matches_csv_twice`, `t_layout_no_jar_outside_crate`, `t_lid_close_never_clips_hive`, `t_lid_closes_clear_of_walls`, `t_lid_still_crank_and_gear1_turn_twice`, `t_no_continue_button`, `t_no_crank_during_zoom`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_speed_tag`, `t_speed_tag_below_labels`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_summary_after_sell`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`
+- Impact widened: no test reads the changed names of `scripts/game_config.gd`; ran the tests reading any name it defines
+- Check `contract`: PASS
+- Flaky: `t_crank_pauses_on_back_and_resumes_on_spin` failed, then passed alone on one rerun; no fix round for them
+- Flaky: `t_crank_pauses_on_back_and_resumes_on_spin` failed, then passed alone on one rerun; no fix round for them
+- Flaky: `t_crank_pauses_on_back_and_resumes_on_spin` failed, then passed alone on one rerun; no fix round for them
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      193 passed, 3 failed  (godot exit 1, 312 noise lines dropped)  game/reports/_runs/20261122-151408/unit.log
+    FAIL  t_crank_pauses_on_back_and_resumes_on_spin  a real tap on Spin starts the crank at the second stop: expected 3 got 2  (4497 ms)
+    FAIL  t_shop_buttons_disabled_unaffordable_maxed_locked  one row per upgrade: expected 7 got 8  (1087 ms)
+    FAIL  t_shop_rows_order_and_level_text  six rows: expected 7 got 8  (1163 ms)
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C5-fix1-patricia.md` (2407 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C5-fix1-quinn.md` (2750 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Patricia** (139,481 tokens, 8 turns, 22 s):
+
+Two of the three failures are stale tests, and one needs diagnosis. I changed no files.
+
+- **`t_shop_buttons_disabled_unaffordable_maxed_locked` and `t_shop_rows_order_and_level_text`:** these are Quinn's tests, not a scripts bug. `economy.gd:61` adds `plant_patch` as an eighth upgrade row, which spec item 3 asks for. `test_shop.gd:6` (`_SHOP_ORDER`) and `test_shop.gd:17` (`_SHOP_IDS`) still list seven. The "six rows" message at line 182 is stale as well. Quinn should add `plant_patch` and its row label to both arrays.
+- **`t_crank_pauses_on_back_and_resumes_on_spin`:** `diag needed`. The Centrifuge is still in FULL (2) after the real tap on Spin, so the crank never started (`test_crank_pause.gd:17`). The enum in `centrifuge.gd:12` is unchanged, so I can't tell the cause from the code. It may be related to the eighth shop row, a new overlay or the victory queue intercepting the tap. Quinn should print:
+  - the Spin icon's rect and `visible`
+  - `m.at_second_stop()`
+  - `get_viewport().gui_get_hovered_control()` at the tap point
+  - whether any new overlay is visible
+  - the Centrifuge state each frame after the tap
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 8); end `success`
+
+
+**Quinn** (119,837 tokens, 11 turns, 23 s):
+
+I fixed the two shop tests and added a diagnostic to the crank test. I haven't run anything.
+
+- **`t_shop_buttons_disabled_unaffordable_maxed_locked` and `t_shop_rows_order_and_level_text`:** Both expected 7 rows and the shop now has 8. Spec 0.3 item 3 makes `plant_patch` an eighth row after Auto-Sell. I changed both to expect `_SHOP_IDS.size() + 1` and `_SHOP_ORDER.size() + 1`. The first test's loop now runs over the seven upgrade ids only. A comment beside each change cites the spec. The other eight-row tests in `test_shop.gd` already expected 8.
+- **`t_crank_pause_on_back_and_resumes_on_spin`:** This is still unexplained. The state is 2 where CRANKING is 3, and neither the failure message nor the code shows why. The spec's victory-screen text doesn't touch the crank. I didn't guess a fix. I extended the FAIL message with one `diag:` part that prints the state and the CRANKING value. The next run will show them.
+
+If the crank test stays red after the diag run, treat it as a finding against the game code until the diag explains it.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 6 (cap 15; CLI num_turns 11); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (209): calls a helper changed in `tests/test_crank_pause.gd` (3): `t_crank_pauses_on_back_and_resumes_on_spin`, `t_paused_crank_never_finishes_in_farm_view`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`; changed in `tests/test_shop.gd` (2): `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_rows_order_and_level_text`; impacted by `scripts/game_config.gd` (via `DEV_SETTING`, `auto_sell_cost`, `auto_sell_unlock_delivery_level`, `barrel_stop_seconds`, `base_seconds_per_jar`, `bees_per_swarm_level`, `bottling_seconds_per_jar`, `button_screen_margin`, `camera_pan_seconds`, `cell_fly_seconds`, `cell_value`, `cells_per_frame` and 62 more) (207): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`, `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_barrel_eases_to_stop`, `t_became_full_count_full_overflow`, `t_became_full_once_while_filling`, `t_bee_count`, `t_bottling_35_single_cells_is_2_jars`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_time_is_live`, `t_bottling_timing`, `t_bucket_capacity_and_states`, `t_button_press_is_not_a_crank`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_centrifuge_lid_paths`, `t_centrifuge_lid_rests_clear`, `t_combs_fill_frame_and_hive_whole`, `t_combs_visible_in_hive`, `t_config_011`, `t_config_012`, `t_config_placeholders_marked`, `t_config_values`, `t_cost_formula`, `t_cost_max_level`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_crate_fulls_fly_to_truck_on_return`, `t_crate_shows_empties`, `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_delivery_trip_time_by_level`, `t_dev_actions`, `t_dev_backquote_opens`, `t_dev_bottling_seconds`, `t_dev_button_clear_of_hud`, `t_dev_button_opens_panel`, `t_dev_max_tap_rate`, `t_dev_mode_setting`, `t_dev_no_panel_when_off`, `t_dev_panel_has_lid_values`, `t_dev_panel_when_on`, `t_dev_physical_key_toggles`, `t_dev_save_only_edited_values`, `t_dev_save_reset_roundtrip`, `t_dev_show_ui_bounds`, `t_dev_three_finger_opens`, `t_dev_ui_bounds_collects_controls`, `t_dev_user_file_ignored_when_off`, `t_drawn_count_capped`, `t_earn_and_jar_value`, `t_economy_removed_jars`, `t_fill_in_order_slot_by_slot`, `t_fill_multiplier`, `t_fill_multiplier_is_bees_over_base`, `t_fill_time_level0`, `t_fill_time_with_levels`, `t_flight_fill_rate_level3`, `t_flight_judge_can_fail`, `t_flower_patch_b`, `t_focus_styles`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gearing_bottling_time_unchanged`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_gearing_own_motor_cut`, `t_gearing_turns_by_level`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_heap_shows_every_cell`, `t_hive_five_upright_frames_four_walls`, `t_hive_footprint_and_frames`, `t_hive_frames_cells_aligned`, `t_hive_lid_close_path`, `t_hive_lid_leaning_pose`, `t_hive_lid_open_path`, `t_hive_rate_is_live`, `t_hive_size_vs_truck`, `t_hold_at_cap`, `t_hold_never_slower`, `t_hold_ramp_is_visual_only`, `t_hold_release_stops`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_journal_panel_text_matches_csv_twice`, `t_layout_hive_scale_follows_config`, `t_layout_no_jar_outside_crate`, `t_layout_objects_on_cells`, `t_layout_truck_wheels_on_ground`, `t_leftover_adds_no_turns`, `t_lid_close_and_signal`, `t_lid_close_never_clips_hive`, `t_lid_closes_clear_of_walls`, `t_lid_still_crank_and_gear1_turn_twice`, `t_lowered_frame_comes_back_empty_then_fills`, `t_next_frame_to_harvest`, `t_no_continue_button`, `t_no_crank_during_zoom`, `t_no_motor_in_phase_1`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_node_contract_011`, `t_node_contract_012`, `t_overflow_one_hive_then_pause`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_phase2_auto_sell_sets_once_toast_once`, `t_pile_shows_every_cell`, `t_pile_unit`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_retired_api_gone`, `t_risen_frame_never_fills`, `t_scrape_rules`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_scrape_value`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_buy_deducts_and_levels`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_costs_floor_base_growth`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_shop_seven_rows_on_screen_no_scroll`, `t_speed_cell_flight`, `t_speed_hotkeys`, `t_speed_jar_cycle`, `t_speed_lid_lift`, `t_speed_reset`, `t_speed_tag`, `t_speed_tag_below_labels`, `t_spigot_bottling_time_by_level`, `t_spigot_cost_floor_levels`, `t_spigot_jar_flight_unchanged`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_tap_cap`, `t_tap_cap_is_live`, `t_truck_and_crate_jars_full_with_lids`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_crate_while_away`, `t_truck_full_and_can_sell`, `t_truck_home_loads_crate_without_trip`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_return_loads_crate`, `t_truck_sell_credits_at_once`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_truck_trip_time_is_live`, `t_truck_wheels_roll_with_travel`, `t_turns_per_jar`, `t_wheel_rims`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; impacted by `scripts/main.gd` (via `ShopPanel`, `Zoom`, `_process`, `advance`, `camera_pan_seconds`, `resume_pending`, `zoom`, `zoom_seconds`) (132): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`, `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_barrel_eases_to_stop`, `t_became_full_count_full_overflow`, `t_became_full_once_while_filling`, `t_bottling_35_single_cells_is_2_jars`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_time_is_live`, `t_bottling_timing`, `t_button_press_is_not_a_crank`, `t_buttons_at_anchor_or_clamped`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_centrifuge_lid_paths`, `t_combs_visible_in_hive`, `t_config_placeholders_marked`, `t_config_values`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_delivery_trip_time_by_level`, `t_dev_bottling_seconds`, `t_dev_button_clear_of_hud`, `t_dev_max_tap_rate`, `t_fill_in_order_slot_by_slot`, `t_fill_time_level0`, `t_fill_time_with_levels`, `t_flight_fill_rate_level3`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gearing_bottling_time_unchanged`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_gearing_turns_by_level`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hive_rate_is_live`, `t_hold_at_cap`, `t_hold_never_slower`, `t_hold_ramp_is_visual_only`, `t_hold_release_stops`, `t_hud_no_overlap_no_cutoff`, `t_icons_above_props`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_journal_panel_text_matches_csv_twice`, `t_leftover_adds_no_turns`, `t_lid_close_never_clips_hive`, `t_lid_still_crank_and_gear1_turn_twice`, `t_lowered_frame_comes_back_empty_then_fills`, `t_next_frame_to_harvest`, `t_no_crank_during_zoom`, `t_no_spin_first_zoom_without_motor`, `t_overflow_one_hive_then_pause`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_retired_api_gone`, `t_risen_frame_never_fills`, `t_scrape_rules`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_scrape_value`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buy_button_real_click_twice`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_speed_cell_flight`, `t_speed_hotkeys`, `t_speed_jar_cycle`, `t_speed_lid_lift`, `t_speed_tag`, `t_spigot_bottling_time_by_level`, `t_spigot_jar_flight_unchanged`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_summary_after_sell`, `t_tap_cap`, `t_tap_cap_is_live`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_home_loads_crate_without_trip`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_return_loads_crate`, `t_truck_sell_credits_at_once`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_truck_trip_time_is_live`, `t_turns_per_jar`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; impacted by `scripts/victory_overlay.gd` (via `_process`, `_wait`, `close`, `closed`, `habitat_thriving`, `shown`) (94): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_barrel_eases_to_stop`, `t_buttons_at_anchor_or_clamped`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_helpers_can_fail`, `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_centrifuge_lid_paths`, `t_combs_visible_in_hive`, `t_config_011`, `t_config_012`, `t_config_placeholders_marked`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_button_opens_panel`, `t_dev_physical_key_toggles`, `t_dev_ui_bounds_collects_controls`, `t_dev_user_file_ignored_when_off`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hive_lid_close_path`, `t_hive_lid_leaning_pose`, `t_hive_lid_open_path`, `t_hud_no_overlap_no_cutoff`, `t_icons_above_props`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_journal_csv_equals_script_output`, `t_journal_panel_text_matches_csv_twice`, `t_layout_no_jar_outside_crate`, `t_lid_close_never_clips_hive`, `t_lid_closes_clear_of_walls`, `t_lid_still_crank_and_gear1_turn_twice`, `t_no_continue_button`, `t_no_crank_during_zoom`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_speed_tag`, `t_speed_tag_below_labels`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_summary_after_sell`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; last failures (2): `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_rows_order_and_level_text`
+- Impact widened: no test reads the changed names of `scripts/game_config.gd`; ran the tests reading any name it defines
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Green: checkpoint `8297ded` on `main`
+
+## Pass 13: scan (2026-11-22T15:32:37-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C5 Victory screen. | change | Patricia | partial (built, waits on its tests) | ✓ ledger 8297ded |
+
+### Order: new or rescored (2 of 9)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 5 | T5.1 item 5: reaching thriving during a zoom shows no v | 3.76 | 0 | 2 | 0.24 | 1 | designer feature; cost 0.24 (Quinn) |
+| 6 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.24 | 0 | waits on C3, C4, C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+
+Next: **C6** (score 9.69: 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia)).
+
+### Step: C6 (2026-11-22T15:32:38-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C6-patricia.md` (1049 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (64,293 tokens, 6 turns, 15 s):
+
+`game/scripts/skip_icon.gd` was already in the repo and matches item 6, so I made no changes. `python -I _tools/contract_check.py` passes: 82 lookups, 0 unresolved. I didn't run Quinn's tests, and the icon has no input test yet, so Quinn should add one.
+
+- **Node:** `SkipIcon`, a `Button` with `class_name SkipIcon`. Bob needs to put it at the farm view's edge.
+- **Press:** it calls `Economy.set_level("plant_patch", Economy.max_level("plant_patch"))`, the same path as the item 3 buy but with no money taken. `patch_slots.gd` then runs each grow-in and adds the Health.
+- **Hiding:** it hides itself once `habitat_health` reaches `habitat_thriving`. It re-checks on `Economy.habitat_changed`.
+- **Label:** the tooltip is `tr("skip_icon_label")`, updated when the language changes. It's off focus so it doesn't catch keyboard focus.
+- **Not in the script:** hiding it on the welcome screen, and clearing every other farm-view control (the spec's last sentence), aren't in `skip_icon.gd`. That has to come from the scene or the welcome overlay.
+
+Open question: should the welcome overlay hide the icon, or should Bob handle that in the scene?
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 4 (cap 30; CLI num_turns 6); end `success`
+
+- Tests this round: none (no unit test is the goal's own or reads what the step changed); `unit` skipped, the end-of-run full suite runs it
+- Check `contract`: PASS
+- Check `tests`: PASS
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+## Pass 14: scan (2026-11-22T15:33:34-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C6 Skip to ending. | change | Patricia | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - Question: The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+Next: **T1.1** (score 3.76: designer feature; cost 0.24 (Quinn)), with T1.2.
+
+### Step: T1.1, T1.2 (2026-11-22T15:33:34-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T1.1-quinn.md` (3995 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (1,367,627 tokens, 52 turns, 130 s):
+
+Parse checks are clean for `test_welcome.gd` and `flow.gd`. I ran no tests, mutations or shots.
+
+**Files changed**
+- New `tests/test_welcome.gd`, with four tests marked `# goal T1.1` or `# goal T1.2`. `t_welcome_world_idle_then_play_twice` is the sequence test: it taps the farm while the overlay is up, taps Play, then does it all a second time.
+- `run_tests.gd` now extends it. The tests are registered under the `# 0.3 item 1 (written from game/specs/0.3-course-build.md before the code)` comment.
+- `flow.gd` gains `no_welcome(tree)` for T1.1. I call it in `play_loop`, `r4_measure`, `snapshot_pop`, `style_shots`, `touch_windowed` and `replay_core`.
+- `mutations.json`: 7 mutations added.
+
+`test_base.gd` already set `show_welcome = false` in `_mk_main`, so I left it alone.
+
+**Node names used:** `WelcomeOverlay` (a `CanvasLayer`), `FarmUI`, `Hive`, `ForkIcon`, `CentrifugeIcon`, `SellIcon`. The Play button and title label are found by type and text. The `WelcomeOverlay` name comes from `main.gd`, not from the spec text I was given.
+
+**Open questions**
+- Item 1: what happens to the overlay and the world on an app pause before Play? The spec doesn't say, so I wrote no test for it.
+- The spec doesn't say how to check "bees hold", so no test covers it.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 21 (cap 30; CLI num_turns 52); end `success`
+
+- Tests this round (13): own (11): `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_buy_deducts_and_levels`, `t_shop_costs_floor_base_growth`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`; calls a helper changed in `tests/flow.gd` (2): `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`; calls a helper changed in `tests/replay_core.gd` (2): `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`; calls a helper changed in `tests/test_welcome.gd` (4): `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`; changed in `tests/run_tests.gd` (4): `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`; changed in `tests/test_welcome.gd` (4): `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`; suite `measure` (changed `tests/r4_measure.gd`); suite `play` (changed `tests/play_loop.gd`); suite `snapshot` (changed `tests/snapshot_pop.gd`); suite `touch` (changed `tests/touch_windowed.gd`); suite `ui` (calls a helper changed in `tests/flow.gd`)
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    ui        7 passed, 2 failed  (godot exit 1, 0 noise lines dropped)  game/reports/_runs/20261122-153551/ui.log
+    FAIL  ForkIcon is visible
+    FAIL  MoneyLabel is visible
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/T1.1-fix1-patricia.md` (2017 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (70,231 tokens, 6 turns, 16 s):
+
+Both failures come from `game/tests/ui_bounds_pixels.gd`, which is Quinn's folder, so I changed nothing.
+
+The test calls `Economy.reset()` and instantiates `main.tscn` (lines 47–49) without first setting `show_welcome` to false. The Welcome overlay is therefore up. `main.gd:134` (`_hold_for_welcome`) hides `_farm_ui`, so ForkIcon and MoneyLabel report not visible. UpgradeButton passes only because `Flow.shop_open` (line 54) runs after the main scene is already loaded.
+
+The `main.gd` behaviour matches spec item 1. The fix is for Quinn: set `show_welcome` to false after the reset and before line 48, as `flow.gd` lines 6–10 do. The spec says every test run does this unless the test is about the welcome screen.
+
+I ran no checks.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 6); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (13): own (11): `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_buy_deducts_and_levels`, `t_shop_costs_floor_base_growth`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`; calls a helper changed in `tests/flow.gd` (2): `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`; calls a helper changed in `tests/replay_core.gd` (2): `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`; calls a helper changed in `tests/test_welcome.gd` (4): `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`; changed in `tests/run_tests.gd` (4): `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`; changed in `tests/test_welcome.gd` (4): `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`; suite `measure` (changed `tests/r4_measure.gd`); suite `play` (changed `tests/play_loop.gd`); suite `snapshot` (changed `tests/snapshot_pop.gd`); suite `touch` (changed `tests/touch_windowed.gd`); suite `ui` (calls a helper changed in `tests/flow.gd`)
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    ui        7 passed, 2 failed  (godot exit 1, 0 noise lines dropped)  game/reports/_runs/20261122-154129/ui.log
+    FAIL  ForkIcon is visible
+    FAIL  MoneyLabel is visible
+```
+
+#### Fix round 2: to Quinn (Patricia put the fault in tests/)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T1.1-fix2-quinn.md` (3465 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (52,880 tokens, 4 turns, 9 s):
+
+I fixed the cause of both failures, ForkIcon and MoneyLabel not visible, in `game/tests/ui_bounds_pixels.gd`. I haven't run the tests.
+
+The test reset `Economy` and instantiated `main.tscn` with `show_welcome` still true. The Welcome overlay therefore hid the farm UI. Patricia's reading of `main.gd` is right: that behaviour matches spec item 1.
+
+I added `Flow.no_welcome(self)` right after `Economy.reset()` and before the scene loads. It reuses the existing helper in `tests/flow.gd`, so no steps are copied inline. A comment beside the call quotes the spec: "every test run sets it false unless the test is about the welcome screen".
+
+I found no game bug and no open spec question, so nothing is marked `(designer)`.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 4); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Check `designer questions`: STOP (1)
+
+## Waiting for the designer
+
+Fix round 2 on T1.1, T1.2 raised a question the spec does not answer, about how the game behaves (no visual number, so no Design Votes row). Answer it in the spec item, then rerun `goal_agent.py 0.3-course-build.md --note "<the answer>"`. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T1.1, T1.2 fix-round edits"`.
+
+| # | Who | Question |
+|---|---|---|
+| 1 | Quinn | I found no game bug and no open spec question, so nothing is marked `(designer)`. |
+
 ## Result
 
-Last invocation (2026-11-22T15:09:49-05:00): waiting-designer.
+Last invocation (2026-11-22T15:46:52-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -1028,4 +1449,15 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Patricia, C4 | 255,175 | 28,216 | 20 | 41 s |
 | Patricia, C4 fix 1 | 97,637 | 22,935 | 7 | 18 s |
 | Quinn, C4 fix 1 | 152,179 | 27,165 | 13 | 27 s |
-| **Total** | **3,021,948** | | | |
+| Quinn, C3 | 96,360 | 35,275 | 5 | 15 s |
+| Patricia, C3 | 102,203 | 23,552 | 8 | 18 s |
+| Quinn, C4 | 47,894 | 17,552 | 3 | 10 s |
+| Patricia, C4 | 67,568 | 19,477 | 6 | 13 s |
+| Patricia, C5 | 470,139 | 47,146 | 29 | 69 s |
+| Patricia, C5 fix 1 | 139,481 | 26,348 | 8 | 22 s |
+| Quinn, C5 fix 1 | 119,837 | 24,081 | 11 | 23 s |
+| Patricia, C6 | 64,293 | 18,177 | 6 | 15 s |
+| Quinn, T1.1, T1.2 | 1,367,627 | 81,241 | 52 | 130 s |
+| Patricia, T1.1, T1.2 fix 1 | 70,231 | 20,650 | 6 | 16 s |
+| Quinn, T1.1, T1.2 fix 2 | 52,880 | 19,293 | 4 | 9 s |
+| **Total** | **5,620,461** | | | |
