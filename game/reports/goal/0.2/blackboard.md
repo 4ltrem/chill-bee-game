@@ -4260,9 +4260,28 @@ Unit results from `game/reports/_runs/20261121-224553/unit.log`. 34 of 36 goals 
 
 Nothing left to build.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept C15 --note Full suite green at --time-scale 6 --skip-x1: game/reports/_runs/20261122-011146/ (unit 209, play 246, measure 18, snapshot 12, ui 13, touch 4; start PASS); T15.1 3/3 green` (the run had stopped: `stopped`).
+
+### Manual fix: C15 (2026-11-22T01:22:33-05:00)
+
+- Change (orchestrator, Process 9): Full suite green at --time-scale 6 --skip-x1: game/reports/_runs/20261122-011146/ (unit 209, play 246, measure 18, snapshot 12, ui 13, touch 4; start PASS); T15.1 3/3 green
+- Accepted: commit failed: 	modified:   game/reports/goal/0.2/blackboard.md
+	modified:   game/reports/goal/ledger.json
+
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 78 lookups in 72 top-level scenes, 0 unresolved
+
 ## Result
 
-Last invocation (2026-11-22T01:11:29-05:00): stopped (C15 is not ready).
+C15 accepted with a manual fix (commit failed: 	modified:   game/reports/goal/0.2/blackboard.md
+	modified:   game/reports/goal/ledger.json
+
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 78 lookups in 72 top-level scenes, 0 unresolved). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`, `_meta/sessions/runs/2026-11-22-goal-0.2/`
 
