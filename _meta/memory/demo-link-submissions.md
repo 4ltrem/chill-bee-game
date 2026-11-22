@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: cbb6da0e-d437-4e4a-8094-be94d2d136c8
-  modified: 2026-11-05T23:23:07.370Z
+  modified: 2026-11-22T03:42:26.730Z
 ---
 
 Each course assignment (A5, A6, A7, final) is handed in as a demo link. The designer resubmits it after every
@@ -15,4 +15,4 @@ milestone or assignment, so the link must stay stable and always show the latest
 
 **How to apply:** when a milestone or assignment closes, check the demo link shows it (the itch page
 https://4ltrem.itch.io/chill-bee-game for builds, uploaded only at new milestone numbers per [[itch-upload-rule]]).
-Which page shows the tooling assignments (A5 agent, A6 style loops) is not settled yet. Related: [[course-milestones]].
+Tooling assignments link to their write-up in the repo: A5 = `GOAL_AGENT.md`, A6 = `STYLE_LOOP.md` (designer 2026-11-21; STYLE_LOOP.md stays `approved`). Related: [[course-milestones]].

@@ -191,7 +191,18 @@ func _pan_span(samples: Array, pose0: Dictionary, clock: int = -1) -> Dictionary
 	var k: int = clock if clock >= 0 else (2 if (samples[i1] as Array).size() > 2 else 0)   # clock 3 = real time; sim-time clock when the sampler recorded one, else the game clock
 	for i in range(maxi(i0, 1), i1 + 1):
 		worst = maxf(worst, float((samples[i] as Array)[k] - (samples[i - 1] as Array)[k]) / 1.0e6)
-	return {"ok": true, "secs": float((samples[i1] as Array)[k] - (samples[i0] as Array)[k]) / 1.0e6, "worst": worst}
+	# upper: from the first sampled frame (the tap, before the pan can start) to the first frame after the last move. The eased ends move
+	# less than MOVE_EPS for a few frames, and a long frame under load widens them, so the pan's true length lies between secs and upper.
+	var iend: int = mini(i1 + 1, samples.size() - 1)
+	var upper: float = float((samples[iend] as Array)[k] - (samples[0] as Array)[k]) / 1.0e6
+	return {"ok": true, "secs": float((samples[i1] as Array)[k] - (samples[i0] as Array)[k]) / 1.0e6, "worst": worst, "upper": upper}
+
+
+## The pan lasts `want`: the measured span (+ one frame) reaches it and the bracket up to the frames around the move holds it. Load can
+## stretch frames, not shorten the pan, so a wrong duration (a changed config, a missed live change) still fails.
+func _pan_within(sp: Dictionary, want: float) -> bool:
+	var tol: float = float(sp["worst"]) + 0.01
+	return float(sp["secs"]) <= want + tol and float(sp["upper"]) + tol >= want
 
 
 ## The glass bucket's boxes: every glass.tres mesh of the centrifuge outside the spigot jar.
@@ -491,7 +502,7 @@ func t_camera_pan_seconds() -> void:
 	if bool(sp["ok"]):
 		var want: float = float(cv("camera_pan_seconds"))
 		var tol: float = float(sp["worst"]) + 0.01
-		ck(absf(float(sp["secs"]) - want) <= tol, "the pan took %.3f s; camera_pan_seconds is %.3f s +- %.3f s (one frame)" % [float(sp["secs"]), want, tol])
+		ck(_pan_within(sp, want), "the pan took %.3f s (bracket up to %.3f s); camera_pan_seconds is %.3f s +- %.3f s (one frame)" % [float(sp["secs"]), float(sp["upper"]), want, tol])
 		# 0.2 item 9: the second stop is reached from the farm view by Spin, so the pan starts wider than the second stop
 		ck(float((s["pose0"] as Dictionary)["size"]) > float(cv("pan_zoom_size")) + 0.5, "the pan started from the farm view")
 	# a live change: 2.5 s is read when the pan starts (a fresh scene)
@@ -503,7 +514,7 @@ func t_camera_pan_seconds() -> void:
 		ck(bool(sp2["ok"]), "the pan with camera_pan_seconds 2.5 moved the camera")
 		if bool(sp2["ok"]):
 			var tol2: float = float(sp2["worst"]) + 0.01
-			ck(absf(float(sp2["secs"]) - 2.5) <= tol2, "after a live change to 2.5 the pan took %.3f s +- %.3f s" % [float(sp2["secs"]), tol2])
+			ck(_pan_within(sp2, 2.5), "after a live change to 2.5 the pan took %.3f s (bracket up to %.3f s) +- %.3f s" % [float(sp2["secs"]), float(sp2["upper"]), tol2])
 	_fin()
 
 
