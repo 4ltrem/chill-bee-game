@@ -200,9 +200,200 @@ Fix round 2 on C1 needs a visual number the designer has not voted on (sizes, sc
 
 Comparison pages:
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note designer 2026-11-22: keep Bob's welcome values (title 64, outline 8, button 40, separation 48, dim 0.55) as placeholders; voted later on Design Votes` (the run had stopped: `waiting-designer`).
+
+Designer's answer: designer 2026-11-22: keep Bob's welcome values (title 64, outline 8, button 40, separation 48, dim 0.55) as placeholders; voted later on Design Votes
+Branch `main`: stays on it.
+
+## Pass 3: scan (2026-11-22T13:24:01-05:00)
+
+Unit results from `game/reports/_runs/20261122-011146/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+### Order: new or rescored (8 of 14)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 7 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.26 | 0 | waits on C1, C2, C3, C4, C5, C6 |
+| 8 | T1.1 every test run sets `show_welcome = false` except  | 0.0 | 0 | 2 | 0.26 | 0 | waits on C1 |
+| 9 | T1.2 item 1: at launch with `show_welcome = true` the o | 0.0 | 0 | 2 | 0.26 | 0 | waits on C1 |
+| 10 | T2.1 item 2: Health starts at `habitat_health_start`; ` | 0.0 | 0 | 2 | 0.26 | 0 | waits on C2 |
+| 11 | T3.1 item 3: the row's cost equals `40 × 1.25^n` (floor | 0.0 | 0 | 2 | 0.26 | 0 | waits on C3 |
+| 12 | T4.1 item 4: before thriving the Journal button is hidd | 0.0 | 0 | 2 | 0.26 | 0 | waits on C4 |
+| 13 | T5.1 item 5: reaching thriving during a zoom shows no v | 0.0 | 0 | 2 | 0.26 | 0 | waits on C5 |
+| 14 | T6.1 item 6: the skip icon reaches thriving with money  | 0.0 | 0 | 2 | 0.26 | 0 | waits on C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C1** (score 12.67: 3 goal(s) wait on it; designer feature; cost 0.33 (Patricia)).
+
+### Step: C1 (2026-11-22T13:24:03-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C1-patricia.md` (1246 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C1-quinn.md` (2354 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (33,876 tokens, 2 turns, 9 s):
+
+I changed no files. None of the listed tests has an expectation that spec item 1 replaces.
+
+- **`_mk_main` in `test_base.gd`:** it already sets `show_welcome` to false through `_set_cfg`, so teardown restores it. The line 389 comment already quotes the spec line. A welcome-screen test sets it true before calling `_mk_main`.
+- **`t_dev_mode_setting`, `t_dev_no_panel_when_off`, `t_dev_panel_when_on`:** these only read the dev-mode setting and the dev panel node. With `show_welcome` false, `main.gd` frees `WelcomeOverlay` and holds nothing. The panel checks are unaffected.
+
+**Node names used:** `WelcomeOverlay` (found with `find_child`).
+
+**Open questions:**
+- `main.gd` hides `_farm_ui` while the welcome screen is up. If the dev panel sits under it, a test that runs with `show_welcome` true would not see the panel until Play is pressed. No current test does this.
+- I did not create `tests/flow.gd`, because no windowed test needed a welcome step.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 2 (cap 30; CLI num_turns 2); end `success`
+
+
+**Patricia** (178,260 tokens, 12 turns, 24 s):
+
+Item 1 scripts are in place. I couldn't run Godot, so nothing is tested.
+
+**State:** `welcome_overlay.gd` (`class_name WelcomeOverlay`, emits `play_pressed` and frees itself), the `main.gd` hold, and `show_welcome` in `game_config.gd` already existed from earlier rounds. I left them unchanged. The `main.gd` hold turns off processing on FarmWorld, Hive, Bees, Truck, Centrifuge and Pile, and hides FarmUI. `contract_check.py` reports 0 unresolved lookups.
+
+**Changed:** I added the row `welcome_play,Play,Jouer` to `game/translations/journal.csv`. Without it, `tr("welcome_play")` returns the raw key.
+
+**Node names:** `WelcomeOverlay` (CanvasLayer in `main.tscn`) and `PlayButton` (a Button anywhere under it). Bob's scene already has both.
+
+**Open questions:**
+- Godot only picks up the new CSV row after a reimport, so someone needs to run `godot_run.py unit start --refresh`. That is Rex's job; the hook blocked me from running it.
+- Dev panel: `show_welcome` has no toggle there yet. I think it's launch-only and doesn't need one. Say so if you want one.
+
+**For Quinn:**
+- Test the Play press and the idle world before it.
+- Test the `tr()` French text.
+- `play_loop.gd` and `r4_measure.gd` need `show_welcome` set to false.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 8 (cap 30; CLI num_turns 12); end `success`
+
+- Tests this round (7): own (3): `t_dev_mode_setting`, `t_dev_no_panel_when_off`, `t_dev_panel_when_on`; impacted by `translations/journal.csv` (via `journal`) (4): `t_journal_csv_equals_script_output`, `t_journal_csv_every_key_en_and_fr`, `t_journal_panel_text_matches_csv_twice`, `t_journal_tr_follows_locale`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      3 passed, 4 failed  (godot exit 1, 10 noise lines dropped)  game/reports/_runs/20261122-132434/unit.log
+    FAIL  t_dev_panel_when_on  a dev_panel.gd node exists with chill_bee/dev_mode true  (224 ms)
+    FAIL  t_journal_tr_follows_locale  locale fr: tr(welcome_play) is the CSV fr text: expected Jouer got welcome_play | locale en: tr(welcome_play) is the CSV en text: expected Play got welcome_play | locale fr: tr(welcome_play) is the CSV fr 
+    FAIL  t_journal_panel_text_matches_csv_twice  en run 1: the Journal button is on screen | en run 1: a real tap on Journal opens the panel | en run 1: the panel body is the CSV text: expected Canada is home to 41 bumble bee species � fuzzy, 
+    FAIL  t_journal_csv_equals_script_output  journal_csv.py output equals the committed journal.csv byte for byte (1238 vs 1262 bytes)  (244 ms)
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
+FAIL    start     3 errors  (godot exit 1 (1 is normal here), 4 noise lines dropped)  game/reports/_runs/20261122-132434/start.log
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C1-fix1-patricia.md` (3340 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C1-fix1-quinn.md` (3683 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (50,628 tokens, 4 turns, 12 s):
+
+No test edits made. All four unit failures and the `start` failure come from outside `tests/`.
+
+1. **`WelcomeOverlay` parse error (`scripts/main.gd:48`, Patricia).** `welcome_overlay.gd:4` does declare `class_name WelcomeOverlay`, so the type is probably missing from Godot's global class cache because the cache wasn't refreshed. Fix: run a one-off `godot --headless --import` (a Rex job) to rebuild the cache. If that doesn't clear it, change `main.gd` to `preload("res://scripts/welcome_overlay.gd")`. This breaks `main.gd` loading, so it most likely explains `t_dev_panel_when_on`, `t_journal_tr_follows_locale` (`tr(welcome_play)` returns the key) and `t_journal_panel_text_matches_csv_twice`.
+
+2. **`t_journal_csv_equals_script_output` (1238 vs 1262 bytes; `_tools/journal_csv.py` or `translations/journal.csv`, Patricia).** The committed `journal.csv` has a `welcome_play,Play,Jouer` row at line 8, and the generator output is 24 bytes shorter, so the row was probably added by hand. Fix: add the `welcome_play` row to `journal_csv.py`'s source, or regenerate the CSV.
+
+The tests are correct for spec item 1. I did not run anything.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 4); end `success`
+
+
+**Patricia** (95,704 tokens, 9 turns, 16 s):
+
+I fixed one cause, and the other two failure groups look like stale Godot caches that I couldn't clear from here. I ran nothing, per your instructions.
+
+- **`t_journal_csv_equals_script_output`:** `_tools/journal_csv.py` didn't write the `welcome_play,Play,Jouer` row that `game/translations/journal.csv` already has. I added that row to the script, so its output should now match the file byte for byte.
+- **`WelcomeOverlay` parse error:** `scripts/welcome_overlay.gd` and `main.gd` look correct. The `WelcomeOverlay` node is already in `main.tscn`. The error is almost certainly Godot's global class cache missing the new `class_name`. Run `godot_run.py unit start --refresh` to rebuild it.
+- **`t_journal_tr_follows_locale`:** `tr(welcome_play)` returns the raw key. I suspect the CSV hasn't been re-imported, so the new row isn't in the translations. The `--refresh` run should re-import it. If it still fails after that, the cause is the import setup, and that needs `diag needed`.
+- **`t_dev_panel_when_on` and `t_journal_panel_text_matches_csv_twice`:** these fail because `main.gd` doesn't load. I expect them to pass after the refresh.
+
+I changed nothing under `scripts/`.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 9); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (7): own (3): `t_dev_mode_setting`, `t_dev_no_panel_when_off`, `t_dev_panel_when_on`; impacted by `translations/journal.csv` (via `journal`) (4): `t_journal_csv_equals_script_output`, `t_journal_csv_every_key_en_and_fr`, `t_journal_panel_text_matches_csv_twice`, `t_journal_tr_follows_locale`; last failures (4): `t_dev_panel_when_on`, `t_journal_csv_equals_script_output`, `t_journal_panel_text_matches_csv_twice`, `t_journal_tr_follows_locale`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      4 passed, 3 failed  (godot exit 1, 10 noise lines dropped)  game/reports/_runs/20261122-132507/unit.log
+    FAIL  t_dev_panel_when_on  a dev_panel.gd node exists with chill_bee/dev_mode true  (228 ms)
+    FAIL  t_journal_tr_follows_locale  locale fr: tr(welcome_play) is the CSV fr text: expected Jouer got welcome_play | locale en: tr(welcome_play) is the CSV en text: expected Play got welcome_play | locale fr: tr(welcome_play) is the CSV fr 
+    FAIL  t_journal_panel_text_matches_csv_twice  en run 1: the Journal button is on screen | en run 1: a real tap on Journal opens the panel | en run 1: the panel body is the CSV text: expected Canada is home to 41 bumble bee species � fuzzy, 
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
+FAIL    start     3 errors  (godot exit 1 (1 is normal here), 4 noise lines dropped)  game/reports/_runs/20261122-132507/start.log
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
+```
+
+#### Fix round 2: to Quinn (Patricia put the fault in tests/)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C1-fix2-quinn.md` (5089 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (33,722 tokens, 3 turns, 8 s):
+
+I changed nothing in `tests/`. All 3 unit failures and the `start` failure trace to one cause, and that cause is not in `tests/`.
+
+**Cause:** `scripts/main.gd` line 48 (`var _welcome: WelcomeOverlay`) and line 125 (`as WelcomeOverlay`) don't parse. Godot can't find the class `WelcomeOverlay`, so `main.gd` fails to load. `scripts/welcome_overlay.gd` line 4 does declare `class_name WelcomeOverlay`, so the global class cache is almost certainly stale.
+
+**Fallout:**
+- `t_dev_panel_when_on` and `t_journal_panel_text_matches_csv_twice` fail because `main.gd` doesn't load.
+- `t_journal_tr_follows_locale` most likely also comes from the broken load, but I can't confirm that from the logs.
+
+**Next step:** run `godot_run.py unit start --refresh`. If the parse error persists afterwards, the fix belongs to Patricia in `scripts/`.
+
+I added no `diag:` output. The next run's result will show whether `t_journal_tr_follows_locale` still fails once `main.gd` loads.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 2 (cap 15; CLI num_turns 3); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (7): own (3): `t_dev_mode_setting`, `t_dev_no_panel_when_off`, `t_dev_panel_when_on`; impacted by `translations/journal.csv` (via `journal`) (4): `t_journal_csv_equals_script_output`, `t_journal_csv_every_key_en_and_fr`, `t_journal_panel_text_matches_csv_twice`, `t_journal_tr_follows_locale`; last failures (3): `t_dev_panel_when_on`, `t_journal_panel_text_matches_csv_twice`, `t_journal_tr_follows_locale`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      4 passed, 3 failed  (godot exit 1, 10 noise lines dropped)  game/reports/_runs/20261122-132533/unit.log
+    FAIL  t_dev_panel_when_on  a dev_panel.gd node exists with chill_bee/dev_mode true  (221 ms)
+    FAIL  t_journal_tr_follows_locale  locale fr: tr(welcome_play) is the CSV fr text: expected Jouer got welcome_play | locale en: tr(welcome_play) is the CSV en text: expected Play got welcome_play | locale fr: tr(welcome_play) is the CSV fr 
+    FAIL  t_journal_panel_text_matches_csv_twice  en run 1: the Journal button is on screen | en run 1: a real tap on Journal opens the panel | en run 1: the panel body is the CSV text: expected Canada is home to 41 bumble bee species � fuzzy, 
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
+FAIL    start     3 errors  (godot exit 1 (1 is normal here), 4 noise lines dropped)  game/reports/_runs/20261122-132533/start.log
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    SCRIPT ERROR: Parse Error: Could not find type "WelcomeOverlay" in the current scope.
+    ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on C1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept C1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-22T13:22:07-05:00): waiting-designer.
+Last invocation (2026-11-22T13:25:43-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -212,4 +403,9 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Patricia, C1 | 235,836 | 29,261 | 20 | 44 s |
 | Patricia, C1 fix 1 | 28,577 | 15,641 | 2 | 7 s |
 | Bob, C1 fix 2 | 99,327 | 23,121 | 10 | 19 s |
-| **Total** | **483,820** | | | |
+| Quinn, C1 | 33,876 | 19,702 | 2 | 9 s |
+| Patricia, C1 | 178,260 | 25,039 | 12 | 24 s |
+| Quinn, C1 fix 1 | 50,628 | 18,400 | 4 | 12 s |
+| Patricia, C1 fix 1 | 95,704 | 22,116 | 9 | 16 s |
+| Quinn, C1 fix 2 | 33,722 | 18,256 | 3 | 8 s |
+| **Total** | **876,010** | | | |

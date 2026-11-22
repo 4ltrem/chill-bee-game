@@ -30,5 +30,45 @@
   "turns": 10,
   "seconds": 19,
   "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Quinn, C1",
+  "tokens": 33876,
+  "final": 19702,
+  "turns": 2,
+  "seconds": 9,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Patricia, C1",
+  "tokens": 178260,
+  "final": 25039,
+  "turns": 12,
+  "seconds": 24,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Quinn, C1 fix 1",
+  "tokens": 50628,
+  "final": 18400,
+  "turns": 4,
+  "seconds": 12,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Patricia, C1 fix 1",
+  "tokens": 95704,
+  "final": 22116,
+  "turns": 9,
+  "seconds": 16,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Quinn, C1 fix 2",
+  "tokens": 33722,
+  "final": 18256,
+  "turns": 3,
+  "seconds": 8,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
  }
 ]
