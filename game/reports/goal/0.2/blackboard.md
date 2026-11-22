@@ -3,7 +3,7 @@ spec: 0.2-first-automation.md
 version: 0.2
 run: 0.2
 started: 2026-11-09
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.2-first-automation.md (run 0.2)
 
@@ -3934,9 +3934,67 @@ Fix round 2 on T9.1 needs a visual number the designer has not voted on (sizes, 
 
 Comparison pages:
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T9.1` (the run had stopped: `waiting-designer`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 45: scan (2026-11-21T21:47:00-05:00)
+
+Unit results from `game/reports/_runs/20261121-210834/unit.log`. 29 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (4 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C9 The second stop only after Spin | change | Patricia | partial (built, waits on its tests) | ✗ test t_zoom_end_farm_pose_then_spin_second_stop_twice (FAIL), ✓ ledger 0.2 |
+| CFG Config and Dev mode | change | Patricia | partial | 43/44 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T9.1 item 9: the bucket filling during the first zoom leaves the  | test | Quinn | partial | ✗ test t_zoom_end_farm_pose_then_spin_second_stop_twice (FAIL) |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | 40/41 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+### Order: new or rescored (2 of 3)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 2 | CFG Config and Dev mode | 3.66 | 0 | 2 | 0.34 | 1 | designer feature; cost 0.34 (Patricia) |
+| 3 | T.1 mutations in `tests/mutations.json` prove the new  | 1.72 | 0 | 1 | 0.28 | 1 | housekeeping/handoff; cost 0.28 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T9.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
+
+### Step: T9.1 (2026-11-21T21:47:01-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T9.1-quinn.md` (4069 chars)
+- Quinn's step skipped: every line already has its marked test (T9.1: t_zoom_end_farm_pose_then_spin_second_stop_twice)
+- Tests this round (1): own (1): `t_zoom_end_farm_pose_then_spin_second_stop_twice`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T9.1 and the checks were already green, so it is not built. Their replies on the board (step T9.1, 2026-11-21T21:54:58-05:00) say why; answer by editing the spec item.
+
+## Pass 46: scan (2026-11-21T21:54:59-05:00)
+
+Unit results from `game/reports/_runs/20261121-210834/unit.log`. 29 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T9.1 item 9: the bucket filling during the first zoom leaves the  | test | Quinn | partial AMBIGUOUS | ✗ test t_zoom_end_farm_pose_then_spin_second_stop_twice (FAIL) |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T9.1: item 9: the bucket filling during the first zoom leaves the zoom open;
+  - Question: The agents changed no file for T9.1 and the checks were already green, so it is not built. Their replies on the board (step T9.1, 2026-11-21T21:54:58-05:00) say why; answer by editing the spec item.
+
+**Stop:** stopped after 0 goal(s) (--goal list done).
+
 ## Result
 
-Last invocation (2026-11-21T21:28:27-05:00): waiting-designer.
+Last invocation (2026-11-21T21:54:59-05:00): stopped after 0 goal(s) (--goal list done).
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 

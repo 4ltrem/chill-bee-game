@@ -272,6 +272,12 @@
    "at": "2026-11-21T21:06:14-05:00",
    "held": "The agents changed no file for T10.1 and the checks were already green, so it is not built. Their replies on the board (step T10.1, 2026-11-21T21:06:14-05:00) say why; answer by editing the spec item.",
    "text": "9497d7798af2"
+  },
+  "T9.1": {
+   "run": "0.2",
+   "at": "2026-11-21T21:54:58-05:00",
+   "held": "The agents changed no file for T9.1 and the checks were already green, so it is not built. Their replies on the board (step T9.1, 2026-11-21T21:54:58-05:00) say why; answer by editing the spec item.",
+   "text": "9dd7038e27b2"
   }
  }
 }

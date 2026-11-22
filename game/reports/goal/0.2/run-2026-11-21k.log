@@ -25,3 +25,5 @@ gaps.json: game/reports/goal/0.2/gaps.json
 Order:
    1. T9.1     5.72  play-test fix; cost 0.28 (Quinn)
 gaps.json: game/reports/goal/0.2/gaps.json
+goal_agent: state committed
+goal_agent: waiting-designer. Blackboard: game/reports/goal/0.2/blackboard.md

@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-21T21:06:15-05:00",
- "unit_log": "game/reports/_runs/20261121-204954/unit.log",
+ "at": "2026-11-21T21:54:59-05:00",
+ "unit_log": "game/reports/_runs/20261121-210834/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -852,6 +852,12 @@
    "status": "partial",
    "evidence": [
     {
+     "kind": "test",
+     "name": "t_zoom_end_farm_pose_then_spin_second_stop_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
      "kind": "ledger",
      "name": "0.2",
      "ok": true
@@ -1073,7 +1079,7 @@
    ],
    "items": [],
    "depends": [],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "config",
@@ -1329,6 +1335,12 @@
      "name": "t_fork_returns_to_icon_twice",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_zoom_end_farm_pose_then_spin_second_stop_twice",
+     "ok": false,
+     "result": "FAIL"
     }
    ],
    "built": false,
@@ -1783,12 +1795,21 @@
    "depends": [
     "C9"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_zoom_end_farm_pose_then_spin_second_stop_twice",
+     "ok": false,
+     "result": "FAIL"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for T9.1 and the checks were already green, so it is not built. Their replies on the board (step T9.1, 2026-11-21T21:54:58-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T10.1": {
    "kind": "test",
@@ -2005,7 +2026,7 @@
     "C13",
     "C14"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -2246,6 +2267,12 @@
      "name": "t_fork_returns_to_icon_twice",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_zoom_end_farm_pose_then_spin_second_stop_twice",
+     "ok": false,
+     "result": "FAIL"
     }
    ],
    "built": false,
@@ -2256,16 +2283,29 @@
  },
  "order": [
   {
-   "id": "T9.1",
-   "score": 5.72,
+   "id": "CFG",
+   "score": 3.66,
    "factors": {
     "unblocks": 0,
-    "value": 3,
+    "value": 2,
+    "cost": 0.34,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.1",
+   "score": 1.72,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
     "cost": 0.28,
     "ready": 1,
     "blocked_by": []
    }
   }
  ],
- "ambiguous": []
+ "ambiguous": [
+  "T9.1"
+ ]
 }
