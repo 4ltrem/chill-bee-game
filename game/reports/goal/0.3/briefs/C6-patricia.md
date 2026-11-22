@@ -6,6 +6,6 @@ Your contract lines:
 - Item 6: the skip icon script, using the same plant path as item 3 at no cost.
 
 Spec text:
-6. **Skip to ending.** A small skip icon at the farm view's edge (designer, 2026-11-22: visible for graders, not on the welcome screen), with the label `skip_icon_label` as its tooltip/accessibility text. Pressing it plants every remaining patch for free (each with its grow-in), so Health reaches thriving and items 4 and 5 follow as in normal play. It hides once thriving is reached. Clears every other farm-view control.
+6. **Skip to ending.** A small skip icon at the farm view's edge (designer, 2026-11-22: visible for graders, not on the welcome screen), with the label `skip_icon_label` as its tooltip/accessibility text. Pressing it plants every remaining patch for free (each with its grow-in), so Health reaches thriving and items 4 and 5 follow as in normal play. It hides once thriving is reached, and it is not shown (or pressable) while the welcome screen is up. It is a `SkipIcon` Button (`skip_icon.gd`) in the farm UI of `main.tscn`. Clears every other farm-view control.
 
 Reply in at most 150 words: files changed, node names used, open questions.
