@@ -312,6 +312,7 @@ func spin_tapped() -> void:
 ## Back: the risen frame sinks keeping its state, the hive lid goes back on and the camera zooms out.
 ## The fork stays available while any frame has Capped cells (resume_pending).
 func back() -> void:
+	_close_shop_sheet()   # 0.2 item 15: Back with the sheet open closes it at once, in the zoom and at the second stop
 	match zoom:
 		Zoom.NONE:
 			leave_second_stop()

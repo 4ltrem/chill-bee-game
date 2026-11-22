@@ -1553,5 +1553,58 @@
    "t_zoom_end_farm_pose_then_spin_second_stop_twice"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 15 the Shop button stays hidden in the zoom",
+  "file": "scripts/main.gd",
+  "find": "_farm_ui.visible = false   # item 15:",
+  "replace": "_farm_ui.visible = false; (find_child(\"ShopButton\", true, false) as Control).visible = false   # item 15:",
+  "expect": [
+   "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
+   "t_shop_at_second_stop_buy_blocks_crank_closes_on_back"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 15 the zoom ending with the sheet open leaves it open when the zoom starts closing",
+  "file": "scripts/main.gd",
+  "find": "\t_close_shop_sheet()   # 0.2 item 15: leaving the zoom (Back or on its own) closes an open Shop sheet\n",
+  "replace": "\tpass   # 0.2 item 15: leaving the zoom (Back or on its own) closes an open Shop sheet\n",
+  "expect": [
+   "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 15 the Shop button opens the sheet only once (second open does nothing)",
+  "file": "scripts/shop_ui.gd",
+  "find": "_shop_button.pressed.connect(func() -> void: set_sheet_open(true))",
+  "replace": "_shop_button.pressed.connect(func() -> void: set_sheet_open(true), CONNECT_ONE_SHOT)",
+  "expect": [
+   "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
+   "t_shop_at_second_stop_buy_blocks_crank_closes_on_back"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 15 the sheet's dim lets fork and crank input through",
+  "file": "scripts/shop_ui.gd",
+  "find": "_dim.mouse_filter = Control.MOUSE_FILTER_STOP",
+  "replace": "_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE",
+  "expect": [
+   "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
+   "t_shop_at_second_stop_buy_blocks_crank_closes_on_back"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 15 with shop_layout 0 the compact panel moves out to stay in the zoom",
+  "file": "scripts/shop_ui.gd",
+  "find": "_move_parts.call_deferred(layout == SHEET)",
+  "replace": "_move_parts.call_deferred(true)",
+  "expect": [
+   "t_shop_compact_layout_nothing_in_zoom"
+  ],
+  "suite": "unit"
  }
 ]

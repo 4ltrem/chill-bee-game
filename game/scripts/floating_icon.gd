@@ -18,7 +18,7 @@ const MIN_TOUCH: Vector2 = Vector2(120.0, 120.0)   # GDD 8 / spec Accessibility
 const STYLE_NAMES: Array[String] = ["normal", "hover", "pressed", "disabled", "hover_pressed", "focus"]
 const GROUP: StringName = &"anchored_buttons"
 const OFFSET_KEYS: Dictionary = {"ForkIcon": "harvest_anchor_offset", "CentrifugeIcon": "spin_anchor_offset", "SellIcon": "sell_anchor_offset"}
-const AVOID_NAMES: Array[String] = ["TopInfo", "BackButton"]   # other controls an anchored button is nudged clear of
+const AVOID_NAMES: Array[String] = ["TopInfo", "BackButton", "ShopButton"]   # other controls an anchored button is nudged clear of
 
 var _anchor: Node3D
 var _avoid_cache: Dictionary = {}
