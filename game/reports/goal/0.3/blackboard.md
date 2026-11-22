@@ -585,9 +585,45 @@ FAIL    start     2 errors  (godot exit 1 (1 is normal here), 2 noise lines drop
 
 **Paused:** Quinn: qa-build-engineer reported an error: API Error: Can't reach the API server — check your internet or DNS (ENOTFOUND) (a network or API error, twice). Run the same command again to resume.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md` (the run had stopped: `paused`).
+Branch `main`: stays on it.
+
+## Pass 6: scan (2026-11-22T14:50:24-05:00)
+
+Unit results from `game/reports/_runs/20261122-011146/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+### Order: new or rescored (8 of 12)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 5 | T1.1 every test run sets `show_welcome = false` except  | 3.75 | 0 | 2 | 0.25 | 1 | designer feature; cost 0.25 (Quinn) |
+| 6 | T1.2 item 1: at launch with `show_welcome = true` the o | 3.75 | 0 | 2 | 0.25 | 1 | designer feature; cost 0.25 (Quinn) |
+| 7 | T2.1 item 2: Health starts at `habitat_health_start`; ` | 3.75 | 0 | 2 | 0.25 | 1 | designer feature; cost 0.25 (Quinn) |
+| 8 | T.1 mutations in `tests/mutations.json` prove the new  | 0.0 | 0 | 1 | 0.25 | 0 | waits on C3, C4, C5, C6 |
+| 9 | T3.1 item 3: the row's cost equals `40 × 1.25^n` (floor | 0.0 | 0 | 2 | 0.25 | 0 | waits on C3 |
+| 10 | T4.1 item 4: before thriving the Journal button is hidd | 0.0 | 0 | 2 | 0.25 | 0 | waits on C4 |
+| 11 | T5.1 item 5: reaching thriving during a zoom shows no v | 0.0 | 0 | 2 | 0.25 | 0 | waits on C5 |
+| 12 | T6.1 item 6: the skip icon reaches thriving with money  | 0.0 | 0 | 2 | 0.25 | 0 | waits on C6 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C3** (score 9.68: 2 goal(s) wait on it; designer feature; cost 0.32 (Patricia)).
+
+### Step: C3 (2026-11-22T14:50:27-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C3-patricia.md` (1815 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C3-quinn.md` (2980 chars)
+
+**Paused:** Budget guard: weekly usage is 33% with 18% of the week gone, more than 10 points ahead of pace, so heavy agents (programmer) wait (reading 0 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
 ## Result
 
-Last invocation (2026-11-22T13:50:27-05:00): paused.
+Last invocation (2026-11-22T14:50:27-05:00): paused.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 

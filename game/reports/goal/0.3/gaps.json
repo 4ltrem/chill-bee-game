@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T13:34:55-05:00",
+ "at": "2026-11-22T14:50:24-05:00",
  "unit_log": "game/reports/_runs/20261122-011146/unit.log",
  "goals": {
   "C1": {
@@ -328,33 +328,33 @@
   },
   {
    "id": "T1.1",
-   "score": 3.74,
+   "score": 3.75,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.26,
+    "cost": 0.25,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T1.2",
-   "score": 3.74,
+   "score": 3.75,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.26,
+    "cost": 0.25,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T2.1",
-   "score": 3.74,
+   "score": 3.75,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.26,
+    "cost": 0.25,
     "ready": 1,
     "blocked_by": []
    }
@@ -365,7 +365,7 @@
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.26,
+    "cost": 0.25,
     "ready": 0,
     "blocked_by": [
      "C3",
@@ -381,7 +381,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.26,
+    "cost": 0.25,
     "ready": 0,
     "blocked_by": [
      "C3"
@@ -394,7 +394,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.26,
+    "cost": 0.25,
     "ready": 0,
     "blocked_by": [
      "C4"
@@ -407,7 +407,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.26,
+    "cost": 0.25,
     "ready": 0,
     "blocked_by": [
      "C5"
@@ -420,7 +420,7 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.26,
+    "cost": 0.25,
     "ready": 0,
     "blocked_by": [
      "C6"
