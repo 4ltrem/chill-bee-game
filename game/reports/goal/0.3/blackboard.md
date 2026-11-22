@@ -2573,9 +2573,254 @@ Fix round 1 on C6 needs a visual number the designer has not voted on (sizes, sc
 
 Comparison pages:
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note designer 2026-11-22, applied by the orchestrator in main.tscn (style_check PASS): V11 wins: HabitatPlusButton 120x120, BuyButton 160x120, JournalButton 120x120, SkipIcon 120x120 (offsets kept at the right edge); V12 wins: NameLabel and LevelLabel 28; HabitatIcon is a flat Panel (StyleBox_wildflower, blossom, radius 20), no texture; blossom added to STYLE_GUIDE's UI tokens by the designer; test_habitat.gd finds HabitatIcon by name. No visual question is open.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: designer 2026-11-22, applied by the orchestrator in main.tscn (style_check PASS): V11 wins: HabitatPlusButton 120x120, BuyButton 160x120, JournalButton 120x120, SkipIcon 120x120 (offsets kept at the right edge); V12 wins: NameLabel and LevelLabel 28; HabitatIcon is a flat Panel (StyleBox_wildflower, blossom, radius 20), no texture; blossom added to STYLE_GUIDE's UI tokens by the designer; test_habitat.gd finds HabitatIcon by name. No visual question is open.
+Branch `main`: stays on it.
+
+## Pass 26: scan (2026-11-22T17:19:25-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 8 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C6 Skip to ending. | change | Patricia, Bob | partial | ✓ node SkipIcon |
+
+### Order: new or rescored (2 of 4)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C6 Skip to ending. | 6.45 | 1 | 2 | 0.55 | 1 | 1 goal(s) wait on it; designer feature; cost 0.55 (Patricia, Bob) |
+| 4 | T6.1 item 6: the skip icon reaches thriving with money  | 3.78 | 0 | 2 | 0.22 | 1 | designer feature; cost 0.22 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T17:01:03-05:00) say why; answer by editing the spec item.
+
+Next: **C6** (score 6.45: 1 goal(s) wait on it; designer feature; cost 0.55 (Patricia, Bob)).
+
+### Step: C6 (2026-11-22T17:19:27-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C6-patricia.md` (1190 chars)
+- Brief for Bob: `game/reports/goal/0.3/briefs/C6-bob.md` (1179 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+
+**Patricia** (115,280 tokens, 12 turns, 25 s):
+
+I've finished item 6, and `python -I _tools/contract_check.py` passes (106 lookups, 0 unresolved). I did not run Quinn's tests or the playthrough.
+
+`game/scripts/skip_icon.gd` already existed, so I made three small edits to it.
+- **Plant path:** pressing the icon calls `Economy.set_level("plant_patch", max)`, which is the same path as the shop buy but takes no money.
+- **Welcome guard:** a press is ignored while `main.welcome_active()` is true. The farm UI is hidden then anyway.
+- **Accessibility name:** the label `skip_icon_label` is now also set as the accessibility name, when the engine has that property. It was already the tooltip.
+
+**Hiding:** the icon hides once Health reaches thriving.
+
+**Node names:** `SkipIcon` is a Button under `FarmUIRoot/FarmUI` in `main.tscn`. Bob's node is already in the scene and wired to this script.
+
+**Open questions:** none.
+
+**For Quinn:** the item 6 test (money unchanged, victory follows, icon hides) still needs writing. It should also check that the icon is not pressable while the welcome screen is up.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 6 (cap 30; CLI num_turns 12); end `success`
+
+
+**Bob** (150,737 tokens, 9 turns, 32 s):
+
+`SkipIcon` was already in `main.tscn` from an earlier pass, so I changed no files this run.
+
+- **Node:** `FarmUIRoot/FarmUI/SkipIcon`, a `Button` with `skip_icon.gd`. It is 120×120, anchored top-right (24 px from the right edge, 32 px from the top).
+- **Other farm controls:** none of the controls I looked at sits at the icon's position. I didn't check the others by name, and the Back button's position was never re-checked after the earlier overlap failure.
+- **Welcome screen:** `WelcomeOverlay` is on layer 10 with a full-screen `Dim`, so it covers the icon and blocks presses. I haven't confirmed that `Dim` blocks input.
+- **Tooltip:** `tr("skip_icon_label")`, which is in `journal.csv`.
+- **Contract check:** 106 lookups, 0 unresolved.
+- **Render:** the welcome screen is up and the icon is not visible on it. I did not render the icon after pressing Play, so I haven't seen it on screen.
+
+Open question: nothing in the scene or script is tested for the Back-button overlap or the welcome-screen block.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 6 (cap 30; CLI num_turns 9); end `success`
+
+- Tests this round: none (no unit test is the goal's own or reads what the step changed); `unit` skipped, the end-of-run full suite runs it
+- No test reads `scripts/skip_icon.gd`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: PASS (open rows only on files this step did not change)
+- Green: checkpoint `851591f` on `main`
+
+## Pass 27: scan (2026-11-22T17:33:09-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 8 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C6 Skip to ending. | change | Patricia, Bob | partial (built, waits on its tests) | ✓ node SkipIcon, ✓ ledger 851591f |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T17:01:03-05:00) say why; answer by editing the spec item.
+
+Next: **T3.1** (score 3.78: designer feature; cost 0.22 (Quinn)).
+
+### Step: T3.1 (2026-11-22T17:33:09-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T3.1-quinn.md` (5144 chars)
+- Quinn's step skipped: every line already has its marked test (T3.1: t_fork_reach_by_level, t_fork_post_auto_yield_bonus)
+- Tests this round (2): own (2): `t_fork_post_auto_yield_bonus`, `t_fork_reach_by_level`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T3.1-fix1-quinn.md` (2489 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (382,859 tokens, 17 turns, 62 s):
+
+T3.1 had no test, so the check had nothing to run and "no mutations to run" was the failure. I added a test and two mutations. I ran nothing.
+
+- **Test:** `t_patch_plant_steps_group_health_twice` is in `game/tests/test_habitat.gd` and registered in `run_tests.gd`.
+- **What it checks:** it plants all six patches in a quiet `main.tscn`, then a reset, then all six again. Each buy has to meet the spec:
+  - cost is `patch_base_cost × patch_cost_growth^planted`;
+  - the next slot shows and joins group `flower_patch`;
+  - Health rises by `habitat_health_per_patch`;
+  - a seventh buy is refused.
+- **Mutations:** two are added to `mutations.json`, both expecting that test to fail.
+  - A planted patch never joins the group.
+  - A reset keeps the planted patches.
+
+Nothing is outside `tests/`. If the mutate run still reports nothing to run, check how the goal agent selects mutations. It may filter on goal tags.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 15 (cap 15; CLI num_turns 17); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (4): own (3): `t_fork_post_auto_yield_bonus`, `t_fork_reach_by_level`, `t_patch_plant_steps_group_health_twice`; changed in `tests/run_tests.gd` (1): `t_patch_plant_steps_group_health_twice`; changed in `tests/test_habitat.gd` (2): `t_habitat_pill_order_plus_opens_shop_twice`, `t_patch_plant_steps_group_health_twice`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Green: checkpoint `de34590` on `main`
+
+## Pass 28: scan (2026-11-22T17:36:43-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 10 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C3 Plant wildflower patch. | change | Patricia, Bob | done | ✓ node PatchSlots, ✓ test t_patch_plant_steps_group_health_twice |
+| T3.1 item 3: the row's cost equals `40 × 1.25^n` (floored) for n  | test | Quinn | done | ✓ test t_patch_plant_steps_group_health_twice, ✓ ledger de34590 |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | done | 9/9 present: ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_p ... |
+
+No score changed.
+
+Next: **T4.1** (score 3.78: designer feature; cost 0.22 (Quinn)).
+
+### Step: T4.1 (2026-11-22T17:36:43-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T4.1-quinn.md` (3532 chars)
+- Quinn's step skipped: every line already has its marked test (T4.1: t_gearing_gears_visible_by_level, t_gearing_gears_turn_opposite_twice)
+- Tests this round (2): own (2): `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T4.1-fix1-quinn.md` (1254 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (275,467 tokens, 23 turns, 56 s):
+
+I wrote the item 4 test and registered it, but I haven't run anything, not even a `--check-only` parse. The goal agent runs every check.
+
+The mutate step had nothing to run because item 4 had no test group and no mutations. There was no failing test row to fix. I changed only `tests/`:
+
+- **`tests/test_habitat.gd`**: new `t_bumble_visitor_toast_journal_unlock_twice`, marked `# goal T4.1`. It runs two farms in a row. It checks that the Journal button is hidden at the start and one point below `habitat_thriving`. At thriving, the toast shows the `toast_bumble_visitor` text and the button shows. A real tap then opens the Bumble Bees entry and Close hides it. A farm reset (`Economy.reset()`) hides the button again.
+- **`tests/run_tests.gd`**: registered under `# 0.3 item 4 (written from game/specs/0.3-course-build.md before the code)`.
+- **`tests/mutations.json`**: three mutations, one for the reset (leave) step, one for the toast firing again in a second farm (twice step), and one for the button showing below thriving.
+
+Nodes used: `JournalButton`, `JournalPanel`, `JournalTitle`, `JournalCloseButton`, `PhaseToast`, `ToastLabel`, `ShopPanel`.
+
+Open question: no Dev "Reset habitat" button exists in `scripts/`, so the test uses `Economy.reset()` instead. Should the Dev "Reset habitat" hide the button without a full farm reset?
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 10 (cap 15; CLI num_turns 23); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (4): own (3): `t_bumble_visitor_toast_journal_unlock_twice`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`; changed in `tests/run_tests.gd` (1): `t_bumble_visitor_toast_journal_unlock_twice`; changed in `tests/test_habitat.gd` (2): `t_bumble_visitor_toast_journal_unlock_twice`, `t_habitat_pill_order_plus_opens_shop_twice`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      3 passed, 1 failed  (godot exit 1, 12 noise lines dropped)  game/reports/_runs/20261122-173838/unit.log
+    FAIL  t_bumble_visitor_toast_journal_unlock_twice  run 1 step open: the Journal button is on screen in the Shop | run 1 step tap: a real tap on Journal opens the entry | run 2 step below: no bumble toast yet | run 2 step open: the Journal b
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/T4.1-fix2-patricia.md` (1927 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (160,510 tokens, 14 turns, 28 s):
+
+I changed one thing for this test. The Journal-in-Shop failure is still open, so I haven't fixed it.
+
+- **Fixed (run 2 "below: no bumble toast yet"):** `scripts/farm_ui.gd` now hides the bumble toast when Habitat Health drops back under `habitat_thriving`, as it does on a farm reset. Before, run 1's toast was still on screen when run 2 started. I added `_on_habitat_changed`, connected to `Economy.habitat_changed`. I haven't run the test.
+- **Not fixed (the "step open" and "step tap" rows, runs 1 and 2): diag needed.** The Journal button is visible at thriving but not visible in the tree once `_shop_open` runs. It sits in `main.tscn` under `ShopPanel/ShopBox`. The code doesn't show why, so I changed nothing. Quinn should print these values after `_shop_open`:
+  - `ShopPanel.visible`
+  - `ShopPanel.get_parent()`
+  - `btn.visible`
+  - the first ancestor of `btn` where `visible` is false
+  - `btn.get_global_rect()`
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 8 (cap 15; CLI num_turns 14); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (34): own (3): `t_bumble_visitor_toast_journal_unlock_twice`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`; changed in `tests/run_tests.gd` (1): `t_bumble_visitor_toast_journal_unlock_twice`; changed in `tests/test_habitat.gd` (2): `t_bumble_visitor_toast_journal_unlock_twice`, `t_habitat_pill_order_plus_opens_shop_twice`; impacted by `scripts/farm_ui.gd` (via `BeeCountLabel`, `CentrifugeLabel`, `FarmUI`, `ForkIcon`, `HiveCountLabel`, `MoneyLabel`, `PhaseToast`, `SummaryJarsLabel`, `SummaryModal`, `SummaryOkButton`, `SummaryTotalLabel`, `SummaryValueLabel` and 3 more) (32): `t_back_after_one_frame`, `t_back_keeps_half_frame`, `t_bumble_visitor_toast_journal_unlock_twice`, `t_camera_back_from_second_stop`, `t_camera_second_stop_hud_clear`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_ui_bounds_collects_controls`, `t_focus_styles`, `t_fork_rules`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_journal_panel_text_matches_csv_twice`, `t_no_continue_button`, `t_no_crank_during_zoom`, `t_node_contract`, `t_node_contract_012`, `t_phase2_auto_sell_sets_once_toast_once`, `t_resume_pending_pile_loads_while_zoom_open`, `t_second_stop_fork_icon_tap`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_speed_tag_below_labels`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`; last failures (1): `t_bumble_visitor_toast_journal_unlock_twice`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      32 passed, 2 failed  (godot exit 1, 56 noise lines dropped)  game/reports/_runs/20261122-174008/unit.log
+    FAIL  t_hud_no_overlap_no_cutoff  farm view: no HUD controls overlap and none is cut off: expected [] got ["TopInfo [P: (24, 32), S: (672, 289)] overlaps HiveCountLabel [P: (413.0096, 320.7905), S: (75, 39)]"]  (3900 ms)
+    FAIL  t_bumble_visitor_toast_journal_unlock_twice  run 1 step open: the Journal button is on screen in the Shop | run 1 step tap: a real tap on Journal opens the entry | run 2 step open: the Journal button is on screen in the Shop | run 2 s
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T4.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T4.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T4.1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-22T17:15:41-05:00): waiting-designer.
+Last invocation (2026-11-22T17:42:51-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -2638,4 +2883,9 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Patricia, C6 | 88,272 | 19,821 | 6 | 22 s |
 | Bob, C6 | 391,115 | 35,397 | 20 | 62 s |
 | Bob, C6 fix 1 | 46,852 | 16,974 | 3 | 11 s |
-| **Total** | **9,139,033** | | | |
+| Patricia, C6 | 115,280 | 22,718 | 12 | 25 s |
+| Bob, C6 | 150,737 | 29,853 | 9 | 32 s |
+| Quinn, T3.1 fix 1 | 382,859 | 32,665 | 17 | 62 s |
+| Quinn, T4.1 fix 1 | 275,467 | 40,707 | 23 | 56 s |
+| Patricia, T4.1 fix 2 | 160,510 | 25,695 | 14 | 28 s |
+| **Total** | **10,223,886** | | | |

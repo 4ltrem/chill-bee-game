@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T17:01:04-05:00",
+ "at": "2026-11-22T17:36:43-05:00",
  "unit_log": "game/reports/_runs/20261122-145415/unit.log",
  "goals": {
   "C1": {
@@ -114,12 +114,18 @@
     3
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
      "name": "PatchSlots",
      "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_patch_plant_steps_group_health_twice",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -127,7 +133,7 @@
    "questions": [
     "The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T17:01:03-05:00) say why; answer by editing the spec item."
    ],
-   "ambiguous": true
+   "ambiguous": false
   },
   "C4": {
    "kind": "change",
@@ -199,16 +205,21 @@
     6
    ],
    "depends": [],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "node",
      "name": "SkipIcon",
-     "ok": false
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "851591f",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -325,9 +336,21 @@
    "depends": [
     "C3"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_patch_plant_steps_group_health_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "de34590",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -464,6 +487,12 @@
     },
     {
      "kind": "test",
+     "name": "t_patch_plant_steps_group_health_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
      "name": "t_victory_delay_show_close_once_per_farm",
      "ok": true,
      "result": "PASS"
@@ -483,28 +512,6 @@
  },
  "order": [
   {
-   "id": "C6",
-   "score": 6.43,
-   "factors": {
-    "unblocks": 1,
-    "value": 2,
-    "cost": 0.57,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T3.1",
-   "score": 3.78,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.22,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T4.1",
    "score": 3.78,
    "factors": {
@@ -517,19 +524,15 @@
   },
   {
    "id": "T6.1",
-   "score": 0.0,
+   "score": 3.78,
    "factors": {
     "unblocks": 0,
     "value": 2,
     "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C6"
-    ]
+    "ready": 1,
+    "blocked_by": []
    }
   }
  ],
- "ambiguous": [
-  "C3"
- ]
+ "ambiguous": []
 }
