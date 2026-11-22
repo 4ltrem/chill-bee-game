@@ -81,7 +81,9 @@ func _process(delta: float) -> void:
 
 func _farm_view_idle() -> bool:
 	if _main == null or not is_instance_valid(_main):
-		_main = get_tree().current_scene
+		_main = get_parent()   # the overlay lives under Main; current_scene is not Main when a test instances it
+		if _main == null or not _main.has_method("farm_view_idle"):
+			_main = get_tree().current_scene
 	if _main != null and _main.has_method("farm_view_idle"):
 		return _main.call("farm_view_idle")
 	return true

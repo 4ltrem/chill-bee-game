@@ -1719,6 +1719,36 @@
   "suite": "unit"
  },
  {
+  "name": "0.3 item 5 victory ignores the delay",
+  "file": "scripts/victory_overlay.gd",
+  "find": "\t_wait = Economy.config.victory_delay_seconds   # read when used",
+  "replace": "\t_wait = 0.0",
+  "expect": [
+   "t_victory_delay_show_close_once_per_farm"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 5 victory shows again in the same farm",
+  "file": "scripts/victory_overlay.gd",
+  "find": "\tif _done or _queued:",
+  "replace": "\tif _queued:",
+  "expect": [
+   "t_victory_delay_show_close_once_per_farm"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 5 victory ignores the farm view",
+  "file": "scripts/victory_overlay.gd",
+  "find": "\t\treturn _main.call(\"farm_view_idle\")",
+  "replace": "\t\treturn true",
+  "expect": [
+   "t_victory_waits_for_farm_view"
+  ],
+  "suite": "unit"
+ },
+ {
   "name": "0.3 item 2 the number never refreshes",
   "file": "scripts/habitat_pill.gd",
   "find": "Economy.habitat_changed.connect(func(_h: int) -> void: _refresh())",

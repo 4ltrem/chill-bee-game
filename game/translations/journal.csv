@@ -6,3 +6,9 @@ These fluffy wanderers stop for a friendly visit in the sunny meadow, then follo
 
 Ces voyageuses duveteuses font un arrêt amical dans la prairie ensoleillée avant de suivre les épilobes jusqu'à la vallée alpine."
 welcome_play,Play,Jouer
+victory_title,The meadow is thriving!,Le pré est en pleine floraison !
+victory_body,"Your pocket world is restored and buzzing with life. Thank you, beekeeper! Stay as long as you like: the bees are happy to keep going.","Votre monde de poche est restauré et bourdonne de vie. Merci, apiculteur ou apicultrice ! Restez aussi longtemps que vous voulez : les abeilles sont ravies de continuer."
+victory_button,Keep playing,Continuer à jouer
+toast_patch_planted,A new wildflower patch is blooming!,Une nouvelle parcelle de fleurs sauvages s'épanouit !
+toast_bumble_visitor,A bumble bee has dropped by! Peek at the new page in your Bee Journal.,Un bourdon est passé nous voir ! Jetez un œil à la nouvelle page de votre Carnet des abeilles.
+skip_icon_label,Skip to ending,Aller à la fin

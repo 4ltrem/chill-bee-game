@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/welcome_overlay.gd" id="welcome_script"]
+[ext_resource type="Script" path="res://scripts/victory_overlay.gd" id="victory_script"]
 [ext_resource type="PackedScene" path="res://scenes/props/hive.tscn" id="2_hive"]
 [ext_resource type="Script" path="res://scripts/bees.gd" id="3_bees"]
 [ext_resource type="Script" path="res://scripts/farm_ui.gd" id="4_farmui"]
@@ -796,3 +797,48 @@ custom_minimum_size = Vector2(240, 120)
 focus_mode = 0
 theme_override_font_sizes/font_size = 40
 text = "Play"
+
+[node name="VictoryOverlay" type="CanvasLayer" parent="."]
+visible = false
+layer = 9
+script = ExtResource("victory_script")
+
+[node name="Dim" type="ColorRect" parent="VictoryOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="Center" type="CenterContainer" parent="VictoryOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Column" type="VBoxContainer" parent="VictoryOverlay/Center"]
+custom_minimum_size = Vector2(640, 0)
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="VictoryTitle" type="Label" parent="VictoryOverlay/Center/Column"]
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 64
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="VictoryBody" type="Label" parent="VictoryOverlay/Center/Column"]
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 36
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="VictoryButton" type="Button" parent="VictoryOverlay/Center/Column"]
+custom_minimum_size = Vector2(320, 120)
+size_flags_horizontal = 4
+focus_mode = 0
+theme_override_font_sizes/font_size = 40
