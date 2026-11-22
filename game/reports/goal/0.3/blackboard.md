@@ -1997,9 +1997,122 @@ FAIL    unit      6 passed, 1 failed  (godot exit 1, 22 noise lines dropped)  ga
 
 2 fix rounds failed on T5.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T5.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T5.1 fix-round edits"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note the victory keys were missing from the translations: the orchestrator extended _tools/journal_csv.py to copy the approved rows of content/course-ending-text.md and regenerated game/translations/journal.csv (victory_*, toast_*, skip_icon_label). No game code change for this failure.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: the victory keys were missing from the translations: the orchestrator extended _tools/journal_csv.py to copy the approved rows of content/course-ending-text.md and regenerated game/translations/journal.csv (victory_*, toast_*, skip_icon_label). No game code change for this failure.
+Branch `main`: stays on it.
+
+## Pass 20: scan (2026-11-22T16:08:34-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 5 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C5 Victory screen. | change | Patricia, Bob | partial (built, waits on its tests) | ✗ test t_victory_delay_show_close_once_per_farm (FAIL), ✓ test t_victory_waits_for_farm_view, ✓ ledger 8297ded |
+| T5.1 item 5: reaching thriving during a zoom shows no victory unt | test | Quinn | partial | ✗ test t_victory_delay_show_close_once_per_farm (FAIL), ✓ test t_victory_waits_for_farm_view |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | partial | 7/8 present: ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_p ... |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - Question: The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+Next: **T5.1** (score 3.78: designer feature; cost 0.22 (Quinn)).
+
+### Step: T5.1 (2026-11-22T16:08:34-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T5.1-quinn.md` (4036 chars)
+- Quinn's step skipped: every line already has its marked test (T5.1: t_delivery_look_groups_by_level, t_delivery_stacks_not_flame_material, t_victory_delay_show_close_once_per_farm, t_victory_waits_for_farm_view)
+- Tests this round (4): own (4): `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 0 of 3 caught
+mutate baseline: 2 expected tests, 0 already failing
+mutate 2/3: 0.3 item 5 victory shows again in the same farm ... MISSED in 15s
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T5.1-fix1-quinn.md` (1773 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (109,852 tokens, 8 turns, 18 s):
+
+I fixed one cause in `tests/`. I haven't run anything.
+
+The mutation `0.3 item 5 victory shows again in the same farm` was missed because the test never reached the overlay's once-per-farm guard. `Economy` fires `thriving` only once per farm (`economy.gd:192`). The "step once" part of `t_victory_delay_show_close_once_per_farm` only called `add_habitat`, which doesn't emit `thriving` again. So the overlay never saw a second signal, and the mutated guard went untested.
+
+The fix is in `e_thrive_again_once` in `game/tests/test_victory.gd`. It now also emits `thriving` directly after the close. With the guard removed, the overlay re-queues and shows again, so "step once" should fail.
+
+I changed nothing else. The other two mutations in the "0 of 3 caught" count aren't named in the failure output, so I didn't touch them.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 6 (cap 15; CLI num_turns 8); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (4): own (4): `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`; calls a helper changed in `tests/test_victory.gd` (2): `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`; changed in `tests/test_victory.gd` (2): `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 0 of 3 caught
+mutate baseline: 2 expected tests, 0 already failing
+mutate 2/3: 0.3 item 5 victory shows again in the same farm ... MISSED in 15s
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T5.1-fix2-quinn.md` (1773 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (126,360 tokens, 8 turns, 25 s):
+
+I changed `game/tests/test_victory.gd` and ran nothing, per the brief.
+
+**Cause I found:** the "step once" check in `t_victory_delay_show_close_once_per_farm` waited a fixed `int(delay * 60.0) + 10` frames. Under `--time-scale 6` that may cover less than `victory_delay_seconds` of game time. The mutated overlay would still have been waiting and the check passed anyway. That is a guess from reading the code, not a confirmed cause.
+
+**Fix:** it now waits with `_until` on `_vic_shown(o)` for `delay * 1.5 + 1.0` real seconds, and asserts it never becomes true. That is at least `victory_delay_seconds` of game time at any time scale. I also added a `diag:` part to the FAIL message, printing `is_queued` and `Engine.time_scale`.
+
+I did not touch the other two mutations that were reported as missed. The failure message names only mutation 2/3, and I did not read the other two entries. If they still miss on the next run, the `diag:` output will show the state.
+
+No problems found in `scripts/` or the spec for this row.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 6 (cap 15; CLI num_turns 8); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (4): own (4): `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`; calls a helper changed in `tests/test_victory.gd` (2): `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`; changed in `tests/test_victory.gd` (2): `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: 1 of 3 caught
+mutate baseline: 2 expected tests, 0 already failing
+mutate 2/3: 0.3 item 5 victory shows again in the same farm ... CAUGHT in 17s
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T5.1: `mutations` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T5.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T5.1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-22T16:07:51-05:00): waiting-designer.
+Last invocation (2026-11-22T16:14:39-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -2050,4 +2163,6 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Bob, T5.1 fix 2 | 163,145 | 28,775 | 12 | 28 s |
 | Patricia, T5.1 fix 1 | 115,015 | 23,720 | 11 | 21 s |
 | Bob, T5.1 fix 2 | 29,706 | 16,587 | 2 | 6 s |
-| **Total** | **6,938,091** | | | |
+| Quinn, T5.1 fix 1 | 109,852 | 21,335 | 8 | 18 s |
+| Quinn, T5.1 fix 2 | 126,360 | 28,455 | 8 | 25 s |
+| **Total** | **7,174,303** | | | |

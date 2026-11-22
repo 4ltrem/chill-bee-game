@@ -358,5 +358,21 @@
   "turns": 2,
   "seconds": 6,
   "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Quinn, T5.1 fix 1",
+  "tokens": 109852,
+  "final": 21335,
+  "turns": 8,
+  "seconds": 18,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Quinn, T5.1 fix 2",
+  "tokens": 126360,
+  "final": 28455,
+  "turns": 8,
+  "seconds": 25,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
  }
 ]
