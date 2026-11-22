@@ -2818,9 +2818,120 @@ FAIL    unit      32 passed, 2 failed  (godot exit 1, 56 noise lines dropped)  g
 
 2 fix rounds failed on T4.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T4.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T4.1 fix-round edits"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note designer 2026-11-22 (spec items 2 and 3 updated): (1) the open Shop is a full-height sheet over the whole screen, top info included; Close or a tap outside the rows returns to the farm; 8 rows at 120 px and the Journal button all on screen at 720x1280 (fixes the bumble test's 'Journal button is on screen'). (2) HabitatPill sits beside MoneyLabel in one row at the top of TopInfo, bee count below, clear of HiveCountLabel and the SkipIcon (fixes t_hud_no_overlap_no_cutoff). Bob does the scene layout, Patricia any shop_ui.gd change for the sheet. Sizes are placeholders except the 120 px touch minimum and 28 px fonts.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: designer 2026-11-22 (spec items 2 and 3 updated): (1) the open Shop is a full-height sheet over the whole screen, top info included; Close or a tap outside the rows returns to the farm; 8 rows at 120 px and the Journal button all on screen at 720x1280 (fixes the bumble test's 'Journal button is on screen'). (2) HabitatPill sits beside MoneyLabel in one row at the top of TopInfo, bee count below, clear of HiveCountLabel and the SkipIcon (fixes t_hud_no_overlap_no_cutoff). Bob does the scene layout, Patricia any shop_ui.gd change for the sheet. Sizes are placeholders except the 120 px touch minimum and 28 px fonts.
+Branch `main`: stays on it.
+
+## Pass 29: scan (2026-11-22T17:48:13-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 9 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C4 The bumble bee visitor. | change | Patricia | partial (built, waits on its tests) | ✗ test t_bumble_visitor_toast_journal_unlock_twice (FAIL), ✓ ledger 8b8a767 |
+| T4.1 item 4: before thriving the Journal button is hidden; at thr | test | Quinn | partial | ✗ test t_bumble_visitor_toast_journal_unlock_twice (FAIL) |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | partial | 9/10 present: ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_p ... |
+
+### Order: new or rescored (1 of 3)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 3 | T.1 mutations in `tests/mutations.json` prove the new  | 1.78 | 0 | 1 | 0.22 | 1 | housekeeping/handoff; cost 0.22 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T4.1** (score 3.78: designer feature; cost 0.22 (Quinn)), with T.1.
+
+### Step: T4.1, T.1 (2026-11-22T17:48:13-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T4.1-quinn.md` (3712 chars)
+- Quinn's step skipped: every line already has its marked test (T4.1: t_gearing_gears_visible_by_level, t_gearing_gears_turn_opposite_twice, t_bumble_visitor_toast_journal_unlock_twice)
+- Tests this round (3): own (3): `t_bumble_visitor_toast_journal_unlock_twice`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      2 passed, 1 failed  (godot exit 1, 8 noise lines dropped)  game/reports/_runs/20261122-174815/unit.log
+    FAIL  t_bumble_visitor_toast_journal_unlock_twice  run 1 step open: the Journal button is on screen in the Shop | run 1 step tap: a real tap on Journal opens the entry | run 2 step open: the Journal button is on screen in the Shop | run 2 s
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/T4.1-fix1-patricia.md` (1931 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (175,813 tokens, 12 turns, 30 s):
+
+I changed nothing: `diag needed`.
+
+`t_bumble_visitor_toast_journal_unlock_twice` fails at "open" and "tap" in both runs. The unlock itself works: the checks that the button is hidden before thriving and shown at thriving don't appear in the failure line. I can't tell why the button is not visible in the tree once the Shop is open.
+
+The cause is probably in how the test opens the Shop, in `_shop_open` in `test_shop.gd`. It taps `ShopButton` for real, and nothing falls back if that tap misses. The `PhaseToast` toast may be blocking the tap. I read nothing in `scripts/` that shows it.
+
+Please have Quinn print, right after `_shop_open` in run 1:
+- `ShopPanel.visible`, `ShopPanel.is_visible_in_tree()` and `shop_layout`.
+- `ShopButton.is_visible_in_tree()` and its global rect.
+- `PhaseToast.get_global_rect()` and its `mouse_filter`.
+- `JournalButton.visible`, plus the `visible` flag of each ancestor up to the root.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 8 (cap 15; CLI num_turns 12); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (3): own (3): `t_bumble_visitor_toast_journal_unlock_twice`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`; last failures (1): `t_bumble_visitor_toast_journal_unlock_twice`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      2 passed, 1 failed  (godot exit 1, 8 noise lines dropped)  game/reports/_runs/20261122-174941/unit.log
+    FAIL  t_bumble_visitor_toast_journal_unlock_twice  run 1 step open: the Journal button is on screen in the Shop | run 1 step tap: a real tap on Journal opens the entry | run 2 step open: the Journal button is on screen in the Shop | run 2 s
+```
+
+#### Fix round 2: to Quinn (Patricia put the fault in tests/)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T4.1-fix2-quinn.md` (3567 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (97,318 tokens, 6 turns, 17 s):
+
+I changed nothing in the game and did not run any tests. I only extended the failing check in `game/tests/test_habitat.gd`.
+
+There is no known cause yet, so I added a `diag:` part to the `step open` FAIL message in `t_bumble_visitor_toast_journal_unlock_twice`. It prints the state Patricia asked for, taken right after `_shop_open`:
+- **Shop panel:** `ShopPanel.visible`, `is_visible_in_tree()` and `shop_layout`.
+- **Shop button:** `ShopButton`'s in-tree state and global rect.
+- **Toast:** `PhaseToast`'s global rect and `mouse_filter`.
+- **Journal button:** `JournalButton.visible` and its global rect.
+- **Ancestors:** the `name:visible` of every ancestor of the Journal button, up to the root.
+
+The next check will print these when `step open` fails.
+
+The spec line for item 4 ("from thriving on it shows and opens the entry as in 0.2") matches what the test expects, so no expectation was changed.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 6); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (4): own (3): `t_bumble_visitor_toast_journal_unlock_twice`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`; changed in `tests/test_habitat.gd` (2): `t_bumble_visitor_toast_journal_unlock_twice`, `t_habitat_pill_order_plus_opens_shop_twice`; last failures (1): `t_bumble_visitor_toast_journal_unlock_twice`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      3 passed, 1 failed  (godot exit 1, 12 noise lines dropped)  game/reports/_runs/20261122-175056/unit.log
+    FAIL  t_bumble_visitor_toast_journal_unlock_twice  run 1 step open: the Journal button is on screen in the Shop; diag: shop panel visible false, in tree false, shop_layout <null>; ShopButton in tree true rect [P: (1144, 1168), S: (120, 104)
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T4.1, T.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T4.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T4.1, T.1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-22T17:42:51-05:00): waiting-designer.
+Last invocation (2026-11-22T17:51:52-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -2888,4 +2999,6 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Quinn, T3.1 fix 1 | 382,859 | 32,665 | 17 | 62 s |
 | Quinn, T4.1 fix 1 | 275,467 | 40,707 | 23 | 56 s |
 | Patricia, T4.1 fix 2 | 160,510 | 25,695 | 14 | 28 s |
-| **Total** | **10,223,886** | | | |
+| Patricia, T4.1, T.1 fix 1 | 175,813 | 29,040 | 12 | 30 s |
+| Quinn, T4.1, T.1 fix 2 | 97,318 | 22,360 | 6 | 17 s |
+| **Total** | **10,497,017** | | | |

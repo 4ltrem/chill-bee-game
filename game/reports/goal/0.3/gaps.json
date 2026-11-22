@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T17:36:43-05:00",
+ "at": "2026-11-22T17:48:13-05:00",
  "unit_log": "game/reports/_runs/20261122-145415/unit.log",
  "goals": {
   "C1": {
@@ -130,9 +130,7 @@
    ],
    "built": false,
    "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T17:01:03-05:00) say why; answer by editing the spec item."
-   ],
+   "questions": [],
    "ambiguous": false
   },
   "C4": {
@@ -147,6 +145,12 @@
    "depends": [],
    "status": "partial",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_bumble_visitor_toast_journal_unlock_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
     {
      "kind": "ledger",
      "name": "8b8a767",
@@ -367,8 +371,15 @@
    "depends": [
     "C4"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_bumble_visitor_toast_journal_unlock_twice",
+     "ok": false,
+     "result": "FAIL"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -447,7 +458,7 @@
     "C5",
     "C6"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -493,6 +504,12 @@
     },
     {
      "kind": "test",
+     "name": "t_bumble_visitor_toast_journal_unlock_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
      "name": "t_victory_delay_show_close_once_per_farm",
      "ok": true,
      "result": "PASS"
@@ -528,6 +545,17 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.1",
+   "score": 1.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
     "cost": 0.22,
     "ready": 1,
     "blocked_by": []
