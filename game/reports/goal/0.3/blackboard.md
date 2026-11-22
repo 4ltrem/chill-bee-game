@@ -3,7 +3,7 @@ spec: 0.3-course-build.md
 version: 0.3
 run: 0.3
 started: 2026-11-22
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3-course-build.md (run 0.3)
 
@@ -2190,9 +2190,18 @@ Every goal left waits on an open question (Process 1):
 
 Answer each in the spec, or mark it "(answered: ...)" in the handoff, then rerun `goal_agent.py 0.3-course-build.md --note "<the answer>"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --accept C4 --note built earlier (journal_ui.gd hides JournalButton until thriving and on reset; farm_ui.gd shows toast_bumble_visitor on Economy.thriving), committed in e9fe638; contract check clean; T4.1 tests follow` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C4 (2026-11-22T16:18:49-05:00)
+
+- Change (orchestrator, Process 9): built earlier (journal_ui.gd hides JournalButton until thriving and on reset; farm_ui.gd shows toast_bumble_visitor on Economy.thriving), committed in e9fe638; contract check clean; T4.1 tests follow
+- Accepted: checkpoint `8b8a767` on `main`
+
 ## Result
 
-Last invocation (2026-11-22T16:17:51-05:00): waiting-designer.
+C4 accepted with a manual fix (checkpoint `8b8a767` on `main`). Rerun `goal_agent.py 0.3-course-build.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 

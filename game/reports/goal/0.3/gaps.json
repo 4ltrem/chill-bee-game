@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T16:17:51-05:00",
+ "at": "2026-11-22T16:18:36-05:00",
  "unit_log": "game/reports/_runs/20261122-145415/unit.log",
  "goals": {
   "C1": {
@@ -115,13 +115,17 @@
    ],
    "depends": [],
    "status": "missing",
-   "evidence": [],
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "PatchSlots",
+     "ok": false
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item."
-   ],
-   "ambiguous": true
+   "questions": [],
+   "ambiguous": false
   },
   "C4": {
    "kind": "change",
@@ -137,10 +141,8 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item."
-   ],
-   "ambiguous": true
+   "questions": [],
+   "ambiguous": false
   },
   "C5": {
    "kind": "change",
@@ -190,13 +192,17 @@
    ],
    "depends": [],
    "status": "missing",
-   "evidence": [],
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "SkipIcon",
+     "ok": false
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item."
-   ],
-   "ambiguous": true
+   "questions": [],
+   "ambiguous": false
   },
   "T1.1": {
    "kind": "test",
@@ -469,6 +475,39 @@
  },
  "order": [
   {
+   "id": "C4",
+   "score": 6.72,
+   "factors": {
+    "unblocks": 1,
+    "value": 2,
+    "cost": 0.28,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C3",
+   "score": 6.42,
+   "factors": {
+    "unblocks": 1,
+    "value": 2,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C6",
+   "score": 6.42,
+   "factors": {
+    "unblocks": 1,
+    "value": 2,
+    "cost": 0.58,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T3.1",
    "score": 0.0,
    "factors": {
@@ -508,9 +547,5 @@
    }
   }
  ],
- "ambiguous": [
-  "C3",
-  "C4",
-  "C6"
- ]
+ "ambiguous": []
 }
