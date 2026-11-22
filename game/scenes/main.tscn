@@ -1,6 +1,7 @@
 [gd_scene load_steps=50 format=3 uid="uid://ub4nv2k6wxgl"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/welcome_overlay.gd" id="welcome_script"]
 [ext_resource type="PackedScene" path="res://scenes/props/hive.tscn" id="2_hive"]
 [ext_resource type="Script" path="res://scripts/bees.gd" id="3_bees"]
 [ext_resource type="Script" path="res://scripts/farm_ui.gd" id="4_farmui"]
@@ -718,3 +719,39 @@ theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "Back"
+
+[node name="WelcomeOverlay" type="CanvasLayer" parent="."]
+layer = 10
+script = ExtResource("welcome_script")
+
+[node name="Dim" type="ColorRect" parent="WelcomeOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="Center" type="CenterContainer" parent="WelcomeOverlay"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Column" type="VBoxContainer" parent="WelcomeOverlay/Center"]
+theme_override_constants/separation = 48
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="WelcomeOverlay/Center/Column"]
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 64
+text = "Chill Bee Game"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="WelcomeOverlay/Center/Column"]
+custom_minimum_size = Vector2(240, 120)
+focus_mode = 0
+theme_override_font_sizes/font_size = 40
+text = "Play"

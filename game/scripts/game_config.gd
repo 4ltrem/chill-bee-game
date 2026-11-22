@@ -116,6 +116,9 @@ extends Resource
 @export var shop_row_height: int = 64                    # PLACEHOLDER (item 14, Bob's value): px of each shop row's buy button
 @export var shop_font_size: int = 24                     # PLACEHOLDER (item 14, Bob's value): font of each row's name and level labels
 
+## 0.3 item 1: show the welcome overlay on launch (tests set this false unless they test the welcome screen).
+@export var show_welcome: bool = true
+
 const DEFAULT_PATH :="res://scripts/default_config.tres"
 const DEV_PATH := "user://dev_config.json"   # only the values that differ from the defaults (name -> value); the old full-snapshot dev_config.tres is no longer read
 const DEV_SETTING := "chill_bee/dev_mode"

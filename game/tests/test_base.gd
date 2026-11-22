@@ -386,6 +386,10 @@ func _mk_main(quiet: bool = false) -> Node:
 	ck(m != null, "main.tscn failed to instantiate")
 	if m == null:
 		return null
+	# Spec 0.3 goal C1 item 1: "every test run sets [show_welcome] false unless the test is about the welcome screen".
+	# A welcome test sets it true itself after this default, before it calls _mk_main (it uses _set_cfg, so teardown restores it).
+	if _cfg() != null and _cfg().get("show_welcome") != null and not _cfg_saved.has("show_welcome"):
+		_set_cfg("show_welcome", false)
 	if quiet:
 		m.process_mode = Node.PROCESS_MODE_DISABLED   # nothing ticks: the hive does not fill behind the test's back
 	root.add_child(m)

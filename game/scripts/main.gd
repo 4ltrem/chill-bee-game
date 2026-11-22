@@ -45,7 +45,9 @@ var _spin_mode: bool = false         # 0.1.4 item 7: the crank was started and t
 var _auto_spin: bool = false          # the pile is reloading after a pour in spin mode: crank again when the bucket is full
 var _spin_pending: bool = false       # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
 var _crank_paused: bool = false      # 0.1.4 item 15: Back at the second stop while cranking; Spin on the farm resumes
-var _spin_pan_timer: float = 0.0    # 0.1.4 item 11: Spin tapped on the farm view: seconds left of the pan to the second stop
+var _welcome: WelcomeOverlay
+var _held: Dictionary = {}           # 0.3 item 1: node -> its process_mode before the welcome hold
+var _spin_pan_timer: float = 0.0   # 0.1.4 item 11: Spin tapped on the farm view: seconds left of the pan to the second stop
 
 
 func _ready() -> void:
@@ -109,6 +111,42 @@ func _ready() -> void:
 		_sell_icon.pressed.connect(sell)
 	_sync_cell_size()
 	_refresh_icons()
+	_hold_for_welcome()
+
+
+## 0.3 item 1: with config show_welcome on and a WelcomeOverlay in the scene, the world is idle until it emits play_pressed:
+## the farm nodes stop processing (no hive fill, bees hold, no input reaches the farm) and the farm UI hides.
+func _hold_for_welcome() -> void:
+	if not Economy.config.show_welcome:
+		var skipped := find_child("WelcomeOverlay", true, false)
+		if skipped != null:
+			skipped.queue_free()
+		return
+	_welcome = find_child("WelcomeOverlay", true, false) as WelcomeOverlay
+	if _welcome == null:
+		push_warning("main.gd: show_welcome is on but main.tscn has no WelcomeOverlay node.")
+		return
+	_held.clear()
+	for node: Node in [_farm_world, _hive, _bees, _truck, _centrifuge, _pile]:
+		if node != null and not _held.has(node):
+			_held[node] = node.process_mode
+			node.process_mode = Node.PROCESS_MODE_DISABLED
+	_farm_ui.visible = false
+	_welcome.play_pressed.connect(_on_play_pressed)
+
+
+func welcome_active() -> bool:
+	return _welcome != null and is_instance_valid(_welcome) and not _held.is_empty()
+
+
+func _on_play_pressed() -> void:
+	for node: Node in _held:
+		if is_instance_valid(node):
+			node.process_mode = _held[node]
+	_held.clear()
+	_welcome = null
+	_farm_ui.visible = true
+	_refresh_icons()
 
 
 ## 0.1.4 item 5: pile and bucket cells are drawn at the frame cell size (re-read at each zoom, so a Dev panel edit shows).
@@ -123,6 +161,8 @@ func _sync_cell_size() -> void:
 
 
 func _process(delta: float) -> void:
+	if welcome_active():
+		return
 	advance(delta)
 	if _fork_icon != null:
 		_fork_icon.disabled = not fork_available()   # the hive fills between state changes
