@@ -1,0 +1,12 @@
+Goal agent run `0.2`, spec `game/specs/0.2-first-automation.md`, goal C15. Work in the main folder on branch `main`; do not commit, switch branch or edit outside your folder. Follow `game/CONTEXT.md` (Process 2-5, 8). Read only the spec text below, not the whole spec.
+
+Build your part (scripts/) of this change. Bob works on the scenes in parallel; the handoff is your contract. Run `python -I _tools/contract_check.py` before you finish.
+Node handoff: `game/specs/0.2-node-handoff.md` (read it first).
+
+Your contract lines:
+- Item 15: `ShopButton` and `ShopPanel` stay visible in the zoom, though `main.gd` hides FarmUI there (`_farm_ui.visible = false` on zoom, shown again in `_finish_zoom`): a parent that stays visible, or hiding FarmUI's other children instead; node names unchanged (`contract_check.py`). Leaving the zoom closes an open sheet.
+
+Spec text:
+15. **Shop stays available in both zooms** (designer, 2026-11-21: "the shop button should be available while zoomed in still so the player can upgrade at any time"; then "yes, second stop shows Shop too"; `UI_DESIGN.md` row 3, Shop + Tools). Replaces `0.1-harvest.md` items 3 and 8 on the shop ("the farm UI hides ... shop"; "not during the zoom"). With `shop_layout = 1` (the sheet), the Shop button shows in the first zoom and at the second stop, in the same bottom-right place as on the farm; Back, the hint and Spin do not move, and Shop clears Spin and the hive count. Opening it opens the same sheet over the dimmed zoom; Close or a tap on the dim returns to the zoom as it was. A purchase applies the next time its value is read, as on the farm: Heated Fork on the next drag, Gearing on the crank in progress (fewer turns left), Spigot Flow on the jar now filling, Faster Delivery and Auto-Sell on the next truck trip. While the sheet is open the zoom takes no fork or crank input; everything automatic goes on (cells in flight, loads, pours, the truck). Leaving the zoom with the sheet open (Back, or the zoom ending on its own) closes the sheet. With `shop_layout = 0` (compact panel) nothing changes: the panel stays farm-only. A stopgap like item 14: 0.3.0 adds the Tools icon beside it.
+
+Reply in at most 150 words: files changed, node names used, open questions.

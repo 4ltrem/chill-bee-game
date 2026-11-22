@@ -3,7 +3,7 @@ spec: 0.2-first-automation.md
 version: 0.2
 run: 0.2
 started: 2026-11-09
-result: stopped
+result: paused
 ---
 # Goal agent: 0.2-first-automation.md (run 0.2)
 
@@ -4001,9 +4001,50 @@ Command: `goal_agent.py 0.2-first-automation.md --accept C14 --note Re-recorded:
 - Change (orchestrator, Process 9): Re-recorded: accepted 2026-11-21 (0628fc6), shop_layout config (sheet default, vote pending in game/reports/votes/shop-layout/vote.html); T14.1 green. Full suite green: game/reports/_runs/20261121-221056/
 - Accepted: checkpoint `cce1e86` on `milestone/0.2`
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --goal C15,T15.1` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 47: scan (2026-11-22T00:37:09-05:00)
+
+Unit results from `game/reports/_runs/20261121-224553/unit.log`. 33 of 36 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (8 of 36)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C9 The second stop only after Spin | change | Patricia | done | ✓ test t_zoom_end_farm_pose_then_spin_second_stop_twice, ✓ ledger 0.2 |
+| C10 The fork goes back into the Harvest icon | change | Patricia | done | ✓ test t_fork_returns_to_icon_twice, ✓ ledger 0.2 |
+| C14 The shop shows every row without scrolling | change | Patricia, Bob | partial (built, waits on its tests) | ✗ node ShopScroll, ✓ test t_shop_seven_rows_on_screen_no_scroll, ✓ ledger cce1e86 |
+| C15 Shop stays available in both zooms | change | Patricia | partial | ✗ node ShopButton, ✓ node ShopPanel |
+| CFG Config and Dev mode | change | Patricia | done | 45/45 present: ✓ config flight_max_level, ✓ config fork_return_seconds, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_ma ... |
+| T9.1 item 9: the bucket filling during the first zoom leaves the  | test | Quinn | done | ✓ test t_zoom_end_farm_pose_then_spin_second_stop_twice |
+| T15.1 item 15: in each zoom (first zoom, second stop), three times | test | Quinn | missing | none found |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 41/41 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+### Order: new or rescored (2 of 2)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C15 Shop stays available in both zooms | 6.66 | 1 | 2 | 0.34 | 1 | 1 goal(s) wait on it; designer feature; cost 0.34 (Patricia) |
+| 2 | T15.1 item 15: in each zoom (first zoom, second stop), t | 1.72 | 0 | 1 | 0.28 | 1 | housekeeping/handoff; cost 0.28 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C15** (score 6.66: 1 goal(s) wait on it; designer feature; cost 0.34 (Patricia)).
+
+### Step: C15 (2026-11-22T00:37:13-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/C15-patricia.md` (2239 chars)
+- Brief for Quinn: `game/reports/goal/0.2/briefs/C15-quinn.md` (5112 chars)
+
+**Paused:** Budget guard: weekly usage is 26% with 9% of the week gone, more than 10 points ahead of pace, so heavy agents (programmer) wait (reading 0 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
+Run the same command again to resume.
+
 ## Result
 
-C14 accepted with a manual fix (checkpoint `cce1e86` on `milestone/0.2`). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
+Last invocation (2026-11-22T00:37:13-05:00): paused.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 
