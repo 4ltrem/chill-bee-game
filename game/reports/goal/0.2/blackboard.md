@@ -3781,9 +3781,162 @@ godot_run: unit done in 15m00s (TIMEOUT)
 
 2 fix rounds failed on T10.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T10.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T10.1 fix-round edits"`.
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T10.1,T9.1` (the run had stopped: `waiting-designer`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 43: scan (2026-11-21T20:47:11-05:00)
+
+Unit results from `game/reports/_runs/20261121-202756/unit.log`. 22 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (6 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C12 Spigot Flow | change | Patricia | partial (built, waits on its tests) | ✓ config spigot_flow_max_level, ✓ config spigot_flow_cut_per_level, ✓ test t_spigot_cost_floor_levels, ✗ test t_spigot_bottling_time_by_level (not run), ✗ test t_spigot_jar_flight_unchanged (not run), ✓ ledger 0.2 |
+| C13 No jar flies after a leaving truck | change | Patricia | partial (built, waits on its tests) | ✗ test t_truck_sell_waits_for_jar_in_flight (not run), ✗ test t_truck_autosell_waits_for_jar_in_flight (not run), ✗ test t_truck_jar_after_departure_goes_to_crate (not run), ✗ test t_truck_sell_with_jar_in_flight_twice_matches (not run), ✓ ledger 0.2 |
+| CFG Config and Dev mode | change | Patricia | partial | 35/43 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^level` (floore | test | Quinn | partial (built, waits on its tests) | ✓ test t_spigot_cost_floor_levels, ✗ test t_spigot_bottling_time_by_level (not run), ✗ test t_spigot_jar_flight_unchanged (not run), ✓ ledger 81f0997 |
+| T13.1 item 13: with a jar in flight to the bed, a Sell press (and  | test | Quinn | partial (built, waits on its tests) | ✗ test t_truck_sell_waits_for_jar_in_flight (not run), ✗ test t_truck_autosell_waits_for_jar_in_flight (not run), ✗ test t_truck_jar_after_departure_goes_to_crate (not run), ✗ test t_truck_sell_with_jar_in_flight_twice_matches (not run), ✓ ledger b4529db |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | 32/40 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+Next: **T10.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
+
+### Step: T10.1 (2026-11-21T20:47:11-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T10.1-quinn.md` (4138 chars)
+- Quinn's step skipped: every line already has its marked test (T10.1: t_fork_returns_to_icon_twice)
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Check `full unit`: PASS
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T10.1 and the checks were already green, so it is not built. Their replies on the board (step T10.1, 2026-11-21T21:06:14-05:00) say why; answer by editing the spec item.
+
+## Pass 44: scan (2026-11-21T21:06:15-05:00)
+
+Unit results from `game/reports/_runs/20261121-204954/unit.log`. 31 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (10 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C10 The fork goes back into the Harvest icon | change | Patricia | done | ✓ config fork_return_seconds, ✓ test t_fork_returns_to_icon_twice, ✓ ledger 0.2 |
+| C12 Spigot Flow | change | Patricia | done | ✓ config spigot_flow_max_level, ✓ config spigot_flow_cut_per_level, ✓ test t_spigot_cost_floor_levels, ✓ test t_spigot_bottling_time_by_level, ✓ test t_spigot_jar_flight_unchanged, ✓ ledger 0.2 |
+| C13 No jar flies after a leaving truck | change | Patricia | done | ✓ test t_truck_sell_waits_for_jar_in_flight, ✓ test t_truck_autosell_waits_for_jar_in_flight, ✓ test t_truck_jar_after_departure_goes_to_crate, ✓ test t_truck_sell_with_jar_in_flight_twice_matches, ✓ ledger 0.2 |
+| C14 The shop shows every row without scrolling | change | Patricia, Bob | partial (built, waits on its tests) | ✗ node ShopScroll, ✓ test t_shop_seven_rows_on_screen_no_scroll, ✓ ledger 0628fc6 |
+| CFG Config and Dev mode | change | Patricia | done | 43/43 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T10.1 item 10: after a drag release the fork prop is hidden; with  | test | Quinn | done | ✓ test t_fork_returns_to_icon_twice |
+| T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^level` (floore | test | Quinn | done | ✓ test t_spigot_cost_floor_levels, ✓ test t_spigot_bottling_time_by_level, ✓ test t_spigot_jar_flight_unchanged, ✓ ledger 81f0997 |
+| T13.1 item 13: with a jar in flight to the bed, a Sell press (and  | test | Quinn | done | ✓ test t_truck_sell_waits_for_jar_in_flight, ✓ test t_truck_autosell_waits_for_jar_in_flight, ✓ test t_truck_jar_after_departure_goes_to_crate, ✓ test t_truck_sell_with_jar_in_flight_twice_matches, ✓ ledger b4529db |
+| T14.1 item 14: the shop panel has no scroll container, all seven r | test | Quinn | done | ✓ test t_shop_seven_rows_on_screen_no_scroll, ✓ ledger 7f3ced5 |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | done | 40/40 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+Next: **T9.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
+
+### Step: T9.1 (2026-11-21T21:06:15-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T9.1-quinn.md` (4069 chars)
+- Budget guard for Quinn: allow (reading 19 min old)
+
+**Quinn** (1,208,390 tokens, 38 turns, 134 s):
+
+I wrote one sequence test for T9.1 and registered it. It parses cleanly under `--check-only`, and I have not run it, the mutations or any shots.
+
+**Files changed**
+- New `tests/test_zoom_end.gd`: `t_zoom_end_farm_pose_then_spin_second_stop_twice`, with `# goal T9.1` on the line above it.
+- `tests/run_tests.gd`: now extends `test_zoom_end.gd`, and the test is registered under the `# 0.2 item 9 (written from … before the code)` comment.
+- `tests/test_helpers_3.gd`: `_zoom_open_main` now also returns the camera's farm pose from before the zoom.
+- `tests/mutations.json`: three mutations added.
+
+The test fills the bucket in the first zoom with real drags and checks the zoom stays open, then leaves by Back and checks the camera is at the farm pose. A real Spin tap from there must reach the second stop. It then runs a second time on the same scene (Back from the second stop, Harvest again), and a third time on a fresh scene, leaving by finishing every frame.
+
+The mutations are in `main.gd`: one breaks the leave step, one breaks the twice step, and one drops the pan on Spin from the farm view.
+
+**Node names used:** `BackButton`, `CentrifugeIcon`, `ForkIcon`, `Hive`, `Centrifuge`, `Pile`.
+
+**Open questions**
+- Item 9: what happens to the zoom or camera when the app is paused (`NOTIFICATION_APPLICATION_PAUSED`) mid-zoom? `main.gd` doesn't handle it, so I wrote no test.
+- Item 9: when a Spin tap ends a zoom that still has Capped frames, do they stay resumable (Harvest again)?
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 22 (cap 30; CLI num_turns 38); end `success`
+
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      205 passed, 1 failed  (exit 1, 308 noise lines dropped)  game/reports/_runs/20261121-210834/unit.log
+    FAIL  t_zoom_end_farm_pose_then_spin_second_stop_twice  run 2: the bucket is FULL: expected 2 got 3 | run 2 (Back): no spin mode without a Spin tap: expected false got true  (27110 ms)
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T9.1-fix1-patricia.md` (1971 chars)
+- Budget guard for Patricia: allow (reading 13 min old)
+
+**Patricia** (94,027 tokens, 8 turns, 17 s):
+
+I changed nothing: the failing check is in `tests/test_zoom_end.gd` (Quinn's folder), and `scripts/main.gd` already follows spec item 9.
+
+Run 2 of `t_zoom_end_farm_pose_then_spin_second_stop_twice` (lines 93-100) starts after run 1's Spin has started the crank. Both failures follow from that:
+- **Bucket not FULL (expected 2, got 3):** the bucket is still cranking. Run 2 never refills it, but `_ck_zoom_stays_open` (line 31) expects `FULL`.
+- **`_spin_mode` is true:** 0.1.4 item 7 keeps spin mode on until the pile runs out. Run 1's Spin legitimately set it, and `_ck_farm_pose` (line 58) expects `false` after a Back with no Spin tap.
+
+In `main.gd`, `_start_closing` goes to the second stop only when `_spin_pending` is set, and a full bucket no longer pans the camera. Run 1 and run 3 pass.
+
+Quinn needs to fix run 2. Either let the crank finish and refill the bucket before run 2, or skip the `FULL` and `_spin_mode == false` checks there.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 8); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      0 passed, 1 failed  (exit 1, 4 noise lines dropped)  game/reports/_runs/20261121-212655/unit.log
+    FAIL  t_zoom_end_farm_pose_then_spin_second_stop_twice  run 2: the bucket is FULL: expected 2 got 3 | run 2 (Back): no spin mode without a Spin tap: expected false got true  (27611 ms)
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T9.1-fix2-patricia.md` (1967 chars)
+- Budget guard for Patricia: allow (reading 14 min old)
+
+**Patricia** (108,958 tokens, 8 turns, 22 s):
+
+I changed nothing: the fault is in the test, not in `scripts/`. I didn't run anything.
+
+In run 1 the test taps Spin. The crank starts at the second stop (`main.gd` lines 340 and 451), and `leave_second_stop` (line 534) pauses it as `CRANKING` with `_spin_mode = true`. That is the 0.1.4 item 15 behaviour. Run 2 then reopens the zoom on that same scene.
+
+So in run 2, `test_zoom_end.gd` line 31 gets state 3 (`CRANKING`), not 2 (`FULL`). Line 58 gets `_spin_mode == true`, because the earlier Spin tap left it set. Both mismatches come from the run 1 Spin, not from a full bucket moving the camera. `_closing_to_second = _spin_pending` (line 424) is already correct, and run 1 passes.
+
+The failing rows are in `game/tests/test_zoom_end.gd`, lines 93–99. Either run 2 needs a fresh scene, or its `_ck_zoom_stays_open` and `_ck_farm_pose` calls must accept a paused crank. That's Quinn's file.
+
+The spec doesn't say what the bucket should be when Harvest is tapped again with a paused crank. If you want `FULL` and no spin mode there, that is a design call. (designer) A: keep the paused crank and fix the test. B: reset the crank on reopening the zoom.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 6 (cap 15; CLI num_turns 8); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: STOP (1 for the designer)
+
+## Waiting for the designer
+
+Fix round 2 on T9.1 needs a visual number the designer has not voted on (sizes, scales, offsets, fonts and margins are the designer's). Each row becomes a question with votes on the Design Votes page (`_tools/compare_page.py add`); its link goes here. A `changed` row is already in the tree, uncommitted: undo it if the vote keeps the old value. Then rerun `goal_agent.py 0.2-first-automation.md --note "<the pick>"`.
+
+| # | Who | Row |
+|---|---|---|
+| 1 | Patricia | The spec doesn't say what the bucket should be when Harvest is tapped again with a paused crank. If you want `FULL` and no spin mode there, that is a design call. (designer) A: keep the paused crank and fix the test. B: reset the crank on reopening the zoom. |
+
+Comparison pages:
+
 ## Result
 
-Last invocation (2026-11-21T20:42:56-05:00): waiting-designer.
+Last invocation (2026-11-21T21:28:27-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 
@@ -3861,4 +4014,7 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/20
 | Patricia, T10.1 fix 2 | 306,664 | 32,732 | 19 | 37 s |
 | Patricia, T10.1 fix 1 | 46,391 | 16,963 | 5 | 13 s |
 | Patricia, T10.1 fix 2 | 83,380 | 18,968 | 5 | 12 s |
-| **Total** | **16,469,687** | | | |
+| Quinn, T9.1 | 1,208,390 | 70,052 | 38 | 134 s |
+| Patricia, T9.1 fix 1 | 94,027 | 25,076 | 8 | 17 s |
+| Patricia, T9.1 fix 2 | 108,958 | 24,030 | 8 | 22 s |
+| **Total** | **17,881,062** | | | |

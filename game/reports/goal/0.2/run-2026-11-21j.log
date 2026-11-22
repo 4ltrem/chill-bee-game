@@ -14,3 +14,5 @@ Order:
    3. CFG      3.65  designer feature; cost 0.35 (Patricia)
    4. T.1      1.72  housekeeping/handoff; cost 0.28 (Quinn)
 gaps.json: game/reports/goal/0.2/gaps.json
+goal_agent: state committed
+goal_agent: waiting-designer. Blackboard: game/reports/goal/0.2/blackboard.md

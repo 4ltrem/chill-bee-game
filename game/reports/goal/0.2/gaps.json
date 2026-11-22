@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-21T19:49:18-05:00",
- "unit_log": "game/reports/_runs/20261121-191328/unit.log",
+ "at": "2026-11-21T21:06:15-05:00",
+ "unit_log": "game/reports/_runs/20261121-204954/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -872,7 +872,7 @@
     10
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -882,8 +882,8 @@
     {
      "kind": "test",
      "name": "t_fork_returns_to_icon_twice",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -892,7 +892,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -1051,8 +1051,8 @@
     {
      "kind": "test",
      "name": "t_shop_seven_rows_on_screen_no_scroll",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -1073,7 +1073,7 @@
    ],
    "items": [],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "config",
@@ -1321,14 +1321,14 @@
     {
      "kind": "test",
      "name": "t_shop_seven_rows_on_screen_no_scroll",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_fork_returns_to_icon_twice",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -1802,18 +1802,20 @@
    "depends": [
     "C10"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_fork_returns_to_icon_twice",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
+   "questions": [
+    "The agents changed no file for T10.1 and the checks were already green, so it is not built. Their replies on the board (step T10.1, 2026-11-21T21:06:14-05:00) say why; answer by editing the spec item."
+   ],
    "ambiguous": false
   },
   "T11.1": {
@@ -1946,13 +1948,13 @@
    "depends": [
     "C14"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
      "name": "t_shop_seven_rows_on_screen_no_scroll",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -1961,7 +1963,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -2003,7 +2005,7 @@
     "C13",
     "C14"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -2236,14 +2238,14 @@
     {
      "kind": "test",
      "name": "t_shop_seven_rows_on_screen_no_scroll",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
      "name": "t_fork_returns_to_icon_twice",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -2254,44 +2256,11 @@
  },
  "order": [
   {
-   "id": "T10.1",
-   "score": 5.72,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.28,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T9.1",
    "score": 5.72,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.28,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "CFG",
-   "score": 3.65,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.35,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T.1",
-   "score": 1.72,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
     "cost": 0.28,
     "ready": 1,
     "blocked_by": []

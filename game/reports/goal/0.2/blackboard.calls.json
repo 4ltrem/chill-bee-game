@@ -574,5 +574,29 @@
   "turns": 5,
   "seconds": 12,
   "transcripts": "_meta/sessions/runs/2026-11-21-goal-0.2"
+ },
+ {
+  "call": "Quinn, T9.1",
+  "tokens": 1208390,
+  "final": 70052,
+  "turns": 38,
+  "seconds": 134,
+  "transcripts": "_meta/sessions/runs/2026-11-21-goal-0.2"
+ },
+ {
+  "call": "Patricia, T9.1 fix 1",
+  "tokens": 94027,
+  "final": 25076,
+  "turns": 8,
+  "seconds": 17,
+  "transcripts": "_meta/sessions/runs/2026-11-21-goal-0.2"
+ },
+ {
+  "call": "Patricia, T9.1 fix 2",
+  "tokens": 108958,
+  "final": 24030,
+  "turns": 8,
+  "seconds": 22,
+  "transcripts": "_meta/sessions/runs/2026-11-21-goal-0.2"
  }
 ]
