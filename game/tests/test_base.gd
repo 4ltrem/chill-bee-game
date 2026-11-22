@@ -102,6 +102,24 @@ func _fin() -> void:
 	_finished = true
 
 
+## `godot_run.py --set KEY=VALUE` (obstacles item 7): config values passed after `--`, laid over the reset live
+## config once for the whole run (each test restores what it changes, so they hold). Values are Godot literals.
+func _apply_config_overrides() -> void:
+	var cfg: Variant = _cfg()
+	var done: Array[String] = []
+	for a in OS.get_cmdline_user_args():
+		var kv: PackedStringArray = a.split("=", false, 1)
+		if kv.size() != 2 or kv[0].begins_with("-") or kv[0].contains("."):
+			continue
+		if cfg == null or cfg.get(kv[0]) == null:
+			push_error("override: no config value " + kv[0])
+			continue
+		cfg.set(kv[0], str_to_var(kv[1]))
+		done.append(a)
+	if not done.is_empty():
+		print("Config overrides (--set): ", done)
+
+
 ## The harness must be able to fail: eq(1, 2) has to flip the flag, or every PASS above is meaningless.
 func _selfcheck() -> void:
 	_cur_ok = true

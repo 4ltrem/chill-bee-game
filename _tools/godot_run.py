@@ -6,7 +6,9 @@
 
 --only, --time-scale and --skip-x1 set CB_ONLY, CB_TIME_SCALE and CB_SKIP_X1=1 for the Godot run (run_tests.gd
 reads them), so no shell `VAR=value` prefix is needed: Claude Code cannot allow-list such prefixes cleanly. An
-env var already set in the caller's environment still works when its flag is not given.
+env var already set in the caller's environment still works when its flag is not given. --set KEY=VALUE goes after
+`--`; run_tests.gd (unit) lays it over the reset config for the whole run and prints "Config overrides (--set)";
+the windowed suites ignore it for now.
 
 Suites: unit (run_tests.gd, headless), start (a headless start, errors only), play (play_loop.gd),
 measure (r4_measure.gd), snapshot (snapshot_pop.gd), ui (ui_bounds_pixels.gd), touch (touch_windowed.gd);
@@ -196,7 +198,11 @@ def render(results, markdown=False):
     for r in results:
         t = r["total"]
         counts = f"{t['passed']} passed, {t['failed']} failed" if t else "no total line"
-        lines.append(f"{r['status']:7} {r['suite']:9} {counts}  (exit {r['exit']}, {r['noise_dropped']} noise lines dropped)  {r['log']}")
+        exit_note = f"godot exit {r['exit']}"
+        if r["suite"] == "start":   # errors-only suite: no total line by design; 4.2.1 exits 1 on a clean start
+            counts = f"{len(r['errors'])} errors"
+            exit_note += " (1 is normal here)" if r["exit"] == 1 else ""
+        lines.append(f"{r['status']:7} {r['suite']:9} {counts}  ({exit_note}, {r['noise_dropped']} noise lines dropped)  {r['log']}")
         for f in r["fails"][:15]:
             lines.append("    " + f)
         if len(r["fails"]) > 15:

@@ -25,15 +25,22 @@ def git(*args, root=None):
 
 
 def unit_counts(root=None):
-    """(passed, failed, log path) from the newest full-suite unit log, or None."""
+    """(passed, failed, source) from each test's newest result: the newest full-suite unit log, with every newer
+    `--only` log laid over it (L47: item 15's WIP commits said "unit green" from the last full run while 3 tests
+    that newer `--only` runs had turned red were still failing). None when there is no full run."""
     logs = sorted(((root or ROOT) / "game" / "reports" / "_runs").glob("*/unit.log"), key=lambda p: p.parent.name)
-    for log in reversed(logs):
-        text = log.read_text(encoding="utf-8", errors="replace")
-        if "CB_ONLY: running" in text:   # a partial run says nothing about the suite
-            continue
-        return (len(re.findall(r"^PASS\s", text, re.M)), len(re.findall(r"^FAIL\s", text, re.M)),
-                log.relative_to(root or ROOT).as_posix())
-    return None
+    texts = [(log, log.read_text(encoding="utf-8", errors="replace")) for log in logs]
+    full = [i for i, (_, text) in enumerate(texts) if "CB_ONLY: running" not in text]
+    if not full:
+        return None   # a partial run says nothing about the suite
+    results = {}
+    for _, text in texts[full[-1]:]:
+        for m in re.finditer(r"^(PASS|FAIL)\s+(\S+)", text, re.M):
+            results[m.group(2)] = m.group(1)
+    newer = len(texts) - 1 - full[-1]
+    source = texts[full[-1]][0].relative_to(root or ROOT).as_posix() + (f" + {newer} newer --only run(s)" if newer else "")
+    failed = sum(1 for v in results.values() if v == "FAIL")
+    return (len(results) - failed, failed, source)
 
 
 def milestone(root=None):

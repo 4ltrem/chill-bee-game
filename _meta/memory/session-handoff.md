@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: cf44f0d9-ea3d-41b5-a628-12e39e761cca
-  modified: 2026-11-22T06:25:29.183Z
+  modified: 2026-11-22T16:20:17.960Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -20,7 +20,7 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 - Tests at the end: test_generate 91/91, test_goal_agent 64/64, consistency clean, links 0 broken.
 
 **NEXT:**
-1. `start` suite exits 1 despite PASS: godot_run reports "no total line" for it (start.log holds only headless mesh errors). Small godot_run.py / start-suite fix.
+1. Operator cleanup DONE 2026-11-22 (pre-feature round): `start` "exit 1" was Godot's code in the summary, not godot_run's (it exits 0); the line now says "0 errors (godot exit 1 (1 is normal here))". L47 prevention (DIAG_RULE, checkpoint label from newest runs), scan counts code-built nodes and "replaces" as removed (0.2 = 36/36), `run_tests.gd` reads `--set` (windowed suites still don't). Verified by Rex `_runs/20261122-111955/`.
 2. Item 15 DONE 2026-11-22: C15 `daf2d7c`, test fixes `f42034a`/`7616d20` (orchestrator diag: stray main, CLOSE_DELAY, other frames emptied), C15/T15.1 accepted `9aadc61`; full suite green `_runs/20261122-011146/`. 0.2 spec: 36/36 except C14 still "partial" in the scan. Not pushed. Not yet play-tested by the designer.
 3. 0.2.1 version build + itch upload as the A7 link (each needs a yes; A7 is due 11/29 with a run video and a >20-page audit, brief in MILESTONES.md Open; A6 submitted 11/22). Tag it (`v0.2.1`).
 4. Designer play-tests item 15 (Shop in first zoom and second stop, buy, leave with the sheet open).

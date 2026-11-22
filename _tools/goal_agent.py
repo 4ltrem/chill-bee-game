@@ -113,6 +113,7 @@ INTERACTION_CHECKLIST = (
 CODE_PATHS = ["game/scripts", "game/scenes", "game/materials"]
 LOCK = "_meta/usage/goal-run.lock"   # exists while a build run is live; guard_shell reads it (rule C)
 REMOVED = re.compile(r"\b(removed?|retired?|goes away|deleted?)\b", re.I)   # a node in such a sentence must be absent
+REPLACES = re.compile(r"\b(replaces?|supersedes?)\b", re.I)   # a node after it is the old one, which must be absent
 AMBIGUOUS = re.compile(r"\bTBD\b|\bto be decided\b|\bopen question", re.I)
 ENV = {"CB_TIME_SCALE": "6", "CB_SKIP_X1": "1"}   # routine runs: x6, the real-time tests are the designer's (D102)
 # L39: tests that copied a flow inline went stale on every feature change, and the windowed suites drifted unseen for two
@@ -142,7 +143,17 @@ VISUAL_ROW = re.compile(r"\b(?:sizes?|scales?|offsets?|positions?|fonts?|margins
 # L42: T9.1's two fix rounds went to Patricia, who said each time the fault was in Quinn's new test. A reply like this
 # sends the next round to Quinn.
 QUINN_FAULT = re.compile(r"Quinn's (?:folder|file|tests?)\b|\b(?:fault|failure|cause|bug|problem)s? (?:is|are|lies|lie) "
-                         r"in (?:the |a )?(?:tests?\b|`?(?:game/)?tests/)|\bnot in `?(?:game/)?(?:scripts|scenes)/", re.I)
+                         r"in (?:the |a )?(?:tests?\b|`?(?:game/)?tests/)|\bnot in `?(?:game/)?(?:scripts|scenes)/|"
+                         r"\bdiag needed\b", re.I)
+# L47: both T15.1 fix rounds said "I'm guessing" and missed; one `diag:` line in the FAIL message (zoom state, cell
+# counts, departures) showed the last cause in a single run. An unexplained failure gets a diag line, not a guess.
+DIAG_RULE = {
+    "qa": ("If neither the failure message nor the code shows why a test fails, do not guess a fix: extend that test's "
+           "FAIL message with one `diag:` part printing the state that would explain it (the state machine's value, "
+           "counts on each side, elapsed vs. cap time), change nothing else for it, and say so; the next check prints it. "),
+    "code": ("If neither the failure message nor the code shows the cause, do not guess a fix: change nothing for it and "
+             "write `diag needed` with the values that would show the cause; the next round asks Quinn to print them. "),
+}
 IMPACT_MAX = 40   # test functions listed in a brief; the rest are counted
 PHRASE_STOP = {"per", "max", "min", "level", "levels", "time", "rate", "base", "new", "model", "change", "growth"}   # in most upgrade tests' names
 TEST_RULES = (
@@ -333,7 +344,10 @@ def parse_spec(path):
         if goal["keys"] and "Patricia" not in goal["owners"]:
             goal["owners"].insert(0, "Patricia")
         own = goal["text"] + " " + " ".join(l for ls in goal["lines"].values() for l in ls)
-        gone = {t for s in re.split(r"(?<=[.;])\s", own) if REMOVED.search(s) for t in backticked(s) if is_node(t)}
+        sentences = re.split(r"(?<=[.;])\s", own)
+        gone = {t for s in sentences if REMOVED.search(s) for t in backticked(s) if is_node(t)}
+        # 0.2 C14: "Replaces ... the C1 hand fix (`ShopScroll` one-row height)": a node after replaces/supersedes goes
+        gone |= {t for s in sentences for m in [REPLACES.search(s)] if m for t in backticked(s[m.end():]) if is_node(t)}
         goal["nodes"] = sorted({t for t in backticked(own) if is_node(t)} - gone)
         goal["removed"] = sorted(gone)
         goal["picks"] = pick_match.pairs(own) if goal["kind"] == "change" else []   # (live prop, picked variant)
@@ -405,6 +419,8 @@ def scan(game, ledger_path=None):
         if "variants" in scene.parts or "retired" in scene.parts:
             continue
         nodes |= set(re.findall(r'^\[node name="([^"]+)"', scene.read_text(encoding="utf-8"), re.M))
+    for script in (game / "scripts").glob("**/*.gd"):   # nodes built in code (0.2 C15: shop_ui.gd names ShopButton)
+        nodes |= set(re.findall(r'\.name\s*=\s*"(\w+)"', script.read_text(encoding="utf-8", errors="replace")))
     groups, x1 = [], set()
     runner = game / "tests" / "run_tests.gd"
     if runner.is_file():
@@ -1880,13 +1896,13 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd, quinn="", replies=No
                  f"file and line: the next round goes to them. ") if a in other else "" for a in owners}
     keep = ("Change only what a failing row names; every other value, pose and position stays as it is (0.1.4: a lid "
             "fix asked to change the end also moved the open pose). ")
-    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{alone[a]}{keep}{VISUAL_RULE if a != QA else ''}{looks if a == BUILDER else ''}{first if a == QA else ''}{report}\n\nSpec text:\n"
+    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{alone[a]}{keep}{DIAG_RULE['qa' if a == QA else 'code']}{VISUAL_RULE if a != QA else ''}{looks if a == BUILDER else ''}{first if a == QA else ''}{report}\n\nSpec text:\n"
                      f"{spec_slice(spec, goal)}\n\nReply in at most 150 words." for a in owners}
     if goal["kind"] == "change" and any(l == "tests" for l, _ in failed):
         # an older test may pin what this change was asked to change (e.g. the removed Hive bar): Quinn's folder
         out[QA] = head + (f"Your folder: {FOLDERS[QA]}. Update only a test whose expectation this change of the "
                           f"spec replaces, and quote the spec line in a comment beside it. Any other failure is a "
-                          f"finding against the code: leave the test and say which. Do not run the tests: the goal agent "
+                          f"finding against the code: leave the test and say which. {DIAG_RULE['qa']}Do not run the tests: the goal agent "
                           f"runs them after you.{TEST_RULES}\n\n{report}\n\nSpec text:\n{spec_slice(spec, goal)}\n\nReply in at most 150 words.")
     if quinn:   # L42: T9.1's failing test was Quinn's new one, and Patricia said so in both rounds
         said = "\n\n".join(f"{g.NAMES[a]} (last round):\n{r.strip()[:1500]}" for a, r in (replies or {}).items()
@@ -1897,7 +1913,7 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd, quinn="", replies=No
                            f"line beside it; if the game breaks the spec, change nothing and say which file and line: "
                            f"the next round goes to the code owners. Where the spec does not say what the game should "
                            f"do, change nothing for it and write one line ending `(designer)`: the question, with "
-                           f"options A: and B:. Do not run the tests: the goal agent runs them after you.{TEST_RULES}"
+                           f"options A: and B:. {DIAG_RULE['qa']}Do not run the tests: the goal agent runs them after you.{TEST_RULES}"
                            f"\n\n{report}" + (f"\n\n{said}" if said else "") + f"\n\nSpec text:\n"
                            f"{spec_slice(spec, goal)}\n\nReply in at most 150 words.")}
     return out

@@ -57,6 +57,23 @@ class Parse(unittest.TestCase):
         self.assertEqual(spec["steps"], {"a": [1], "b": [2, 3]})
         self.assertEqual(g["C1"]["value"], ga.VALUE["playtest"])
 
+    def test_a_replaced_node_must_be_gone_and_code_built_nodes_count(self):
+        """0.2 C14/C15 stayed partial: `ShopScroll` came after "Replaces", `ShopButton` is named in shop_ui.gd."""
+        with tempfile.TemporaryDirectory() as tmp:
+            game = Path(tmp) / "game"
+            shutil.copytree(FIX / "game", game)
+            spec_path = game / "specs" / "9.9-fixture.md"
+            text = spec_path.read_text(encoding="utf-8").replace(
+                "The `FillNode` shows the hive's fill.",
+                "The `FillNode` shows the hive's fill. Replaces the C1 hand fix (`OldScroll` one-row height).")
+            spec_path.write_text(text, encoding="utf-8")
+            (game / "scripts" / "built.gd").write_text('func _ready():\n\tvar b := Button.new()\n\tb.name = "CodeButton"\n',
+                                                       encoding="utf-8")
+            g = ga.parse_spec(spec_path)["goals"]
+            self.assertEqual(g["C1"]["nodes"], ["FillNode"])               # before "Replaces": still wanted
+            self.assertIn("OldScroll", g["C1"]["removed"])
+            self.assertIn("CodeButton", ga.scan(game, ledger_path=Path(tmp) / "none.json")["nodes"])
+
     def test_item_numbers_outside_the_spec_are_ignored(self):
         changes = [(1, "Speed", "game speed row"), (2, "Camera", "camera stops")]
         self.assertEqual(ga.match_items("the speed row (report open item 6)", changes), [1])
@@ -513,6 +530,22 @@ class Loop(unittest.TestCase):
         self.assertEqual(subject, "9.9 checkpoint: lid edits (WIP, 1 unit fails)")
         self.assertNotIn("reports", run("show", "--name-only", "--format=").stdout)  # reports stay out
         self.assertEqual(run("rev-parse", "--abbrev-ref", "HEAD").stdout.strip(), "main")
+
+    def test_checkpoint_label_counts_newer_only_runs(self):
+        """L47: a green full run followed by an `--only` run with red tests is not "unit green"."""
+        import checkpoint
+        runs = self.tmp / "lbl" / "game" / "reports" / "_runs"
+        for stamp, text in (("1", "PASS  t_a  (1 ms)\nPASS  t_b  (1 ms)\n"),
+                            ("2", "CB_ONLY: running 1\nFAIL  t_b  no  (1 ms)\n")):
+            (runs / stamp).mkdir(parents=True)
+            (runs / stamp / "unit.log").write_text(text, encoding="utf-8")
+        passed, failed, source = checkpoint.unit_counts(self.tmp / "lbl")
+        self.assertEqual((passed, failed), (1, 1))
+        self.assertIn("1 newer --only run", source)
+        self.assertIn("WIP, 1 unit fails", checkpoint.message("9.9", "x", (passed, failed, source)))
+        (runs / "3").mkdir()
+        (runs / "3" / "unit.log").write_text("CB_ONLY: running 1\nPASS  t_b  (1 ms)\n", encoding="utf-8")
+        self.assertIn("unit green", checkpoint.message("9.9", "x", checkpoint.unit_counts(self.tmp / "lbl")))
 
     def test_one_owner_follows_the_folder_the_failure_names(self):
         self.assertEqual(ga.one_owner("FAIL lid clips; see scenes/props/hive.tscn", 1), ga.BUILDER)
@@ -1030,6 +1063,9 @@ class Loop(unittest.TestCase):
         for reply in ("the fault is in the test, not in `scripts/`", "That's Quinn's file.", "the bug is in tests/"):
             self.assertTrue(ga.QUINN_FAULT.search(reply), reply)
         self.assertFalse(ga.QUINN_FAULT.search("The fault is in scripts/main.gd line 40; the test is right."))
+        self.assertTrue(ga.QUINN_FAULT.search("Cause unclear, diag needed: zoom state and cells per frame."))  # L47
+        self.assertIn("diag needed", [p for a, p in self.calls if "fix round 1" in p][0])   # L47: no guessing
+        self.assertIn("`diag:`", fix2[0][1])
 
     def test_a_behaviour_designer_row_is_a_question_not_a_visual_vote(self):
         """L42: T9.1 stopped for a Design Votes row on keeping or resetting the paused crank."""

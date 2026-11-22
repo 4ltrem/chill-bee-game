@@ -156,6 +156,7 @@ func _run() -> void:
 	# the equivalent of the Dev panel's "Reset to defaults": a stale user://dev_config.tres (backed up above, and removed) must not skew the run
 	print("Dev config: a user://dev_config.tres was ", "FOUND (backed up, removed for the run, restored at the end)" if _user_cfg_existed else "not present", "; the live config is reset to default_config.tres")
 	FarmInput.reset_dev_config()
+	_apply_config_overrides()
 	var sc: String = OS.get_environment("CB_TIME_SCALE")
 	_run_scale = maxf(float(sc), 0.01) if sc != "" else 1.0
 	print("Test speed: CB_TIME_SCALE x", _run_scale, " (tests in X1_TESTS run at x1: ", X1_TESTS.size(), ")")
