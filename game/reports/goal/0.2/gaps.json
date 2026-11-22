@@ -1,7 +1,7 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-22T00:37:09-05:00",
+ "at": "2026-11-22T00:51:49-05:00",
  "unit_log": "game/reports/_runs/20261121-224553/unit.log",
  "goals": {
   "H": {
@@ -1087,10 +1087,15 @@
      "kind": "node",
      "name": "ShopPanel",
      "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "daf2d7c",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -2331,17 +2336,6 @@
   }
  },
  "order": [
-  {
-   "id": "C15",
-   "score": 6.66,
-   "factors": {
-    "unblocks": 1,
-    "value": 2,
-    "cost": 0.34,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T15.1",
    "score": 1.72,
