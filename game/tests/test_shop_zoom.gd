@@ -186,38 +186,48 @@ func t_shop_in_first_zoom_buy_blocks_input_closes_on_exit() -> void:
 	_fin()
 
 
-## Scrape until the last Capped cell goes; the instant it does, open the sheet (set_sheet_open) while the pointer is still down. Returns whether it opened.
+## Scrape every frame with real drags until the last Capped cell goes; then, while the zoom finishes (LOWERING or CLOSE_DELAY), open the sheet. Returns whether it opened before CLOSING.
+# goal T15.1
 func _zs_finish_with_sheet(m: Node, p: Dictionary, tr: Dictionary) -> bool:
 	var hive: Node = p["Hive"]
-	var hc: Node = m.find_child("Honeycomb", true, false)
-	var opened: bool = false
 	var t0: int = _gms()
-	while fi.capped_total(hive, _frames_n()) > 0 and float(_gms() - t0) < 120000.0 and not opened:
-		if int(tr["risen"]) < 0:
-			await process_frame
-			continue
-		var f: int = int(tr["risen"])
-		var last_frame: bool = fi.capped_total(hive, _frames_n()) == fi.capped(hive, f)
-		if not last_frame:
+	# only the risen frame is scraped by hand: the others are emptied in the hive's data (main.gd _raise_next skips frames with no Capped cell), so the zoom ends after this frame (diag run 20261122-010936: 40 Capped cells left in other frames when the 120 game-second cap hit)
+	var rf: int = int(tr["risen"])
+	for f in int(hive.call("frame_count")):
+		if f != rf:
+			for c in (hive.call("frame_cells", f) as PackedByteArray).size():
+				hive.call("scrape", f, c)
+	_set_cfg("close_delay_seconds", 4.0)   # 0.5 s is ~5 frames at --time-scale 6: widen the window the player has to tap Shop in (restored after the test)
+	var delay: int = _zs_zoom_val(m, "CLOSE_DELAY")
+	var working: int = _zs_zoom_val(m, "WORKING")
+	# only CLOSE_DELAY means the zoom is ending on its own (main.gd back()); after LOWERING a refilled frame can rise again, so keep scraping until then
+	while int(m.get("zoom")) != delay and float(_gms() - t0) < 120000.0:
+		if int(tr["risen"]) >= 0 and int(m.get("zoom")) == working and fi.capped_total(hive, _frames_n()) > 0:
 			await _scrape_risen(m, hive, tr, 1)
-			continue
-		for r in fi.rows(hc, _cam()):
-			if opened or fi.capped_total(hive, _frames_n()) == 0:
-				break
-			var first: Vector2 = r[0]
-			var last: Vector2 = r[r.size() - 1]
-			fi.mouse_button(first, true)
+		else:
 			await process_frame
-			var steps: int = maxi(r.size() * 3, 4)
-			for s in range(1, steps + 1):
-				fi.mouse_move(first.lerp(last, float(s) / float(steps)))
-				await process_frame
-				if not opened and fi.capped_total(hive, _frames_n()) == 0:
-					_zs_panel(m).call("set_sheet_open", true)
-					opened = true
-			fi.mouse_button(last, false)
-			await process_frame
-	return opened
+		if int(m.get("zoom")) == _zs_zoom_val(m, "CLOSING") or int(m.get("zoom")) == 0:
+			break
+	var lowering: int = _zs_zoom_val(m, "LOWERING")
+	var z: int = int(m.get("zoom"))
+	if z != delay:
+		# diagnosis: the hive's Capped count vs the risen honeycomb's own cell states (frame_done needs every cell EXTRACTED)
+		var hcd: Node = m.find_child("Honeycomb", true, false)
+		var st: Array = [0, 0, 0]
+		if hcd != null:
+			for c in hcd.get("cells"):
+				st[clampi(int(c), 0, 2)] += 1
+		ck(false, "diag: zoom %d, risen %d, hive capped %d, honeycomb capped/uncapped/extracted %s, departures %d" % [z, int(tr["risen"]), fi.capped_total(hive, _frames_n()), str(st), (hcd.get("_departures") as Array).size() if hcd != null else -1])
+		return false   # CLOSING or NONE already (or timed out): too late, the check fails honestly
+	# The Shop button sits under FarmUIRoot and stays in the zoom (shop_layout 1): tap it for real when visible, else ask the panel directly.
+	var btn: Control = _zs_btn(m)
+	if btn != null and btn.is_visible_in_tree():
+		await fi.tap_at(btn.get_global_rect().get_center())
+		await _frames(2)
+	if not _zs_open(m) and int(m.get("zoom")) in [lowering, delay]:
+		_zs_panel(m).call("set_sheet_open", true)
+		await process_frame
+	return _zs_open(m)
 
 
 ## When the zoom reaches CLOSING (whatever started it) the sheet must be closed within two frames, not only at the very end.
@@ -225,7 +235,7 @@ func _zs_expect_closed_at_closing(m: Node, label: String) -> void:
 	var closing: int = _zs_zoom_val(m, "CLOSING")
 	ck(closing >= 0, "%s: main.gd names Zoom.CLOSING" % label)
 	var hit: bool = await _until(func() -> bool: return int(m.get("zoom")) == closing, float(cv("slide_seconds")) + float(cv("zoom_seconds")) + 10.0)
-	ck(hit, "%s: the zoom reached CLOSING" % label)
+	ck(hit, "%s: the zoom reached CLOSING (zoom is %s)" % [label, str(m.get("zoom"))])
 	await _frames(2)
 	ck(not _zs_open(m), "%s: the sheet is closed as the zoom starts closing" % label)
 
@@ -270,7 +280,6 @@ func t_shop_at_second_stop_buy_blocks_crank_closes_on_back() -> void:
 # goal T15.1
 func t_shop_compact_layout_nothing_in_zoom() -> void:
 	_portrait()
-	await _mk_main()   # loads the live config so _set_cfg can reach it; the zoom run below builds its own scene
 	var z: Dictionary = await _zoom_open_main()   # opened with the default layout: the compact panel would sit over the Harvest icon and block its tap
 	if z.is_empty():
 		_fin()
