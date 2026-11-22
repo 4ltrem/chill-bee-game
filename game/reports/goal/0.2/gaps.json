@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-21T14:36:11-05:00",
- "unit_log": "game/reports/_runs/20261121-141430/unit.log",
+ "at": "2026-11-21T19:44:06-05:00",
+ "unit_log": "game/reports/_runs/20261121-191328/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -1051,8 +1051,8 @@
     {
      "kind": "test",
      "name": "t_shop_seven_rows_on_screen_no_scroll",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -1321,8 +1321,8 @@
     {
      "kind": "test",
      "name": "t_shop_seven_rows_on_screen_no_scroll",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
@@ -1946,13 +1946,13 @@
    "depends": [
     "C14"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_shop_seven_rows_on_screen_no_scroll",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "ledger",
@@ -1961,7 +1961,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -2236,8 +2236,8 @@
     {
      "kind": "test",
      "name": "t_shop_seven_rows_on_screen_no_scroll",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
@@ -2277,11 +2277,11 @@
   },
   {
    "id": "CFG",
-   "score": 3.63,
+   "score": 3.64,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.37,
+    "cost": 0.36,
     "ready": 1,
     "blocked_by": []
    }

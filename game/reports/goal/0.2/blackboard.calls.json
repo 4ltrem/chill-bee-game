@@ -542,5 +542,21 @@
   "turns": 9,
   "seconds": 24,
   "transcripts": "_meta/sessions/runs/2026-11-21-goal-0.2"
+ },
+ {
+  "call": "Patricia, T10.1 fix 1",
+  "tokens": 358945,
+  "final": 34410,
+  "turns": 21,
+  "seconds": 51,
+  "transcripts": "_meta/sessions/runs/2026-11-21-goal-0.2"
+ },
+ {
+  "call": "Patricia, T10.1 fix 2",
+  "tokens": 306664,
+  "final": 32732,
+  "turns": 19,
+  "seconds": 37,
+  "transcripts": "_meta/sessions/runs/2026-11-21-goal-0.2"
  }
 ]

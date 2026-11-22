@@ -3,7 +3,7 @@ spec: 0.2-first-automation.md
 version: 0.2
 run: 0.2
 started: 2026-11-09
-result: failed
+result: waiting-designer
 ---
 # Goal agent: 0.2-first-automation.md (run 0.2)
 
@@ -3446,9 +3446,218 @@ FAIL    unit      no total line  (exit 3221225477, 202 noise lines dropped)  gam
 
 **Stop:** the run crashed: failed (AgentError: programmer reported an error: API Error: Can't reach the API server — check your internet or DNS (ENOTFOUND)). A rerun re-scans and continues from the ledger.
 
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T10.1 --max-goals 1` (the run had stopped: `failed`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 40: scan (2026-11-21T19:13:26-05:00)
+
+Unit results from `game/reports/_runs/20261121-145146/unit.log`. 1 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (29 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Upgrade shop holds several rows. | change | Patricia, Bob | partial (built, waits on its tests) | 12/19 present: ✓ config flight_base_cost, ✓ config flight_cost_growth, ✓ config heated_fork_base_cost, ✓ config heated_fork_cost_growth, ✓ config gearing_base_cost, ✓ config gearing_cost_growth, ✓ config spigot_flow_base_cost, ✓ config spigot_flow_cost_gr ... |
+| C2 Flight Endurance | change | Patricia | partial (built, waits on its tests) | 2/10 present: ✓ config flight_speed_bonus_per_level, ✗ test t_shop_costs_floor_base_growth (not run), ✗ test t_shop_buy_deducts_and_levels (not run), ✗ test t_shop_buttons_disabled_unaffordable_maxed_locked (not run), ✗ test t_shop_rows_order_and_level_t ... |
+| C3 Heated Uncapping Fork | change | Patricia, Bob | partial (built, waits on its tests) | 7/18 present: ✓ config heated_fork_radius_bonus_per_level, ✓ config fork_pulse_seconds, ✓ config heated_fork_max_level, ✓ config heated_fork_post_auto_yield_bonus_per_level, ✓ config uncap_radius, ✓ node ForkIcon, ✗ test t_shop_costs_floor_base_growth (n ... |
+| C4 Centrifuge Gearing | change | Patricia, Bob | partial (built, waits on its tests) | 3/15 present: ✓ config gearing_post_auto_time_cut_per_level, ✓ config gearing_post_auto_cut_includes_bottling, ✗ test t_shop_costs_floor_base_growth (not run), ✗ test t_shop_buy_deducts_and_levels (not run), ✗ test t_shop_buttons_disabled_unaffordable_ma ... |
+| C5 Faster Delivery | change | Patricia, Bob | partial (built, waits on its tests) | 6/16 present: ✓ config faster_delivery_max_level, ✓ config faster_delivery_trip_cut_per_level, ✓ node DecalsBold, ✓ node DecalsSmall, ✓ node FlamesTop, ✗ test t_shop_costs_floor_base_growth (not run), ✗ test t_shop_buy_deducts_and_levels (not run), ✗ tes ... |
+| C6 Auto-Sell | change | Patricia, Bob | partial (built, waits on its tests) | 2/13 present: ✓ config auto_sell_unlock_delivery_level, ✗ test t_shop_costs_floor_base_growth (not run), ✗ test t_shop_buy_deducts_and_levels (not run), ✗ test t_shop_buttons_disabled_unaffordable_maxed_locked (not run), ✗ test t_shop_rows_order_and_leve ... |
+| C7 Phase 2 flag. | change | Patricia, Bob | partial (built, waits on its tests) | 1/10 present: ✗ test t_shop_costs_floor_base_growth (not run), ✗ test t_shop_buy_deducts_and_levels (not run), ✗ test t_shop_buttons_disabled_unaffordable_maxed_locked (not run), ✗ test t_shop_rows_order_and_level_text (not run), ✗ test t_shop_auto_sell_ ... |
+| C8 Bee Journal entry, EN/FR, through Godot's translation CSV. | change | Patricia, Bob | partial (built, waits on its tests) | 1/12 present: ✗ test t_shop_costs_floor_base_growth (not run), ✗ test t_shop_buy_deducts_and_levels (not run), ✗ test t_shop_buttons_disabled_unaffordable_maxed_locked (not run), ✗ test t_shop_rows_order_and_level_text (not run), ✗ test t_shop_auto_sell_ ... |
+| C11 The lid stays still; the crank drives the gears | change | Patricia | partial (built, waits on its tests) | ✓ node LidDisc, ✗ test t_lid_still_crank_and_gear1_turn_twice (not run), ✓ ledger 0.2 |
+| C12 Spigot Flow | change | Patricia | partial (built, waits on its tests) | ✓ config spigot_flow_max_level, ✓ config spigot_flow_cut_per_level, ✗ test t_spigot_cost_floor_levels (not run), ✗ test t_spigot_bottling_time_by_level (not run), ✗ test t_spigot_jar_flight_unchanged (not run), ✓ ledger 0.2 |
+| C13 No jar flies after a leaving truck | change | Patricia | partial (built, waits on its tests) | ✗ test t_truck_sell_waits_for_jar_in_flight (not run), ✗ test t_truck_autosell_waits_for_jar_in_flight (not run), ✗ test t_truck_jar_after_departure_goes_to_crate (not run), ✗ test t_truck_sell_with_jar_in_flight_twice_matches (not run), ✓ ledger 0.2 |
+| C14 The shop shows every row without scrolling | change | Patricia, Bob | partial (built, waits on its tests) | ✗ node ShopScroll, ✗ test t_shop_seven_rows_on_screen_no_scroll (not run), ✓ ledger 0628fc6 |
+| CFG Config and Dev mode | change | Patricia | partial | 3/43 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✗ test t_shop_costs_floor_base_growth (not run), ✗ test t_shop_buy_deducts_and_levels (not run), ✗ test t_shop_buttons_disabled_unaffordable_maxed_locked ... |
+| T1.1 item 1: each row's cost equals `base × growth^level` (floore | test | Quinn | partial (built, waits on its tests) | 1/8 present: ✗ test t_shop_costs_floor_base_growth (not run), ✗ test t_shop_buy_deducts_and_levels (not run), ✗ test t_shop_buttons_disabled_unaffordable_maxed_locked (not run), ✗ test t_shop_rows_order_and_level_text (not run), ✗ test t_shop_auto_sell_ ... |
+| T2.1 item 2: at Flight level 3 and Swarm level 0, the hive fills  | test | Quinn | partial (built, waits on its tests) | ✗ test t_flight_fill_rate_level3 (not run), ✓ ledger 60ae8f7 |
+| T3.1 item 3: at Heated level 0 one drag point uncaps one cell; at | test | Quinn | partial | ✗ test t_fork_reach_by_level (not run), ✗ test t_fork_post_auto_yield_bonus (not run) |
+| T3.2 item 3 look: during a drag the fork prop is visible within ` | test | Quinn | partial | ✗ test t_fork_prop_follows_drag_twice (not run), ✗ test t_fork_head_colour_by_level (not run) |
+| T4.1 item 4 look: at Gearing N (0..5) exactly Gear1..Gear(N + 1)  | test | Quinn | partial | ✗ test t_gearing_gears_visible_by_level (not run), ✗ test t_gearing_gears_turn_opposite_twice (not run) |
+| T5.1 item 5 look: at each Faster Delivery level 0..4 exactly the  | test | Quinn | partial (built, waits on its tests) | ✗ test t_delivery_look_groups_by_level (not run), ✗ test t_delivery_stacks_not_flame_material (not run), ✓ ledger 5028cf3 |
+| T4.2 item 4: at Gearing level 2 the turns needed are `ceil(base × | test | Quinn | partial | ✗ test t_gearing_turns_by_level (not run), ✗ test t_gearing_bottling_time_unchanged (not run), ✗ test t_gearing_own_motor_cut (not run) |
+| T5.2 item 5: trip time at Faster Delivery 0..4 is 30, 25.5, 21, 1 | test | Quinn | partial (built, waits on its tests) | ✗ test t_delivery_trip_time_by_level (not run), ✓ ledger 5028cf3 |
+| T6.1 item 6: with Auto-Sell owned, a full bed leaves with no Sell | test | Quinn | partial (built, waits on its tests) | ✗ test t_autosell_full_bed_leaves_by_itself (not run), ✗ test t_autosell_not_owned_full_bed_waits (not run), ✗ test t_autosell_part_load_sells_by_sell (not run), ✗ test t_autosell_twice_matches (not run), ✓ ledger 4cb1c6a |
+| T7.1 item 7: buying Auto-Sell sets phase 2 once and the toast sho | test | Quinn | partial (built, waits on its tests) | ✗ test t_phase2_auto_sell_sets_once_toast_once (not run), ✗ test t_phase2_locked_auto_sell_keeps_phase_1 (not run), ✓ ledger 4272bff |
+| T8.1 item 8: `journal.csv` has every key in `en` and `fr`, non-em | test | Quinn | partial (built, waits on its tests) | ✗ test t_journal_csv_every_key_en_and_fr (not run), ✗ test t_journal_tr_follows_locale (not run), ✗ test t_journal_panel_text_matches_csv_twice (not run), ✗ test t_journal_csv_equals_script_output (not run), ✓ ledger 4ee67e2 |
+| T11.1 item 11: while cranking, `Lid`'s and `LidDisc`'s global rota | test | Quinn | partial | ✗ test t_lid_still_crank_and_gear1_turn_twice (not run) |
+| T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^level` (floore | test | Quinn | partial (built, waits on its tests) | ✗ test t_spigot_cost_floor_levels (not run), ✗ test t_spigot_bottling_time_by_level (not run), ✗ test t_spigot_jar_flight_unchanged (not run), ✓ ledger 81f0997 |
+| T13.1 item 13: with a jar in flight to the bed, a Sell press (and  | test | Quinn | partial (built, waits on its tests) | ✗ test t_truck_sell_waits_for_jar_in_flight (not run), ✗ test t_truck_autosell_waits_for_jar_in_flight (not run), ✗ test t_truck_jar_after_departure_goes_to_crate (not run), ✗ test t_truck_sell_with_jar_in_flight_twice_matches (not run), ✓ ledger b4529db |
+| T14.1 item 14: the shop panel has no scroll container, all seven r | test | Quinn | partial (built, waits on its tests) | ✗ test t_shop_seven_rows_on_screen_no_scroll (not run), ✓ ledger 7f3ced5 |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | 0/40 present: ✗ test t_shop_costs_floor_base_growth (not run), ✗ test t_shop_buy_deducts_and_levels (not run), ✗ test t_shop_buttons_disabled_unaffordable_maxed_locked (not run), ✗ test t_shop_rows_order_and_level_text (not run), ✗ test t_shop_auto_sell_ ... |
+
+### Order: new or rescored (6 of 9)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 2 | T11.1 item 11: while cranking, `Lid`'s and `LidDisc`'s g | 5.72 | 0 | 3 | 0.28 | 1 | play-test fix; cost 0.28 (Quinn) |
+| 4 | T3.1 item 3: at Heated level 0 one drag point uncaps on | 3.72 | 0 | 2 | 0.28 | 1 | designer feature; cost 0.28 (Quinn) |
+| 5 | T3.2 item 3 look: during a drag the fork prop is visibl | 3.72 | 0 | 2 | 0.28 | 1 | designer feature; cost 0.28 (Quinn) |
+| 6 | T4.1 item 4 look: at Gearing N (0..5) exactly Gear1..Ge | 3.72 | 0 | 2 | 0.28 | 1 | designer feature; cost 0.28 (Quinn) |
+| 7 | T4.2 item 4: at Gearing level 2 the turns needed are `c | 3.72 | 0 | 2 | 0.28 | 1 | designer feature; cost 0.28 (Quinn) |
+| 8 | CFG Config and Dev mode | 3.64 | 0 | 2 | 0.36 | 1 | designer feature; cost 0.36 (Patricia) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T10.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
+
+### Step: T10.1 (2026-11-21T19:13:26-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T10.1-quinn.md` (4138 chars)
+- Quinn's step skipped: every line already has its marked test (T10.1: t_fork_returns_to_icon_twice)
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_truck_wheels_roll_with_travel  WheelFL: return leg: every sample rolls with the travel (no skid); 30 good: expected 0 got 1 | WheelFR: return leg: every sample rolls with the travel (no skid); 30 good: expected 0 got 1 | WheelRL: re
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T10.1-fix1-patricia.md` (1669 chars)
+- Budget guard for Patricia: allow (reading 0 min old)
+
+**Patricia** (260,261 tokens, 12 turns, 60 s):
+
+I changed nothing. The failing check looks unrelated to this goal, and I couldn't trace it to a defect in `scripts/`.
+
+- **What fails:** `t_truck_wheels_roll_with_travel` reports one skid sample on the return leg for each wheel. Item 10 (the fork going back into the Harvest icon) doesn't touch the truck.
+- **What changed:** `git diff HEAD` shows `game/scripts/truck.gd` is unchanged. Only `honeycomb.gd` differs under `scripts/`.
+- **The code:** `truck.gd` `roll_wheels()` turns each wheel about its own axle from the truck's real displacement, so reversing should roll the wheels backwards. I found no sign error.
+- **Likely cause:** I suspect the test, not the truck. It samples in real time (`_gms()` and `process_frame`) and treats any one reverse-signed sample as a skid. The first return step after the plateau, or a frame hitch, is the sort of thing that could trip it. This is a guess I haven't confirmed, because I can't run the test.
+
+This probably belongs to Quinn's `game/tests/test_truck.gd` (lines 199–216 and 230–231), or it is a flaky run under load. Rerun the test once. If it fails again with the same sample, send it to Quinn.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 11 (cap 15; CLI num_turns 12); end `success`
+
+- Check `scope`: PASS
+- Check `contract`: PASS
+
+## Resumed 2026-11-21
+
+Command: `goal_agent.py 0.2-first-automation.md --goal T10.1,T9.1` (the run had stopped: `running`).
+Branch `milestone/0.2`: already on it.
+
+## Pass 41: scan (2026-11-21T19:44:06-05:00)
+
+Unit results from `game/reports/_runs/20261121-191328/unit.log`. 26 of 34 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (27 of 34)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Upgrade shop holds several rows. | change | Patricia, Bob | done | 19/19 present: ✓ config flight_base_cost, ✓ config flight_cost_growth, ✓ config heated_fork_base_cost, ✓ config heated_fork_cost_growth, ✓ config gearing_base_cost, ✓ config gearing_cost_growth, ✓ config spigot_flow_base_cost, ✓ config spigot_flow_cost_gr ... |
+| C2 Flight Endurance | change | Patricia | done | 10/10 present: ✓ config flight_speed_bonus_per_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_l ... |
+| C3 Heated Uncapping Fork | change | Patricia, Bob | done | 18/18 present: ✓ config heated_fork_radius_bonus_per_level, ✓ config fork_pulse_seconds, ✓ config heated_fork_max_level, ✓ config heated_fork_post_auto_yield_bonus_per_level, ✓ config uncap_radius, ✓ node ForkIcon, ✓ test t_shop_costs_floor_base_growth, ✓ ... |
+| C4 Centrifuge Gearing | change | Patricia, Bob | done | 15/15 present: ✓ config gearing_post_auto_time_cut_per_level, ✓ config gearing_post_auto_cut_includes_bottling, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t ... |
+| C5 Faster Delivery | change | Patricia, Bob | done | 16/16 present: ✓ config faster_delivery_max_level, ✓ config faster_delivery_trip_cut_per_level, ✓ node DecalsBold, ✓ node DecalsSmall, ✓ node FlamesTop, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_dis ... |
+| C6 Auto-Sell | change | Patricia, Bob | done | 13/13 present: ✓ config auto_sell_unlock_delivery_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sel ... |
+| C7 Phase 2 flag. | change | Patricia, Bob | done | 10/10 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+| C8 Bee Journal entry, EN/FR, through Godot's translation CSV. | change | Patricia, Bob | done | 12/12 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+| C11 The lid stays still; the crank drives the gears | change | Patricia | done | ✓ node LidDisc, ✓ test t_lid_still_crank_and_gear1_turn_twice, ✓ ledger 0.2 |
+| C12 Spigot Flow | change | Patricia | done | ✓ config spigot_flow_max_level, ✓ config spigot_flow_cut_per_level, ✓ test t_spigot_cost_floor_levels, ✓ test t_spigot_bottling_time_by_level, ✓ test t_spigot_jar_flight_unchanged, ✓ ledger 0.2 |
+| C13 No jar flies after a leaving truck | change | Patricia | done | ✓ test t_truck_sell_waits_for_jar_in_flight, ✓ test t_truck_autosell_waits_for_jar_in_flight, ✓ test t_truck_jar_after_departure_goes_to_crate, ✓ test t_truck_sell_with_jar_in_flight_twice_matches, ✓ ledger 0.2 |
+| CFG Config and Dev mode | change | Patricia | partial | 41/43 present: ✓ config flight_max_level, ✓ config gearing_cut_per_level, ✓ config gearing_max_level, ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows ... |
+| T1.1 item 1: each row's cost equals `base × growth^level` (floore | test | Quinn | done | 8/8 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+| T2.1 item 2: at Flight level 3 and Swarm level 0, the hive fills  | test | Quinn | done | ✓ test t_flight_fill_rate_level3, ✓ ledger 60ae8f7 |
+| T3.1 item 3: at Heated level 0 one drag point uncaps one cell; at | test | Quinn | done | ✓ test t_fork_reach_by_level, ✓ test t_fork_post_auto_yield_bonus |
+| T3.2 item 3 look: during a drag the fork prop is visible within ` | test | Quinn | done | ✓ test t_fork_prop_follows_drag_twice, ✓ test t_fork_head_colour_by_level |
+| T4.1 item 4 look: at Gearing N (0..5) exactly Gear1..Gear(N + 1)  | test | Quinn | done | ✓ test t_gearing_gears_visible_by_level, ✓ test t_gearing_gears_turn_opposite_twice |
+| T5.1 item 5 look: at each Faster Delivery level 0..4 exactly the  | test | Quinn | done | ✓ test t_delivery_look_groups_by_level, ✓ test t_delivery_stacks_not_flame_material, ✓ ledger 5028cf3 |
+| T4.2 item 4: at Gearing level 2 the turns needed are `ceil(base × | test | Quinn | done | ✓ test t_gearing_turns_by_level, ✓ test t_gearing_bottling_time_unchanged, ✓ test t_gearing_own_motor_cut |
+| T5.2 item 5: trip time at Faster Delivery 0..4 is 30, 25.5, 21, 1 | test | Quinn | done | ✓ test t_delivery_trip_time_by_level, ✓ ledger 5028cf3 |
+| T6.1 item 6: with Auto-Sell owned, a full bed leaves with no Sell | test | Quinn | done | ✓ test t_autosell_full_bed_leaves_by_itself, ✓ test t_autosell_not_owned_full_bed_waits, ✓ test t_autosell_part_load_sells_by_sell, ✓ test t_autosell_twice_matches, ✓ ledger 4cb1c6a |
+| T7.1 item 7: buying Auto-Sell sets phase 2 once and the toast sho | test | Quinn | done | ✓ test t_phase2_auto_sell_sets_once_toast_once, ✓ test t_phase2_locked_auto_sell_keeps_phase_1, ✓ ledger 4272bff |
+| T8.1 item 8: `journal.csv` has every key in `en` and `fr`, non-em | test | Quinn | done | ✓ test t_journal_csv_every_key_en_and_fr, ✓ test t_journal_tr_follows_locale, ✓ test t_journal_panel_text_matches_csv_twice, ✓ test t_journal_csv_equals_script_output, ✓ ledger 4ee67e2 |
+| T11.1 item 11: while cranking, `Lid`'s and `LidDisc`'s global rota | test | Quinn | done | ✓ test t_lid_still_crank_and_gear1_turn_twice |
+| T12.1 item 12: Spigot Flow's cost equals `30 × 1.20^level` (floore | test | Quinn | done | ✓ test t_spigot_cost_floor_levels, ✓ test t_spigot_bottling_time_by_level, ✓ test t_spigot_jar_flight_unchanged, ✓ ledger 81f0997 |
+| T13.1 item 13: with a jar in flight to the bed, a Sell press (and  | test | Quinn | done | ✓ test t_truck_sell_waits_for_jar_in_flight, ✓ test t_truck_autosell_waits_for_jar_in_flight, ✓ test t_truck_jar_after_departure_goes_to_crate, ✓ test t_truck_sell_with_jar_in_flight_twice_matches, ✓ ledger b4529db |
+| T.1 mutations in `tests/mutations.json` prove the new tests. | test | Quinn | partial | 38/40 present: ✓ test t_shop_costs_floor_base_growth, ✓ test t_shop_buy_deducts_and_levels, ✓ test t_shop_buttons_disabled_unaffordable_maxed_locked, ✓ test t_shop_rows_order_and_level_text, ✓ test t_shop_auto_sell_locked_until_delivery_1, ✓ test t_shop_b ... |
+
+No score changed.
+
+Next: **T10.1** (score 5.72: play-test fix; cost 0.28 (Quinn)).
+
+### Step: T10.1 (2026-11-21T19:44:06-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.2/briefs/T10.1-quinn.md` (4138 chars)
+- Quinn's step skipped: every line already has its marked test (T10.1: t_fork_returns_to_icon_twice)
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      0 passed, 1 failed  (exit 1, 2 noise lines dropped)  game/reports/_runs/20261121-194408/unit.log
+    FAIL  t_fork_returns_to_icon_twice  run 1: every frame was uncapped by real drags and the last one by a press that is still held | run 1: the zoom ended (zoom NONE) with the press still held | run 1: the fork prop is still on screen when th
+```
+
+#### Fix round 1: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T10.1-fix1-patricia.md` (2087 chars)
+- Budget guard for Patricia: allow (reading 0 min old)
+
+**Patricia** (358,945 tokens, 21 turns, 51 s):
+
+I made one fix in `scripts/honeycomb.gd`, but I'm not sure it's the cause. I couldn't run anything, so it's untested.
+
+- **What failed:** In run 1, `_drag_last_frame_held` never got every cell uncapped. The zoom never ended, so the fork-return checks after it also failed. I didn't find the specific reason.
+- **Bug I found:** `hive.lower_frame()` sets the honeycomb's `active = false`, and the setter cleared `_held`. A press held across a frame change was dropped, which contradicts the comment in `load_frame` and the "press still held" rule.
+- **Fix:** The setter no longer clears `_held`. `_unhandled_input` now clears it when the release arrives while the honeycomb is inactive.
+- **If it still fails:** The cause is probably in the test. `fi.rows` positions may land on scraped cells, or the drag may not cover all the remaining Capped cells. Quinn should check that.
+- **Not done:** `main.gd` still doesn't release the fork when a frame ends mid-drag with frames remaining. `load_frame` already emits `drag_ended`, so I think that case is covered.
+
+No placeholders were left. Nothing was run, so no processes are left running.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 14 (cap 15; CLI num_turns 21); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      0 passed, 1 failed  (exit 1, 2 noise lines dropped)  game/reports/_runs/20261121-194544/unit.log
+    FAIL  t_fork_returns_to_icon_twice  run 1: every frame was uncapped by real drags and the last one by a press that is still held | run 1: the zoom ended (zoom NONE) with the press still held | run 1: the fork prop is still on screen when th
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.2/briefs/T10.1-fix2-patricia.md` (2087 chars)
+- Budget guard for Patricia: allow (reading 2 min old)
+
+**Patricia** (306,664 tokens, 19 turns, 37 s):
+
+I found the cause and fixed it. I didn't run any checks, as instructed.
+
+**Cause:** When the last frame sank with the press still held, `honeycomb.gd` (the `active` setter) emitted `drag_ended`. That hid the fork before the zoom ended, so `_return_fork_to_icon` found it hidden and had nothing to fly into the icon.
+
+**Changes:**
+- `honeycomb.gd`: the `active` setter no longer emits `drag_ended`. The fork stays visible, so the zoom end can fly it into the icon. The `if _dragging:` line is still there, now over a `pass`.
+- `main.gd` (`_on_frame_done`): after the frame sinks, if a queued frame still has capped cells, it calls `_fork_prop.release()`. This keeps the rule that the fork hides when a frame ends mid-drag with more frames to come.
+
+**For Quinn:** `t_fork_returns_to_icon_twice` needs a rerun. Check that the fork stays visible between the last frame lowering and the zoom end.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 12 (cap 15; CLI num_turns 19); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      0 passed, 1 failed  (exit 1, 2 noise lines dropped)  game/reports/_runs/20261121-194705/unit.log
+    FAIL  t_fork_returns_to_icon_twice  run 1: every frame was uncapped by real drags and the last one by a press that is still held | run 1: the zoom ended (zoom NONE) with the press still held | run 1: the fork prop is still on screen when th
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T10.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T10.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T10.1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-21T15:04:46-05:00): failed (AgentError: programmer reported an error: API Error: Can't reach the API server — check your internet or DNS (ENOTFOUND)).
+Last invocation (2026-11-21T19:47:45-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`
 
@@ -3522,4 +3731,6 @@ Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/20
 | Quinn, T14.1 | 646,334 | 42,215 | 30 | 74 s |
 | Quinn, T14.1 fix 1 | 140,713 | 23,261 | 10 | 20 s |
 | Patricia, T10.1 fix 1 | 117,150 | 23,587 | 9 | 24 s |
-| **Total** | **15,674,307** | | | |
+| Patricia, T10.1 fix 1 | 358,945 | 34,410 | 21 | 51 s |
+| Patricia, T10.1 fix 2 | 306,664 | 32,732 | 19 | 37 s |
+| **Total** | **16,339,916** | | | |
