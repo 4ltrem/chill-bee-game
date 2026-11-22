@@ -219,7 +219,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 
 ### D47 · 2026-11-03 · Pipeline design · Prototype 0: a colorbox core loop
 - Decided: the first playable build is the manual core loop in Sunny Meadow (hive fills, uncap, centrifuge, sell, Worker Swarm Count), built from primitive shapes and flat colours, with no sound. Its work order is `game/specs/prototype-0.md`; Patricia writes the scripts, Bob the scenes, Quinn the tests, report and Windows build.
-- Files: `game/specs/prototype-0.md`, `game/scripts/`, `game/scenes/`, `game/tests/`, `game/reports/2026-11-03-prototype-0.md`
+- Files: `game/specs/prototype-0.md`, `game/scripts/`, `game/scenes/`, `game/tests/`, `game/reports/builds/prototype-0/round-1/report.md`
 
 ### D48 · 2026-11-03 · Workspace & agents · Owners fix their own work; every fix is counted
 - Decided: a defect goes back to the agent who made it. The orchestrator may make only small, certain fixes, and every fix, whoever makes it, is recorded in the report's Fixes section and the Rework tally in `_meta/team.md`, against its owner. Quinn re-runs before any export.
@@ -235,7 +235,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 ### D50 · 2026-11-03 · Pipeline design · Prototype 0 revision 2
 - Decided: uncapping ends on an "Extract honey" button instead of jumping straight to the centrifuge; Worker Swarm Count adds bees (+3 a level, shown as a counter and a visibly larger flock), not speed.
 - Result: revision 2 passed (26 unit tests, 104 real-input checks), but the designer found the uncapping pop no longer visible. The cause is a light Bob added to the harvest scene, washing capped cells to the uncapped yellow; it is counted against Bob, and Quinn's missed screenshot check against Quinn.
-- Files: `game/reports/2026-11-03-prototype-0.md` (Revision 2, Open for revision 3), `_meta/team.md`
+- Files: `game/reports/builds/prototype-0/round-1/report.md` (Revision 2, Open for revision 3), `_meta/team.md`
 
 ### D51 · 2026-11-03 · Game design · A new harvest flow
 - Decided: when the hive is full a fork icon floats above it. Uncapping is a close-up: a frame slides out of the hive, scraped cells pop and fly into the centrifuge, and the next frame slides up until the centrifuge is full. The centrifuge is spun by tapping or holding its physical crank, or the screen around it; holding ramps up to the fastest tap rate. Continue opens the spigot, jars load onto a truck, and a Sell ($X) icon sends the truck off to sell. Everything after uncapping plays on the farm.
@@ -260,7 +260,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 
 - `content/onboarding-script.md`: approve after the guide signature-lines revision, which must also follow the new harvest flow (no crank button, No-Rapid-Tap branch or Market Stand).
 - Guide character playtest: Melli, Pip, Lady Aura or Miel (D46).
-- Prototype 0 revision 3: the spec from the new harvest flow and the five open items in `game/reports/2026-11-03-prototype-0.md`; the designer reviews the spec before any agent builds.
+- Prototype 0 revision 3: the spec from the new harvest flow and the five open items in `game/reports/builds/prototype-0/round-1/report.md`; the designer reviews the spec before any agent builds.
 - Second usage calibration: nudge the status line before and after the revision 3 batch, then `python -I _tools/runlog.py --calibrate`.
 - Harvest TBDs: centrifuge and truck capacity, truck trip time, Long Fork unlock and cost (Terry).
 - Content follow-ups: a Sunny Meadow flower for the bumble bee visitor (then Journal Entry 3); name Glowbell and Skybloom in `content/biome-intros.md`; the "sweat name" wording.

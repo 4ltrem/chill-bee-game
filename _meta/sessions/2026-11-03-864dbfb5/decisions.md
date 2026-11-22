@@ -45,7 +45,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 
 ### D61 · 2026-11-04 · Game design · Revision 3 play-test issues wait for revision 4
 - Decided: the focus-style bug waits for revision 4, not an orchestrator fix now. The opaque focus style keeps the disabled Upgrade button gold until another button takes focus, and the same style is on Continue, the icons, OK and Back. It is counted against Bob, and the miss against Quinn.
-- Files: `game/reports/2026-11-04-prototype-0-r3.md` (Open for revision 4, item 7), `_meta/team.md`
+- Files: `game/reports/builds/prototype-0/round-3/report.md` (Open for revision 4, item 7), `_meta/team.md`
 
 ## Still open
 

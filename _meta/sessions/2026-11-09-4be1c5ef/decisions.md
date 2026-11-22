@@ -19,7 +19,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 ### D198 · 2026-11-08 · Game build · Spin gets per-view values, picked on Design Votes: 60 px on the farm, 80 px lower in the first zoom (item 22)
 - Decided: asked how to handle "smaller in farm view, lower in harvest view" against item 2's "no per-view offsets", the designer chose the votes page: two config values (`spin_farm_visual_px`, `spin_zoom_offset`, live in Dev mode), shots of A 88/0, B 72/40, C 60/80, and voted C for both. The touch area stays 120 x 120; item 2 names item 22 as its one exception; a new shot moment `6b-farm-spin`. Commit `044f59b`.
 - Rejected: placeholder values without shots; leaving item 2 as is.
-- Files: `game/scripts/game_config.gd`, `game/scripts/default_config.tres`, `game/scripts/floating_icon.gd`, `game/tests/ui_compare_shots.gd`, `game/reports/ui-compare/spin-r1-decisions.json`
+- Files: `game/scripts/game_config.gd`, `game/scripts/default_config.tres`, `game/scripts/floating_icon.gd`, `game/tests/ui_compare_shots.gd`, `game/reports/votes/spin/round-1/decisions.json`
 
 ### D199 · 2026-11-08 · Cost & structure · Test runs always use the fast settings
 - Decided: asked "why does it take 15 minutes", the designer said yes to running tests sped up and to only the affected tests while iterating: every Rex brief names `CB_ONLY=<tests>` while fixing and `CB_TIME_SCALE=6 CB_SKIP_X1=1 ... all` at checkpoints (approved 11/6, missed today; see L17).

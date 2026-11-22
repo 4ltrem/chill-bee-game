@@ -5,7 +5,7 @@ status: proposed
 description: UI for every player-facing GDD function - floating icons over the 0.1.4 farm (no navigation bar), sheets for each screen, and four bottom-slot options for the play-test
 ---
 # UI Screens: icons over the farm
-**Sources:** `GDD.md` (all sections with player-facing functions: §1–§9, Child Safety, Progression Tiers & Biomes, Conservation Partnerships, Monetization Architecture), `STYLE_GUIDE.md` (UI tokens, V9–V13), `game/specs/0.1.4-ui-placement.md` (items 1–4, 8, 9, 11, 18, 20), `game/reports/ui-compare/spin-c/` (the spin-r1 pick, used as the base shots).
+**Sources:** `GDD.md` (all sections with player-facing functions: §1–§9, Child Safety, Progression Tiers & Biomes, Conservation Partnerships, Monetization Architecture), `STYLE_GUIDE.md` (UI tokens, V9–V13), `game/specs/0.1.4-ui-placement.md` (items 1–4, 8, 9, 11, 18, 20), `game/reports/votes/spin/round-1/c/` (the spin-r1 pick, used as the base shots).
 **Trigger:** designer, 2026-11-09: "design created for the ui of the game to match the functions in the GDD"; then "use the screenshots we already have and build the UI on top, icons over the screen are preferred over a navigation bar"; on the bottom panel: "final decision to be decided by playtest, have both and also have 3 other options".
 
 **Mockups:** Design canvas "Chill Bee UI Screens", https://claude.ai/artifact/ErtHvkxYUpDQHRM8RLRLca (source in `proposals/design/ui-screens-mockup/`). Each phone is 360×640, half of 720×1280, so a 60 px icon there is V11's 120 px.
@@ -69,6 +69,7 @@ None. Every number on the boards is a GDD value or a [TBD] the GDD already lists
 2. Icon placement as in §1 (top row, right rail, left rail), or another split.
 3. When each icon appears (§1 last bullet), or all from the start.
 4. Tools icon in the zooms as the answer to GDD §1 Phase 2's "UI TBD", and Build › Open for automated units.
+   **Answer (designer, 2026-11-21), partial:** Shop + Tools. The full Shop icon stays in both zooms, so the player can upgrade at any time, and Tools sits beside it with the machine's own upgrades. This changes §1's "Zooms hide the rail" for Shop. Build › Open is not answered yet. Canvas boards 2–3 and the legend still show Tools alone.
 5. Habitat & Refinery on one sheet (board 7), or the Refinery on its own unit panel.
 6. The parental gate screen and the kid-mode Store are not drawn yet; Connie should review the Store, ad and Welcome back copy before they are.
 7. GDD TBDs these screens show as [TBD]: Long Fork unlock, automation costs, ad boost length, Alpine unlock level, Refinery synergy minimum, starting-upgrade max levels, donation percentages, Jelly prices and skip size, offline cap copy for passes.

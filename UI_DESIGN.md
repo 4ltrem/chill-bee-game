@@ -12,7 +12,7 @@ The designer's stated UI preferences, collected from the 2026-11-09 session. Eac
 - Canvas: "Chill Bee UI Screens", https://claude.ai/artifact/ErtHvkxYUpDQHRM8RLRLca (private; pages 0–6, below).
 - Source copy: `proposals/design/ui-screens-mockup/project/` (the canvas is newer when the designer has edited on the page: read it from the canvas first).
 - Proposal: `proposals/design/ui-screens.md` (status proposed; function → screen table and open decisions).
-- Base screenshots: `game/reports/ui-compare/spin-c/` (the spin-r1 pick), uploaded to the canvas as assets.
+- Base screenshots: `game/reports/votes/spin/round-1/c/` (the spin-r1 pick), uploaded to the canvas as assets.
 
 ## 1. Design rules (designer's preferences)
 
@@ -20,7 +20,7 @@ The designer's stated UI preferences, collected from the 2026-11-09 session. Eac
 |---|---|---|
 | 1 | Start from the game's real screenshots and draw only the new UI on top. Never redraw the harvest loop or any screen the build already shows. | "use the screenshots we already have and build the UI on top" |
 | 2 | No navigation bar. Round icons float over the farm, each with a label, clear of the top info and the Harvest/Spin/Sell anchors. | "icons over the screen are preferred over a navigation bar" |
-| 3 | Zooms hide the icon rail; Back (top-right) is the only exit; one Tools icon (bottom-right) opens the machine's upgrades. | 0.1.4 spec items 3, 8; canvas boards 2–3 |
+| 3 | Zooms hide the rest of the icon rail, but **Shop stays** (the full shop, so the player can upgrade at any time), with the Tools icon beside it (bottom-right) for the machine's own upgrades. Back (top-right) is the only exit. | 0.1.4 spec items 3, 8; canvas boards 2–3 (not yet redrawn with Shop); designer 2026-11-21: "the shop button should be available while zoomed in still so the player can upgrade at any time", then picked Shop + Tools |
 | 4 | Harvest is a white circle with a honey uncapping fork; the honey meter rises behind the fork from the bottom; n/10 stays above it. | "replace harvest button with honey scrapper fork icon, white background"; "honey meter should be rising behind the fork" |
 | 5 | The bottom panel is decided by play-test: A = today's quick-buy plus a Shop icon (default), B next-unlock goal, C habitat strip, D guide task strip. | "final decision to be decided by playtest, have both and also have 3 other options" |
 | 6 | Icons have a clear real-world shape: Journal = a bee, Tools = a proper wrench, Settings = a toothed gear, Impact = a green leaf. | canvas comments 2026-11-09 |

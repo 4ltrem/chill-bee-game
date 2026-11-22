@@ -14,7 +14,7 @@ The designer played 0.1.3 (worktree exe, commit 59e11bd) on 2026-11-06 afternoon
 2. **Spin and Harvest buttons change location** between views or stops. Spin is moved out of FarmUI at runtime by `main.gd`, and one marker height serves both views.
 3. **The game-speed tag (e.g. "x5") overlaps other text in the top-left** HUD.
 
-**UI direction from the Round 7 vote (2026-11-06, `game/reports/ui-compare/decisions.json`):** 0.1.3's layout won (yes); ab-A and ab-B got no. For the next revision:
+**UI direction from the Round 7 vote (2026-11-06, `game/reports/votes/ui-round-7/decisions.json`):** 0.1.3's layout won (yes); ab-A and ab-B got no. For the next revision:
 - Make the hive frames and combs bigger, to match the pile size.
 - Move the honey meter into the Harvest button: its background fills up slowly. Put the hive count ("5/10") just above the button.
 - Bees and money stay at the top.

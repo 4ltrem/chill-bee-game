@@ -12,7 +12,7 @@ The designer wants to keep several guide characters and let playtests pick (2026
 first prototype. Suggested shortlist, one per distinct personality, v1 names where the drafts overlap:
 Melli (poetic elder queen; NOT Queenie: the designer folded Queenie into Queen Maeve, 2026-11-07), Pip (excitable scout; absorbs Bixby), Lady Aura (regal, dry wit; v1 only),
 Miel (poetic elder drone, name works in French; v2 only). v1 options are in
-`content/_runs/onboarding-script-v1/draft.md`, v2 in `content/onboarding-script.md` (Decisions needed).
+`content/_runs/onboarding-script/run-0/draft.md`, v2 in `content/onboarding-script.md` (Decisions needed).
 
 **Why:** both drafts share one `[GUIDE]` script, so the characters only differ by name; a playtest needs each to have
 their own signature lines (welcome, first harvest, first sale, first upgrade, hand-off, EN + FR).

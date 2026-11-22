@@ -323,7 +323,7 @@ The open question from before still stands: is the `uncap_radius` unit (cell pit
 - Check `style`: FAIL (exit 1)
 
 ```
-Style board `game/reports/style/goal-0-2-c3-r0/blackboard.md`, Result:
+Style board `game/reports/style/0.2-goal-c3/run-1/blackboard.md`, Result:
 
 Still FAIL after round 1 (max rounds 1 or the token cap). Open rows:
 
@@ -370,7 +370,7 @@ Fixed one row. Two of the five are in other folders, one I left alone, and one i
 - Check `style`: FAIL (exit 1)
 
 ```
-Style board `game/reports/style/goal-0-2-c3-r1/blackboard.md`, Result:
+Style board `game/reports/style/0.2-goal-c3/run-2/blackboard.md`, Result:
 
 Still FAIL after round 1 (max rounds 1 or the token cap). Open rows:
 
@@ -918,7 +918,7 @@ Auto-Sell (item 6) is done in `scripts/`, and `contract_check.py` passes: 0 unre
 - Check `style`: FAIL (exit 1)
 
 ```
-Style board `game/reports/style/goal-0-2-c6-r0/blackboard.md`, Result:
+Style board `game/reports/style/0.2-goal-c6/run-1/blackboard.md`, Result:
 
 Still FAIL after round 1 (max rounds 1 or the token cap). Open rows:
 
@@ -2761,11 +2761,11 @@ FAIL    unit      184 passed, 11 failed  (exit 1, 292 noise lines dropped)  game
 
 ## Resumed 2026-11-21
 
-Command: `goal_agent.py 0.2-first-automation.md --accept C14 --note Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/ui-compare/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/` (the run had stopped: `waiting-designer`).
+Command: `goal_agent.py 0.2-first-automation.md --accept C14 --note Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/votes/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/` (the run had stopped: `waiting-designer`).
 
 ### Manual fix: C14 (2026-11-21T11:34:31-05:00)
 
-- Change (orchestrator, Process 9): Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/ui-compare/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/
+- Change (orchestrator, Process 9): Shop layout behind config shop_layout (0 compact, 1 sheet = default; shop_row_height 64, shop_font_size 24), Patricia; sheet z-order/sizing and Journal top_level fixes; Quinn's tests open the sheet. Layout is provisional: designer vote in game/reports/votes/shop-layout/vote.html. Full suite green: game/reports/_runs/20261121-112004/
 - Accepted: checkpoint `0628fc6` on `milestone/0.2`
 
 ## Resumed 2026-11-21
@@ -3994,11 +3994,11 @@ No score changed.
 
 ## Resumed 2026-11-21
 
-Command: `goal_agent.py 0.2-first-automation.md --accept C14 --note Re-recorded: accepted 2026-11-21 (0628fc6), shop_layout config (sheet default, vote pending in game/reports/ui-compare/shop-layout/vote.html); T14.1 green. Full suite green: game/reports/_runs/20261121-221056/` (the run had stopped: `stopped`).
+Command: `goal_agent.py 0.2-first-automation.md --accept C14 --note Re-recorded: accepted 2026-11-21 (0628fc6), shop_layout config (sheet default, vote pending in game/reports/votes/shop-layout/vote.html); T14.1 green. Full suite green: game/reports/_runs/20261121-221056/` (the run had stopped: `stopped`).
 
 ### Manual fix: C14 (2026-11-21T22:33:53-05:00)
 
-- Change (orchestrator, Process 9): Re-recorded: accepted 2026-11-21 (0628fc6), shop_layout config (sheet default, vote pending in game/reports/ui-compare/shop-layout/vote.html); T14.1 green. Full suite green: game/reports/_runs/20261121-221056/
+- Change (orchestrator, Process 9): Re-recorded: accepted 2026-11-21 (0628fc6), shop_layout config (sheet default, vote pending in game/reports/votes/shop-layout/vote.html); T14.1 green. Full suite green: game/reports/_runs/20261121-221056/
 - Accepted: checkpoint `cce1e86` on `milestone/0.2`
 
 ## Result

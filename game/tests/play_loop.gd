@@ -17,7 +17,7 @@ const FarmInput := preload("res://tests/farm_input.gd")
 const Flow := preload("res://tests/flow.gd")
 const MAIN_SCENE := "res://scenes/main.tscn"
 const SHOT_DIR := "res://reports/_runs/shots/play_loop/"
-# r3 numbers for the disabled UpgradeButton at $0 (reports/2026-11-04-prototype-0-r3.md): background (97, 87, 76)
+# r3 numbers for the disabled UpgradeButton at $0 (reports/builds/prototype-0/round-3/report.md): background (97, 87, 76)
 const DISABLED_BG := Color8(97, 87, 76)
 
 var fi: RefCounted

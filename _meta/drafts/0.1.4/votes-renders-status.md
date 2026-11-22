@@ -25,7 +25,7 @@ These were rendered without worktrees. `ui_compare_shots.gd` gained an override 
 | `vote-pan-954/` | `pan_zoom_size=9.54` | not in the plan: the game warns that 9.30 is 0.24 short for the second stop (since 0.1.3c). A new row 5 |
 | `0.1.3-before/` | none: `milestone/0.1` shot in a throwaway worktree (since removed) | the before/after versions section |
 
-`game/reports/variants/hive-frames/`: Milo's colorbox hives, rendered by `model_shots.py hive-frames`, all `style_check` PASS. **a** is today (0.13 cells, 7 columns). **b** is 1.35× (0.175, 5 columns, same body). **c** is pile size (0.28 cells, body 2.2 wide). Each has a loose 0.28 pile cell beside it for scale, and each shot is zoomed to fit its own hive. Milo's flag: the frames stand above the 0.68 walls in all three. These are row 1 (C5 A, B and the current size).
+`game/reports/variants/hive-frames/round-1/`: Milo's colorbox hives, rendered by `model_shots.py hive-frames`, all `style_check` PASS. **a** is today (0.13 cells, 7 columns). **b** is 1.35× (0.175, 5 columns, same body). **c** is pile size (0.28 cells, body 2.2 wide). Each has a loose 0.28 pile cell beside it for scale, and each shot is zoomed to fit its own hive. Milo's flag: the frames stand above the 0.68 walls in all three. These are row 1 (C5 A, B and the current size).
 
 Spot-checked by eye: `vote-back-lower` shot 3 (Back moved down) and `vote-count-gap12` shot 2 (the gap shows). The rest are not looked at yet.
 
@@ -35,5 +35,5 @@ Spot-checked by eye: `vote-back-lower` shot 3 (Back moved down) and `vote-count-
 2. Row 3 C (reframe the second stop) needs a camera change. It isn't rendered.
 3. Row 4: render −20 if C stays at −20.
 4. Decide on the plan's two `compare_page.py` checks: the "Style loop" eyebrow on `--stop` sections, and C duplicating the reference.
-5. Build the page and publish it to the one Design Votes artifact (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa). Read it first: the live version starts at Round 7, the same as `game/reports/ui-compare/design-votes.html`.
+5. Build the page and publish it to the one Design Votes artifact (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa). Read it first: the live version starts at Round 7, the same as `game/reports/votes/design-votes.html`.
 6. Commit the override hook and `--set`, with a line in the `ui_shots.py` docstring (done) and `_tools/CONTEXT.md` if needed.

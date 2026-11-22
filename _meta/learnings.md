@@ -127,7 +127,7 @@ Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Pre
 - **What broke:** the first boards were drawn from scratch, including the harvest screens the game already has, with a bottom navigation bar.
 - **How noticed:** the designer: "screens were being invented for the harvest loop which we already know, use the screenshots we already have and build the UI on top, icons over the screen are preferred over a navigation bar". The designer also said "stop" mid-run.
 - **Cause:** the brief started from the GDD's screen list, not from what the build already shows.
-- **How fixed:** the canvas was rebuilt on `game/reports/ui-compare/spin-c/` shots with floating icons; the invented boards were deleted.
+- **How fixed:** the canvas was rebuilt on `game/reports/votes/spin/round-1/c/` shots with floating icons; the invented boards were deleted.
 - **Prevention:** `UI_DESIGN.md` rule 1: start every UI design from the latest scripted shots (`_tools/ui_shots.py`) and draw only the new UI on top.
 
 ## L24 · 2026-11-08 · A commit to `main` from a worktree failed the hooks and the push hung
@@ -216,7 +216,7 @@ Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Pre
 
 ## L12 · 2026-11-08 · Two owners fixed the same failure; fixes moved what was meant to stay
 - **What broke:** item 14 fix rounds: Patricia and Bob both removed the same 30° cell turn; a lid fix asked to change only the end also moved the open pose; ForkIcon regressed.
-- **How noticed:** designer play-test and the lid votes (`game/reports/_look/lid-close-r1-votes.json`).
+- **How noticed:** designer play-test and the lid votes (`game/reports/votes/lid-close/round-1/decisions.json`).
 - **Cause:** `fix_briefs` sent the same full report to every owner in parallel, and nothing pinned what the item said stays.
 - **How fixed:** one code owner per fix round (the folder the failure names, else Patricia and Bob take turns); briefs say "change only what a failing row names"; a `scope` check lists files a round changed outside its owner's folder and hands them on; Quinn writes a keep test for what a play-test line says stays.
 - **Prevention:** `test_goal_agent`: one-owner, scope and brief assertions.

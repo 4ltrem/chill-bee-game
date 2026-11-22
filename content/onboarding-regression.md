@@ -4,10 +4,10 @@ author: william
 type: onboarding
 status: draft
 description: Regression fixture: run 1 onboarding draft with known errors (false bloom fact, wrong §9 citation), re-checked by the stricter critic
-run: content/_runs/onboarding-regression/blackboard-2.md
+run: content/_runs/onboarding-regression/run-2/blackboard.md
 ---
 # Onboarding Script — First Session
-**Sources:** `GDD.md` (Story Premise & Onboarding §7, Phase 1 Uncapping & Extraction Minigame §2, Progression Trees §3, Aesthetic & Tone, Child Safety, Glossary), `content/_runs/onboarding-script-v1/blackboard.md`.
+**Sources:** `GDD.md` (Story Premise & Onboarding §7, Phase 1 Uncapping & Extraction Minigame §2, Progression Trees §3, Aesthetic & Tone, Child Safety, Glossary), `content/_runs/onboarding-script/run-0/blackboard.md`.
 
 ---
 

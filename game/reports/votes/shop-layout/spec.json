@@ -1,0 +1,23 @@
+{
+ "title": "0.2.1 Shop layout",
+ "eyebrow": "Goal run 0.2 &middot; designer stop &middot; item 14",
+ "h1": "Item 14: how should all seven shop rows fit without scrolling?",
+ "brief": "Spec item 14 asks for all seven rows at 720 &times; 1280, no scroll container, and the panel still clear of the HUD. Seven rows do not fit beside Spin, Harvest and Dev, so both options are built behind config <code>shop_layout</code> (Dev panel). Rows are 64 px with 24 pt text (<code>shop_row_height</code>, <code>shop_font_size</code>; were 120 px / 28 pt). The build defaults to B, the only one that passes the HUD tests. Nothing is final until you pick.",
+ "options": [
+  {"letter": "A", "title": "Compact: always-on panel",
+   "shot": "game/reports/votes/shop-layout/compact/1b-shop-closed.png",
+   "on": ["all seven rows and Journal on the farm view", "Dev moved above the panel"],
+   "cut": ["covers the centrifuge, crate and truck", "covers Spin at the second stop, so the HUD tests fail"],
+   "change": "<code>shop_layout = 0</code>"},
+  {"letter": "B", "title": "Sheet: Shop button opens it",
+   "shot": "game/reports/votes/shop-layout/sheet/1c-shop-open.png",
+   "extra_shots": [["Farm view, shop closed", "game/reports/votes/shop-layout/sheet/1b-shop-closed.png"]],
+   "on": ["farm clear until Shop is tapped (bottom right)", "all seven rows, Journal and Close when open; the farm is dimmed", "Dev hidden while it is open"],
+   "cut": ["one extra tap to buy", "open question: should Shop hide during the zoom?"],
+   "change": "<code>shop_layout = 1</code> (current default)"}
+ ],
+ "ref": {"title": "0.2.0 (play-tested): scrolling panel",
+  "shots": [["0.2.0 farm view", "game/reports/builds/0.2/ui/1-farm-start.png"]],
+  "text": "The build you play-tested, with the scroll panel item 14 removes."},
+ "ask": "vote A or B, and say whether the 64 px / 24 pt rows stay. 0.3.0's Shop sheet replaces this panel later (spec: a stopgap)."
+}

@@ -5,7 +5,7 @@ status: approved
 decided: 2026-11-07
 decision: approved (designer); follow-up: prepare the briefs for Patricia (guide switch in the build) and Gerard (playtest design), see Decisions 2
 description: The six candidate guide characters side by side (who they are, how they talk, their lines for the same moments), for the guide playtest; the onboarding script and biome intros keep the [GUIDE] placeholder
-run: content/_runs/guides/blackboard-5.md
+run: content/_runs/guides/run-5/blackboard.md
 ---
 # Guide Characters
 **Sources:** `GDD.md` (Story Premise & Onboarding: "a guide character (e.g., a queen bee; name and personality TBD)"), `content/onboarding-script.md` (v2 options), `content/onboarding-regression.md` (run 1 options), `content/biome-intros.md` (its options), `_meta/sessions/2026-10-31-fa5df4be/decisions.md` (D46).

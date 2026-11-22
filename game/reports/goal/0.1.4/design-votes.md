@@ -1,6 +1,6 @@
 # Design Votes, 0.1.4: the questions as rendered
 
-Built from `_meta/drafts/0.1.4/design-votes-0.1.4.md`, with each row's options cut down to what is rendered (`game/reports/ui-compare/vote-*`, `game/reports/variants/hive-frames/`). `compare_page.py add --stop` reads the table below. Row 1 (C5 frame size) is a variants section on the page (Milo's hive-frames a/b/c), so it isn't in this table.
+Built from `_meta/drafts/0.1.4/design-votes-0.1.4.md`, with each row's options cut down to what is rendered (`game/reports/ui-compare/vote-*`, `game/reports/variants/hive-frames/round-1/`). `compare_page.py add --stop` reads the table below. Row 1 (C5 frame size) is a variants section on the page (Milo's hive-frames a/b/c), so it isn't in this table.
 
 ## Waiting for the designer
 

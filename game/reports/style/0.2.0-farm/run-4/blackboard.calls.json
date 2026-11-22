@@ -1,0 +1,26 @@
+[
+ {
+  "call": "Vera, round 1",
+  "tokens": 56261,
+  "final": 27533,
+  "turns": 9,
+  "seconds": 25,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r4"
+ },
+ {
+  "call": "Bob, round 2",
+  "tokens": 93241,
+  "final": 21180,
+  "turns": 7,
+  "seconds": 14,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r4"
+ },
+ {
+  "call": "Patricia, round 2",
+  "tokens": 91976,
+  "final": 23219,
+  "turns": 10,
+  "seconds": 20,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r4"
+ }
+]

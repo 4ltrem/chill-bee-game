@@ -29,7 +29,7 @@ Notes on the options:
 | 3 | c3-b, c3-c | B: Back's size and position. C: the second-stop camera (Patricia or Bob) | `6-centrifuge-stop` |
 | 4 | c1-a, c1-c | A: label y from `_fork.global_position.y`. C: `count_gap_px = -20` | `1-farm-start`, `2-farm-hive-full` |
 
-The reference for every row is the current `milestone/0.1.4` build: `game/reports/ui-compare/0.1.4/` (re-shoot it after the run exits, since the run is still changing code).
+The reference for every row is the current `milestone/0.1.4` build: `game/reports/builds/0.1.4/ui/` (re-shoot it after the run exits, since the run is still changing code).
 
 Then, as one `add` call:
 

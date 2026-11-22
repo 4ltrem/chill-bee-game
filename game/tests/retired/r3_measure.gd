@@ -2,13 +2,13 @@
 # of commit 7d04bc6 (it printed revision 3's capped (229,177,45) / uncapped (255,255,57) on this machine for the 0.1 report). Replaced by tests/r4_measure.gd.
 # Quinn: measurements for the Prototype 0 r3 report (spec "Done when": uncapping pop RGB, layout, contrast, FPS).
 #   Godot --path game --resolution 720x1280 --position 0,0 --script res://tests/r3_measure.gd
-# Windowed. Not a pass/fail suite: it prints numbers and saves screenshots to reports/2026-11-04-prototype-0-r3/.
+# Windowed. Not a pass/fail suite: it prints numbers and saves screenshots to reports/builds/prototype-0/round-3/shots/.
 # Drives the farm through the real scene nodes (pressed signals), not through input: input is play_loop.gd's job.
 # The uncapping close-up is reached through the fork icon (instanced under Main, so the Sun lights it) and sampled
 # MID-DRAG: the mouse button is still down (Input.parse_input_event, as the OS sends it) when the pixels are read.
 extends SceneTree
 
-const SHOT_DIR := "res://reports/2026-11-04-prototype-0-r3/"
+const SHOT_DIR := "res://reports/builds/prototype-0/round-3/shots/"
 var main: Node
 
 

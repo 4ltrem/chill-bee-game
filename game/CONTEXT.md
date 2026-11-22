@@ -10,9 +10,14 @@ One job: turn applied designs into a running Godot game. Godot 4.2.1 (standard b
 | `materials/` | Bob, the Builder | shared flat `.tres` materials, one per palette use; colours from `../STYLE_GUIDE.md` tokens only (V1) |
 | `assets/` | developer | purchased low-poly packs and selected audio; agents read, never add |
 | `tests/` | Quinn, the QA & Build Engineer | automated tests |
-| `reports/` | Quinn, the QA & Build Engineer | `<date>-<slug>.md` test, build and performance reports |
-| `reports/style/` | `_tools/style_loop.py` (not Quinn); Vera, the Style Critic, judges its shots | `<slug>/blackboard.md` (format: `_templates/blackboard.md`) and `<slug>/round-N/` shots and `measure.json` of each visual style loop run |
-| `reports/goal/` | `_tools/goal_agent.py` (not Quinn), the M3 goal agent | `<run>/blackboard.md` (format: `_templates/blackboard.md`), its `.calls.json` and `.pass.json` sidecars, `gaps.json` and `briefs/` of each goal-agent run, and `ledger.json`, the goals it built to green |
+| `reports/builds/` | Quinn, the QA & Build Engineer; `_tools/ui_shots.py` | `<version>/report.md` (test, build and performance report), `shots/`, `logs/`, `ui/` (ui_shots' moments; a dated `ui-<YYYY-MM-DD>/` when one version has several), and `round-N/` for a milestone review round |
+| `reports/style/` | `_tools/style_loop.py` (not Quinn); Vera, the Style Critic, judges its shots | `<version>-<scene>/run-N/blackboard.md` (format: `_templates/blackboard.md`), `round-N/` shots and `measure.json`, `sandbox.patch` of each visual style loop run (goal runs: `<version>-goal-<id>/`) |
+| `reports/goal/` | `_tools/goal_agent.py` (not Quinn), the M3 goal agent | `<version>/blackboard.md` (format: `_templates/blackboard.md`), its `.calls.json` and `.pass.json` sidecars, `gaps.json`, `briefs/`, `pick/<goal>/round-N/` and `runs/<YYYY-MM-DD>-<n>.log` (the console of each launch) of each goal-agent run, and `ledger.json`, the goals it built to green |
+| `reports/votes/` | the orchestrator (`_tools/compare_page.py`, `ui_shots.py` with a `votes/<id>/<option>` label, `godot_run.py lid`) | `<vote-id>/<option>/` candidates of each Design Votes question, with its `vote.html`, `spec.json` and `decisions.json`; `design-votes-db/` the page's saved votes |
+| `reports/variants/` | `_tools/model_shots.py`, `pick_match.py` | `<prop>/round-N/` Milo's variant shots, `checks.json` and `vote.html`; `<prop>/pick-match/` the live prop beside the pick |
+| `reports/_runs/` | `godot_run.py`, `mutate.py` (gitignored) | raw logs only |
+
+Naming (designer, 2026-11-21): `round` is a design or critic round, `run` a re-run of a tool (`run-N/`, never an `-rN` suffix); versions keep their dots (`0.2.1`); dates are `YYYY-MM-DD`; no `now`/`before` folders, use the version or the date.
 
 ## Inputs
 - Working (this run): the work order in `specs/` (e.g. `specs/prototype-0.md`), or the feature list, layout spec or build request
@@ -35,7 +40,7 @@ Do NOT load: the review folders, `_meta/agent-runs.md`, proposals still `propose
 
 ## Outputs
 - scripts, scenes and tests -> their folders above
-- `<date>-<slug>.md` -> `reports/`
+- `report.md` -> `reports/builds/<version>/`
 
 ## Check
 Quinn's report passes (tests green, 60 FPS on the test devices), then the developer reviews the git diff and plays the build.

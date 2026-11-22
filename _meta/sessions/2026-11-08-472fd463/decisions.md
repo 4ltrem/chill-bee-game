@@ -14,7 +14,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 
 ### D179 · 2026-11-08 · Records & deliverables · Lid close before/after goes to Design Votes; comb size approved
 - Decided: "also take before and after of the lid animation not sure which one I like best. the comb size looks good". New section "Lid close: before or after?" (0, 40, 70, 90%); the comb size stays.
-- Files: `game/reports/_look/lid-before/`, `game/reports/_look/lid-now/`, `_tools/compare_page.py`
+- Files: `game/reports/votes/lid-close/round-1/`, `game/reports/votes/lid-close/round-2/`, `_tools/compare_page.py`
 
 ### D180 · 2026-11-08 · Workspace & agents · Delegate all script runs to Rex to keep the session slim
 - Decided: "delegate any scripts to rex to keep this session slim"; the rule also covers shot follow-ups (contact sheets, votes page builds); the orchestrator only views final images and publishes.
@@ -26,7 +26,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 
 ### D182 · 2026-11-08 · Game build · Lid vote round 1: the old open pose, fix only the closed landing
 - Decided: votes: open pose Before yes / After no; 40% and 70% yes both; 90% After yes. The lid returns to the pose before the fix rounds; only the end of the close changes so it lands flat with no clip; comb size stays.
-- Files: `game/reports/_look/lid-close-r1-votes.json`, `game/scenes/hive.tscn`
+- Files: `game/reports/votes/lid-close/round-1/decisions.json`, `game/scenes/hive.tscn`
 
 ### D183 · 2026-11-08 · Cost & structure · Hold the Patricia/Bob run until the 5-hour reset; checkpoint commit
 - Decided: "wait until after the reset" (5-hour window at 66%), then "checkpoint commit": `e77235a` on `milestone/0.1.4`; `ONBOARDING.md` and `game/reports/_look/votes/` left out on purpose.

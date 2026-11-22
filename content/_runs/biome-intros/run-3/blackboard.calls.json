@@ -1,0 +1,26 @@
+[
+ {
+  "call": "Critic, round 1",
+  "tokens": 110364,
+  "final": 37185,
+  "turns": 8,
+  "seconds": 37,
+  "transcripts": "_meta/sessions/runs/2026-11-20-biome-intros-run-3"
+ },
+ {
+  "call": "William, round 2",
+  "tokens": 68753,
+  "final": 21311,
+  "turns": 11,
+  "seconds": 18,
+  "transcripts": "_meta/sessions/runs/2026-11-20-biome-intros-run-3"
+ },
+ {
+  "call": "Critic, round 2",
+  "tokens": 17110,
+  "final": 17110,
+  "turns": 1,
+  "seconds": 11,
+  "transcripts": "_meta/sessions/runs/2026-11-20-biome-intros-run-3"
+ }
+]

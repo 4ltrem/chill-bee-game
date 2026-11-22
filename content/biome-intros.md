@@ -3,7 +3,7 @@ author: william
 type: story
 status: draft
 description: Title-card line and 2–3 guide introduction lines shown when the player unlocks each of the four biomes (Sunny Meadow, Alpine Valley, Enchanted Grove, Cloud Gardens).
-run: content/_runs/biome-intros/blackboard-2.md
+run: content/_runs/biome-intros/run-3/blackboard.md
 decided: 2026-11-03
 decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Skybloom (Cloud Gardens) added to the GDD; revise the intros to name them (done: the intros name both; designer 2026-11-07: keep the names)
 ---
@@ -20,7 +20,7 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 **[GUIDE]:** Welcome, little beekeeper! Look at those rolling green hills and patches of wild clover — this is Sunny Meadow, and it's all yours to tend.
 
-**[GUIDE]:** Your classic wooden Langstroth hive is ready and waiting. It's a beekeeper's most trusted companion, tried-and-true and full of golden promise.
+**[GUIDE]:** Your classic wooden Langstroth hive is ready and waiting. It's a beekeeper's cosy first home for the bees, full of golden promise.
 
 **[GUIDE]:** When your bees have done their wonderful work, you'll harvest your very first jars of *Wildflower Gold Honey* — pure meadow sunshine, bottled just for you.
 
@@ -28,9 +28,9 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 ### Alpine Valley
 
-> **Title card:** *Cool mountain air, the blush of fireweed, and a whole new horizon for your hive.*
+> **Title card:** *Cool mountain air, soft pastel blooms, and a whole new horizon for your hive.*
 
-**[GUIDE]:** Oh, breathe that in! Pine trees reaching up to the clouds, and whole hillsides painted in soft violet and rose. Your bees are going to love it up here.
+**[GUIDE]:** Oh, breathe that in! Pine trees reaching up to the clouds, and whole hillsides painted in soft pastel blooms. Your bees are going to love it up here.
 
 **[GUIDE]:** In Alpine Valley, your hives settle into cosy chalet hives — sturdy, Swiss-style, and perfectly at home on the mountain slopes.
 
@@ -70,7 +70,7 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 **[GUIDE] :** Bienvenue, petit apiculteur ! Regarde ces collines verdoyantes et ces touffes de trèfle sauvage — c'est la Prairie Ensoleillée, et elle t'appartient.
 
-**[GUIDE] :** Ta ruche Langstroth en bois classique t'attend déjà. C'est la meilleure amie de tout apiculteur qui se respecte — éprouvée, fiable, et débordante de promesses dorées.
+**[GUIDE] :** Ta ruche Langstroth en bois classique t'attend déjà. C'est le premier petit chez-soi de tes abeilles, débordant de promesses dorées.
 
 **[GUIDE] :** Quand tes abeilles auront fait leur beau travail, tu récolteras tes premiers pots de *Miel d'Or Sauvage* — le soleil de la prairie mis en bocal, rien que pour toi.
 
@@ -78,9 +78,9 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 ### Vallée Alpine
 
-> **Carte-titre :** *L'air frais de la montagne, le rose de l'épilobe, et un tout nouvel horizon pour ta ruche.*
+> **Carte-titre :** *L'air frais de la montagne, des fleurs aux teintes pastel, et un tout nouvel horizon pour ta ruche.*
 
-**[GUIDE] :** Ah, sens-moi ça ! Des pins qui s'élancent jusqu'aux nuages, et des flancs de montagne tout entiers peints de violet et de rose tendres. Tes abeilles vont adorer ça.
+**[GUIDE] :** Ah, sens-moi ça ! Des pins qui s'élancent jusqu'aux nuages, et des flancs de montagne tout entiers peints de fleurs aux teintes pastel. Tes abeilles vont adorer ça.
 
 **[GUIDE] :** Dans la Vallée Alpine, tes ruches prennent la forme de ruches-chalets — robustes, de style suisse, parfaitement à leur place sur les pentes de montagne.
 
@@ -114,15 +114,12 @@ decision: approved; follow-up: fictional flora Glowbell (Enchanted Grove) and Sk
 
 ## 3. Real-world facts
 
-None. The biome intro cards are story and onboarding text set inside the game's pocket-world fiction. They name hive styles and flora from the GDD but make no independent real-world factual claims. (Fact-checked GDD elements such as Langstroth hives, fireweed, and Canadian native wildflowers belong to the Bee Journal, not these cards.)
+No sourced real-world facts, and no research brief is needed. The intros are in-world scenery and onboarding text. They name hive styles and flora from the GDD, but they do not state a real flower colour, a real hive's reliability or any other real-world claim. Round 2 removed the earlier lines about fireweed's colour, the hillside colours and the Langstroth being "tried-and-true". Real-world facts about Langstroth hives, fireweed and native wildflowers belong to the Bee Journal, with Ruth's briefs and a conservation-partner review.
 
 ---
 
 ## Decisions needed from the designer
 
-1. **Guide character name and personality (GDD: TBD).** The [GUIDE] placeholder is used throughout. Suggested options for the designer to consider:
-   - **Queen Maeve** — a wise, warmly maternal queen bee with a gentle wit.
-   - **Wren** — a small, bright-eyed scout bee, curious and enthusiastic; genderless.
-   - **Pip** — a tiny glowing sprite companion who used to be a bee; whimsical and wordplay-prone.
+1. **Guide identity.** The guide is no longer TBD: the GDD lists six candidates in `content/guides.md` (Melli, Pip, Lady Aura, Miel, Queen Maeve, Lumi), and a playtest picks one. The [GUIDE] tag stands in for the playtest winner; nothing in these intros needs to change until it is picked (the lines are written to fit any of the six voices).
 
 2. **Biome names in French.** The English biome names are taken directly from the GDD; the French names above are proposed equivalents (*Prairie Ensoleillée*, *Vallée Alpine*, *Bosquet Enchanté*, *Jardins Célestes*). The designer or the conservation partner should confirm or replace these before localisation.

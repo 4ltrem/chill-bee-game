@@ -10,6 +10,6 @@ FAIL    unit      146 passed, 4 failed  (exit 1, 224 noise lines dropped)  game/
     FAIL  t_combs_fill_frame_and_hive_whole  frame 1, slot axis 0: the cells span 147% of the frame's inner area (0.90 to 1.10) | frame 1, slot axis 2: the cells span 160% of the frame's inner area (0.90 to 1.10) | frame 2, slot axis 0: the cel
 
 Spec text:
-14. **The hive is the round 9 pick** (designer's play-test of 0.1.4, 2026-11-08: "the hive and frame models were changed WRONG"). C5 built a shallow hive body with its front-left wall missing and two large flat frames, not the pick. `scenes/props/hive.tscn` must match `scenes/variants/hive-frames/hive-frames-a.tscn` (render `game/reports/variants/hive-frames-r9/hive-frames-r9-a.png`): a deep box with all four walls, five upright frames standing side by side, the comb cells on each frame filling it edge to edge, the lid hinged at the back. The frames still rise one at a time in the first zoom.
+14. **The hive is the round 9 pick** (designer's play-test of 0.1.4, 2026-11-08: "the hive and frame models were changed WRONG"). C5 built a shallow hive body with its front-left wall missing and two large flat frames, not the pick. `scenes/props/hive.tscn` must match `scenes/variants/hive-frames/hive-frames-a.tscn` (render `game/reports/variants/hive-frames/round-9/hive-frames-r9-a.png`): a deep box with all four walls, five upright frames standing side by side, the comb cells on each frame filling it edge to edge, the lid hinged at the back. The frames still rise one at a time in the first zoom.
 
 Reply in at most 150 words.

@@ -11,7 +11,7 @@ description: Prototype 0, the manual core loop in Sunny Meadow as a colorbox (pr
 
 > **Closed 2026-11-04.** Prototype 0 proved the loop. The work continues as milestone 1, `game/specs/0.1-harvest.md` (see `MILESTONES.md`).
 
-**Sources:** `GDD.md` (1. Primary Game Loop & Phase Structure; 2. Phase 1 Uncapping & Extraction Minigame; 3. Progression Trees, Tree A and Tree B; 8. Accessibility; 9. UI & Screens; Engine Integration; Technical Constraints). Open items from `game/reports/2026-11-03-prototype-0.md`, "Open for revision 3".
+**Sources:** `GDD.md` (1. Primary Game Loop & Phase Structure; 2. Phase 1 Uncapping & Extraction Minigame; 3. Progression Trees, Tree A and Tree B; 8. Accessibility; 9. UI & Screens; Engine Integration; Technical Constraints). Open items from `game/reports/builds/prototype-0/round-1/report.md`, "Open for revision 3".
 
 The first playable piece of Chill Bee Game: one hive in Sunny Meadow, harvested by hand, honey bottled and sold by truck, the first upgrade bought, and round again. It is the loop the onboarding script (`content/onboarding-script.md`) walks a new player through. That script still describes the old flow and is revised separately.
 

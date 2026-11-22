@@ -1,0 +1,42 @@
+[
+ {
+  "call": "Vera, round 1",
+  "tokens": 55133,
+  "final": 26839,
+  "turns": 9,
+  "seconds": 22,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0"
+ },
+ {
+  "call": "Bob, round 2",
+  "tokens": 196500,
+  "final": 48683,
+  "turns": 21,
+  "seconds": 36,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0"
+ },
+ {
+  "call": "Vera, round 2",
+  "tokens": 59146,
+  "final": 26263,
+  "turns": 7,
+  "seconds": 17,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0"
+ },
+ {
+  "call": "Bob, round 3",
+  "tokens": 209722,
+  "final": 32756,
+  "turns": 22,
+  "seconds": 33,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0"
+ },
+ {
+  "call": "Vera, round 3",
+  "tokens": 61108,
+  "final": 28548,
+  "turns": 9,
+  "seconds": 15,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0"
+ }
+]

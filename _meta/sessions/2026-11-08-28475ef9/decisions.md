@@ -32,7 +32,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 
 ### D174 · 2026-11-08 · Game build · T14.4 fix-round edits reverted, Quinn's tests kept
 - Decided: "Revert them" for the uncommitted fix-round script and scene edits; the lid clips on "Every close". The reverted diff is kept.
-- Files: `game/reports/goal/0.1.4/T14.4-fix-rounds-reverted.diff`, `game/specs/0.1.4-ui-placement.md`
+- Files: `game/reports/goal/0.1.4/runs/T14.4-fix-rounds-reverted.diff`, `game/specs/0.1.4-ui-placement.md`
 
 ### D175 · 2026-11-08 · Game build · Lid test: a 1° tilt is fine, it just can't clip (T14.5)
 - Decided: "1 percent tilt is fine it just can't clip". T14.5: the lid sinks no more than 0.005 into any hive part at any frame of the close.

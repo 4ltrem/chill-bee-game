@@ -25,7 +25,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 ### D109 · 2026-11-06 · Pipeline design · Round 7: 0.1.3's layout kept, with the designer's UI direction
 - Decided: On Design Votes, 0.1.3 got yes and the archived mocks ab-A and ab-B got no (ab-A's Sell placement is the good one). Direction: bigger hive frames and combs; the honey meter becomes the Harvest button's fill with "7/10" above it; bees and money stay at the top; Harvest lower (above the hive lid); Spin above the centrifuge lid; Sell lower, as in ab-A.
 - Why: The designer compared the same moments across versions to see which version placed things right.
-- Files: `game/reports/ui-compare/decisions.json`, `game/specs/0.1.4-ui-placement.md`
+- Files: `game/reports/votes/ui-round-7/decisions.json`, `game/specs/0.1.4-ui-placement.md`
 
 ### D110 · 2026-11-06 · Workspace & agents · One folder: worktrees only for parallel work, removed when merged
 - Decided: Every worktree was removed and the main folder now sits on `milestone/0.1`; the branches stay. New rule, `game/CONTEXT.md` Process 10: before dispatching agents, the orchestrator decides where they work. The default is the main folder on the milestone branch; a worktree only when two sessions or agents must change the same files at once (or a long run must keep going while other work changes its files), removed the day its branch merges. The archived A/B mock is kept on branch `ab/centrifuge-by-crate` (2a5d5bc).

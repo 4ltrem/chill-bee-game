@@ -3,12 +3,12 @@ author: william
 type: onboarding
 status: superseded
 description: The guide character's spoken script for a new player's first session — meadow introduction, manual harvest (uncapping then centrifuge extraction), and first upgrade purchase.
-run: content/_runs/onboarding-script-v1/blackboard.md
+run: content/_runs/onboarding-script/run-0/blackboard.md
 rounds: 1
 ---
 # Onboarding Script — First Session
 **Author:** William, the Writer
-**Sources:** `GDD.md` (Story Premise & Onboarding §7, Phase 1 Uncapping & Extraction Minigame §2, Progression Trees §3, Aesthetic & Tone, Child Safety, Glossary), `content/_runs/onboarding-script/blackboard.md`.
+**Sources:** `GDD.md` (Story Premise & Onboarding §7, Phase 1 Uncapping & Extraction Minigame §2, Progression Trees §3, Aesthetic & Tone, Child Safety, Glossary), `content/_runs/onboarding-script/run-1/blackboard.md`.
 **Request:** The guide character's script for a new player's first session: explain why the meadow matters and introduce the farm, guide the first manual harvest (uncapping then centrifuge extraction), and guide the first upgrade purchase. Short lines for mobile dialogue bubbles.
 **Status:** Draft. Guide name and personality are TBD in the GDD — three options are offered below. The specific first upgrade to recommend needs a designer decision. Accessibility line (No-Rapid-Tap Mode) placement needs a designer decision. Nothing here touches donations, purchases or kid-mode wording; if those beats are added to onboarding later, flag for Connie.
 

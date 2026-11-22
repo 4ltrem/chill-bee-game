@@ -1,0 +1,16 @@
+{
+  "question": "shop-layout",
+  "source": "Design Votes https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (version 26), collection votes",
+  "read": "2026-11-21",
+  "pick": "B-sheet",
+  "votes": {
+    "shop-layout-A-compact": {"vote": "no", "note": "", "updatedAt": "2026-11-21T19:19:21.105Z"},
+    "shop-layout-B-sheet": {"vote": "yes", "note": "good the functionality is added, the ui design will be implemented later", "updatedAt": "2026-11-21T19:20:11.374Z"},
+    "shop-layout-0.2.0-ref": {"vote": "no", "note": "", "updatedAt": "2026-11-21T19:19:51.476Z"}
+  },
+  "designer_followup_2026-11-21": "The current shop screen's look doesn't matter much: a design already exists to be implemented (0.3.0 UI pass). The Shop button must stay available while zoomed in, so the player can upgrade at any time.",
+  "answers": {
+    "rows_64px_24pt": "keep as built (look not important; 0.3.0 design replaces it)",
+    "hide_shop_during_zoom": "no: Shop stays available in the zoom (today it is hidden: ShopButton is a child of FarmUI, shop_ui.gd:165; needs a spec item + Patricia)"
+  }
+}

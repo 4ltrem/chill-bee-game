@@ -1,0 +1,58 @@
+[
+ {
+  "call": "Vera, round 1",
+  "tokens": 56022,
+  "final": 27294,
+  "turns": 9,
+  "seconds": 23,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r5"
+ },
+ {
+  "call": "Bob, round 2",
+  "tokens": 194098,
+  "final": 26585,
+  "turns": 12,
+  "seconds": 23,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r5"
+ },
+ {
+  "call": "Patricia, round 2",
+  "tokens": 137306,
+  "final": 24908,
+  "turns": 16,
+  "seconds": 27,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r5"
+ },
+ {
+  "call": "Vera, round 2",
+  "tokens": 56195,
+  "final": 24364,
+  "turns": 6,
+  "seconds": 14,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r5"
+ },
+ {
+  "call": "Bob, round 3",
+  "tokens": 151928,
+  "final": 23378,
+  "turns": 11,
+  "seconds": 21,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r5"
+ },
+ {
+  "call": "Patricia, round 3",
+  "tokens": 115277,
+  "final": 23612,
+  "turns": 12,
+  "seconds": 22,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r5"
+ },
+ {
+  "call": "Vera, round 3",
+  "tokens": 57637,
+  "final": 24768,
+  "turns": 6,
+  "seconds": 14,
+  "transcripts": "_meta/sessions/runs/2026-11-20-style-farm-0-2-0-r5"
+ }
+]

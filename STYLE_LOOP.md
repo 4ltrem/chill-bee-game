@@ -61,8 +61,8 @@ The rules are the approved [STYLE_GUIDE.md](STYLE_GUIDE.md): **V1–V15** for th
 
 ## Demo runs
 
-### Visual: the 0.2 farm, no designer step (`game/reports/style/farm-0-2-0-r5/blackboard.md`)
-`python -I _tools/style_loop.py farm-0-2-0-r5`, on the 0.2 build, 2026-11-20, with the sandbox, the guards, the test gate and the UI refiner. No designer step from start to end.
+### Visual: the 0.2 farm, no designer step (`game/reports/style/0.2.0-farm/run-5/blackboard.md`)
+`python -I _tools/style_loop.py farm-0-2-0-r5` (run 5 of the 0.2.0 farm; slugs are `<version>-<scene>` with `run-N/` inside since 2026-11-21), on the 0.2 build, 2026-11-20, with the sandbox, the guards, the test gate and the UI refiner. No designer step from start to end.
 
 **Baseline:** the unit suite on the untouched copy, 195 passed, 0 failed.
 
@@ -81,14 +81,14 @@ The rules are the approved [STYLE_GUIDE.md](STYLE_GUIDE.md): **V1–V15** for th
 - Patricia made the Harvest button's disabled state cream on dark brown with the ink outline, and the Journal button cream with a border. The gate passed.
 - Vera closed both UI rows. Harvest button V10 went from **3 to 8/10**, and Journal button V8 from **5 to 8/10**. She kept one row open: the empty jars are still ghosts (V15 **4/10**), because the rim rings have no mesh.
 
-**Result: `needs-review`, 768,463 tokens.** Two of three findings were fixed and verified by the critic, with no human step. The third is open on purpose: the only fix Vera could see changes the shape of a prop the designer play-tested, which the loop is built to refuse. The game itself did not change. The surviving edits are in [`sandbox.patch`](game/reports/style/farm-0-2-0-r5/sandbox.patch) for the designer to review: the glass rim effect, the two button restyles, and two empty rim nodes. The guard now removes parts added to a picked prop entirely, so a later run won't leave empty nodes.
+**Result: `needs-review`, 768,463 tokens.** Two of three findings were fixed and verified by the critic, with no human step. The third is open on purpose: the only fix Vera could see changes the shape of a prop the designer play-tested, which the loop is built to refuse. The game itself did not change. The surviving edits are in [`sandbox.patch`](game/reports/style/0.2.0-farm/run-5/sandbox.patch) for the designer to review: the glass rim effect, the two button restyles, and two empty rim nodes. The guard now removes parts added to a picked prop entirely, so a later run won't leave empty nodes.
 
 **What this run shows about the limits.** The gate undoes a turn on any new failure, including a flaky timing test, which cost Patricia one round. Vera was told which props are locked, yet her jar fix asked for added rim parts while calling it "materials only". The guard, not the critic's wording, is what kept the prop's shape. A next step would be to re-run a failing real-time test once before undoing a turn.
 
-**What led here.** The first 0.2 run, `farm-0-2-0` (581,609 tokens, no designer step), ended at max rounds with 4 open rows. Watching the renders, the designer saw that Bob had changed the truck's motion and size, and the unit suite then caught the truck off its cell and 7 enlarged jars overhanging the crate. A second run was stopped in round 2 after he moved the Spin icon. A third (`farm-0-2-0-r3`, with the sandbox) was stopped in round 2 because its test gate failed on tests the refiners had not broken: a test that reads `../STYLE_GUIDE.md` (missing from the copy) and a zoom value left out of step by the revert. The copy now includes the guide, and the gate compares against a baseline run before any edit. A fourth (`farm-0-2-0-r4`) passed both gates in round 2 but its render failed: the shot set's crank step sometimes bottled no jar. Quinn made it wait on the real state (3 clean renders in a row), and the loop now retries a failed render once. Every edit Bob made was reverted, and the sandbox, guards, gate and UI refiner were built (see *What makes it rigorous*). Two rows from the first run were fixed outside the loop: Patricia restyled the Dev label, and found that the config's `zoom_size` overrode the scene's. Quinn's shot set now cranks real jars before shots 05 and 06, because Vera had judged jars that the shot set kept empty.
+**What led here.** The first 0.2 run, `0.2.0-farm/run-1` (581,609 tokens, no designer step), ended at max rounds with 4 open rows. Watching the renders, the designer saw that Bob had changed the truck's motion and size, and the unit suite then caught the truck off its cell and 7 enlarged jars overhanging the crate. A second run was stopped in round 2 after he moved the Spin icon. A third (`run-3`, with the sandbox) was stopped in round 2 because its test gate failed on tests the refiners had not broken: a test that reads `../STYLE_GUIDE.md` (missing from the copy) and a zoom value left out of step by the revert. The copy now includes the guide, and the gate compares against a baseline run before any edit. A fourth (`run-4`) passed both gates in round 2 but its render failed: the shot set's crank step sometimes bottled no jar. Quinn made it wait on the real state (3 clean renders in a row), and the loop now retries a failed render once. Every edit Bob made was reverted, and the sandbox, guards, gate and UI refiner were built (see *What makes it rigorous*). Two rows from the first run were fixed outside the loop: Patricia restyled the Dev label, and found that the config's `zoom_size` overrode the scene's. Quinn's shot set now cranks real jars before shots 05 and 06, because Vera had judged jars that the shot set kept empty.
 
-### Visual, first version: the 0.1.2 farm (`game/reports/style/farm-0-1-2/blackboard.md`)
-`python -I _tools/style_loop.py farm-0-1-2`, on the 0.1.2 build, 2026-11-05. This run predates the loop's own choices: it stopped twice for the designer.
+### Visual, first version: the 0.1.2 farm (`game/reports/style/0.1.2-farm/run-1/blackboard.md`)
+`python -I _tools/style_loop.py farm-0-1-2` (now folder `0.1.2-farm/run-1`), on the 0.1.2 build, 2026-11-05. This run predates the loop's own choices: it stopped twice for the designer.
 
 **Round 1: FAIL.**
 - **`style_check.py`: 9 blocking rows.** These include the two the spec predicted:
@@ -143,7 +143,7 @@ Result: `needs-review`. This is the spec's "stops at max rounds with its FAIL ro
 
 Some of Vera's rows (V8 honey brightness, the V9 "Need $25" cue, the zoom framing) need script or config changes. Bob may only edit `scenes/` and `materials/`, so they stay open and come back in round 2. That is a real limit of a scene-only refiner. It is recorded here rather than widened: those rows become spec items for Patricia, the programmer.
 
-### Voice: Biome intros (`content/_runs/biome-intros/blackboard-2.md`)
+### Voice: Biome intros (`content/_runs/biome-intros/run-2/blackboard.md`)
 `python -I _tools/generate.py biome-intros --revise` re-checked the approved Biome intros against the T1–T6 rules.
 
 **Round 1: FAIL.** Clara found:
@@ -155,7 +155,7 @@ She also ran the new T6 check (Look & words): every hive described matches the G
 
 **Round 2: PASS.** William revised, and only 1 minor note remains. The draft goes back to `status: draft` for the designer to re-approve.
 
-### Voice, scored: Biome intros again (`content/_runs/biome-intros/blackboard-3.md`)
+### Voice, scored: Biome intros again (`content/_runs/biome-intros/run-3/blackboard.md`)
 Re-run on 2026-11-20 with Clara's scores, the cached source quotes and the new script checks, with no designer step.
 - **Round 1: script check PASS, Clara FAIL.** Two blocking rows: the guide is still offered as "GDD: TBD" with a non-candidate "Wren" (Lore), and an unsourced fireweed colour and a "tried-and-true" Langstroth claim (Facts & French). Scores: Lore 5/10, Facts & French 5/10, Look & words 7/10, Tone & Glossary 9/10, Completeness 9/10, Child safety 10/10, Sources 10/10 (checked by script).
 - **Round 2: PASS.** William listed the six GDD guide candidates and removed the unsourced claims. Lore went to 9/10 and Facts & French to 9/10. Two minor Look & words notes remain ("little suns", "warm amber light"), so Look & words stays at 7/10.
@@ -175,11 +175,11 @@ Tokens are total processed, from the run log (`_meta/agent-runs.csv`, tables "St
 
 | What | Calls | Tokens |
 |---|---|---|
-| Visual loop, 0.2 farm (`farm-0-2-0-r5`), 3 rounds, no designer step | Vera × 3, Bob × 2, Patricia × 2 | 768,463 (Vera 56–58k per round; Bob 194k and 152k; Patricia 137k and 115k). The 5 unit-suite runs (baseline + 4 gates, about 4 min each) cost no tokens |
-| Visual loop, 0.2 farm, earlier runs (`farm-0-2-0`, `-r2`, `-r3`, `-r4`) | Vera, Bob, Patricia | `farm-0-2-0`: 581,609; `-r2` and `-r3` were stopped and `-r4` failed in round 2 (their boards hold whatever per-call rows they wrote) |
+| Visual loop, 0.2 farm (`0.2.0-farm/run-5`), 3 rounds, no designer step | Vera × 3, Bob × 2, Patricia × 2 | 768,463 (Vera 56–58k per round; Bob 194k and 152k; Patricia 137k and 115k). The 5 unit-suite runs (baseline + 4 gates, about 4 min each) cost no tokens |
+| Visual loop, 0.2 farm, earlier runs (`0.2.0-farm/run-1` to `run-4`) | Vera, Bob, Patricia | `run-1`: 581,609; `run-2` and `run-3` were stopped and `run-4` failed in round 2 (their boards hold whatever per-call rows they wrote) |
 | Visual loop, 0.1.2 farm, 3 rounds and 2 designer stops | Vera × 3, Bob × 2 | 466,798 (round 1: 103,927; round 2: 309,760, of which Bob 255,831; round 3: 53,111) |
-| Voice loop, Biome intros scored re-run (`blackboard-3.md`) | Clara × 2, William | 196,227 |
-| Voice loop, Biome intros first run (`blackboard-2.md`) | Clara × 2, William | 131,695 |
+| Voice loop, Biome intros scored re-run (`biome-intros/run-3`) | Clara × 2, William | 196,227 |
+| Voice loop, Biome intros first run (`biome-intros/run-2`) | Clara × 2, William | 131,695 |
 | Clara calibration after the scores and the script checks | Clara × 2 | 88,838 and 92,879 |
 | Vera calibration | Vera × 2 | 83,171 |
 | Clara before / after | Clara × 2 | 161,219 |

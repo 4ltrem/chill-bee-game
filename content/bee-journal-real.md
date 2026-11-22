@@ -2,7 +2,7 @@
 author: william
 type: journal
 status: approved
-run: content/_runs/bee-journal-real/blackboard-3.md
+run: content/_runs/bee-journal-real/run-3/blackboard.md
 description: Bee Journal entries for five real native bee species (sweat bees, leafcutter bees, bumble bees, mason bees, mining bees) from GDD Tree C Native Bee Species table; appears in the Bee Journal in-game.
 decided: 2026-11-03
 decision: approved with the designer's corrections ('sweat name', changed to 'sweat-y name' 2026-11-07); Meadow flower follow-up done 2026-11-07 (GDD: 'Meadow flowers', generic; Entry 3 names it)

@@ -5,7 +5,7 @@ Your folder: scenes/ and materials/
 You alone work this round. If the cause is in Patricia (scripts/)'s folder, change nothing and say which file and line: the next round goes to them. Change only what a failing row names; every other value, pose and position stays as it is (0.1.4: a lid fix asked to change the end also moved the open pose). A `pick match` row means the live prop must match the designer's picked variant: open both shots and the variant's .tscn, and rebuild what differs. A style row whose Fix ends `(designer)` is not yours: leave it and list it in your reply.
 
 style:
-Style board `game/reports/style/goal-0-2-c3-r1/blackboard.md`, Result:
+Style board `game/reports/style/0.2-goal-c3/run-2/blackboard.md`, Result:
 
 Still FAIL after round 1 (max rounds 1 or the token cap). Open rows:
 

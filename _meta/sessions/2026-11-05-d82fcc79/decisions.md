@@ -50,7 +50,7 @@ Format (parsed by `_tools/decision_page.py`): one `### D<n> · <YYYY-MM-DD> · <
 ### D82 · 2026-11-05 · Records & deliverables · One Design Votes page for every comparison
 - Decided: every comparison is a new section of the one vote page, renamed "Design Votes" (https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa), with earlier questions collapsed. No separate artifact is published and nothing opens in the browser; the link is given. The V3 rim mark and flower patch pages were moved into it (flower patch B picked).
 - Why: two separate pages opened in the browser during the M2 run.
-- Files: `_meta/memory/ab-comparison-page.md`, `_tools/compare_page.py`, `game/reports/variants/flower-patch/decisions.json`
+- Files: `_meta/memory/ab-comparison-page.md`, `_tools/compare_page.py`, `game/reports/variants/flower-patch/round-1/decisions.json`
 
 ### D83 · 2026-11-05 · Workspace & agents · Edit only the needed lines
 - Decided: files are changed with line edits only, never with scripts that read and rewrite a whole file.

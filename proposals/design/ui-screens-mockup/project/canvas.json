@@ -220,7 +220,7 @@
   "notes": {
     "n1": {
       "fill": "orange",
-      "text": "Backgrounds are the real 0.1.4 shots (game/reports/ui-compare/spin-c, the spin-r1 pick), untouched. Only the new UI is drawn on top. Each phone is 360×640 = half of 720×1280, so a 60 px icon here is the 120 px target of V11.",
+      "text": "Backgrounds are the real 0.1.4 shots (game/reports/votes/spin/round-1/c, the spin-r1 pick), untouched. Only the new UI is drawn on top. Each phone is 360×640 = half of 720×1280, so a 60 px icon here is the 120 px target of V11.",
       "w": 340,
       "x": 2200,
       "y": 0

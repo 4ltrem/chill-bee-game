@@ -17,7 +17,7 @@ playtest ([[guide-playtest]]), since that revision returns it to `draft` anyway.
 now wrong (fork icon, tap/hold the centrifuge's physical crank or the screen around it, Continue, sales truck instead).
 
 Also waiting (2026-11-05, M2): `content/biome-intros.md` went back to `draft` after the T6 voice-loop revise
-(`content/_runs/biome-intros/blackboard-2.md`) and needs re-approval. `STYLE_LOOP.md` (the A6 write-up) was approved 2026-11-05 (second shift).
+(`content/_runs/biome-intros/run-2/blackboard.md`) and needs re-approval. `STYLE_LOOP.md` (the A6 write-up) was approved 2026-11-05 (second shift).
 
 Follow-ups recorded in the approvals' `decision:` lines, not started:
 - ~~Meadow flower for the bumble bee visitor~~: done 2026-11-07, generic "Meadow flowers" in the GDD and Entry 3.

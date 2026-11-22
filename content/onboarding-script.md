@@ -3,7 +3,7 @@ author: william
 type: onboarding
 status: draft
 description: Guide character dialogue script for a new player's first session — welcome, first manual harvest (uncapping + centrifuge), and first upgrade purchase
-run: content/_runs/onboarding-script/blackboard-2.md
+run: content/_runs/onboarding-script/run-2/blackboard.md
 ---
 # Onboarding Script — First Session
 **Sources:** `GDD.md` (Story Premise & Onboarding §7, Phase 1 Uncapping & Extraction Minigame §2, Progression Trees §3, Aesthetic & Tone, Child Safety, Glossary).
