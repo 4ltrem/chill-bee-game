@@ -2153,9 +2153,46 @@ Every goal left waits on an open question (Process 1):
 
 Answer each in the spec, or mark it "(answered: ...)" in the handoff, then rerun `goal_agent.py 0.3-course-build.md --note "<the answer>"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note C3, C4, C6 scripts were written earlier and committed by the orchestrator's mid-step checkpoint e9fe638, so the agents saw nothing to change. Not built yet: Bob's scene work (spec contract, Bob items 3 and 6): main.tscn has no PatchSlots node with its six hidden flower_patch.tscn slots and no SkipIcon button; the welcome overlay must also cover/hide the SkipIcon until Play. Hidden patches stay out of group flower_patch until bought (test_economy.gd:391 stays at 3 at start). PatchSlots.toast_requested connects to the farm toast (Patricia). C4 code is complete: only T4.1 tests remain.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: C3, C4, C6 scripts were written earlier and committed by the orchestrator's mid-step checkpoint e9fe638, so the agents saw nothing to change. Not built yet: Bob's scene work (spec contract, Bob items 3 and 6): main.tscn has no PatchSlots node with its six hidden flower_patch.tscn slots and no SkipIcon button; the welcome overlay must also cover/hide the SkipIcon until Play. Hidden patches stay out of group flower_patch until bought (test_economy.gd:391 stays at 3 at start). PatchSlots.toast_requested connects to the farm toast (Patricia). C4 code is complete: only T4.1 tests remain.
+Branch `main`: stays on it.
+
+## Pass 22: scan (2026-11-22T16:17:51-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 8 of 14 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - Question: The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+## Waiting for the designer
+
+Every goal left waits on an open question (Process 1):
+
+- C3: Plant wildflower patch.
+  - The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+Answer each in the spec, or mark it "(answered: ...)" in the handoff, then rerun `goal_agent.py 0.3-course-build.md --note "<the answer>"`.
+
 ## Result
 
-Last invocation (2026-11-22T16:17:04-05:00): waiting-designer.
+Last invocation (2026-11-22T16:17:51-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
