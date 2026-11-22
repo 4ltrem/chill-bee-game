@@ -1095,6 +1095,55 @@ class Loop(unittest.TestCase):
         self.assertFalse(ga.DESIGNER_ROW.search("I found no game bug, so nothing is marked `(designer)`."))   # L49
 
 
+class DefaultedStops(unittest.TestCase):
+    """2026-11-22: the 0.3 stops that needed no decision (placeholders, minimums, empty rows, mutation tooling)."""
+
+    def test_style_minimums_are_not_votes(self):
+        before = {"game/scenes/main.tscn": ["custom_minimum_size = Vector2(64, 64)", "theme_override_font_sizes/font_size = 24"]}
+        after = {"game/scenes/main.tscn": ["custom_minimum_size = Vector2(120, 120)", "theme_override_font_sizes/font_size = 28"]}
+        self.assertEqual(ga.visual_changes(before, after, ""), [])
+        after = {"game/scenes/main.tscn": ["custom_minimum_size = Vector2(96, 96)", "theme_override_font_sizes/font_size = 28"]}
+        self.assertEqual(len(ga.visual_changes(before, after, "")), 1)   # 96 is not a minimum: still a vote
+
+    def test_designer_row_needs_a_question(self):
+        rows = ["Row 1: should the shop fit 8 rows? A: shrink rows; B: scroll (designer)",
+                "Nothing here needs the (designer)."]
+        self.assertEqual([r for r in rows if ga.DESIGNER_ROW.search(r) and ga.QUESTION.search(r)], rows[:1])
+
+    def test_stale_find_rows(self):
+        out = "BROKEN  0.3 item 5 x: `find` occurs 0 times in scripts/victory_overlay.gd\nMISSED  y: every test passed\n"
+        self.assertEqual(len(ga.STALE_FIND.findall(out)), 1)
+        self.assertFalse(ga.STALE_FIND.search("BROKEN  z: already failing without the mutation: t_a"))
+
+    def test_visual_rule_follows_the_spec(self):
+        self.assertIn("placeholders", ga.visual_rule({"placeholders": True}))
+        self.assertIn("Never change a visual number", ga.visual_rule({"placeholders": False}))
+        self.assertIn("ui-screens-mockup", ga.visual_rule({}))
+        self.assertIn("Outstanding TBDs", ga.visual_rule({}))
+
+    def test_placeholders_and_answers_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            ga.keep_placeholders(folder, "C1", [("changed", "`main.tscn`: `(none)` -> `font_size = 64`")])
+            ga.keep_placeholders(folder, "T5.1", [("Bob", "victory panel 800 wide")])
+            text = (folder / "placeholders.md").read_text(encoding="utf-8")
+            self.assertEqual(text.count("## "), 2)
+            self.assertIn("font_size = 64", text)
+            board = folder / "blackboard.md"
+            board.write_text("x\nDesigner's answer: buttons go to 120 px\n", encoding="utf-8")
+            self.assertIn("buttons go to 120 px", ga.earlier_answers(board))
+            self.assertEqual(ga.earlier_answers(folder / "none.md"), "")
+
+    def test_mutation_base_skips_a_manual_checkpoint(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "ledger.json"
+            self.assertEqual(ga.mutation_base({"file": "s.md"}, ledger, "abc1234"), "abc1234")   # no ledger: HEAD
+            _, head = ga.git("rev-parse", "--short", "HEAD~1")
+            ledger.write_text(json.dumps({"s.md": {"C1": {"at": "1", "commit": head.strip()},
+                                                    "C2": {"at": "2", "commit": "0000000"}}}), encoding="utf-8")
+            self.assertEqual(ga.mutation_base({"file": "s.md"}, ledger, "abc1234"), head.strip())   # newest reachable
+
+
 def datetime_after(stamp):
     """A POSIX time one hour after a godot_run log folder's stamp."""
     import datetime

@@ -136,6 +136,29 @@ VISUAL = re.compile(r"^\s*(?:@export\S*\s+)?(?:(?:var|const)\s+)?[\w/.]*(?:size|
 VISUAL_RULE = ("Never change a visual number (a size, scale, offset, font size or margin) to make a check pass: those "
                "are the designer's, voted on the Design Votes page (item 12). If only such a change would fix a row, "
                "change nothing for it and write one line ending `(designer)`: the question, with options A: and B:. ")
+# designer, 2026-11-22: a spec with `visuals: placeholder` in its front matter keeps the visual numbers a fix round sets
+# and lists them for the play-test (placeholders.md) instead of stopping for a Design Votes row (0.3: 6 of 17 stops).
+PLACEHOLDER_RULE = ("This spec's visuals are placeholders (front matter `visuals: placeholder`): you may set a size, "
+                    "offset, font size or margin when a failing row needs it. Keep it close to the canvas board, change "
+                    "only the numbers the row needs, and list each as `placeholder: <file>: <old> -> <new>`; the designer "
+                    "confirms them at play-test. ")
+# 0.3 C3 and C6 stopped twice on the same V11/V12 question: the style guide's minimums are approved values, not votes.
+STYLE_MINIMUMS = ("STYLE_GUIDE minimums are approved values, not votes: raise a touch target below 120 px to 120 and a "
+                  "font below 28 px to 28 without asking, and say so in your reply. ")
+MINIMUM_VALUES = {28.0, 120.0}   # a changed line whose new numbers are only these is a minimum, not a vote
+# designer, 2026-11-22: 0.3 T4.1 stopped on the shop layout, already drawn in the Claude Design canvas.
+LAYOUT_RULE = ("Where a panel sits, how it opens and what fits on screen come from the designer's Claude Design canvas: "
+               "read `UI_DESIGN.md` and the matching board in `proposals/design/ui-screens-mockup/project/` for the look "
+               "and placement of what the spec item asks for. Build only what the spec asks (a board part it does not "
+               "name, like tabs, waits for a later revision); where the spec text differs, the spec wins. "
+               # designer, 2026-11-22: "I shouldn't have to specify something that is already built and on the todo
+               # or tbd list". A question the workspace already answers is not a (designer) row.
+               "Before writing any `(designer)` row, look for the answer in `UI_DESIGN.md`, the canvas boards, "
+               "`README.md` (Outstanding TBDs), `proposals/design/ui-screens.md` and `_meta/sessions/*/decisions.md`: "
+               "if one answers it, apply that answer and cite the file. If the topic is already a listed TBD, build "
+               "the placeholder, name the TBD and go on; it is not a question. Ask only when none of them covers it. ")
+QUESTION = re.compile(r"\?|\bA:")   # a `(designer)` row with no question and no options asks nothing (0.3 T1.1)
+STALE_FIND = re.compile(r"^BROKEN\s.*`find` occurs 0 times", re.M)   # the code moved since the mutation was written
 # L42: T9.1's fix round 2 stopped for a Design Votes row on "A: keep the paused crank; B: reset the crank", no visual
 # value in it. A `(designer)` row is a vote only when it names one of these; any other is a plain designer question.
 # L49: Quinn's "nothing is marked `(designer)`" stopped the 0.3 run as a question; a tag quoted in backticks is a
@@ -383,7 +406,7 @@ def parse_spec(path):
                       "owners": ["Quinn"], "keys": [], "nodes": [], "lines": {"Quinn": [line]}, "value": val,
                       "depends": deps}
     return {"file": Path(path).name, "version": version, "status": meta.get("status", ""), "steps": steps,
-            "goals": goals}
+            "goals": goals, "placeholders": meta.get("visuals", "").strip().lower() == "placeholder"}
 
 
 # ---------------------------------------------------------------------------------------------- the scan
@@ -791,7 +814,7 @@ def briefs(spec, goal, batch, run, branch):
         other = "Bob works on the scenes in parallel" if agent == PROGRAMMER else "Patricia works on the scripts in parallel"
         out[agent] = head + (
             f"Build your part ({FOLDERS[agent]}) of this change. {other}; the handoff is your contract. Run "
-            f"`python -I _tools/contract_check.py` before you finish.{keys}\n{hand_ref}\nYour contract lines:\n{lines}\n\n"
+            f"`python -I _tools/contract_check.py` before you finish. {LAYOUT_RULE}{STYLE_MINIMUMS}{keys}\n{hand_ref}\nYour contract lines:\n{lines}\n\n"
             f"Spec text:\n{spec_slice(spec, goal)}") + tail
     rows = test_impact(goal)
     if rows:   # L39 (b): the stale tests are updated beside the build, from the spec, not found red in fix rounds
@@ -1465,11 +1488,22 @@ def visual_changes(before, after, spec_text=""):
         if not (gone or came):
             continue
         nums = values(" ".join(came)) - values(" ".join(gone))
-        if came and nums and nums <= named:
+        if came and nums and nums <= named | MINIMUM_VALUES:
             continue
         rows.append(f"`{path}`: " + "; ".join(f"`{l}`" for l in gone or ["(none)"]) + " -> "
                     + "; ".join(f"`{l}`" for l in came or ["(removed)"]))
     return rows
+
+
+def keep_placeholders(folder, ids, votes):
+    """Append a placeholder-mode step's visual rows to the run's placeholders.md, the designer's play-test list."""
+    path = folder / "placeholders.md"
+    if not path.is_file():
+        path.write_text("# Placeholder visuals to confirm at play-test\n\nKept by `goal_agent.py` (spec front matter "
+                        "`visuals: placeholder`). Each row is in the tree; change it in Dev mode or the scene if it "
+                        "looks wrong.\n", encoding="utf-8")
+    with path.open("a", encoding="utf-8") as f:
+        f.write(f"\n## {ids} ({now()})\n\n" + "\n".join(f"- {who}: {row}" for who, row in votes) + "\n")
 
 
 def text_hash(goal):
@@ -1544,7 +1578,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     ids = ", ".join(b["id"] for b in batch)
     plan = briefs(spec, goal, batch, run, branch)
     _, base = git("rev-parse", "--short", "HEAD")
-    base = base.strip()
+    base = mutation_base(spec, folder.parent / "ledger.json", base.strip())
     suites = impact_suites(test_impact(goal)) if goal["kind"] == "change" else []
     cmds = checks(spec, goal, base, spec["version"], suites) if goal["kind"] != "handoff" else []
     if dry:   # the console only: no brief files, no board
@@ -1595,6 +1629,14 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                     return "paused"
             else:
                 code, out = run_cmd(cmd, env=env)
+            if code and label == "mutations":   # only stale `find` strings left: warn, the code moved, not the tests
+                rows = re.findall(r"^(?:CAUGHT|MISSED|BROKEN)\s.*$", out, re.M)
+                stale = [r for r in rows if STALE_FIND.search(r)]
+                if stale and all(r.startswith("CAUGHT") or r in stale for r in rows):
+                    say(board, f"- Check `mutations`: PASS with a warning ({len(stale)} stale `find` strings in "
+                               f"`game/tests/mutations.json`; refresh them at the next Quinn step)\n\n```\n"
+                               + "\n".join(stale) + "\n```\n")
+                    continue
             if label == "tests":
                 red_now = red_tests(partial=True) if needs_red else {}   # this check's log, before any rerun
                 if code:
@@ -1660,7 +1702,8 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                       f"committed: keep them with `python -I _tools/checkpoint.py \"{ids} fix-round edits\"`.")
             return "waiting-designer"
         quinn = quinn_round(goal, failed, prev_failed, wrote, replies, last_fix)
-        fix = fix_briefs(spec, goal, batch, failed, run, branch, rnd + 1, quinn=quinn, replies=replies)
+        fix = fix_briefs(spec, goal, batch, failed, run, branch, rnd + 1, quinn=quinn, replies=replies,
+                         answers=earlier_answers(board))
         say(board, f"\n#### Fix round {rnd + 1}: to {', '.join(g.NAMES[a] for a in fix)}"
                    + (f" ({quinn})" if quinn else "") + "\n\n")
         keep_briefs(folder, board, fix, f"{goal['id']}-fix{rnd + 1}")
@@ -1671,12 +1714,17 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         say(board, f"- Check `scope`: " + (f"FAIL ({', '.join(f'`{p}`' for p in stray)} changed outside "
                                            f"{', '.join(FOLDERS[a] for a in fix)})\n" if stray else "PASS\n"))
         rows = [(g.NAMES[a], l.strip().lstrip("-* ")) for a, r in replies.items() if a != QA or quinn
-                for l in r.splitlines() if DESIGNER_ROW.search(l)]
+                for l in r.splitlines() if DESIGNER_ROW.search(l) and QUESTION.search(l)]
         votes = [(who, row) for who, row in rows if VISUAL_ROW.search(row)]   # L42: only a visual value is a vote
         asks = [(who, row) for who, row in rows if not VISUAL_ROW.search(row)]
         votes += [("changed", row) for row in visual_changes(looks_before, visual_lines(), spec_slice(spec, goal))]
         table = lambda rs, col: (f"\n\n| # | Who | {col} |\n|---|---|---|\n" + "\n".join(
             f"| {i} | {who} | {row.replace('|', '/')} |" for i, (who, row) in enumerate(rs, 1)))
+        if votes and spec.get("placeholders"):   # kept, listed for the play-test; the next check decides the step
+            keep_placeholders(folder, ids, votes)
+            say(board, f"- Check `visual numbers`: PLACEHOLDER ({len(votes)} kept for the play-test, listed in "
+                       f"`placeholders.md`)" + table(votes, "Row") + "\n")
+            votes = []
         say(board, "- Check `visual numbers`: " + (f"STOP ({len(votes)} for the designer)\n" if votes else "PASS\n"))
         if asks:
             say(board, f"- Check `designer questions`: STOP ({len(asks)})\n")
@@ -1866,7 +1914,31 @@ def quinn_round(goal, failed, failing, wrote, replies, last_fix):
     return ""
 
 
-def fix_briefs(spec, goal, batch, failed, run, branch, rnd, quinn="", replies=None):
+def visual_rule(spec):
+    """The visual-number paragraph of a code owner's fix brief: minimums and the canvas always, then placeholder or vote."""
+    return STYLE_MINIMUMS + LAYOUT_RULE + (PLACEHOLDER_RULE if spec.get("placeholders") else VISUAL_RULE)
+
+
+def earlier_answers(board, n=5):
+    """The designer's last n answers on this run's board (0.3 C6 asked what C3 had just been told)."""
+    path = Path(board) if board is not None else None
+    found = re.findall(r"^Designer's answer: (.+)$", path.read_text(encoding="utf-8"), re.M) if path and path.is_file() else []
+    return ("The designer's earlier answers in this run still hold; do not ask them again:\n"
+            + "\n".join(f"- {a}" for a in found[-n:]) + "\n\n") if found else ""
+
+
+def mutation_base(spec, ledger_path, head):
+    """The newest goal checkpoint of this spec that HEAD contains, for `mutate.py --since`: a mid-step
+    `checkpoint.py` commit (0.3 T2.1, ff4abe5) must not hide the step's own mutations. HEAD when there is none."""
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8")) if ledger_path.is_file() else {}
+    entries = sorted(ledger.get(spec["file"], {}).values(), key=lambda e: e.get("at", ""), reverse=True)
+    for sha in [e["commit"] for e in entries if e.get("commit")]:
+        if git("merge-base", "--is-ancestor", sha, "HEAD")[0] == 0:
+            return sha
+    return head
+
+
+def fix_briefs(spec, goal, batch, failed, run, branch, rnd, quinn="", replies=None, answers=""):
     """Failures go to the owners of the folders involved (Process 9): code owners for test failures; Quinn alone when
     quinn_round() names a reason (`quinn`), with the code owners' replies that blamed the test."""
     report = "\n\n".join(f"{label}:\n{text}" for label, text in failed)
@@ -1899,7 +1971,7 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd, quinn="", replies=No
                  f"file and line: the next round goes to them. ") if a in other else "" for a in owners}
     keep = ("Change only what a failing row names; every other value, pose and position stays as it is (0.1.4: a lid "
             "fix asked to change the end also moved the open pose). ")
-    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{alone[a]}{keep}{DIAG_RULE['qa' if a == QA else 'code']}{VISUAL_RULE if a != QA else ''}{looks if a == BUILDER else ''}{first if a == QA else ''}{report}\n\nSpec text:\n"
+    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{alone[a]}{keep}{DIAG_RULE['qa' if a == QA else 'code']}{visual_rule(spec) if a != QA else ''}{looks if a == BUILDER else ''}{first if a == QA else ''}{answers}{report}\n\nSpec text:\n"
                      f"{spec_slice(spec, goal)}\n\nReply in at most 150 words." for a in owners}
     if goal["kind"] == "change" and any(l == "tests" for l, _ in failed):
         # an older test may pin what this change was asked to change (e.g. the removed Hive bar): Quinn's folder

@@ -29,6 +29,7 @@
 - [Look before done](look-before-done.md) — never call a model change done on tests alone; compare fresh shots with the picked variant
 - [Spec consistency](spec-consistency.md) — before adding a play-test item, grep the spec for the same object/view and fix contradictions in the same edit
 - [UI design prefs](ui-design-prefs.md) — read UI_DESIGN.md before UI work: real shots + icons, no nav bar, fork meter, Jelly icon K, variants with sliders
+- [Look up before asking](look-up-before-asking.md) — never ask what the canvas, UI_DESIGN.md, TBD list or decisions already answer; apply it and cite the file
 - [Ask with quiz tool](ask-with-quiz-tool.md) — open questions for the designer go in AskUserQuestion, never a text list
 - [Repo only](repo-only.md) — write only inside the repo (hook-enforced); reading outside is fine; moving/deleting outside files needs a yes
 - [GDD review decisions](gdd-review-decisions.md) — GDD is a first draft; leaderboard split by purchase status, habitat health in Flora slot
