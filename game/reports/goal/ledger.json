@@ -298,6 +298,12 @@
    "run": "0.3",
    "at": "2026-11-22T13:34:49-05:00",
    "commit": "3cd0470"
+  },
+  "C3": {
+   "run": "0.3",
+   "at": "2026-11-22T15:05:28-05:00",
+   "held": "The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:05:28-05:00) say why; answer by editing the spec item.",
+   "text": "24abf4b4f9da"
   }
  }
 }

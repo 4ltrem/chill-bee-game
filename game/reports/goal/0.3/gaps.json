@@ -1,8 +1,8 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T14:51:29-05:00",
- "unit_log": "game/reports/_runs/20261122-011146/unit.log",
+ "at": "2026-11-22T15:05:29-05:00",
+ "unit_log": "game/reports/_runs/20261122-145415/unit.log",
  "goals": {
   "C1": {
    "kind": "change",
@@ -64,8 +64,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:05:28-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "C4": {
    "kind": "change",
@@ -283,45 +285,34 @@
  },
  "order": [
   {
-   "id": "C3",
-   "score": 9.68,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.32,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C4",
-   "score": 9.68,
+   "score": 9.69,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.32,
+    "cost": 0.31,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C5",
-   "score": 9.68,
+   "score": 9.69,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.32,
+    "cost": 0.31,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C6",
-   "score": 9.68,
+   "score": 9.69,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.32,
+    "cost": 0.31,
     "ready": 1,
     "blocked_by": []
    }
@@ -428,5 +419,7 @@
    }
   }
  ],
- "ambiguous": []
+ "ambiguous": [
+  "C3"
+ ]
 }

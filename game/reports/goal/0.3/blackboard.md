@@ -790,9 +790,215 @@ FAIL    start     2 errors  (godot exit 1 (1 is normal here), 2 noise lines drop
 
 2 fix rounds failed on C3: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept C3 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C3 fix-round edits"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note after a refresh (L48) the real C3 failures are: 5 shop tests still expect 7 rows (spec item 3 makes 8: update the tests, Quinn; the panel must fit 8 rows without overlapping ForkIcon, Bob); 'Invalid get index refresh_patches (on base: Nil)' x5 (Patricia: guard the bees reference); t_replay_fill_and_back and t_replay_without_back_stays_in_zoom fall back to farm, never the second stop (check whether the refresh_patches error or the welcome overlay breaks replay). Run _runs/20261122-145415/` (the run had stopped: `waiting-designer`).
+
+Designer's answer: after a refresh (L48) the real C3 failures are: 5 shop tests still expect 7 rows (spec item 3 makes 8: update the tests, Quinn; the panel must fit 8 rows without overlapping ForkIcon, Bob); 'Invalid get index refresh_patches (on base: Nil)' x5 (Patricia: guard the bees reference); t_replay_fill_and_back and t_replay_without_back_stays_in_zoom fall back to farm, never the second stop (check whether the refresh_patches error or the welcome overlay breaks replay). Run _runs/20261122-145415/
+Branch `main`: stays on it.
+
+## Pass 8: scan (2026-11-22T15:04:15-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+No gap changed.
+
+### Order: new or rescored (4 of 12)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C3 Plant wildflower patch. | 9.69 | 2 | 2 | 0.31 | 1 | 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia) |
+| 2 | C4 The bumble bee visitor. | 9.69 | 2 | 2 | 0.31 | 1 | 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia) |
+| 3 | C5 Victory screen. | 9.69 | 2 | 2 | 0.31 | 1 | 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia) |
+| 4 | C6 Skip to ending. | 9.69 | 2 | 2 | 0.31 | 1 | 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C3** (score 9.69: 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia)).
+
+### Step: C3 (2026-11-22T15:04:18-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C3-patricia.md` (1815 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C3-quinn.md` (2980 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (109,113 tokens, 5 turns, 19 s):
+
+No files changed, and I wrote no new tests. I ran nothing, as instructed.
+
+I read all seven listed tests against spec item 3. None of them expects anything the spec replaces.
+- **`t_node_contract`, `_fp_prop`, `_fp_prop_contract`:** they check only the prop scene and its root, `FlowerPatch`, which are untouched.
+- **`_fp_main`:** it reads `FlowerPatch1..3` and asserts exactly 3 nodes in group `flower_patch` at start. That still holds if the six hidden slots join the group only on purchase, as the spec says.
+- **`t_dev_ui_bounds_collects_controls`, `t_shop_compact_layout_nothing_in_zoom`, `t_zoom_ui_and_camera`:** none of them reads a row count. They use `ShopPanel`, `UpgradeButton` and the `shop_layout` setting, none of which the spec changes.
+- **`t_pop_tween_unchanged`:** it checks the scrape pop, not the grow-in, so it is unaffected.
+
+Node names used: none added or edited.
+
+Open questions:
+1. `t_shop_seven_rows_on_screen_no_scroll` (registered in `run_tests.gd`) is not on your list, but the spec makes the compact panel eight rows. It will fail until it is updated. I can update it if you add it.
+2. Tests that read `t_shop_rows_order_and_level_text` and `FlowerPatch%d` (`test_layout.gd`) depend on how the new slots are named and ordered.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 4 (cap 30; CLI num_turns 5); end `success`
+
+
+**Patricia** (86,245 tokens, 9 turns, 20 s):
+
+Item 3 and item 6 were already in `scripts/`. I changed no files. The contract check passes (81 lookups, 0 unresolved). I did not run `godot_run.py unit start`: a hook blocks it here, so Rex needs to run it. No tests were run, so none exercises the new input paths yet.
+
+**What is in place**
+- **`economy.gd`:** the `plant_patch` upgrade, last row, with cost from the config and max level `patch_slots`.
+- **`game_config.gd`:** `patch_slots`, `patch_base_cost`, `patch_cost_growth`, `habitat_health_per_patch`, and `patch_grow_seconds`.
+- **`patch_slots.gd`:** class `PatchSlots`. It shows the next slot with the grow-in, adds it to group `flower_patch`, adds Health, and emits `toast_requested("toast_patch_planted")`.
+- **`bees.gd`:** `refresh_patches()` runs when a patch is planted.
+- **`shop_ui.gd`:** the row shows "Thriving" at 6 / 6.
+- **`skip_icon.gd`:** class `SkipIcon`. It plants every remaining patch for free and hides once Health is thriving.
+
+**Node names for Bob:** `PatchSlots` (Node3D, six `flower_patch.tscn` children) and `SkipIcon` (Button).
+
+**Placeholder:** `patch_grow_seconds` is 0.18.
+
+**Open questions**
+- Who connects `toast_requested` to the toast?
+- Dev mode (`dev_panel.gd`) has no patch values yet.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 4 (cap 30; CLI num_turns 9); end `success`
+
+- Tests this round (5): own (5): `t_dev_ui_bounds_collects_controls`, `t_node_contract`, `t_pop_tween_unchanged`, `t_shop_compact_layout_nothing_in_zoom`, `t_zoom_ui_and_camera`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:05:28-05:00) say why; answer by editing the spec item.
+
+## Pass 9: scan (2026-11-22T15:05:29-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 0 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C3 Plant wildflower patch. | change | Patricia | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:05:28-05:00) say why; answer by editing the spec item.
+
+Next: **C4** (score 9.69: 2 goal(s) wait on it; designer feature; cost 0.31 (Patricia)).
+
+### Step: C4 (2026-11-22T15:05:30-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C4-patricia.md` (877 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C4-quinn.md` (2030 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (188,546 tokens, 13 turns, 26 s):
+
+I updated two tests. I did not run them, as instructed.
+
+**Files changed**
+- `tests/test_shop.gd`:
+  - New shared helper `_reach_thriving(m)`. It calls `Economy.add_habitat(habitat_thriving)`, with the value read from config via `cv`.
+  - In `t_shop_no_row_overlaps_other_controls`, I call it before the `JournalButton` rect check. The button is now hidden before thriving, so without it the rect would never be checked.
+- `tests/test_journal.gd`: `t_journal_panel_text_matches_csv_twice` calls `_reach_thriving(m)` before `_shop_open`. A comment quotes the spec line.
+
+**Node names used:** `JournalButton`, `JournalPanel`, `JournalTitle`, `JournalBody`, `JournalCloseButton`, `ShopPanel`.
+
+**Open questions**
+- I assumed `JournalButton` still sits in the shop sheet and appears as soon as `thriving` fires. If Patricia reparents it or changes how it unlocks, the helper's wait may need adjusting.
+- I added no test that the button is hidden before thriving, per the instructions. The contract line T4.1 covers it.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 8 (cap 30; CLI num_turns 13); end `success`
+
+
+**Patricia** (255,175 tokens, 20 turns, 41 s):
+
+Item 4 is in, but I didn't run Quinn's tests or the playthrough. `contract_check.py` passes, with 0 unresolved lookups.
+
+**Files changed**
+- `scripts/journal_ui.gd`: `JournalButton` is hidden until `Economy.habitat_health >= config.habitat_thriving`. It follows `habitat_changed`, so Reset hides it again and closes the panel. Once visible, the button opens the entry as in 0.2.
+- `scripts/farm_ui.gd`: on `Economy.thriving`, it shows `tr("toast_bumble_visitor")` in the existing toast for `PHASE_TOAST_SECONDS` (a placeholder, 4 s).
+
+**Nodes used:** `JournalButton`, `JournalPanel`, `JournalTitle`, `JournalBody`, `JournalCloseButton`, `PhaseToast`, `ToastLabel`.
+
+**Open questions**
+- `toast_bumble_visitor` has no translation yet: it isn't in `translations/journal.csv`, so the raw key will show until the text is exported.
+- Nobody connects `PatchSlots.toast_requested` yet (no toast shows for planting). It's the same open question as in C3.
+- If a patch toast and a thriving toast fire together, they share one label and the later text wins.
+
+**For Quinn:** test that the button is hidden before thriving, visible after, and hidden again after Reset. Also test that the toast shows on thriving.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 11 (cap 30; CLI num_turns 20); end `success`
+
+- Tests this round (49): own (2): `t_journal_panel_text_matches_csv_twice`, `t_shop_no_row_overlaps_other_controls`; calls a helper changed in `tests/test_shop.gd` (5): `t_journal_panel_text_matches_csv_twice`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buy_button_real_click_twice`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`; changed in `tests/test_journal.gd` (1): `t_journal_panel_text_matches_csv_twice`; changed in `tests/test_shop.gd` (1): `t_shop_no_row_overlaps_other_controls`; impacted by `scripts/farm_ui.gd` (via `BeeCountLabel`, `CentrifugeLabel`, `FarmUI`, `ForkIcon`, `HiveCountLabel`, `MoneyLabel`, `PhaseToast`, `SummaryJarsLabel`, `SummaryModal`, `SummaryOkButton`, `SummaryTotalLabel`, `SummaryValueLabel` and 2 more) (28): `t_back_after_one_frame`, `t_back_keeps_half_frame`, `t_camera_back_from_second_stop`, `t_camera_second_stop_hud_clear`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_ui_bounds_collects_controls`, `t_focus_styles`, `t_fork_rules`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_no_continue_button`, `t_no_crank_during_zoom`, `t_node_contract`, `t_node_contract_012`, `t_phase2_auto_sell_sets_once_toast_once`, `t_resume_pending_pile_loads_while_zoom_open`, `t_second_stop_fork_icon_tap`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_speed_tag_below_labels`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`; impacted by `scripts/journal_ui.gd` (via `JournalBody`, `JournalButton`, `JournalCloseButton`, `JournalPanel`, `JournalTitle`, `close`, `habitat_thriving`, `open`) (30): `t_back_after_one_frame`, `t_back_keeps_half_frame`, `t_barrel_eases_to_stop`, `t_bottling_timing`, `t_camera_lid_component_shared`, `t_centrifuge_lid_paths`, `t_config_011`, `t_config_012`, `t_config_placeholders_marked`, `t_dev_backquote_opens`, `t_dev_three_finger_opens`, `t_dev_user_file_ignored_when_off`, `t_hive_lid_leaning_pose`, `t_hive_lid_open_path`, `t_journal_csv_equals_script_output`, `t_journal_panel_text_matches_csv_twice`, `t_lid_close_never_clips_hive`, `t_lid_closes_clear_of_walls`, `t_no_continue_button`, `t_no_crank_during_zoom`, `t_node_contract`, `t_pop_tween_unchanged`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_fill_and_bottling_keep_running`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      43 passed, 3 failed  (godot exit 1, 74 noise lines dropped)  game/reports/_runs/20261122-150618/unit.log
+    FAIL  t_shop_auto_sell_locked_until_delivery_1  seven rows expected, got 8  (996 ms)
+    FAIL  t_shop_no_row_overlaps_other_controls  six rows: expected 7 got 8  (1136 ms)
+    FAIL  t_shop_seven_rows_on_screen_no_scroll  all 7 rows are shown at once: expected 7 got 8  (1082 ms)
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+    SCRIPT ERROR: Invalid get index 'refresh_patches' (on base: 'Nil').
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.3/briefs/C4-fix1-patricia.md` (2284 chars)
+- Brief for Quinn: `game/reports/goal/0.3/briefs/C4-fix1-quinn.md` (2627 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Patricia** (97,637 tokens, 7 turns, 18 s):
+
+Two of the three failures are fixed in `scripts/`. The third is a test problem, not a script problem. I did not run any checks.
+
+- **`refresh_patches` on Nil:** I think the old lambda in `bees.gd` was still connected to `Economy.upgrade_changed` after the Bees node was freed. I replaced it with a method, `_on_upgrade_changed`, that does nothing unless the node is in the tree. Economy is an autoload, so it outlives each test scene. I haven't confirmed this is the cause.
+- **Three shop tests expecting 7 rows (not in my folder):** `plant_patch` is now the eighth upgrade id, so `shop_ui.gd` correctly builds 8 rows. The tests still assert 7. They are in `tests/test_shop.gd`: line 216 for the row-count check, and line 295 for "all seven rows on screen".
+  - Quinn needs to update them to 8. The row-overlap test is in `test_shop.gd` as well.
+  - If the 8 rows don't fit on screen at 720×1280, only a layout change would fix that. That is a visual number, so I changed nothing for it. (designer): does the shop panel need to fit 8 rows? A: shrink the row height; B: let the panel scroll.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 7); end `success`
+
+
+**Quinn** (152,179 tokens, 13 turns, 27 s):
+
+I fixed the three shop-row failures in `tests/test_shop.gd`. I haven't run anything.
+
+**Fixed.** The spec now has eight shop rows, because `plant_patch` is the eighth row in `economy.gd`. I changed three expectations from seven rows to `_SHOP_IDS.size() + 1`, each with the spec line quoted in a comment:
+- `t_shop_auto_sell_locked_until_delivery_1`
+- `t_shop_no_row_overlaps_other_controls`
+- `t_shop_seven_rows_on_screen_no_scroll`
+
+Auto-Sell stays at row index 6.
+
+**Finding, not fixed.** The `Invalid get index 'refresh_patches' (on base: 'Nil')` errors don't come from any test. Nothing in `tests/` mentions `refresh_patches`. It is defined in `game/scripts/bees.gd:49`, and the error comes from the code side. Probably something calls `.refresh_patches` on a null node. Check `bees.gd:37` (called from the setup before the node is ready) and `:45` (the deferred call). The owner is Patricia. I didn't add a `diag:` part to any test.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 13); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: STOP (1 for the designer)
+
+## Waiting for the designer
+
+Fix round 1 on C4 needs a visual number the designer has not voted on (sizes, scales, offsets, fonts and margins are the designer's). Each row becomes a question with votes on the Design Votes page (`_tools/compare_page.py add`); its link goes here. A `changed` row is already in the tree, uncommitted: undo it if the vote keeps the old value. Then rerun `goal_agent.py 0.3-course-build.md --note "<the pick>"`.
+
+| # | Who | Row |
+|---|---|---|
+| 1 | Patricia | If the 8 rows don't fit on screen at 720×1280, only a layout change would fix that. That is a visual number, so I changed nothing for it. (designer): does the shop panel need to fit 8 rows? A: shrink the row height; B: let the panel scroll. |
+
+Comparison pages:
+
 ## Result
 
-Last invocation (2026-11-22T14:53:09-05:00): waiting-designer.
+Last invocation (2026-11-22T15:09:49-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -816,4 +1022,10 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Quinn, C3 fix 1 | 51,225 | 18,758 | 3 | 11 s |
 | Patricia, C3 fix 1 | 46,346 | 16,612 | 4 | 12 s |
 | Quinn, C3 fix 2 | 32,509 | 17,535 | 2 | 8 s |
-| **Total** | **2,133,053** | | | |
+| Quinn, C3 | 109,113 | 34,827 | 5 | 19 s |
+| Patricia, C3 | 86,245 | 25,801 | 9 | 20 s |
+| Quinn, C4 | 188,546 | 28,942 | 13 | 26 s |
+| Patricia, C4 | 255,175 | 28,216 | 20 | 41 s |
+| Patricia, C4 fix 1 | 97,637 | 22,935 | 7 | 18 s |
+| Quinn, C4 fix 1 | 152,179 | 27,165 | 13 | 27 s |
+| **Total** | **3,021,948** | | | |
