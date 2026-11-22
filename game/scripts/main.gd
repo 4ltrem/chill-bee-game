@@ -267,7 +267,7 @@ func open_zoom() -> bool:
 	_spin_pan_timer = 0.0
 	zoom = Zoom.OPENING
 	_timer = Economy.config.lid_move_seconds()
-	_farm_ui.visible = false
+	_farm_ui.visible = false   # item 15: ShopPanel, its dim and ShopButton sit under FarmUIRoot (shop_ui.gd) and stay in the zoom with shop_layout = 1
 	if _harvest_ui != null:
 		_harvest_ui.show_zoom()
 	_centrifuge.set_holding(false)
@@ -417,6 +417,7 @@ func _on_frame_done() -> void:
 ## Hive lid back on, camera out, and the bucket's lid on if it is open with cells in it (spec step 3, either way the zoom ends).
 func _start_closing(on_own: bool) -> void:
 	zoom = Zoom.CLOSING
+	_close_shop_sheet()   # 0.2 item 15: leaving the zoom (Back or on its own) closes an open Shop sheet
 	_timer = maxf(Economy.config.zoom_seconds, Economy.config.lid_move_seconds())
 	resume_pending = not on_own   # all frames done: nothing left to resume
 	_hive.close_lid()
@@ -430,7 +431,14 @@ func _start_closing(on_own: bool) -> void:
 	_refresh_icons()
 
 
+func _close_shop_sheet() -> void:
+	var shop: ShopUI = find_child("ShopPanel", true, false) as ShopUI
+	if shop != null and shop.is_sheet_open():
+		shop.set_sheet_open(false)
+
+
 func _finish_zoom() -> void:
+	_close_shop_sheet()
 	zoom = Zoom.NONE
 	_going_back = false
 	_queue.clear()

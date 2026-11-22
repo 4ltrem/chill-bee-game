@@ -57,6 +57,8 @@ var _close_button: Button
 var _dim: ColorRect
 var _dev_button: Button
 var _dev_home: Vector2 = Vector2(-1.0, -1.0)
+var _home: Node
+var _home_index: int = 0
 
 
 func _process(_delta: float) -> void:
@@ -123,6 +125,7 @@ func _apply_layout() -> void:
 	var journal: Control = find_child("JournalButton", true, false) as Control
 	if journal != null:
 		journal.custom_minimum_size.y = float(_cfg.shop_row_height)
+	_move_parts.call_deferred(layout == SHEET)   # deferred: the scene's parents are still setting up children in _ready
 	if layout == SHEET:
 		_build_sheet_parts()
 		top_level = true
@@ -162,7 +165,7 @@ func _build_sheet_parts() -> void:
 	_shop_button.size = _shop_button.custom_minimum_size
 	_shop_button.pressed.connect(func() -> void: set_sheet_open(true))
 	if _farm_ui != null:
-		_farm_ui.add_child.call_deferred(_shop_button)   # FarmUI is still setting up its children during our _ready
+		_sheet_root().add_child.call_deferred(_shop_button)   # 0.2 item 15: under FarmUIRoot, so it stays when main hides FarmUI in the zoom
 	_dim = ColorRect.new()   # a tap outside the sheet closes it; show_behind_parent keeps it under the sheet
 	_dim.name = "ShopDim"
 	_dim.color = Color(0.0, 0.0, 0.0, 0.35)
@@ -182,6 +185,39 @@ func _build_sheet_parts() -> void:
 	var box: Node = find_child("ShopBox", true, false)
 	if box != null:
 		box.add_child(_close_button)
+
+
+## 0.2 item 15: the node main.gd hides on zoom is FarmUI; the sheet, its dim, the Shop button and the Journal panel live under its parent
+## (FarmUIRoot) while shop_layout = 1, so they stay visible. Compact puts the panel back in the Column (farm-only).
+func _sheet_root() -> Node:
+	return _farm_ui.get_parent() if _farm_ui != null and _farm_ui.get_parent() != null else self
+
+
+func _move_parts(to_root: bool) -> void:
+	if _farm_ui == null or _farm_ui.get_parent() == null:
+		return
+	var root: Node = _farm_ui.get_parent()
+	var journal: Control = _farm_ui.find_child("JournalPanel", true, false) as Control
+	if journal == null:
+		journal = root.find_child("JournalPanel", true, false) as Control
+	if to_root:
+		if _home == null:
+			_home = get_parent()
+			_home_index = get_index()
+		if get_parent() != root:
+			reparent(root, false)
+		if _dim != null and _dim.get_parent() != null and _dim.get_parent() != root:
+			_dim.reparent(root, false)
+		if _dim != null and _dim.get_parent() == root:
+			root.move_child(_dim, get_index())
+		if journal != null and journal.get_parent() != root:
+			journal.reparent(root, false)
+	else:
+		if _home != null and is_instance_valid(_home) and get_parent() != _home:
+			reparent(_home, false)
+			_home.move_child(self, mini(_home_index, _home.get_child_count() - 1))
+		if journal != null and journal.get_parent() == root:
+			journal.reparent(_farm_ui, false)
 
 
 func _attach_dim() -> void:
