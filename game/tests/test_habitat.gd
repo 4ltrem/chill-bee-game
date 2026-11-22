@@ -205,3 +205,97 @@ func t_patch_plant_steps_group_health_twice() -> void:
 		eq(int(slots.call("planted_count")), n, "run %d: still patch_slots planted" % run)
 	e.call("reset")
 	_fin()
+
+
+func _sk_shown(o: Node) -> bool:
+	return o != null and o.has_method("is_showing") and bool(o.call("is_showing"))
+
+
+## 0.3 item 6: a real tap on SkipIcon (farm view) plants every patch for free: Health reaches habitat_thriving, money is unchanged, the victory
+## follows after victory_delay_seconds on the idle farm view, and the icon hides; a reset brings it back and the second farm does the same.
+# goal 0.3 T6.1
+func t_skip_icon_reaches_thriving_free_twice() -> void:
+	_portrait()
+	var e: Node = _eco()
+	var m: Node = await _mk_main()   # not quiet: a disabled Main takes no real taps
+	if m == null:
+		_fin()
+		return
+	var icon: Button = m.find_child("SkipIcon", true, false) as Button
+	var slots: Node = m.find_child("PatchSlots", true, false)
+	var o: Node = m.find_child("VictoryOverlay", true, false)
+	if icon == null or slots == null or o == null:
+		ck(false, "SkipIcon, PatchSlots and VictoryOverlay exist; diag: icon %s, slots %s, overlay %s" % [icon, slots, o])
+		_fin()
+		return
+	var thr: int = int(cv("habitat_thriving"))
+	var n: int = int(cv("patch_slots"))
+	var delay: float = float(cv("victory_delay_seconds"))
+	for run in [1, 2]:
+		e.call("reset")
+		await _frames(3)
+		ck(icon.is_visible_in_tree(), "run %d step start: the skip icon shows on the idle farm view" % run)
+		ck(int(e.get("habitat_health")) < thr, "run %d step start: Health is below habitat_thriving" % run)
+		eq(int(slots.call("planted_count")), 0, "run %d step start: nothing planted" % run)
+		eq(_sk_shown(o), false, "run %d step start: no victory yet" % run)
+		var money0: Variant = e.get("money")
+		await fi.tap_at(icon.get_global_rect().get_center())
+		await _frames(3)
+		ck(int(e.get("habitat_health")) >= thr, "run %d step tap: a real tap raises Health to habitat_thriving; diag: health %s, thr %d, icon rect %s" % [run, str(e.get("habitat_health")), thr, icon.get_global_rect()])
+		eq(e.get("money"), money0, "run %d step tap: money unchanged (free)" % run)
+		eq(int(slots.call("planted_count")), n, "run %d step tap: all patch_slots patches shown" % run)
+		ck(not icon.visible, "run %d step tap: the icon hides once thriving" % run)
+		eq(_sk_shown(o), false, "run %d step delay: the victory is not shown at once; diag: delay %s" % [run, delay])
+		var ok: bool = await _until(func() -> bool: return _sk_shown(o), delay * 3.0 + 2.0)
+		ck(ok, "run %d step victory: the overlay shows after victory_delay_seconds" % run)
+		if o.has_method("close"):
+			o.call("close")
+		await _frames(2)
+	e.call("reset")
+	_fin()
+
+
+## 0.3 item 6: the icon is a farm-view control: hidden on the welcome screen (and a press does nothing there), hidden in the first zoom and
+## at the second stop, shown on the idle farm view.
+# goal 0.3 T6.1
+func t_skip_icon_farm_view_only() -> void:
+	_portrait()
+	var e: Node = _eco()
+	_set_cfg("show_welcome", true)
+	var m: Node = await _mk_main()
+	if m == null:
+		_fin()
+		return
+	var icon: Button = m.find_child("SkipIcon", true, false) as Button
+	var slots: Node = m.find_child("PatchSlots", true, false)
+	if icon == null or slots == null:
+		ck(false, "SkipIcon and PatchSlots exist; diag: icon %s, slots %s" % [icon, slots])
+		_fin()
+		return
+	ck(not icon.is_visible_in_tree(), "welcome: the skip icon is hidden while the welcome screen is up")
+	icon.pressed.emit()
+	await _frames(3)
+	eq(int(slots.call("planted_count")), 0, "welcome: a press does nothing while the welcome screen is up")
+	_cleanup_main(m)
+	_set_cfg("show_welcome", false)
+	var z: Dictionary = await _first_zoom_setup()
+	if z.is_empty():
+		_fin()
+		return
+	var zi: Control = (z["m"] as Node).find_child("SkipIcon", true, false) as Control
+	ck(zi != null and not zi.is_visible_in_tree(), "first zoom: the skip icon is hidden")
+	_cleanup_main(z["m"])
+	var s: Dictionary = await _second_stop_with_capped()
+	if s.is_empty():
+		_fin()
+		return
+	var si: Control = (s["m"] as Node).find_child("SkipIcon", true, false) as Control
+	ck(si != null and not si.is_visible_in_tree(), "second stop: the skip icon is hidden")
+	_cleanup_main(s["m"])
+	e.call("reset")
+	var m2: Node = await _mk_main()
+	if m2 != null:
+		await _frames(3)
+		var ic2: Control = m2.find_child("SkipIcon", true, false) as Control
+		ck(ic2 != null and ic2.is_visible_in_tree(), "idle farm view: the skip icon shows")
+	_fin()

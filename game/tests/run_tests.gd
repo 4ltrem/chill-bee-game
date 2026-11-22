@@ -153,6 +153,8 @@ func _run() -> void:
 		"t_bumble_visitor_toast_journal_unlock_twice",
 		# 0.3 item 5
 		"t_victory_delay_show_close_once_per_farm", "t_victory_waits_for_farm_view",
+		# 0.3 item 6
+		"t_skip_icon_reaches_thriving_free_twice", "t_skip_icon_farm_view_only",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

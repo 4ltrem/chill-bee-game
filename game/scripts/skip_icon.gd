@@ -7,6 +7,8 @@ extends Button
 
 const LABEL_KEY: String = "skip_icon_label"
 
+var _on_farm_view: bool = true
+
 
 func _ready() -> void:
 	tooltip_text = tr(LABEL_KEY)
@@ -34,9 +36,17 @@ func is_thriving() -> bool:
 
 
 func _welcome_up() -> bool:
-	var m: Node = get_tree().current_scene
-	return m != null and m.has_method("welcome_active") and m.welcome_active()
+	var m: Node = get_parent()   # walk up to Main: current_scene is not Main when a test instances it (as victory_overlay.gd)
+	while m != null and not m.has_method("welcome_active"):
+		m = m.get_parent()
+	return m != null and m.welcome_active()
+
+
+## Main calls this on every state change: the icon is a farm-view control only.
+func set_on_farm_view(on: bool) -> void:
+	_on_farm_view = on
+	_sync()
 
 
 func _sync() -> void:
-	visible = not is_thriving()
+	visible = _on_farm_view and not is_thriving()

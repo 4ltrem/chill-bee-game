@@ -1807,5 +1807,25 @@
    "t_bumble_visitor_toast_journal_unlock_twice"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.3 item 6 the skip icon charges money",
+  "file": "scripts/skip_icon.gd",
+  "find": "Economy.set_level(\"plant_patch\", Economy.max_level(\"plant_patch\"))   # free: no money taken",
+  "replace": "Economy.set_level(\"plant_patch\", Economy.max_level(\"plant_patch\"))\n\tEconomy.money -= 1",
+  "expect": [
+   "t_skip_icon_reaches_thriving_free_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 6 the skip icon presses while the welcome screen is up",
+  "file": "scripts/skip_icon.gd",
+  "find": "if is_thriving() or _welcome_up():",
+  "replace": "if is_thriving():",
+  "expect": [
+   "t_skip_icon_farm_view_only"
+  ],
+  "suite": "unit"
  }
 ]

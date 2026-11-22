@@ -186,6 +186,9 @@ func _refresh_icons() -> void:
 	if _centrifuge == null or _truck == null:
 		return
 	var on_farm: bool = zoom == Zoom.NONE
+	var skip: SkipIcon = _farm_ui.find_child("SkipIcon", true, false) as SkipIcon if _farm_ui != null else null
+	if skip != null:
+		skip.set_on_farm_view(on_farm and not _at_second_stop and not welcome_active())   # FarmUI stays visible at the second stop
 	if _fork_icon != null:
 		# 0.1.4 item 1: always shown on the farm view (the button is the honey meter); pressable only when the fork rule holds
 		_fork_icon.set_wanted(on_farm and not _at_second_stop)   # hidden at the second stop (designer 2026-11-06)
