@@ -3244,9 +3244,73 @@ mutate: no mutations to run
 
 2 fix rounds failed on T1.1, T1.2, T.1: `mutations` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept T1.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T1.1, T1.2, T.1 fix-round edits"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --note orchestrator 2026-11-22, full unit 230/232 (_runs/20261122-183621/): (a) C6 bug: SkipIcon stays visible at the second stop and overlaps the hive (t_camera_second_stop_hud_clear); spec item 6 puts it on the farm view only: hide it in both zooms and at the second stop like the other farm-view controls (Patricia), and T6.1 must test that. (b) t_pop_tween_unchanged self-check failed while mutations ran in parallel: likely load, rerun before treating it as real. (c) mutations --since 3331fce: 16/20 caught. MISSED '0.3 item 1 the French Play text is wrong' (t_welcome_play_text_translated_title_not) and '0.3 item 5 victory ignores the farm view' (t_victory_waits_for_farm_view); BROKEN '0.3 item 1 show_welcome false is ignored' (script error in t_welcome_off_by_default_in_tests, make the mutation valid) and '0.3 item 1 the Play button shows the raw key' (find occurs 2 times in welcome_overlay.gd: make it unique). Quinn fixes (c) under T.1.` (the run had stopped: `waiting-designer`).
+
+Designer's answer: orchestrator 2026-11-22, full unit 230/232 (_runs/20261122-183621/): (a) C6 bug: SkipIcon stays visible at the second stop and overlaps the hive (t_camera_second_stop_hud_clear); spec item 6 puts it on the farm view only: hide it in both zooms and at the second stop like the other farm-view controls (Patricia), and T6.1 must test that. (b) t_pop_tween_unchanged self-check failed while mutations ran in parallel: likely load, rerun before treating it as real. (c) mutations --since 3331fce: 16/20 caught. MISSED '0.3 item 1 the French Play text is wrong' (t_welcome_play_text_translated_title_not) and '0.3 item 5 victory ignores the farm view' (t_victory_waits_for_farm_view); BROKEN '0.3 item 1 show_welcome false is ignored' (script error in t_welcome_off_by_default_in_tests, make the mutation valid) and '0.3 item 1 the Play button shows the raw key' (find occurs 2 times in welcome_overlay.gd: make it unique). Quinn fixes (c) under T.1.
+Branch `main`: stays on it.
+
+## Pass 33: scan (2026-11-22T18:51:49-05:00)
+
+Unit results from `game/reports/_runs/20261122-183621/unit.log`. 12 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (8 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 Welcome screen. | change | Patricia, Bob | done | ✓ node WelcomeOverlay, ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ ledger 04f72f9 |
+| C2 Habitat Health. | change | Patricia, Bob | done | ✓ node HabitatPill, ✓ node TopInfo, ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_pill_order_plus_opens_shop_twice, ✓ ledger 3cd0470 |
+| C5 Victory screen. | change | Patricia, Bob | done | ✓ test t_victory_delay_show_close_once_per_farm, ✓ test t_victory_waits_for_farm_view, ✓ ledger 8297ded |
+| T1.1 every test run sets `show_welcome = false` except the welcom | test | Quinn | done | ✓ test t_welcome_off_by_default_in_tests |
+| T1.2 item 1: at launch with `show_welcome = true` the overlay sho | test | Quinn | done | ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_play_text_translated_title_not |
+| T2.1 item 2: Health starts at `habitat_health_start`; `thriving`  | test | Quinn | done | ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_pill_order_plus_opens_shop_twice, ✓ ledger 784fe83 |
+| T5.1 item 5: reaching thriving during a zoom shows no victory unt | test | Quinn | done | ✓ test t_victory_delay_show_close_once_per_farm, ✓ test t_victory_waits_for_farm_view |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | done | 10/10 present: ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_p ... |
+
+No score changed.
+
+Next: **T6.1** (score 3.79: designer feature; cost 0.21 (Quinn)).
+
+### Step: T6.1 (2026-11-22T18:51:49-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T6.1-quinn.md` (3765 chars)
+- Quinn's step skipped: every line already has its marked test (T6.1: t_autosell_full_bed_leaves_by_itself, t_autosell_not_owned_full_bed_waits, t_autosell_part_load_sells_by_sell, t_autosell_twice_matches)
+- Tests this round (4): own (4): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS (no new mutations since the step's base; every own test is already named by a mutation in `game/tests/mutations.json`)
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-22T18:52:39-05:00) say why; answer by editing the spec item.
+
+## Pass 34: scan (2026-11-22T18:52:40-05:00)
+
+Unit results from `game/reports/_runs/20261122-183621/unit.log`. 12 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T6.1 item 6: the skip icon reaches thriving with money unchanged, | test | Quinn | missing AMBIGUOUS | none found |
+
+Nothing left to build.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T6.1: item 6: the skip icon reaches thriving with money unchanged, the victo
+  - Question: The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-22T18:52:39-05:00) say why; answer by editing the spec item.
+
+## Waiting for the designer
+
+Every goal left waits on an open question (Process 1):
+
+- T6.1: item 6: the skip icon reaches thriving with money unchanged, the victo
+  - The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-22T18:52:39-05:00) say why; answer by editing the spec item.
+
+Answer each in the spec, or mark it "(answered: ...)" in the handoff, then rerun `goal_agent.py 0.3-course-build.md --note "<the answer>"`.
+
 ## Result
 
-Last invocation (2026-11-22T18:35:36-05:00): waiting-designer.
+Last invocation (2026-11-22T18:52:40-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
