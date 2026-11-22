@@ -1757,5 +1757,25 @@
    "t_habitat_pill_order_plus_opens_shop_twice"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.3 item 3 a planted patch never joins group flower_patch",
+  "file": "scripts/patch_slots.gd",
+  "find": "\t\t\tslot.add_to_group(GROUP)",
+  "replace": "\t\t\tpass",
+  "expect": [
+   "t_patch_plant_steps_group_health_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3 item 3 a new farm keeps the planted patches",
+  "file": "scripts/patch_slots.gd",
+  "find": "var want: bool = i < level",
+  "replace": "var want: bool = i < level or _shown[i]",
+  "expect": [
+   "t_patch_plant_steps_group_health_twice"
+  ],
+  "suite": "unit"
  }
 ]

@@ -90,3 +90,42 @@ func t_habitat_pill_order_plus_opens_shop_twice() -> void:
 	if panel != null and panel.has_method("set_sheet_open"):
 		panel.call("set_sheet_open", false)
 	_fin()
+
+
+## 0.3 item 3: planting. Buying walks the PatchSlots in child order; each purchase joins group flower_patch and adds
+## habitat_health_per_patch to Health; cost grows per the config; a farm reset hides them again (twice).
+# goal T3.1
+func t_patch_plant_steps_group_health_twice() -> void:
+	var e: Node = _eco()
+	var m: Node = await _mk_main(true)
+	if m == null:
+		_fin()
+		return
+	var slots: Node = m.find_child("PatchSlots", true, false)
+	ck(slots != null, "main.tscn has a PatchSlots node")
+	if slots == null:
+		_fin()
+		return
+	var n: int = int(cv("patch_slots"))
+	var per: int = int(cv("habitat_health_per_patch"))
+	var base: float = float(cv("patch_base_cost"))
+	var growth: float = float(cv("patch_cost_growth"))
+	for run in 2:
+		e.call("reset")
+		await _frames(2)
+		var deco: int = root.get_tree().get_nodes_in_group("flower_patch").size()
+		eq(int(slots.call("slot_count")), n, "run %d: PatchSlots holds patch_slots children" % run)
+		eq(int(slots.call("planted_count")), 0, "run %d: nothing planted at start" % run)
+		var h0: int = int(e.get("habitat_health"))
+		for i in n:
+			e.set("money", 1000000)
+			eq(int(e.call("cost", "plant_patch")), floori(base * pow(growth, i)), "run %d step %d: cost is base x growth^planted" % [run, i])
+			ck(bool(e.call("buy", "plant_patch")), "run %d step %d: the buy succeeds with no gate" % [run, i])
+			eq(int(slots.call("planted_count")), i + 1, "run %d step %d: one more slot shown" % [run, i])
+			eq(root.get_tree().get_nodes_in_group("flower_patch").size(), deco + i + 1, "run %d step %d: group flower_patch gains the planted slot; diag: before %d" % [run, i, deco])
+			eq(int(e.get("habitat_health")), mini(h0 + per * (i + 1), int(cv("habitat_health_max"))), "run %d step %d: Health rises by habitat_health_per_patch" % [run, i])
+		e.set("money", 1000000)
+		ck(not bool(e.call("buy", "plant_patch")), "run %d: a buy at max is refused" % run)
+		eq(int(slots.call("planted_count")), n, "run %d: still patch_slots planted" % run)
+	e.call("reset")
+	_fin()
