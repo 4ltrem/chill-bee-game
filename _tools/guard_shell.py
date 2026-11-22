@@ -13,7 +13,7 @@ Each refusal names the rule and the right way to do it, so the caller rewrites t
      the cwd is already the repo, and absolute paths trip the permission check.
   4. drafts-folder: no Write/Edit outside the repo (temp, scratchpad) except Claude Code's plan files.
      Work a later session needs goes in `_meta/drafts/<version>/`; throwaway output in `game/reports/_runs/`.
-  5. one Design Votes page: a `game/reports/ui-compare/` page is published only to the Design Votes
+  5. one Design Votes page: a `game/reports/votes/` or `variants/` page is published only to the Design Votes
      artifact, and that artifact is never opened in the browser (give the link instead).
   6. goal-run-owns-game: while `_meta/usage/goal-run.lock` exists (goal_agent writes it for a build run and
      removes it at the end), the main session may not Write or Edit in game/scripts, scenes, materials, tests or
@@ -120,7 +120,8 @@ def artifact(inp):
     if action == "open" and url == DESIGN_VOTES:
         return "one Design Votes page: don't open it in the browser; give the designer the link."
     path = norm(inp.get("file_path") or "")
-    if action == "publish" and "game/reports/ui-compare/" in path and not inp.get("asset") and url != DESIGN_VOTES:
+    if (action == "publish" and re.search(r"game/reports/(votes|variants)/", path) and not inp.get("asset")
+            and url != DESIGN_VOTES):
         return (f"one Design Votes page: add a section with compare_page.py add and publish to {DESIGN_VOTES}; "
                 "never a separate artifact.")
     return None

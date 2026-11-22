@@ -1265,9 +1265,9 @@ def checks(spec, goal, base, version, suites=()):
            ("tests", py + ["_tools/godot_run.py", "unit", "start", *suites, *ONLY_FLAGS], ENV)]   # L41: flags, not env alone
     if goal["kind"] == "change" and "Bob" in goal["owners"]:
         out.append(("ui shots", py + ["_tools/ui_shots.py", f"{version}={ROOT}"], None))
-        # one style-loop round (render, style_check, Vera; no Bob): a FAIL goes to Bob in the fix round. {round} is
-        # filled per round, since a style board can't be reused.
-        slug = f"goal-{version}-{goal['id']}-r{{round}}".lower().replace(".", "-")
+        # one style-loop round (render, style_check, Vera; no Bob): a FAIL goes to Bob in the fix round. Each fix
+        # round's call is the next run-N/ under style/<version>-goal-<id>/ (naming review, 2026-11-21).
+        slug = f"{version}-goal-{goal['id']}".lower()
         out.append(("style", py + ["_tools/style_loop.py", slug, "--max-rounds", "1", "--request",
                                    f"goal_agent {version} {goal['id']}: check Bob's change against STYLE_GUIDE.md"], None))
     if goal["kind"] == "test":
@@ -1553,7 +1553,6 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
             say(board, tests_line(own, impact, prev_failed, focus))
         red_now = {}
         for label, cmd, env in cmds:
-            cmd = [c.replace("{round}", str(rnd)) for c in cmd]
             if label == "tests":   # L42: no full unit run per step; the run's end runs every suite once
                 at = cmd.index("--time-scale")
                 cmd = cmd[:at] + [s for s in impact["suites"] if s not in cmd] + cmd[at:]
@@ -1743,7 +1742,7 @@ def style_report(out, changed=None):
     """The Result of the style board a failed `style` check names (its open rows), else the output's tail.
     With `changed` (paths this step changed), only rows about those files are kept: the board checks the whole game,
     and in 0.2 C3 Bob followed an older V4 row on honey_cell.tscn and broke two frame tests. "" when no row is left."""
-    m = re.search(r"game/reports/style/[\w-]+/blackboard\.md", out)
+    m = re.search(r"game/reports/style/[\w.-]+/run-\d+/blackboard\.md", out)
     board = ROOT / m.group(0) if m else None
     if board and board.is_file():
         result = board.read_text(encoding="utf-8").split("\n## Result", 1)
@@ -1784,7 +1783,7 @@ def rows_in_scope(body, changed):
 def match_pick(spec, goal, live, pick, folder, rnd, board, usage, run, ids):
     """Render the live prop beside the pick and ask Vera whether they match. "" on PASS, the rows on FAIL,
     None when the budget guard pauses the run."""
-    out = folder / "pick" / f"{goal['id']}-r{rnd}"
+    out = folder / "pick" / goal["id"] / f"round-{rnd}"
     code, text = run_cmd(pick_match.render_cmd(live, pick, out))
     say(board, f"- Check `pick match` render ({live} beside {pick}): {'done' if code == 0 else f'FAIL (exit {code})'}\n")
     if code:

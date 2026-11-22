@@ -12,7 +12,7 @@ Suites: unit (run_tests.gd, headless), start (a headless start, errors only), pl
 measure (r4_measure.gd), snapshot (snapshot_pop.gd), ui (ui_bounds_pixels.gd), touch (touch_windowed.gd);
 the windowed ones open a 720x1280 window. `all` runs every test suite; no suite means `unit start`.
 Shot runs (by name only, not in `all`; PASS = exit 0 + COMPLETED): lid (lid_shots.gd, the hive lid's close shot every
-10% plus per-node penetration, into ROOT/../game/reports/_look/lid/); fixture (make_recording_fixture.gd, rewrites
+10% plus per-node penetration, into ROOT/../game/reports/votes/lid-close/<YYYY-MM-DD>/); fixture (make_recording_fixture.gd, rewrites
 tests/fixtures/recording_fill_and_back.json; PASS = exit 0 + its "wrote" line).
 
 Why: agents used to read Godot's raw output, hundreds of lines a run, much of it engine noise (the
@@ -51,7 +51,7 @@ SUITES = {
     "ui": {"script": "res://tests/ui_bounds_pixels.gd", "headless": False},
     "touch": {"script": "res://tests/touch_windowed.gd", "headless": False},
     # shot runs: no pass/fail total; PASS = exit 0 + COMPLETED. --out is relative to the checkout root (the folder above game/)
-    "lid": {"script": "res://tests/lid_shots.gd", "headless": False, "shots": True, "args": ["--out=game/reports/_look/lid"]},
+    "lid": {"script": "res://tests/lid_shots.gd", "headless": False, "shots": True, "args": ["--out=game/reports/votes/lid-close/{date}"]},
     # fixture runs: rewrite a test fixture by driving the game; PASS = exit 0 + the `done` line
     "fixture": {"script": "res://tests/make_recording_fixture.gd", "headless": True, "shots": True, "done": "wrote "},
 }
@@ -84,7 +84,8 @@ def command(suite, root, sets=()):
             cmd += WINDOW
         cmd += ["-s", spec["script"]]
         if spec.get("args") or sets:
-            cmd += ["--"] + spec.get("args", []) + list(sets)
+            today = time.strftime("%Y-%m-%d")   # dated shot folders, never a moving "now" (naming review)
+            cmd += ["--"] + [x.replace("{date}", today) for x in spec.get("args", [])] + list(sets)
     else:
         cmd += ["--quit-after", "300"]
     return cmd

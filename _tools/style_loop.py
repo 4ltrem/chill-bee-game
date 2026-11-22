@@ -7,14 +7,14 @@
 Generator → Evaluator → Refiner, built like generate.py. Each round:
   1. (from round 2) Bob gets only the open FAIL rows not held for the designer and edits
      game/scenes/ and game/materials/ (the diff goes on the blackboard);
-  2. game/tests/style_shots.gd renders the fixed shot set into game/reports/style/SLUG/round-N/;
+  2. game/tests/style_shots.gd renders the fixed shot set into game/reports/style/SLUG/run-N/round-N/;
   3. style_check.py measures the script rules (its table goes on the blackboard);
   4. Vera, the style critic, judges the shots and the table and replies with a verdict block.
 The round passes only when Vera says PASS and style_check.py has no blocking row.
 
 Sandbox and guards (designer, 2026-11-20): by default the loop works on a copy of the game under
-_meta/sessions/runs/style-SLUG-sandbox/ (gitignored), never on game/ itself, and ends by writing
-game/reports/style/SLUG/sandbox.patch for the designer to review and `git apply` (--live edits the game).
+_meta/sessions/runs/style-SLUG-run-N-sandbox/ (gitignored), never on game/ itself, and ends by writing
+game/reports/style/SLUG/run-N/sandbox.patch for the designer to review and `git apply` (--live edits the game).
 After each Bob edit, the loop puts back any change to motion, to the size or place of the props the
 designer picked, or to the UI (the FarmUIRoot tree and its StyleBoxes are not Bob's), then runs the
 unit suite on the copy (the test gate, --no-gate skips it); a round that fails it is undone.
@@ -32,7 +32,9 @@ and once the designer has edited STYLE_GUIDE.md or picked an option, `--resume S
 from the next round. A run also stops at PASS, at --max-rounds (counted over the whole run) or
 past --max-tokens (checked after each FAIL).
 
-The blackboard is game/reports/style/SLUG/blackboard.md (format: _templates/blackboard.md); no agent reads it. Every agent call is
+SLUG is <version>-<scene> (0.2.1-farm; goal_agent uses 0.2-goal-c3). Each call without --resume starts the
+next run-N/ inside game/reports/style/SLUG/ (naming review, designer 2026-11-21); --resume continues the newest.
+The blackboard is game/reports/style/SLUG/run-N/blackboard.md (format: _templates/blackboard.md); no agent reads it. Every agent call is
 logged to the run log (table "Style loop") and its transcript kept under _meta/sessions/runs/.
 Tests: python -I _tools/test_generate.py (StyleLoop cases). Standard library only.
 """
@@ -390,7 +392,7 @@ def finish(board, slug, usage, result, summary, run_folder):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("slug", help="run name, e.g. farm-0-1-2")
+    ap.add_argument("slug", help="<version>-<scene>, e.g. 0.2.1-farm; each call is a new run-N/ inside it")
     ap.add_argument("--request", default="Check the current farm against STYLE_GUIDE.md and fix what fails.")
     ap.add_argument("--resume", action="store_true", help="continue a run stopped for the designer")
     ap.add_argument("--note", help="with --resume: the designer's decision on the waiting rows, passed to Vera")
@@ -400,10 +402,11 @@ def main(argv=None):
     ap.add_argument("--live", action="store_true", help="let Bob edit the game itself instead of a sandbox copy")
     ap.add_argument("--no-gate", action="store_true", help="skip the test gate after Bob's edits")
     a = ap.parse_args(argv)
-    if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", a.slug):
-        sys.exit("slug must be kebab-case")
+    if not re.fullmatch(r"[a-z0-9]+([.-][a-z0-9]+)*", a.slug):
+        sys.exit("slug must be <version>-<scene> in kebab-case, e.g. 0.2.1-farm")
     game = (g.ROOT / a.root).resolve()
-    base = g.ROOT / "game" / "reports" / "style" / a.slug
+    runs = g.ROOT / "game" / "reports" / "style" / a.slug
+    base = (g.run_dir(runs, newest=True) or runs / "run-1") if a.resume else g.run_dir(runs)
     board = base / "blackboard.md"
     rel_board = board.relative_to(g.ROOT).as_posix()
     if a.resume:
@@ -420,15 +423,13 @@ def main(argv=None):
         g.resumed(board, f"The designer has answered the rows waiting above; the loop goes on from round {start}.\n"
                          + (f"\nDesigner's decision: {a.note}\n" if a.note else ""))
     else:
-        if board.exists() and g.get_front(board, "result") not in ("failed",):
-            sys.exit(f"{rel_board} already exists; use --resume or a new slug")
         g.board_start(board, {"slug": a.slug, "started": datetime.date.today(), "max_rounds": a.max_rounds,
                               "max_tokens": a.max_tokens}, f"Style blackboard: {a.slug}", a.request)
         start, resumed_block, resumed_changes = 1, None, None
-    run_folder = g.ROOT / g.RUNS / f"{datetime.date.today()}-style-{a.slug}"
+    run_folder = g.ROOT / g.RUNS / f"{datetime.date.today()}-style-{a.slug}-{base.name}"
     live = game
     if not a.live:
-        game = make_sandbox(live, g.ROOT / g.RUNS / f"style-{a.slug}-sandbox")
+        game = make_sandbox(live, g.ROOT / g.RUNS / f"style-{a.slug}-{base.name}-sandbox")
         if start == 1:
             g.append(board, f"\nSandbox: Bob edits `{game.relative_to(g.ROOT).as_posix()}/`, a copy; the game itself "
                             f"does not change. The run ends with `sandbox.patch` beside this board for the designer.\n")

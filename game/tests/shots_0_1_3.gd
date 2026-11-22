@@ -1,12 +1,12 @@
 # Bob: round 5 camera mock-up (option C, rack c-1: whole hive scaled 1.4x, 7 x 5 cells, layout C at cell 2.0). Copy of ab_round4_shots.gd.
 # Mock-up only: everything is placed at runtime, main.tscn is not touched.
 #   Godot --path game --resolution 720x1280 --position 0,0 -s res://tests/shots_0_1_3.gd [-- truck=0.8,1.2 pan_margin=0.04]
-# Shots to game/reports/0.1.3-shots/: z1-tight|mid|loose (hive + centrifuge, margins 3/6/10%), pan-quarter|third|half (second stop:
+# Shots to game/reports/builds/0.1.3/shots/: z1-tight|mid|loose (hive + centrifuge, margins 3/6/10%), pan-quarter|third|half (second stop:
 # centrifuge, crate, truck, hive partly in the upper-right corner) and round5.json.
 extends SceneTree
 
 const FarmInput := preload("res://tests/farm_input.gd")
-const OUT := "res://reports/0.1.3-shots/"
+const OUT := "res://reports/builds/0.1.3/shots/"
 const CELL: float = 2.0
 const ASPECT: float = 720.0 / 1280.0
 const HIVE_SCALE: float = 1.4

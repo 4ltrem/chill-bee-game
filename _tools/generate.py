@@ -13,8 +13,8 @@ PASS stops the loop with `status: draft` (awaiting the designer); a FAIL after t
 the draft with `status: needs-review`. Agents run through the Claude Code CLI (`claude -p --agent
 ...`, prompt on stdin), so no API key is needed. Standard library only.
 
-The blackboard (content/_runs/SLUG/blackboard.md, format in _templates/blackboard.md) is the run's
-shared record: the request, a link to the round-1 draft (saved as blackboard-round-1.md beside it),
+The blackboard (content/_runs/SLUG/run-N/blackboard.md, format in _templates/blackboard.md) is the run's
+shared record: the request, a link to the round-1 draft (saved as round-1.md beside it),
 a diff against the previous round after that, every verdict, and one Result. The script is
 its controller: it hands each agent only the slice it needs in the prompt (William: the open FAIL
 rows; the critic: the draft or the diff, plus its previous verdict) and appends what they return.
@@ -25,7 +25,8 @@ research/SLUG.md (on --revise, verifying the draft's existing claims) and Willia
 briefs. In later rounds, FAIL rows asking for a better source go to Ruth first, as a new brief
 research/SLUG-2.md, -3, ...
 
---revise starts a new run (blackboard-2.md, -3, ...) on the existing draft instead of a blank one.
+--revise starts a new run (run-2/, run-3/, ...) on the existing draft instead of a blank one. A failed
+run's folder stays as history (`result: failed`); the next run takes the next number.
 With designer notes, William first edits the draft for them; without, the critic checks the
 draft as it stands, and William is called only if it fails. William edits flagged lines only.
 
@@ -227,6 +228,15 @@ def resumed(board, text):
     append(board, f"\n## Resumed {datetime.date.today()}\n\n{text.strip()}\n")
 
 
+def run_dir(parent, newest=False):
+    """PARENT/run-N/, one shape for every loop's re-runs (naming review, designer 2026-11-21): the next free N, or with
+    `newest` the highest existing one (None if there is none). `round-N/` stays the word for a round inside a run."""
+    nums = sorted(int(p.name[4:]) for p in Path(parent).glob("run-*") if p.name[4:].isdigit())
+    if newest:
+        return Path(parent) / f"run-{nums[-1]}" if nums else None
+    return Path(parent) / f"run-{(nums[-1] if nums else 0) + 1}"
+
+
 def calls_file(board):
     return board.with_name(f"{board.stem}.calls.json")
 
@@ -398,7 +408,7 @@ def main(argv=None):
         sys.exit("slug must be kebab-case, e.g. onboarding-script")
 
     draft = ROOT / "content" / f"{a.slug}.md"
-    run_dir = ROOT / "content" / "_runs" / a.slug
+    runs = ROOT / "content" / "_runs" / a.slug
     rel_draft = draft.relative_to(ROOT).as_posix()
     if a.revise:
         if not draft.is_file():
@@ -406,10 +416,7 @@ def main(argv=None):
         a.type = a.type or get_front(draft, "type")
         if a.type not in TYPES:
             sys.exit(f"{rel_draft} has no valid type:; pass --type")
-        n = 2
-        while (run_dir / f"blackboard-{n}.md").exists():
-            n += 1
-        board = run_dir / f"blackboard-{n}.md"
+        board = run_dir(runs) / "blackboard.md"
         previous = get_front(draft, "run") or "none recorded"
         request = (f"Revision of `{rel_draft}` (previous run: `{previous}`, status was "
                    f"`{get_front(draft, 'status')}`).\n\nDesigner notes: {a.request or 'none; re-check against the current rules.'}")
@@ -418,23 +425,16 @@ def main(argv=None):
             sys.exit("a new draft needs --type and --request (or use --revise)")
         if draft.exists():
             sys.exit(f"{rel_draft} already exists; use --revise to revise it")
-        board = run_dir / "blackboard.md"
-        if board.exists():
-            if get_front(board, "result") != "failed":
-                sys.exit(f"{board.relative_to(ROOT).as_posix()} already exists; use --revise")
-            n = 1
-            while (run_dir / f"blackboard-failed-{n}.md").exists():
-                n += 1
-            board.rename(run_dir / f"blackboard-failed-{n}.md")  # keep the failed run as history
-            for old in (calls_file(board), run_dir / "blackboard-round-1.md"):
-                if old.is_file():
-                    old.rename(run_dir / old.name.replace("blackboard", f"blackboard-failed-{n}"))
+        last = run_dir(runs, newest=True)
+        if last and (last / "blackboard.md").exists() and get_front(last / "blackboard.md", "result") != "failed":
+            sys.exit(f"{(last / 'blackboard.md').relative_to(ROOT).as_posix()} already exists; use --revise")
+        board = run_dir(runs) / "blackboard.md"   # a failed run's folder stays as history
         request = a.request
     set_live_tag(f"content {a.slug}")
     use_research =a.type == "journal" and not a.no_research
     rel_board = board.relative_to(ROOT).as_posix()
-    run_folder = ROOT / RUNS / f"{datetime.date.today()}-{a.slug}-{board.stem.replace('blackboard', 'run')}"
-    run_dir.mkdir(parents=True, exist_ok=True)
+    run_folder = ROOT / RUNS / f"{datetime.date.today()}-{a.slug}-{board.parent.name}"
+    board.parent.mkdir(parents=True, exist_ok=True)
     board_start(board, {"slug": a.slug, "type": a.type, "started": datetime.date.today(),
                         "max_rounds": a.max_rounds, "max_tokens": a.max_tokens}, f"Blackboard: {a.slug}", request)
 
@@ -485,7 +485,7 @@ def main(argv=None):
             text = draft.read_text(encoding="utf-8").strip()
             if n == 1:
                 section = f"### Draft ({'William' if task else 'unchanged from the previous run'}), round 1"
-                snap = run_dir / f"{board.stem}-round-1.md"   # the draft file changes each round: keep round 1
+                snap = board.parent / "round-1.md"   # the draft file changes each round: keep round 1
                 snap.write_text(text + "\n", encoding="utf-8", newline="\n")
                 append(board, f"\n## Round 1\n\n{section}\n\nThe full draft: `{snap.relative_to(ROOT).as_posix()}` "
                               f"({len(text.splitlines())} lines). Later rounds show only the changes.\n")

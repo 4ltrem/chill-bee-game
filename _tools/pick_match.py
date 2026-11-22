@@ -6,7 +6,7 @@
 
 The look-before-done rule as a step (designer, 2026-11-08: C5 shipped a shallow hive with two flat frames instead of
 round 9 pick "a", with every test green). One Godot load renders both scenes with the same staging and close camera
-(game/tests/model_shots.gd --scenes) into DIR (default game/reports/pick/<live stem>/), as <stem>.png each.
+(game/tests/model_shots.gd --scenes) into DIR (default game/reports/variants/<live stem>/pick-match/), as <stem>.png each.
 Then Vera gets a pick-match prompt: shape, parts, counts, proportions and layout only, not the style rules.
 Exit 0 on PASS (or after rendering, with --no-agent), 1 on FAIL with her rows printed, 2 when the render fails.
 goal_agent.py uses render() and prompt() itself, so its budget guard and run log cover Vera's call.
@@ -42,7 +42,7 @@ def res(path):
 
 
 def default_out(live):
-    return ROOT / "game" / "reports" / "pick" / Path(live).stem
+    return ROOT / "game" / "reports" / "variants" / Path(live).stem.replace("_", "-") / "pick-match"
 
 
 HIDE = "HiveLid,Lid"   # a live prop's closed lid hides the frames the pick shows; hidden in the live shot only

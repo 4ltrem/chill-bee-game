@@ -1,5 +1,5 @@
 # Quinn: the 0.1 Harvest shot set (game/CONTEXT.md Process 6: one screenshot per state in the spec's state table plus every new view),
-# WINDOWED at 720 x 1280, into game/reports/0.1-shots/ with the prefix "q-" (Bob's own shots there are not touched).
+# WINDOWED at 720 x 1280, into game/reports/builds/0.1.0/shots/ with the prefix "q-" (Bob's own shots there are not touched).
 #   Godot --path game --resolution 720x1280 --position 0,0 -s res://tests/shots_0_1.gd
 # The zoom, the scrape and the Back are real input (tests/farm_input.gd); the states in between are set up with the same Dev-style cheats as
 # play_loop.gd (fill_now, add_cells, begin_crank and turns through tap()). The cell in flight is shot in slow motion (Engine.time_scale)
@@ -8,7 +8,7 @@
 extends SceneTree
 
 const FarmInput := preload("res://tests/farm_input.gd")
-const OUT := "res://reports/0.1-shots/"
+const OUT := "res://reports/builds/0.1.0/shots/"
 
 var fi: RefCounted
 var main: Node

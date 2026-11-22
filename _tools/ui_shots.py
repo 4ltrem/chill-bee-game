@@ -8,7 +8,8 @@ Each WORKTREE is a checkout's root (the folder holding game/). The moment list l
 MOMENTS list of game/tests/ui_compare_shots.gd. This tool copies that script (from this repository unless
 --script names another) into each worktree, so every version is shot at the same moments. It runs Godot windowed at
 720x1280 with `-- LABEL`, then tiles the shots with contact_sheet.py. Shots and shots.json land in
-WORKTREE/game/reports/ui-compare/LABEL/. --collect DIR also copies each label's folder to DIR/LABEL/.
+WORKTREE/game/reports/builds/LABEL/ui/ for a version label, or WORKTREE/game/reports/LABEL/ when LABEL holds a slash
+(a vote option: votes/<vote-id>/<option>). --collect DIR also copies each label's folder to DIR/LABEL/.
 
 Designer rule (2026-11-06): the same moments are captured by this script, not by an agent. An agent (Bob) is
 only called when a new screen, phase or menu enters the game, to add its entry to MOMENTS.
@@ -29,6 +30,13 @@ from godot_run import GODOT  # noqa: E402
 REL_SCRIPT = os.path.join("game", "tests", "ui_compare_shots.gd")
 
 
+def out_rel(label):
+    """Where LABEL's shots go under game/reports/ (naming review, 2026-11-21): a version label (0.2.1) is that build's
+    `builds/0.2.1/ui`; a label with a slash is the path itself (`votes/shop-layout/sheet`). ui_compare_shots.gd
+    applies the same rule."""
+    return label if "/" in label else f"builds/{label}/ui"
+
+
 def shoot(label, tree, script, timeout, sets=()):
     game = os.path.join(tree, "game")
     if not os.path.isfile(os.path.join(game, "project.godot")):
@@ -36,7 +44,7 @@ def shoot(label, tree, script, timeout, sets=()):
     dest = os.path.join(tree, REL_SCRIPT)
     if os.path.abspath(dest) != os.path.abspath(script):
         shutil.copyfile(script, dest)
-    out = os.path.join(game, "reports", "ui-compare", label)
+    out = os.path.join(game, "reports", *out_rel(label).split("/"))
     os.makedirs(out, exist_ok=True)
     cmd = [GODOT, "--path", game, "--resolution", "720x1280", "--position", "0,0",
            "-s", "res://tests/ui_compare_shots.gd", "--", label, *sets]
@@ -83,7 +91,7 @@ def main(argv=None):
             sys.exit(f"ui_shots: expected LABEL=WORKTREE, got {t}")
         lines.append(shoot(label, os.path.abspath(tree), os.path.abspath(a.script), a.timeout, a.set))
         if a.collect:
-            src = os.path.join(tree, "game", "reports", "ui-compare", label)
+            src = os.path.join(tree, "game", "reports", *out_rel(label).split("/"))
             if os.path.isdir(src):
                 shutil.copytree(src, os.path.join(a.collect, label), dirs_exist_ok=True)
     print("\n".join(lines))

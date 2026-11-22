@@ -106,8 +106,10 @@ class Workspace(unittest.TestCase):
     def status(self):
         return g.get_front(self.root / "content" / "x.md", "status")
 
-    def board(self, name="blackboard.md"):
-        return (self.root / "content" / "_runs" / "x" / name).read_text(encoding="utf-8")
+    def board(self, run=None):
+        """Run N's board, by default the newest run's (content/_runs/x/run-N/blackboard.md)."""
+        runs = self.root / "content" / "_runs" / "x"
+        return ((runs / f"run-{run}" if run else g.run_dir(runs, newest=True)) / "blackboard.md").read_text(encoding="utf-8")
 
 
 class GenerateTest(Workspace):
@@ -127,9 +129,9 @@ class GenerateTest(Workspace):
         self.assertIn("### Critic, round 1\nVERDICT: PASS", board)
         self.assertNotIn("```", board)  # fences and chatter are stripped
         self.assertNotIn(BAD, board)  # the draft goes by reference (an input), the verdict inline (an output)
-        snap = self.root / "content" / "_runs" / "x" / "blackboard-round-1.md"
+        snap = self.root / "content" / "_runs" / "x" / "run-1" / "round-1.md"
         self.assertIn(BAD, snap.read_text(encoding="utf-8"))
-        self.assertIn("`content/_runs/x/blackboard-round-1.md`", board)
+        self.assertIn("`content/_runs/x/run-1/round-1.md`", board)
         self.assertTrue(board.startswith("---\nslug: x\n") and board.count("## Result") == 1)
 
     def test_fail_then_pass_hands_out_slices(self):
@@ -211,7 +213,7 @@ class GenerateTest(Workspace):
         self.run_main(fake, "--revise")
         self.assertEqual(fake.calls, [g.CRITIC])
         self.assertEqual(self.status(), "approved")
-        self.assertIn("unchanged from the previous run", self.board("blackboard-2.md"))
+        self.assertIn("unchanged from the previous run", self.board(2))
 
     def test_revise_with_notes_calls_william_first(self):
         self.new(Fake(self.root, ["PASS"]))
@@ -235,7 +237,8 @@ class GenerateTest(Workspace):
         self.assertIn("result: failed", self.board())
         self.new(Fake(self.root, ["PASS"]))
         self.assertIn("result: draft", self.board())
-        self.assertIn("result: failed", self.board("blackboard-failed-1.md"))
+        self.assertIn("result: failed", self.board(1))                      # the failed run stays as history
+        self.assertEqual(sorted(p.name for p in (self.root / "content" / "_runs" / "x").iterdir()), ["run-1", "run-2"])
 
     def test_a_finished_run_is_not_overwritten(self):
         self.new(Fake(self.root, ["PASS"]))
@@ -265,7 +268,7 @@ class GenerateTest(Workspace):
             g.projects_dir = self.saved_projects
         runs = list((self.root / "_meta" / "sessions" / "runs").iterdir())
         self.assertEqual(len(runs), 1)
-        self.assertTrue(runs[0].name.endswith("-x-run"))
+        self.assertTrue(runs[0].name.endswith("-x-run-1"))
         kept = sorted(p.name for p in runs[0].iterdir())
         self.assertEqual(kept, ["critic-round-1.jsonl", "critic-round-2.jsonl", "william-round-1",
                                 "william-round-1.jsonl", "william-round-2.jsonl"])
@@ -959,8 +962,9 @@ class BuildToolsTest(unittest.TestCase):
             self.assertIsNotNone(wr("C:/Users/x/AppData/Local/Temp/draft.md"))   # drafts live in the repo
             self.assertIsNone(wr("C:/Users/x/.claude/plans/p.md"))
             art = lambda **k: gs.decide("Artifact", k, repo)
-            self.assertIsNotNone(art(file_path="game/reports/ui-compare/design-votes.html"))
-            self.assertIsNone(art(file_path="game/reports/ui-compare/design-votes.html", url=gs.DESIGN_VOTES))
+            self.assertIsNotNone(art(file_path="game/reports/votes/design-votes.html"))
+            self.assertIsNotNone(art(file_path="game/reports/variants/fork/round-4/vote.html"))
+            self.assertIsNone(art(file_path="game/reports/votes/design-votes.html", url=gs.DESIGN_VOTES))
             self.assertIsNotNone(art(action="open", url=gs.DESIGN_VOTES))
             self.assertIsNone(art(file_path="report.html"))
             self.assertIsNone(wr("game/tests/t.gd", "Edit"))                     # no goal run: the main session may edit
@@ -1077,7 +1081,7 @@ class StyleLoop(unittest.TestCase):
             return self.sl.main(["s", *args])
 
     def board(self):
-        return (self.root / "game" / "reports" / "style" / "s" / "blackboard.md").read_text(encoding="utf-8")
+        return (g.run_dir(self.root / "game" / "reports" / "style" / "s", newest=True) / "blackboard.md").read_text(encoding="utf-8")
 
     def test_pass_in_round_one(self):
         calls, _ = self.fake(["PASS"])
@@ -1112,10 +1116,10 @@ class StyleLoop(unittest.TestCase):
         self.mat(NEON)
         calls, prompts = self.fake(["PASS", "PASS"])
         self.assertEqual(self.run_loop(), 0)
-        self.assertIn("_meta/sessions/runs/style-s-sandbox/game/scenes/", prompts[1])
+        self.assertIn("_meta/sessions/runs/style-s-run-1-sandbox/game/scenes/", prompts[1])
         live = (self.root / "game" / "materials" / "ground_patch.tres").read_text(encoding="utf-8")
         self.assertIn(NEON, live)                                    # the game itself is unchanged
-        patch = (self.root / "game" / "reports" / "style" / "s" / "sandbox.patch").read_text(encoding="utf-8")
+        patch = (self.root / "game" / "reports" / "style" / "s" / "run-1" / "sandbox.patch").read_text(encoding="utf-8")
         self.assertIn("+++ b/game/materials/ground_patch.tres", patch)
         self.assertIn(MEADOW, patch)
         self.assertIn("sandbox.patch", self.board().split("## Result")[1])
@@ -1131,7 +1135,7 @@ class StyleLoop(unittest.TestCase):
         self.sl.gate = gate
         self.fake(["PASS", "PASS"])
         self.assertEqual(self.run_loop("--max-rounds", "2"), 1)        # script row stays: Bob's fix was undone
-        sand = self.root / "_meta" / "sessions" / "runs" / "style-s-sandbox" / "game" / "materials" / "ground_patch.tres"
+        sand = self.root / "_meta" / "sessions" / "runs" / "style-s-run-1-sandbox" / "game" / "materials" / "ground_patch.tres"
         self.assertIn(NEON, sand.read_text(encoding="utf-8"))
         self.assertIn("FAIL: Bob’s edits this round were undone, they broke t_layout_objects_on_cells", self.board())
         self.assertNotIn("broke t_old", self.board())                  # a baseline failure is not his
@@ -1293,7 +1297,7 @@ class StyleLoop(unittest.TestCase):
         self.assertEqual(calls[-1], self.sl.CRITIC)
         self.assertIn("Your round 1 verdict", prompts[-1])  # Vera's context survives the stop
         self.assertIn("ground_patch", prompts[-1])  # with Bob's meanwhile diff
-        self.assertTrue((self.root / "game" / "reports" / "style" / "s" / "round-2").is_dir())
+        self.assertTrue((self.root / "game" / "reports" / "style" / "s" / "run-1" / "round-2").is_dir())
         board = self.board()
         self.assertIn("result: pass", board)
         self.assertEqual(board.count("## Result"), 1)                    # one Result, rewritten on resume

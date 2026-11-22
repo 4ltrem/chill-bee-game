@@ -2,7 +2,7 @@
 #   Godot --path game --resolution 720x1280 --position 0,0 -s res://tests/ui_compare_shots.gd -- <label>
 # Plays the real game from a fresh state with real input (tests/farm_input.gd): the shipped default config (no user://dev_config.tres overlay;
 # the file is left alone), no input recording (user://recordings is not written). Saves 720 x 1280 PNGs 1-farm-start .. 9-dev-speed-x5 and
-# shots.json (name -> caption, or "missing: reason") to game/reports/ui-compare/<label>/.
+# shots.json (name -> caption, or "missing: reason") to game/reports/builds/<label>/ui/ (or game/reports/<label>/ when it holds a slash).
 # A label ending in "B" in the centrifuge-by-crate mock copies ZoomFramingB over ZoomFraming (as tests/ab_shots.gd does); other versions ignore that.
 # One deliberate tweak: truck_capacity_jars is set to the 4 jars one bucket gives, so shot 8 (Sell) needs one bucket, not three.
 extends SceneTree
@@ -170,7 +170,8 @@ func _run() -> void:
 	var args: PackedStringArray = OS.get_cmdline_user_args()
 	if args.size() > 0:
 		label = args[0]
-	out_dir = ProjectSettings.globalize_path("res://reports/ui-compare/" + label + "/")
+	# naming review (2026-11-21), same rule as _tools/ui_shots.py out_rel(): a version label is builds/<v>/ui, a label with a slash is the path
+	out_dir = ProjectSettings.globalize_path("res://reports/" + (label if "/" in label else "builds/" + label + "/ui") + "/")
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	fi = FarmInput.new(self)
 	# shipped defaults without touching the player's user://dev_config.tres: lay default_config.tres over the live config

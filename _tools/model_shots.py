@@ -6,11 +6,11 @@
 Milo writes game/scenes/variants/PROP-rN/PROP-rN-a.tscn, -b, -c, a new folder per vote round (a name without -rN is
 refused unless --unnumbered, so one round can't overwrite another). This script then:
   1. loads all the variants once, side by side on one shared test grid (cell 2.0), and shoots each
-     close up (the others hidden) with the farm's light and camera angle at 720 × 1280 (game/tests/model_shots.gd) into game/reports/variants/PROP/;
+     close up (the others hidden) with the farm's light and camera angle at 720 × 1280 (game/tests/model_shots.gd) into game/reports/variants/PROP/round-N/;
   2. runs style_check.py on each variant alone (its scene and the materials it uses), and writes
      checks.json and checks.md there;
   3. builds the yes / maybe / no vote page (compare_page.py variants, at most 9 shots) as
-     game/reports/variants/PROP/vote.html, for the orchestrator to publish.
+     game/reports/variants/PROP/round-N/vote.html, for the orchestrator to publish.
 --size fixes the camera's orthographic size; by default (0) the camera zooms in close on each
 variant, fitted to its bounds (designer, 2026-11-05). Exit 0 when the page is built, whatever the checks say: a variant
 that fails is shown with its FAIL pill so the designer can still pick it and Bob fixes it on
@@ -30,6 +30,13 @@ import style_check  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 from godot_path import GODOT  # noqa: E402
+
+
+def report_dir(prop):
+    """game/reports/variants/<prop>/round-<N>/ for Milo's scene folder <prop>-r<N> (naming review, 2026-11-21: `round`,
+    never `r`); an old unnumbered folder (hive-frames, flower-patch) is round 1."""
+    m = re.fullmatch(r"(.+)-r(\d+)", prop)
+    return ROOT / "game" / "reports" / "variants" / (m.group(1) if m else prop) / f"round-{m.group(2) if m else 1}"
 
 
 def render(prop, out, size):
@@ -54,7 +61,7 @@ def main(argv=None):
     variants = sorted((ROOT / "game" / "scenes" / "variants" / a.prop).glob(f"{a.prop}-*.tscn"))
     if not variants:
         sys.exit(f"no variants in game/scenes/variants/{a.prop}/ (Milo writes {a.prop}-a.tscn, -b, -c)")
-    out = ROOT / "game" / "reports" / "variants" / a.prop
+    out = report_dir(a.prop)
     if not a.no_render:
         print(f"rendering {len(variants)} variant(s)...", flush=True)
         render(a.prop, out, a.size)

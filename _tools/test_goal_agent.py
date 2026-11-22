@@ -17,6 +17,7 @@ import re
 import shutil
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -319,8 +320,8 @@ class Loop(unittest.TestCase):
         self.assertNotIn(ga.PROGRAMMER, who[who.index(ga.CRITIC):])
         bob_fix = [p for a, p in self.calls if a == ga.BUILDER][-1]
         self.assertIn("5 upright frames", bob_fix)
-        self.assertIn("pick/C3-r0/hive.png", bob_fix)
-        self.assertTrue(any("style_loop.py" in " ".join(c) and "goal-9-9-c3-r1" in c for c in self.cmds))
+        self.assertIn("pick/C3/round-0/hive.png", bob_fix)
+        self.assertTrue(any("style_loop.py" in " ".join(c) and "9.9-goal-c3" in c for c in self.cmds))
         self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))  # PASS in fix round 1: committed
         self.assertIn("Check `pick match`: PASS", board)
 
@@ -877,7 +878,8 @@ class Loop(unittest.TestCase):
         import godot_run
         cmd = godot_run.command("unit", "game", ["shop_layout=0", "grid_cols=5"])
         self.assertEqual(cmd[-5:], ["-s", "res://tests/run_tests.gd", "--", "shop_layout=0", "grid_cols=5"])
-        self.assertEqual(godot_run.command("lid", "game", ["k=1"])[-3:], ["--", "--out=game/reports/_look/lid", "k=1"])
+        self.assertEqual(godot_run.command("lid", "game", ["k=1"])[-3:],
+                         ["--", f"--out=game/reports/votes/lid-close/{time.strftime('%Y-%m-%d')}", "k=1"])   # dated
         self.assertNotIn("--", godot_run.command("unit", "game"))
         with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
             godot_run.main(["unit", "--set", "shop_layout"])

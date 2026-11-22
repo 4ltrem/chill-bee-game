@@ -1,10 +1,10 @@
 # Bob: round 6 first-zoom comparison, four options (overrides only, no scene/script/config file changed). Based on shots_0_1_3.gd.
 #   Godot --path game --resolution 720x1280 --position 0,0 -s res://tests/round6_shots.gd
-# Shots to game/reports/round6-shots/: <option>-1-first-zoom.png, <option>-2-second-stop.png and checks.json.
+# Shots to game/reports/builds/0.1.3/round-6/shots/: <option>-1-first-zoom.png, <option>-2-second-stop.png and checks.json.
 extends SceneTree
 
 const FarmInput := preload("res://tests/farm_input.gd")
-const OUT := "res://reports/round6-shots/"
+const OUT := "res://reports/builds/0.1.3/round-6/shots/"
 const CELL: float = 2.0
 const ASPECT: float = 720.0 / 1280.0
 const OFFSET: float = 1.25                     # the round-5 hive shift up-right (world -z)
