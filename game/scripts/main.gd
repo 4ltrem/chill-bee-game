@@ -405,6 +405,11 @@ func _on_frame_done() -> void:
 	if zoom != Zoom.RISING and zoom != Zoom.WORKING:
 		return
 	_hive.lower_frame()
+	if _fork_prop != null:
+		for i in _queue:
+			if _hive.frame_capped_count(i) > 0:
+				_fork_prop.release()   # 0.2 item 10: a frame ended mid-drag with more to come: the fork hides
+				break
 	zoom = Zoom.LOWERING
 	_timer = Economy.config.slide_seconds
 

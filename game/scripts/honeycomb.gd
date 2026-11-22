@@ -37,9 +37,10 @@ const POP_SECONDS: float = 0.18
 ## Drags only uncap while true (hive.gd turns it on while a frame is risen).
 @export var active: bool = true:
 	set(value):
-		if not value and _dragging:
-			_dragging = false
-			drag_ended.emit()   # 0.2 item 10: going inactive mid-drag ends the drag (the fork hides)
+		if not value:
+			if _dragging:   # _held stays: a press held across a frame change keeps uncapping the next frame (release is read below even while inactive)
+				_dragging = false
+				pass   # no drag_ended: the fork stays for the zoom end to fly it into the icon; main hides it when more frames remain
 		active = value
 
 ## One byte per cell: 0 Capped, 1 Uncapped, 2 Extracted.
@@ -57,7 +58,8 @@ var _rise_t: float = 0.0
 var _bar: Node3D
 var _bar_home: Vector3 = Vector3.ZERO
 var _slide: Tween
-var _dragging: bool = false
+var _dragging: bool = false   # the fork is shown (drag_point fired since the last drag_ended)
+var _held: bool = false       # the press is still down: it keeps uncapping across frame changes
 var _last_pos: Vector2 = Vector2.ZERO
 var _departures: Array = []        # {cell, t}: cells popping, about to fly
 var _flights: Dictionary = {}      # cell -> {to, to_scale, land}
@@ -155,8 +157,7 @@ func load_frame(hive_node: Hive, index: int) -> void:
 	_flush_departures()
 	if _dragging:
 		_dragging = false
-		drag_ended.emit()
-	_dragging = false
+		drag_ended.emit()   # the fork hides; a press still held keeps uncapping the next frame (its next move shows the fork again)
 	hive = hive_node
 	frame_index = index
 	_done_emitted = false
@@ -355,28 +356,33 @@ func _pop(index: int) -> void:
 # --- drag input ---
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not active and _held and ((event is InputEventMouseButton and not event.pressed) or (event is InputEventScreenTouch and not event.pressed)):
+		_held = false   # the release of a press that outlived its frame
+		return
 	if not active or not is_visible_in_tree():
 		return
 	if event is InputEventScreenTouch:
 		_dragging = event.pressed
+		_held = event.pressed
 		if _dragging:
 			_last_pos = event.position
 			_probe(event.position)
 		else:
 			drag_ended.emit()
 	elif event is InputEventScreenDrag:
-		if _dragging:
+		if _held:
 			_sweep(event.position)
 	elif event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			_dragging = event.pressed
+			_held = event.pressed
 			if _dragging:
 				_last_pos = event.position
 				_probe(event.position)
 			else:
 				drag_ended.emit()
 	elif event is InputEventMouseMotion:
-		if _dragging and (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0:
+		if _held and (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0:
 			_sweep(event.position)
 
 
@@ -402,6 +408,7 @@ func _probe(screen_pos: Vector2) -> void:
 		return
 	var collider: Object = hit["collider"]
 	if collider != null and collider.has_meta("cell_index"):
+		_dragging = true
 		drag_point.emit(hit["position"])
 		uncap_reach(int(collider.get_meta("cell_index")))
 
@@ -416,6 +423,7 @@ func _follow_over_emptied(from: Vector3, to: Vector3) -> void:
 	var p: Vector3 = point
 	for i in _cell_roots.size():
 		if _cell_roots[i].global_position.distance_to(p) <= cell_pitch:
+			_dragging = true
 			drag_point.emit(p)
 			return
 

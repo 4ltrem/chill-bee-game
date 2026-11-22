@@ -1,4 +1,4 @@
-extends "res://tests/test_journal.gd"
+extends "res://tests/test_fork_return.gd"
 
 # Quinn: 0.2 item 11 (the lid stays still; the crank drives the gears), written from game/specs/0.2-first-automation.md before the code.
 # Nodes by name (spec + node handoff): Lid, LidDisc, Crank, Gear1, Spinner. Angles are measured, never read from a script variable.

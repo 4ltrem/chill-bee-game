@@ -99,9 +99,11 @@ func _zoom_open_main() -> Dictionary:
 	var tr: Dictionary = _track(p["Hive"])
 	_full_hive_frozen(p["Hive"])
 	await _frames(4)
+	var cam0: Camera3D = root.get_viewport().get_camera_3d()
+	var farm: Dictionary = {"size": cam0.size, "pos": cam0.global_position} if cam0 != null else {}   # 0.2 item 9: the farm pose to come back to
 	var raised: bool = await _open_zoom(m, p, tr)
 	ck(raised, "the zoom opened with a risen frame")
-	return {"m": m, "p": p, "tr": tr}
+	return {"m": m, "p": p, "tr": tr, "farm": farm}
 
 
 ## Every visible jar of the scene: the parent of each JarGlass.
@@ -352,3 +354,50 @@ func _bed_count(tk: Node) -> int:
 			if (j as Node3D).is_visible_in_tree() and not (j is Label3D):
 				n += 1
 	return n
+
+
+## 0.2 item 10 flow step: with the zoom open, uncap every frame but the last with real drags (each released), then ONE held press
+## drags over every cell of the last frame and is NOT released. Returns {"ok": all frames uncapped and the press is down, "hold": the
+## viewport point where the press is held}. The caller releases with fi.mouse_button(hold, false).
+func _drag_last_frame_held(m: Node, p: Dictionary, tr: Dictionary) -> Dictionary:
+	var hive: Node = p["Hive"]
+	var n: int = _frames_n()
+	var t0: int = _gms()
+	while float(_gms() - t0) < 120000.0:
+		var f: int = int(tr["risen"])
+		if f >= 0 and fi.capped_total(hive, n) == fi.capped(hive, f):
+			break
+		if f >= 0:
+			await _scrape_risen(m, hive, tr)
+		await process_frame
+	await _wait(float(cv("slide_seconds")) + 0.3)   # the last frame is still sliding up: cell centres move until it stands
+	var hc: Node = m.find_child("Honeycomb", true, false)
+	var cam: Camera3D = root.get_viewport().get_camera_3d()
+	if hc == null or cam == null or int(tr["risen"]) < 0:
+		return {"ok": false, "hold": Vector2.ZERO}
+	var pts: Array[Vector2] = []
+	var flip: bool = false
+	for r in fi.rows(hc, cam):
+		var row: Array = (r as Array).duplicate()
+		if flip:
+			row.reverse()
+		flip = not flip
+		for v in row:
+			pts.append(v as Vector2)
+	if pts.is_empty():
+		return {"ok": false, "hold": Vector2.ZERO}
+	fi.mouse_button(pts[0], true)
+	await process_frame
+	var at: Vector2 = pts[0]
+	for pass_i in 3:   # still one held press: a further sweep over the cells the first one missed
+		for i in range(1, pts.size()):
+			if fi.capped_total(hive, n) == 0:
+				break
+			for s in range(1, 4):
+				at = pts[i - 1].lerp(pts[i], float(s) / 3.0)
+				fi.mouse_move(at)
+				await process_frame
+		if fi.capped_total(hive, n) == 0:
+			break
+		pts.reverse()
+	return {"ok": fi.capped_total(hive, n) == 0, "hold": at}

@@ -1493,5 +1493,65 @@
    "t_shop_seven_rows_on_screen_no_scroll"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.2 item 10 zoom end no longer sends the fork to the icon",
+  "file": "scripts/main.gd",
+  "find": "\t_return_fork_to_icon()\n\tif _closing_to_second:",
+  "replace": "\tif _closing_to_second:",
+  "expect": [
+   "t_fork_returns_to_icon_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 10 fork keeps its shrunk scale after the return",
+  "file": "scripts/uncap_fork.gd",
+  "find": "func _finish_return() -> void:\n\tvisible = false\n\tif _has_rest_scale:\n\t\tscale = _rest_scale",
+  "replace": "func _finish_return() -> void:\n\tvisible = false",
+  "expect": [
+   "t_fork_returns_to_icon_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 10 release leaves the fork on screen",
+  "file": "scripts/uncap_fork.gd",
+  "find": "\t_dragging = false\n\tvisible = false\n\t_pulse_t = 0.0\n\t_apply(0.0)",
+  "replace": "\t_dragging = false\n\t_pulse_t = 0.0\n\t_apply(0.0)",
+  "expect": [
+   "t_fork_returns_to_icon_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 9 leave step: the zoom ending with no Spin pans to the second stop",
+  "file": "scripts/main.gd",
+  "find": "\telse:\n\t\t_move_camera(false)\n\t_refresh_icons()",
+  "replace": "\telse:\n\t\t_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)\n\t_refresh_icons()",
+  "expect": [
+   "t_zoom_end_farm_pose_then_spin_second_stop_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 9 twice step: a zoom opened after a Spin from the farm view closes to the second stop",
+  "file": "scripts/main.gd",
+  "find": "\t_closing_to_second = _spin_pending   # 0.2 item 9",
+  "replace": "\t_closing_to_second = _spin_pending or _crank_paused   # 0.2 item 9",
+  "expect": [
+   "t_zoom_end_farm_pose_then_spin_second_stop_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.2 item 9 a Spin tap from the farm view no longer pans to the second stop",
+  "file": "scripts/main.gd",
+  "find": "\t\t# 0.1.4 item 11: from the farm view the camera pans to the second stop, then the crank starts there\n\t\t_spin_pan_timer = Economy.config.camera_pan_seconds\n\t\t_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)\n\t\t_enter_second_stop_hud()",
+  "replace": "\t\t# 0.1.4 item 11: from the farm view the camera pans to the second stop, then the crank starts there\n\t\t_spin_pan_timer = Economy.config.camera_pan_seconds\n\t\t_enter_second_stop_hud()",
+  "expect": [
+   "t_zoom_end_farm_pose_then_spin_second_stop_twice"
+  ],
+  "suite": "unit"
  }
 ]
