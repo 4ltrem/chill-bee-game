@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T15:55:48-05:00",
+ "at": "2026-11-22T16:00:11-05:00",
  "unit_log": "game/reports/_runs/20261122-145415/unit.log",
  "goals": {
   "C1": {
@@ -68,7 +68,7 @@
     2
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
@@ -89,8 +89,8 @@
     {
      "kind": "test",
      "name": "t_habitat_pill_order_plus_opens_shop_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -99,7 +99,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -262,7 +262,7 @@
    "depends": [
     "C2"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -273,11 +273,16 @@
     {
      "kind": "test",
      "name": "t_habitat_pill_order_plus_opens_shop_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "784fe83",
+     "ok": true
     }
    ],
-   "built": false,
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -380,7 +385,7 @@
     "C5",
     "C6"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -415,8 +420,8 @@
     {
      "kind": "test",
      "name": "t_habitat_pill_order_plus_opens_shop_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -427,17 +432,6 @@
  },
  "order": [
   {
-   "id": "T2.1",
-   "score": 3.77,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.23,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T5.1",
    "score": 3.77,
    "factors": {
@@ -446,21 +440,6 @@
     "cost": 0.23,
     "ready": 1,
     "blocked_by": []
-   }
-  },
-  {
-   "id": "T.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.23,
-    "ready": 0,
-    "blocked_by": [
-     "C3",
-     "C4",
-     "C6"
-    ]
    }
   },
   {

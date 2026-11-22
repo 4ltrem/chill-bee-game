@@ -3,7 +3,7 @@ spec: 0.3-course-build.md
 version: 0.3
 run: 0.3
 started: 2026-11-22
-result: stopped
+result: waiting-designer
 ---
 # Goal agent: 0.3-course-build.md (run 0.3)
 
@@ -1767,9 +1767,120 @@ Command: `goal_agent.py game/specs/0.3-course-build.md --accept T2.1 --note test
 - Change (orchestrator, Process 9): tests green; mutations 5/5 caught by mutate.py --since 8df9794 (the step's --since base came after my mid-step checkpoint ff4abe5 had committed them, so it found none)
 - Accepted: checkpoint `784fe83` on `main`
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 18: scan (2026-11-22T16:00:11-05:00)
+
+Unit results from `game/reports/_runs/20261122-145415/unit.log`. 6 of 14 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 14)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C2 Habitat Health. | change | Patricia, Bob | done | ✓ node HabitatPill, ✓ node TopInfo, ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_pill_order_plus_opens_shop_twice, ✓ ledger 3cd0470 |
+| T2.1 item 2: Health starts at `habitat_health_start`; `thriving`  | test | Quinn | done | ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_pill_order_plus_opens_shop_twice, ✓ ledger 784fe83 |
+| T.1 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | done | ✓ test t_welcome_shows_title_and_play_only, ✓ test t_welcome_world_idle_then_play_twice, ✓ test t_welcome_off_by_default_in_tests, ✓ test t_welcome_play_text_translated_title_not, ✓ test t_habitat_start_cap_thriving_once, ✓ test t_habitat_pill_order_plus_opens_shop_twice |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- C3: Plant wildflower patch.
+  - Question: The agents changed no file for C3 and the checks were already green, so it is not built. Their replies on the board (step C3, 2026-11-22T15:11:49-05:00) say why; answer by editing the spec item.
+- C4: The bumble bee visitor.
+  - Question: The agents changed no file for C4 and the checks were already green, so it is not built. Their replies on the board (step C4, 2026-11-22T15:12:50-05:00) say why; answer by editing the spec item.
+- C6: Skip to ending.
+  - Question: The agents changed no file for C6 and the checks were already green, so it is not built. Their replies on the board (step C6, 2026-11-22T15:33:33-05:00) say why; answer by editing the spec item.
+
+Next: **T5.1** (score 3.77: designer feature; cost 0.23 (Quinn)).
+
+### Step: T5.1 (2026-11-22T16:00:11-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T5.1-quinn.md` (4036 chars)
+- Quinn's step skipped: every line already has its marked test (T5.1: t_delivery_look_groups_by_level, t_delivery_stacks_not_flame_material)
+- Tests this round (2): own (2): `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3/briefs/T5.1-fix1-quinn.md` (1648 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (334,690 tokens, 25 turns, 67 s):
+
+T5.1 had no victory tests and no mutations, so I wrote them. I ran nothing. The failure text only said "no mutations to run", so the rest is my reading of the code.
+
+**Changes, all in `game/tests/`:**
+- **`test_victory.gd`** is new and is now chained in the test-file chain. It has two tests: `t_victory_delay_show_close_once_per_farm` and `t_victory_waits_for_farm_view`.
+  - The first checks the delay, a real tap on the button closing the overlay, once per farm, and a new farm showing it again.
+  - The second checks it waits while the Shop sheet is open or a zoom is in progress, then shows when the player is back on the farm view.
+- **`run_tests.gd`** now extends `test_victory.gd` and lists the two tests.
+- **`mutations.json`** has three new victory mutations: ignore the delay, show again in the same farm, ignore the farm view.
+
+**Outside my folder (Bob):** `game/scenes/` has no `VictoryOverlay`, `VictoryButton`, `VictoryTitle` or `VictoryBody` nodes. `victory_overlay.gd` expects them in `main.tscn`, so both tests will fail until Bob adds them.
+
+**Not covered:** the strings come from the approved text rows and the translation CSV, and I didn't test that.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 13 (cap 15; CLI num_turns 25); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (4): own (4): `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`; calls a helper changed in `tests/test_victory.gd` (2): `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`; changed in `tests/run_tests.gd` (2): `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`; changed in `tests/test_victory.gd` (2): `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      2 passed, 2 failed  (godot exit 1, 10 noise lines dropped)  game/reports/_runs/20261122-160210/unit.log
+    FAIL  t_victory_delay_show_close_once_per_farm  VictoryOverlay exists in main.tscn  (1120 ms)
+    FAIL  t_victory_waits_for_farm_view  overlay and Shop panel exist  (1104 ms)
+```
+
+#### Fix round 2: to Bob
+
+- Brief for Bob: `game/reports/goal/0.3/briefs/T5.1-fix2-bob.md` (2275 chars)
+- Budget guard for Bob: override
+
+**Bob** (163,145 tokens, 12 turns, 28 s):
+
+Both failures had the same cause: `main.tscn` had no `VictoryOverlay` node. I added one and ran no tests or renders, so none of it is checked.
+
+**Added to `game/scenes/main.tscn`:**
+- A `VictoryOverlay` CanvasLayer on layer 9, hidden at start, with `scripts/victory_overlay.gd` attached through a new ext_resource.
+- Under it, a dim `ColorRect` and a centred column holding `VictoryTitle`, `VictoryBody` and `VictoryButton`. The overlay script fills in the three texts.
+- Nothing existing was changed. The sizes and font sizes on the new nodes copy the WelcomeOverlay's, except the body label's 36 and the column's 800-wide minimum, which are new.
+
+**Not checked:**
+- The `victory_title`, `victory_body` and `victory_button` keys need to be in the translation CSV (Patricia's or the script's folder). If they aren't, the "translated string" checks will fail and the next round should look there.
+- `t_victory_waits_for_farm_view` should now pass. `ShopPanel` and `set_sheet_open` already exist.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 12); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: STOP (1 for the designer)
+
+## Waiting for the designer
+
+Fix round 2 on T5.1 needs a visual number the designer has not voted on (sizes, scales, offsets, fonts and margins are the designer's). Each row becomes a question with votes on the Design Votes page (`_tools/compare_page.py add`); its link goes here. A `changed` row is already in the tree, uncommitted: undo it if the vote keeps the old value. Then rerun `goal_agent.py 0.3-course-build.md --note "<the pick>"`.
+
+| # | Who | Row |
+|---|---|---|
+| 1 | changed | `game/scenes/main.tscn`: `(none)` -> `custom_minimum_size = Vector2(800, 0)`; `theme_override_constants/separation = 40`; `custom_minimum_size = Vector2(320, 120)`; `size_flags_horizontal = 4` |
+
+Comparison pages:
+
 ## Result
 
-T2.1 accepted with a manual fix (checkpoint `784fe83` on `main`). Rerun `goal_agent.py 0.3-course-build.md` to build the rest.
+Last invocation (2026-11-22T16:03:31-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
@@ -1816,4 +1927,6 @@ Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 | Bob, T2.1 fix 2 | 144,940 | 24,469 | 12 | 23 s |
 | Quinn, T2.1 fix 1 | 67,387 | 18,823 | 6 | 15 s |
 | Quinn, T2.1 fix 2 | 92,188 | 21,867 | 7 | 16 s |
-| **Total** | **6,295,535** | | | |
+| Quinn, T5.1 fix 1 | 334,690 | 35,302 | 25 | 67 s |
+| Bob, T5.1 fix 2 | 163,145 | 28,775 | 12 | 28 s |
+| **Total** | **6,793,370** | | | |
