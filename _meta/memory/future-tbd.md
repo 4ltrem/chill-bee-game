@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 472d224a-a84f-4a66-bfff-00b669226a91
-  modified: 2026-11-21T18:41:55.661Z
+  modified: 2026-11-22T06:26:13.795Z
 ---
 
 TBD items the designer named on 2026-11-01, not started:
@@ -68,7 +68,7 @@ TBD items the designer named on 2026-11-01, not started:
    Haiku pass (see MILESTONES.md Open). The content-run gate is lifted.
 
 10. **Godot 4.2.1 -> 4.7.2 upgrade** (designer, 2026-11-17: assessed by a subagent, "add it to future-tbd").
-    NOT before the final deadline (11/24); do it on a branch right after a milestone. Assessment (subagent, not yet
+    NOT before the final deadline (11/29; moved from 11/24 on 2026-11-22); do it on a branch right after a milestone. Assessment (subagent, not yet
     re-checked): 4.7.2-stable is real (18 Aug 2026; 4.8 in beta); no GDScript API break found in the 4.3-4.7 guides;
     watch `scripts/ui_bounds_overlay.gd` lines in shots. One-way: the newer editor rewrites project.godot/.tscn/.tres,
     adds `.uid` sidecars, and 4.2.1 can't reopen it. To change: the hard-coded 4.2.1 exe path (`_tools/godot_run.py`,

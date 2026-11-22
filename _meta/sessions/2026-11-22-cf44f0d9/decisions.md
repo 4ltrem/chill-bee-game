@@ -105,6 +105,11 @@ D234-D248 come from the 2026-11-20 and 2026-11-21 sessions (laptop: e8567c58, th
 - What broke: D248's `git worktree remove --force .claude/worktrees/m02-play` followed that worktree's Godot junction and emptied the repo's Godot folder; the designer re-unpacked it.
 - Files: `_tools/guard_shell.py`, `_tools/test_generate.py`, `_meta/learnings.md` (L45)
 
+### D256 · 2026-11-22 · Workspace & agents · The gate checks that README and AGENTS.md map every top-level file
+- Decided: `consistency.py` `check_readme_map()` (pre-commit gate) needs a row for every top-level tracked file and folder in README.md's Repository Contents and AGENTS.md's Where things live (`README_EXEMPT` for deliberate omissions); Doris gains a coverage pass for added, renamed or removed files. Both maps completed.
+- Why: the designer, after the A6 push: "the readme is outdated, why didn't the gate catch that". Every check verified that docs were true, none that they were complete (L46).
+- Files: `_tools/consistency.py`, `README.md`, `AGENTS.md`, `.claude/agents/doc-auditor.md` (commit `16e131a`, logged from the commit at end of day 11/22)
+
 ## Still open
 
 - **A6 (due 11/22):** push `main` so `STYLE_LOOP.md`'s demo folders are on GitHub, then submit the link; offer the `a6-demo` tag.

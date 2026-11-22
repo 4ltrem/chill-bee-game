@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L47 · 2026-11-22 · Two goal_agent fix rounds guessed at T15.1's failures; the bugs were in the new tests
+- **What broke:** item 15's run stopped `waiting-designer` with 2 of 3 new tests red after Quinn's and Patricia's fix rounds. Both replies said "I'm guessing" and ran nothing; Patricia's `back()` fix was real, the rest missed. Separately, `checkpoint.py` labelled both WIP commits "(unit green)" from the last full run while 3 tests were red.
+- **How noticed:** the blackboard's fix-round replies (D259).
+- **Cause:** three test bugs, none in the game: a stray `_mk_main()` left two overlapping farms (the Harvest tap missed); the zoom-end exit waited for `LOWERING`, after which a refilled frame can rise again (only `CLOSE_DELAY` means the zoom ends on its own); and the test's 120 s cap counts game time (about 20 s real at `--time-scale 6`) with 40 Capped cells left in other frames. A one-line `diag:` failure message (zoom state, hive vs honeycomb cell counts, departures) showed the last cause in one run.
+- **How fixed:** `7616d20` (test_shop_zoom.gd); C15 and T15.1 accepted after a green full suite (`_runs/20261122-011146/`).
+- **Prevention:** none yet (Still open): fix-round briefs could ask for a `diag:` line on an unexplained failure instead of a guess, and `checkpoint.py` should label from the newest run, not the last full one.
+
 ## L46 · 2026-11-22 · README.md fell 12 days behind and no check saw it
 - **What broke:** README.md's Repository Contents had not changed since 2026-11-10: it lacked STYLE_GUIDE.md, STYLE_LOOP.md (the A6 write-up), GOAL_AGENT.md (the A5 write-up), UI_DESIGN.md, research/, operator/, _tools/, _templates/, _meta/learnings.md and CONTEXT.md as a row, still said `.claude/agents/` "starting with Connie" and the timeline had "no fixed date". AGENTS.md's map lacked CREW.md, GOAL_AGENT.md and ONBOARDING.md.
 - **How noticed:** the designer, after the A6 push: "the readme is outdated, why didn't the gate catch that".

@@ -41,7 +41,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - **Team:** a solo developer directing AI agents in Claude Code. The agent roles are in [_meta/team.md](_meta/team.md).
 - **Engine:** Godot (GDScript). Art comes from purchased low-poly asset packs.
 - **Launch platforms:** iOS and Android, in English and French.
-- **Timeline:** milestone-based, with no fixed launch date. The course builds have dates up to 0.3.0 (~2026-11-24) in [MILESTONES.md](MILESTONES.md); the first playable is one full rough run in Sunny Meadow.
+- **Timeline:** milestone-based, with no fixed launch date. The course builds have dates up to 0.3.0 (2026-11-29) in [MILESTONES.md](MILESTONES.md); the first playable is one full rough run in Sunny Meadow.
 - **Launch scope:** Sunny Meadow and Alpine Valley, rewarded ads and the Impact Pass, local personal-best times.
 - **Post-launch:** biomes 3–4, the Patron Pass, online leaderboards, the live Impact Dashboard, and possibly Switch and PC/Mac.
 

@@ -1,11 +1,11 @@
 ---
 name: session-handoff
-description: "Where work stands (2026-11-21 late, laptop): one branch now (main; milestone branches dropped, origin cleaned); reports renamed to builds/goal/style/votes/variants; spec item 15 (Shop in zoom) written, not built; Godot binary MISSING on the laptop (folder empty) - nothing that runs Godot works until it is re-unpacked; read first"
+description: "Where work stands (2026-11-22, laptop): item 15 built and accepted, full suite green; A6 submitted; A7 and final both due 11/29 (run video, >20-page audit, 2-minute playable gate); start-suite exit 1 = 'no total line'; read first"
 metadata:
   node_type: memory
   type: project
   originSessionId: cf44f0d9-ea3d-41b5-a628-12e39e761cca
-  modified: 2026-11-22T05:04:22.437Z
+  modified: 2026-11-22T06:25:29.183Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -20,11 +20,11 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 - Tests at the end: test_generate 91/91, test_goal_agent 64/64, consistency clean, links 0 broken.
 
 **NEXT:**
-1. Check why `start --refresh` exited 1 despite PASS (one-line look at the log).
-2. Build item 15: `python -I _tools/goal_agent.py game/specs/0.2-first-automation.md --goal C15,T15.1` (Patricia, then Quinn; budget guard first: 5-hour was 75% at ~23:50).
-3. 0.2.1 version build + itch upload as the A7 link (each needs a yes; A7 was due 11/18-11/19: ask whether it was submitted). Tag it (`v0.2.1`).
-4. End-of-day (designer starts it): log decisions (branch model A; naming A/A/A + rename-script exception to edit-lines; item 15 = Shop + Tools; keep-going rule A; item 10 = A; T9.1 paused crank = A; Quinn probe hook = A), `sync_docs.py` (agent-runs totals), rebuild + republish the decision page (D219+ not yet published from the laptop), push `main`.
-5. A6 (due 11/22): link = `STYLE_LOOP.md` (approved); its demo folders are now committed but not on origin until the push.
+1. `start` suite exits 1 despite PASS: godot_run reports "no total line" for it (start.log holds only headless mesh errors). Small godot_run.py / start-suite fix.
+2. Item 15 DONE 2026-11-22: C15 `daf2d7c`, test fixes `f42034a`/`7616d20` (orchestrator diag: stray main, CLOSE_DELAY, other frames emptied), C15/T15.1 accepted `9aadc61`; full suite green `_runs/20261122-011146/`. 0.2 spec: 36/36 except C14 still "partial" in the scan. Not pushed. Not yet play-tested by the designer.
+3. 0.2.1 version build + itch upload as the A7 link (each needs a yes; A7 is due 11/29 with a run video and a >20-page audit, brief in MILESTONES.md Open; A6 submitted 11/22). Tag it (`v0.2.1`).
+4. Designer play-tests item 15 (Shop in first zoom and second stop, buy, leave with the sheet open).
+5. A7 plan (final also 11/29): 2-minute stranger gate (first-time hint?), run video (designer records), >20-page audit. End of day 11/22 logged D256-D260; L47 prevention open.
 
 **Still open from before:** content approvals in [[pending-approvals]] (onboarding-script, biome-intros re-approval); proposals awaiting acceptance: `proposals/design/roadmap.md` (Q3 watering, Q5 Connie timing open; re-layer to build-from-start r2) and build-from-start-r2 (accepted, applied from 0.4); 0.3.0 = first UI pass (`UI_DESIGN.md`, ui-screens decisions 2-4; canvas redraw of boards 2-3 for Shop + Tools left for 0.3.0); mutation 25 test (Quinn); `t_icons_never_overlap` weakened to "0 icons at the second stop" (designer to confirm); the side pane (`claude --plugin-dir _tools/live-pane`) untested in a real session; run-5's `sandbox.patch` applied without `jar.tscn`; UI canvas https://claude.ai/artifact/ErtHvkxYUpDQHRM8RLRLca. Uncommitted and left alone: `_meta/agent-runs.*` (end-of-day), `game/reports/goal/0.2/gaps.json`.
 
