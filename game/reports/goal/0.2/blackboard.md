@@ -3,7 +3,7 @@ spec: 0.2-first-automation.md
 version: 0.2
 run: 0.2
 started: 2026-11-09
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.2-first-automation.md (run 0.2)
 
@@ -4226,9 +4226,28 @@ FAIL    unit      73 passed, 2 failed  (exit 1, 158 noise lines dropped)  game/r
 
 2 fix rounds failed on T15.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.2-first-automation.md --accept T15.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T15.1 fix-round edits"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.2-first-automation.md --accept T15.1 --note Orchestrator fixed the test by hand (diagnosed with a diag line): stray _mk_main removed (Quinn), zoom-end exit waits for CLOSE_DELAY not LOWERING, run 2 empties the non-risen frames so the 120 game-second cap holds. 3/3 green: game/reports/_runs/20261122-011036/unit.log` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T15.1 (2026-11-22T01:11:07-05:00)
+
+- Change (orchestrator, Process 9): Orchestrator fixed the test by hand (diagnosed with a diag line): stray _mk_main removed (Quinn), zoom-end exit waits for CLOSE_DELAY not LOWERING, run 2 empties the non-risen frames so the 120 game-second cap holds. 3/3 green: game/reports/_runs/20261122-011036/unit.log
+- Accepted: commit failed: 	modified:   game/reports/goal/0.2/blackboard.md
+	modified:   game/reports/goal/ledger.json
+
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 78 lookups in 72 top-level scenes, 0 unresolved
+
 ## Result
 
-Last invocation (2026-11-22T01:02:46-05:00): waiting-designer.
+T15.1 accepted with a manual fix (commit failed: 	modified:   game/reports/goal/0.2/blackboard.md
+	modified:   game/reports/goal/ledger.json
+
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 78 lookups in 72 top-level scenes, 0 unresolved). Rerun `goal_agent.py 0.2-first-automation.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-09-goal-0.2/`, `_meta/sessions/runs/2026-11-21-goal-0.2/`, `_meta/sessions/runs/2026-11-22-goal-0.2/`
 
