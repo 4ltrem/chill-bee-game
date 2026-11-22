@@ -5,8 +5,10 @@ metadata:
   node_type: memory
   type: reference
   originSessionId: 48828af3-0854-4eed-ae60-5bc5642a3a42
-  modified: 2026-11-09T00:46:18.326Z
+  modified: 2026-11-21T18:41:57.925Z
 ---
+
+**Since 2026-11-21: run `python -I _tools/commit_main.py -m "msg" FILE...` (add `--push` only after the designer's yes); it does every step below.** The manual steps, for reference:
 
 To change `main` while the main folder is on a milestone branch (done 2026-11-08 for the A4 CREW.md fixes):
 - Create the worktree **inside** the repo (`git worktree add .wt-x origin/main -b x`). The repo-only hook blocks `../` paths and `cd` prefixes, so run `git -C .wt-x ...` with repo-relative paths.

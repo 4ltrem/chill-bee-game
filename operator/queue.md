@@ -8,10 +8,10 @@ Each row is one job and its status (`open`, `held`, `built`, `done`). The design
 | 2 | First dream pass (`/dream`): six preferences, about 33 to 22 memory files | held | after #1; proposals in the analysis, sections A1 and A2; also the `rex-runs-scripts` wording from [wiring](../_meta/drafts/operator/wiring.md) section 5 |
 | 3 | Republish the decision page | held | after the pull (the live page has D200-D218 from the desktop) |
 | 4 | Tick the stale README TBD boxes (milestone dates, daily token budget) | open | ask the designer before ticking |
-| 5 | Stop committing goal state on every goal commit (`blackboard.md`, `ledger.json`, `gaps.json`) | open | an Opus session picks between once-per-run and gitignore |
-| 6 | Hook: scripts go to Rex (L21) | open | |
-| 7 | Script: commit to main (L24) | open | |
-| 8 | End-of-day mechanical steps as one script; the decision log stays in the skill | open | |
-| 9 | Generate the handoff and `MEMORY.md` status lines from git and the run log | open | |
-| 10 | `live.json` covers the scripts' own steps, then `watch.py` (future-tbd 5a and 5b) | open | |
+| 5 | Stop committing goal state on every goal commit (`blackboard.md`, `ledger.json`, `gaps.json`) | built | 2026-11-21: once per run (`goal_agent.commit_state`, `--only` its own paths at the run's end); kept tracked for the A7 history |
+| 6 | Hook: scripts go to Rex (L21) | built | 2026-11-21: `guard_shell.py` rule 7 |
+| 7 | Script: commit to main (L24) | built | 2026-11-21: `_tools/commit_main.py` (`--push` only with the designer's yes) |
+| 8 | End-of-day mechanical steps as one script; the decision log stays in the skill | built | 2026-11-21: `_tools/end_of_day.py prep` / `checks`, wired into the skill |
+| 9 | Generate the handoff and `MEMORY.md` status lines from git and the run log | built | 2026-11-21: `_tools/status.py` (`/status`; `--markdown` facts block for the handoff); the judgement lines stay hand-written |
+| 10 | `live.json` covers the scripts' own steps, then `watch.py` (future-tbd 5a and 5b) | built | 2026-11-21: `_tools/live.py`, `watch.py`, the side pane `_tools/live-pane/` (5c) |
 | 11 | A7 deliverable 3: the run-log tables | open | the operator drafts the tables; an Opus session writes the analysis |

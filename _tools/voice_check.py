@@ -12,6 +12,9 @@ after a name, a sub-part after a dash and a "§N" are allowed; "A > B" checks ea
 T2 (Tone & Glossary), the word part only: terms the GDD Glossary marks **Rejected.**, and the terms
 in _tools/voice_terms.json (confirmed: a FAIL row; unconfirmed: a "(minor)" row). Tone stays with Clara.
 
+Completeness, the cell part (A4 grader item a): a table row with an empty cell, or a cell that is only a
+placeholder ("to write", "TBD", "(proposed)", ...), after its first cell. Placeholders in sentences stay with Clara.
+
 Prints a `### Script check, round N` block in Clara's verdict format (VERDICT, Checked, findings
 table) and exits 1 on FAIL. generate.py calls check() each round: a FAIL goes to William without a
 Clara call. Standard library only. Tests: python -I _tools/test_generate.py
@@ -138,6 +141,25 @@ def term_rows(text, gdd, terms):
     return rows
 
 
+PLACEHOLDERS = ("to write", "à écrire", "tbd", "none in run 1", "only the personality above", "(proposed)",
+                "(proposé)", "...", "…", "")
+
+
+def placeholder_rows(text):
+    """(check, quote, section, fix, blocking) for each table row with an empty or placeholder-only cell
+    (Clara's check 7, the mechanical part: a placeholder inside a sentence stays with her)."""
+    rows = []
+    for line in re.sub(r"\A---\n.*?\n---\n", "", text, flags=re.S).splitlines():
+        if not line.lstrip().startswith("|") or set(line.strip()) <= set("|-: "):
+            continue
+        cells = [c.strip().strip("*_ ").lower() for c in line.strip().strip("|").split("|")]
+        bad = [c for c in cells[1:] if c in PLACEHOLDERS]  # the first cell is the row label or number
+        if bad:
+            rows.append(("Completeness", line.strip()[:90].replace("|", "/"), "content/CONTEXT.md",
+                         f"fill the {'empty' if '' in bad else 'placeholder'} cell with a real entry", True))
+    return rows
+
+
 def check(text, gdd, terms=None, n=1):
     """(verdict, block) for a draft: verdict PASS or FAIL, block in Clara's format with `### Script check, round n`."""
     if terms is None:
@@ -150,13 +172,16 @@ def check(text, gdd, terms=None, n=1):
         if why:
             rows.append(("Sources", written.replace("|", "/"), "GDD headings", why, True))
     rows += term_rows(text, gdd, terms)
+    filled = placeholder_rows(text)
+    rows += filled
     verdict = "FAIL" if any(r[4] for r in rows) else "PASS"
     table = "\n".join(f"| {i} | {c} | {'' if b else '(minor) '}\"{q}\" | {s} | {f} |"
                       for i, (c, q, s, f, b) in enumerate(rows, 1))
     block = (f"### Script check, round {n}\nVERDICT: {verdict}\nChecked (voice_check.py, no agent call):\n"
              f"- Sources (T5): {'; '.join(seen) or 'no GDD section cited'}\n"
              f"- Tone & Glossary (T2, terms only): {len(glossary_rejected(gdd))} Rejected Glossary term(s), "
-             f"{len(terms)} listed in `_tools/voice_terms.json`\n{HEADER}" + (f"\n{table}" if table else ""))
+             f"{len(terms)} listed in `_tools/voice_terms.json`\n"
+             f"- Completeness (T7 cells only): {len(filled)} table row(s) with an empty or placeholder cell\n{HEADER}" + (f"\n{table}" if table else ""))
     return verdict, block
 
 

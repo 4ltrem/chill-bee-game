@@ -21,6 +21,14 @@ Each refusal names the rule and the right way to do it, so the caller rewrites t
      line of Quinn's test mid-run and the commit credited the goal agent). Such an edit goes in a worktree
      (`.claude/worktrees/`, whose paths are not under game/), merged after the run. The run's own headless agents
      (CHILLBEE_HEADLESS=1) are not bound. A lock older than 12 hours is stale and ignored.
+  7. rex-runs-scripts (L21, queue #6): the Godot test, build, mutation and shot scripts (`godot_run.py`,
+     `build.py`, `mutate.py`, `ui_shots.py`, `model_shots.py`) run only in Rex's shell (the hook input's
+     `agent_type` is `script-runner`). The main session, the operator and the other agents dispatch Rex; the loop
+     scripts start them as subprocesses, which no hook sees.
+     One exception (obstacles item 19, option A): Quinn (`qa-build-engineer`) may run `godot_run.py ... --only ...`
+     probes while the operator's allow file `_meta/usage/quinn-probes.allow` is fresh. The operator writes it with
+     `python -I _tools/guard_shell.py --allow-quinn-probes 60` (minutes) when the brief allows probes. Full-suite
+     runs (`all`, or no `--only`) and the other scripts stay Rex-only.
 Fails open: a hook input it can't read allows the call. Standard library only.
 """
 import json
@@ -118,10 +126,48 @@ def artifact(inp):
     return None
 
 
-def decide(tool, inp, repo=REPO):
-    """The refusal reason for this call, or None to let it through."""
+REX_SCRIPTS = re.compile(r"\b(?:python3?|py)(?:\.exe)?\b[^|;&\n]*?_tools[/\\]"
+                         r"(godot_run|build|mutate|ui_shots|model_shots)\.py\b", re.I)
+
+
+PROBES = "_meta/usage/quinn-probes.allow"
+
+
+def probes_allowed(repo):
+    """True while the operator's allow file holds an `until` (epoch seconds) still in the future."""
+    try:
+        with open(os.path.join(repo, PROBES), encoding="utf-8") as fh:
+            return float(json.load(fh)["until"]) > time.time()
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+def quinn_probe(seg, agent, repo):
+    """A Quinn `godot_run.py` run of named tests only (`--only`, no `all` suite) while probes are allowed."""
+    m = REX_SCRIPTS.search(seg)
+    if agent != "qa-build-engineer" or not m or m.group(1).lower() != "godot_run":
+        return False
+    args = seg[m.end():]
+    return bool(re.search(r"(?:^|\s)--only(?:[=\s])", args)) and not re.search(r"(?:^|\s)all(?:\s|$)", args) \
+        and probes_allowed(repo)
+
+
+def rex_only(cmd, agent, repo=REPO):
+    for seg in re.split(r"[;&|\n]+", cmd):
+        m = REX_SCRIPTS.search(seg)
+        if not m or agent == "script-runner" or quinn_probe(seg, agent, repo):
+            continue
+        return (f"rex-runs-scripts: {m.group(1)}.py runs in Rex's shell, not this one (L21). Dispatch Rex "
+                "(Agent tool, subagent_type script-runner) with the exact command and the fast flags "
+                "(test-speed-fixes), and act on his reply.")
+    return None
+
+
+def decide(tool, inp, repo=REPO, agent=None):
+    """The refusal reason for this call, or None to let it through. agent: the hook input's agent_type."""
     if tool in ("Bash", "PowerShell"):
-        return shell(inp.get("command") or "", repo)
+        cmd = inp.get("command") or ""
+        return shell(cmd, repo) or rex_only(cmd, agent, repo)
     if tool in ("Write", "Edit"):
         return write(tool, inp.get("file_path") or "", repo)
     if tool == "Artifact":
@@ -129,10 +175,24 @@ def decide(tool, inp, repo=REPO):
     return None
 
 
+def allow_probes(minutes, repo=REPO):
+    """The operator's step: write the allow file, fresh for `minutes`."""
+    path = os.path.join(repo, PROBES)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as fh:
+        json.dump({"until": time.time() + 60 * minutes}, fh)
+    return path
+
+
 def main():
+    if sys.argv[1:2] == ["--allow-quinn-probes"]:
+        minutes = int(sys.argv[2]) if len(sys.argv) > 2 else 60
+        allow_probes(minutes)
+        print(f"guard_shell: Quinn may run godot_run.py --only probes for {minutes} minutes ({PROBES})")
+        return 0
     try:
         event = json.load(sys.stdin)
-        reason = decide(event.get("tool_name", ""), event.get("tool_input") or {})
+        reason = decide(event.get("tool_name", ""), event.get("tool_input") or {}, agent=event.get("agent_type"))
     except Exception:
         return 0
     if reason:

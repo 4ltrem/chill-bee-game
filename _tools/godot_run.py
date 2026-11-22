@@ -2,7 +2,7 @@
 """Run the Godot test suites and print a short summary instead of the raw log.
 
     python -I _tools/godot_run.py [SUITE ...] [--root game] [--refresh] [--json FILE] [--markdown] [--timeout S]
-                                  [--only T1,T2] [--time-scale X] [--skip-x1]
+                                  [--only T1,T2] [--time-scale X] [--skip-x1] [--set KEY=VALUE ...]
 
 --only, --time-scale and --skip-x1 set CB_ONLY, CB_TIME_SCALE and CB_SKIP_X1=1 for the Godot run (run_tests.gd
 reads them), so no shell `VAR=value` prefix is needed: Claude Code cannot allow-list such prefixes cleanly. An
@@ -32,12 +32,14 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import time
 
 TOOLS = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(TOOLS)
 sys.path.insert(0, TOOLS)  # -I leaves the script's folder off sys.path
 from godot_path import GODOT  # noqa: E402
+import live  # noqa: E402
 WINDOW = ["--resolution", "720x1280", "--position", "0,0"]
 
 SUITES = {
@@ -63,10 +65,15 @@ NOISE = [re.compile(p) for p in (
     r"^\s*at: \w+ \(servers/rendering/dummy",
 )]
 TOTAL = re.compile(r"^---- (\d+) (passed|checks), (\d+) failed")
+# L41: a flat 900 s cut the grown unit suite (218 tests, ~4.5 s each at x6) at 198 passed, twice. The unit timeout now
+# follows the test count, within a floor and a hard cap; other suites keep 900 s. `--timeout S` overrides both.
+SUITE_TIMEOUT, UNIT_BASE_S, UNIT_PER_TEST_S, UNIT_CAP_S = 900, 300, 6, 1800
 ERROR = re.compile(r"^(ERROR|SCRIPT ERROR|WARNING|USER ERROR|USER WARNING|Parse Error)\b")
 
 
-def command(suite, root):
+def command(suite, root, sets=()):
+    """`sets`: --set KEY=VALUE config overrides, passed as user args after `--`, as ui_shots.py passes them to
+    ui_compare_shots.gd; the suite script applies them (obstacles item 7)."""
     spec = SUITES[suite]
     cmd = [GODOT]
     if spec["headless"]:
@@ -76,8 +83,8 @@ def command(suite, root):
         if not spec["headless"]:
             cmd += WINDOW
         cmd += ["-s", spec["script"]]
-        if spec.get("args"):
-            cmd += ["--"] + spec["args"]
+        if spec.get("args") or sets:
+            cmd += ["--"] + spec.get("args", []) + list(sets)
     else:
         cmd += ["--quit-after", "300"]
     return cmd
@@ -123,23 +130,44 @@ def progress(msg):
     print("godot_run: " + msg, file=sys.stderr, flush=True)
 
 
-def run_suite(suite, root, logdir, timeout, env=None, log_name=None):
+def stream(cmd, timeout, env, step=None):
+    """Run cmd, reading its output line by line so the live view can count PASS/FAIL lines as they come (L5);
+    return (text, exit code), the code None on a timeout (the process is killed)."""
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding="utf-8",
+                            errors="replace", env=env)
+    timed = []
+    timer = threading.Timer(timeout, lambda: (timed.append(1), proc.kill()))
+    timer.start()
+    lines, passed, failed = [], 0, 0
+    try:
+        for line in proc.stdout:
+            lines.append(line)
+            s = line.strip()
+            if s.startswith(("PASS", "FAIL")) and step:
+                passed, failed = passed + s.startswith("PASS"), failed + s.startswith("FAIL")
+                name = (s.split()[1:2] or [""])[0]
+                step.note(f"{passed} passed" + (f", {failed} failed" if failed else "") + f" · {name}"[:70])
+        proc.wait()
+    finally:
+        timer.cancel()
+    return "".join(lines), (None if timed else proc.returncode)
+
+
+def run_suite(suite, root, logdir, timeout, env=None, log_name=None, sets=()):
     """Run one suite; `env` is merged over os.environ, `log_name` names the log (default: the suite)."""
-    cmd = command(suite, root)
+    cmd = command(suite, root, sets)
     full_env = {**os.environ, **env} if env else None
     progress(f"{suite} ...")
     started = time.time()
-    try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=timeout, env=full_env)
-        text, code = proc.stdout + proc.stderr, proc.returncode
-    except subprocess.TimeoutExpired as exc:
-        out = exc.stdout or b""
-        text = out.decode("utf-8", "replace") if isinstance(out, bytes) else out
-        code = None
+    with live.step(suite + ("" if not log_name or log_name == suite else f" ({log_name})")) as step:
+        text, code = stream(cmd, timeout, full_env, step)
+        result = summarise(suite, text, code)
+        t = result.get("total")
+        step.result = result["status"] + (f" ({t['passed']} passed, {t['failed']} failed)" if t else "")
+        step.ok = result["status"] == "PASS"
     log = os.path.join(logdir, (log_name or suite) + ".log")
     with open(log, "w", encoding="utf-8") as fh:
         fh.write(" ".join(cmd) + "\n\n" + text)
-    result = summarise(suite, text, code)
     secs = int(time.time() - started)
     progress(f"{suite} done in {secs // 60}m{secs % 60:02d}s ({result['status']})")
     result["log"] = os.path.relpath(log, REPO).replace(os.sep, "/")
@@ -179,6 +207,30 @@ def render(results, markdown=False):
     return "\n".join(lines)
 
 
+def unit_test_count(root, env=None):
+    """The unit tests a run will start: the CB_ONLY list when one is set, else every `func t_` in tests/test_*.gd."""
+    only = ({**os.environ, **(env or {})}).get("CB_ONLY", "")
+    if only.strip():
+        return len([t for t in only.split(",") if t.strip()])
+    tests = os.path.join(root, "tests")
+    n = 0
+    for name in (os.listdir(tests) if os.path.isdir(tests) else []):
+        if name.startswith("test_") and name.endswith(".gd"):
+            with open(os.path.join(tests, name), encoding="utf-8", errors="replace") as fh:
+                n += len(re.findall(r"^func t_", fh.read(), re.M))
+    return n
+
+
+def suite_timeout(suite, root, given=None, env=None):
+    """Seconds one suite may run: `given` (--timeout) when set; for unit, UNIT_BASE_S + UNIT_PER_TEST_S per test,
+    at least SUITE_TIMEOUT and at most UNIT_CAP_S; else SUITE_TIMEOUT."""
+    if given:
+        return given
+    if suite != "unit":
+        return SUITE_TIMEOUT
+    return min(UNIT_CAP_S, max(SUITE_TIMEOUT, UNIT_BASE_S + UNIT_PER_TEST_S * unit_test_count(root, env)))
+
+
 def suite_env(args):
     """Pure: the CB_* env the CLI flags ask for (None when no flag is given; os.environ then applies as before)."""
     env = {}
@@ -200,11 +252,16 @@ def main(argv=None):
     ap.add_argument("--refresh", action="store_true", help="rebuild the import and class cache first")
     ap.add_argument("--json", help="also write the summary as JSON to this file")
     ap.add_argument("--markdown", action="store_true", help="print a Markdown table for reports")
-    ap.add_argument("--timeout", type=int, default=900, help="seconds per suite")
+    ap.add_argument("--timeout", type=int, help="seconds per suite (default: 900; unit follows its test count, "
+                                                 "capped at 1800, L41)")
     ap.add_argument("--only", help="comma list of test names to run alone (sets CB_ONLY)")
     ap.add_argument("--time-scale", help="Engine.time_scale for the unit tests, e.g. 6 (sets CB_TIME_SCALE)")
     ap.add_argument("--skip-x1", action="store_true", help="skip the real-time X1_TESTS (sets CB_SKIP_X1=1)")
+    ap.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
+                    help="a config override for the run (e.g. shop_layout=0), passed after `--` as ui_shots.py does; repeatable")
     args = ap.parse_args(argv)
+    if any("=" not in s or s.startswith("=") for s in args.set):
+        ap.error("--set takes KEY=VALUE")
     env = suite_env(args)
     suites = args.suites or ["unit", "start"]
     if suites == ["all"]:
@@ -217,8 +274,9 @@ def main(argv=None):
     logdir = os.path.join(root, "reports", "_runs", stamp)
     os.makedirs(logdir, exist_ok=True)
     if args.refresh:
-        refresh(root, args.timeout)
-    results = [run_suite(s, root, logdir, args.timeout, env=env) for s in suites]
+        refresh(root, args.timeout or SUITE_TIMEOUT)
+    results = [run_suite(s, root, logdir, suite_timeout(s, root, args.timeout, env), env=env, sets=args.set)
+               for s in suites]
     print(render(results, args.markdown))
     if args.json:
         with open(args.json, "w", encoding="utf-8") as fh:

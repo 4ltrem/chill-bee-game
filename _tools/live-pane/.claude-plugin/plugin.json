@@ -1,0 +1,1 @@
+{ "name": "live-pane", "version": "0.1.0", "description": "Side pane: the headless agents and script steps running now, and their last events (reads _meta/usage/live.json and live.log)", "types": "./types/index.d.ts" }

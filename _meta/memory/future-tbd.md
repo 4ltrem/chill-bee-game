@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 472d224a-a84f-4a66-bfff-00b669226a91
-  modified: 2026-11-18T00:58:15.229Z
+  modified: 2026-11-21T18:41:55.661Z
 ---
 
 TBD items the designer named on 2026-11-01, not started:
@@ -23,7 +23,7 @@ TBD items the designer named on 2026-11-01, not started:
    it was fixed. Seed it from the decision logs, the memories and the QA reports. Examples: Quinn's hour-long
    mutate run (D89), the agent run that hit the 5-hour limit (which led to the budget guard), and the red 0.1.3
    step b.
-5. **See the headless agents again** (added 2026-11-07; (a) built 2026-11-07 late, uncommitted, see [[session-handoff]]; **(b) `watch.py` and (c) the live side pane both approved 2026-11-08, build next session** (designer: "I need everything visible, also the live pane"; the status line alone isn't enough). Also: live.json must cover the scripts' own steps, not only agents: unit/contract checks, mutate, shots, commits (on 2026-11-08 the status line showed nothing while goal_agent ran `godot_run.py unit` itself, and the designer thought it had stalled). The script loops (`goal_agent.py`, `generate.py`,
+5. **See the headless agents again** — **BUILT 2026-11-21 (Opus): `_tools/live.py` (scripts' own steps too), `watch.py`, side pane `_tools/live-pane/` (`claude --plugin-dir _tools/live-pane`, `/live`); uncommitted until the designer's yes.** History: (added 2026-11-07; (a) built 2026-11-07 late; (b) `watch.py` and (c) the live side pane both approved 2026-11-08 (designer: "I need everything visible, also the live pane"; the status line alone isn't enough). Also: live.json must cover the scripts' own steps, not only agents: unit/contract checks, mutate, shots, commits (on 2026-11-08 the status line showed nothing while goal_agent ran `godot_run.py unit` itself, and the designer thought it had stalled). The script loops (`goal_agent.py`, `generate.py`,
    `style_loop.py`) run agents as `claude -p`, so they don't show in Claude Code's agent list as Agent-tool
    subagents did ("I can't see as clearly which sub agents are running"). Recommended, in order:
    (a) `generate.run_agent` writes `_meta/usage/live.json` on each agent start and end (agent, loop, run, goal or
@@ -63,7 +63,9 @@ TBD items the designer named on 2026-11-01, not started:
    Clara re-fetching every URL each round).
    (b) Promote a couple of voice rules (STYLE_GUIDE T1-T6) to hard script checks, as `style_check.py` does for the
    visual rules: T2 Glossary terms and T5 cited GDD sections are the mechanical candidates. (b) BUILT 2026-11-17
-   as `_tools/voice_check.py` (run by generate.py each round); (a) still open.
+   as `_tools/voice_check.py` (run by generate.py each round). (a) BUILT 2026-11-20: `_tools/source_cache.py`
+   (Ruth's quotes by URL + date in Clara's prompt, no re-fetch), placeholder cells and check 5 by script; no
+   Haiku pass (see MILESTONES.md Open). The content-run gate is lifted.
 
 10. **Godot 4.2.1 -> 4.7.2 upgrade** (designer, 2026-11-17: assessed by a subagent, "add it to future-tbd").
     NOT before the final deadline (11/24); do it on a branch right after a milestone. Assessment (subagent, not yet
@@ -76,6 +78,20 @@ TBD items the designer named on 2026-11-01, not started:
     SDK/JDK needs. Procedure: (1) 4.7.2 alongside 4.2.1, `GODOT` env to the new exe, branch; (2) open/refresh once and
     commit the format-only rewrite alone; (3) Rex: unit then `all` vs 178/178; (4) `ui_shots.py` + style shots old vs
     new by eye; (5) `build.py --smoke` + a real browser check; (6) only then update paths and the workarounds.
+
+11. **A UI agent** (designer, 2026-11-20: "Patricia for now, add the UI agent to backlog"). The visual style loop
+    sends UI rows (Vera's `(UI)` rows, V10-V12, rows on the FarmUIRoot tree or UI scripts) to a UI refiner, not
+    Bob; Patricia does it for now (`style_loop.py` `ui_prompt`, guard: no screen_offset/anchor/position/layout edits).
+    A dedicated agent hired through Martin would read `UI_DESIGN.md` first, own the UI scenes and UI scripts, and
+    later the 0.3.0 UI pass. Swap `UI_FIXER` in `style_loop.py` to it once hired.
+
+12. **Tests that survive feature changes** (added 2026-11-21; learnings L39). Items 9 and 14 of 0.2.1 turned
+    6-11 stale tests red each, and the play suite sat red from 0.1.4 unseen because `goal_agent.py` checks unit only.
+    BUILT 2026-11-21 (Opus session): (b) `goal_agent.py` test-impact list briefs Quinn beside each change
+    (`--impact GOAL`); (c) the windowed suites it reaches run in the step, and the full suite at the end of a run;
+    (a)/(d) as rules in Quinn's briefs and agent file. Left: a one-off Quinn pass moving the existing copied flows
+    (second stop, shop open, CRANKING waits, the 720x1280 literals in about 20 lines) onto shared helpers and
+    `tests/flow.gd`, after C14 settles; optionally a lint for literal sizes and indexes in `game/tests/`.
 
 **Why:** the designer keeps every session for analysis and wants memory to work across machines.
 

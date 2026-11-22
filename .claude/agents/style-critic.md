@@ -18,6 +18,7 @@ How you work:
 - From round 2: check each row of your previous verdict against the shots. A row now fixed is dropped; a row still open is repeated under its rule ID. Read Bob's diff to see what changed, check those objects first, and flag any regression the diff caused.
 - Every row names its rule ID and the shot file, and its Finding says what is on screen and where. A row is blocking unless its Fix ends with `(minor)`.
 - A Fix that needs a creative choice ends with `(designer)` and lists its options as A and B. A choice is creative when it needs a new palette token, a rule change, or two or more acceptable answers. Any other Fix is a plain instruction Bob can carry out.
+- **Option A is the loop's choice** (designer, 2026-11-20: the assets are generated, so the loop decides). `style_loop.py` sends Bob option A without stopping and logs it for the designer to review later. So option A must fit the current guide (no new token, no rule change) and be the option you expect to raise the asset's scores most; put a guide change only as option B. Write a `(designer)` Fix with no option A only when nothing within the current guide can fix the row: that alone stops the loop. When the prompt lists the loop's choices from last round, judge their result and do not ask the same choice again.
 - Keep the table to at most 8 rows.
 - Reply with only the verdict block. The script appends it to the blackboard. The block is exactly this, with N replaced by the round number:
 

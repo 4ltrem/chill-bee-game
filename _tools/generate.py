@@ -7,7 +7,8 @@
 Each round: William writes or revises content/SLUG.md from the GDD, voice_check.py checks the
 mechanical voice rules (T5 cited sections, T2 Glossary terms; a FAIL goes straight back to William
 with no critic call), and the critic checks it. The critic sees the whole draft on her first look in a
-run, then her last verdict and a diff since the draft she judged. A
+run, then her last verdict and a diff since the draft she judged. Her prompt also carries Ruth's
+checked quotes for every URL the draft cites (source_cache.py), so she does not re-fetch them. A
 PASS stops the loop with `status: draft` (awaiting the designer); a FAIL after the last round saves
 the draft with `status: needs-review`. Agents run through the Claude Code CLI (`claude -p --agent
 ...`, prompt on stdin), so no API key is needed. Standard library only.
@@ -52,7 +53,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script's folder off sys.path
 from log_subagent import measure  # noqa: E402
+import live  # noqa: E402
 import runlog  # noqa: E402
+import source_cache  # noqa: E402
 import voice_check  # noqa: E402
 
 try:
@@ -73,32 +76,57 @@ class AgentError(Exception):
     pass
 
 
-LIVE_FILE = ROOT / "_meta" / "usage" / "live.json"   # local (gitignored); statusline.py shows what runs now
-_live_lock = threading.Lock()
-_live_tag = [""]   # what the running loop is on, e.g. "goal 0.1.4 · C5"; set by each loop with set_live_tag
-
-
-def set_live_tag(tag):
-    _live_tag[0] = tag
+LIVE_FILE = live.FILE   # local (gitignored); statusline.py, watch.py and the pane show what runs now
+set_live_tag = live.set_tag   # what the running loop is on, e.g. "goal 0.1.4 · C5"; child scripts inherit it
 
 
 def live_update(key, entry=None, path=None):
     """Add (entry) or remove (None) one running agent in live.json. Never fails a run."""
-    path = path or LIVE_FILE
-    with _live_lock:
+    live.update(key, entry, path)
+
+
+def stream_agent(cmd, prompt, name, key):
+    """Run a `claude -p --output-format stream-json --verbose` call: tee each line to live/<key>.jsonl, log each
+    tool call to live.log (watch.py, the pane), and return (exit code, the final `result` object or None, stderr)."""
+    tee = live.STREAMS / f"{key}.jsonl"
+    live.prune_streams()
+    try:
+        live.STREAMS.mkdir(parents=True, exist_ok=True)
+        fh = tee.open("w", encoding="utf-8", newline="\n")
+    except OSError:
+        fh = None
+    proc = subprocess.Popen(cmd, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            text=True, encoding="utf-8", errors="replace",
+                            env={**os.environ, "CHILLBEE_HEADLESS": "1"})  # log_session.py skips these
+    err = []
+    drain = threading.Thread(target=lambda: err.append(proc.stderr.read()), daemon=True)
+    drain.start()
+    try:
+        proc.stdin.write(prompt)
+        proc.stdin.close()
+    except OSError:
+        pass
+    result = None
+    for raw in proc.stdout:
+        if fh:
+            fh.write(raw)
+            fh.flush()
         try:
-            cur = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
-        except (OSError, ValueError):
-            cur = {}
-        if entry is None:
-            cur.pop(key, None)
-        else:
-            cur[key] = entry
-        try:
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(json.dumps(cur), encoding="utf-8")
-        except OSError:
-            pass
+            msg = json.loads(raw)
+        except ValueError:
+            continue
+        if msg.get("type") == "result":
+            result = msg
+        elif msg.get("type") == "assistant":
+            calls = live.tool_line(msg)
+            if calls:
+                live.event("tool", name, calls)
+                live.note(key, calls, every=0)
+    proc.wait()
+    drain.join(5)
+    if fh:
+        fh.close()
+    return proc.returncode, result, "".join(err)
 
 
 def run_agent(agent, prompt, tools="WebFetch,WebSearch", max_turns=None):
@@ -108,22 +136,22 @@ def run_agent(agent, prompt, tools="WebFetch,WebSearch", max_turns=None):
     claude = shutil.which("claude")
     if not claude:
         raise AgentError("claude CLI not found on PATH")
-    cmd = [claude, "-p", "--agent", agent, "--output-format", "json",
+    cmd = [claude, "-p", "--agent", agent, "--output-format", "stream-json", "--verbose",
            "--permission-mode", "acceptEdits", "--allowedTools", tools] \
         + (["--max-turns", str(max_turns)] if max_turns else [])
     started = now_iso()
-    key = f"{os.getpid()}-{threading.get_ident()}-{agent}"
-    live_update(key, {"agent": NAMES.get(agent, agent), "tag": _live_tag[0], "start": started})
+    name = live.display(agent)
+    key = live.start(name, "agent", key=f"{os.getpid()}-{threading.get_ident()}-{agent}")
+    out, ok = None, False
     try:
-        proc = subprocess.run(cmd, cwd=ROOT, input=prompt, capture_output=True, text=True, encoding="utf-8",
-                              env={**os.environ, "CHILLBEE_HEADLESS": "1"})  # log_session.py skips these
+        code, out, err = stream_agent(cmd, prompt, name, key)
+        ok = bool(out) and not out.get("is_error")
     finally:
-        live_update(key)
+        live.end(key, name, (out or {}).get("subtype", "") if out else "no reply", ok=ok,
+                 seconds=round((out or {}).get("duration_ms", 0) / 1000) or None)
     ended = now_iso()
-    try:
-        out = json.loads(proc.stdout)
-    except ValueError:
-        raise AgentError(f"{agent} failed (exit {proc.returncode}): {proc.stderr or proc.stdout}")
+    if not out:
+        raise AgentError(f"{agent} failed (exit {code}): {err or 'no result line in the stream'}")
     if out.get("subtype") == "error_max_turns":   # the cap is a stop, not a crash: the caller's checks decide
         out["result"] = f"(stopped at the {max_turns}-turn cap before a reply) " + (out.get("result") or "")
     elif out.get("is_error"):
@@ -484,6 +512,9 @@ def main(argv=None):
                          f"of `{rel_draft}` (read the file only for context around them):\n\n~~~~diff\n"
                          f"{diff or '(no changes)'}\n~~~~")
 
+            quotes = source_cache.for_draft(text, ROOT)  # A4 (a): Ruth's checked quotes, not a re-fetch each round
+            if quotes:
+                shown += f"\n\n{quotes}"
             print(f"round {n}: critic checking...", flush=True)
             prompt = f"Content loop, round {n}.\n\n{shown}\n\nReply with only your `### Critic, round {n}` block."
             reply, u = run_agent(CRITIC, prompt)

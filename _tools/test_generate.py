@@ -12,6 +12,7 @@ blackboard, research routing, the token cap, crash handling and run logging. Whe
 agents write well is checked by real runs, not here. Standard library only.
 """
 import contextlib
+import datetime
 import io
 import json
 import re
@@ -318,6 +319,32 @@ class VoiceCheckTest(unittest.TestCase):
         self.assertEqual(block.count("GDD §9 Progression Tiers"), 2)  # listed once as checked, one row, though cited twice
         self.assertEqual(len(g.fail_rows(block)), 3)
 
+    def test_empty_or_placeholder_table_cells_fail(self):  # A4 (a): the cell part of check 7 by script
+        v, block = vc("# X\n| # | EN | FR |\n|---|---|---|\n| 1 | Hello | Bonjour |\n| 2 | Bye | à écrire |\n"
+                      "| 3 | Hi | |\nThe name is TBD in the GDD.\n")
+        self.assertEqual(v, "FAIL")
+        self.assertEqual(len(g.fail_rows(block)), 2)  # rows 2 and 3; the sentence stays with Clara
+        self.assertIn("Completeness (T7 cells only): 2", block)
+
+    def test_source_cache_gives_fresh_quotes_for_cited_urls(self):
+        import source_cache as sc
+        brief = ("---\nstatus: approved\n---\n| # | Claim (as narrow as the quote) | Verbatim quote | URL | Source kind "
+                 "| Date checked |\n|---|---|---|---|---|---|\n| R1 | Leafcutters nest in dead wood | \"prefer dead "
+                 "trees\" | https://ex.ca/bees | NGO | 2026-11-01 |\n| R2 | Old | \"old\" | https://ex.ca/old | NGO | 2025-01-01 |\n")
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "research").mkdir()
+            (Path(d) / "research" / "b.md").write_text(brief, encoding="utf-8")
+            (Path(d) / "research" / "r.md").write_text(brief.replace("approved", "rejected")
+                                                       .replace("ex.ca/bees", "ex.ca/no"), encoding="utf-8")
+            text = "See https://ex.ca/bees. And https://ex.ca/old and https://ex.ca/no and https://other.ca/x"
+            out = sc.for_draft(text, Path(d), today=datetime.date(2026, 11, 20))
+        self.assertIn('https://ex.ca/bees (checked 2026-11-01, `research/b.md`)', out)
+        self.assertIn('"prefer dead trees"', out)
+        self.assertNotIn("ex.ca/old", out)    # older than MAX_AGE_DAYS: fetched as before
+        self.assertNotIn("ex.ca/no", out)     # a rejected brief is not a source
+        self.assertNotIn("other.ca", out)
+        self.assertEqual(sc.for_draft("no links here", Path(d)), "")
+
     def test_glossary_terms(self):
         v, block = vc("# X\nThe frontier bonus helps.\n")  # Rejected in the GDD Glossary: blocks
         self.assertEqual((v, len(g.fail_rows(block))), ("FAIL", 1))
@@ -405,6 +432,13 @@ class CriticCheckTest(Workspace):
     def test_a_minor_row_does_not_count(self):
         rows = self.ALL.replace("| Lore |", "| Lore (minor) |")
         self.assertFalse(self.check_with("FAIL", rows)[0])
+
+    def test_score_rows_are_not_findings(self):  # Clara's Scores table (designer, 2026-11-20)
+        scores = ("\n\nScores\n| Check | Score | Reason |\n|---|---|---|\n"
+                  "| Lore | 4/10 | \"Tree A, cheapest\" is wrong |\n| Tone & Glossary | 9/10 | playful, Glossary terms |")
+        passed, report, _ = self.check_with("FAIL", self.ALL + scores)
+        self.assertTrue(passed)
+        self.assertIn("(3 blocking finding(s))", report[0])
 
     def test_a_pass_verdict_fails_the_check(self):
         self.assertFalse(self.check_with("PASS", self.ALL)[0])
@@ -552,6 +586,149 @@ class LogSubagentTest(unittest.TestCase):
         self.assertEqual(statusline.live(self.root, at), "▶ goal 0.1.4 · C5 · Bob 2m")
         live.write_text("not json", encoding="utf-8")
         self.assertEqual(statusline.live(self.root, at), "")
+
+    @contextlib.contextmanager
+    def live_here(self):
+        """Point live.py's files at the test folder."""
+        import live
+        base = self.root / "_meta" / "usage"
+        saved = live.FILE, live.LOG, live.STREAMS, live.tag()
+        live.FILE, live.LOG, live.STREAMS = base / "live.json", base / "live.log", base / "live"
+        try:
+            yield live
+        finally:
+            live.FILE, live.LOG, live.STREAMS = saved[:3]
+            live.set_tag(saved[3])
+
+    def test_live_steps_show_progress_and_log_events(self):
+        import statusline
+        with self.live_here() as live:
+            live.set_tag("goal 0.2 · C14 checks")
+            with live.step("unit") as s:
+                s.note("45 passed, 1 failed · t_shop_rows")
+                self.assertRegex(statusline.live(self.root), r"^▶ goal 0\.2 · C14 checks · unit 0m \(45 passed, 1 failed\)$")
+                s.result = "exit 1"
+                s.ok = False
+            self.assertEqual(statusline.live(self.root), "")       # ended: gone from the line
+            events = [json.loads(l) for l in live.LOG.read_text(encoding="utf-8").splitlines()]
+            self.assertEqual([(e["kind"], e["name"], e["tag"]) for e in events],
+                             [("start", "unit", "goal 0.2 · C14 checks"), ("end", "unit", "goal 0.2 · C14 checks")])
+            self.assertEqual((events[1]["ok"], events[1]["text"]), (False, "exit 1"))
+            import os
+            self.assertEqual(os.environ[live.ENV_TAG], "goal 0.2 · C14 checks")   # child scripts inherit the tag
+
+    def test_live_drops_dead_processes(self):
+        import subprocess
+        with self.live_here() as live:
+            p = subprocess.Popen([sys.executable, "-I", "-c", "pass"])
+            p.wait()
+            live.update("dead", {"agent": "Bob", "kind": "agent", "start": live.now_iso(), "pid": p.pid})
+            live.update("me", {"agent": "Rex", "kind": "agent", "start": live.now_iso(), "pid": __import__("os").getpid()})
+            self.assertEqual([r["agent"] for r in live.running(self.root)], ["Rex"])
+
+    def test_stream_agent_logs_tool_calls_and_returns_the_result(self):
+        lines = [{"type": "system", "subtype": "init"},
+                 {"type": "assistant", "message": {"content": [
+                     {"type": "text", "text": "looking"},
+                     {"type": "tool_use", "name": "Edit", "input": {"file_path": str(g.ROOT / "game" / "scripts" / "main.gd")}}]}},
+                 {"type": "result", "subtype": "success", "result": "done", "num_turns": 2}]
+        script = self.root / "fake_claude.py"
+        script.write_text("import sys, json\nsys.stdin.read()\n" + "".join(
+            f"print(json.dumps({l!r}))\n" for l in lines), encoding="utf-8")
+        with self.live_here() as live:
+            code, out, _ = g.stream_agent([sys.executable, "-I", str(script)], "brief", "Patricia", "k1")
+            self.assertEqual((code, out["result"]), (0, "done"))
+            tools = [json.loads(l) for l in live.LOG.read_text(encoding="utf-8").splitlines()]
+            self.assertEqual([(e["kind"], e["name"], e["text"]) for e in tools],
+                             [("tool", "Patricia", "Edit game/scripts/main.gd")])
+            self.assertEqual(len((live.STREAMS / "k1.jsonl").read_text(encoding="utf-8").splitlines()), 3)
+
+    def test_godot_run_streams_counts_and_times_out(self):
+        import godot_run
+
+        class Step:
+            notes = []
+
+            def note(self, t):
+                self.notes.append(t)
+        s = Step()
+        text, code = godot_run.stream([sys.executable, "-I", "-c", "print('PASS t_a'); print('FAIL t_b x'); print('---- 1 passed, 1 failed')"],
+                                      60, None, s)
+        self.assertEqual(code, 0)
+        self.assertIn("---- 1 passed", text)
+        self.assertEqual(s.notes[-1], "1 passed, 1 failed · t_b")
+        _, code = godot_run.stream([sys.executable, "-I", "-c", "import time; time.sleep(30)"], 1, None)
+        self.assertIsNone(code)
+
+    def test_watch_formats_events(self):
+        import watch
+        self.assertRegex(watch.fmt({"ts": "2026-11-21T18:28:41Z", "kind": "tool", "name": "Patricia",
+                                    "tag": "goal 0.2 · C14", "text": "Edit game/scripts/main.gd"}),
+                         r"^\d\d:\d\d:\d\d · Patricia\s+Edit game/scripts/main\.gd   \[goal 0\.2 · C14\]$")
+        self.assertIn("✗ unit", watch.fmt({"ts": "x", "kind": "end", "name": "unit", "ok": False, "text": "exit 1",
+                                           "seconds": 333}))
+        self.assertIn("exit 1 in 5m33s", watch.fmt({"ts": "x", "kind": "end", "name": "unit", "ok": False,
+                                                     "text": "exit 1", "seconds": 333}))
+
+    def test_status_reads_boards_tests_stops_and_decisions(self):
+        import status
+        r = self.root
+        (r / "game" / "reports" / "goal" / "0.9").mkdir(parents=True)
+        (r / "game" / "reports" / "goal" / "0.9" / "blackboard.md").write_text(
+            "---\nrun: 0.9\nresult: waiting-designer\n---\n# x\n\n## Waiting for the designer\n\nC3 needs a layout.\n",
+            encoding="utf-8")
+        for stamp, total in (("20261120-010101", "---- 5 passed, 0 failed"), ("20261121-010101", "---- 9 passed, 2 failed")):
+            (r / "game" / "reports" / "_runs" / stamp).mkdir(parents=True)
+            (r / "game" / "reports" / "_runs" / stamp / "unit.log").write_text(f"PASS t_a\n{total}\n", encoding="utf-8")
+        (r / "_meta" / "memory").mkdir(parents=True, exist_ok=True)
+        (r / "_meta" / "memory" / "session-handoff.md").write_text(
+            "x\n**STOP (Oscar): C9 failed**, for an Opus session.\nnot a stop\n", encoding="utf-8")
+        (r / "_meta" / "sessions" / "a").mkdir(parents=True, exist_ok=True)
+        (r / "_meta" / "sessions" / "a" / "decisions.md").write_text("### D7 · x\n### D12 · y\n", encoding="utf-8")
+        self.assertEqual(status.goal_runs(r), [("0.9", "waiting-designer", "C3 needs a layout.")])
+        self.assertEqual(status.newest_tests(r), ("game/reports/_runs/20261121-010101", {"unit": "FAIL 9, 2 failed"}))
+        self.assertEqual(status.stops(r), ["STOP (Oscar): C9 failed, for an Opus session."])
+        self.assertEqual(status.next_decision(r), "D13")
+
+    def test_end_of_day_refuses_transcripts_in_the_index(self):
+        import end_of_day
+        bad = ["_meta/sessions/2026-11-21-ab/session.jsonl", "_meta/sessions/x/subagents/a.jsonl",
+               "_meta/sessions/runs/x/blackboard.md", "_meta/sessions/x/manifest.json"]
+        good = ["_meta/sessions/x/decisions.md", "_meta/sessions/decision-comb.html"]
+        self.assertEqual([bool(end_of_day.NEVER_STAGED.search(p)) for p in bad + good], [True] * 4 + [False] * 2)
+
+    def test_commit_main_commits_named_files_to_main_and_leaves_this_branch(self):
+        import subprocess, commit_main
+        r = self.root / "repo"
+        r.mkdir()
+        run = lambda *a: subprocess.run(["git", "-C", str(r), *a], capture_output=True, text=True, check=True).stdout
+        run("init", "-q", "-b", "main")
+        run("config", "user.email", "t@t")
+        run("config", "user.name", "t")
+        (r / ".claude").mkdir()
+        (r / ".claude" / "a.md").write_text("one\n", encoding="utf-8")
+        (r / "gone.md").write_text("x\n", encoding="utf-8")
+        run("add", "-A")
+        run("commit", "-q", "-m", "first")
+        run("switch", "-q", "-c", "milestone/9.9")
+        (r / ".claude" / "a.md").write_text("two\n", encoding="utf-8")
+        (r / "gone.md").unlink()
+        (r / "other.md").write_text("stays here\n", encoding="utf-8")
+        code, text = commit_main.commit_main(r, "fix a", [".claude/a.md", "gone.md"])
+        self.assertEqual(code, 0, text)
+        self.assertIn("committed to main", text)
+        self.assertEqual(run("show", "main:.claude/a.md"), "two\n")
+        self.assertEqual(run("ls-tree", "--name-only", "main"), ".claude\n")     # gone.md deleted, other.md not taken
+        self.assertEqual(run("rev-parse", "--abbrev-ref", "HEAD").strip(), "milestone/9.9")
+        self.assertFalse((r / commit_main.WT).exists())                        # worktree removed
+        self.assertEqual(commit_main.commit_main(r, "again", [".claude/a.md"])[1],
+                         "nothing to commit: main already has these files as they are")
+        self.assertEqual(commit_main.commit_main(r, "x", ["../out.md"])[0], 2)
+
+    def test_display_names_come_from_the_agent_files(self):
+        import live
+        self.assertEqual((live.display("programmer"), live.display("content-critic"), live.display("nope")),
+                         ("Patricia", "Clara", "nope"))
 
     def run_hook(self, payload):
         import subprocess
@@ -781,11 +958,29 @@ class BuildToolsTest(unittest.TestCase):
             self.assertIsNotNone(sh("'x' | Set-Content GDD.md", "PowerShell"))
             self.assertIsNotNone(sh("@'\nx\n'@ | python -", "PowerShell"))
             for ok in ["python -I _tools/links.py", "git commit -m \"$(cat <<'EOF'\nmsg\nEOF\n)\"",
-                       "grep -n x GDD.md 2>&1 | head", "python -I _tools/godot_run.py all > /dev/null",
+                       "grep -n x GDD.md 2>&1 | head", "python -I _tools/links.py > /dev/null",
                        "echo x > new.txt", "sed -n '1,5p' GDD.md", "git log --oneline | head -5",
-                       '& "C:\\Users\\me\\Godot.exe" --path game']:
+                       '& "C:\\Users\\me\\Godot.exe" --path game', "grep -n stream _tools/godot_run.py",
+                       "python -I _tools/test_generate.py"]:
                 self.assertIsNone(sh(ok), ok)
-            self.assertIsNotNone(wr("GDD.md"))                                   # overwrite: use Edit
+            rex = lambda c, agent: gs.decide("Bash", {"command": c}, repo, agent=agent)   # L21, queue #6
+            for cmd in ["python -I _tools/godot_run.py all > /dev/null", "py -I _tools\\mutate.py --since abc",
+                        "python -I _tools/ui_shots.py 0.2=game", "python -I _tools/build.py --smoke"]:
+                self.assertIn("rex-runs-scripts", rex(cmd, None), cmd)              # the main session
+                self.assertIn("rex-runs-scripts", rex(cmd, "qa-build-engineer"), cmd)
+                self.assertIsNone(rex(cmd, "script-runner"), cmd)                  # Rex runs them
+            probe = "python -I _tools/godot_run.py unit --only test_a,test_b --time-scale 6"   # item 19, option A
+            self.assertIn("rex-runs-scripts", rex(probe, "qa-build-engineer"))   # no allow file yet
+            gs.allow_probes(60, repo)
+            self.assertIsNone(rex(probe, "qa-build-engineer"))                   # the operator allowed probes
+            for cmd in ["python -I _tools/godot_run.py all --only test_a", "python -I _tools/godot_run.py unit",
+                        "python -I _tools/mutate.py --only x", f"{probe} && python -I _tools/godot_run.py all"]:
+                self.assertIn("rex-runs-scripts", rex(cmd, "qa-build-engineer"), cmd)   # full suites stay Rex's
+            self.assertIn("rex-runs-scripts", rex(probe, None))                  # the main session: still Rex
+            self.assertIn("rex-runs-scripts", rex(probe, "programmer"))
+            gs.allow_probes(-1, repo)
+            self.assertIn("rex-runs-scripts", rex(probe, "qa-build-engineer"))   # expired
+            self.assertIsNotNone(wr("GDD.md"))                                 # overwrite: use Edit
             self.assertIsNone(wr("GDD.md", "Edit"))
             self.assertIsNone(wr(str(Path(repo) / "new.md")))
             self.assertIsNone(wr("_meta/memory/m.md"))                           # memories are replaced whole
@@ -798,7 +993,7 @@ class BuildToolsTest(unittest.TestCase):
             self.assertIsNone(art(file_path="report.html"))
             self.assertIsNone(wr("game/tests/t.gd", "Edit"))                     # no goal run: the main session may edit
             lock = Path(repo) / gs.LOCK
-            lock.parent.mkdir(parents=True)
+            lock.parent.mkdir(parents=True, exist_ok=True)
             lock.write_text("{}", encoding="utf-8")
             self.assertIn("goal-run-owns-game", wr("game/tests/t.gd", "Edit"))  # a live run owns the build folders
             self.assertIn("goal-run-owns-game", wr("game/scripts/new.gd"))
@@ -860,16 +1055,18 @@ class StyleLoop(unittest.TestCase):
         (self.root / "_meta").mkdir()
         shutil.copy(TOOLS.parent / "STYLE_GUIDE.md", self.root / "STYLE_GUIDE.md")
         self.mat(MEADOW)
-        self.saved = g.ROOT, g.run_agent, sl.render
+        self.saved = g.ROOT, g.run_agent, sl.render, sl.gate
         g.ROOT = self.root
         sl.render = self.fake_render
+        self.gates = []
+        sl.gate = lambda game: (self.gates.append(game) or (True, "unit PASS (fake)", set()))
 
     def tearDown(self):
-        g.ROOT, g.run_agent, self.sl.render = self.saved
+        g.ROOT, g.run_agent, self.sl.render, self.sl.gate = self.saved
         self.tmp.cleanup()
 
-    def mat(self, rgb):
-        (self.root / "game" / "materials" / "ground_patch.tres").write_text(
+    def mat(self, rgb, game="game"):
+        (self.root / game / "materials" / "ground_patch.tres").write_text(
             f'[gd_resource type="StandardMaterial3D" format=3]\n\n[resource]\nalbedo_color = Color({rgb}, 1.0)\n',
             encoding="utf-8")
 
@@ -885,13 +1082,17 @@ class StyleLoop(unittest.TestCase):
             calls.append(name)
             prompts.append(prompt)
             reply = ""
-            if name == self.sl.BUILDER and fixes:
-                self.mat(MEADOW)
+            if name == self.sl.BUILDER and fixes:  # Bob edits the folder his prompt names (the sandbox by default)
+                self.mat(MEADOW, re.search(r"editing `([^`]+)/scenes/`", prompt).group(1))
             elif name == self.sl.CRITIC:
                 n = re.search(r"round (\d+)", prompt).group(1)
                 said = verdicts.pop(0)
                 row = {"FAIL": "| 1 | V7 | 01-farm-start.png | clutter | move the truck |",
-                       "FAIL:designer": "| 1 | V3 | 01-farm-start.png | a third accent | A: recolour; B: new token (designer) |"
+                       "FAIL:designer": "| 1 | V8 | 04-bucket-full.png | truck outshines honey | Mute the bar. "
+                                        "(designer) A: shrink the truck. B: enlarge the honey props. |",
+                       "FAIL:guide": "| 1 | V3 | 01-farm-start.png | a third accent | add a new token (designer) |",
+                       "FAIL:ui": "| 1 | V7 | 01-farm-start.png | clutter | move the truck |\n"
+                                  "| 2 | V13 | 06-truck-away.png | Dev label faint | (UI) cream text, ink outline |"
                        }.get(said, "")
                 reply = (f"### Critic, round {n}\nVERDICT: {said.split(':')[0]}\n| # | Rule | Shot | Finding | Fix |\n"
                          f"|---|---|---|---|---|\n{row}\n")
@@ -935,9 +1136,178 @@ class StyleLoop(unittest.TestCase):
         self.assertEqual(self.run_loop("--max-tokens", "5"), 1)
         self.assertEqual(calls, [self.sl.CRITIC])
 
+    def test_sandbox_leaves_the_game_alone_and_writes_a_patch(self):  # designer, 2026-11-20
+        self.mat(NEON)
+        calls, prompts = self.fake(["PASS", "PASS"])
+        self.assertEqual(self.run_loop(), 0)
+        self.assertIn("_meta/sessions/runs/style-s-sandbox/game/scenes/", prompts[1])
+        live = (self.root / "game" / "materials" / "ground_patch.tres").read_text(encoding="utf-8")
+        self.assertIn(NEON, live)                                    # the game itself is unchanged
+        patch = (self.root / "game" / "reports" / "style" / "s" / "sandbox.patch").read_text(encoding="utf-8")
+        self.assertIn("+++ b/game/materials/ground_patch.tres", patch)
+        self.assertIn(MEADOW, patch)
+        self.assertIn("sandbox.patch", self.board().split("## Result")[1])
+        self.assertEqual(len(self.gates), 2)                          # the baseline, then Bob's one turn
+
+    def test_a_round_that_fails_the_gate_is_undone(self):
+        self.mat(NEON)
+        runs = []   # the baseline already fails t_old; Bob's turn adds t_layout_objects_on_cells
+
+        def gate(game):
+            runs.append(game)
+            return False, "unit FAIL", {"t_old"} | ({"t_layout_objects_on_cells"} if len(runs) > 1 else set())
+        self.sl.gate = gate
+        self.fake(["PASS", "PASS"])
+        self.assertEqual(self.run_loop("--max-rounds", "2"), 1)        # script row stays: Bob's fix was undone
+        sand = self.root / "_meta" / "sessions" / "runs" / "style-s-sandbox" / "game" / "materials" / "ground_patch.tres"
+        self.assertIn(NEON, sand.read_text(encoding="utf-8"))
+        self.assertIn("FAIL: Bob’s edits this round were undone, they broke t_layout_objects_on_cells", self.board())
+        self.assertNotIn("broke t_old", self.board())                  # a baseline failure is not his
+
+    def test_a_baseline_failure_does_not_undo_a_turn(self):
+        self.mat(NEON)
+        self.sl.gate = lambda game: (False, "unit FAIL", {"t_old"})
+        self.fake(["PASS", "PASS"])
+        self.assertEqual(self.run_loop(), 0)                           # Bob's fix stays and the round passes
+        self.assertIn("PASS: no test fails that passed before the run", self.board())
+
+    def test_ui_edits_are_put_back(self):  # designer, 2026-11-20: Bob moved the Spin icon; UI is not his
+        game = self.root / "game"
+        main = game / "scenes" / "main.tscn"
+        old = ('[sub_resource type="StyleBoxFlat" id="StyleBox_tag"]\nbg_color = Color(0.38, 0.34, 0.3, 0.5)\n\n'
+               '[node name="Ground" type="MeshInstance3D" parent="FarmWorld"]\nvisible = true\n\n'
+               '[node name="SpinIcon" type="Button" parent="FarmUIRoot/FarmUI"]\nscreen_offset = Vector2(0, 0)\n')
+        main.write_text(old, encoding="utf-8")
+        before = self.sl.snapshot(game)
+        main.write_text(old.replace("0.38, 0.34", "0.3, 0.22").replace("visible = true", "visible = false")
+                        .replace("Vector2(0, 0)", "Vector2(-230, -60)")
+                        + '\n[node name="NewLabel" type="Label" parent="FarmUIRoot/FarmUI"]\ntext = "x"\n',
+                        encoding="utf-8")
+        put_back = self.sl.guard_motion(before, game)
+        text = main.read_text(encoding="utf-8")
+        self.assertIn("Vector2(0, 0)", text)
+        self.assertIn("0.38, 0.34", text)
+        self.assertNotIn("NewLabel", text)
+        self.assertIn("visible = false", text)                        # a 3D scene node is still Bob's
+        self.assertTrue(all("(UI)" in x for x in put_back))
+
+    def test_parts_added_to_a_picked_prop_are_removed(self):  # r5 left empty rim nodes in the patch
+        game = self.root / "game"
+        jar = game / "scenes" / "props" / "jar.tscn"
+        jar.parent.mkdir(parents=True, exist_ok=True)
+        old = '[sub_resource type="CylinderMesh" id="Mesh_glass"]\nheight = 0.26\n\n[node name="Jar" type="Node3D"]\n'
+        jar.write_text(old, encoding="utf-8")
+        before = self.sl.snapshot(game)
+        jar.write_text(old.replace("\n\n[node", '\n\n[sub_resource type="TorusMesh" id="Mesh_rim"]\nrings = 16\n\n[node')
+                       + '\n[node name="JarRimTop" type="MeshInstance3D" parent="."]\nmesh = SubResource("Mesh_rim")\n',
+                       encoding="utf-8")
+        put_back = self.sl.guard_motion(before, game)
+        self.assertEqual(jar.read_text(encoding="utf-8").rstrip(), old.rstrip())  # a blank separator line may stay
+        self.assertTrue(any("picked prop shape" in x for x in put_back))
+
+    def test_ui_rows_go_to_patricia_and_3d_rows_to_bob(self):  # designer, 2026-11-20: UI is not Bob's
+        calls, prompts = self.fake(["FAIL:ui", "PASS"])
+        self.assertEqual(self.run_loop(), 0)
+        self.assertEqual(calls, [self.sl.CRITIC, self.sl.BUILDER, self.sl.UI_FIXER, self.sl.CRITIC])
+        self.assertIn("move the truck", prompts[1])
+        self.assertNotIn("Dev label", prompts[1])
+        self.assertIn("Dev label", prompts[2])
+        self.assertIn("UI_DESIGN.md", prompts[2])
+        self.assertNotIn("move the truck", prompts[2])
+        self.assertIn("Start the Fix of every row about the UI with `(UI)`", prompts[0])
+        bob, ui = self.sl.split_rows(["| 1 | V11 | `scenes/main.tscn:3` | 90 px | 120 px |",
+                                      "| 2 | V1 | `materials/x.tres:2` | ΔE 14 | recolour |"], self.root / "game")
+        self.assertEqual((len(bob), len(ui)), (1, 1))                 # V11 is a UI rule
+
+    def test_patricia_may_restyle_the_ui_but_not_move_it(self):
+        game = self.root / "game"
+        main = game / "scenes" / "main.tscn"
+        old = ('[node name="SpinIcon" type="Button" parent="FarmUIRoot/FarmUI"]\n'
+               'theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)\nscreen_offset = Vector2(0, 0)\n')
+        main.write_text(old, encoding="utf-8")
+        before = self.sl.snapshot(game)
+        main.write_text(old.replace("0.5, 0.5, 0.5", "1, 0.96, 0.86").replace("(0, 0)", "(-230, -60)"), encoding="utf-8")
+        self.mat(NEON)                                                 # a 3D material is not hers
+        put_back = self.sl.guard_motion(before, game, self.sl.UI_FIXER)
+        text = main.read_text(encoding="utf-8")
+        self.assertIn("1, 0.96, 0.86", text)
+        self.assertIn("Vector2(0, 0)", text)
+        self.assertIn(MEADOW, (game / "materials" / "ground_patch.tres").read_text(encoding="utf-8"))
+        self.assertEqual(len(put_back), 2)
+
+    def test_loop_takes_option_a_without_stopping(self):  # designer, 2026-11-20
+        calls, prompts = self.fake(["FAIL:designer", "PASS"])
+        self.assertEqual(self.run_loop(), 0)
+        self.assertEqual(calls, [self.sl.CRITIC, self.sl.BUILDER, self.sl.CRITIC])
+        self.assertIn("shrink the truck (the loop's choice A)", prompts[1])
+        self.assertNotIn("(designer)", prompts[1])
+        self.assertNotIn("enlarge the honey", prompts[1])
+        self.assertIn("chose A: shrink the truck", prompts[2])  # Vera is told what the loop picked
+        board = self.board()
+        self.assertIn("### Loop's choices, round 1", board)
+        self.assertNotIn("Waiting for the designer", board)
+        self.assertIn("result: pass", board)
+
+    def test_motion_edits_are_put_back(self):  # designer, 2026-11-20: the truck's exit went diagonal
+        scene = self.root / "game" / "scenes" / "t.tscn"
+        scene.parent.mkdir(parents=True, exist_ok=True)
+        old = '[node name="Truck"]\ntransform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 0, 5.2)\nspeed = 2.0\n'
+        scene.write_text(old, encoding="utf-8")
+        before = self.sl.snapshot(self.root / "game")
+        scene.write_text(old.replace("3.8, 0, 5.2)", "4.6, 0, 6)").replace("speed = 2.0", "speed = 5.0")
+                         + "exit_direction = Vector3(1, 0, -1)\n", encoding="utf-8")
+        put_back = self.sl.guard_motion(before, self.root / "game")
+        text = scene.read_text(encoding="utf-8")
+        self.assertIn("4.6, 0, 6)", text)          # a placement change stays
+        self.assertIn("speed = 2.0", text)          # motion changes are put back
+        self.assertNotIn("exit_direction", text)
+        self.assertEqual(len(put_back), 2)
+        self.assertIn("Never change how anything moves", self.sl.bob_prompt(2, ["| 1 | V13 | x | y | z |"]))
+
+    def test_picked_prop_size_and_placement_are_put_back(self):  # designer, 2026-11-20: truck shrunk, jars enlarged
+        game = self.root / "game"
+        (game / "scenes" / "props").mkdir(parents=True, exist_ok=True)
+        main, jar = game / "scenes" / "main.tscn", game / "scenes" / "props" / "jar.tscn"
+        main_old = ('[node name="Truck" parent="FarmWorld"]\ntransform = Transform3D(0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, '
+                    '3.8, 0, 5.2)\n\n[node name="JournalButton" type="Button"]\ncustom_minimum_size = Vector2(120, 120)\n')
+        jar_old = '[sub_resource type="CylinderMesh" id="Mesh_glass"]\ntop_radius = 0.15\nheight = 0.26\n'
+        main.write_text(main_old, encoding="utf-8")
+        jar.write_text(jar_old, encoding="utf-8")
+        mat = game / "materials" / "glass.tres"
+        mat.parent.mkdir(parents=True, exist_ok=True)
+        mat.write_text("albedo_color = Color(0.75, 0.85, 0.9, 0.28)\n", encoding="utf-8")
+        before = self.sl.snapshot(game)
+        main.write_text(main_old.replace("0.93, 0, 0, 0, 0.93, 0, 0, 0, 0.93, 3.8, 0, 5.2", "0.7, 0, 0, 0, 0.7, 0, 0, 0, "
+                                         "0.7, 4.6, 0, 6").replace("(120, 120)", "(120, 88)"), encoding="utf-8")
+        jar.write_text(jar_old.replace("0.15", "0.18").replace("0.26", "0.3"), encoding="utf-8")
+        mat.write_text("albedo_color = Color(0.88, 0.95, 0.98, 0.3)\n", encoding="utf-8")
+        put_back = self.sl.guard_motion(before, game)
+        self.assertEqual(jar.read_text(encoding="utf-8"), jar_old)
+        text = main.read_text(encoding="utf-8")
+        self.assertIn("0.93, 3.8, 0, 5.2", text)       # the truck's size and place come back
+        self.assertIn("(120, 88)", text)               # a UI node is Bob's to change
+        self.assertIn("0.88, 0.95", mat.read_text(encoding="utf-8"))  # colours are Bob's
+        self.assertEqual(len(put_back), 3)
+        self.assertTrue(all("picked prop size" in x for x in put_back))
+
+    def test_choose_splits_choices_from_true_stops(self):
+        held = ["| 1 | V3 | `materials/rim.tres:4` | 3 accents | A: recolour `rim` to charcoal; B: approve `rim` "
+                "as a new accent (designer) |",
+                "| 2 | V1 | `materials/rim.tres:4` | ΔE 16 | recolour `rim` to truck red; or per the V3 decision on "
+                "the same line (designer) |",
+                "| 3 | V1 | `materials/x.tres:2` | ΔE 14 | A: recolour to cream (0.9, 0.85, 0.7) (ΔE 13.0); B: allow "
+                "the Shadow role (designer) |",
+                "| 4 | V3 | 01-farm-start.png | a third accent | add a new token (designer) |"]
+        picked, stops = self.sl.choose(held)
+        self.assertEqual(stops, [held[3]])
+        fixes = {o: b for o, b, _ in picked}
+        self.assertIn("| recolour `rim` to charcoal (the loop's choice A) |", fixes[held[0]])
+        self.assertIsNone(fixes[held[1]])  # follows the V3 row, no Bob row of its own
+        self.assertIn("recolour to cream (0.9, 0.85, 0.7) (ΔE 13.0) (the loop's choice A)", fixes[held[2]])
+
     def test_designer_stop_then_resume(self):
         self.mat(NEON)
-        calls, prompts = self.fake(["FAIL:designer", "PASS"])
+        calls, prompts = self.fake(["FAIL:guide", "PASS"])
         self.assertEqual(self.run_loop(), 1)
         self.assertEqual(calls, [self.sl.CRITIC, self.sl.BUILDER])
         self.assertIn("V1", prompts[1])
@@ -946,6 +1316,7 @@ class StyleLoop(unittest.TestCase):
         self.assertIn("result: waiting-designer", board)
         self.assertIn("## Waiting for the designer", board)
         self.assertIn("new token (designer)", board.split("## Waiting for the designer")[1])
+        self.assertNotIn("Loop's choices", board)
         self.assertEqual(self.run_loop("--resume"), 0)
         self.assertEqual(calls[-1], self.sl.CRITIC)
         self.assertIn("Your round 1 verdict", prompts[-1])  # Vera's context survives the stop
@@ -960,7 +1331,7 @@ class StyleLoop(unittest.TestCase):
         self.assertLess(board.index("## Resumed"), board.index("## Result"))   # Result stays last
 
     def test_designer_row_in_the_last_round_ends_at_max_rounds(self):
-        calls, prompts = self.fake(["FAIL:designer", "FAIL:designer"], fixes=False)
+        calls, prompts = self.fake(["FAIL:guide", "FAIL:guide"], fixes=False)
         self.assertEqual(self.run_loop("--max-rounds", "2"), 1)  # round 1 stops for the designer
         self.assertEqual(self.run_loop("--resume", "--max-rounds", "2", "--note", "defer V3"), 1)
         self.assertIn("defer V3", prompts[-1])

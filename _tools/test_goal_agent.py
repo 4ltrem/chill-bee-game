@@ -84,6 +84,16 @@ class Parse(unittest.TestCase):
         self.assertIn("honey_cell", kept)
 
 
+class LiveLabels(unittest.TestCase):
+    def test_check_commands_get_short_live_names_and_git_reads_none(self):
+        py = [sys.executable, "-I"]
+        self.assertEqual(ga.cmd_label(py + ["_tools/godot_run.py", "unit", "start", "--time-scale", "6"]),
+                         "godot_run unit start")
+        self.assertEqual(ga.cmd_label(py + ["_tools/mutate.py", "--since", "abc"]), "mutate abc")
+        self.assertEqual(ga.cmd_label(["git", "commit", "-m", "x"]), "git commit")
+        self.assertEqual(ga.cmd_label(["git", "rev-parse", "HEAD"]), "")
+
+
 class Gaps(unittest.TestCase):
     def test_done_partial_missing_with_evidence(self):
         _, report, _, _ = plan()
@@ -174,12 +184,16 @@ class Loop(unittest.TestCase):
     def setUp(self):
         self.tmp = Path(tempfile.mkdtemp())
         shutil.copytree(FIX / "game", self.tmp / "game")
-        self.saved = {k: getattr(ga, k) for k in ("ROOT", "run_agent", "run_cmd", "budget_ok", "log_usage")}
+        self.saved = {k: getattr(ga, k) for k in ("ROOT", "run_agent", "run_cmd", "budget_ok", "log_usage",
+                                                  "change_snapshot", "file_diff")}
         ga.ROOT = self.tmp
         self.calls, self.cmds, self.check_codes, self.budget, self.idle = [], [], [], (True, "allow"), False
-        self.turn_caps, self.logs, self.code_idle, self.scope_rows = [], [], False, []
+        self.turn_caps, self.logs, self.code_idle, self.scope_rows, self.outs = [], [], False, [], []
+        self.snapshot, self.diffs = {}, {}                                  # L42: what the step changed, per path
         ga.run_agent = self.fake_agent
         ga.run_cmd = self.fake_cmd
+        ga.change_snapshot = lambda: {p: list(v) for p, v in self.snapshot.items()}
+        ga.file_diff = lambda path: self.diffs.get(path, "")
         ga.budget_ok = lambda agent: self.budget
         ga.log_usage = lambda usage, run: None
 
@@ -213,7 +227,8 @@ class Loop(unittest.TestCase):
             d = self.tmp / "game" / "reports" / "_runs" / f"2100{len(self.cmds):06d}"
             d.mkdir(parents=True)
             (d / "unit.log").write_text(self.logs.pop(0), encoding="utf-8")
-        return (self.check_codes.pop(0) if self.check_codes else 0), "FAIL  t_x  broken"
+        out = self.outs.pop(0) if self.outs and any("godot_run.py" in c for c in cmd) else "FAIL  t_x  broken"
+        return (self.check_codes.pop(0) if self.check_codes else 0), out
 
     def run_main(self, *args):
         out = io.StringIO()
@@ -246,8 +261,28 @@ class Loop(unittest.TestCase):
         self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
         add = next(c for c in self.cmds if c[:2] == ["git", "add"])
         self.assertNotIn("-A", add)
+        self.assertFalse(any("ledger.json" in p or "goal/t" in p for p in add))   # queue #5: state not in a goal commit
         self.assertIn("## Pass 2", board)                                   # re-scanned after the write
         self.assertIn("Next: **C3**", board.split("## Pass 2")[0] + "Next: **C3**")
+
+    def test_the_run_state_is_one_commit_of_its_own_paths(self):
+        folder = self.tmp / "game" / "reports" / "goal" / "t"
+        folder.mkdir(parents=True)
+        (folder / "blackboard.md").write_text("x", encoding="utf-8")
+        ledger = folder.parent / "ledger.json"
+        ledger.write_text("{}", encoding="utf-8")
+        staged = lambda cmd, env=None, timeout=0: (self.cmds.append(cmd) or
+                                                   ((1, "") if cmd[1:3] == ["diff", "--cached"] else self.fake_cmd(cmd)))
+        ga.run_cmd = staged
+        spec = {"version": "9.9"}
+        self.assertEqual(ga.commit_state(spec, "t", folder, ledger, "done"), "state committed")
+        commit = next(c for c in self.cmds if c[:2] == ["git", "commit"])
+        self.assertIn("--only", commit)
+        self.assertEqual(commit[commit.index("--") + 1:], ["game/reports/goal/ledger.json", "game/reports/goal/t"])
+        ga.run_cmd = self.fake_cmd                                          # nothing staged: no commit
+        self.cmds.clear()
+        self.assertEqual(ga.commit_state(spec, "t", folder, ledger, "done"), "state unchanged")
+        self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
 
     def test_a_step_builds_the_change_with_both_owners_in_parallel(self):
         (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
@@ -334,9 +369,9 @@ class Loop(unittest.TestCase):
 
     def test_a_bug_test_that_passes_first_goes_back_to_quinn_alone(self):
         self.fail_first_fixture()
-        self.check_codes = [0, 0, 0, 0, 1, 0, 0, 0]                         # round 0 green, 1 red, 2 green
+        self.check_codes = [0, 0, 0, 0, 1, 1, 0, 0, 0, 0]                   # round 0 green, 1 red (rerun red), 2 green, gate
         self.logs = ["PASS  t_frames_scale  (3 checks, 5 ms)\n",
-                     "FAIL  t_frames_scale  frames 1.0, expected 2.0  (5 ms)\n",
+                     "FAIL  t_frames_scale  frames 1.0, expected 2.0  (5 ms)\n", "FAIL  t_x  broken  (5 ms)\n",
                      "PASS  t_frames_scale  (3 checks, 5 ms)\n"]
         code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
         self.assertIn("Check `fail-first`: FAIL (T3.1 not shown failing)", board)
@@ -374,8 +409,9 @@ class Loop(unittest.TestCase):
 
     def test_tests_already_written_skip_quinn_and_go_to_the_code_owners(self):
         self.fail_first_fixture()                                           # test_frames.gd marks T3.1 already
-        self.check_codes = [0, 1, 0, 0, 0]
-        self.logs = ["FAIL  t_frames_scale  frames 1.0, expected 2.0  (5 ms)\n", "PASS  t_frames_scale  (5 ms)\n"]
+        self.check_codes = [0, 1, 1, 0, 0, 0, 0]                            # t_x red again on its rerun: not flaky
+        self.logs = ["FAIL  t_frames_scale  frames 1.0, expected 2.0  (5 ms)\n", "FAIL  t_x  broken  (5 ms)\n",
+                     "PASS  t_frames_scale  (5 ms)\n"]
         code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
         self.assertIn("Quinn's step skipped", board)
         self.assertNotIn(ga.QA, [a for a, _ in self.calls])
@@ -392,8 +428,9 @@ class Loop(unittest.TestCase):
     def test_a_bug_fixed_with_only_test_changes_is_held(self):
         self.fail_first_fixture()
         self.code_idle = True                                               # T14.3: the lid test, no lid change
-        self.check_codes = [0, 1, 0, 0, 0]
-        self.logs = ["FAIL  t_frames_scale  frames 1.0, expected 2.0  (5 ms)\n", "PASS  t_frames_scale  (5 ms)\n"]
+        self.check_codes = [0, 1, 1, 0, 0, 0, 0]
+        self.logs = ["FAIL  t_frames_scale  frames 1.0, expected 2.0  (5 ms)\n", "FAIL  t_x  broken  (5 ms)\n",
+                     "PASS  t_frames_scale  (5 ms)\n"]
         code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
         self.assertIn("only tests changed", board)
         self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
@@ -429,7 +466,7 @@ class Loop(unittest.TestCase):
 
     def test_a_failing_old_test_after_a_change_also_goes_to_quinn(self):
         (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
-        self.check_codes = [0, 1]                                           # contract passes, the suite fails once
+        self.check_codes = [0, 1, 1]                                        # contract passes, the suite fails (rerun too)
         code, out, board = self.run_main("--max-goals", "1")
         self.assertEqual(code, 0)
         fix = [a for a, p in self.calls if "fix round 1" in p]
@@ -579,7 +616,9 @@ class Loop(unittest.TestCase):
             self.assertIn(text, quinn)
         self.assertNotIn("t_untouched", quinn)
         test_cmd = next(c for c in self.cmds if any("godot_run.py" in x for x in c))
-        self.assertEqual(test_cmd[-3:], ["unit", "start", "play"])
+        self.assertEqual(test_cmd[-8:], ["unit", "start", "play", *ga.ONLY_FLAGS, "--only", "t_old_bar"])   # L40, L41
+        gate = [c for c in self.cmds if any("godot_run.py" in x for x in c) and "--only" not in c]
+        self.assertEqual([c[-4:] for c in gate], [ga.FULL_SUITE])            # L42: no step gate; the run's end, once
 
     def test_no_impact_no_quinn_call(self):
         (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
@@ -611,6 +650,397 @@ class Loop(unittest.TestCase):
         self.assertEqual(len(self.calls), 1)
         self.assertFalse(any(c[:2] == ["git", "commit"] for c in self.cmds))
         self.assertIn("full suite is red after Quinn's round", board.read_text(encoding="utf-8"))
+
+    def written_fixture(self):
+        """H and C3 built, T3.1's test written and marked (no `shown failing`): the step goes straight to the checks."""
+        game = self.tmp / "game"
+        (game / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        (game / "reports" / "goal").mkdir(parents=True, exist_ok=True)
+        (game / "reports" / "goal" / "ledger.json").write_text(json.dumps(
+            {"9.9-fixture.md": {"H": {"run": "t"}, "C3": {"run": "t"}}}), encoding="utf-8")
+        (game / "tests" / "test_frames.gd").write_text("# goal T3.1\nfunc t_frames_scale() -> void:\n\tpass\n",
+                                                       encoding="utf-8")
+
+    def godot_cmds(self):
+        return [c for c in self.cmds if any("godot_run.py" in x for x in c)]
+
+    def test_a_fix_round_runs_its_own_and_failed_tests_then_the_full_suite_once(self):
+        """L40 (item 18): T12.1 ran ~200 tests three times; a round now runs `--only` its own tests and last round's
+        failures. L42: no full unit gate per step; every suite runs once, at the run's end."""
+        self.written_fixture()
+        self.check_codes = [0, 1, 1, 0, 0, 0, 0]                            # r0: t_x red (rerun red); r1 green; suite
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        runs = self.godot_cmds()
+        only = [c[c.index("--only") + 1] for c in runs if "--only" in c]
+        self.assertEqual(only, ["t_frames_scale", "t_x", "t_frames_scale,t_x"])   # round 0, the rerun, round 1
+        self.assertEqual([c[-4:] for c in runs if "--only" not in c], [ga.FULL_SUITE])   # the run's end, once
+        self.assertNotIn("Check `full unit`", board)
+        self.assertIn("Check `full suite`: PASS", board)
+        self.assertIn("- Tests this round (2): own (1): `t_frames_scale`; last failures (1): `t_x`", board)
+        self.assertEqual([a for a, p in self.calls if "fix round 1" in p], [ga.PROGRAMMER])
+        self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
+
+    def test_a_green_full_run_newer_than_every_change_is_reused_at_the_end(self):
+        """L42: the end-of-run check reuses an `all` run that is green in every suite and newer than every change."""
+        import os
+        self.written_fixture()
+        run = self.tmp / "game" / "reports" / "_runs" / "20991231-000000"
+        run.mkdir(parents=True)
+        for s in ga.FULL_LOGS:
+            (run / f"{s}.log").write_text("" if s == "start" else "PASS  t_frames_scale  (5 ms)\n---- 1 passed, 0 failed\n",
+                                          encoding="utf-8")
+        self.assertEqual(ga.fresh_green_full(), run / "unit.log")
+        spec, folder, board = self.suite_board()
+        self.assertEqual(ga.final_suite(spec, "t", folder, board, []), "done")
+        self.assertIn("Check `full suite`: PASS (reused `game/reports/_runs/20991231-000000`",
+                      board.read_text(encoding="utf-8"))
+        self.assertEqual(self.godot_cmds(), [])                              # no second full run
+        (run / "play.log").unlink()                                          # a unit-only run is not a full one
+        self.assertIsNone(ga.fresh_green_full())
+        (run / "play.log").write_text("FAIL  loop  no\n---- 5 checks, 1 failed\n", encoding="utf-8")
+        self.assertIsNone(ga.fresh_green_full())                             # red in any suite: never reused
+        (run / "play.log").write_text("---- 5 checks, 0 failed\n", encoding="utf-8")
+        later = datetime_after(run.name)
+        os.utime(self.tmp / "game" / "tests" / "test_frames.gd", (later, later))   # a build file changed since
+        self.assertIsNone(ga.fresh_green_full())
+
+    def test_a_test_that_passes_alone_on_rerun_is_flaky_not_a_fix_round(self):
+        """Item 11: T11.1's two timing tests cost 2 fix rounds."""
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        self.check_codes = [0, 1, 0]                                        # contract, tests red, the rerun green
+        code, out, board = self.run_main("--max-goals", "1")
+        self.assertIn("Flaky: `t_x` failed, then passed alone on one rerun", board)
+        self.assertFalse([p for _, p in self.calls if "fix round" in p])
+        rerun = self.godot_cmds()[1]
+        self.assertEqual(rerun[rerun.index("--only"):], ["--only", "t_x", *ga.ONLY_FLAGS])
+        self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
+        board_file = self.tmp / "b.md"
+        self.cmds.clear()
+        self.assertEqual(ga.rerun_flaky("FAIL  t_frames_scale  no", ["t_frames_scale"], board_file), set())
+        self.assertEqual(self.cmds, [])                                     # the goal's own test: never rerun
+        out = ("FAIL    unit      9 passed, 1 failed  (exit 1)  game/reports/_runs/1/unit.log\n    FAIL  t_a  no\n"
+               "FAIL    start     no total line  (exit 1)\n")
+        self.assertEqual(ga.failing_tests(out), (["t_a"], False))           # a start failure can't be rerun by name
+        self.assertEqual(ga.failing_tests(out.replace("FAIL    start", "PASS    start")), (["t_a"], True))
+        self.assertEqual(ga.failing_tests(out.replace("FAIL    start     no total line  (exit 1)",
+                                                      "    ... 3 more FAIL lines in the log"))[1], False)
+
+    def test_a_fix_round_that_changes_a_visual_number_stops_for_a_vote(self):
+        """Item 12: Bob shrank the shop rows 120 -> 64 px and fonts 28 -> 24 in a fix round, with no vote."""
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        scene = self.tmp / "game" / "scenes" / "main.tscn"
+        fake = self.fake_agent
+        def agent(a, prompt, max_turns=None):
+            if "fix round 1" in prompt:
+                scene.write_text(scene.read_text(encoding="utf-8") + "custom_minimum_size = Vector2(0, 64)\n",
+                                 encoding="utf-8")
+            return fake(a, prompt, max_turns)
+        ga.run_agent = agent
+        self.check_codes = [1]                                              # the contract fails: one fix round
+        code, out, board = self.run_main()
+        self.assertEqual(code, 1)
+        self.assertIn("Never change a visual number", next(p for _, p in self.calls if "fix round 1" in p))
+        self.assertIn("Check `visual numbers`: STOP (1 for the designer)", board)
+        self.assertIn("Design Votes page (`_tools/compare_page.py add`)", board)
+        self.assertIn("`game/scenes/main.tscn`: `(none)` -> `custom_minimum_size = Vector2(0, 64)`", board)
+        self.assertIn("result: waiting-designer", board)
+        self.assertFalse([p for _, p in self.calls if "fix round 2" in p])
+        before = {"game/scenes/shop.tscn": ["theme_override_font_sizes/font_size = 28"]}
+        after = {"game/scenes/shop.tscn": ["theme_override_font_sizes/font_size = 24"]}
+        self.assertEqual(len(ga.visual_changes(before, after, "the shop rows")), 1)
+        self.assertEqual(ga.visual_changes(before, after, "fonts drop to 24 px"), [])   # the spec named it
+        for line in ("custom_minimum_size = Vector2(0, 120)", "offset_top = -4.0", "@export var row_height: float = 120.0",
+                     "label.add_theme_font_size_override(\"font_size\", 24)", "scale = Vector3(1, 1, 1)"):
+            self.assertTrue(ga.VISUAL.search(line), line)
+        for line in ("spigot_flow_cut_per_level = 0.08", "if items.size() > 0:", "transform = Transform3D(1, 0, 0)"):
+            self.assertFalse(ga.VISUAL.search(line), line)
+
+    def test_a_designer_row_in_a_fix_reply_stops_for_a_vote(self):
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        fake = self.fake_agent
+        def agent(a, prompt, max_turns=None):
+            reply, u = fake(a, prompt, max_turns)
+            return ("- Row height: A: keep 120 px; B: 64 px (designer)" if "fix round" in prompt else reply), u
+        ga.run_agent = agent
+        self.check_codes = [1]
+        code, out, board = self.run_main()
+        self.assertIn("| 1 | ", board.split("## Waiting for the designer")[1])
+        self.assertIn("Row height: A: keep 120 px; B: 64 px (designer)", board)
+        self.assertIn("result: waiting-designer", board)
+
+    def net_errors(self, n):
+        fake, left = self.fake_agent, [n]
+        def agent(a, prompt, max_turns=None):
+            if left[0]:
+                left[0] -= 1
+                raise ga.g.AgentError("programmer reported an error: API Error: Can't reach the API server — check "
+                                      "your internet or DNS (ENOTFOUND)")
+            return fake(a, prompt, max_turns)
+        ga.run_agent = agent
+
+    def test_a_network_error_is_retried_once(self):
+        self.net_errors(1)
+        code, out, board = self.run_main("--max-goals", "1")
+        self.assertEqual(code, 0)
+        self.assertIn("transient error", board)
+        self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))
+
+    def test_a_network_error_twice_pauses_the_run_not_fails_it(self):
+        """Run 0.2 ended `failed` on ENOTFOUND (240952d); a rerun resumes it."""
+        self.net_errors(2)
+        code, out, board = self.run_main()
+        self.assertEqual(code, 1)
+        self.assertIn("**Paused:** Patricia:", board)
+        self.assertIn("result: paused", board)
+        self.assertNotIn("failed (", board)
+
+    def test_goal_list_skips_done_goals_and_builds_the_rest_in_order(self):
+        """Item 8: `--goal X` on a goal the scan counts done exited 1 and broke the operator's per-goal loop."""
+        code, out, board = self.run_main("--goal", "C1")
+        self.assertEqual((code, self.calls), (0, []))
+        self.assertIn("goal_agent: C1 is already done; skipped", out)
+        code, out, board = self.run_main("--goal", "C1,H")
+        self.assertEqual(code, 0)
+        self.assertEqual([a for a, _ in self.calls], [ga.PROGRAMMER])       # H only, then the list is done
+        self.assertIn("stopped after 1 goal(s) (--goal list done)", board)
+        self.assertEqual(self.run_main("--goal", "C9")[0], 2)               # not a goal of the spec
+
+    TIMEOUT = "TIMEOUT unit      no total line  (exit None, 0 noise lines dropped)  game/reports/_runs/1/unit.log\n"
+
+    def test_a_timeout_with_no_failing_test_is_retried_once_then_pauses(self):
+        """L41: T10.1's full unit run hit the 15 min cap twice, all green, and each TIMEOUT started a fix round."""
+        self.written_fixture()
+        self.check_codes, self.outs = [0, 1, 1], [self.TIMEOUT, self.TIMEOUT]   # contract; tests cut twice
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        self.assertEqual(code, 1)
+        self.assertIn("TIMEOUT with no failing test; retrying once", board)
+        self.assertIn("**Paused:** `tests` timed out twice with no failing test", board)
+        self.assertIn("result: paused", board)
+        self.assertFalse([p for _, p in self.calls if "fix round" in p])
+        runs = self.godot_cmds()
+        self.assertEqual(len(runs), 2)
+        self.assertTrue(all(c[c.index("--time-scale"):c.index("--time-scale") + 3] == ga.ONLY_FLAGS for c in runs))
+
+    def test_a_timeout_then_green_on_the_retry_goes_on(self):
+        self.written_fixture()
+        self.check_codes, self.outs = [0, 1, 0], [self.TIMEOUT, "PASS  t_frames_scale"]
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        self.assertIn("retrying once", board)
+        self.assertNotIn("**Paused:**", board)
+        self.assertFalse([p for _, p in self.calls if "fix round" in p])
+        self.assertIn("Check `tests`: PASS", board)
+        self.assertNotIn("full unit", board)                                # L42: no step gate after it
+
+    def test_a_green_step_runs_no_full_unit_gate(self):
+        """L42: T9.1's step spent its wall time on ~220 tests; a green round goes straight to the checkpoint."""
+        self.written_fixture()
+        self.check_codes = [0, 0, 0]                                         # contract, tests, mutations
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        self.assertEqual([c for c in self.godot_cmds() if "--only" not in c], [])
+        self.assertNotIn("full unit", board)
+
+    def test_a_timeout_with_a_failing_test_still_gets_a_fix_round(self):
+        self.assertTrue(ga.timed_out(self.TIMEOUT))
+        self.assertTrue(ga.timed_out("timed out after 3600 s"))              # run_cmd's own cut
+        self.assertFalse(ga.timed_out(self.TIMEOUT + "    FAIL  t_a  expected 3, got 2\n"))
+        self.assertFalse(ga.timed_out("FAIL    unit      9 passed, 1 failed  (exit 1)\n    FAIL  t_a  no\n"))
+        spec, folder, board = self.suite_board()                             # the end-of-run suite: no Quinn round
+        self.check_codes, self.outs = [1, 1], [self.TIMEOUT, self.TIMEOUT]
+        self.assertEqual(ga.final_suite(spec, "t", folder, board, []), "paused")
+        self.assertEqual(self.calls, [])
+
+    def test_godot_run_unit_timeout_follows_the_test_count_within_a_cap(self):
+        """L41: a flat 900 s cut the 218-test unit suite at 198 passed."""
+        import godot_run
+        root = self.tmp / "game"
+        tests = root / "tests"
+        for f in tests.glob("test_*.gd"):
+            f.unlink()
+        (tests / "test_a.gd").write_text("func t_one():\n\tpass\nfunc t_two():\n\tpass\nfunc _helper():\n\tpass\n",
+                                         encoding="utf-8")
+        (tests / "play_loop.gd").write_text("func t_not_unit():\n\tpass\n", encoding="utf-8")
+        self.assertEqual(godot_run.unit_test_count(str(root), {"CB_ONLY": ""}), 2)
+        self.assertEqual(godot_run.suite_timeout("unit", str(root), env={"CB_ONLY": ""}), 900)   # the floor
+        (tests / "test_b.gd").write_text("func t_x():\n\tpass\n" * 218, encoding="utf-8")
+        self.assertEqual(godot_run.suite_timeout("unit", str(root), env={"CB_ONLY": ""}), 300 + 6 * 220)   # 26.7 min
+        (tests / "test_c.gd").write_text("func t_y():\n\tpass\n" * 400, encoding="utf-8")
+        self.assertEqual(godot_run.suite_timeout("unit", str(root), env={"CB_ONLY": ""}), godot_run.UNIT_CAP_S)
+        self.assertEqual(godot_run.suite_timeout("unit", str(root), env={"CB_ONLY": "t_a,t_b"}), 900)
+        self.assertEqual(godot_run.suite_timeout("play", str(root)), 900)
+        self.assertEqual(godot_run.suite_timeout("unit", str(root), given=60), 60)   # --timeout wins
+
+    def test_godot_run_set_passes_config_overrides_after_the_double_dash(self):
+        """Item 7: the suites under a non-default config (shop_layout=0), as ui_shots.py --set does."""
+        import godot_run
+        cmd = godot_run.command("unit", "game", ["shop_layout=0", "grid_cols=5"])
+        self.assertEqual(cmd[-5:], ["-s", "res://tests/run_tests.gd", "--", "shop_layout=0", "grid_cols=5"])
+        self.assertEqual(godot_run.command("lid", "game", ["k=1"])[-3:], ["--", "--out=game/reports/_look/lid", "k=1"])
+        self.assertNotIn("--", godot_run.command("unit", "game"))
+        with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+            godot_run.main(["unit", "--set", "shop_layout"])
+
+    # ------------------------------------------------------------------ L42: impact-based tests, routing, designer rows
+    def impact_game(self):
+        """A tiny game: truck.gd on the Truck node, main.gd and the config (core), and tests that read them directly
+        or through helpers. `_make` (every test's setup) reads `Truck` too, which must not reach every test."""
+        game = self.tmp / "game"
+        w = lambda rel, text: (game / rel).parent.mkdir(parents=True, exist_ok=True) or \
+            (game / rel).write_text(text, encoding="utf-8")
+        w("scripts/truck.gd", "extends Node3D\nclass_name Truck\nvar load_count: int = 0\nfunc depart() -> void:\n"
+                              "\tload_count = 0\nfunc honk() -> void:\n\tpass\n")
+        w("scripts/main.gd", "extends Node3D\nvar zoom: int = 0\nfunc at_second_stop() -> bool:\n\treturn zoom == 2\n"
+                             "func _on_back() -> void:\n\tzoom = 0\n")
+        w("scripts/pile.gd", "extends Node3D\nclass_name Pile\nvar cells: int = 0\nfunc add_cell() -> void:\n"
+                             "\tcells += 1\nfunc clear() -> void:\n\tcells = 0\n")
+        w("scripts/default_config.tres", "[resource]\nzoom_seconds = 1.0\ncell_fly_seconds = 0.5\n")
+        w("scripts/game_config.gd", "extends Resource\nclass_name GameConfig\n@export var zoom_seconds: float = 1.0\n"
+                                    "@export var cell_fly_seconds: float = 0.5\n")
+        w("scenes/main.tscn", '[gd_scene format=3]\n\n[ext_resource type="Script" path="res://scripts/truck.gd" id="1"]\n\n'
+                              '[node name="Main" type="Node3D"]\n\n[node name="Truck" type="Node3D" parent="."]\n'
+                              'script = ExtResource("1")\n')
+        w("tests/test_base.gd", "extends SceneTree\nfunc _make() -> Node:\n\tvar p = {\"Hive\": 1, \"Truck\": 2}  # Pile\n"
+                                "\treturn null\nfunc _wait_zoom() -> void:\n\tawait _wait(cv(\"zoom_seconds\"))\n")
+        w("tests/test_a.gd", 'extends "res://tests/test_base.gd"\nfunc t_truck_departs() -> void:\n\t_make()\n'
+                             '\tvar t = p["Truck"]\nfunc t_second_stop() -> void:\n\t_make()\n\tck(m.call("at_second_stop"))\n'
+                             "func t_zoom_wait() -> void:\n\t_make()\n\tawait _wait_zoom()\n"
+                             'func t_pile_grows() -> void:\n\t_make()\n\tget_node("X").call("add_cell")\n'
+                             "func t_unrelated() -> void:\n\t_make()\n\teq(1, 1)\n")
+        self.diffs = {"game/scripts/truck.gd": "@@ -7 +7 @@\n-\tpass\n+\tprint(1)\n",
+                      "game/scripts/main.gd": "@@ -4 +4 @@\n-\treturn zoom == 1\n+\treturn zoom == 2\n",
+                      "game/scripts/default_config.tres": "@@ -2 +2 @@\n-zoom_seconds = 2.0\n+zoom_seconds = 1.0\n",
+                      "game/scripts/pile.gd": "@@ -7 +7 @@\n-\tcells = 1\n+\tcells = 0\n",
+                      "game/tests/test_base.gd": "@@ -6 +6 @@\n-\tawait _wait(1)\n+\tawait _wait(cv(\"zoom_seconds\"))\n"}
+
+    def test_change_impact_maps_each_changed_file_to_the_tests_that_read_it(self):
+        """L42: a step runs the tests that read what its changed files define, not ~220."""
+        self.impact_game()
+        tests = lambda changes: set(ga.change_impact(changes)["tests"])
+        self.assertEqual(tests({"game/scripts/truck.gd": False}), {"t_truck_departs"})   # its node, read directly
+        self.assertEqual(tests({"game/scripts/main.gd": False}), {"t_second_stop"})      # core: the changed function only
+        self.assertEqual(tests({"game/scripts/default_config.tres": False}), {"t_zoom_wait"})   # the key, via a helper
+        imp = ga.change_impact({"game/tests/test_base.gd": False})                       # a changed helper: its callers
+        self.assertEqual((set(imp["tests"]), imp["written"]), ({"t_zoom_wait"}, set()))
+        (self.tmp / "game" / "tests" / "test_new.gd").write_text(
+            'extends "res://tests/test_a.gd"\nfunc t_new_one() -> void:\n\t_make()\n', encoding="utf-8")
+        imp = ga.change_impact({"game/tests/test_new.gd": True})                         # a new test file: its tests only
+        self.assertEqual((imp["tests"], imp["written"]), ({"t_new_one": ["changed in `tests/test_new.gd`"]}, {"t_new_one"}))
+        imp = ga.change_impact({"game/scripts/pile.gd": False})                          # `clear` read by no test: widened
+        self.assertEqual((set(imp["tests"]), imp["widened"]), ({"t_pile_grows"}, ["game/scripts/pile.gd"]))
+        (self.tmp / "game" / "scripts" / "bees.gd").write_text("extends Node\nfunc buzz() -> void:\n\tpass\n",
+                                                              encoding="utf-8")
+        imp = ga.change_impact({"game/scripts/bees.gd": True, "game/scripts/truck.gd": False})
+        self.assertEqual(imp["uncovered"], ["game/scripts/bees.gd"])
+        line = ga.tests_line(["t_own"], imp, {"t_x"}, ["t_own", "t_truck_departs", "t_x"])
+        for text in ("- Tests this round (3): own (1): `t_own`", "impacted by `scripts/truck.gd` (via `Truck`) (1): "
+                     "`t_truck_departs`", "last failures (1): `t_x`", "No test reads `scripts/bees.gd`"):
+            self.assertIn(text, line)
+        self.assertIn("`unit` skipped", ga.tests_line([], ga.change_impact({}), set(), []))
+
+    def test_the_test_index_is_cached_and_reread_when_a_file_changes(self):
+        self.impact_game()
+        first = ga.test_index()
+        cache = self.tmp / ga.TEST_MAP
+        self.assertEqual(json.loads(cache.read_text(encoding="utf-8")), first)
+        self.assertIn("at_second_stop", first["test_a.gd"]["funcs"]["t_second_stop"]["t"])
+        self.assertNotIn("Pile", first["test_base.gd"]["funcs"]["_make"]["t"])        # comments are not read
+        data = json.loads(cache.read_text(encoding="utf-8"))
+        data["test_a.gd"]["funcs"] = {"t_cached": {"t": [], "c": []}}
+        cache.write_text(json.dumps(data), encoding="utf-8")
+        self.assertEqual(list(ga.test_index()["test_a.gd"]["funcs"]), ["t_cached"])     # same stamp: the cache
+        f = self.tmp / "game" / "tests" / "test_a.gd"
+        f.write_text(f.read_text(encoding="utf-8") + "func t_more() -> void:\n\tpass\n", encoding="utf-8")
+        self.assertIn("t_more", ga.test_index()["test_a.gd"]["funcs"])                   # changed: read again
+        self.assertEqual(ga.diff_lines("@@ -3,2 +3,0 @@\n-a\n-b\n@@ -9 +7,2 @@\n+c\n+d\n"), ({3, 4, 7, 8}, ["a", "b", "c", "d"]))
+        self.assertIsNone(ga.diff_lines(""))
+
+    def test_a_round_runs_the_tests_its_changes_impact_and_says_why(self):
+        self.written_fixture()
+        self.impact_game()
+        snaps = [{}, {"game/scripts/main.gd": ["h", False]}]                    # the step's start, then its change
+        ga.change_snapshot = lambda: snaps.pop(0) if len(snaps) > 1 else snaps[0]
+        self.check_codes = [0, 0, 0]
+        code, out, board = self.run_main("--goal", "T3.1", "--max-goals", "1")
+        tests = next(c for c in self.godot_cmds() if "--only" in c)
+        self.assertEqual(tests[tests.index("--only") + 1], "t_frames_scale,t_second_stop")
+        self.assertIn("own (1): `t_frames_scale`; impacted by `scripts/main.gd` (via `at_second_stop`) (1): "
+                      "`t_second_stop`", board)
+
+    def test_a_failing_test_the_step_wrote_goes_to_quinn_first(self):
+        """L42: T9.1's two fix rounds went to Patricia, though the only failing test was Quinn's new one."""
+        game = self.tmp / "game"
+        (game / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        (game / "reports" / "goal").mkdir(parents=True, exist_ok=True)
+        (game / "reports" / "goal" / "ledger.json").write_text(json.dumps(
+            {"9.9-fixture.md": {"H": {"run": "t"}, "C3": {"run": "t"}}}), encoding="utf-8")
+        fake = self.fake_agent
+        def agent(a, prompt, max_turns=None):
+            if a == ga.QA and "fix round" not in prompt:                    # Quinn writes the test, a doc line under its mark
+                (game / "tests" / "test_frames.gd").write_text(
+                    "# goal T3.1\n## the frames scale\nfunc t_frames_scale() -> void:\n\tpass\n", encoding="utf-8")
+                self.snapshot = {"game/tests/test_frames.gd": ["h", True]}
+            return fake(a, prompt, max_turns)
+        ga.run_agent = agent
+        fail = "FAIL    unit      0 passed, 1 failed\n    FAIL  t_frames_scale  run 2: expected 2 got 3\nPASS    start\n"
+        self.check_codes, self.outs = [0, 1, 0, 1, 0, 1], [fail] * 3
+        code, out, board = self.run_main("--goal", "T3.1")
+        self.assertIn("own (1): `t_frames_scale`", board)                    # the mark is found past the doc line
+        fix1 = [(a, p) for a, p in self.calls if "fix round 1" in p]
+        self.assertEqual([a for a, _ in fix1], [ga.QA])
+        self.assertIn("You alone work this round: the failing tests are ones this step wrote", fix1[0][1])
+        self.assertIn("Fix round 1: to Quinn (the failing tests are ones this step wrote)", board)
+        fix2 = [a for a, p in self.calls if "fix round 2" in p]
+        self.assertEqual(len(fix2), 1)
+        self.assertIn(fix2[0], (ga.PROGRAMMER, ga.BUILDER))                  # a code owner: not Quinn twice running
+
+    def test_a_code_owner_blaming_the_test_sends_the_next_round_to_quinn(self):
+        self.written_fixture()                                              # the test is older than this step
+        fake = self.fake_agent
+        blame = "I changed nothing: the failing check is in `tests/test_frames.gd` (Quinn's folder)."
+        def agent(a, prompt, max_turns=None):
+            reply, u = fake(a, prompt, max_turns)
+            return (blame if a == ga.PROGRAMMER else reply), u
+        ga.run_agent = agent
+        fail = "FAIL    unit      0 passed, 1 failed\n    FAIL  t_frames_scale  expected 2 got 3\nPASS    start\n"
+        self.check_codes, self.outs = [0, 1, 0, 1, 0, 1], [fail] * 3
+        code, out, board = self.run_main("--goal", "T3.1")
+        self.assertEqual([a for a, p in self.calls if "fix round 1" in p], [ga.PROGRAMMER])
+        fix2 = [(a, p) for a, p in self.calls if "fix round 2" in p]
+        self.assertEqual([a for a, _ in fix2], [ga.QA])
+        self.assertIn("Patricia put the fault in tests/", fix2[0][1])
+        self.assertIn(blame, fix2[0][1])                                    # her reply goes with the brief
+        for reply in ("the fault is in the test, not in `scripts/`", "That's Quinn's file.", "the bug is in tests/"):
+            self.assertTrue(ga.QUINN_FAULT.search(reply), reply)
+        self.assertFalse(ga.QUINN_FAULT.search("The fault is in scripts/main.gd line 40; the test is right."))
+
+    def test_a_behaviour_designer_row_is_a_question_not_a_visual_vote(self):
+        """L42: T9.1 stopped for a Design Votes row on keeping or resetting the paused crank."""
+        (self.tmp / "game" / "specs" / "9.9-node-handoff.md").write_text("# handoff\n", encoding="utf-8")
+        row = ("The spec doesn't say what the bucket should be when Harvest is tapped again with a paused crank. "
+               "(designer) A: keep the paused crank and fix the test. B: reset the crank on reopening the zoom.")
+        fake = self.fake_agent
+        def agent(a, prompt, max_turns=None):
+            reply, u = fake(a, prompt, max_turns)
+            return (row if "fix round" in prompt else reply), u
+        ga.run_agent = agent
+        self.check_codes = [1]
+        code, out, board = self.run_main()
+        self.assertIn("Check `visual numbers`: PASS", board)
+        self.assertIn("Check `designer questions`: STOP (1)", board)
+        wait = board.split("## Waiting for the designer")[1]
+        self.assertIn("about how the game behaves", wait)
+        self.assertIn("| 1 | Patricia | " + row, wait)
+        self.assertNotIn("Design Votes page", wait)
+        self.assertIn("result: waiting-designer", board)
+        for visual in ("Row height: A: keep 120 px; B: 64 px (designer)", "A: font 28; B: 24 (designer)",
+                       "Icon colour: A: amber; B: honey (designer)", "Back button offset A: -4 B: 0 (designer)"):
+            self.assertTrue(ga.VISUAL_ROW.search(visual), visual)
+        self.assertFalse(ga.VISUAL_ROW.search(row))
+
+
+def datetime_after(stamp):
+    """A POSIX time one hour after a godot_run log folder's stamp."""
+    import datetime
+    return datetime.datetime.strptime(stamp, "%Y%m%d-%H%M%S").timestamp() + 3600
 
 
 if __name__ == "__main__":

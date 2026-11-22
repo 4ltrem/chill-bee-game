@@ -16,21 +16,25 @@ The rules are the approved [STYLE_GUIDE.md](STYLE_GUIDE.md): **V1–V15** for th
 ```
                  VISUAL (style_loop.py)                              VOICE (generate.py)
 
-  request ──► Bob (builder) edits scenes/ and materials/       request ──► William (writer) drafts content/<slug>.md
-                 │  only the open, non-designer FAIL rows                    │  only the open FAIL rows
+  sandbox: a copy of game/ (the game itself never changes)    request ──► William (writer) drafts content/<slug>.md
+                 │                                                           │  only the open FAIL rows
+  FAIL rows ─► Bob: the 3D scene's rows (colours, materials)                 ▼
+           ─► Patricia: the UI rows (text colours, sizes)           voice_check.py (T5 sources, T2 terms,
+                 │  each turn: guard puts back motion, picked-prop          empty table cells): FAIL ─► William
+                 │  size and UI layout; unit-suite gate, undo on FAIL        │
                  ▼                                                           ▼
-           style_shots.gd renders 6 shots + measure.json             Clara (content critic)
-                 │                                                     checks T1–T6 against the GDD
+           style_shots.gd renders 6 shots + measure.json             Clara (content critic), with Ruth's
+                 │                                                     cached source quotes: T1–T6, scored
                  ▼                                                           │
            style_check.py  (script rules: V1 V2 V3 V4 V5 V6               PASS ─► draft, for the designer
                             V10 V11 V12 V14 V15)                       FAIL ─► back to William (max 3 rounds)
                  │
                  ▼
-           Vera (style critic) reads the shots (V3 V6 V7 V8 V9 V10 V13 V15)
+           Vera (style critic) reads the shots (V3 V6 V7 V8 V9 V10 V13 V15), scores every asset
                  │
-     PASS (Vera PASS and no blocking script row) ─► done
-     FAIL ─► Bob, next round (max 3 rounds, token cap)
-     FAIL row marked (designer) ─► held: comparison page ─► designer edits the guide or picks ─► --resume
+     PASS (Vera PASS and no blocking script row) ─► done; sandbox.patch for the designer
+     FAIL ─► next round (max 3 rounds, token cap); a row with options A/B ─► the loop takes A
+     only a row nothing in the guide can fix (a new token or rule) ─► held for the designer
 ```
 
 | Role | Visual loop | Voice loop |
@@ -38,7 +42,7 @@ The rules are the approved [STYLE_GUIDE.md](STYLE_GUIDE.md): **V1–V15** for th
 | Generator | Bob (Sonnet) | William (Sonnet) |
 | Evaluator, measurable | `_tools/style_check.py` (stdlib, no Godot, no tokens) over `game/materials/`, `game/scenes/` and the shots' `measure.json` | — |
 | Evaluator, judgement | Vera, the Style Critic (Sonnet, Read/Grep/Glob, looks at the PNG shots) | Clara, the Content Critic (Sonnet) |
-| Refiner | Bob, given only the open FAIL rows not held for the designer | William, given only the open FAIL rows |
+| Refiner | Bob for the 3D scene's rows, Patricia (Sonnet) for the UI rows, each given only their open FAIL rows, on a sandbox copy | William, given only the open FAIL rows |
 | Controller | `_tools/style_loop.py` | `_tools/generate.py` |
 | Shared record | `game/reports/style/<slug>/blackboard.md` | `content/_runs/<slug>/blackboard*.md` |
 | Record format | `_templates/blackboard.md`, shared with the goal agent: inputs linked, outputs inline, one Result | same |
@@ -49,14 +53,42 @@ The rules are the approved [STYLE_GUIDE.md](STYLE_GUIDE.md): **V1–V15** for th
 - **The critic sees only what scripts can't measure**: clutter and cut-off objects (V7), honey as the brightest thing (V8), state by more than colour (V9), overlap with the HUD (V13), glass reading as glass (V15), plus a second look at accents, shapes and on-screen contrast.
 - **The loop can't pass by persuasion.** A round passes only when Vera says PASS *and* `style_check.py` has no blocking row.
 - **Vera scores every asset** (designer, 2026-11-05). Under her findings table, each prop and UI element gets a score out of 10 with a one-line reason, on the look words (cozy, whimsical, chunky/round, calm, pastel) and on her rules that apply to it, e.g. "hive: whimsical 3/10, chunky/round 9/10". A score below 6 is also a blocking findings row with a fix for Bob. Score rows start with the asset name, so `style_loop.py` reads only the numbered rows as findings.
+- **Clara scores every check** (designer, 2026-11-20). Under her findings table, each of her seven checks (Lore, Tone & Glossary, Child safety & spending, Facts & French, Sources, Look & words, Completeness) gets a score out of 10 with a one-line reason quoting the draft. A check with a blocking row scores below 6, and a score below 6 needs a blocking row with a fix for William.
 - **Refiners get a slice, not the board.** Bob sees only open FAIL rows; Vera sees the shots, the script table and (from round 2) her previous verdict plus Bob's diff. No agent reads the blackboard.
-- **Creative choices go to the designer.** A Fix with two or more acceptable answers, a new token or a rule change ends in `(designer)`. Bob never gets it; the loop fixes the rest, lists those rows under *Waiting for the designer*, adds an A/B question with votes to the Design Votes page (`compare_page.py add`), and resumes with `--resume` after the designer picks.
-- **The evaluators are tested.** `style_critic_check.py` must catch every known-bad fixture: six script fixtures (neon → V1, glowing hive → V2, texture + imported mesh → V4, third accent → V3, 90 px button → V11, low-contrast disabled text → V10) and two rendered shots Vera must fail (a cluttered, accent-heavy diorama → V3 + V7; a grey-on-grey disabled button → V10). `test_generate.py` checks the controller with fake agents (PASS in round 1, FAIL then PASS, max rounds, token cap, designer stop and resume).
+- **The loop makes its own creative choices** (designer, 2026-11-20: the assets are generated, so the loop decides). A Fix with two acceptable answers ends in `(designer)` with options A and B, and option A is always the one that fits the current guide. The loop sends A to the refiner without stopping, lists it under *Loop's choices* on the blackboard, tells Vera next round, and adds it to the Design Votes page afterwards so the designer can reverse it. Only a row that nothing in the current guide can fix (a new token or a rule change) still stops the loop. The first visual run (below) predates this rule and stopped twice for the designer.
+- **The refiners can't break the game** (designer, 2026-11-20, after a run where Bob turned the truck's exit diagonal, shrank the truck, enlarged the jars and moved the Spin icon to please the critic). The loop works on a sandbox copy and ends with `sandbox.patch` for the designer to apply. After each refiner's turn, a guard puts back any change to motion, to the size or place of the props the designer picked, or to the UI's layout. Then the unit suite runs on the copy (the test gate), and a turn that fails it is undone. The UI is not Bob's: UI rows go to Patricia, who may restyle but never move it.
+- **The evaluators are tested.** `style_critic_check.py` must catch every known-bad fixture: six script fixtures (neon → V1, glowing hive → V2, texture + imported mesh → V4, third accent → V3, 90 px button → V11, low-contrast disabled text → V10) and two rendered shots Vera must fail (a cluttered, accent-heavy diorama → V3 + V7; a grey-on-grey disabled button → V10). `test_generate.py` checks the controller with fake agents (PASS in round 1, FAIL then PASS, max rounds, token cap, the loop's option-A choice, a true designer stop and resume, the sandbox and its patch, a gate failure undoing a turn, UI rows to Patricia, and the guard on motion, picked-prop size and the UI).
 
 ## Demo runs
 
-### Visual: the 0.1.2 farm (`game/reports/style/farm-0-1-2/blackboard.md`)
-`python -I _tools/style_loop.py farm-0-1-2`, on the 0.1.2 build, 2026-11-05.
+### Visual: the 0.2 farm, no designer step (`game/reports/style/farm-0-2-0-r5/blackboard.md`)
+`python -I _tools/style_loop.py farm-0-2-0-r5`, on the 0.2 build, 2026-11-20, with the sandbox, the guards, the test gate and the UI refiner. No designer step from start to end.
+
+**Baseline:** the unit suite on the untouched copy, 195 passed, 0 failed.
+
+**Round 1: FAIL.** `style_check.py` had no rows. Vera found 3 blocking rows and scored 25 assets:
+- V10 (UI): the disabled Harvest button's grey-green text on olive is about 2:1. Harvest button V10: **3/10**.
+- V8 (UI): the full-width gold Journal bar outshines the honey. Journal button V8: **5/10**.
+- V15: the empty jars on the crate read as ghosts, not glass. Jars (empty) V15: **4/10**.
+
+**Round 2: FAIL.** The two UI rows went to Patricia, the jar row to Bob.
+- Bob gave the glass a rim effect and raised its alpha to 0.35 (the limit). The gate passed (195/195), so it stayed.
+- Patricia restyled both buttons. The gate failed on `t_camera_pan_seconds`, a real-time timing test her colours can't have affected (the pan took 2.25 s, not 2.5 s, under load). Her turn was undone anyway: the gate does not judge cause.
+- Vera: all three rows still open, and the scores unchanged.
+
+**Round 3: FAIL, at max rounds.**
+- Bob tried to add two steel rim rings to the jar. The jar is a prop the designer picked, so the guard put back their meshes and placement. The gate passed.
+- Patricia made the Harvest button's disabled state cream on dark brown with the ink outline, and the Journal button cream with a border. The gate passed.
+- Vera closed both UI rows. Harvest button V10 went from **3 to 8/10**, and Journal button V8 from **5 to 8/10**. She kept one row open: the empty jars are still ghosts (V15 **4/10**), because the rim rings have no mesh.
+
+**Result: `needs-review`, 768,463 tokens.** Two of three findings were fixed and verified by the critic, with no human step. The third is open on purpose: the only fix Vera could see changes the shape of a prop the designer play-tested, which the loop is built to refuse. The game itself did not change. The surviving edits are in [`sandbox.patch`](game/reports/style/farm-0-2-0-r5/sandbox.patch) for the designer to review: the glass rim effect, the two button restyles, and two empty rim nodes. The guard now removes parts added to a picked prop entirely, so a later run won't leave empty nodes.
+
+**What this run shows about the limits.** The gate undoes a turn on any new failure, including a flaky timing test, which cost Patricia one round. Vera was told which props are locked, yet her jar fix asked for added rim parts while calling it "materials only". The guard, not the critic's wording, is what kept the prop's shape. A next step would be to re-run a failing real-time test once before undoing a turn.
+
+**What led here.** The first 0.2 run, `farm-0-2-0` (581,609 tokens, no designer step), ended at max rounds with 4 open rows. Watching the renders, the designer saw that Bob had changed the truck's motion and size, and the unit suite then caught the truck off its cell and 7 enlarged jars overhanging the crate. A second run was stopped in round 2 after he moved the Spin icon. A third (`farm-0-2-0-r3`, with the sandbox) was stopped in round 2 because its test gate failed on tests the refiners had not broken: a test that reads `../STYLE_GUIDE.md` (missing from the copy) and a zoom value left out of step by the revert. The copy now includes the guide, and the gate compares against a baseline run before any edit. A fourth (`farm-0-2-0-r4`) passed both gates in round 2 but its render failed: the shot set's crank step sometimes bottled no jar. Quinn made it wait on the real state (3 clean renders in a row), and the loop now retries a failed render once. Every edit Bob made was reverted, and the sandbox, guards, gate and UI refiner were built (see *What makes it rigorous*). Two rows from the first run were fixed outside the loop: Patricia restyled the Dev label, and found that the config's `zoom_size` overrode the scene's. Quinn's shot set now cranks real jars before shots 05 and 06, because Vera had judged jars that the shot set kept empty.
+
+### Visual, first version: the 0.1.2 farm (`game/reports/style/farm-0-1-2/blackboard.md`)
+`python -I _tools/style_loop.py farm-0-1-2`, on the 0.1.2 build, 2026-11-05. This run predates the loop's own choices: it stopped twice for the designer.
 
 **Round 1: FAIL.**
 - **`style_check.py`: 9 blocking rows.** These include the two the spec predicted:
@@ -123,6 +155,12 @@ She also ran the new T6 check (Look & words): every hive described matches the G
 
 **Round 2: PASS.** William revised, and only 1 minor note remains. The draft goes back to `status: draft` for the designer to re-approve.
 
+### Voice, scored: Biome intros again (`content/_runs/biome-intros/blackboard-3.md`)
+Re-run on 2026-11-20 with Clara's scores, the cached source quotes and the new script checks, with no designer step.
+- **Round 1: script check PASS, Clara FAIL.** Two blocking rows: the guide is still offered as "GDD: TBD" with a non-candidate "Wren" (Lore), and an unsourced fireweed colour and a "tried-and-true" Langstroth claim (Facts & French). Scores: Lore 5/10, Facts & French 5/10, Look & words 7/10, Tone & Glossary 9/10, Completeness 9/10, Child safety 10/10, Sources 10/10 (checked by script).
+- **Round 2: PASS.** William listed the six GDD guide candidates and removed the unsourced claims. Lore went to 9/10 and Facts & French to 9/10. Two minor Look & words notes remain ("little suns", "warm amber light"), so Look & words stays at 7/10.
+- 196,227 tokens for both rounds (Clara × 2, William × 1). This is not comparable with the first run, because the draft and the GDD have both changed since then.
+
 ### Props: Milo → vote page with no hand steps (spec item 11)
 1. Milo wrote three flower-patch variants (`game/scenes/variants/flower-patch/`).
 2. `python -I _tools/model_shots.py flower-patch` rendered them on the 5 × 5 test grid, ran `style_check.py` on each (3/3 PASS), and built the yes / maybe / no vote page.
@@ -137,8 +175,12 @@ Tokens are total processed, from the run log (`_meta/agent-runs.csv`, tables "St
 
 | What | Calls | Tokens |
 |---|---|---|
-| Visual loop, 3 rounds and 2 designer stops | Vera × 3, Bob × 2 | 466,798 (round 1: 103,927; round 2: 309,760, of which Bob 255,831; round 3: 53,111) |
-| Voice loop, 2 rounds | Clara × 2, William | 131,695 |
+| Visual loop, 0.2 farm (`farm-0-2-0-r5`), 3 rounds, no designer step | Vera × 3, Bob × 2, Patricia × 2 | 768,463 (Vera 56–58k per round; Bob 194k and 152k; Patricia 137k and 115k). The 5 unit-suite runs (baseline + 4 gates, about 4 min each) cost no tokens |
+| Visual loop, 0.2 farm, earlier runs (`farm-0-2-0`, `-r2`, `-r3`, `-r4`) | Vera, Bob, Patricia | `farm-0-2-0`: 581,609; `-r2` and `-r3` were stopped and `-r4` failed in round 2 (their boards hold whatever per-call rows they wrote) |
+| Visual loop, 0.1.2 farm, 3 rounds and 2 designer stops | Vera × 3, Bob × 2 | 466,798 (round 1: 103,927; round 2: 309,760, of which Bob 255,831; round 3: 53,111) |
+| Voice loop, Biome intros scored re-run (`blackboard-3.md`) | Clara × 2, William | 196,227 |
+| Voice loop, Biome intros first run (`blackboard-2.md`) | Clara × 2, William | 131,695 |
+| Clara calibration after the scores and the script checks | Clara × 2 | 88,838 and 92,879 |
 | Vera calibration | Vera × 2 | 83,171 |
 | Clara before / after | Clara × 2 | 161,219 |
 | Building M2: Vera's hire (Martin), shot scripts (Quinn), compare_page move, Milo's variants | 4 subagents | ≈ 202,500 |
@@ -153,7 +195,8 @@ Vera costs about 53k tokens per round. Bob costs 51k on a small fix list and 256
 | `_tools/style_check.py` | script evaluator |
 | `.claude/agents/style-critic.md` | Vera, the judgement evaluator |
 | `game/tests/style_shots.gd` | the fixed shot set and `measure.json` |
-| `_tools/style_loop.py` | the visual loop controller |
+| `_tools/style_loop.py` | the visual loop controller: sandbox, loop's choices, guard, test gate, Bob/Patricia routing |
+| `_tools/voice_check.py`, `_tools/source_cache.py` | the voice loop's script checks and Ruth's cached source quotes |
 | `_tools/compare_page.py` | A/B comparison and vote pages (`stop` for designer stops, `variants` for Milo's props) |
 | `_tools/model_shots.py`, `game/tests/model_shots.gd` | prop variants: render on the 5 × 5 grid, check, vote page |
 | `_tools/style_critic_check.py`, `_tools/fixtures/style/` | evaluator calibration |

@@ -34,6 +34,7 @@ TOOLS = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(TOOLS)
 sys.path.insert(0, TOOLS)
 import godot_run  # noqa: E402
+import live  # noqa: E402
 
 
 def failed_tests(result):
@@ -153,6 +154,7 @@ def main(argv=None):
             finally:
                 open(path, "w", encoding="utf-8", newline="").write(original)
             v, why = verdict(m, result, red_before if suite == "unit" else frozenset())
+            live.event("note", "mutate", f"{i}/{len(mutations)} {m['name']}: {v}")
             print(f"mutate {i}/{len(mutations)}: {m['name']} ... {v} in {int(time.time() - started)}s", file=sys.stderr, flush=True)
             all_caught = all_caught and v == "CAUGHT"
             rows.append((m["name"], v, why))

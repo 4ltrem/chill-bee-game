@@ -3,7 +3,7 @@
 
     python -I _tools/goal_agent.py SPEC --plan                 # scan, gaps, scores: no agents, no game changes
     python -I _tools/goal_agent.py SPEC --dry-run              # the plan, then the next step's briefs and commands
-    python -I _tools/goal_agent.py SPEC [--max-goals N] [--goal ID] [--run NAME]   # the loop
+    python -I _tools/goal_agent.py SPEC [--max-goals N] [--goal ID[,ID...]] [--run NAME]   # the loop
 
 SPEC is a file in game/specs/ (e.g. 0.1.4-ui-placement.md). Spec: game/specs/m3-goal-agent.md.
 
@@ -23,11 +23,20 @@ its spec slice (generate.run_agent). A Change also gets Quinn, when existing tes
 (test_impact(): its nodes, keys and backticked names, and two-word phrases of its text such as second_stop): he
 updates the tests the spec makes stale beside the build (L39; `--impact GOAL` prints the list). Then
 contract_check.py, godot_run.py (unit + start, plus the windowed suites the impact list reaches), ui_shots.py after
-scene work, mutate.py --since after new tests. Failures go to the folder's owners, at most MAX_FIX_ROUNDS
-rounds, then the run stops for the designer. A green step gets a ledger line and a checkpoint commit on the
+scene work, mutate.py --since after new tests. A round's unit run is `--only` the goal's own tests, the tests that read
+what the step's changed files define (change_impact(), cached test index; core files count only their changed names),
+and the last check's failures; the board says which ran and why. There is no full unit run per step (L42): the run's
+end runs every suite once. A failing test that is not the goal's own is rerun alone once first: passing, it is
+logged flaky and gets no fix round. Failures go to the folder's owners (to Quinn alone when the failing test is one the
+step wrote, or a code owner's reply puts the fault in tests/), at most MAX_FIX_ROUNDS
+rounds, then the run stops for the designer. A fix round that changes a visual number (size, scale, offset, font,
+margin) the spec does not name, or replies with a `(designer)` row naming one, stops for a Design Votes question; any
+other `(designer)` row stops as a plain designer question. An agent call
+that fails on a network or API error is retried once, then the run pauses (resumable). A green step gets a ledger line and a checkpoint commit on the
 milestone branch (never main, never a push); a step green only because no file changed is held for the
-designer instead, like an open question, until its spec text changes or --accept. When nothing is left it runs
-every suite (`all --time-scale 6 --skip-x1`): red gets one Quinn round for stale tests, then waits for the designer.
+designer instead, like an open question, until its spec text changes or --accept. When nothing is left (or a --goal
+list or --max-goals stop built something) it runs every suite (`all --time-scale 6 --skip-x1`), or reuses a green one
+newer than every build change: red gets one Quinn round for stale tests, then waits for the designer.
 It stops when nothing is left, when budget_guard denies an agent
 (the run pauses: run it again to resume), when a goal is ambiguous (Process 1), or after the fix rounds.
 
@@ -112,6 +121,28 @@ SUITE_FILES = {"play_loop.gd": "play", "r4_measure.gd": "measure", "snapshot_pop
                "ui_bounds_pixels.gd": "ui", "touch_windowed.gd": "touch"}
 UNIT_FILES = re.compile(r"^(test_\w+|farm_input)\.gd$")   # the unit chain (run_tests.gd only lists names); shot scripts are not checks
 FULL_SUITE = ["all", "--time-scale", "6", "--skip-x1"]   # the end-of-run check: every suite, as at a checkpoint
+# L40 (obstacles item 18): each round reran all ~200 unit tests (~12.5 min; T12.1 ran three for 2 min of agents), since
+# L39 only added suites. A round now runs the goal's own tests plus last round's failures (`--only`); L42 added the
+# tests the step's changes impact and dropped the step's full unit gate (the run's end runs every suite: final_suite()).
+ONLY_FLAGS = ["--time-scale", "6", "--skip-x1"]
+TRANSIENT = re.compile(r"ENOTFOUND|ECONNRESET|ECONNREFUSED|ETIMEDOUT|EAI_AGAIN|socket hang up|can't reach the API|"
+                       r"API Error: (?:5\d\d|Connection error|Request timed out)|overloaded_error|network error", re.I)
+# item 12: a fix round shrank the shop rows 120 -> 64 px and the fonts 28 -> 24 to pass a test, with no vote. A changed
+# line setting one of these (scenes, materials, config, scripts) stops the step for the Design Votes page.
+VISUAL = re.compile(r"^\s*(?:@export\S*\s+)?(?:(?:var|const)\s+)?[\w/.]*(?:size|scale|offset|font|margin|separation|"
+                    r"height|width)[\w/]*\s*(?::\s*\w+\s*)?:?=\s*(?:Vector[23]i?\()?\s*-?\d|"
+                    r"add_theme_(?:font_size|constant)_override\(.*\d", re.I)
+VISUAL_RULE = ("Never change a visual number (a size, scale, offset, font size or margin) to make a check pass: those "
+               "are the designer's, voted on the Design Votes page (item 12). If only such a change would fix a row, "
+               "change nothing for it and write one line ending `(designer)`: the question, with options A: and B:. ")
+# L42: T9.1's fix round 2 stopped for a Design Votes row on "A: keep the paused crank; B: reset the crank", no visual
+# value in it. A `(designer)` row is a vote only when it names one of these; any other is a plain designer question.
+VISUAL_ROW = re.compile(r"\b(?:sizes?|scales?|offsets?|positions?|fonts?|margins?|colou?rs?|px|pixels?|width|height|"
+                        r"separation|spacing)\b", re.I)
+# L42: T9.1's two fix rounds went to Patricia, who said each time the fault was in Quinn's new test. A reply like this
+# sends the next round to Quinn.
+QUINN_FAULT = re.compile(r"Quinn's (?:folder|file|tests?)\b|\b(?:fault|failure|cause|bug|problem)s? (?:is|are|lies|lie) "
+                         r"in (?:the |a )?(?:tests?\b|`?(?:game/)?tests/)|\bnot in `?(?:game/)?(?:scripts|scenes)/", re.I)
 IMPACT_MAX = 40   # test functions listed in a brief; the rest are counted
 PHRASE_STOP = {"per", "max", "min", "level", "levels", "time", "rate", "base", "new", "model", "change", "growth"}   # in most upgrade tests' names
 TEST_RULES = (
@@ -384,7 +415,7 @@ def scan(game, ledger_path=None):
                 results[m.group(2)] = m.group(1)
     marks = {}   # {goal id: [tests]} from Quinn's `# goal <ID>` line above each test function
     for f in sorted((game / "tests").glob("*.gd")):
-        for gid, t in re.findall(r"^\s*#\s*goal\s+(\S+).*\n\s*func\s+(t_\w+)", f.read_text(encoding="utf-8", errors="replace"), re.M):
+        for gid, t in re.findall(r"^\s*#\s*goal\s+(\S+).*\n(?:[ \t]*#(?![ \t]*goal\b).*\n)*[ \t]*func\s+(t_\w+)", f.read_text(encoding="utf-8", errors="replace"), re.M):
             marks.setdefault(gid, []).append(t)
     handoffs = sorted(p.name for p in (game / "specs").glob("*handoff*.md"))
     handoff_text = {p.name: p.read_text(encoding="utf-8") for p in (game / "specs").glob("*handoff*.md")}
@@ -815,6 +846,344 @@ def impact_text(rows):
     return "\n".join(f"- `{f}` [{suite}]: " + ", ".join(fns) for (f, suite), fns in by_file.items()) + more
 
 
+# ---------------------------------------------------------------------------------------------- change impact (L42)
+# L42 (the designer: "we don't need to test things we know work already, or won't be affected by a change"): a step ran
+# ~220 unit tests (up to 27 min) as its gate. A round now runs its own tests, the tests that read what the step's changed
+# files define (change_impact()), and last round's failures; the full suite runs once, at the run's end (final_suite()).
+CORE_FILES = {"game/scripts/main.gd", "game/scripts/game_config.gd", "game/scripts/default_config.tres",
+              "game/scenes/main.tscn", "game/project.godot"}   # every test loads these: only their changed names count
+IMPACT_PATHS = ["game/scripts", "game/scenes", "game/materials", "game/tests", "game/translations", "game/project.godot"]
+TEST_MAP = "game/reports/_runs/test-map.json"   # the test index cache, by file mtime and size (gitignored with the logs)
+HELPER_FILES = {"flow.gd", "replay_core.gd"}   # shared helpers the suites call, outside the unit chain
+GD_DECL = re.compile(r"^(?:@\w+(?:\([^)]*\))?\s+)*(?:static\s+)?(func|var|const|signal|enum|class)\s+(\w+)")
+GODOT_TYPES = re.compile(r"^(?:Node|Node2D|Node3D|Control|Label|Button|Panel|Camera3D|MeshInstance3D|Sprite3D|"
+                         r"CanvasLayer|[HV]BoxContainer|MarginContainer|TextureRect|ColorRect|Timer|Area3D|"
+                         r"CollisionShape3D|DirectionalLight3D|WorldEnvironment|Mesh|Body)\d*$")   # node names too generic to count
+FULL_LOGS = ("unit", "start", "play", "measure", "snapshot", "ui", "touch")   # godot_run's `all`: one log each
+
+
+def idents(text):
+    return set(re.findall(r"[A-Za-z_]\w*", text))
+
+
+def strip_comment(line):
+    """A GDScript line without its comment (a # outside quotes)."""
+    quote = None
+    for i, ch in enumerate(line):
+        if quote:
+            quote = None if ch == quote else quote
+        elif ch in "\"'":
+            quote = ch
+        elif ch == "#":
+            return line[:i]
+    return line
+
+
+def index_file(text):
+    """{function: {"t": [identifiers it reads, string contents included], "c": [names it calls or passes]}} of one test
+    file; its top level (extends, vars) is under ""."""
+    funcs, cur = {"": (set(), set())}, ""
+    for line in text.splitlines():
+        m = re.match(r"^(?:static\s+)?func\s+(\w+)", line)
+        if m:
+            cur = m.group(1)
+            funcs.setdefault(cur, (set(), set()))
+            line = line[m.end():]
+        elif line and not line[0].isspace() and not line.startswith("#"):
+            cur = ""
+        code = strip_comment(line)
+        funcs[cur][0].update(idents(code))
+        funcs[cur][1].update(re.findall(r"([A-Za-z_]\w*)\s*\(", code))
+    return {f: {"t": sorted(t), "c": sorted(c)} for f, (t, c) in funcs.items()}
+
+
+def test_index(tests=None):
+    """{file name: {"stamp", "suite", "funcs"}} for each unit test file, windowed suite and shared helper, cached in
+    TEST_MAP and re-read only for a file whose mtime or size changed."""
+    tests = tests or ROOT / "game" / "tests"
+    cache_path = ROOT / TEST_MAP
+    try:
+        cache = json.loads(cache_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        cache = {}
+    out = {}
+    for f in sorted(tests.glob("*.gd")):
+        suite = SUITE_FILES.get(f.name) or ("unit" if UNIT_FILES.match(f.name) else
+                                            "helper" if f.name in HELPER_FILES else None)
+        if not suite:
+            continue
+        st = f.stat()
+        stamp = [st.st_mtime_ns, st.st_size]
+        hit = cache.get(f.name)
+        if not isinstance(hit, dict) or hit.get("stamp") != stamp or hit.get("suite") != suite:
+            hit = {"stamp": stamp, "suite": suite,
+                   "funcs": index_file(f.read_text(encoding="utf-8", errors="replace"))}
+        out[f.name] = hit
+    if out != cache:
+        try:
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
+            cache_path.write_text(json.dumps(out), encoding="utf-8")
+        except OSError:
+            pass
+    return out
+
+
+def tests_reading(index, tokens, direct=frozenset()):
+    """({unit test: [tokens]}, {windowed suite}) for the functions reading any of `tokens`, directly or through the
+    helpers they call. Names are merged across files: the unit chain is one class (each file extends the one before).
+    `direct`: names that count only in a test function's own body (a file's stem, class and scene nodes: every setup
+    helper reads `Hive`, so through helpers they would reach nearly every test)."""
+    reach, calls, units, suites = {}, {}, set(), {}
+    for name, e in index.items():
+        for fn, d in e["funcs"].items():
+            if not fn:
+                continue
+            reach.setdefault(fn, set()).update((tokens - direct) & set(d["t"]))
+            calls.setdefault(fn, set()).update(c for c in d["c"] if c != fn)
+            if e["suite"] == "unit" and fn.startswith("t_"):
+                units.add(fn)
+            elif e["suite"] not in ("unit", "helper"):
+                suites.setdefault(e["suite"], set()).add(fn)
+    grew = True
+    while grew:   # a test reaches what its helpers reach
+        grew = False
+        for fn, cs in calls.items():
+            more = set().union(*(reach.get(c, set()) for c in cs)) - reach[fn]
+            if more:
+                reach[fn] |= more
+                grew = True
+    for name, e in index.items():
+        for fn, d in e["funcs"].items():
+            if fn in units or (fn and e["suite"] not in ("unit", "helper")):
+                reach[fn] |= direct & tokens & set(d["t"])
+    hit = {fn: sorted(reach[fn]) for fn in sorted(units) if reach[fn]}
+    return hit, {s for s, fns in suites.items() if any(reach[f] for f in fns)}
+
+
+def diff_lines(diff):
+    """(new-side line numbers a `git diff -U0` touches, the texts of its added and removed lines); None: no hunk."""
+    nums, texts, seen = set(), [], False
+    for line in diff.splitlines():
+        m = re.match(r"^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@", line)
+        if m:
+            seen = True
+            start, n = int(m.group(1)), int(m.group(2)) if m.group(2) is not None else 1
+            nums.update(range(start, start + n) if n else {max(start, 1), start + 1})   # a deletion: the lines around it
+        elif seen and line[:1] in "+-" and not line.startswith(("+++", "---")):
+            texts.append(line[1:])
+    return (nums, texts) if seen else None
+
+
+def gd_members(text):
+    """([(first line, last line, kind, name)] of a GDScript file's top-level entries, 1-based and inclusive; a line that
+    declares nothing (extends, class_name) has kind "top"."""
+    src = text.splitlines()
+    tops = []
+    for i, line in enumerate(src, 1):
+        if not line.strip() or line[0].isspace() or line.startswith("#"):
+            continue
+        m = GD_DECL.match(line)
+        tops.append([i, i, m.group(1) if m else "top", m.group(2) if m else ""])
+    for a, b in zip(tops, tops[1:]):
+        a[1] = b[0] - 1
+    if tops:
+        tops[-1][1] = len(src)
+    return [tuple(t) for t in tops]
+
+
+def project_names():
+    """(config keys, scene node names) of the game, as scan() reads them."""
+    found = scan(ROOT / "game", ledger_path=ROOT / "game" / "reports" / "goal" / "none.json")
+    return found["keys"], {n for n in found["nodes"] if not GODOT_TYPES.match(n)}
+
+
+def scene_users(res_path, depth=2):
+    """Node names that use a resource (a script, material or prop scene) in the game's scenes, and the nodes that
+    instance those scenes (one level up), e.g. truck.gd -> Truck."""
+    out = set()
+    for scene in sorted((ROOT / "game" / "scenes").rglob("*.tscn")):
+        if "variants" in scene.parts or "retired" in scene.parts:
+            continue
+        text = scene.read_text(encoding="utf-8", errors="replace")
+        ids = re.findall(rf'^\[ext_resource[^\]]*path="{re.escape(res_path)}"[^\]]*id="([^"]+)"', text, re.M)
+        ids += re.findall(rf'^\[ext_resource[^\]]*id="([^"]+)"[^\]]*path="{re.escape(res_path)}"', text, re.M)
+        users = set()
+        for sec in re.split(r"(?m)^(?=\[)", text):
+            m = re.match(r'\[node name="([^"]+)"', sec)
+            if m and any(f'ExtResource("{i}")' in sec for i in ids):
+                users.add(m.group(1))
+        out |= users
+        if users and depth > 1 and scene.name != "main.tscn":
+            out |= scene_users("res://" + scene.relative_to(ROOT / "game").as_posix(), depth - 1)
+    return {n for n in out if not GODOT_TYPES.match(n)}
+
+
+def file_tokens(path, text, touched, keys, nodes):
+    """(names a test would read to exercise the change to one game file, the file's whole name set for widening).
+    `touched`: (line numbers, changed texts), or None for a new or undiffable file (every line counts)."""
+    rel = path[len("game/"):] if path.startswith("game/") else path
+    core, stem = path in CORE_FILES, Path(path).stem
+    src = text.splitlines()
+    lines, texts = touched if touched else (set(range(1, len(src) + 1)), src)
+    found = {w for t in texts for w in idents(t)} & (keys | nodes)
+    own = {stem} | scene_users("res://" + rel) if not core else set()
+    if path.endswith(".gd"):
+        tops = gd_members(text)
+        names = {n for _, _, k, n in tops if n}
+        if any(k == "top" and any(a <= x <= b for x in lines) for a, b, k, _ in tops):   # extends / class_name changed
+            lines = set(range(1, len(src) + 1))
+        body = {n: "\n".join(strip_comment(l) for l in src[a - 1:b]) for a, b, k, n in tops if n}
+        changed = {n for a, b, k, n in tops if n and any(a <= x <= b for x in lines)}
+        funcs = {n for _, _, k, n in tops if k == "func"}
+        callers, grew = changed & funcs, True
+        while grew:   # a function calling (or connecting) a changed function changed too
+            grew = False
+            for f in funcs - callers:
+                if idents(body[f]) & callers:
+                    callers.add(f)
+                    grew = True
+        reads = set().union(*(idents(body[n]) for n in changed & funcs)) & (names | keys | nodes)
+        found |= changed | callers | ({w for t in texts for w in idents(t)} & (names | keys | nodes))
+        cls = re.search(r"^class_name\s+(\w+)", text, re.M)
+        own |= ({cls.group(1)} if cls and not core else set()) | reads   # the state a changed function reads: direct only
+        return found | own, names | own | found, own - found
+    if path.endswith(".tscn"):
+        secs = [(i, l) for i, l in enumerate(src, 1) if l.startswith("[")]
+        subs = set()
+        for x in lines:
+            head = next((l for i, l in reversed(secs) if i <= x), "")
+            m = re.match(r'\[(node|sub_resource|ext_resource)\b.*?(?:name|id)="([^"]+)"', head)
+            if m and m.group(1) == "node":
+                found.add(re.search(r'name="([^"]+)"', head).group(1))
+            elif m and m.group(1) == "sub_resource":
+                subs.add(re.search(r'id="([^"]+)"', head).group(1))
+            p = re.search(r'path="res://([^"]+\.gd)"', head)
+            if p and (ROOT / "game" / p.group(1)).is_file():
+                g_text = (ROOT / "game" / p.group(1)).read_text(encoding="utf-8", errors="replace")
+                cls = re.search(r"^class_name\s+(\w+)", g_text, re.M)
+                found |= {Path(p.group(1)).stem} | ({cls.group(1)} if cls else set())
+        found |= {n for t in texts for n in re.findall(r'name="([^"]+)"', t)}
+        for sec in re.split(r"(?m)^(?=\[)", text):
+            m = re.match(r'\[node name="([^"]+)"', sec)
+            if m and any(f'SubResource("{s}")' in sec for s in subs):
+                found.add(m.group(1))
+        root = re.search(r'^\[node name="([^"]+)"', text, re.M)
+        own |= {root.group(1)} if root and not core else set()
+        found = {n for n in found if not GODOT_TYPES.match(n)}
+        return found | own, found | own | set(re.findall(r'^\[node name="([^"]+)"', text, re.M)) - {""}, own - found
+    # config resources, translations, project.godot, materials: the keys and names on the changed lines
+    found |= {m for t in texts for m in re.findall(r"^\s*([A-Za-z_]\w*)\s*=", t)} - {"script", "metadata", "resource_name"}
+    found |= {w for t in texts for w in idents(t.split(",")[0]) if path.endswith(".csv") and len(w) > 3}
+    if path.endswith("project.godot"):
+        found |= {w for t in texts for w in re.findall(r"(\w+)\s*=", t.replace("/", " ")) if len(w) > 3}
+    return found | own, found | own, own - found
+
+
+def change_snapshot():
+    """{path: [content hash, untracked]} of the uncommitted files a test could depend on; a step's changes are the
+    difference from its start (step_changes())."""
+    out = {}
+    for row in git("status", "--porcelain", "--untracked-files=all", "--", *IMPACT_PATHS)[1].splitlines():
+        path = row[3:].strip().strip('"').split(" -> ")[-1]
+        if not path or path.startswith("game/reports/") or path.endswith((".uid", ".import")):
+            continue
+        f = ROOT / path
+        out[path] = [hashlib.sha1(f.read_bytes()).hexdigest() if f.is_file() else "deleted", row.startswith("??")]
+    return out
+
+
+def step_changes(start):
+    """{path: untracked} of each file whose state differs from the step's start snapshot (changed, new or reverted)."""
+    now_ = change_snapshot()
+    return {p: (now_.get(p) or [None, False])[1] for p in set(now_) | set(start) if now_.get(p) != start.get(p)}
+
+
+def file_diff(path):
+    """The file's `git diff -U0` against HEAD (replaced by a fake in the tests)."""
+    return git("diff", "-U0", "HEAD", "--", path)[1]
+
+
+def change_impact(changes, tests=None):
+    """L42: what a round runs for the files the step changed ({path: untracked}). Returns {"tests": {test: [reasons]},
+    "suites": {suite: reason}, "uncovered": [paths no test reads], "widened": [paths], "written": {tests the step
+    changed}}. A game file maps to the unit tests that read its names (directly or through helpers): a script's
+    class, stem, scene nodes and changed members with their callers and the state they read; a scene's changed nodes; a
+    config file's changed keys. A core file (CORE_FILES) counts only its changed names; a file no test reads is widened
+    to every name it defines. A change under game/tests/ runs only the changed tests (and the tests calling a changed
+    helper; a changed windowed suite file runs that suite). Conservative by design; the end-of-run suite backs it."""
+    out = {"tests": {}, "suites": {}, "uncovered": [], "widened": [], "written": set()}
+    if not changes:
+        return out
+    index = test_index(tests)
+    keys, nodes = project_names()
+    add = lambda names, why: [out["tests"].setdefault(t, []).append(why) for t in names if why not in out["tests"].get(t, [])]
+    for path in sorted(changes):
+        f, rel = ROOT / path, path[len("game/"):]
+        text = f.read_text(encoding="utf-8", errors="replace") if f.is_file() else ""
+        touched = None if changes[path] or not text else diff_lines(file_diff(path))
+        if path.startswith("game/tests/"):
+            name = f.name
+            src = text.splitlines()
+            lines, texts = touched if touched else (set(range(1, len(src) + 1)), src)
+            if name in SUITE_FILES:
+                out["suites"][SUITE_FILES[name]] = f"changed `{rel}`"
+                continue
+            if name == "run_tests.gd":   # a registration: the names on its changed lines
+                direct = {t for x in texts for t in re.findall(r"\bt_\w+", x)}
+                helpers = set()
+            else:
+                tops = gd_members(text) if name.endswith(".gd") else []
+                if any(k == "top" and any(a <= x <= b for x in lines) for a, b, k, _ in tops):
+                    lines = set(range(1, len(src) + 1))
+                changed = {n for a, b, k, n in tops if k == "func" and any(a <= x <= b for x in lines)}
+                direct = {n for n in changed if n.startswith("t_")}
+                helpers = (changed - direct) if name.endswith(".gd") else {f.stem}
+            units = {t for e in index.values() if e["suite"] == "unit" for t in e["funcs"] if t.startswith("t_")}
+            direct &= units
+            out["written"] |= direct
+            add(sorted(direct), f"changed in `{rel}`")
+            hit, suites = tests_reading(index, helpers) if helpers else ({}, set())
+            add(sorted(hit), f"calls a helper changed in `{rel}`")
+            for s in suites:
+                out["suites"].setdefault(s, f"calls a helper changed in `{rel}`")
+            if not (direct or hit or suites):
+                out["uncovered"].append(path)
+            continue
+        tokens, every, direct = file_tokens(path, text, touched, keys, nodes)
+        hit = tests_reading(index, tokens, direct)[0] if tokens else {}
+        if not hit and every - tokens:   # no known coverage: widen to every name the file defines
+            hit = tests_reading(index, every)[0]
+            if hit:
+                out["widened"].append(path)
+        if hit:
+            via = sorted(set().union(*map(set, hit.values())))
+            add(sorted(hit), f"impacted by `{rel}` (via " + ", ".join(f"`{v}`" for v in via[:12])
+                + (f" and {len(via) - 12} more" if len(via) > 12 else "") + ")")
+        else:
+            out["uncovered"].append(path)
+    return out
+
+
+def tests_line(own, impact, last, focus):
+    """The board's record of which tests a round runs and why, so a missed impact can be traced (L42)."""
+    names = lambda ts: ", ".join(f"`{t}`" for t in sorted(ts))
+    parts = [f"own ({len(own)}): {names(own)}"] if own else []
+    by_why = {}
+    for t, whys in impact["tests"].items():
+        for w in whys:
+            by_why.setdefault(w, set()).add(t)
+    parts += [f"{w} ({len(ts)}): {names(ts)}" for w, ts in sorted(by_why.items())]
+    parts += [f"last failures ({len(last)}): {names(last)}"] if last else []
+    text = (f"- Tests this round ({len(focus)}): " + "; ".join(parts) if focus else
+            "- Tests this round: none (no unit test is the goal's own or reads what the step changed); `unit` skipped, "
+            "the end-of-run full suite runs it")
+    text += "".join(f"; suite `{s}` ({w})" for s, w in sorted(impact["suites"].items()))
+    text += "".join(f"\n- Impact widened: no test reads the changed names of `{p[5:]}`; ran the tests reading any name "
+                    f"it defines" for p in impact["widened"])
+    text += "".join(f"\n- No test reads `{p[5:]}`: covered only by the end-of-run full suite" for p in impact["uncovered"])
+    return text + "\n"
+
+
 def scan_handoffs(game=None):
     return sorted(p.name for p in ((game or ROOT / "game") / "specs").glob("*handoff*.md"))
 
@@ -824,14 +1193,56 @@ def run_agent(agent, prompt, max_turns=None):
     return g.run_agent(agent, prompt, tools="Read,Grep,Glob" if agent == CRITIC else TOOLS, max_turns=max_turns)
 
 
+class Transient(Exception):
+    """An agent call failed twice on a network or API error: the run pauses (resumable); it did not fail."""
+
+
+def agent_once_more(agent, prompt, board, **kw):
+    """run_agent, retried once on a transient API or network error (run 0.2 ended `failed` on ENOTFOUND, 240952d);
+    a second one raises Transient, which pauses the run."""
+    try:
+        return run_agent(agent, prompt, **kw)
+    except g.AgentError as e:
+        if not TRANSIENT.search(str(e)):
+            raise
+        say(board, f"\n**{g.NAMES[agent]}:** transient error ({e}); retrying once\n")
+    try:
+        return run_agent(agent, prompt, **kw)
+    except g.AgentError as e:
+        if TRANSIENT.search(str(e)):
+            raise Transient(f"{g.NAMES[agent]}: {e}") from e
+        raise
+
+
+def cmd_label(cmd):
+    """The live view's name for a command ("godot_run unit start", "git commit"), or "" for a quick git read."""
+    if cmd and cmd[0] == "git":
+        return f"git {cmd[1]}" if len(cmd) > 1 and cmd[1] in ("commit", "push", "merge") else ""
+    for i, c in enumerate(cmd):
+        if str(c).endswith(".py"):
+            args = [a for a in cmd[i + 1:i + 4] if not str(a).startswith("-") and "=" not in str(a)]
+            return " ".join([Path(c).stem, *map(str, args)])[:40]
+    return Path(str(cmd[0])).stem if cmd else ""
+
+
 def run_cmd(cmd, env=None, timeout=3600):
-    """(exit code, output) of one check command, run from the repo root. Replaced by a fake in the tests."""
+    """(exit code, output) of one check command, run from the repo root. Replaced by a fake in the tests.
+    Each one but a quick git read shows in the live view while it runs (L5: a silent unit run looked stalled)."""
+    label = cmd_label(cmd)
+    key = g.live.start(label) if label else None
+    began, code = datetime.datetime.now(), 1
     try:
         p = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", errors="replace",
                            env={**os.environ, **(env or {})}, timeout=timeout)
+        code = p.returncode
         return p.returncode, (p.stdout + p.stderr)
     except subprocess.TimeoutExpired:
+        code = 124
         return 124, f"timed out after {timeout} s"
+    finally:
+        if key:
+            g.live.end(key, label, "PASS" if code == 0 else f"exit {code}", ok=code == 0,
+                       seconds=int((datetime.datetime.now() - began).total_seconds()))
 
 
 def budget_ok(agent):
@@ -851,7 +1262,7 @@ def checks(spec, goal, base, version, suites=()):
     impact list reaches (L39), run with unit so a change that breaks play, measure or snapshot is seen in its step."""
     py = [sys.executable, "-I"]
     out = [("contract", py + ["_tools/contract_check.py"], None),
-           ("tests", py + ["_tools/godot_run.py", "unit", "start", *suites], ENV)]
+           ("tests", py + ["_tools/godot_run.py", "unit", "start", *suites, *ONLY_FLAGS], ENV)]   # L41: flags, not env alone
     if goal["kind"] == "change" and "Bob" in goal["owners"]:
         out.append(("ui shots", py + ["_tools/ui_shots.py", f"{version}={ROOT}"], None))
         # one style-loop round (render, style_check, Vera; no Bob): a FAIL goes to Bob in the fix round. {round} is
@@ -885,10 +1296,11 @@ def tree_state(paths=None):
 
 
 def marked_tests(goal_id):
-    """Test functions Quinn marked `# goal <id>` on the line above, in game/tests/*.gd."""
+    """Test functions Quinn marked `# goal <id>` above, in game/tests/*.gd; `##` doc lines may come between (L42: T9.1's
+    mark sat above two doc lines, so its step found no own test and ran the whole unit suite)."""
     out = []
     for f in sorted((ROOT / "game" / "tests").glob("*.gd")):
-        out += re.findall(rf"^\s*#\s*goal\s+{re.escape(goal_id)}\b.*\n\s*func\s+(t_\w+)",
+        out += re.findall(rf"^\s*#\s*goal\s+{re.escape(goal_id)}\b.*\n(?:[ \t]*#(?![ \t]*goal\b).*\n)*[ \t]*func\s+(t_\w+)",
                           f.read_text(encoding="utf-8", errors="replace"), re.M)
     return out
 
@@ -902,6 +1314,133 @@ def red_tests(partial=False):
             reasons = [r.strip() for r in m.group(2).split(" | ")]
             out[m.group(1)] = any(r and not r.startswith("test stopped before its final line") for r in reasons)
     return out
+
+
+def failing_tests(output):
+    """([unit tests the check's output shows failing], whether they can be rerun by name): not when a start or
+    windowed suite failed, nor when godot_run cut the FAIL list at 15 lines."""
+    names, suite, whole = [], None, True
+    for line in output.splitlines():
+        s = line.strip()
+        m = re.match(r"^(PASS|FAIL|TIMEOUT)\s+(\w+)", s)
+        if "more FAIL lines" in s:
+            whole = False
+        if not m:
+            continue
+        if not m.group(2).startswith("t_"):   # godot_run's suite line
+            suite = m.group(2)
+            whole = whole and (m.group(1) == "PASS" or suite == "unit")
+        elif m.group(1) == "FAIL" and m.group(2) not in names:
+            names.append(m.group(2))
+    return names, whole and bool(names)
+
+
+def timed_out(output):
+    """L41: a suite hit its timeout (godot_run's TIMEOUT line, or run_cmd's own cut) and no test failed: the suite
+    outgrew the limit, not a code bug, so it gets no fix round."""
+    cut = re.search(r"^\s*TIMEOUT\s", output, re.M) or output.startswith("timed out after")
+    return bool(cut) and not failing_tests(output)[0]
+
+
+def run_tests_once_more(cmd, board, label, env=None):
+    """L41: a test command, rerun once when it timed out with no failing test (T10.1 lost two fix rounds to the 15 min
+    unit cap). Returns (code, output, paused): paused when the rerun timed out too; the board then says why."""
+    code, out = run_cmd(cmd, env=env)
+    if not (code and timed_out(out)):
+        return code, out, False
+    say(board, f"- Check `{label}`: TIMEOUT with no failing test; retrying once\n")
+    code, out = run_cmd(cmd, env=env)
+    if not (code and timed_out(out)):
+        return code, out, False
+    say(board, f"- Check `{label}`: TIMEOUT again\n\n```\n{summary_of(out)}\n```\n\n**Paused:** `{label}` timed out "
+               f"twice with no failing test: the suite outgrew godot_run's timeout (or a test hangs), which is not a "
+               f"code bug, so no fix round was started. Check the newest `game/reports/_runs/*/unit.log` for the last "
+               f"test it reached, raise the limit in `_tools/godot_run.py` (`UNIT_CAP_S`) if the suite only grew, then "
+               f"run the same command again to resume.\n")
+    return code, out, True
+
+
+def own_tests(spec, goal, batch):
+    """L40: the tests a round runs alone (`--only`): a test goal's marked tests; a change's registered item tests and the
+    unit tests on its impact list. The round adds change_impact()'s tests and the last failures (L42)."""
+    if goal["kind"] == "test":
+        return sorted({t for b in batch for t in marked_tests(b["id"])})
+    own = set(tests_for(spec, scan(ROOT / "game"), goal["items"]))
+    own |= {fn for _, fn, s, _ in test_impact(goal) if s == "unit" and fn.startswith("t_")}
+    return sorted(own)
+
+
+def fresh_green_full():
+    """L42 (was L40's fresh_green_unit): the newest `all` run folder (a log for every suite, unit not a CB_ONLY run) if
+    every suite is green and it began after the last change to any build file, so the end-of-run check reuses it
+    instead of running every suite again; else None."""
+    runs = sorted((ROOT / "game" / "reports" / "_runs").glob("*/unit.log"), key=lambda p: p.parent.name)
+    log = next((u for u in reversed(runs) if all((u.parent / f"{s}.log").is_file() for s in FULL_LOGS)), None)
+    if not log or "CB_ONLY: running" in log.read_text(encoding="utf-8", errors="replace"):
+        return None
+    for s in FULL_LOGS:
+        text = (log.parent / f"{s}.log").read_text(encoding="utf-8", errors="replace")
+        if re.search(r"^\s*FAIL\s", text, re.M) or re.search(r"^\s*(?:SCRIPT ERROR|Parse Error)\b", text, re.M):
+            return None
+        if s != "start" and not re.search(r"^---- \d+ (passed|checks), 0 failed", text, re.M):
+            return None
+    try:
+        began = datetime.datetime.strptime(log.parent.name, "%Y%m%d-%H%M%S").timestamp()
+    except ValueError:
+        return None
+    for rel in BUILD_PATHS:
+        p = ROOT / rel
+        for f in ([p] if p.is_file() else p.rglob("*") if p.is_dir() else []):
+            if f.is_file() and not f.name.endswith((".uid", ".import")) and f.stat().st_mtime > began:
+                return None
+    return log
+
+
+def rerun_flaky(output, own, board):
+    """Item 11: the failing tests that are not the goal's own, rerun alone once. Those that pass are logged as flaky and
+    get no fix round (T11.1: two timing tests cost 2 fix rounds). Returns the flaky names."""
+    names, whole = failing_tests(output)
+    others = [t for t in names if t not in own]
+    if not whole or not others:
+        return set()
+    code, out = run_cmd([sys.executable, "-I", "_tools/godot_run.py", "unit", "--only", ",".join(others), *ONLY_FLAGS])
+    still = (set(failing_tests(out)[0]) or set(others)) if code else set()
+    flaky = {t for t in others if t not in still}
+    if flaky:
+        say(board, f"- Flaky: {', '.join(f'`{t}`' for t in sorted(flaky))} failed, then passed alone on one rerun; "
+                   f"no fix round for them\n")
+    return flaky
+
+
+def visual_lines():
+    """{path: [lines]} of the lines setting a visual number (VISUAL) in the scenes, materials and scripts."""
+    out = {}
+    for rel in CODE_PATHS:
+        for f in sorted((ROOT / rel).rglob("*")) if (ROOT / rel).is_dir() else []:
+            if f.suffix in (".tscn", ".tres", ".gd") and f.is_file():
+                rows = [l.strip() for l in f.read_text(encoding="utf-8", errors="replace").splitlines()
+                        if VISUAL.search(l) and not l.lstrip().startswith("#")]
+                if rows:
+                    out[f.relative_to(ROOT).as_posix()] = rows
+    return out
+
+
+def visual_changes(before, after, spec_text=""):
+    """Item 12: ["`path`: `old` -> `new`"] for each file whose visual numbers changed, unless every new number is
+    one the spec text names (the spec asked for it)."""
+    values = lambda text: {float(x) for x in re.findall(r"(?<![\w.])\d+(?:\.\d+)?", text)}   # 120.0 == 120; not Vector2's 2
+    named, rows = values(spec_text), []
+    for path in sorted(set(before) | set(after)):
+        old, new = before.get(path, []), after.get(path, [])
+        gone, came = [l for l in old if l not in new], [l for l in new if l not in old]
+        if not (gone or came):
+            continue
+        nums = values(" ".join(came)) - values(" ".join(gone))
+        if came and nums and nums <= named:
+            continue
+        rows.append(f"`{path}`: " + "; ".join(f"`{l}`" for l in gone or ["(none)"]) + " -> "
+                    + "; ".join(f"`{l}`" for l in came or ["(removed)"]))
+    return rows
 
 
 def text_hash(goal):
@@ -929,7 +1468,7 @@ def checkpoint(spec, batch, run, folder, ledger_path):
         ledger.setdefault(spec["file"], {})[b["id"]] = {"run": run, "at": now()}
     ledger_path.parent.mkdir(parents=True, exist_ok=True)
     ledger_path.write_text(json.dumps(ledger, indent=1), encoding="utf-8")
-    paths = BUILD_PATHS + [ledger_path.relative_to(ROOT).as_posix(), folder.relative_to(ROOT).as_posix()]
+    paths = BUILD_PATHS   # queue #5: the run's state (ledger, blackboard, gaps) goes in one commit at the run's end
     git("add", "--", *paths)
     ids = ", ".join(b["id"] for b in batch)
     msg = (f"{spec['version']} goal {ids}: {batch[0]['title'][:60]} (goal_agent run {run})\n\n"
@@ -943,6 +1482,24 @@ def checkpoint(spec, batch, run, folder, ledger_path):
         ledger[spec["file"]][b["id"]]["commit"] = sha.strip()
     ledger_path.write_text(json.dumps(ledger, indent=1), encoding="utf-8")
     return f"checkpoint `{sha.strip()}` on `{branch}`"
+
+
+def commit_state(spec, run, folder, ledger_path, result):
+    """One commit of the run's state (ledger.json and the run folder: blackboard, gaps, briefs) when the run ends,
+    instead of a copy in every goal checkpoint (queue #5). Only those paths (`--only`), never on main."""
+    code, branch = git("rev-parse", "--abbrev-ref", "HEAD")
+    if code or branch.strip() in ("main", "master"):
+        return "no state commit: on " + branch.strip()
+    paths = [p.relative_to(ROOT).as_posix() for p in (ledger_path, folder) if p.exists()]
+    if not paths:
+        return "no state to commit"
+    git("add", "--", *paths)
+    code, out = git("diff", "--cached", "--quiet", "--", *paths)
+    if code == 0:
+        return "state unchanged"
+    code, out = git("commit", "--only", "-m", f"{spec['version']} goal_agent run {run} state: {result}\n\n"
+                    f"Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>", "--", *paths)
+    return "state committed" if code == 0 else "state commit failed: " + summary_of(out, 6)
 
 
 def ensure_branch(version):
@@ -975,6 +1532,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     keep_briefs(folder, board, plan, goal["id"])
     before, code_before = tree_state(), tree_state(CODE_PATHS)
     start_files = file_states()   # style rows are kept only for files this step changes
+    start_snap = change_snapshot()   # L42: the tests a round runs follow what the step changed since here
     needs_red = [b["id"] for b in batch if b["kind"] == "test" and FAIL_FIRST.search(b["text"])]
     seen_red = set()
     lines = [b for b in batch if b["kind"] == "test" and not re.search(r"\bmutations?\b", b["text"], re.I)]
@@ -986,10 +1544,40 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         return "paused"
     rounds = MAX_FIX_ROUNDS + (1 if needs_red else 0)   # one round may go to Quinn alone, to reproduce the bug
     scope_rows = []   # files the last fix round changed outside its owners' folders
+    prev_failed = set()   # L40: the tests the last check showed failing; the next round runs them with its own
+    replies, last_fix = {}, []   # L42: the last fix round's replies and agents, for routing the next round
     for rnd in range(rounds + 1):
         failed = [("scope", scope_rows.pop())] if scope_rows else []
+        g.set_live_tag(f"goal {run} · {ids} checks" + (f" r{rnd}" if rnd else ""))
+        own = own_tests(spec, goal, batch) if cmds else []
+        impact = change_impact(step_changes(start_snap)) if cmds else change_impact({})
+        wrote = impact["written"]   # tests this step wrote or changed: a failure in one goes to Quinn first
+        focus = sorted(set(own) | set(impact["tests"]) | prev_failed)
+        if any(l == "tests" for l, _, _ in cmds):
+            say(board, tests_line(own, impact, prev_failed, focus))
+        red_now = {}
         for label, cmd, env in cmds:
-            code, out = run_cmd([c.replace("{round}", str(rnd)) for c in cmd], env=env)
+            cmd = [c.replace("{round}", str(rnd)) for c in cmd]
+            if label == "tests":   # L42: no full unit run per step; the run's end runs every suite once
+                at = cmd.index("--time-scale")
+                cmd = cmd[:at] + [s for s in impact["suites"] if s not in cmd] + cmd[at:]
+                if focus:
+                    cmd += ["--only", ",".join(focus)]
+                else:
+                    cmd.remove("unit")
+            if label == "tests":
+                code, out, stuck = run_tests_once_more(cmd, board, label, env)
+                if stuck:
+                    return "paused"
+            else:
+                code, out = run_cmd(cmd, env=env)
+            if label == "tests":
+                red_now = red_tests(partial=True) if needs_red else {}   # this check's log, before any rerun
+                if code:
+                    names = [t for t in failing_tests(out)[0] if t not in rerun_flaky(out, set(own) | wrote, board)]
+                    prev_failed = set(names)
+                    if failing_tests(out)[1] and not names:
+                        code = 0   # every failure was flaky
             if code and label == "style":
                 now_files = file_states()
                 text = style_report(out, {p for p, h in now_files.items() if start_files.get(p) != h})
@@ -1004,7 +1592,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                 if label in ("contract", "tests"):
                     break
         if needs_red and not any(l == "contract" for l, _ in failed):   # the tests ran: who has shown the bug
-            red = red_tests()
+            red = dict(red_now)
             # a marked real-time test is skipped by the x6 run (CB_SKIP_X1): run it alone at x1, or it can never
             # fail nor pass (0.1.4 T14.5: three Quinn rounds on a test that never ran)
             x1 = sorted({t for gid in needs_red for t in marked_tests(gid)} & scan(ROOT / "game")["x1"])
@@ -1047,15 +1635,43 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                       f"\"<the change>\"`. Then rerun the same command to go on. The fix rounds' edits are not "
                       f"committed: keep them with `python -I _tools/checkpoint.py \"{ids} fix-round edits\"`.")
             return "waiting-designer"
-        fix = fix_briefs(spec, goal, batch, failed, run, branch, rnd + 1)
-        say(board, f"\n#### Fix round {rnd + 1}: to {', '.join(g.NAMES[a] for a in fix)}\n\n")
+        quinn = quinn_round(goal, failed, prev_failed, wrote, replies, last_fix)
+        fix = fix_briefs(spec, goal, batch, failed, run, branch, rnd + 1, quinn=quinn, replies=replies)
+        say(board, f"\n#### Fix round {rnd + 1}: to {', '.join(g.NAMES[a] for a in fix)}"
+                   + (f" ({quinn})" if quinn else "") + "\n\n")
         keep_briefs(folder, board, fix, f"{goal['id']}-fix{rnd + 1}")
-        states = file_states()
-        if not call_agents(fix, board, usage, run, f"{ids} fix {rnd + 1}", max_turns=FIX_MAX_TURNS):
+        states, looks_before, replies, last_fix = file_states(), visual_lines(), {}, list(fix)
+        if not call_agents(fix, board, usage, run, f"{ids} fix {rnd + 1}", max_turns=FIX_MAX_TURNS, replies=replies):
             return "paused"
         stray = out_of_scope(states, file_states(), fix)
         say(board, f"- Check `scope`: " + (f"FAIL ({', '.join(f'`{p}`' for p in stray)} changed outside "
                                            f"{', '.join(FOLDERS[a] for a in fix)})\n" if stray else "PASS\n"))
+        rows = [(g.NAMES[a], l.strip().lstrip("-* ")) for a, r in replies.items() if a != QA or quinn
+                for l in r.splitlines() if "(designer)" in l]
+        votes = [(who, row) for who, row in rows if VISUAL_ROW.search(row)]   # L42: only a visual value is a vote
+        asks = [(who, row) for who, row in rows if not VISUAL_ROW.search(row)]
+        votes += [("changed", row) for row in visual_changes(looks_before, visual_lines(), spec_slice(spec, goal))]
+        table = lambda rs, col: (f"\n\n| # | Who | {col} |\n|---|---|---|\n" + "\n".join(
+            f"| {i} | {who} | {row.replace('|', '/')} |" for i, (who, row) in enumerate(rs, 1)))
+        say(board, "- Check `visual numbers`: " + (f"STOP ({len(votes)} for the designer)\n" if votes else "PASS\n"))
+        if asks:
+            say(board, f"- Check `designer questions`: STOP ({len(asks)})\n")
+        if votes:   # item 12: the way style_loop.py stops on its (designer) rows
+            g.waiting(board, f"Fix round {rnd + 1} on {ids} needs a visual number the designer has not voted on "
+                      f"(sizes, scales, offsets, fonts and margins are the designer's). Each row becomes a question with "
+                      f"votes on the Design Votes page (`_tools/compare_page.py add`); its link goes here. A `changed` "
+                      f"row is already in the tree, uncommitted: undo it if the vote keeps the old value. Then rerun "
+                      f"`goal_agent.py {spec['file']} --note \"<the pick>\"`." + table(votes, "Row")
+                      + (f"\n\nAlso a question on behaviour (not a vote): answer it in the spec item."
+                         + table(asks, "Question") if asks else "") + "\n\nComparison pages:\n")
+            return "waiting-designer"
+        if asks:   # L42: a behaviour question (T9.1: keep or reset the paused crank) is not a Design Votes row
+            g.waiting(board, f"Fix round {rnd + 1} on {ids} raised a question the spec does not answer, about how the "
+                      f"game behaves (no visual number, so no Design Votes row). Answer it in the spec item, then rerun "
+                      f"`goal_agent.py {spec['file']} --note \"<the answer>\"`. The fix rounds' edits are not committed: "
+                      f"keep them with `python -I _tools/checkpoint.py \"{ids} fix-round edits\"`."
+                      + table(asks, "Question"))
+            return "waiting-designer"
         if stray:
             scope_rows.append(f"Fix round {rnd + 1} ({', '.join(g.NAMES[a] for a in fix)}) changed these files outside "
                               f"its folder: " + ", ".join(f"`{p}`" for p in stray) + ". If one is in your folder, "
@@ -1088,12 +1704,20 @@ def final_suite(spec, run, folder, board, usage):
     check again; still red, the run waits for the designer. Returns done, paused or waiting-designer."""
     cmd = [sys.executable, "-I", "_tools/godot_run.py", *FULL_SUITE]
     say(board, f"\n### Full suite ({now()})\n\n")
+    reused = fresh_green_full()   # L42: the run's one full run, unless a green one is newer than every build change
+    if reused:
+        say(board, f"- Check `full suite`: PASS (reused `{reused.parent.relative_to(ROOT).as_posix()}`: every suite "
+                   f"green, and no build file changed since it began)\n")
+        return "done"
     for rnd in range(2):
-        code, out = run_cmd(cmd)
+        g.set_live_tag(f"goal {run} · full suite" + (f" r{rnd}" if rnd else ""))
+        code, out, stuck = run_tests_once_more(cmd, board, "full suite")
+        if stuck:
+            return "paused"
         say(board, f"- Check `full suite`: {'PASS' if code == 0 else f'FAIL (exit {code})'}\n")
         if code == 0:
             if rnd:   # Quinn's test fixes made it green: keep them
-                git("add", "--", "game/tests", folder.relative_to(ROOT).as_posix())
+                git("add", "--", "game/tests")
                 c, o = git("commit", "-m", f"{spec['version']} full suite: stale tests updated (goal_agent run {run})"
                            f"\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>")
                 say(board, "- Green: " + ("tests committed" if c == 0 else "commit failed: " + summary_of(o, 6)) + "\n")
@@ -1177,7 +1801,11 @@ def match_pick(spec, goal, live, pick, folder, rnd, board, usage, run, ids):
     prompt = pick_match.prompt(live, pick, out, spec_slice(spec, goal))
     verdict, rows = None, []
     for attempt in range(2):
-        reply, u = run_agent(CRITIC, prompt if not attempt else prompt + " Your last reply had no such block with a VERDICT line.")
+        try:
+            reply, u = agent_once_more(CRITIC, prompt if not attempt else prompt + " Your last reply had no such block with a VERDICT line.", board)
+        except Transient as e:
+            say(board, f"\n**Paused:** {e} (a network or API error, twice). Run the same command again to resume.\n")
+            return None
         usage.append((CRITIC, f"{ids} pick match", u))
         say(board, f"\n**Vera, pick match** ({u['tokens']:,} tokens):\n\n{reply.strip()}\n\n")
         verdict, rows = pick_match.judge(reply)
@@ -1200,8 +1828,23 @@ def keep_briefs(folder, board, plan, name):
         say(board, f"- Brief for {g.NAMES[agent]}: `{f.relative_to(ROOT).as_posix()}` ({len(prompt)} chars)\n")
 
 
-def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
-    """Failures go to the owners of the folders involved (Process 9): code owners for test failures."""
+def quinn_round(goal, failed, failing, wrote, replies, last_fix):
+    """L42: why the next fix round goes to Quinn alone, or "". Only when every failing check is `tests`: a code owner's
+    last reply puts the fault in tests/ (QUINN_FAULT), or, on a test goal, every failing test is one this step wrote
+    (not twice running: after Quinn's own round the code owners get the next)."""
+    if not failed or {l for l, _ in failed} != {"tests"}:
+        return ""
+    blame = [g.NAMES[a] for a, r in replies.items() if a != QA and QUINN_FAULT.search(r)]
+    if blame:
+        return f"{' and '.join(blame)} put the fault in tests/"
+    if goal["kind"] == "test" and failing and set(failing) <= set(wrote) and last_fix != [QA]:
+        return "the failing tests are ones this step wrote"
+    return ""
+
+
+def fix_briefs(spec, goal, batch, failed, run, branch, rnd, quinn="", replies=None):
+    """Failures go to the owners of the folders involved (Process 9): code owners for test failures; Quinn alone when
+    quinn_round() names a reason (`quinn`), with the code owners' replies that blamed the test."""
     report = "\n\n".join(f"{label}:\n{text}" for label, text in failed)
     owners = [OWNERS[o] for o in goal["owners"]] if goal["kind"] != "test" else \
         sorted({OWNERS[o] for n in goal["items"] for o in spec["goals"].get(f"C{n}", {}).get("owners", [])}
@@ -1232,7 +1875,7 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
                  f"file and line: the next round goes to them. ") if a in other else "" for a in owners}
     keep = ("Change only what a failing row names; every other value, pose and position stays as it is (0.1.4: a lid "
             "fix asked to change the end also moved the open pose). ")
-    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{alone[a]}{keep}{looks if a == BUILDER else ''}{first if a == QA else ''}{report}\n\nSpec text:\n"
+    out = {a: head + f"Your folder: {FOLDERS[a]}\n\n{alone[a]}{keep}{VISUAL_RULE if a != QA else ''}{looks if a == BUILDER else ''}{first if a == QA else ''}{report}\n\nSpec text:\n"
                      f"{spec_slice(spec, goal)}\n\nReply in at most 150 words." for a in owners}
     if goal["kind"] == "change" and any(l == "tests" for l, _ in failed):
         # an older test may pin what this change was asked to change (e.g. the removed Hive bar): Quinn's folder
@@ -1240,6 +1883,18 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd):
                           f"spec replaces, and quote the spec line in a comment beside it. Any other failure is a "
                           f"finding against the code: leave the test and say which. Do not run the tests: the goal agent "
                           f"runs them after you.{TEST_RULES}\n\n{report}\n\nSpec text:\n{spec_slice(spec, goal)}\n\nReply in at most 150 words.")
+    if quinn:   # L42: T9.1's failing test was Quinn's new one, and Patricia said so in both rounds
+        said = "\n\n".join(f"{g.NAMES[a]} (last round):\n{r.strip()[:1500]}" for a, r in (replies or {}).items()
+                           if a != QA and r.strip())
+        out = {QA: head + (f"Your folder: {FOLDERS[QA]}. You alone work this round: {quinn}. Check each failing test "
+                           f"against the spec text: if it expects what the spec does not say (a wrong expectation, or "
+                           f"state left over from an earlier run in the same scene), fix the test and quote the spec "
+                           f"line beside it; if the game breaks the spec, change nothing and say which file and line: "
+                           f"the next round goes to the code owners. Where the spec does not say what the game should "
+                           f"do, change nothing for it and write one line ending `(designer)`: the question, with "
+                           f"options A: and B:. Do not run the tests: the goal agent runs them after you.{TEST_RULES}"
+                           f"\n\n{report}" + (f"\n\n{said}" if said else "") + f"\n\nSpec text:\n"
+                           f"{spec_slice(spec, goal)}\n\nReply in at most 150 words.")}
     return out
 
 
@@ -1294,8 +1949,9 @@ def call_line(u, max_turns):
                f"Transcript: `{u.get('transcript', '?')}`.\n" if over else "\n"))
 
 
-def call_agents(plan, board, usage, run, label, max_turns=None):
-    """Run the briefs in parallel after the budget check; False when the budget guard pauses the run."""
+def call_agents(plan, board, usage, run, label, max_turns=None, replies=None):
+    """Run the briefs in parallel after the budget check; False when the budget guard or a twice-failed network call
+    (Transient) pauses the run. `replies`, if given, gets {agent: reply}."""
     for agent in plan:
         ok, msg = budget_ok(agent)
         if not ok:
@@ -1304,13 +1960,18 @@ def call_agents(plan, board, usage, run, label, max_turns=None):
         say(board, f"- Budget guard for {g.NAMES[agent]}: {msg}\n")
     rundir = transcripts(run)
     g.set_live_tag(f"goal {run} · {label}")
+    paused = False
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(plan)) as pool:
         cap = {"max_turns": max_turns} if max_turns else {}
-        futures = {pool.submit(run_agent, a, p, **cap): a for a, p in plan.items()}
+        futures = {pool.submit(agent_once_more, a, p, board, **cap): a for a, p in plan.items()}
         for fut in concurrent.futures.as_completed(futures):
             agent = futures[fut]
             try:
                 reply, u = fut.result()
+            except Transient as e:   # the others still finish and are logged; the run pauses, resumable
+                say(board, f"\n**Paused:** {e} (a network or API error, twice). Run the same command again to resume.\n")
+                paused = True
+                continue
             except g.AgentError as e:
                 say(board, f"\n**{g.NAMES[agent]} failed:** {e}\n")
                 raise
@@ -1319,9 +1980,11 @@ def call_agents(plan, board, usage, run, label, max_turns=None):
             except Exception:
                 pass
             usage.append((agent, label, u))
+            if replies is not None:
+                replies[agent] = reply
             say(board, f"\n**{g.NAMES[agent]}** ({u['tokens']:,} tokens, {u['turns']} turns, {u['seconds']} s):\n\n"
                             f"{reply.strip()}\n\n{call_line(u, max_turns)}\n")
-    return True
+    return not paused
 
 
 def log_usage(usage, run):
@@ -1344,7 +2007,8 @@ def main(argv=None):
     ap.add_argument("--plan", action="store_true", help="scan, gaps and scores only")
     ap.add_argument("--dry-run", action="store_true", help="the plan, then the next step's briefs and commands")
     ap.add_argument("--max-goals", type=int, default=0, help="stop after this many green steps (0 = no limit)")
-    ap.add_argument("--goal", help="build this goal next instead of the top score (it must be ready)")
+    ap.add_argument("--goal", help="build only these goals, in order (a comma list, e.g. T10.1,T12.1); one the scan "
+                    "counts done is skipped with one line (exit 0), one not ready stops the run")
     ap.add_argument("--run", help="run folder name under game/reports/goal/ (default: the spec's version)")
     ap.add_argument("--accept", metavar="GOAL", help="after a stop: record GOAL as green with a manual fix (Process 9), "
                     "checkpoint it, and exit; run the checks first")
@@ -1352,7 +2016,14 @@ def main(argv=None):
                     "otherwise: the designer's answer the run resumes on (written under Resumed)")
     ap.add_argument("--impact", metavar="GOAL", help="print the existing tests that read what GOAL touches (L39) and "
                     "the windowed suites its step would add, then exit; any goal, built or not")
+    ap.add_argument("--changed", action="store_true", help="print the tests a round would run for every uncommitted "
+                    "build file (L42's change impact, against HEAD), then exit")
     a = ap.parse_args(argv)
+    if a.changed:
+        imp = change_impact(step_changes({}))
+        print(tests_line([], imp, set(), sorted(imp["tests"])), end="")
+        print(f"{len(imp['tests'])} unit tests; written: {', '.join(sorted(imp['written'])) or 'none'}")
+        return 0
     path = Path(a.spec)
     if not path.is_file():
         path = ROOT / "game" / "specs" / a.spec
@@ -1400,9 +2071,14 @@ def main(argv=None):
         say(board, f"- Accepted: {msg}\n")
         g.finish_board(board, [], "stopped", f"{goal['id']} accepted with a manual fix ({msg}). Rerun "
                        f"`goal_agent.py {spec['file']}` to build the rest.", transcripts(run))
+        commit_state(spec, run, folder, folder.parent / "ledger.json", f"{goal['id']} accepted")
         print(f"goal_agent: {goal['id']} accepted: {msg}")
         return 0
     usage, built, result = [], 0, "done"
+    wanted = [x.strip() for x in a.goal.split(",") if x.strip()] if a.goal else None   # obstacles item 8
+    if wanted and [x for x in wanted if x not in spec["goals"]]:
+        print(f"goal_agent: not a goal of {spec['file']}: {', '.join(x for x in wanted if x not in spec['goals'])}")
+        return 2
     branch = f"milestone/{spec['version']}"
     if not (a.plan or a.dry_run):
         branch, note = ensure_branch(spec["version"])
@@ -1420,6 +2096,23 @@ def main(argv=None):
             if a.plan:
                 return 0
             ready = [e for e in ranked if e["factors"]["ready"]]
+            if wanted is not None:   # item 8: only the listed goals, in order; a done one is a clean skip, not exit 1
+                while wanted and report[wanted[0]]["status"] == "done":
+                    print(f"goal_agent: {wanted[0]} is already done; skipped")
+                    if board is not None:
+                        say(board, f"\n- `--goal`: {wanted.pop(0)} is already done; skipped.\n")
+                    else:
+                        wanted.pop(0)
+                if not wanted:
+                    result = f"stopped after {built} goal(s) (--goal list done)"
+                    if board is not None:
+                        say(board, f"\n**Stop:** {result}.\n")
+                    break
+                ready = [e for e in ready if e["id"] == wanted[0]]
+                if not ready:
+                    print(f"goal_agent: {wanted[0]} is not a ready, unbuilt goal")
+                    result = f"stopped ({wanted[0]} is not ready)"
+                    return 2
             if ambiguous and not ready:   # the other goals were built first; now only the designer can unblock the rest
                 result = "waiting-designer"
                 if board is not None:
@@ -1428,12 +2121,6 @@ def main(argv=None):
                         for x in ambiguous) + "\n\nAnswer each in the spec, or mark it \"(answered: ...)\" in the "
                         f"handoff, then rerun `goal_agent.py {spec['file']} --note \"<the answer>\"`.")
                 break
-            if a.goal and built == 0:
-                ready = [e for e in ranked if e["id"] == a.goal and e["factors"]["ready"]] or []
-                if not ready:
-                    print(f"goal_agent: {a.goal} is not a ready, unbuilt goal")
-                    result = "stopped (--goal was not a ready, unbuilt goal)"
-                    return 2
             if not ready:
                 left = [gid for gid, r in report.items() if r["status"] != "done"]
                 result = "done" if not left else "waiting-tests" if all(report[x]["waits_on_tests"] for x in left) \
@@ -1448,6 +2135,8 @@ def main(argv=None):
             say(board, f"\nNext: **{top['id']}** (score {ready[0]['score']}: {why(spec, ready[0])})" +
                      (f", with {', '.join(b['id'] for b in batch[1:])}" if batch[1:] else "") + ".\n")
             outcome = step(spec, top, batch, run, folder, board, branch, usage, dry=a.dry_run)
+            if wanted and outcome in ("green", "held"):
+                wanted = [x for x in wanted if x not in {b["id"] for b in batch}]
             if outcome == "held":   # like an open question: the rest is built, then the run waits on the designer
                 continue
             if outcome != "green":
@@ -1459,8 +2148,11 @@ def main(argv=None):
                 say(board, f"\n**Stop:** {result}.\n")
                 plan_pass(spec, ROOT / "game", folder, board, costs, n)   # the re-scan after the last write
                 break
-        if result == "done" and board is not None:   # L39 (c): a step runs unit only; the end runs every suite
-            result = final_suite(spec, run, folder, board, usage)
+        # L39 (c), L42: a step runs only its own and impacted tests; the run's end runs every suite once, also after a
+        # --goal list or --max-goals stop that built something
+        if board is not None and (result == "done" or (built and result.startswith("stopped after"))):
+            end = final_suite(spec, run, folder, board, usage)
+            result = result if end == "done" else end
     except Exception as e:   # an agent or check crashed: never record it as done (generate.py marks `result: failed`)
         result = f"failed ({type(e).__name__}: {e})"
         say(board, f"\n**Stop:** the run crashed: {result}. A rerun re-scans and continues from the ledger.\n")
@@ -1474,6 +2166,8 @@ def main(argv=None):
                            f"Last invocation ({now()}): {result}.", transcripts(run))
         if usage:
             log_usage(usage, run)
+        if board is not None:
+            print("goal_agent: " + commit_state(spec, run, folder, folder.parent / "ledger.json", result))
     print(f"goal_agent: {result}. Blackboard: {(board or shown).relative_to(ROOT).as_posix()}"
           + (" (not written: --plan/--dry-run)" if board is None else ""))
     return 0 if result in ("done", "dry-run") or result.startswith("stopped after") else 1

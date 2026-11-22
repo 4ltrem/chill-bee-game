@@ -40,11 +40,14 @@ A read that needs any of these goes to a subagent that returns at most 150 words
    - checkpoint commits on a milestone branch (`python -I _tools/checkpoint.py`)
    - the handoff line for the next session
    - the status in `queue.md`
-7. End the session when the job is done, so the next job starts with a small context again.
+   - a vote section published: fetch the live Design Votes page with ArtifactData, run `compare_page.py add`, publish to the same URL; the operator does this itself
+7. End the session when the job is done, so the next job starts with a small context again. A session held by `/goal` stays one job, the goal's; at its end, rewrite the handoff.
 
 Hard limits:
 - Edit lines, not files (team rule 5).
 - No push, upload or memory delete without the designer's yes for that one action.
+- Parking a blocked goal: `git stash push -u -m "<goal> parked (<question>)" -- <files>`, then a handoff line naming the stash and the question. After the designer's answer, `git stash pop` to unpark.
+- While a goal run is live, edits under `game/` wait for the run to end; the guard enforces it. Spec answers that can't wait go through a worktree.
 - Not end-of-day. That skill reads every decision log and publishes the decision page, and writing the decision log is judgement, so the designer runs it in an Opus session until `queue.md` #8 splits off its mechanical steps.
 - No content run while the A4 gate is open ([future-tbd](../_meta/memory/future-tbd.md) item 9; the MILESTONES.md Open line is on the unmerged `feat/voice-check` branch).
 - Replies to the designer: at most 150 words, with links to files instead of copied content.

@@ -6,7 +6,8 @@
 The critic is the last automated check in the content loop, so nothing downstream measures it.
 Each fixture in _tools/fixtures/ is a draft with errors the critic must find. The script shows
 the critic the draft exactly as generate.py does in round 1, then checks that the verdict is FAIL
-and that every expected error appears in a blocking (non-minor) finding row. Run it before and
+and that every expected error appears in a blocking (non-minor) finding row, the critic's or
+voice_check.py's (which runs before her in a real run and owns check 5). Run it before and
 after any change to the critic's model or rules. Exit code 0 means every fixture was caught.
 Each call is logged to _meta/agent-runs.md. Standard library only.
 """
@@ -40,6 +41,7 @@ def check(fixture):
     draft = (g.ROOT / fixture["draft"]).read_text(encoding="utf-8").strip()
     prompt = (f"Content loop, round 1.\n\nRequest:\n{fixture['request']}\n\nThe full draft of "
               f"`{fixture['draft']}`:\n\n~~~~markdown\n{draft}\n~~~~\n\n"
+              + (f"{q}\n\n" if (q := g.source_cache.for_draft(draft, g.ROOT)) else "") +
               f"Reply with only your `### Critic, round 1` block.")
     reply, usage = g.run_agent(g.CRITIC, prompt)
     g.keep_transcript(usage, g.ROOT / g.RUNS / f"{g.datetime.date.today()}-critic-check", f"critic-{fixture['name']}")
@@ -53,6 +55,11 @@ def check(fixture):
     rows = g.fail_rows(block)
     report = [f"verdict: {g.verdict_of(block)} ({len(rows)} blocking finding(s))"]
     passed = g.verdict_of(block) == "FAIL"
+    gdd = g.ROOT / "GDD.md"
+    if gdd.is_file():  # in a run voice_check.py goes first and owns check 5, so its rows count as caught too
+        _, script = g.voice_check.check(draft, gdd.read_text(encoding="utf-8"))
+        rows += g.fail_rows(script)
+        report.append(f"script check: {len(g.fail_rows(script))} blocking row(s)")
     for error, pattern in fixture["expect"].items():
         found = any(re.search(pattern, r, re.I) for r in rows)
         report.append(f"{'caught ' if found else 'MISSED '} {error}")

@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "_tools"))  # -I leaves the script's folder off sys.path
 
 
 def pct(data, window):
@@ -41,21 +42,18 @@ def save(reading, path):
 
 
 def live(root=None, at=None):
-    """The headless agents running now (from _meta/usage/live.json, written by generate.run_agent), grouped by
-    what their loop is on: '▶ goal 0.1.4 · C5 · Patricia 4m · Bob 2m'. Entries over 3 h old (a killed run) are left out."""
+    """The headless agents and script steps running now (_meta/usage/live.json, see live.py), grouped by what
+    their loop is on: '▶ goal 0.1.4 · C5 · Patricia 4m · Bob 2m · unit 2m (45 passed)'. A dead process and an
+    entry over 12 h old are left out."""
     try:
-        runs = json.loads(((root or ROOT) / "_meta" / "usage" / "live.json").read_text(encoding="utf-8"))
-    except (OSError, ValueError):
+        import live as lv
+    except ImportError:
         return ""
-    at = at or datetime.datetime.now(datetime.timezone.utc)
     groups = {}
-    for r in sorted(runs.values(), key=lambda r: r.get("start", "")):
-        try:
-            mins = int((at - datetime.datetime.fromisoformat(r["start"].replace("Z", "+00:00"))).total_seconds() // 60)
-        except (KeyError, ValueError, AttributeError):
-            continue
-        if 0 <= mins < 180:
-            groups.setdefault(r.get("tag") or "agent", []).append(f"{r.get('agent', '?')} {mins}m")
+    for r in lv.running(root or ROOT, at):
+        note = r.get("note", "") if r.get("kind") == "step" else ""
+        note = f" ({note.split(' · ')[0][:28]})" if note else ""
+        groups.setdefault(r.get("tag") or "run", []).append(f"{r.get('agent', '?')} {r['mins']}m{note}")
     return " | ".join(f"▶ {tag} · " + " · ".join(names) for tag, names in groups.items())
 
 
@@ -72,7 +70,7 @@ def line(data, root=None):
 def main(raw, root=None):
     data = json.loads(raw or "{}")
     five, week = pct(data, "five_hour"), pct(data, "seven_day")
-    if five is not None or week is not None:
+    if (five is not None or week is not None) and data.get("session_id"):   # no session: a hand test, not saved
         stamp = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
         reading = {"ts": stamp, "session": data.get("session_id", ""), "five_hour": five, "seven_day": week}
         resets = ((data.get("rate_limits") or {}).get("seven_day") or {}).get("resets_at")

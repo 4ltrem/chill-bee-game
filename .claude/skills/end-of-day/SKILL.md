@@ -9,6 +9,8 @@ The designer keeps a record of every working session for analysis and a future e
 
 Run the steps in order. Stop and report if a step fails; never commit over a failing check.
 
+The mechanical steps are one script (queue #8): `python -I _tools/end_of_day.py prep` runs the step 0 check, step 1 export and step 4.1 `sync_docs.py`, and prints the export folders and the next decision ID; `python -I _tools/end_of_day.py checks` runs the step 3 page rebuild, the step 5 checks and the step 6 staged-path guard. Each stops at its first failure. The sections below say what each step does and what stays yours: step 0's fixes, the decision log, Doris, the publish and the commit.
+
 ## 0. Check this machine is set up
 
 **Doc gate.** `git config --get core.hooksPath` must print `.githooks`. If not, run `git config core.hooksPath .githooks`: it enables `.githooks/pre-commit`, which refuses any commit whose docs contradict the code (`_tools/consistency.py`) or whose links break.
@@ -58,6 +60,8 @@ Docs must stay true without the designer checking them. Three layers do that; th
 4. Fixed findings go in the report.
 
 ## 5. Run the checks
+
+`python -I _tools/end_of_day.py checks` runs these in order (after the page rebuild), then refuses staged transcripts:
 
 ```
 python -I _tools/consistency.py

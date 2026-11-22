@@ -12,7 +12,8 @@ DIR/measure.json, written by game/tests/style_shots.gd), V15 glass alpha and bac
 The palette is read from the guide each run, so a token the designer adds there counts at once.
 Prints a FAIL table (rule ID, file:line, finding, Fix) and exits 1 if any row is blocking, else 0.
 A Fix that needs a creative choice (two or more acceptable answers, or a new token) ends with
-"(designer)" and lists the options; style_loop.py does not send those rows to Bob.
+"(designer)" and lists the options, option A being the one that fits the current guide; style_loop.py
+sends Bob option A and logs the choice (a row with no option A stops the loop for the designer).
 Standard library only, no Godot. Tests: python -I _tools/test_style.py
 """
 import argparse
@@ -394,7 +395,7 @@ def check_shots(shots, rep, min_px=20.0):
     px = data.get("cell_px_min")
     if px is None or px < min_px:
         rep.add("V14", m, 1, f"smallest cell at the uncapping zoom is {px} px wide < {min_px:g}",
-                "frame the zoom closer (zoom_size) or enlarge the comb (designer)")
+                "A: frame the zoom closer (zoom_size); B: enlarge the comb (designer)")
 
 
 def run(root, guide, phase="colorbox", threshold=12.0, shots=None, budget=2000, scenes=None):
