@@ -44,7 +44,7 @@ The rules are the approved [STYLE_GUIDE.md](STYLE_GUIDE.md): **V1–V15** for th
 | Evaluator, judgement | Vera, the Style Critic (Sonnet, Read/Grep/Glob, looks at the PNG shots) | Clara, the Content Critic (Sonnet) |
 | Refiner | Bob for the 3D scene's rows, Patricia (Sonnet) for the UI rows, each given only their open FAIL rows, on a sandbox copy | William, given only the open FAIL rows |
 | Controller | `_tools/style_loop.py` | `_tools/generate.py` |
-| Shared record | `game/reports/style/<slug>/blackboard.md` | `content/_runs/<slug>/blackboard*.md` |
+| Shared record | `game/reports/style/<slug>/run-N/blackboard.md` | `content/_runs/<slug>/run-N/blackboard.md` |
 | Record format | `_templates/blackboard.md`, shared with the goal agent: inputs linked, outputs inline, one Result | same |
 | Evaluator calibration | `_tools/style_critic_check.py` on `_tools/fixtures/style/` | `_tools/critic_check.py` on `_tools/fixtures/` |
 

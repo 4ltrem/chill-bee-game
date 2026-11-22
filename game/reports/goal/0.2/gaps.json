@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-21T22:33:45-05:00",
- "unit_log": "game/reports/_runs/20261121-221056/unit.log",
+ "at": "2026-11-21T23:55:08-05:00",
+ "unit_log": "game/reports/_runs/20261121-224553/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -881,11 +881,6 @@
    "status": "done",
    "evidence": [
     {
-     "kind": "config",
-     "name": "fork_return_seconds",
-     "ok": true
-    },
-    {
      "kind": "test",
      "name": "t_fork_returns_to_icon_twice",
      "ok": true,
@@ -1062,12 +1057,40 @@
     },
     {
      "kind": "ledger",
-     "name": "0628fc6",
+     "name": "cce1e86",
      "ok": true
     }
    ],
    "built": true,
    "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C15": {
+   "kind": "change",
+   "title": "Shop stays available in both zooms",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    15
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "ShopButton",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "ShopPanel",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -1084,6 +1107,11 @@
     {
      "kind": "config",
      "name": "flight_max_level",
+     "ok": true
+    },
+    {
+     "kind": "config",
+     "name": "fork_return_seconds",
      "ok": true
     },
     {
@@ -1988,6 +2016,25 @@
    "questions": [],
    "ambiguous": false
   },
+  "T15.1": {
+   "kind": "test",
+   "title": "item 15: in each zoom (first zoom, second stop), three times in a row:",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    15
+   ],
+   "depends": [
+    "C15"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
   "T.1": {
    "kind": "test",
    "title": "mutations in `tests/mutations.json` prove the new tests.",
@@ -2008,7 +2055,8 @@
     11,
     12,
     13,
-    14
+    14,
+    15
    ],
    "depends": [
     "C1",
@@ -2024,7 +2072,8 @@
     "C11",
     "C12",
     "C13",
-    "C14"
+    "C14",
+    "C15"
    ],
    "status": "done",
    "evidence": [
@@ -2281,6 +2330,29 @@
    "ambiguous": false
   }
  },
- "order": [],
+ "order": [
+  {
+   "id": "C15",
+   "score": 6.66,
+   "factors": {
+    "unblocks": 1,
+    "value": 2,
+    "cost": 0.34,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T15.1",
+   "score": 1.72,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.28,
+    "ready": 1,
+    "blocked_by": []
+   }
+  }
+ ],
  "ambiguous": []
 }

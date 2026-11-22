@@ -61,7 +61,7 @@ The GDD reaches the game through approved specs (one per build). The agent reads
    - Patricia (scripts) and Bob (scenes) run in parallel for a change, Quinn for test lines (one call per item). Each is a fresh headless `claude -p` given only its spec slice.
    - Then come the checks: `contract_check.py`, the Godot unit and start suites (`godot_run.py`), `ui_shots.py` after scene work, and `mutate.py --since` after new tests.
    - Failures go back to the folder's owner, for at most 2 fix rounds. When an older test fails after a change, Quinn is asked too, because the spec may have replaced what that test pins.
-   - A green step writes the ledger and makes a checkpoint commit on `milestone/0.1.4`, never on `main` and never pushed.
+   - A green step writes the ledger and makes a checkpoint commit on the current branch, never pushed (on `milestone/0.1.4` in this run; on `main` since milestone branches were dropped, 2026-11-21).
    - Before every agent call, `budget_guard.decide()` runs. The hook only sees the Agent tool, so the agent calls it itself, and a denial pauses the run.
 6. **The iteration loop.** Re-scan, re-score and build the top goal. It stops when nothing is left, when only ambiguous or blocked goals remain, after 2 failed fix rounds, or when the budget guard pauses it.
 
