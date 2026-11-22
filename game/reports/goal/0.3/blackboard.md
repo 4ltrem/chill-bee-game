@@ -3,7 +3,7 @@ spec: 0.3-course-build.md
 version: 0.3
 run: 0.3
 started: 2026-11-22
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3-course-build.md (run 0.3)
 
@@ -391,9 +391,18 @@ FAIL    start     3 errors  (godot exit 1 (1 is normal here), 4 noise lines drop
 
 2 fix rounds failed on C1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3-course-build.md --accept C1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C1 fix-round edits"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --accept C1 --note no code change: the failures were Godot's stale class/import cache after the new welcome_overlay.gd class_name and CSV key; start --refresh then the 7 tests green (_runs/20261122-132648)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C1 (2026-11-22T13:27:03-05:00)
+
+- Change (orchestrator, Process 9): no code change: the failures were Godot's stale class/import cache after the new welcome_overlay.gd class_name and CSV key; start --refresh then the 7 tests green (_runs/20261122-132648)
+- Accepted: checkpoint `04f72f9` on `main`
+
 ## Result
 
-Last invocation (2026-11-22T13:25:43-05:00): waiting-designer.
+C1 accepted with a manual fix (checkpoint `04f72f9` on `main`). Rerun `goal_agent.py 0.3-course-build.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
