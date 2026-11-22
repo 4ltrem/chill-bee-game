@@ -510,5 +510,21 @@
   "turns": 6,
   "seconds": 17,
   "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Patricia, T4.1, T.1 fix 1",
+  "tokens": 247178,
+  "final": 29937,
+  "turns": 17,
+  "seconds": 44,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
+ },
+ {
+  "call": "Quinn, T4.1, T.1 fix 2",
+  "tokens": 122169,
+  "final": 23393,
+  "turns": 9,
+  "seconds": 24,
+  "transcripts": "_meta/sessions/runs/2026-11-22-goal-0.3"
  }
 ]

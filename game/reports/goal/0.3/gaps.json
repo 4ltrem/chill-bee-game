@@ -1,8 +1,8 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T17:48:13-05:00",
- "unit_log": "game/reports/_runs/20261122-145415/unit.log",
+ "at": "2026-11-22T18:07:41-05:00",
+ "unit_log": "game/reports/_runs/20261122-175323/unit.log",
  "goals": {
   "C1": {
    "kind": "change",
@@ -68,7 +68,7 @@
     2
    ],
    "depends": [],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "node",
@@ -89,8 +89,8 @@
     {
      "kind": "test",
      "name": "t_habitat_pill_order_plus_opens_shop_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "ledger",
@@ -99,7 +99,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -303,7 +303,7 @@
    "depends": [
     "C2"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -314,8 +314,8 @@
     {
      "kind": "test",
      "name": "t_habitat_pill_order_plus_opens_shop_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "ledger",
@@ -324,7 +324,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": false,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -493,8 +493,8 @@
     {
      "kind": "test",
      "name": "t_habitat_pill_order_plus_opens_shop_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "FAIL"
     },
     {
      "kind": "test",
