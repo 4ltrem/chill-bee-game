@@ -93,6 +93,42 @@ border_width_right = 4
 border_width_bottom = 4
 border_color = Color(0.35, 0.22, 0.05, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_fork"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.2, 0.12, 0.02, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_fork_pressed"]
+bg_color = Color(0.93, 0.9, 0.82, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.2, 0.12, 0.02, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_fork_disabled"]
+bg_color = Color(1, 0.96, 0.86, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.2, 0.12, 0.02, 1)
+
 [sub_resource type="StyleBoxFlat" id="StyleBox_circle"]
 bg_color = Color(1, 0.76, 0.12, 1)
 corner_radius_top_left = 80
@@ -702,23 +738,19 @@ horizontal_alignment = 1
 
 [node name="ForkIcon" type="Button" parent="FarmUIRoot/FarmUI"]
 focus_mode = 0
-custom_minimum_size = Vector2(240, 120)
+custom_minimum_size = Vector2(120, 120)
 layout_mode = 0
 theme_override_font_sizes/font_size = 32
-theme_override_colors/font_disabled_color = Color(1, 0.96, 0.86, 1)
-theme_override_colors/font_outline_color = Color(0.2, 0.12, 0.02, 1)
-theme_override_constants/outline_size = 6
-theme_override_styles/normal = SubResource("StyleBox_tag")
-theme_override_styles/hover = SubResource("StyleBox_tag")
-theme_override_styles/disabled = SubResource("StyleBox_tag_disabled")
-theme_override_styles/pressed = SubResource("StyleBox_tag_pressed")
+theme_override_styles/normal = SubResource("StyleBox_fork")
+theme_override_styles/hover = SubResource("StyleBox_fork")
+theme_override_styles/disabled = SubResource("StyleBox_fork_disabled")
+theme_override_styles/pressed = SubResource("StyleBox_fork_pressed")
 theme_override_styles/focus = SubResource("StyleBox_empty")
 theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
-text = "Harvest"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../../FarmWorld/Hive/ForkAnchor")
 screen_offset = Vector2(0, 0)
@@ -728,10 +760,87 @@ show_behind_parent = true
 layout_mode = 0
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 236.0
+offset_right = 116.0
 offset_bottom = 116.0
 mouse_filter = 2
 color = Color(1, 0.76, 0.12, 1)
+
+[node name="ForkGlyph" type="Node2D" parent="FarmUIRoot/FarmUI/ForkIcon"]
+position = Vector2(60, 60)
+rotation = 0.610865
+scale = Vector2(3, 3)
+
+[node name="Handle" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph"]
+points = PackedVector2Array(0, 4.6, 0, 10.8)
+width = 4.0
+default_color = Color(0.2, 0.12, 0.02, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="HandleWood" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph"]
+points = PackedVector2Array(0, 4.6, 0, 10.8)
+width = 2.0
+default_color = Color(0.6, 0.45, 0.28, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Tines" type="Node2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph"]
+
+[node name="Tine1" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph/Tines"]
+points = PackedVector2Array(-4.2, -1.5, -4.2, -11)
+width = 1.4
+default_color = Color(0.33, 0.33, 0.35, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Tine2" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph/Tines"]
+points = PackedVector2Array(-2.5, -1.5, -2.5, -11)
+width = 1.4
+default_color = Color(0.33, 0.33, 0.35, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Tine3" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph/Tines"]
+points = PackedVector2Array(-0.8, -1.5, -0.8, -11)
+width = 1.4
+default_color = Color(0.33, 0.33, 0.35, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Tine4" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph/Tines"]
+points = PackedVector2Array(0.8, -1.5, 0.8, -11)
+width = 1.4
+default_color = Color(0.33, 0.33, 0.35, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Tine5" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph/Tines"]
+points = PackedVector2Array(2.5, -1.5, 2.5, -11)
+width = 1.4
+default_color = Color(0.33, 0.33, 0.35, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Tine6" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph/Tines"]
+points = PackedVector2Array(4.2, -1.5, 4.2, -11)
+width = 1.4
+default_color = Color(0.33, 0.33, 0.35, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="Head" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph"]
+points = PackedVector2Array(-4.2, -0.3, 4.2, -0.3)
+width = 4.0
+default_color = Color(0.2, 0.12, 0.02, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="HeadSteel" type="Line2D" parent="FarmUIRoot/FarmUI/ForkIcon/ForkGlyph"]
+points = PackedVector2Array(-4.2, -0.3, 4.2, -0.3)
+width = 2.0
+default_color = Color(0.6, 0.66, 0.74, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
 
 [node name="HiveCountLabel" type="Label" parent="FarmUIRoot/FarmUI"]
 layout_mode = 0
@@ -758,10 +867,40 @@ theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
-text = "Spin"
 script = ExtResource("8_icon")
 anchor_path = NodePath("../../FarmWorld/Centrifuge/CentrifugeAnchor")
 screen_offset = Vector2(0, 0)
+
+[node name="SpinGlyph" type="Node2D" parent="FarmUIRoot/CentrifugeIcon"]
+position = Vector2(16, 16)
+scale = Vector2(1.28, 1.28)
+
+[node name="DropFill" type="Polygon2D" parent="FarmUIRoot/CentrifugeIcon/SpinGlyph"]
+color = Color(1, 0.96, 0.86, 1)
+polygon = PackedVector2Array(50, 28, 44, 37, 38.5, 47, 36, 56, 37.9, 63, 43, 68.1, 50, 70, 57, 68.1, 62.1, 63, 64, 56, 61.5, 47, 56, 37)
+
+[node name="DropOutline" type="Line2D" parent="FarmUIRoot/CentrifugeIcon/SpinGlyph"]
+points = PackedVector2Array(50, 28, 44, 37, 38.5, 47, 36, 56, 37.9, 63, 43, 68.1, 50, 70, 57, 68.1, 62.1, 63, 64, 56, 61.5, 47, 56, 37)
+closed = true
+width = 5.0
+default_color = Color(0.2, 0.12, 0.02, 1)
+joint_mode = 2
+
+[node name="TurnArrow" type="Line2D" parent="FarmUIRoot/CentrifugeIcon/SpinGlyph"]
+points = PackedVector2Array(78, 46, 75.1, 33.3, 66.9, 23.2, 55, 17.6, 42, 17.9, 30, 24.1)
+width = 7.0
+default_color = Color(0.2, 0.12, 0.02, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="TurnArrowHead" type="Line2D" parent="FarmUIRoot/CentrifugeIcon/SpinGlyph"]
+points = PackedVector2Array(33, 14, 28, 26, 41, 28)
+width = 7.0
+default_color = Color(0.2, 0.12, 0.02, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
 
 [node name="SellIcon" type="Button" parent="FarmUIRoot/FarmUI"]
 focus_mode = 0
@@ -1077,16 +1216,31 @@ offset_right = -24.0
 offset_bottom = 136.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 36
-theme_override_styles/normal = SubResource("StyleBox_back")
-theme_override_styles/hover = SubResource("StyleBox_back")
-theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+tooltip_text = "farm_back"
+theme_override_styles/normal = SubResource("StyleBox_close_round")
+theme_override_styles/hover = SubResource("StyleBox_close_round")
+theme_override_styles/pressed = SubResource("StyleBox_close_round")
 theme_override_styles/focus = SubResource("StyleBox_empty")
 theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
-text = "Back"
+
+[node name="BackArrowShaft" type="Line2D" parent="HarvestUIRoot/HarvestUI/BackButton"]
+points = PackedVector2Array(88, 60, 34, 60)
+width = 10.0
+default_color = Color(0.2, 0.12, 0.02, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="BackArrowHead" type="Line2D" parent="HarvestUIRoot/HarvestUI/BackButton"]
+points = PackedVector2Array(58, 34, 32, 60, 58, 86)
+width = 10.0
+default_color = Color(0.2, 0.12, 0.02, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
 
 [node name="WelcomeOverlay" type="CanvasLayer" parent="."]
 layer = 10
