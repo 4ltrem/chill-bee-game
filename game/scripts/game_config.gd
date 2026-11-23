@@ -76,7 +76,8 @@ extends Resource
 @export var button_screen_margin: float = 16.0        # spec item 2: px kept clear between an anchored button and the screen edge
 @export var spin_farm_visual_px: int = 88             # 0.1.4 item 22; designer 2026-11-23 "behave like the fork icon": icon_visual_px in every view (was 60, spin-r1 C); touch area stays 120
 @export var spin_farm_offset_x: float = 0.0          # PLACEHOLDER 0.3.1 (Design Votes spin-farm): px Spin moves sideways in the farm view only (negative = left), so it clears Harvest and floats above the centrifuge
-@export var spin_zoom_offset: float = 80.0           # 0.1.4 item 22 (Design Votes spin-r1: C): extra px Spin sits lower in the first zoom only
+@export var spin_farm_offset_y: float = 30.0         # 0.3.1 (Design Votes spin-farm-height: A, 30, designer 2026-11-23): extra px Spin sits lower in the farm view only (designer: "too high in farm view, ok if it covers part of the lid")
+@export var spin_zoom_offset: float = 80.0          # 0.1.4 item 22 (Design Votes spin-r1: C): extra px Spin sits lower in the first zoom only
 
 # --- 0.2 (game/specs/0.2-first-automation.md, item 4): Centrifuge Gearing ---
 @export var gearing_cut_per_level: float = 0.15        # PLACEHOLDER (spec 0.2): share of crank turns and hold-ramp time cut per Gearing level

@@ -1,0 +1,11 @@
+{
+  "question": "spin-farm-height: how low should Spin sit in the farm view?",
+  "read": "2026-11-23",
+  "votes": {
+    "D (today, 0 px)": {"vote": "maybe", "note": ""},
+    "A (30 px lower)": {"vote": "yes", "note": ""},
+    "B (50 px lower)": {"vote": "maybe", "note": ""},
+    "C (70 px lower)": {"vote": "no", "note": ""}
+  },
+  "picked": {"spin_farm_offset_y": 30.0}
+}
