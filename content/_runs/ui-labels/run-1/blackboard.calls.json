@@ -1,0 +1,18 @@
+[
+ {
+  "call": "William, round 1",
+  "tokens": 132044,
+  "final": 37657,
+  "turns": 11,
+  "seconds": 54,
+  "transcripts": "_meta/sessions/runs/2026-11-23-ui-labels-run-1"
+ },
+ {
+  "call": "Critic, round 1",
+  "tokens": 47384,
+  "final": 28580,
+  "turns": 4,
+  "seconds": 21,
+  "transcripts": "_meta/sessions/runs/2026-11-23-ui-labels-run-1"
+ }
+]
