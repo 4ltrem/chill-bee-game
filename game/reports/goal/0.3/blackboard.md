@@ -3,7 +3,7 @@ spec: 0.3-course-build.md
 version: 0.3
 run: 0.3
 started: 2026-11-22
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3-course-build.md (run 0.3)
 
@@ -3308,9 +3308,18 @@ Every goal left waits on an open question (Process 1):
 
 Answer each in the spec, or mark it "(answered: ...)" in the handoff, then rerun `goal_agent.py 0.3-course-build.md --note "<the answer>"`.
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --accept C6 --note skip icon hides off the farm view (Patricia: set_on_farm_view from main._refresh_icons); welcome guard walks up to Main (orchestrator); t_skip_icon_* green _runs/20261122-185827/` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C6 (2026-11-22T18:59:58-05:00)
+
+- Change (orchestrator, Process 9): skip icon hides off the farm view (Patricia: set_on_farm_view from main._refresh_icons); welcome guard walks up to Main (orchestrator); t_skip_icon_* green _runs/20261122-185827/
+- Accepted: checkpoint `c3802d9` on `main`
+
 ## Result
 
-Last invocation (2026-11-22T18:52:40-05:00): waiting-designer.
+C6 accepted with a manual fix (checkpoint `c3802d9` on `main`). Rerun `goal_agent.py 0.3-course-build.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
