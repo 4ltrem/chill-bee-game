@@ -3,7 +3,7 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
@@ -1014,9 +1014,28 @@ FAIL    start     2 errors  (godot exit 1 (1 is normal here), 4 noise lines drop
 
 2 fix rounds failed on C8: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.1-playtest-fixes.md --accept C8 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C8 fix-round edits"`.
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md --accept C8 --note shop_ui.gd:372 typed tool_ids built in two steps (ternary gave untyped Array); start PASS, unit 234/234` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C8 (2026-11-23T16:32:11-05:00)
+
+- Change (orchestrator, Process 9): shop_ui.gd:372 typed tool_ids built in two steps (ternary gave untyped Array); start PASS, unit 234/234
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 118 lookups in 72 top-level scenes, 0 unresolved
+SIGNAL NOTE patch_slots.gd:toast_requested emitted, never connected (never connected in 0.3.0; game/specs/0.3.1-playtest-fixes.md item 2 connects it)
+contract: 0 emitted signals unheard
+
 ## Result
 
-Last invocation (2026-11-23T16:23:26-05:00): waiting-designer.
+C8 accepted with a manual fix (commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 118 lookups in 72 top-level scenes, 0 unresolved
+SIGNAL NOTE patch_slots.gd:toast_requested emitted, never connected (never connected in 0.3.0; game/specs/0.3.1-playtest-fixes.md item 2 connects it)
+contract: 0 emitted signals unheard). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
