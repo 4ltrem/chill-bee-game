@@ -1,7 +1,7 @@
 {
  "spec": "0.3.1-playtest-fixes.md",
  "version": "0.3.1",
- "at": "2026-11-23T14:21:08-05:00",
+ "at": "2026-11-23T15:21:56-05:00",
  "unit_log": "game/reports/_runs/20261122-190049/unit.log",
  "goals": {
   "C1": {
@@ -50,11 +50,16 @@
     {
      "kind": "node removed",
      "name": "HabitatPlusButton",
-     "ok": false
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "c5fae29",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -117,47 +122,47 @@
     {
      "kind": "node",
      "name": "ShopHeader",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "ShopMoney",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "ShopTabs",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "ShopTitle",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "TabBees",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "TabHabitat",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "TabHive",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "TabRefinery",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "TabResearch",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node removed",
@@ -168,10 +173,15 @@
      "kind": "node removed",
      "name": "ShopDim",
      "ok": false
+    },
+    {
+     "kind": "ledger",
+     "name": "8954121",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -226,7 +236,7 @@
     {
      "kind": "node",
      "name": "TabHabitat",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "dev button",
@@ -591,34 +601,12 @@
  },
  "order": [
   {
-   "id": "C1",
-   "score": 8.46,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.54,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C3",
-   "score": 8.46,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.54,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C8",
-   "score": 8.46,
+   "score": 8.47,
    "factors": {
     "unblocks": 1,
     "value": 3,
-    "cost": 0.54,
+    "cost": 0.53,
     "ready": 1,
     "blocked_by": []
    }
@@ -647,11 +635,11 @@
   },
   {
    "id": "C7",
-   "score": 6.46,
+   "score": 6.47,
    "factors": {
     "unblocks": 1,
     "value": 2,
-    "cost": 0.54,
+    "cost": 0.53,
     "ready": 1,
     "blocked_by": []
    }
