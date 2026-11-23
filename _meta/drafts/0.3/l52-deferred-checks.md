@@ -1,7 +1,7 @@
 ---
 author: orchestrator
 type: draft
-status: waiting (approved 2026-11-22; blocked by the weekly budget guard; build before the 0.3.1 goal run if the budget allows)
+status: checks 1 and 2 built 2026-11-23 (`_tools/spec_factcheck.py`, goal_agent's assumption stop); check 3 (event shots) still waiting for Quinn and budget
 description: The three L52 checks not built on 2026-11-22: a spec fact-check pass, assumption stops, event shots
 ---
 # L52 deferred checks

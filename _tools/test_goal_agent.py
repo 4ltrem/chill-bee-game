@@ -203,7 +203,8 @@ class Loop(unittest.TestCase):
         self.tmp = Path(tempfile.mkdtemp())
         shutil.copytree(FIX / "game", self.tmp / "game")
         self.saved = {k: getattr(ga, k) for k in ("ROOT", "run_agent", "run_cmd", "budget_ok", "log_usage",
-                                                  "change_snapshot", "file_diff")}
+                                                  "change_snapshot", "file_diff", "factcheck_gate")}
+        ga.factcheck_gate = lambda spec_path: (True, "")   # L52's gate has its own tests (FactCheck)
         ga.ROOT = self.tmp
         self.calls, self.cmds, self.check_codes, self.budget, self.idle = [], [], [], (True, "allow"), False
         self.turn_caps, self.logs, self.code_idle, self.scope_rows, self.outs = [], [], False, [], []
@@ -261,6 +262,30 @@ class Loop(unittest.TestCase):
         self.assertIn("1. H", out)
         self.assertTrue((self.tmp / "game" / "reports" / "goal" / "t" / "gaps.json").is_file())
         self.assertIsNone(board)                                            # the console only: no board
+
+    def test_an_assumption_in_a_first_round_reply_stops_after_the_green_commit(self):
+        """L52: Quinn's 0.3 C4 "I assumed `JournalButton` still sits in the shop sheet" came in a first build round."""
+        line = "- I assumed `JournalButton` still sits in the shop sheet and appears as soon as `thriving` fires."
+        fake = self.fake_agent
+        ga.run_agent = lambda a, p, max_turns=None: (line, fake(a, p, max_turns)[1])
+        code, out, board = self.run_main("--max-goals", "1")
+        self.assertTrue(any(c[:2] == ["git", "commit"] for c in self.cmds))   # green and committed first
+        self.assertIn("Check `assumptions`: STOP (1)", board)
+        self.assertIn("| 1 | Patricia | I assumed `JournalButton` still sits", board.split("## Waiting for the designer")[1])
+        self.assertIn("result: waiting-designer", board)
+
+    def test_assumption_rows_skip_mentions(self):
+        said = [(ga.QA, "I made no assumptions, and no line says \"I assumed\".\nPresumably the toast waits."),
+                (ga.PROGRAMMER, "Nothing to flag: `assuming` is a variable name.\nI took it that Reset hides it.")]
+        self.assertEqual(ga.assumption_rows(said), [("Quinn", "Presumably the toast waits."),
+                                                    ("Patricia", "I took it that Reset hides it.")])
+
+    def test_a_build_run_refuses_an_unchecked_spec(self):
+        ga.factcheck_gate = lambda spec_path: (False, "no fact-check of the spec's claims yet")
+        code, out, board = self.run_main()
+        self.assertEqual((code, self.calls, board), (2, [], None))
+        self.assertIn("no fact-check", out)
+        self.assertEqual(self.run_main("--plan")[0], 0)                     # the plan only reads: no gate
 
     def test_dry_run_prints_briefs_and_spends_nothing(self):
         code, out, board = self.run_main("--dry-run")
@@ -932,6 +957,15 @@ class Loop(unittest.TestCase):
         with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
             godot_run.main(["unit", "--set", "shop_layout"])
 
+    def test_godot_run_refuses_set_for_suites_that_ignore_it(self):
+        """Item 7's tail: the windowed suites and start don't read --set, so asking for it there is an error,
+        not a run that silently uses the default config."""
+        import godot_run
+        self.assertEqual(godot_run.deaf_to_sets(["unit", "play", "start"], ["k=1"]), ["play", "start"])
+        self.assertEqual(godot_run.deaf_to_sets(["play"], []), [])
+        with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+            godot_run.main(["play", "--set", "shop_layout=0"])
+
     # ------------------------------------------------------------------ L42: impact-based tests, routing, designer rows
     def impact_game(self):
         """A tiny game: truck.gd on the Truck node, main.gd and the config (core), and tests that read them directly
@@ -1152,6 +1186,53 @@ class DefaultedStops(unittest.TestCase):
             ledger.write_text(json.dumps({"s.md": {"C1": {"at": "1", "commit": head.strip()},
                                                     "C2": {"at": "2", "commit": "0000000"}}}), encoding="utf-8")
             self.assertEqual(ga.mutation_base({"file": "s.md"}, ledger, "abc1234"), head.strip())   # newest reachable
+
+
+class FactCheck(unittest.TestCase):
+    """L52's fact-check pass (`spec_factcheck.py`): claims, the reply's verdicts, and the gate a build run waits on."""
+
+    def setUp(self):
+        import spec_factcheck
+        self.fc = spec_factcheck
+        self.tmp = Path(tempfile.mkdtemp())
+        self.spec = self.tmp / "game" / "specs" / "9.9-fixture.md"
+        self.spec.parent.mkdir(parents=True)
+        text = (FIX / "game" / "specs" / "9.9-fixture.md").read_text(encoding="utf-8")
+        self.spec.write_text(text.replace("The `TagNode` sits under the money line.",
+                                          "The `TagNode` sits under the money line. Farm view only, like the rest of "
+                                          "the info row."), encoding="utf-8")
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_claims_pull_existing_behaviour_sentences_with_their_item(self):
+        self.assertEqual(self.fc.claims(self.spec), [(2, "Farm view only, like the rest of the info row.")])
+
+    def test_a_missing_row_is_unclear(self):
+        reply = "| # | Verdict | Evidence | Why |\n|---|---|---|---|\n| 1 | UNTRUE | scripts/farm_ui.gd:88 | kept at stop 2 |\n"
+        got = self.fc.parse_reply(reply, 2)
+        self.assertEqual(got[1], ("UNTRUE", "scripts/farm_ui.gd:88", "kept at stop 2"))
+        self.assertEqual(got[2][0], "UNCLEAR")
+
+    def test_gate_needs_a_current_all_true_report(self):
+        rows = self.fc.claims(self.spec)
+        report = self.fc.report_path(self.spec, self.tmp)
+        self.assertFalse(self.fc.gate(self.spec, self.tmp)[0])                      # none yet
+        report.parent.mkdir(parents=True)
+        report.write_text(self.fc.render(self.spec, rows, {1: ("UNTRUE", "x.gd:1", "no")}), encoding="utf-8")
+        ok, msg = self.fc.gate(self.spec, self.tmp)
+        self.assertFalse(ok)
+        self.assertIn("#1 UNTRUE", msg)
+        report.write_text(self.fc.render(self.spec, rows, {1: ("NEW", "", "the change")}), encoding="utf-8")
+        self.assertTrue(self.fc.gate(self.spec, self.tmp)[0])
+        self.spec.write_text(self.spec.read_text(encoding="utf-8") + "\n", encoding="utf-8")   # the spec moved on
+        self.assertIn("older text", self.fc.gate(self.spec, self.tmp)[1])
+
+    def test_the_03_claim_is_found(self):
+        """The 0.3.0 miss the pass exists for: item 2's top-info claim."""
+        repo = Path(__file__).resolve().parent.parent
+        found = self.fc.claims(repo / "game" / "specs" / "0.3-course-build.md")
+        self.assertIn((2, "Farm view only, like the rest of the info row."), found)
 
 
 def datetime_after(stamp):

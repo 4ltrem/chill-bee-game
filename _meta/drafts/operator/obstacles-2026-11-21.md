@@ -15,7 +15,7 @@ Note: this session ran on Opus 5.5 (the designer ran `/model opus` before the re
 4. **The script list doesn't match the memory.** (applied) Rex refused `compare_page.py page` because it isn't on his list, but `rex-runs-scripts.md` says `compare_page.py add` goes to Rex. Oscar ran it himself under `escalate.md`. Make one list the source of truth.
 5. **Rex replies before long runs finish.** (applied) Twice he backgrounded `godot_run.py all` after 180 s and replied "INCOMPLETE", and once his final report never arrived, so Oscar read the logs himself. Put "set the Bash timeout to 600000, wait for the completion notice, no `tail -f` watchers" into `script-runner.md` rather than into every brief.
 6. **Hook rejections waste a retry.** (applied) Rex's first call was blocked several times by the repo-only hook (a `cd` prefix, an absolute path). Add "repo-relative paths, no `cd` prefix" to `script-runner.md`.
-7. **`godot_run.py` has no `--set KEY=VALUE`.** (applied, L40: passed after `--`; 2026-11-22: `run_tests.gd` reads them through `test_base._apply_config_overrides()`; the windowed suites still ignore them) The suites can't run under a non-default config value (the compact `shop_layout`), so that option is covered only by `ui_shots.py`.
+7. **`godot_run.py` has no `--set KEY=VALUE`.** (applied, L40: passed after `--`; 2026-11-22: `run_tests.gd` reads them through `test_base._apply_config_overrides()`; the windowed suites still ignore them, so since 2026-11-23 `godot_run.py` refuses `--set` with any suite but unit, and `--set` alone runs unit only) The suites can't run under a non-default config value (the compact `shop_layout`), so that option is covered only by `ui_shots.py`.
 
 ## goal_agent driving
 

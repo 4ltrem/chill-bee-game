@@ -45,7 +45,7 @@ import live  # noqa: E402
 WINDOW = ["--resolution", "720x1280", "--position", "0,0"]
 
 SUITES = {
-    "unit": {"script": "res://tests/run_tests.gd", "headless": True},
+    "unit": {"script": "res://tests/run_tests.gd", "headless": True, "sets": True},   # reads --set (test_base.gd)
     "start": {"script": None, "headless": True},
     "play": {"script": "res://tests/play_loop.gd", "headless": False},
     "measure": {"script": "res://tests/r4_measure.gd", "headless": False},
@@ -91,6 +91,12 @@ def command(suite, root, sets=()):
     else:
         cmd += ["--quit-after", "300"]
     return cmd
+
+
+def deaf_to_sets(suites, sets):
+    """Pure: the suites that would drop --set without a word (obstacles item 7's tail: only run_tests.gd applies
+    config overrides; start, the windowed suites and the shot runs don't)."""
+    return [s for s in suites if sets and not SUITES[s].get("sets")]
 
 
 def summarise(suite, text, code):
@@ -270,12 +276,15 @@ def main(argv=None):
     if any("=" not in s or s.startswith("=") for s in args.set):
         ap.error("--set takes KEY=VALUE")
     env = suite_env(args)
-    suites = args.suites or ["unit", "start"]
+    suites = args.suites or (["unit"] if args.set else ["unit", "start"])
     if suites == ["all"]:
         suites = ALL
     bad = [s for s in suites if s not in SUITES]
     if bad:
         ap.error(f"unknown suite(s) {bad}; choose from {ALL} or all")
+    deaf = deaf_to_sets(suites, args.set)
+    if deaf:
+        ap.error(f"--set is not read by {deaf} (only unit applies it); run those without --set")
     root = os.path.abspath(args.root)
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     logdir = os.path.join(root, "reports", "_runs", stamp)

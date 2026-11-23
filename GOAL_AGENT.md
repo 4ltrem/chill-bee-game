@@ -56,7 +56,7 @@ The GDD reaches the game through approved specs (one per build). The agent reads
    - **ready**: 0 while a dependency is missing.
 
    Each score is written to the blackboard with its factors: in full at the first pass, then only the rows that changed. The board follows the format all three loops share (`_templates/blackboard.md`), and `--plan` and `--dry-run` leave it untouched.
-4. **Ambiguity** (Process 1: "if the spec is ambiguous, stop and list the questions"). A goal whose text holds a TBD, or that an open question in the node handoff points to, is not scored. The rest are built, and then the run stops with the question.
+4. **Ambiguity** (Process 1: "if the spec is ambiguous, stop and list the questions"). A goal whose text holds a TBD, or that an open question in the node handoff points to, is not scored. The rest are built, and then the run stops with the question. Two checks added after 0.3.0's play-test misses (L52, 2026-11-23): a build run starts only once `spec_factcheck.py` has had the spec's sentences about the current game checked against the code (every row TRUE, or NEW for a sentence about the change only), and a reply line saying "I assumed" stops the run after its step's green commit, for the designer to confirm or correct.
 5. **The code-writing step.** Only this step calls agents:
    - Patricia (scripts) and Bob (scenes) run in parallel for a change, Quinn for test lines (one call per item). Each is a fresh headless `claude -p` given only its spec slice.
    - Then come the checks: `contract_check.py`, the Godot unit and start suites (`godot_run.py`), `ui_shots.py` after scene work, and `mutate.py --since` after new tests.

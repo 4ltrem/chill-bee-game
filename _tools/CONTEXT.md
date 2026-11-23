@@ -22,7 +22,7 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | Votes | `compose_variant.py` | builds a new round's variant from seen ones (graft, drop, material, move on node paths), no agent; Milo only for new shapes |
 | Votes | `pick_match.py` | renders a live prop beside the designer's picked variant (one load, `model_shots.gd --scenes`) and has Vera judge only the match; goal_agent runs it on every spec item naming a pick (`--no-agent` renders only) |
 | Votes | `ui_shots.py` | shoots the same UI moments (`game/tests/ui_compare_shots.gd`) in several worktrees for a versions vote |
-| Godot | `godot_run.py` | runs the Godot test suites and prints a short summary (`--set KEY=VALUE` passes config overrides after `--`, as `ui_shots.py` does) |
+| Godot | `godot_run.py` | runs the Godot test suites and prints a short summary (`--set KEY=VALUE` passes config overrides after `--`, as `ui_shots.py` does; only unit reads them, so `--set` with another suite is refused) |
 | Godot | `build.py` | exports and zips a version |
 | Godot | `mutate.py` | proves tests catch named mutations; a catch by a test already red unmutated (one baseline run) or by a script error is BROKEN |
 | Godot | `godot_path.py` | finds the Godot binary for the scripts: `GODOT` env var, else the copy unpacked in the repo folder (gitignored), else the desktop's `C:\Users\mtrem\Desktop\` copy; alone it prints the path in use, with arguments it runs Godot with them (Bob's renders, so no agent or permission rule names a machine's path) |
@@ -34,6 +34,7 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | A7 | `md_to_pdf.py` | turns a Markdown document into a print-ready A4 PDF with headless Edge and counts its pages (`--min-pages 20` for the audit); writes the `.html` and `.pdf` beside the source |
 | A7 | `audit_data.py` | computes the A7 audit's numbers (per version, per day, per week, goal runs, mutation catch rate) from git, the run log, learnings and goal boards, and draws its SVG charts into `_meta/drafts/a7/` (`data.md`, `data/`, `charts/`) |
 | Goal agent | `spec_lint.py` | lints a spec: FAIL on a Quinn line naming several items, WARN on keyword ties, REVIEW pairs where one item restricts a view another asserts, or covers the screen while another shows something timed (L52) (`--item N` after a play-test edit; `--staged` in the pre-commit gate; goal_agent refuses a build on FAIL) |
+| Goal agent | `spec_factcheck.py` | fact-checks a spec's sentences about how the game behaves today (one Doris call) into `game/reports/goal/<version>/factcheck.md`; goal_agent refuses a build run unless it matches the spec's text and every row is TRUE or NEW (L52; `--no-agent` prints the claims only) |
 | Goal agent | `test_goal_agent.py` | tests the reasoning layer on `fixtures/goal/` and the loop with fake agents |
 | Usage | `runlog.py` | keeps the run log (`_meta/agent-runs.csv`) and calibrates usage |
 | Usage | `log_subagent.py`, `log_session.py` | SubagentStop and Stop hooks that log subagents and the orchestrator |

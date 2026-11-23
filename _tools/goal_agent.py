@@ -179,6 +179,28 @@ def mutated_tests(root=None):
 # L49: Quinn's "nothing is marked `(designer)`" stopped the 0.3 run as a question; a tag quoted in backticks is a
 # mention, not a row.
 DESIGNER_ROW = re.compile(r"(?<!`)\(designer\)(?!`)")
+# L52: Quinn's "I assumed `JournalButton` still sits in the shop sheet" (0.3 C4, a first build round) was wrong and no
+# one was asked. A reply line stating an assumption is a designer stop once the step is green; as in L49, a phrase in
+# backticks or quotes is a mention, not an assumption.
+ASSUMED = re.compile(r"\b(?:I assumed|I(?:'m| am) assuming|assuming|I guessed|presumably|I took it that)\b", re.I)
+
+
+def assumption_rows(said):
+    """[(name, line)] for each reply line that states an assumption, across a step's rounds; `said` = [(agent, reply)]."""
+    rows = []
+    for agent, reply in said:
+        for line in reply.splitlines():
+            if ASSUMED.search(re.sub(r"`[^`]*`|\"[^\"]*\"|“[^”]*”", "", line)):
+                row = (g.NAMES[agent], line.strip().lstrip("-* "))
+                if row not in rows:
+                    rows.append(row)
+    return rows
+
+
+def factcheck_gate(spec_path):
+    """(ok, message): the spec's claims about today's game are fact-checked for this exact text (L52). Replaced in the tests."""
+    import spec_factcheck
+    return spec_factcheck.gate(spec_path, ROOT)
 VISUAL_ROW = re.compile(r"\b(?:sizes?|scales?|offsets?|positions?|fonts?|margins?|colou?rs?|px|pixels?|width|height|"
                         r"separation|spacing)\b", re.I)
 # L42: T9.1's two fix rounds went to Patricia, who said each time the fault was in Quinn's new test. A reply like this
@@ -1619,8 +1641,11 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     if written:   # Quinn's tests exist (marked `# goal <ID>`): go straight to the checks; a red test goes to the code
         say(board, "- Quinn's step skipped: every line already has its marked test ("   # owners (0.1.4 T14.4/T14.5:
                    + ", ".join(f"{b['id']}: {', '.join(marked_tests(b['id'], spec['version']))}" for b in lines) + ")\n")   # ~800k saved)
-    elif not call_agents(plan, board, usage, run, ids, max_turns=BUILD_MAX_TURNS):
+    said = []   # L52: every reply of the step, first round and fix rounds, for the assumption stop at green
+    first = {}
+    if not written and not call_agents(plan, board, usage, run, ids, max_turns=BUILD_MAX_TURNS, replies=first):
         return "paused"
+    said += first.items()
     rounds = MAX_FIX_ROUNDS + (1 if needs_red else 0)   # one round may go to Quinn alone, to reproduce the bug
     scope_rows = []   # files the last fix round changed outside its owners' folders
     prev_failed = set()   # L40: the tests the last check showed failing; the next round runs them with its own
@@ -1741,6 +1766,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         states, looks_before, replies, last_fix = file_states(), visual_lines(), {}, list(fix)
         if not call_agents(fix, board, usage, run, f"{ids} fix {rnd + 1}", max_turns=FIX_MAX_TURNS, replies=replies):
             return "paused"
+        said += replies.items()
         stray = out_of_scope(states, file_states(), fix)
         say(board, f"- Check `scope`: " + (f"FAIL ({', '.join(f'`{p}`' for p in stray)} changed outside "
                                            f"{', '.join(FOLDERS[a] for a in fix)})\n" if stray else "PASS\n"))
@@ -1798,6 +1824,15 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         return "held"
     msg = checkpoint(spec, batch, run, folder, folder.parent / "ledger.json")
     say(board, f"- Green: {msg}\n")
+    assumed = assumption_rows(said)
+    if assumed:   # L52: green and committed, but built on something no one confirmed
+        say(board, f"- Check `assumptions`: STOP ({len(assumed)})\n")
+        g.waiting(board, f"{ids} is green and committed, but an agent built it on an assumption the spec does not "
+                  f"state. Confirm each one (rerun `goal_agent.py {spec['file']} --note \"confirmed\"`), or correct "
+                  f"the spec: a wrong one becomes a new spec item, since this step is already built."
+                  f"\n\n| # | Who | Assumed |\n|---|---|---|\n" + "\n".join(
+                      f"| {i} | {who} | {row.replace('|', '/')} |" for i, (who, row) in enumerate(assumed, 1)))
+        return "waiting-designer"
     return "green"
 
 
@@ -2179,6 +2214,11 @@ def main(argv=None):
     if spec_lint.lint(path, out=lambda line: print("goal_agent: " + line)) and not (a.plan or a.dry_run):
         print("goal_agent: fix the FAIL lines in the spec first (python -I _tools/spec_lint.py SPEC)")
         return 2
+    if not (a.plan or a.dry_run or a.accept):   # L52: a build starts only from fact-checked claims
+        ok, msg = factcheck_gate(path)
+        if not ok:
+            print("goal_agent: " + msg)
+            return 2
     run = a.run or spec["version"]
     folder = ROOT / "game" / "reports" / "goal" / run
     board = folder / "blackboard.md"
