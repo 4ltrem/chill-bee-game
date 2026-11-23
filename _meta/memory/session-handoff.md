@@ -1,26 +1,27 @@
 ---
 name: session-handoff
-description: "Where work stands (2026-11-23): 0.3.1 spec ready to build (7 items, fact-checked, all content approved), waits for the designer's \"build\"; v0.3.0 tagged locally; 66 commits not pushed; A7 + final due 11/29; read first"
+description: "Where work stands (2026-11-23): 0.3.1 spec ready to build (8 items, fact-checked, all content approved incl. tools_icon), waits for the designer's \"build\"; v0.3.0 tagged locally; 68 commits not pushed; A7 + final due 11/29; read first"
 metadata:
   node_type: memory
   type: project
   originSessionId: 5c77a6f2-f6b5-4ff0-a169-8eabbf24bafe
-  modified: 2026-11-23T17:48:41.655Z
+  modified: 2026-11-23T18:15:28.418Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
 
-**State (2026-11-23, `main` at `5d79b8e`):** `v0.3.0` tagged at `830416b`, local only. 66 commits ahead of `origin/main`. Designer: no push or itch upload until 0.3.1 is built and play-tested (each still a yes). Uncommitted on purpose: `_meta/agent-runs.*` (end-of-day). Today's decisions are not logged yet: run the `end-of-day` skill (this session `5c77a6f2`), next ID **D284**.
+**State (2026-11-23, `main` at the "Handoff: 0.3.1 adds Back arrow and Tools" commit):** `v0.3.0` tagged at `830416b`, local only. 68 commits ahead of `origin/main`. Designer: no push or itch upload until 0.3.1 is built and play-tested (each still a yes). Uncommitted on purpose: `_meta/agent-runs.*` (end-of-day). Today's decisions are not logged yet: run the `end-of-day` skill (sessions `5c77a6f2` and the later 11/23 session that added items 6-Back and 8; its decisions: Back as an arrow, icons by shape alone, Tools alone in the zooms with the Shop farm-only per the canvas, `tools_icon` "Tools"/"Outils" approved; balance sim, mutation 25 + adversarial QA, bottom-slot switch and the canvas sticky "Need previews for the upgrade screen, similar to build screen" left for 0.3.2), next ID **D284**.
 
 **NEXT:**
-1. **Build 0.3.1** when the designer says "build": set `game/specs/0.3.1-playtest-fixes.md` to `status: approved`, then `/goal` around `python -I _tools/goal_agent.py 0.3.1-playtest-fixes.md`. The budget guard will likely hold Patricia/Bob/Quinn (week ~50% at ~30% gone on 11/23): the designer runs `python -I _tools/budget_guard.py --allow-for 60` or waits for the 11/28 reset. If the spec changes, re-run `python -I _tools/spec_factcheck.py game/specs/0.3.1-playtest-fixes.md` first (goal_agent refuses a build until `game/reports/goal/0.3.1/factcheck.md` matches; now 36/36 TRUE or NEW). Seven items:
+1. **Build 0.3.1** when the designer says "build": set `game/specs/0.3.1-playtest-fixes.md` to `status: approved`, then `/goal` around `python -I _tools/goal_agent.py 0.3.1-playtest-fixes.md`. The budget guard will likely hold Patricia/Bob/Quinn (week ~50% at ~30% gone on 11/23): the designer runs `python -I _tools/budget_guard.py --allow-for 60` or waits for the 11/28 reset. If the spec changes, re-run `python -I _tools/spec_factcheck.py game/specs/0.3.1-playtest-fixes.md` first (goal_agent refuses a build until `game/reports/goal/0.3.1/factcheck.md` matches; now 51/51 TRUE or NEW). Eight items:
    1. no Habitat +; Journal icon of its own above Shop; pill hidden in zooms
    2. toast queue waiting for the Shop / Journal / Settings / zooms; the patch toast wired
    3. Shop sheet with tabs by GDD tree ("À venir" on Research / Refinery)
    4. first-time hint (text approved: `content/first-time-hint.md`)
    5. 0.3's six Dev buttons, never built ("Show welcome", "Show victory", "+1 patch (free)", "Health to thriving − 1 patch", "Reset habitat", "Unlock Journal")
-   6. drawn fork on Harvest (UI_DESIGN rule 4, canvas Prototype fork; colours now UI tokens) and the honey-drop Spin icon (Design Votes pick D, `game/reports/votes/spin-icon/decisions.json`, shape in `icons.html` option d)
+   6. drawn fork on Harvest (UI_DESIGN rule 4, canvas Prototype fork; colours now UI tokens) and the honey-drop Spin icon (Design Votes pick D, `game/reports/votes/spin-icon/decisions.json`, shape in `icons.html` option d); Back as an ink arrow (README TBD); icons told apart by shape alone (designer 11/23)
    7. Settings gear (farm view only, top-right) with English | Français, every label through `tr()` from the approved `content/ui-labels.md` (French prices "%d $", "Paramètres")
+   8. Tools icon (wrench) alone in both zooms as the canvas draws it; Shop is farm-only now (designer 11/23 "respect the canvas design", supersedes 0.2 item 15 and the 11/21 Shop + Tools answer; `test_shop_zoom.gd` moves to Tools): the item 3 sheet in Tools mode with only the machine's rows (Heated Fork; Gearing + Spigot Flow); `tools_icon` "Tools" / "Outils" approved and in `content/ui-labels.md` (added 11/23 with Back; balance sim, mutation 25 + adversarial QA, bottom-slot switch left for 0.3.2)
 2. **Play-test 0.3.1** (placeholders to confirm): welcome title 64 / outline 8 / Play 40 / gap 48 / dim 0.55; victory heading 64, body 36, button 320×120, column 640; pill flower dot 40; 120 px icons; Shop labels 28; skip icon position; hint bubble and Settings sheet sizes; minutes to victory (Terry: 25, range 20-38). Then tag, push, itch (each a yes).
 3. **A7 (due 11/29):** the designer records the run video. Before submitting: `python -I _tools/audit_data.py`, refresh §4.1 / §7.2 of `_meta/drafts/a7/audit.md` if the 0.3.1 run adds data, set its frontmatter status to final, then `python -I _tools/md_to_pdf.py _meta/drafts/a7/audit.md --min-pages 20` (29 pages last time).
 4. **Final 11/29 leftovers:** UI pass (ui-screens decisions 2-4 + skin), adversarial QA, balance sim, polish.

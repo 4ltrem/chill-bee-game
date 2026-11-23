@@ -69,6 +69,7 @@ None. Every number on the boards is a GDD value or a [TBD] the GDD already lists
 2. Icon placement as in §1 (top row, right rail, left rail), or another split.
 3. When each icon appears (§1 last bullet), or all from the start.
 4. Tools icon in the zooms as the answer to GDD §1 Phase 2's "UI TBD", and Build › Open for automated units.
+   **Answer revised (designer, 2026-11-23):** Tools only, no Shop in the zooms ("respect the canvas design"), as boards 2–3 and the legend draw it; 0.3.1 item 8. Build › Open is still not answered. The answer below is superseded.
    **Answer (designer, 2026-11-21), partial:** Shop + Tools. The full Shop icon stays in both zooms, so the player can upgrade at any time, and Tools sits beside it with the machine's own upgrades. This changes §1's "Zooms hide the rail" for Shop. Build › Open is not answered yet. Canvas boards 2–3 and the legend still show Tools alone.
 5. Habitat & Refinery on one sheet (board 7), or the Refinery on its own unit panel.
 6. The parental gate screen and the kid-mode Store are not drawn yet; Connie should review the Store, ad and Welcome back copy before they are.

@@ -22,6 +22,7 @@ One row per label. English is exactly as the game shows it today. `%d` and `$%d`
 | farm_sell | farm view, Sell icon with its price | Sell $%d |
 | farm_auto | farm view, auto-sell tag | Auto |
 | journal_icon | farm view, Journal icon | Journal |
+| tools_icon | zooms, Tools icon and its sheet title | Tools |
 | farm_back | Back button (zooms) | Back |
 | zoom_uncap_hint | first zoom, instruction line | Drag across the cells to uncap them |
 | zoom_all_uncapped | first zoom, when the last cell opens | All cells uncapped! |
@@ -77,6 +78,7 @@ Vouvoiement. La boutique, Vendre, Carnet des abeilles et la fourche suivent les 
 | farm_sell | ferme, icône Vendre avec son prix | Vendre %d $ |
 | farm_auto | ferme, étiquette de vente auto | Auto |
 | journal_icon | ferme, icône du Carnet | Carnet |
+| tools_icon | zooms, icône Outils et titre de sa feuille | Outils |
 | farm_back | bouton Retour (zooms) | Retour |
 | zoom_uncap_hint | premier zoom, consigne | Glissez pour désoperculer les alvéoles |
 | zoom_all_uncapped | premier zoom, dernière alvéole ouverte | Alvéoles désoperculées! |
@@ -125,6 +127,7 @@ farm_honey,"Honey: %d / %d","Miel : %d / %d"
 farm_sell,"Sell $%d","Vendre %d $"
 farm_auto,"Auto","Auto"
 journal_icon,"Journal","Carnet"
+tools_icon,"Tools","Outils"
 farm_back,"Back","Retour"
 zoom_uncap_hint,"Drag across the cells to uncap them","Glissez pour désoperculer les alvéoles"
 zoom_all_uncapped,"All cells uncapped!","Alvéoles désoperculées!"
