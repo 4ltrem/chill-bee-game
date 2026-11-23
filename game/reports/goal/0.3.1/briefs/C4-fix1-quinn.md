@@ -1,0 +1,31 @@
+Goal agent run `0.3.1`, fix round 1 for goal C4 of `game/specs/0.3.1-playtest-fixes.md`, branch `main`. These checks failed after the last step. Fix what is in your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit. Do not run the test suite, mutations or shots: the goal agent runs every check after you. You have 15 turns.
+
+Your folder: tests/. Update only a test whose expectation this change of the spec replaces, and quote the spec line in a comment beside it. Any other failure is a finding against the code: leave the test and say which. If neither the failure message nor the code shows why a test fails, do not guess a fix: extend that test's FAIL message with one `diag:` part printing the state that would explain it (the state machine's value, counts on each side, elapsed vs. cap time), change nothing else for it, and say so; the next check prints it. Do not run the tests: the goal agent runs them after you. Test rules (L39): a flow step that several tests take (reach the second stop, open the shop, fill the bucket, wait for CRANKING) goes through one shared helper (unit: `tests/test_helpers_*.gd`; the windowed suites, which extend SceneTree: a static func in `tests/flow.gd`, preloaded, created on first need); reuse it, add it if it is missing, and never copy the steps inline, so a change to that step is fixed in one place. No literal cell index, node count or screen size: read it from the config, the scene, or ProjectSettings (`display/window/size/viewport_width` and `_height`).
+
+tests:
+FAIL    ui        no total line  (godot exit 1, 0 noise lines dropped)  game/reports/_runs/20261123-132344/ui.log
+    FAIL  the Dev panel exists (project dev_mode true)
+    SCRIPT ERROR: Parse Error: Function "at_second_stop" has the same name as a previously declared function.
+    ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
+    SCRIPT ERROR: Parse Error: Could not resolve script "res://scripts/main.gd".
+    SCRIPT ERROR: Parse Error: Cannot infer the type of "MainScript" constant because the value doesn't have a set type.
+    SCRIPT ERROR: Parse Error: Cannot find member "Zoom" in base "Variant".
+    SCRIPT ERROR: Parse Error: Function "at_second_stop" has the same name as a previously declared function.
+    ERROR: Failed to load script "res://scripts/main.gd" with error "Parse error".
+    SCRIPT ERROR: Parse Error: Could not resolve script "res://scripts/main.gd".
+    SCRIPT ERROR: Parse Error: Cannot infer the type of "MainScript" constant because the value doesn't have a set type.
+    SCRIPT ERROR: Parse Error: Cannot find member "Zoom" in base "Variant".
+
+Spec text:
+4. **The first-time hint** (MILESTONES M5 and the A7 brief: a stranger plays within 2 minutes; designer quiz 2026-11-22: "Step bubbles", "Up to the first patch", text by "William + Clara", "Skip on tap, Dev replay"). After Play (`play_pressed`, never under the welcome overlay: `proposals/design/course-ending.md`), a `HintBubble` (a small panel with one line and a Skip button, key `hint_skip`, pointing at its target with a tail) shows the next thing to do, one step at a time. The hint follows the game's state, not a script of taps: the bubble shows the first step whose condition holds and that isn't done, so leaving mid-way (Back, the zoom ending) shows the step that fits where the player now is, and a step done out of order is simply skipped. Steps, each a translation key whose text comes from William's approved `content/first-time-hint.md` (EN/FR, `vous`, exported to `game/translations/` by script, not retyped):
+   1. `hint_wait`: the hive is filling and `ForkIcon` isn't shown yet: points at the hive count ("the bees are filling the hive").
+   2. `hint_harvest`: `ForkIcon` shows: points at it.
+   3. `hint_uncap`: in the first zoom with capped cells left: points at the comb.
+   4. `hint_spin`: `CentrifugeIcon` (Spin) shows: points at it.
+   5. `hint_crank`: at the second stop with the crank not yet turned this harvest: points at the `Crank`.
+   6. `hint_sell`: `SellIcon` shows: points at it.
+   7. `hint_shop`: after the first sale, on the farm view: points at the `ShopButton`.
+   8. `hint_plant`: in the Shop: points at `TabHabitat` until it is selected, then at the "Plant wildflower patch" row.
+   The hint ends for good when the first patch is planted, or on Skip. Bottling and the truck's trip need no bubble (they run by themselves); while one of those runs and no step's condition holds, no bubble shows. The bubble never covers its own target, stays on screen at 720 × 1280, is 28 px text (V12) with a 120 px Skip target (V11), and sits above the toasts' place so a waiting toast (item 2) and the bubble never overlap. While the Shop sheet is open only `hint_plant` shows, and it draws above the sheet and its dim; any other step's bubble waits until the Shop closes. The Journal panel and the victory overlay hide the bubble while they are up. Every launch is a new farm (no save), so every launch shows the hint. Config `show_hint` (bool, default true; every test run sets it false except the hint tests); Dev button "Replay hint" (restarts it at the step that fits). Size and position are placeholders the designer confirms at play-test. The text is in `content/first-time-hint.md`, approved by the designer on 2026-11-23 as written (French: "la boutique" for the Shop, "Vendre" for Sell).
+
+Reply in at most 150 words.

@@ -1,0 +1,35 @@
+Goal agent run `0.3.1`, spec `game/specs/0.3.1-playtest-fixes.md`, goal C4. Work in the main folder on branch `main`; do not commit, switch branch or edit outside your folder. Follow `game/CONTEXT.md` (Process 2-5, 8). Read only the spec text below, not the whole spec.
+
+Patricia and Bob are building this change in parallel (Patricia, Bob). These existing tests read names it touches:
+- `tests/play_loop.gd` [play]: `_open_zoom` (CentrifugeIcon, ForkIcon), `_crank` (CentrifugeIcon), `_run` (CentrifugeIcon, ForkIcon, SellIcon, hive_count, second_stop)
+- `tests/r4_measure.gd` [measure]: `_run` (CentrifugeIcon, ForkIcon)
+- `tests/snapshot_pop.gd` [snapshot]: `_run` (ForkIcon)
+- `tests/test_camera.gd` [unit]: `_icon_target` (CentrifugeIcon), `_go_second_stop` (CentrifugeIcon, second_stop), `_first_zoom_setup` (first_zoom), `t_camera_first_zoom_cells` (first_zoom), `t_camera_first_zoom_in_frame` (first_zoom), `t_camera_first_zoom_v7` (first_zoom), `t_camera_second_stop_in_frame` (second_stop), `t_camera_second_stop_hive_share` (second_stop), `t_camera_second_stop_hud_clear` (second_stop), `t_camera_back_from_second_stop` (second_stop), `t_camera_pan_seconds` (second_stop), `t_camera_pan_follows_time_scale` (second_stop)
+- `tests/test_crank_pause.gd` [unit]: `_cranking_at_second_stop` (second_stop), `t_crank_pauses_on_back_and_resumes_on_spin` (CentrifugeIcon, second_stop), `t_paused_crank_never_finishes_in_farm_view` (CentrifugeIcon, second_stop)
+- `tests/test_dev.gd` [unit]: `t_dev_button_opens_panel` (dev_button), `t_dev_button_clear_of_hud` (dev_button, first_zoom, second_stop), `t_dev_ui_bounds_collects_controls` (ForkIcon)
+- `tests/test_economy.gd` [unit]: `t_node_contract` (CentrifugeIcon, ForkIcon, SellIcon), `t_retired_api_gone` (capped_cells)
+- `tests/test_fork_return.gd` [unit]: `_fork_return_run` (ForkIcon)
+- `tests/test_habitat.gd` [unit]: `t_habitat_pill_order_plus_opens_shop_twice` (CentrifugeIcon, ForkIcon, SellIcon), `t_bumble_visitor_toast_journal_unlock_twice` (ShopButton, journal_panel), `t_skip_icon_reaches_thriving_free_twice` (victory_overlay), `t_skip_icon_farm_view_only` (first_zoom, second_stop)
+- `tests/test_helpers_1.gd` [unit]: `_open_zoom` (ForkIcon, second_stop), `_scrape_back_in_pop` (CentrifugeIcon, ForkIcon, second_stop)
+- `tests/test_hive.gd` [unit]: `t_next_frame_to_harvest` (capped_cells)
+- `tests/test_icons.gd` [unit]: `t_icon_touch_area_in_scene` (CentrifugeIcon, ForkIcon, SellIcon)
+- `tests/test_journal.gd` [unit]: `t_journal_panel_text_matches_csv_twice` (journal_panel)
+- `tests/test_motor.gd` [unit]: `_pour_in_farm_view` (CentrifugeIcon, second_stop), `t_no_spin_farm_view_without_motor` (CentrifugeIcon, second_stop), `t_no_spin_first_zoom_without_motor` (CentrifugeIcon, first_zoom)
+- `tests/test_second_stop.gd` [unit]: `_second_stop_with_capped` (CentrifugeIcon, second_stop), `t_second_stop_back_tap` (second_stop)
+- and 51 more functions
+
+For each, compare what it expects with the spec text below. Update only a test whose expectation this change replaces (a flow step it now takes differently, a node it renames or removes, a value it changes), and quote the spec line in a comment beside it; most names on the list are only read, so leave those tests as they are. Change no expectation the spec does not change, and write no new tests (the contract lines do that). Do not run the tests: the goal agent runs them, with the windowed suites this list names, after the build. Test rules (L39): a flow step that several tests take (reach the second stop, open the shop, fill the bucket, wait for CRANKING) goes through one shared helper (unit: `tests/test_helpers_*.gd`; the windowed suites, which extend SceneTree: a static func in `tests/flow.gd`, preloaded, created on first need); reuse it, add it if it is missing, and never copy the steps inline, so a change to that step is fixed in one place. No literal cell index, node count or screen size: read it from the config, the scene, or ProjectSettings (`display/window/size/viewport_width` and `_height`).
+
+Spec text:
+4. **The first-time hint** (MILESTONES M5 and the A7 brief: a stranger plays within 2 minutes; designer quiz 2026-11-22: "Step bubbles", "Up to the first patch", text by "William + Clara", "Skip on tap, Dev replay"). After Play (`play_pressed`, never under the welcome overlay: `proposals/design/course-ending.md`), a `HintBubble` (a small panel with one line and a Skip button, key `hint_skip`, pointing at its target with a tail) shows the next thing to do, one step at a time. The hint follows the game's state, not a script of taps: the bubble shows the first step whose condition holds and that isn't done, so leaving mid-way (Back, the zoom ending) shows the step that fits where the player now is, and a step done out of order is simply skipped. Steps, each a translation key whose text comes from William's approved `content/first-time-hint.md` (EN/FR, `vous`, exported to `game/translations/` by script, not retyped):
+   1. `hint_wait`: the hive is filling and `ForkIcon` isn't shown yet: points at the hive count ("the bees are filling the hive").
+   2. `hint_harvest`: `ForkIcon` shows: points at it.
+   3. `hint_uncap`: in the first zoom with capped cells left: points at the comb.
+   4. `hint_spin`: `CentrifugeIcon` (Spin) shows: points at it.
+   5. `hint_crank`: at the second stop with the crank not yet turned this harvest: points at the `Crank`.
+   6. `hint_sell`: `SellIcon` shows: points at it.
+   7. `hint_shop`: after the first sale, on the farm view: points at the `ShopButton`.
+   8. `hint_plant`: in the Shop: points at `TabHabitat` until it is selected, then at the "Plant wildflower patch" row.
+   The hint ends for good when the first patch is planted, or on Skip. Bottling and the truck's trip need no bubble (they run by themselves); while one of those runs and no step's condition holds, no bubble shows. The bubble never covers its own target, stays on screen at 720 × 1280, is 28 px text (V12) with a 120 px Skip target (V11), and sits above the toasts' place so a waiting toast (item 2) and the bubble never overlap. While the Shop sheet is open only `hint_plant` shows, and it draws above the sheet and its dim; any other step's bubble waits until the Shop closes. The Journal panel and the victory overlay hide the bubble while they are up. Every launch is a new farm (no save), so every launch shows the hint. Config `show_hint` (bool, default true; every test run sets it false except the hint tests); Dev button "Replay hint" (restarts it at the step that fits). Size and position are placeholders the designer confirms at play-test. The text is in `content/first-time-hint.md`, approved by the designer on 2026-11-23 as written (French: "la boutique" for the Shop, "Vendre" for Sell).
+
+Reply in at most 150 words: files changed, node names used, open questions.

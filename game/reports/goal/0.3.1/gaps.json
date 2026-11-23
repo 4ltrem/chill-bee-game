@@ -1,0 +1,777 @@
+{
+ "spec": "0.3.1-playtest-fixes.md",
+ "version": "0.3.1",
+ "at": "2026-11-23T14:19:56-05:00",
+ "unit_log": "game/reports/_runs/20261122-190049/unit.log",
+ "goals": {
+  "C1": {
+   "kind": "change",
+   "title": "One way into the Shop; the Journal gets its own icon.",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "FarmUI",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "JournalButton",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "JournalCloseButton",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "JournalPanel",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "ShopButton",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "TopInfo",
+     "ok": true
+    },
+    {
+     "kind": "node removed",
+     "name": "HabitatPlusButton",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C2": {
+   "kind": "change",
+   "title": "Toasts wait for the Shop to close; the patch toast shows.",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "JournalPanel",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "PatchSlots",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "PhaseToast",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "ToastLabel",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C3": {
+   "kind": "change",
+   "title": "The Shop sheet as drawn on the canvas, with tabs.",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "ShopCloseButton",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "ShopHeader",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "ShopMoney",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "ShopTabs",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "ShopTitle",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "TabBees",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "TabHabitat",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "TabHive",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "TabRefinery",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "TabResearch",
+     "ok": false
+    },
+    {
+     "kind": "node removed",
+     "name": "ShopButton",
+     "ok": false
+    },
+    {
+     "kind": "node removed",
+     "name": "ShopDim",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C4": {
+   "kind": "change",
+   "title": "The first-time hint",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "CentrifugeIcon",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "FarmUIRoot",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "ForkIcon",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "HintBubble",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "HintSkipButton",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "SellIcon",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "ShopButton",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "TabHabitat",
+     "ok": false
+    },
+    {
+     "kind": "dev button",
+     "name": "Replay hint",
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "4407ecb",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C5": {
+   "kind": "change",
+   "title": "The 0.3 Dev buttons, never built",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "dev button",
+     "name": "Show welcome",
+     "ok": false
+    },
+    {
+     "kind": "dev button",
+     "name": "Show victory",
+     "ok": false
+    },
+    {
+     "kind": "dev button",
+     "name": "+1 patch (free)",
+     "ok": false
+    },
+    {
+     "kind": "dev button",
+     "name": "Reset habitat",
+     "ok": false
+    },
+    {
+     "kind": "dev button",
+     "name": "Unlock Journal",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C6": {
+   "kind": "change",
+   "title": "A real fork on Harvest, and a centrifuge icon for Spin",
+   "owners": [
+    "Bob"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "BackButton",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "CentrifugeIcon",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "ForkIcon",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "HarvestFill",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": true
+  },
+  "C7": {
+   "kind": "change",
+   "title": "Settings icon with a language switch, and every label translated",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "FarmUI",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "LangEnglishButton",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "LangFrenchButton",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "SettingsButton",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "SettingsCloseButton",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "SettingsPanel",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C8": {
+   "kind": "change",
+   "title": "Tools icon in both zooms, in place of the Shop",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "ToolsButton",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T4.1": {
+   "kind": "test",
+   "title": "every test run sets `show_hint = false` except the item 4 hint tests; ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "C4"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T1.1": {
+   "kind": "test",
+   "title": "item 1: the pill has no Button child; it shows on the farm view and is",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "C1"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.1": {
+   "kind": "test",
+   "title": "item 2: buying a patch with the Shop open shows no toast until Close, ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.1": {
+   "kind": "test",
+   "title": "item 3: each tab holds exactly its rows in order (Tree map above); Res",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T4.2": {
+   "kind": "test",
+   "title": "item 4: with `show_hint = true`, no bubble under the welcome overlay; ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "C4"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T5.1": {
+   "kind": "test",
+   "title": "item 5: each of the six Dev buttons exists in the Dev panel and, press",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "C5"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T6.1": {
+   "kind": "test",
+   "title": "item 6: `ForkIcon` has the fork shape and no \"Harvest\" text, and `Harv",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [
+    "C6"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T8.1": {
+   "kind": "test",
+   "title": "item 8: the Tools icon shows in the first zoom and at the second stop ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [
+    "C8"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T7.1": {
+   "kind": "test",
+   "title": "item 7: the gear shows on the farm view only, top-right, at least 120 ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [
+    "C7"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T4.3": {
+   "kind": "test",
+   "title": "mutations in `tests/mutations.json` prove the new tests (at least: a h",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "C4"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  }
+ },
+ "order": [
+  {
+   "id": "C1",
+   "score": 8.46,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C3",
+   "score": 8.46,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C8",
+   "score": 8.46,
+   "factors": {
+    "unblocks": 1,
+    "value": 3,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C2",
+   "score": 6.73,
+   "factors": {
+    "unblocks": 1,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C5",
+   "score": 6.73,
+   "factors": {
+    "unblocks": 1,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C7",
+   "score": 6.46,
+   "factors": {
+    "unblocks": 1,
+    "value": 2,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 5.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T3.1",
+   "score": 5.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T4.1",
+   "score": 5.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T4.2",
+   "score": 5.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T6.1",
+   "score": 5.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 3.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T7.1",
+   "score": 3.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T4.3",
+   "score": 1.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T5.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.21,
+    "ready": 0,
+    "blocked_by": [
+     "C5"
+    ]
+   }
+  },
+  {
+   "id": "T8.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.21,
+    "ready": 0,
+    "blocked_by": [
+     "C8"
+    ]
+   }
+  }
+ ],
+ "ambiguous": [
+  "C6"
+ ]
+}
