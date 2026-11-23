@@ -34,5 +34,5 @@
 - [Repo only](repo-only.md) — write only inside the repo (hook-enforced); reading outside is fine; moving/deleting outside files needs a yes
 - [GDD review decisions](gdd-review-decisions.md) — GDD is a first draft; leaderboard split by purchase status, habitat health in Flora slot
 - [0.3 placeholder visuals](placeholder-visuals-0-3.md) — 0.3 build: visual-number stops → keep placeholders if close to UI_DESIGN.md, designer confirms at play-test
-- [French house style](french-house-style.md) — FR UI text uses "vous"; Bee Journal = "Carnet des abeilles"
+- [French house style](french-house-style.md) — FR UI text uses "vous"; Bee Journal = "Carnet des abeilles"; Shop = boutique, Sell = Vendre
 - [ICM run phases](icm-run-phases.md) — tag agent runs pre-ICM / post-ICM in _meta/agent-runs.md

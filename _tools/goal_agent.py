@@ -347,6 +347,21 @@ def value_of(title, text):
     return VALUE["feature"]
 
 
+DEV_SENTENCE = re.compile(r"\bDev (?:panel|buttons?)\b")
+
+
+def dev_buttons(text):
+    """Dev button names a spec text asks for: the quoted names (at most 5 words) in a sentence about the Dev panel.
+    2026-11-23: 0.3's six Dev buttons were never built and the scan showed 14/14, since no goal looked for them."""
+    out = []
+    for s in re.split(r"(?<=[.;])\s+(?=[A-Z\"`(*])", re.sub(r"\s+", " ", text)):
+        if DEV_SENTENCE.search(s):
+            for name in re.findall(r'"([^"]{2,60})"', s):
+                if len(name.split()) <= 5 and "Dev" not in name and name not in out:
+                    out.append(name)
+    return out
+
+
 def parse_spec(path):
     """The spec's goals: {id: goal}. Goal fields: id, kind, item(s), title, text, owners, keys, nodes, value, depends."""
     text = Path(path).read_text(encoding="utf-8")
@@ -381,6 +396,19 @@ def parse_spec(path):
         goals["CFG"] = {"id": "CFG", "kind": "change", "items": [], "title": "Config and Dev mode", "text": config,
                         "owners": ["Patricia"], "keys": loose, "nodes": [], "lines": {}, "value": VALUE["feature"],
                         "depends": []}
+    # Dev buttons: a change's own go to it; a top-level one (the config paragraph or a "Dev mode and config" section)
+    # to the change that quotes its name, else to CFG
+    for n, _, body in changes:
+        goals[f"C{n}"]["dev_buttons"] = dev_buttons(body)
+    for name in dev_buttons(config + "\n" + section(text, "Dev mode and config")):
+        owner = next((f"C{n}" for n, _, body in changes if f'"{name}"' in body), None)
+        if owner is None:
+            goals.setdefault("CFG", {"id": "CFG", "kind": "change", "items": [], "title": "Config and Dev mode",
+                                     "text": config, "owners": ["Patricia"], "keys": [], "nodes": [], "lines": {},
+                                     "value": VALUE["feature"], "depends": []})
+            owner = "CFG"
+        if name not in goals[owner].setdefault("dev_buttons", []):
+            goals[owner]["dev_buttons"].append(name)
     handoff = False
     for owner in ("Patricia", "Bob"):
         parent = []
@@ -512,7 +540,9 @@ def scan(game, ledger_path=None):
     ledger_path = Path(ledger_path) if ledger_path else game / "reports" / "goal" / "ledger.json"
     if ledger_path.is_file():
         ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
-    return {"keys": keys, "nodes": nodes, "groups": groups, "x1": x1, "results": results,
+    panel = game / "scripts" / "dev_panel.gd"   # every string literal there: a button's label is one
+    buttons = set(re.findall(r'"([^"\n]+)"', panel.read_text(encoding="utf-8", errors="replace"))) if panel.is_file() else set()
+    return {"keys": keys, "nodes": nodes, "groups": groups, "x1": x1, "results": results, "dev_buttons": buttons,
             "handoff_text": handoff_text, "marks": marks,
             "unit_log": log.relative_to(game.parent).as_posix() if log and game.parent in log.parents else
             (str(log) if log else None), "handoffs": handoffs, "ledger": ledger}
@@ -547,6 +577,8 @@ def gaps(spec, found):
             ev.append({"kind": "node", "name": nm, "ok": nm in found["nodes"]})
         for nm in goal.get("removed", []):
             ev.append({"kind": "node removed", "name": nm, "ok": nm not in found["nodes"]})
+        for b in goal.get("dev_buttons", []):
+            ev.append({"kind": "dev button", "name": b, "ok": b in found.get("dev_buttons", set())})
         if goal["kind"] == "handoff":
             hand = [h for h in found["handoffs"] if h.startswith(spec["version"])]
             ev.append({"kind": "handoff", "name": hand[0] if hand else f"game/specs/{spec['version']}-node-handoff.md",
@@ -571,7 +603,7 @@ def gaps(spec, found):
         if built:
             ev.append({"kind": "ledger", "name": ledger[gid].get("commit") or ledger[gid].get("run", ""), "ok": True})
         present = [e for e in ev if e["ok"] or (e["kind"] == "test")]
-        code = [e for e in ev if e["kind"] in ("config", "node", "node removed", "handoff")]
+        code = [e for e in ev if e["kind"] in ("config", "node", "node removed", "handoff", "dev button")]
         if goal["kind"] == "handoff":
             status = "done" if built or all(e["ok"] for e in code) else "missing"
         elif tests and all(e["ok"] for e in ev):

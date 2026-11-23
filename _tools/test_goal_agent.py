@@ -1188,6 +1188,25 @@ class DefaultedStops(unittest.TestCase):
             self.assertEqual(ga.mutation_base({"file": "s.md"}, ledger, "abc1234"), head.strip())   # newest reachable
 
 
+class DevButtons(unittest.TestCase):
+    """2026-11-23: 0.3's six Dev buttons were never built, and the scan showed 14/14."""
+
+    def test_names_come_from_dev_sentences_only(self):
+        text = ('Found later (the 0.3 spec\'s "Dev buttons" line; designer: "Add to 0.3.1 + a scan check"). '
+                'The Dev panel gets "Show victory" (the overlay now), "+1 patch (free)". "Reset habitat" clears the queue.')
+        self.assertEqual(ga.dev_buttons(text), ["Show victory", "+1 patch (free)"])
+
+    def test_the_03_buttons_are_goals_and_missing_ones_are_gaps(self):
+        repo = Path(__file__).resolve().parent.parent
+        spec = ga.parse_spec(repo / "game" / "specs" / "0.3-course-build.md")
+        self.assertIn("Show welcome", spec["goals"]["CFG"]["dev_buttons"])
+        self.assertIn("Reset habitat", spec["goals"]["C4"]["dev_buttons"])   # quoted in item 4: its own
+        found = {"ledger": {}, "keys": set(), "nodes": set(), "groups": [], "x1": set(), "results": {},
+                 "handoffs": [], "handoff_text": {}, "marks": {}, "dev_buttons": {"Reset progress"}}
+        ev = ga.gaps(spec, found)["CFG"]["evidence"]
+        self.assertIn({"kind": "dev button", "name": "Show victory", "ok": False}, ev)
+
+
 class FactCheck(unittest.TestCase):
     """L52's fact-check pass (`spec_factcheck.py`): claims, the reply's verdicts, and the gate a build run waits on."""
 

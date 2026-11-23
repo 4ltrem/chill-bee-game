@@ -1,7 +1,7 @@
 ---
 author: william
 type: ui-text
-status: draft
+status: approved (designer, 2026-11-23, as written: "boutique" for Shop and "Vendre" for Sell become the French UI words)
 description: The first-time hint bubbles shown after Play, one short line per step up to the first wildflower patch, as EN/FR translation rows (0.3.1 item 4).
 run: content/_runs/first-time-hint/run-1/blackboard.md
 ---

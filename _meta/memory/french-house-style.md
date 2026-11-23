@@ -1,14 +1,14 @@
 ---
 name: french-house-style
-description: "French UI text addresses the player as \"vous\"; the Bee Journal is \"Carnet des abeilles\" in French"
+description: "French UI text addresses the player as \"vous\"; Bee Journal = \"Carnet des abeilles\", Shop = \"boutique\", Sell = \"Vendre\""
 metadata:
   node_type: memory
   type: feedback
   originSessionId: b80d1f98-5ab8-4175-855f-9399551ac79b
-  modified: 2026-11-22T17:53:19.840Z
+  modified: 2026-11-23T17:08:56.315Z
 ---
 
-All French UI text uses formal "vous" (designer, 2026-11-22, course-ending-text). The Bee Journal's French name is "Carnet des abeilles".
+All French UI text uses formal "vous" (designer, 2026-11-22, course-ending-text). The Bee Journal's French name is "Carnet des abeilles". The Shop is "la boutique" and Sell is "Vendre" (designer approved `content/first-time-hint.md` as written, 2026-11-23); the harvest tool is "la fourche".
 
 **Why:** the designer picked one house style over William's "tu" draft; no French Journal name existed before.
 
