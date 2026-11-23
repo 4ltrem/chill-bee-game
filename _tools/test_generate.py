@@ -862,6 +862,35 @@ class BuildToolsTest(unittest.TestCase):
         bad = 'SCRIPT ERROR: Parse Error: Identifier "JarFlight" not declared in the current scope.'
         self.assertEqual(self.gr.summarise("start", bad, 1)["status"], "FAIL")
 
+    def test_start_runs_first_and_a_parse_error_skips_the_rest(self):   # L53
+        self.assertEqual(self.gr.start_first(["unit", "start", "play"]), ["start", "unit", "play"])
+        self.assertEqual(self.gr.start_first(["unit", "ui"]), ["unit", "ui"])
+        bad = self.gr.summarise("start", 'SCRIPT ERROR: Parse Error: Function "at_second_stop" has the same name', 1)
+        self.assertTrue(self.gr.parse_broken(bad))
+        other = self.gr.summarise("start", "ERROR: Condition \"!x\" is true.", 1)
+        self.assertFalse(self.gr.parse_broken(other))   # a runtime error still lets the tests run and show it
+        self.assertEqual(self.gr.skipped("unit")["status"], "SKIPPED")
+
+    def test_contract_flags_a_name_two_nodes_share_under_one_search(self):   # L53
+        import contract_check as cc
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "scenes"))
+            os.makedirs(os.path.join(d, "scripts"))
+            os.makedirs(os.path.join(d, "tests"))
+            Path(d, "scenes", "main.tscn").write_text(
+                '[gd_scene format=3]\n[ext_resource type="Script" path="res://scripts/a.gd" id="1"]\n'
+                '[node name="Main" type="Node"]\n[node name="A" type="Node" parent="."]\nscript = ExtResource("1")\n'
+                '[node name="Label" type="Label" parent="A"]\n[node name="B" type="Node" parent="."]\n'
+                '[node name="Label" type="Label" parent="B"]\n', encoding="utf-8")
+            Path(d, "scripts", "a.gd").write_text('func _ready():\n\tfind_child("Label")\n', encoding="utf-8")
+            self.assertEqual(cc.check_duplicates(d, {})[0], [])   # A searches its own subtree: one Label
+            Path(d, "tests", "test_x.gd").write_text('func t_x(m):\n\tm.find_child("Label")\n', encoding="utf-8")
+            problems, _ = cc.check_duplicates(d, {})
+            self.assertEqual(len(problems), 1)   # a test searching all of main.tscn finds two
+            self.assertIn("'Label'", problems[0])
+            problems, notes = cc.check_duplicates(d, {"Label": "renamed by item 9"})
+            self.assertEqual((problems, len(notes)), ([], 1))
+
     def test_mutation_verdicts(self):
         fail = {"status": "FAIL", "fails": ["FAIL  t_pop  curve differs", "FAIL  t_other  x"]}
         ok = {"status": "PASS", "fails": []}

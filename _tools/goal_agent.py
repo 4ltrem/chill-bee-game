@@ -60,6 +60,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # -I leaves the script's folder off sys.path
 import budget_guard  # noqa: E402
+import code_map  # noqa: E402
 import generate as g  # noqa: E402
 import pick_match  # noqa: E402
 import runlog  # noqa: E402
@@ -830,6 +831,30 @@ def spec_slice(spec, goal):
     return "\n\n".join(parts)
 
 
+CODE_MAP_CAP = 14000   # L53: chars of code map per brief; past it the brief points at the command instead
+RECIPES = "game/RECIPES.md"
+
+
+def code_help(goal):
+    """L53: the code map sliced to the goal's names, and the recipes pointer, so an agent reads one slice instead of
+    grepping every script for its API (0.3.1: Patricia's C4 call, 1.8M tokens and 58 turns, mostly that grep)."""
+    words = impact_tokens(goal)
+    recipe = (f"\n\nRecipes: `{RECIPES}` says how to add what the game already has (a panel, a corner icon, a "
+              f"translated label, a config value, a Dev button, a toast, their tests). Follow the one that fits "
+              f"instead of working it out again." if (ROOT / RECIPES).is_file() else "")
+    if not words:
+        return recipe
+    cmd = f"python -I _tools/code_map.py --for {','.join(words)}"
+    try:
+        text = code_map.render_for(str(ROOT / "game"), words)
+    except OSError:
+        return recipe
+    if len(text) > CODE_MAP_CAP:
+        return f"{recipe}\n\nCode map: run `{cmd}` (too long to inline) and read it before opening any script."
+    return (f"{recipe}\n\nCode map of this goal's names (`{cmd}`; what each script offers and where the nodes sit). "
+            f"Read it first; open a script only for the lines you change.\n\n{text}")
+
+
 def briefs(spec, goal, batch, run, branch):
     """{agent: prompt} for the step that builds goal (and, for tests, the batch of sibling test goals)."""
     head = (f"Goal agent run `{run}`, spec `game/specs/{spec['file']}`, goal {', '.join(b['id'] for b in batch)}. "
@@ -884,7 +909,7 @@ def briefs(spec, goal, batch, run, branch):
         out[agent] = head + (
             f"Build your part ({FOLDERS[agent]}) of this change. {other}; the handoff is your contract. Run "
             f"`python -I _tools/contract_check.py` before you finish. {LAYOUT_RULE}{STYLE_MINIMUMS}{keys}\n{hand_ref}\nYour contract lines:\n{lines}\n\n"
-            f"Spec text:\n{spec_slice(spec, goal)}") + tail
+            f"Spec text:\n{spec_slice(spec, goal)}{code_help(goal)}") + tail
     rows = test_impact(goal)
     if rows:   # L39 (b): the stale tests are updated beside the build, from the spec, not found red in fix rounds
         out[QA] = head + (
@@ -1486,6 +1511,35 @@ def run_tests_once_more(cmd, board, label, env=None):
     return code, out, True
 
 
+FIRST_MIN_SAVED = 20   # L53: split a round only when the widened list adds at least this many tests
+
+
+def own_first(own, prev_failed, wrote, focus):
+    """L53: the tests a round runs first, alone: the goal's own, last round's failures and the tests the step wrote.
+    The rest of `focus` (the impact list, all 223 tests when `main.gd` changed in 0.3.1 C4/C2) runs only once these
+    pass. [] when splitting would save little (the round then runs `focus` in one go, as before)."""
+    first = sorted((set(own) | set(prev_failed) | set(wrote)) & set(focus))
+    return first if first and len(focus) - len(first) >= FIRST_MIN_SAVED else []
+
+
+def run_tests_first_then_rest(cmd, first, suites, board, label, env=None):
+    """L53: with `first`, run `unit start` on those tests alone (the `--only` already on `cmd` is swapped, no windowed
+    suites), and the full command only when that passes; a red first part is the round's result, so a fix round starts
+    ~5 min sooner. Without `first`, the command as given. Returns run_tests_once_more's (code, output, paused)."""
+    if not first or "--only" not in cmd:
+        return run_tests_once_more(cmd, board, label, env)
+    at = cmd.index("--only")
+    quick = [c for c in cmd[:at] if c not in suites] + ["--only", ",".join(first)] + cmd[at + 2:]
+    say(board, f"- Tests first: the {len(first)} own, written or last-failed tests alone; the other "
+               f"{len(cmd[at + 1].split(','))  - len(first)} and the windowed suites only if they pass\n")
+    code, out, stuck = run_tests_once_more(quick, board, label, env)
+    if code or stuck:
+        return code, out, stuck
+    rest = [t for t in cmd[at + 1].split(",") if t not in first]
+    full = [c for c in cmd[:at] if c != "--refresh"] + ["--only", ",".join(rest)] + cmd[at + 2:]
+    return run_tests_once_more(full, board, label, env)
+
+
 def own_tests(spec, goal, batch):
     """L40: the tests a round runs alone (`--only`): a test goal's marked tests; a change's registered item tests and the
     unit tests on its impact list. The round adds change_impact()'s tests and the last failures (L42)."""
@@ -1701,7 +1755,8 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                 else:
                     cmd.remove("unit")
             if label == "tests":
-                code, out, stuck = run_tests_once_more(cmd, board, label, env)
+                code, out, stuck = run_tests_first_then_rest(cmd, own_first(own, prev_failed, wrote, focus),
+                                                             impact["suites"], board, label, env)
                 if stuck:
                     return "paused"
             else:

@@ -13,6 +13,7 @@ the windowed suites ignore it for now.
 Suites: unit (run_tests.gd, headless), start (a headless start, errors only), play (play_loop.gd),
 measure (r4_measure.gd), snapshot (snapshot_pop.gd), ui (ui_bounds_pixels.gd), touch (touch_windowed.gd);
 the windowed ones open a 720x1280 window. `all` runs every test suite; no suite means `unit start`.
+`start` always runs first when asked for; if a script fails to parse there, the other suites are SKIPPED (L53).
 Shot runs (by name only, not in `all`; PASS = exit 0 + COMPLETED): lid (lid_shots.gd, the hive lid's close shot every
 10% plus per-node penetration, into ROOT/../game/reports/votes/lid-close/<YYYY-MM-DD>/); fixture (make_recording_fixture.gd, rewrites
 tests/fixtures/recording_fill_and_back.json; PASS = exit 0 + its "wrote" line).
@@ -71,6 +72,26 @@ TOTAL = re.compile(r"^---- (\d+) (passed|checks), (\d+) failed")
 # follows the test count, within a floor and a hard cap; other suites keep 900 s. `--timeout S` overrides both.
 SUITE_TIMEOUT, UNIT_BASE_S, UNIT_PER_TEST_S, UNIT_CAP_S = 900, 300, 6, 1800
 ERROR = re.compile(r"^(ERROR|SCRIPT ERROR|WARNING|USER ERROR|USER WARNING|Parse Error)\b")
+# L53: 0.3.1 C4's duplicate `at_second_stop()` left main.gd unparsable and every suite still ran into its timeout (30 min
+# for one round). `start` (a few seconds) now runs first; a script that fails to parse there skips the other suites.
+PARSE_BROKEN = re.compile(r"Parse Error|Failed to load script")
+
+
+def start_first(suites):
+    """Pure: the suites in run order, `start` moved to the front when asked for (L53)."""
+    return (["start"] + [s for s in suites if s != "start"]) if "start" in suites else list(suites)
+
+
+def parse_broken(result):
+    """Pure: the `start` result shows a script that does not parse (L53)."""
+    return result["suite"] == "start" and any(PARSE_BROKEN.search(e) for e in result["errors"])
+
+
+def skipped(suite):
+    """The summary of a suite not run because a script does not parse (L53)."""
+    return {"suite": suite, "status": "SKIPPED", "exit": None, "total": None,
+            "fails": ["FAIL  not run: a script does not parse (see the start suite's errors)"], "measures": [],
+            "errors": [], "noise_dropped": 0, "completed": False, "log": "-"}
 
 
 def command(suite, root, sets=()):
@@ -291,8 +312,12 @@ def main(argv=None):
     os.makedirs(logdir, exist_ok=True)
     if args.refresh:
         refresh(root, args.timeout or SUITE_TIMEOUT)
-    results = [run_suite(s, root, logdir, suite_timeout(s, root, args.timeout, env), env=env, sets=args.set)
-               for s in suites]
+    results = []
+    for s in start_first(suites):   # L53: start first; an unparsable script skips the rest
+        if results and parse_broken(results[0]):
+            results.append(skipped(s))
+            continue
+        results.append(run_suite(s, root, logdir, suite_timeout(s, root, args.timeout, env), env=env, sets=args.set))
     print(render(results, args.markdown))
     if args.json:
         with open(args.json, "w", encoding="utf-8") as fh:

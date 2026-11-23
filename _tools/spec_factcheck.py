@@ -71,8 +71,26 @@ def parse_reply(reply, n):
     return {i: got.get(i, ("UNCLEAR", "", "no row in the reply")) for i in range(1, n + 1)}
 
 
+def cell_text(t):
+    """A claim as its table cell holds it (no pipes, no newlines)."""
+    return str(t).replace("|", "/").replace("\n", " ")
+
+
+ROW = re.compile(r"^\|\s*\d+\s*\|\s*(TRUE|UNTRUE|UNCLEAR|NEW)\s*\|(.*?)\|(.*?)\|\s*([^|]*?)\s*\|\s*(.*?)\s*\|\s*$", re.M)
+
+
+def earlier_verdicts(path):
+    """L53: {(item, claim cell): (verdict, evidence, why)} from an existing fact-check file. A spec edited mid-build
+    (0.3.1 item 7 after C1-C8 were built) keeps the verdict each unchanged sentence had before the build changed the
+    code it describes; only new or reworded sentences go to Doris."""
+    if not path.is_file():
+        return {}
+    return {(m.group(4), m.group(5)): (m.group(1), m.group(2).strip(), m.group(3).strip())
+            for m in ROW.finditer(path.read_text(encoding="utf-8"))}
+
+
 def render(spec_path, rows, verdicts, note=""):
-    cell = lambda t: str(t).replace("|", "/").replace("\n", " ")
+    cell = cell_text
     head = (f"---\nspec: {Path(spec_path).name}\nspec_hash: {spec_hash(spec_path)}\nclaims: {len(rows)}\n"
             f"untrue: {sum(v[0] == 'UNTRUE' for v in verdicts.values())}\n"
             f"unclear: {sum(v[0] == 'UNCLEAR' for v in verdicts.values())}\n---\n"
@@ -145,7 +163,21 @@ def main(argv=None):
             print(f"{i:3}. (item {item}) {s}")
         print(f"{len(rows)} claims")
         return 0
-    verdicts, note = (ask(path, rows) if rows else ({}, " No claims found: nothing to check."))
+    kept = earlier_verdicts(report_path(path))
+    new = [r for r in rows if (str(r[0]), cell_text(r[1])) not in kept]
+    if rows and not new:
+        verdicts, note = {}, " Every claim kept its earlier verdict."
+    elif rows:
+        got, note = ask(path, new)
+        fresh = dict(zip(new, got.values()))
+        verdicts = {}
+    else:
+        verdicts, note = {}, " No claims found: nothing to check."
+    if rows:   # L53: a mid-build spec edit re-checks only its new sentences; the rest keep the verdict they had
+        verdicts = {i: fresh[r] if r in new else kept[(str(r[0]), cell_text(r[1]))]   # before the build changed
+                    for i, r in enumerate(rows, 1)}                                   # the code they describe
+        if len(new) < len(rows):
+            note += f" {len(rows) - len(new)} unchanged claims kept their earlier verdicts; {len(new)} checked now."
     out = report_path(path)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(render(path, rows, verdicts, note), encoding="utf-8")

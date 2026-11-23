@@ -1207,6 +1207,48 @@ class DevButtons(unittest.TestCase):
         self.assertIn({"kind": "dev button", "name": "Show victory", "ok": False}, ev)
 
 
+class OwnTestsFirst(unittest.TestCase):
+    """L53: 0.3.1 C4 and C2 ran all 223 unit tests and every windowed suite each round for 13-57 own tests."""
+
+    def setUp(self):
+        self.saved = ga.run_tests_once_more
+        self.calls = []
+
+    def tearDown(self):
+        ga.run_tests_once_more = self.saved
+
+    def fake(self, results):
+        def run(cmd, board, label, env=None):
+            self.calls.append(cmd)
+            return results[len(self.calls) - 1]
+        ga.run_tests_once_more = run
+
+    def test_split_only_when_it_saves_enough(self):
+        focus = [f"t_{i:03}" for i in range(60)]
+        self.assertEqual(ga.own_first(["t_000"], {"t_001"}, {"t_002"}, focus), ["t_000", "t_001", "t_002"])
+        self.assertEqual(ga.own_first(["t_000"], set(), set(), focus[:10]), [])   # 9 more: not worth a 2nd launch
+        self.assertEqual(ga.own_first([], set(), set(), focus), [])                # nothing of its own
+
+    def test_red_first_part_is_the_result_and_green_runs_the_rest(self):
+        cmd = ["py", "godot_run.py", "--refresh", "unit", "start", "play", "--time-scale", "6", "--skip-x1",
+               "--only", "t_a,t_b,t_c"]
+        self.fake([(1, "FAIL  t_a", False)])
+        code, out, _ = ga.run_tests_first_then_rest(cmd, ["t_a"], {"play": "why"}, None, "tests")
+        self.assertEqual((code, len(self.calls)), (1, 1))
+        self.assertEqual(self.calls[0], ["py", "godot_run.py", "--refresh", "unit", "start", "--time-scale", "6",
+                                         "--skip-x1", "--only", "t_a"])   # no windowed suite in the quick part
+        self.calls.clear()
+        self.fake([(0, "PASS", False), (0, "PASS all", False)])
+        code, out, _ = ga.run_tests_first_then_rest(cmd, ["t_a"], {"play": "why"}, None, "tests")
+        self.assertEqual((code, out, len(self.calls)), (0, "PASS all", 2))
+        self.assertEqual(self.calls[1], ["py", "godot_run.py", "unit", "start", "play", "--time-scale", "6",
+                                         "--skip-x1", "--only", "t_b,t_c"])   # the rest, no second --refresh
+        self.calls.clear()
+        self.fake([(0, "PASS", False)])
+        ga.run_tests_first_then_rest(cmd, [], {}, None, "tests")
+        self.assertEqual(self.calls, [cmd])   # no split: the command as given
+
+
 class FactCheck(unittest.TestCase):
     """L52's fact-check pass (`spec_factcheck.py`): claims, the reply's verdicts, and the gate a build run waits on."""
 
@@ -1226,6 +1268,30 @@ class FactCheck(unittest.TestCase):
 
     def test_claims_pull_existing_behaviour_sentences_with_their_item(self):
         self.assertEqual(self.fc.claims(self.spec), [(2, "Farm view only, like the rest of the info row.")])
+
+    def test_a_reworded_spec_rechecks_only_its_new_claims(self):   # L53
+        rows = self.fc.claims(self.spec)
+        out = self.fc.report_path(self.spec, self.tmp)
+        out.parent.mkdir(parents=True)
+        out.write_text(self.fc.render(self.spec, rows, {1: ("TRUE", "scripts/farm_ui.gd:9", "farm only")}),
+                       encoding="utf-8")
+        kept = self.fc.earlier_verdicts(out)
+        self.assertEqual(kept, {("2", "Farm view only, like the rest of the info row."):
+                                ("TRUE", "scripts/farm_ui.gd:9", "farm only")})
+        asked = []
+        saved_ask, saved_root = self.fc.ask, self.fc.ROOT
+        self.fc.ask = lambda p, r: (asked.append(list(r)), ({1: ("NEW", "", "adds it")}, ""))[1]
+        self.fc.ROOT = self.tmp
+        try:
+            text = self.spec.read_text(encoding="utf-8")
+            self.spec.write_text(text.replace("info row.", "info row. The pill stays hidden as before."), encoding="utf-8")
+            self.fc.main([str(self.spec)])
+        finally:
+            self.fc.ask, self.fc.ROOT = saved_ask, saved_root
+        self.assertEqual(asked, [[(2, "The pill stays hidden as before.")]])   # only the new sentence went to Doris
+        now = self.fc.earlier_verdicts(out)
+        self.assertEqual(now[("2", "Farm view only, like the rest of the info row.")][0], "TRUE")
+        self.assertEqual(now[("2", "The pill stays hidden as before.")][0], "NEW")
 
     def test_a_missing_row_is_unclear(self):
         reply = "| # | Verdict | Evidence | Why |\n|---|---|---|---|\n| 1 | UNTRUE | scripts/farm_ui.gd:88 | kept at stop 2 |\n"

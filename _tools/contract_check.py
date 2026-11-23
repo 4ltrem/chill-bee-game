@@ -42,9 +42,9 @@ STRING = re.compile(r'"(?:[^"\\]|\\.)*"' + r"|'(?:[^'\\]|\\.)*'")
 SCENE_LITERAL = re.compile(r'"(res://[^"]+\.tscn)"')
 SIGNAL_DECL = re.compile(r'^\s*signal\s+([A-Za-z_]\w*)', re.M)
 # "script.gd:signal" -> why it may stay unheard for now, and what closes it
-KNOWN_UNHEARD = {
-    "patch_slots.gd:toast_requested": "never connected in 0.3.0; game/specs/0.3.1-playtest-fixes.md item 2 connects it",
-}
+KNOWN_UNHEARD = {}   # 0.3.1 C2 connected patch_slots.gd:toast_requested, the last entry
+# L53: name -> why two nodes may share it for now, and what makes it unique (a NOTE until then, STALE after)
+KNOWN_DUPLICATES = {}
 # Checked 2026-11-22 (L52): unheard, but nothing player-facing waits on them (listeners read the state or another
 # signal: bees refresh on Economy.upgrade_changed, not PatchSlots.planted). Silent; a new unheard signal still fails.
 HOOKS = {"economy.gd:flight_level_changed", "farm_ui.gd:summary_closed", "honeycomb.gd:all_cells_uncapped",
@@ -219,6 +219,71 @@ def check(root, verbose=False):
     return problems, checked, tops
 
 
+WIDE_FIND = re.compile(r'(?:(?<![\w.])(?:m|main|_main)|get_tree\(\)\.root)\.find_child\(\s*"([^"]+)"')
+SELF_FIND = re.compile(r'(?<![\w.)\]])find_child\(\s*"([^"]+)"')
+PARENT_FIND = re.compile(r'(?<![\w.])get_parent\(\)\.find_child\(\s*"([^"]+)"')
+
+
+def scoped_lookups(file, attached, wide_only=False):
+    """[(line, subtree searched, name)] for the `find_child` calls whose search root is known: the whole scene
+    (`get_tree().root.`, and in tests `m.` / `main.`), the script's own node (a bare `find_child`) or its parent
+    (`get_parent().`). Calls on other nodes (`row.`, `hive.`) search a part the check can't place, and are left out."""
+    out = []
+    parent = attached.rsplit("/", 1)[0] if "/" in attached else ""
+    with open(file, encoding="utf-8", errors="replace") as fh:
+        for n, line in enumerate(fh, 1):
+            if "# contract: optional" in line or line.lstrip().startswith("#"):
+                continue
+            out += [(n, "", t) for t in WIDE_FIND.findall(line)]
+            if not wide_only:
+                out += [(n, attached, t) for t in SELF_FIND.findall(line)]
+                out += [(n, parent, t) for t in PARENT_FIND.findall(line)]
+    return out
+
+
+def check_duplicates(root, known=None):
+    """L53: a name a script finds by name (`find_child("X")`, `%X`) that two nodes of one top-level scene carry:
+    `find_child` returns whichever comes first, so adding the second node silently retargets the lookup (0.3.1 C4: the
+    hint bubble's `HintLabel` took the zoom instruction's lookups and broke three tests). Returns (problems, notes); a
+    name in `known` (KNOWN_DUPLICATES) is a NOTE until it is unique, then STALE."""
+    known = KNOWN_DUPLICATES if known is None else known
+    scenes = sorted(scenes_in(root))
+    instanced = set()
+    for s in scenes:
+        instanced.update(n.instance for n in parse_tscn(res_to_file(s, root))[1] if n.instance)
+    problems, notes, seen_known = [], [], set()
+    for top in (s for s in scenes if s not in instanced):
+        tree = expand(top, root)
+        under = lambda base, name: [f or n.name for f, n in tree if n.name == name and
+                                    (base == "" or f == base or f.startswith(base + "/"))]
+        looked = {}   # name -> (where, the subtree it searches)
+        for full, node in tree:
+            sfile = res_to_file(node.script, root) if node.script else None
+            if sfile and os.path.exists(sfile):
+                for line, base, target in scoped_lookups(sfile, full):
+                    looked.setdefault((target, base), f"{node.script}:{line}")
+        if top == "res://scenes/main.tscn":   # the tests build main.tscn and search it from the top (m., main.)
+            tdir = os.path.join(root, "tests")
+            for f in sorted(os.listdir(tdir)) if os.path.isdir(tdir) else []:
+                if f.endswith(".gd"):
+                    for line, base, target in scoped_lookups(os.path.join(tdir, f), "", wide_only=True):
+                        looked.setdefault((target, ""), f"res://tests/{f}:{line}")
+        flagged = {}
+        for (name, base), at in sorted(looked.items()):
+            hits = under(base, name)
+            if len(hits) >= 2 and name not in flagged:
+                flagged[name] = (at, hits)
+        for name, (at, hits) in sorted(flagged.items()):
+            msg = f"{top}: '{name}' (searched from above both at {at}) names {len(hits)} nodes: " + ", ".join(hits)
+            if name in known:
+                seen_known.add(name)
+                notes.append(f"NOTE {msg} ({known[name]})")
+            else:
+                problems.append(msg + "; give each a unique name")
+    notes += [f"STALE KNOWN_DUPLICATES['{n}']: the name is unique now; remove the entry" for n in sorted(set(known) - seen_known)]
+    return problems, notes
+
+
 def _code(text):
     """The text with `#` comments dropped (a `#` inside a string is rare enough in these scripts to ignore)."""
     return "\n".join(line.split("#", 1)[0] for line in text.splitlines())
@@ -281,7 +346,13 @@ def main(argv=None):
     for n in notes:
         print("SIGNAL " + n)
     print(f"contract: {len(unheard)} emitted signals unheard")
-    return 1 if problems or unheard else 0
+    dups, dup_notes = check_duplicates(args.root)
+    for p in dups:
+        print("DUPLICATE: " + p)
+    for n in dup_notes:
+        print("DUPLICATE " + n)
+    print(f"contract: {len(dups)} looked-up names used twice")
+    return 1 if problems or unheard or dups else 0
 
 
 if __name__ == "__main__":
