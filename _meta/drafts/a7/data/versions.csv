@@ -1,0 +1,9 @@
+version,built,from,to,days,commits,game lines,tool lines,doc lines,tests,mutations,agent calls,tokens,orchestrator tokens,play-test findings,findings source
+Design,"GDD, two review rounds, proposals",2026-10-14,2026-11-01,19,46,68,2210,11084,0,0,4,925658,0,,
+0.1.0,"Prototype 0, 0.1 Harvest",2026-11-01,2026-11-04,3,18,16365,895,1842,78,0,19,239181844,181333412,6,"0.1.1-playtest-fixes.md, items 1-6"
+0.1.1-0.1.2,"play-test fixes, bottling and sale",2026-11-04,2026-11-05,1,9,13772,652,233,110,8,12,46105992,0,,not itemised (fixed inside 0.1.3)
+0.1.3,"farm layouts, camera stops",2026-11-05,2026-11-06,1,18,5107,1769,1515,144,50,71,194714758,142244994,4,"0.1.4-ui-placement.md items 2, 3, 4, 7"
+0.1.4,"UI placement (A5, first goal-agent run)",2026-11-06,2026-11-08,2,85,5719,3608,4754,178,87,158,366076470,318180714,13,"0.1.4-ui-placement.md items 9-17, 19-22"
+0.2.0,first automation (goal agent),2026-11-08,2026-11-09,1,42,12828,672,1534,208,136,79,188773517,168626235,6,0.2-first-automation.md items 9-14 (0.2.1)
+0.2.1,0.2.0 play-test fixes (A6),2026-11-09,2026-11-22,13,44,1578,4663,3814,219,154,171,284035729,221137892,1,0.2-first-automation.md item 15
+0.3.0,course build items 1-6,2026-11-22,2026-11-22,1,56,1868,382,986,234,181,116,85193290,66212166,4,"0.3.1-playtest-fixes.md items 1-3 (four findings, L52)"

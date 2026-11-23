@@ -109,7 +109,13 @@ INTERACTION_CHECKLIST = (
     "resumes or restarts as the spec says, nothing runs twice; (4) do it start to finish twice: the second run matches "
     "the first. A one-tap action gets only (4). Add two mutations per sequence test: one breaking (2), one breaking "
     "(4). Where the spec does not say what leaving or coming back does, or whether a step goes on by itself, do not guess: write no test for it and list "
-    "it under open questions (\"Item N: what happens to <x> on <exit> mid-way?\").")
+    "it under open questions (\"Item N: what happens to <x> on <exit> mid-way?\")."
+    # L52 (2026-11-22): 0.3.0's thriving toast passed `visible == true` while it played under the full-height Shop
+    " Seen, not just visible: a test that something shows (a toast, an icon, a panel) proves the player can see it: "
+    "visible in tree, its rect not under a higher Control that covers it (a dim, a sheet, an overlay), and still "
+    "shown for its full stated time. Anything that shows while an overlay is up either waits for it to close or "
+    "draws above it, as the spec says; test that case too. Where the spec doesn't say which, list it under open "
+    "questions.")
 CODE_PATHS = ["game/scripts", "game/scenes", "game/materials"]
 LOCK = "_meta/usage/goal-run.lock"   # exists while a build run is live; guard_shell reads it (rule C)
 REMOVED = re.compile(r"\b(removed?|retired?|goes away|deleted?)\b", re.I)   # a node in such a sentence must be absent

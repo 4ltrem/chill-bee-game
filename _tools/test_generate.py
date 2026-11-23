@@ -1043,6 +1043,39 @@ class BuildToolsTest(unittest.TestCase):
             self.assertTrue(any(a[0] == 1 and b[0] == 2 and "crank" in shared for a, b, _, shared in pairs))
             self.assertEqual(sl.lint(p, out=lambda line: None), 1)
 
+    def test_spec_lint_pairs_a_full_screen_cover_with_a_timed_toast(self):
+        # L52: 0.3 item 3 made the Shop full-height; item 4's 4 s toast played under it, unread
+        import spec_lint as sl
+        head = "---\nversion: 9.9\n---\n# 9.9\n\n## Changes\n\n"
+        cover = "1. **Shop** The open Shop is a full-height sheet over the whole screen.\n\n"
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "9.9-x.md"
+            p.write_text(head + cover + "2. **Visitor** On `thriving` the toast `toast_x` shows for 4 s.\n", encoding="utf-8")
+            self.assertEqual([(c, t) for c, _, t, _ in sl.cover_pairs(p)], [(1, 2)])
+            p.write_text(head + cover + "2. **Visitor** On `thriving` the toast `toast_x` waits until the Shop closes, "
+                         "then shows for 4 s.\n", encoding="utf-8")
+            self.assertEqual(sl.cover_pairs(p), [])            # the timed item already says it waits
+
+    def test_contract_check_fails_an_emitted_signal_nobody_connects(self):
+        # L52: patch_slots.gd emitted toast_requested and nothing connected it, so the toast never showed
+        import contract_check as cc
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "scripts").mkdir()
+            (root / "tests").mkdir()
+            (root / "scripts" / "a.gd").write_text(
+                "signal said(k: String)\nsignal heard\nsignal hook\n"
+                "func f():\n\tsaid.emit(\"x\")\n\theard.emit()\n\thook.emit()\n", encoding="utf-8")
+            (root / "scripts" / "b.gd").write_text("func g(a):\n\ta.heard.connect(g)  # said.connect( in a comment\n",
+                                                   encoding="utf-8")
+            (root / "tests" / "t.gd").write_text("func t(a):\n\tawait a.hook\n", encoding="utf-8")
+            problems, notes = cc.check_signals(str(root), known={})
+            self.assertEqual(len(problems), 1)
+            self.assertIn("signal said", problems[0])
+            problems, notes = cc.check_signals(str(root), known={"a.gd:said": "item 9 connects it"})
+            self.assertEqual(problems, [])
+            self.assertTrue(notes[0].startswith("NOTE a.gd:said"))
+
     def test_build_sets_version_and_zips_web_at_root(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)

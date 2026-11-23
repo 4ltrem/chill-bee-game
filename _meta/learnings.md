@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L52 · 2026-11-22 · 0.3.0 shipped green with four things the play-test found
+- **What broke:** (1) the Habitat pill's + slid in the spin view; (2) the thriving toast played under the full-height Shop and vanished unread; (3) the approved "A new wildflower patch is blooming!" toast never showed; (4) the Journal opened only from inside the Shop.
+- **How noticed:** the designer's play-test of 0.3.0 ("the + button moves in the zoom spin view", "a message ... vanished before I could read it"); (3) and the cause of (1) found while reading the code for it.
+- **Cause:** (1) the spec stated old behaviour wrongly ("Farm view only, like the rest of the info row"), but `TopInfo` stays at the second stop and shrinks (`fit_top_info`, 0.1.3c); nobody checked the claim, and the 0.3.1 draft repeated it. (2) item 3 changed the Shop to full-height after item 4's toast was written; no check paired them, and the test only asserted `visible`. (3) `patch_slots.gd` emits `toast_requested` and nothing connects it; `contract_check.py` checked node lookups only, and item 3's test line didn't name the toast. (4) 0.2's "a Journal button in the shop panel" carried over unasked; Quinn's reply said "I assumed `JournalButton` still sits in the shop sheet", and nothing surfaced it.
+- **How fixed:** `game/specs/0.3.1-playtest-fixes.md` items 1-3 (designer quiz 2026-11-22), with the pill claim corrected.
+- **Prevention:** `contract_check.py` fails an emitted signal nothing connects (tests count; `KNOWN_UNHEARD` holds 0.3.1 item 2's until it lands, `HOOKS` the six checked harmless ones). `spec_lint.py` REVIEW (cover) pairs an item covering the screen with an item showing something timed, unless that item says it waits or draws on top (it pairs 0.3 items 3 and 4). goal_agent's `INTERACTION_CHECKLIST` asks for "seen, not just visible" tests. Approved, waiting for budget ([brief](drafts/0.3/l52-deferred-checks.md)): a Haiku fact-check of a spec's claims about existing behaviour before a build, "I assumed" lines in agent replies as designer stops, and `ui_shots.py` shots 1 s after each event.
+
 ## L51 · 2026-11-22 · 0.3's T6.1 took 0.2's Auto-Sell tests as its own
 - **What broke:** the 0.3 step for T6.1 (skip-icon tests) skipped Quinn ("every line already has its marked test") and listed four `t_autosell_*` tests, then held the goal as unchanged.
 - **How noticed:** the blackboard's step line named Auto-Sell tests for a skip-icon goal.

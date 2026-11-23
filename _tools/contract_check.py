@@ -13,7 +13,12 @@ Every `NodePath("...")` property in a scene (e.g. a floating icon's `anchor_path
 
 Skipped: absolute paths (`/root/...`), lookups built at run time, and any line carrying the comment
 `# contract: optional` (for lookups the script guards, such as nodes it creates itself).
-Exit code 0 when every lookup resolves, 1 otherwise. Standard library only.
+Signals (L52): a `signal NAME` a script declares and emits (`NAME.emit(`, `emit_signal("NAME"`) must be connected
+somewhere in the scripts, scenes or tests (`NAME.connect(`, `connect("NAME"`, `await x.NAME`, a `.tscn`
+`[connection signal="NAME"`), or the emit is a message nobody hears (0.3.0's patch toast). A test listener makes it
+a test hook, which counts. A known gap waits in
+KNOWN_UNHEARD with the spec item that closes it; it prints as NOTE until it is heard, then as STALE to remove.
+Exit code 0 when every lookup resolves and every emitted signal is heard, 1 otherwise. Standard library only.
 """
 import argparse
 import os
@@ -35,6 +40,15 @@ LOOKUPS = [
 ]
 STRING = re.compile(r'"(?:[^"\\]|\\.)*"' + r"|'(?:[^'\\]|\\.)*'")
 SCENE_LITERAL = re.compile(r'"(res://[^"]+\.tscn)"')
+SIGNAL_DECL = re.compile(r'^\s*signal\s+([A-Za-z_]\w*)', re.M)
+# "script.gd:signal" -> why it may stay unheard for now, and what closes it
+KNOWN_UNHEARD = {
+    "patch_slots.gd:toast_requested": "never connected in 0.3.0; game/specs/0.3.1-playtest-fixes.md item 2 connects it",
+}
+# Checked 2026-11-22 (L52): unheard, but nothing player-facing waits on them (listeners read the state or another
+# signal: bees refresh on Economy.upgrade_changed, not PatchSlots.planted). Silent; a new unheard signal still fails.
+HOOKS = {"economy.gd:flight_level_changed", "farm_ui.gd:summary_closed", "honeycomb.gd:all_cells_uncapped",
+         "patch_slots.gd:planted", "victory_overlay.gd:shown", "victory_overlay.gd:closed"}
 
 
 class Node:
@@ -205,6 +219,50 @@ def check(root, verbose=False):
     return problems, checked, tops
 
 
+def _code(text):
+    """The text with `#` comments dropped (a `#` inside a string is rare enough in these scripts to ignore)."""
+    return "\n".join(line.split("#", 1)[0] for line in text.splitlines())
+
+
+def check_signals(root, known=None):
+    """(problems, notes): emitted signals that nothing connects, in game/scripts and game/scenes (not tests)."""
+    known = KNOWN_UNHEARD if known is None else known
+    scripts, listeners = {}, ""
+    for dirpath, _, files in os.walk(root):
+        rel = os.path.relpath(dirpath, root).replace(os.sep, "/")
+        if rel.split("/")[0] in ("addons", "builds", "reports") or "/." in "/" + rel:
+            continue
+        test = rel.split("/")[0] == "tests"   # a test listening makes it a test hook: heard, but tests declare none
+        for f in files:
+            path = os.path.join(dirpath, f)
+            if f.endswith(".gd") and test:
+                with open(path, encoding="utf-8") as fh:
+                    listeners += _code(fh.read()) + "\n"
+            elif f.endswith(".gd"):
+                with open(path, encoding="utf-8") as fh:
+                    scripts[f] = _code(fh.read())
+                listeners += scripts[f] + "\n"
+            elif f.endswith(".tscn"):
+                with open(path, encoding="utf-8") as fh:
+                    listeners += fh.read() + "\n"
+    problems, notes = [], []
+    for f, code in sorted(scripts.items()):
+        for name in SIGNAL_DECL.findall(code):
+            n = re.escape(name)
+            if not re.search(rf'\b{n}\.emit\(|emit_signal\(\s*&?"{n}"', code):
+                continue
+            heard = re.search(rf'\b{n}\.connect\(|connect\(\s*&?"{n}"|\[connection signal="{n}"|\bawait\b[^\n]*\.{n}\b', listeners)
+            key = f"{f}:{name}"
+            if key in HOOKS:
+                continue
+            if key in known:
+                notes.append(f"STALE {key} is heard now: remove it from KNOWN_UNHEARD" if heard
+                             else f"NOTE {key} emitted, never connected ({known[key]})")
+            elif not heard:
+                problems.append(f"{f}: signal {name} is emitted but nothing connects it (a message nobody hears)")
+    return problems, notes
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", default=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "game"))
@@ -217,7 +275,13 @@ def main(argv=None):
     for p in problems:
         print("CONTRACT: " + p)
     print(f"contract: {checked} lookups in {len(tops)} top-level scenes, {len(problems)} unresolved")
-    return 1 if problems else 0
+    unheard, notes = check_signals(args.root)
+    for p in unheard:
+        print("SIGNAL: " + p)
+    for n in notes:
+        print("SIGNAL " + n)
+    print(f"contract: {len(unheard)} emitted signals unheard")
+    return 1 if problems or unheard else 0
 
 
 if __name__ == "__main__":

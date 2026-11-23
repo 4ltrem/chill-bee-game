@@ -12,6 +12,9 @@ Two kinds of finding, read with goal_agent.parse_spec so the lint sees the spec 
           word, and one of them restricts it (never, only, not, hidden...) while the other asserts something there.
           That's the 2026-11-08 shape: item 11 said the farm view never cranks, then item 13's test line asked for
           a crank in the farm view, and it could never pass. A person reads each pair; it doesn't fail.
+  REVIEW  (cover) one item covers the screen (a full-height sheet, an overlay) and another shows something timed or
+          passing (a toast, "for 4 s", a timer, a flash). L52, 2026-11-22: 0.3 item 3 made the Shop full-height and
+          item 4's 4 s thriving toast played under it, unread. Say whether the timed thing waits or draws on top.
 `--item N` keeps only the REVIEW pairs touching item N: run it right after writing a play-test item.
 Standard library only.
 """
@@ -32,6 +35,12 @@ RESTRICT = re.compile(r"\b(never|only|not|no|cannot|can't|shouldn't|doesn't|don'
 GENERIC = {"camera", "screen", "button", "player", "tap", "tapped", "show", "shows", "game", "phase", "stage",
            "farm", "zoom", "first", "second", "stop", "still", "again", "also", "then", "there", "here", "where",
            "while", "after", "before", "until", "once", "both", "every", "designer", "confirmed", "kept", "play"}
+COVER = re.compile(r"full-height|full-screen|full screen|whole screen|over the whole|covers? (?:the|most of the)|"
+                   r"\boverlay\b|\bsheet\b", re.I)
+TIMED = re.compile(r"\btoasts?\b|\bfor \d+(?:\.\d+)? ?(?:s|sec|seconds)\b|\bseconds\b|\btimer\b|\bflash(?:es)?\b|"
+                   r"\bpop-?ups?\b|\b\w+_seconds\b", re.I)
+ANSWERED = re.compile(r"\b(?:waits?|queued?|draws? (?:above|over|on top))\b[^.]*\b(?:close|closes|closed|sheet|overlay|"
+                      r"shop|panel|zoom)", re.I)
 GENERIC |= {w for w in ("never", "only", "not", "cannot", "hidden", "hide", "without", "unless", "should", "shouldn")}
 
 
@@ -103,6 +112,24 @@ def review(spec_path, only=None):
     return pairs
 
 
+def cover_pairs(spec_path, only=None):
+    """[(cover item, cover sentence, timed item, timed sentence)]: one per item pair, from the Changes only."""
+    text = Path(spec_path).read_text(encoding="utf-8")
+    changes, _ = ga.parse_changes(ga.section(text, "Changes"))
+    sents = [(n, s) for n, _, body in changes for s in sentences(body)]
+    answered = {n for n, _, body in changes if ANSWERED.search(body)}   # the timed item already says what it does
+    covers = [(n, s) for n, s in sents if COVER.search(s)]
+    timed = [(n, s) for n, s in sents if TIMED.search(s) and n not in answered]
+    pairs, seen = [], set()
+    for cn, cs in covers:
+        for tn, ts in timed:
+            if cn == tn or (cn, tn) in seen or (only is not None and only not in (cn, tn)):
+                continue
+            seen.add((cn, tn))
+            pairs.append((cn, cs, tn, ts))
+    return pairs
+
+
 def check_lines(spec_path):
     """(fails, warns) on Quinn's contract lines."""
     spec = ga.parse_spec(spec_path)
@@ -130,8 +157,13 @@ def lint(spec_path, only=None, out=print):
         out(f"REVIEW {name}: item {a[0]} restricts, item {b[0]} asserts, on {', '.join(vs)} ({', '.join(shared)})")
         out(f"         {a[0]} [{a[1]}] {a[2][:160]}")
         out(f"         {b[0]} [{b[1]}] {b[2][:160]}")
+    covers = cover_pairs(spec_path, only)
+    for cn, cs, tn, ts in covers:
+        out(f"REVIEW {name}: item {cn} covers the screen, item {tn} shows something timed: is it still seen while the cover is up?")
+        out(f"         {cn} {cs[:160]}")
+        out(f"         {tn} {ts[:160]}")
     if not (fails or warns):
-        out(f"spec_lint {name}: no FAIL or WARN" + ("" if not review(spec_path, only) else "; read the REVIEW pairs"))
+        out(f"spec_lint {name}: no FAIL or WARN" + ("" if not (review(spec_path, only) or covers) else "; read the REVIEW pairs"))
     return len(fails)
 
 

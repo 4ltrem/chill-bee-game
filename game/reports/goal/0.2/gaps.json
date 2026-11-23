@@ -1,8 +1,8 @@
 {
  "spec": "0.2-first-automation.md",
  "version": "0.2",
- "at": "2026-11-22T01:11:29-05:00",
- "unit_log": "game/reports/_runs/20261121-224553/unit.log",
+ "at": "2026-11-22T11:18:18-05:00",
+ "unit_log": "game/reports/_runs/20261122-011146/unit.log",
  "goals": {
   "H": {
    "kind": "handoff",
@@ -1042,12 +1042,12 @@
    "depends": [
     "H"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
-     "kind": "node",
+     "kind": "node removed",
      "name": "ShopScroll",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "test",
@@ -1062,7 +1062,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -1076,12 +1076,12 @@
     15
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
      "name": "ShopButton",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
@@ -1108,12 +1108,12 @@
     },
     {
      "kind": "ledger",
-     "name": "daf2d7c",
+     "name": "0.2",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },

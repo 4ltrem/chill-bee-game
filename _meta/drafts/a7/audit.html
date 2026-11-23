@@ -1,0 +1,1691 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Chill Bee Game: pipeline audit and cost analysis</title><style>
+@page { size: A4; margin: 18mm 16mm 20mm; @bottom-center { content: counter(page); font-size: 9pt; color: #52514e; } }
+body { font-family: "Segoe UI", Inter, Arial, sans-serif; font-size: 10.5pt; line-height: 1.5; color: #0b0b0b;
+       background: #fff; max-width: 100%; margin: 0; }
+h1 { font-size: 22pt; margin: 0 0 6pt; }
+h2 { font-size: 15pt; margin: 18pt 0 6pt; break-before: page; border-bottom: 1px solid #e4e3df; padding-bottom: 3pt; }
+h2:first-of-type { break-before: auto; }
+h3 { font-size: 12pt; margin: 14pt 0 4pt; break-after: avoid; }
+p, li { orphans: 3; widows: 3; }
+table { border-collapse: collapse; width: 100%; margin: 6pt 0 10pt; font-size: 9pt; }
+th, td { border: 1px solid #e4e3df; padding: 3pt 5pt; text-align: left; vertical-align: top; }
+th { background: #f3f2ee; }
+tr { break-inside: avoid; }
+code { font-family: Consolas, monospace; font-size: 9pt; background: #f3f2ee; padding: 0 2pt; border-radius: 2pt; }
+pre { background: #f3f2ee; padding: 6pt; overflow-wrap: anywhere; white-space: pre-wrap; }
+img { max-width: 100%; display: block; margin: 8pt auto; break-inside: avoid; }
+a { color: #1c5cab; text-decoration: none; }
+</style></head><body><h1 id="chill-bee-game-pipeline-audit-and-cost-analysis">Chill Bee Game: pipeline audit and cost analysis</h1>
+<p>Assignment 7, deliverable 3. Data as of 2026-11-22.</p>
+<p>Sources: <code>_meta/agent-runs.md</code> and <code>agent-runs.csv</code> (765 runs), <code>_meta/learnings.md</code> (L1–L52), <code>_tools/audit_data.py</code> (every per-version, per-day and per-week number, regenerated with one command into <code>data.md</code>, <code>data/</code> and <code>charts/</code>), <code>GOAL_AGENT.md</code>, <code>STYLE_LOOP.md</code>, <code>CREW.md</code>, <code>game/reports/goal/0.3/blackboard.md</code>, git history.</p>
+<h2 id="0-summary">0. Summary</h2>
+<p>Chill Bee Game is a cozy mobile beekeeping idle game built by one developer who designs and directs, and a crew of AI agents who write the code, scenes, tests, content and documentation. Between 2026-10-14 and 2026-11-22 the pipeline produced the game design document (GDD), seven playable versions (0.1.0 Harvest through 0.3.0, the course build, play-tested and tagged on 2026-11-22), bilingual Bee Journal content, and the tooling that runs it all: 319 commits, 765 logged agent runs, 234 automated tests and 181 mutation checks.</p>
+<p>This audit looks at what that pipeline costs, in tokens and in time, where it fails, and what to change. It draws on the run log (<code>_meta/agent-runs.csv</code>), the 52 failure write-ups in <code>_meta/learnings.md</code>, the three loop write-ups (<code>CREW.md</code>, <code>STYLE_LOOP.md</code>, <code>GOAL_AGENT.md</code>), the 0.3 goal run's board, and git history.</p>
+<p><strong>Three findings.</strong></p>
+<ol>
+<li><strong>The orchestrating main session is most of the cost.</strong> The 71 logged main sessions processed about 1.15 billion tokens, roughly 79% of everything logged after the workspace restructure. All the agents together processed about 311 million. Almost all of the main session's tokens are cache reads: every call re-reads a context of 100,000 tokens or more, so the turns spent waiting on and around an agent run often cost more than the run itself.</li>
+<li><strong>The 5-hour window is the limit that binds, not the weekly one.</strong> In the one batch measured in both, the work took 21% of a 5-hour window but only 3% of the week. Work is limited by how much fits in a sitting, which pushes the pipeline toward runs that can pause and resume.</li>
+<li><strong>As the workspace grew, time, not tokens, became the constraint.</strong> In the week of 2026-11-17, workspace files (tools and docs) grew about seven times faster than game code. On 2026-11-22 the 0.3 goal run stopped for the designer 20 times, and 11 of the first 19 needed no decision. The same day spent about 106 minutes waiting on test and build scripts.</li>
+</ol>
+<p><strong>What works.</strong> Headless agents given only a slice of the spec cost five to eight times less per call than the same agents run as interactive subagents (Patricia: 161k tokens per goal-agent call against 1.25M per subagent run). Moving script execution to a Haiku runner (Rex, 92k tokens per run) took test runs off the Sonnet agents. Each loop has a script check before its AI critic, so a mechanical failure costs no agent call.</p>
+<p><strong>What to change.</strong> Default every stop the workspace can already answer (built on 2026-11-22: placeholder visuals, style-guide minimums applied automatically, earlier answers carried forward, empty questions ignored). Freeze new tooling near deadlines. Shrink the orchestrator's context: route waiting and upkeep to a cheaper operator session and start a fresh session for each milestone. Measure usage more precisely before trusting any budget figure in this document to better than ±30%.</p>
+<h2 id="1-the-pipeline-at-a-glance">1. The pipeline at a glance</h2>
+<h3 id="11-the-design-loop">1.1 The design loop</h3>
+<p>Every change follows one loop, written down in <code>CONTEXT.md</code>:</p>
+<ol>
+<li><strong>Request.</strong> The designer asks for a feature, a fix or content.</li>
+<li><strong>Proposal.</strong> An agent writes a proposal on its shelf (<code>proposals/&lt;role&gt;/</code>), with a status line. Gerard (gameplay architect) writes feature proposals that trace the effect on every other system. Terry (progression) models the numbers.</li>
+<li><strong>Decision.</strong> The designer accepts, revises or rejects. Nothing reaches <code>GDD.md</code> until the designer has accepted it. This is the workspace's one hard rule.</li>
+<li><strong>Apply.</strong> The accepted proposal is written into the GDD, then into a build spec (<code>game/specs/&lt;version&gt;.md</code>): numbered changes, the config keys each one needs, and a test contract.</li>
+<li><strong>Build.</strong> The goal agent (<code>_tools/goal_agent.py</code>) builds the spec goal by goal with Patricia (scripts), Bob (scenes) and Quinn (tests).</li>
+<li><strong>Check.</strong> Scripts run the test suites, mutation tests, screenshot scripts and the style loop. Rex, a Haiku agent, runs every Godot script.</li>
+<li><strong>Play-test.</strong> The designer plays the build. What they find becomes the next spec's play-test lines.</li>
+</ol>
+<h3 id="12-the-crew">1.2 The crew</h3>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Role</th>
+<th>Model</th>
+<th>Writes to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gerard</td>
+<td>Gameplay architect: feature proposals across systems</td>
+<td>Opus</td>
+<td><code>proposals/design/</code></td>
+</tr>
+<tr>
+<td>Terry</td>
+<td>Progression and economy numbers</td>
+<td>Opus</td>
+<td><code>proposals/balance/</code></td>
+</tr>
+<tr>
+<td>Connie</td>
+<td>Compliance: kids, ads, purchases, data</td>
+<td>Sonnet</td>
+<td>findings reports</td>
+</tr>
+<tr>
+<td>Patricia</td>
+<td>Programmer: GDScript</td>
+<td>Sonnet</td>
+<td><code>game/scripts/</code></td>
+</tr>
+<tr>
+<td>Bob</td>
+<td>Builder: Godot scenes</td>
+<td>Sonnet</td>
+<td><code>game/scenes/</code></td>
+</tr>
+<tr>
+<td>Quinn</td>
+<td>QA and build: tests, reports</td>
+<td>Sonnet</td>
+<td><code>game/tests/</code>, <code>game/reports/</code></td>
+</tr>
+<tr>
+<td>Rex</td>
+<td>Script runner: runs tests, builds, mutations, shots</td>
+<td>Haiku</td>
+<td>replies only</td>
+</tr>
+<tr>
+<td>Milo</td>
+<td>Modeler: colorbox prop variants</td>
+<td>Haiku</td>
+<td><code>game/scenes/variants/</code></td>
+</tr>
+<tr>
+<td>Vera</td>
+<td>Style critic: judges screenshots against the style guide</td>
+<td>Sonnet</td>
+<td>verdicts on run boards</td>
+</tr>
+<tr>
+<td>William</td>
+<td>Writer: story, onboarding, Bee Journal (EN/FR)</td>
+<td>Sonnet</td>
+<td><code>content/</code></td>
+</tr>
+<tr>
+<td>Clara</td>
+<td>Content critic: checks drafts against the GDD</td>
+<td>Sonnet</td>
+<td>verdicts on run boards</td>
+</tr>
+<tr>
+<td>Ruth</td>
+<td>Research: sourced claims with verbatim quotes</td>
+<td>Sonnet</td>
+<td><code>research/</code></td>
+</tr>
+<tr>
+<td>Andrew</td>
+<td>Audio curation</td>
+<td>Haiku</td>
+<td><code>audio/</code></td>
+</tr>
+<tr>
+<td>Martin</td>
+<td>Hiring manager: writes new agent definitions</td>
+<td>Haiku</td>
+<td><code>.claude/agents/</code></td>
+</tr>
+<tr>
+<td>Doris</td>
+<td>Doc auditor: end-of-day doc check, read-only</td>
+<td>Sonnet</td>
+<td>findings</td>
+</tr>
+<tr>
+<td>Oscar</td>
+<td>Operator: routes the day's work, waits, does upkeep</td>
+<td>Sonnet</td>
+<td><code>operator/</code></td>
+</tr>
+</tbody>
+</table>
+<p>Above them sits the <strong>orchestrator</strong>: the developer's main Claude Code session, on Opus. It briefs agents, reads their results, edits specs and tools, and talks to the designer. Models are chosen per role (<code>_meta/team.md</code>, with the reason for each). Opus goes where errors compound across systems or numbers, Haiku where the output has a fixed shape and a later check catches misses, and Sonnet everywhere else.</p>
+<h3 id="13-the-four-loops">1.3 The four loops</h3>
+<p>Each loop pairs a cheap script check with an AI critic, and writes one shared run board (<code>_templates/blackboard.md</code>).</p>
+<ul>
+<li><strong>Content loop</strong> (<code>_tools/generate.py</code>, <code>CREW.md</code>). William drafts, <code>voice_check.py</code> checks glossary terms and cited GDD sections by script, then Clara scores lore, tone, child safety, facts and French, and cited sources. A FAIL goes back to William with her rows, for up to three rounds. Ruth supplies sourced facts for the real-species Journal.</li>
+<li><strong>Style loop</strong> (<code>_tools/style_loop.py</code>, <code>STYLE_LOOP.md</code>). Godot renders the scene, <code>style_check.py</code> checks the palette and shape rules by script, and Vera judges the shots against the style guide's critic rules. Bob fixes her rows on a sandbox copy, under a motion guard and a unit-test gate, and the run ends with a patch for the designer. The voice half (William and Clara) uses the same structure for text.</li>
+<li><strong>Goal agent</strong> (<code>_tools/goal_agent.py</code>, <code>GOAL_AGENT.md</code>). It parses a spec into goals, scans the game for evidence of each, scores the gaps, and builds the top goal with fresh headless agents given only their slice of the spec. Checks follow, then up to two fix rounds, then a checkpoint commit, then the next goal. All the reasoning up to "what to build next" is plain Python and spends no tokens.</li>
+<li><strong>Script running</strong> (Rex). Every Godot test, build, mutation and screenshot run goes through Rex, enforced by a shell guard (<code>guard_shell.py</code> rule 7). Rex reports counts and the first error lines and changes nothing.</li>
+</ul>
+<h3 id="14-how-agent-output-reaches-the-engine">1.4 How agent output reaches the engine</h3>
+<p>Nothing an agent writes is reformatted by hand on its way into Godot:</p>
+<ul>
+<li><strong>Specs to code.</strong> A spec names its config keys, scene nodes and tests. Patricia writes a node handoff (<code>game/specs/&lt;version&gt;-node-handoff.md</code>) listing every node Bob must add, and <code>contract_check.py</code> checks that every node a script looks up exists in the scenes (on 2026-11-22: 106 lookups in 72 scenes, 0 unresolved).</li>
+<li><strong>Config and Dev mode.</strong> Every tunable is an exported variable in <code>game_config.gd</code> with its default in <code>default_config.tres</code>, marked PLACEHOLDER until balanced, and editable in-game in Dev mode.</li>
+<li><strong>Content to translations.</strong> Approved Bee Journal and UI text in <code>content/</code> is turned into Godot's translation CSV by <code>_tools/journal_csv.py</code> and loaded by <code>TranslationServer</code>, so an approved EN/FR line shows in game without being copied by hand.</li>
+<li><strong>Look to screenshots.</strong> <code>ui_shots.py</code> and the style loop render the real game headlessly, so both the critics and the designer judge actual frames, not descriptions.</li>
+</ul>
+<h2 id="2-method-and-data">2. Method and data</h2>
+<h3 id="21-how-runs-are-logged">2.1 How runs are logged</h3>
+<p>Each agent run is one row of <code>_meta/agent-runs.csv</code>, logged automatically since early November:</p>
+<ul>
+<li>A <strong>SubagentStop hook</strong> (<code>_tools/log_subagent.py</code>) logs every Agent-tool subagent.</li>
+<li><code>generate.py</code>, <code>style_loop.py</code>, <code>goal_agent.py</code>, <code>critic_check.py</code> and <code>doc_audit.py</code> log their own headless calls.</li>
+<li>A <strong>Stop hook</strong> (<code>_tools/log_session.py</code>) logs each main session as one <em>Orchestrator</em> row.</li>
+<li>The <strong>status line</strong> (<code>_tools/statusline.py</code>) records plan usage (5-hour and 7-day percentages) before and after each run, and the orchestrator's own tokens during it.</li>
+</ul>
+<p>The design-review runs from 2026-10-14 to 2026-10-26 were logged by hand. Each row is tagged <em>pre-ICM</em> or <em>post-ICM</em>: on 2026-10-26 (commit <code>4af8e88</code>) the repository was restructured as an ICM workspace, where folder structure is the agent architecture. Agents then follow their own definition and their shelf's <code>CONTEXT.md</code>, and load only the GDD sections a task touches. Appendix B lists the log's columns.</p>
+<h3 id="22-two-measures-that-cant-be-mixed">2.2 Two measures that can't be mixed</h3>
+<p>The log holds two token counts, and they differ several-fold for the same run:</p>
+<ul>
+<li><strong>Final context</strong>: the size of the conversation at the agent's last call. The Agent tool reports it.</li>
+<li><strong>Total processed</strong>: the sum over all of an agent's calls. Each call re-sends the conversation, mostly as cheap cache reads, so this grows with the number of turns.</li>
+</ul>
+<p>For example, Martin's run hiring Clara was 39,232 tokens of final context but 234,632 total processed. This audit compares rows only within one measure. Unless a figure is marked <em>final context</em>, it is total processed.</p>
+<h3 id="23-calibrating-against-the-plans-limits">2.3 Calibrating against the plan's limits</h3>
+<p>The developer is on a Claude Team plan with a rolling 5-hour limit and a weekly limit, shared by every session and subagent. Anthropic does not publish these limits as token counts, so they were calibrated from the status line's percentage readings:</p>
+<table>
+<thead>
+<tr>
+<th>Calibration</th>
+<th>Basis</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-10-26, Terry's native-species run</td>
+<td>final context; weekly 11% → 12%, 5-hour 65% → 70%</td>
+<td>about 138k tokens per 1% of the week; about 2.0M per day</td>
+</tr>
+<tr>
+<td>2026-11-04, Prototype 0 revision 3 batch</td>
+<td>total processed, orchestrator included; weekly 28% → 31%, 5-hour 63% → 84%</td>
+<td>3.7M–4.5M tokens per 1% of the week (370M–450M per week); about 650k per 1% of the 5-hour window</td>
+</tr>
+</tbody>
+</table>
+<p>The two can't be compared with each other, because they use different measures. Both are coarse: <code>/usage</code> shows whole percentages, so a 1% change could be anywhere from about 0.5% to 1.5%, and a 3% change carries about ±30%. Every budget figure in this audit inherits that error.</p>
+<h3 id="24-limits-of-the-data">2.4 Limits of the data</h3>
+<ul>
+<li><strong>Pre-ICM rows</strong> have final context only, and were logged by hand.</li>
+<li><strong>The orchestrator row</strong> covers a whole session, including time when it waited on a run or did unrelated work. It can't be divided between the tasks it served without the per-run orchestrator columns, which exist only since 2026-11-03.</li>
+<li><strong>Usage readings</strong> are missing where the status line wasn't running, for example during headless runs started from another session.</li>
+<li><strong>The note field</strong> of the CSV holds free text with commas. Totals here are computed from the generated summary in <code>_meta/agent-runs.md</code> (runs × average per agent), not by summing columns by hand.</li>
+<li><strong>Which measure counts against the plan</strong> is not published. The 2026-11-04 calibration suggests total processed, including cache reads, tracks the 5-hour window, but one batch is not proof.</li>
+</ul>
+<h2 id="3-cost-by-component">3. Cost by component</h2>
+<p>The plan is flat-rate, so the cost that matters is not money but the share of the 5-hour and weekly limits each part uses, and the time it takes. This section measures tokens. Section 7 measures time.</p>
+<h3 id="31-totals">3.1 Totals</h3>
+<p>Post-ICM totals by log table (runs × average total processed, from the generated summary in <code>_meta/agent-runs.md</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Runs</th>
+<th>Average per run</th>
+<th>Total</th>
+<th>Share</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Orchestrator (main sessions)</td>
+<td>71</td>
+<td>16.2M</td>
+<td>1,152M</td>
+<td>78.7%</td>
+</tr>
+<tr>
+<td>Agent-tool subagents</td>
+<td>295</td>
+<td>819k</td>
+<td>241.5M</td>
+<td>16.5%</td>
+</tr>
+<tr>
+<td>Goal agent calls (headless)</td>
+<td>246</td>
+<td>226k</td>
+<td>55.6M</td>
+<td>3.8%</td>
+</tr>
+<tr>
+<td>Content generation</td>
+<td>55</td>
+<td>117k</td>
+<td>6.4M</td>
+<td>0.4%</td>
+</tr>
+<tr>
+<td>Doc audits (Doris)</td>
+<td>16</td>
+<td>295k</td>
+<td>4.7M</td>
+<td>0.3%</td>
+</tr>
+<tr>
+<td>Style loop</td>
+<td>34</td>
+<td>83k</td>
+<td>2.8M</td>
+<td>0.2%</td>
+</tr>
+<tr>
+<td>Probes and pick match</td>
+<td>3</td>
+<td>16k</td>
+<td>&lt;0.1M</td>
+<td>&lt;0.1%</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>720</strong></td>
+<td></td>
+<td><strong>≈1,463M</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The 32 pre-ICM runs (design review, cross-examination, Gerard's and Terry's first proposals) logged final context only, so they are left out. A full design review, both rounds with 12 agent runs, used about 586k tokens of final context the first time and 634k the second.</p>
+<p>Two things stand out. The orchestrator is nearly four-fifths of the total. And within the agents, the same roles cost very different amounts depending on how they are run: as interactive subagents (16.5%) or as headless calls with a sliced brief from a script (3.8%, for a similar number of runs).</p>
+<h3 id="32-where-the-agents-tokens-go">3.2 Where the agents' tokens go</h3>
+<p><strong>Agent-tool subagents</strong> (241.5M):</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Runs</th>
+<th>Average</th>
+<th>Total</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quinn</td>
+<td>51</td>
+<td>1.98M</td>
+<td>100.9M</td>
+<td>tests, builds and reports; the costliest per run (long Godot runs read in full before Rex existed)</td>
+</tr>
+<tr>
+<td>Patricia</td>
+<td>36</td>
+<td>1.25M</td>
+<td>45.2M</td>
+<td>whole features built in one run (Prototype 0: 716k in 14 min)</td>
+</tr>
+<tr>
+<td>general-purpose</td>
+<td>17</td>
+<td>2.26M</td>
+<td>38.4M</td>
+<td>open-ended research and one-off tasks</td>
+</tr>
+<tr>
+<td>Bob</td>
+<td>32</td>
+<td>829k</td>
+<td>26.5M</td>
+<td>scenes, each with a render and a screenshot read</td>
+</tr>
+<tr>
+<td>Rex</td>
+<td>126</td>
+<td>92k</td>
+<td>11.6M</td>
+<td>script runs on Haiku</td>
+</tr>
+<tr>
+<td>Milo</td>
+<td>12</td>
+<td>837k</td>
+<td>10.0M</td>
+<td>colorbox variants</td>
+</tr>
+<tr>
+<td>Terry, Gerard, Martin, others</td>
+<td>21</td>
+<td></td>
+<td>8.8M</td>
+<td>proposals, numbers, hires</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Goal agent calls</strong> (55.6M):</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Calls</th>
+<th>Average</th>
+<th>Total</th>
+<th>Average time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Quinn</td>
+<td>91</td>
+<td>316k</td>
+<td>28.7M</td>
+<td>57 s</td>
+</tr>
+<tr>
+<td>Patricia</td>
+<td>102</td>
+<td>161k</td>
+<td>16.4M</td>
+<td>127 s</td>
+</tr>
+<tr>
+<td>Bob</td>
+<td>53</td>
+<td>198k</td>
+<td>10.5M</td>
+<td>35 s</td>
+</tr>
+</tbody>
+</table>
+<p>The same three agents cost 1.25M–1.98M per subagent run, but 161k–316k per goal-agent call. The tasks are not identical: a subagent run often built a whole feature, while a goal-agent call builds one goal or one fix. Even allowing for that, the difference is large. It comes from three choices in <code>goal_agent.py</code>: each call gets only its slice of the spec, never the whole document; calls are capped (30 turns for a build, 15 for a fix, after L11 and L33); and agents are told not to run tests, because the script runs them after the call.</p>
+<p><strong>Rex</strong> shows the same effect for script running. Before Rex, Quinn ran his own tests: one such run took 974k tokens over 38 turns (L21), and on 2026-11-04 long suite runs on Quinn's Sonnet took 21% of the plan's usage. Rex's runs average 92k tokens on Haiku.</p>
+<h3 id="33-the-orchestrators-share">3.3 The orchestrator's share</h3>
+<p>The orchestrator costs the most because of how calls are billed against context. Each of its calls re-reads the whole conversation, which in a working session is 100,000 tokens or more. On 2026-11-03 the main session stood at about 156.5M tokens processed over 421 calls, 154.4M of them cache reads, against about 11.1M for every post-ICM agent run logged up to then.</p>
+<p>Since 2026-11-03 the log also records the orchestrator's tokens during each agent run: 340k to 8.9M per run, median about 760k. The turns around an agent run (writing the brief, waiting, reading the result) often cost more than the run. The worst case was 8.9M during Patricia's 14-minute build, when the main session kept working while she ran.</p>
+<p>This finding drove three changes:</p>
+<ul>
+<li><strong>A fresh session per milestone</strong> (cost rule 9), so the context restarts small.</li>
+<li><strong>An operator role</strong> (Oscar, <code>claude --agent operator</code>, on Sonnet) for routing, waiting and upkeep. The roster records the reason: the Opus main session was about 83% of logged tokens, and about half of that sat in routing and waiting.</li>
+<li><strong>Waiting without spending turns.</strong> The goal agent and other loops run as background scripts, and the session is woken when they finish instead of polling.</li>
+</ul>
+<h3 id="34-the-binding-limit">3.4 The binding limit</h3>
+<p>The 2026-11-04 calibration batch (four runs: Quinn's tests, Patricia, Bob, Quinn's report) took 3% of the weekly limit but 21% of the 5-hour window. That day as a whole ran about 60M agent tokens and 23.5M orchestrator tokens, and moved the weekly bar from 33% to 47%, two days' share in one. Those numbers led directly to the nine cost rules (section 8).</p>
+<p>In practice the 5-hour window decides how much work fits in a sitting. A long goal run can't safely start late in a window. That is why <code>budget_guard.py</code> checks every agent call against the window and the week's pace, and why goal runs pause and resume rather than fail (L3).</p>
+<h3 id="35-did-the-icm-restructure-cut-cost">3.5 Did the ICM restructure cut cost?</h3>
+<p>The evidence is mixed, and this audit can't claim a clean effect:</p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Pre-ICM (final context)</th>
+<th>Post-ICM (final context)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Design review agents (read the whole GDD)</td>
+<td>41.6k</td>
+<td>n/a (no post-ICM review)</td>
+</tr>
+<tr>
+<td>Gerard</td>
+<td>71.7k (2 runs)</td>
+<td>88.0k (4 runs)</td>
+</tr>
+<tr>
+<td>Terry</td>
+<td>126.6k (5 runs)</td>
+<td>67.7k (3 runs)</td>
+</tr>
+<tr>
+<td>William (content)</td>
+<td>n/a</td>
+<td>21.4k</td>
+</tr>
+</tbody>
+</table>
+<p>Terry's runs got smaller and Gerard's got larger, but the tasks changed: Gerard's later proposals traced more systems. What the restructure clearly did was make costs attributable. Each agent loads known files, each loop logs its calls, and a brief can be sliced to the section it needs. The large savings came after that, from slicing briefs and from moving work out of agents and into scripts.</p>
+<h3 id="36-over-time">3.6 Over time</h3>
+<p><img alt="Tokens processed per day, by component" src="charts/tokens-per-day.svg" /></p>
+<p>Tokens per day (<code>data/daily.csv</code>), each run on the day it ended. Work came in two blocks: 2026-11-03 to 11-10 (0.1.0 to 0.2.0) and 2026-11-20 to 11-22 (A6, 0.3.0), with almost nothing between while the developer was away. The orchestrator (blue) is the largest part of every busy day. Agent-tool subagents (orange) were large in the first block, when Patricia, Bob and Quinn built whole features as subagents, and small in the second, when the goal agent (aqua) did the building in sliced headless calls. A main session is one row, so a long session lands as one spike: the 170M on 11-03 is the session that ran from 10-31.</p>
+<p><img alt="Weekly plan usage" src="charts/weekly-usage.svg" /></p>
+<p>Weekly plan usage, the highest status-line reading each day. Twice the first block nearly used up a week in four days (90% on 11-06, 83% on 11-10); the drops are the weekly resets. In the second block, three days took the week from 8% to 47%, which is why the budget guard held heavy agents on 2026-11-22 (46% used with 21% of the week gone).</p>
+<h2 id="4-cost-per-output">4. Cost per output</h2>
+<h3 id="41-the-goal-agent">4.1 The goal agent</h3>
+<p><strong>The 0.1.4 run</strong> (<code>GOAL_AGENT.md</code>, Assignment 5) built a node handoff, 15 numbered changes and their test lines: 38 goals in three runs.</p>
+<table>
+<thead>
+<tr>
+<th>Part of the run</th>
+<th>Agent calls</th>
+<th>Tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First run (H, C1–C4, C6, C7, T2.x)</td>
+<td>27</td>
+<td>6.11M</td>
+</tr>
+<tr>
+<td>Second run (rebuilds, C5, C8–C10)</td>
+<td>11</td>
+<td>2.46M</td>
+</tr>
+<tr>
+<td>Third run (C5 fixes, C11–C15, test lines T.1–T15.1)</td>
+<td>42</td>
+<td>10.63M</td>
+</tr>
+<tr>
+<td>T14.4/T14.5 hive alignment (stopped for the designer)</td>
+<td>15</td>
+<td>4.57M</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>95</strong></td>
+<td><strong>23.76M</strong></td>
+</tr>
+</tbody>
+</table>
+<p>That averages about 625k tokens per finished goal. The distribution is uneven. The test lines (23 calls, 7.46M) and C2's two fix rounds (2.86M, 57 minutes) were the costly parts, and 4.57M, 19% of the run, went to one item that the agent never finished (the hive alignment, finished outside the agent).</p>
+<p><strong>The 0.3 run</strong> (2026-11-22) built all 14 goals of items 1–6 in 71 agent calls and 11.6M tokens, with 20 designer stops and several goals accepted by hand after a stop. Its average per call, 163k, is well below 0.1.4's 250k and 0.2's 253k (data.md, Goal-agent runs):</p>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>Agent calls</th>
+<th>Tokens</th>
+<th>Per call</th>
+<th>Agent time</th>
+<th>Designer stops</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.1.4</td>
+<td>95</td>
+<td>24M</td>
+<td>250k</td>
+<td>241 min</td>
+<td>8</td>
+</tr>
+<tr>
+<td>0.2</td>
+<td>80</td>
+<td>20M</td>
+<td>253k</td>
+<td>60 min</td>
+<td>13</td>
+</tr>
+<tr>
+<td>0.3</td>
+<td>71</td>
+<td>12M</td>
+<td>163k</td>
+<td>33 min</td>
+<td>20</td>
+</tr>
+</tbody>
+</table>
+<p>Agent time is the sum of the calls' own durations; script runs and waiting come on top (section 7.3). Cost per call fell by a third between 0.2 and 0.3 while stops rose from 8 to 20: the run got cheaper per call and more expensive in the designer's attention. That reflects the fixes made in between: a test-impact list instead of a full suite per step (L40–L42), diag lines instead of guessed fixes (L47), and one owner per fix round (L12).</p>
+<h3 id="42-the-content-crew">4.2 The content crew</h3>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Result</th>
+<th>Tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Onboarding script</td>
+<td>PASS, then revised for one designer note</td>
+<td>221k + 195k</td>
+</tr>
+<tr>
+<td>Biome intros (four biomes)</td>
+<td>PASS in round 1</td>
+<td>301k</td>
+</tr>
+<tr>
+<td>Bee Journal, fictional species</td>
+<td>FAIL, fixed, PASS in round 2</td>
+<td>352k</td>
+</tr>
+<tr>
+<td>Bee Journal, real species</td>
+<td>three runs: stopped at the cap twice, then PASS in round 2</td>
+<td>879k + 503k + 1,170k</td>
+</tr>
+</tbody>
+</table>
+<p>Invented content costs 300k–420k per approved piece. Real-world facts cost about six times more (2.55M over three runs) because every claim needs a source that says exactly what the draft says. The first run, with William researching alone, used 34 turns and 720k tokens on searching and still overclaimed. Research then moved to Ruth, whose briefs return each claim with a verbatim quote, and Clara checks quotes from a cache (<code>source_cache.py</code>) instead of fetching every URL each round.</p>
+<h3 id="43-the-style-loop">4.3 The style loop</h3>
+<table>
+<thead>
+<tr>
+<th>Run</th>
+<th>Calls</th>
+<th>Tokens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.2 farm, run 5: 3 rounds, no designer step</td>
+<td>Vera × 3, Bob × 2, Patricia × 2</td>
+<td>768k</td>
+</tr>
+<tr>
+<td>0.2 farm, run 1</td>
+<td>Vera, Bob, Patricia</td>
+<td>582k</td>
+</tr>
+<tr>
+<td>0.1.2 farm: 3 rounds, 2 designer stops</td>
+<td>Vera × 3, Bob × 2</td>
+<td>467k</td>
+</tr>
+<tr>
+<td>Voice loop, biome intros scored re-run</td>
+<td>Clara × 2, William</td>
+<td>196k</td>
+</tr>
+</tbody>
+</table>
+<p>Vera costs about 53k tokens per round, a predictable price for judging shots. Bob is the variable: 51k on a short fix list and 256k when his rows need layout reasoning (17 turns). The script half (renders, <code>style_check.py</code>, screenshots) costs no tokens. The cheapest round is one where <code>style_check.py</code> fails the scene before Vera is called.</p>
+<h3 id="44-what-a-step-costs-end-to-end">4.4 What a step costs end to end</h3>
+<p>The plan's limits count everything, not just agent calls. The 2026-11-04 revision batch is the one fully measured case: 11.06M subagent tokens plus 2.58M orchestrator tokens (2.53M of them cache reads) for four runs, about 21% of a 5-hour window. At that rate a sitting fits about four such batches. A goal-agent step with sliced briefs costs a fraction of that (0.3: 163k per call), which is why most building has moved there.</p>
+<h3 id="45-cost-and-output-per-version">4.5 Cost and output per version</h3>
+<p>Each version runs from the previous version's last commit to its own (the commit its build came from; 0.3.0 is the tag <code>v0.3.0</code>). A run counts in the version where it ended. Lines are added plus deleted, without generated reports, CSV, JSON or images. Play-test findings are the designer's findings on that version, counted as the spec items that fixed them.</p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Built</th>
+<th>Days</th>
+<th>Commits</th>
+<th>Game lines</th>
+<th>Tool lines</th>
+<th>Agent calls</th>
+<th>Tokens</th>
+<th>Tests at end</th>
+<th>Mutations at end</th>
+<th>Play-test findings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Design</td>
+<td>GDD, two reviews, proposals</td>
+<td>19</td>
+<td>46</td>
+<td>68</td>
+<td>2,210</td>
+<td>4</td>
+<td>0.9M</td>
+<td>0</td>
+<td>0</td>
+<td>n/a</td>
+</tr>
+<tr>
+<td>0.1.0</td>
+<td>Prototype 0, 0.1 Harvest</td>
+<td>3</td>
+<td>18</td>
+<td>16,365</td>
+<td>895</td>
+<td>19</td>
+<td>239M</td>
+<td>78</td>
+<td>0</td>
+<td>6</td>
+</tr>
+<tr>
+<td>0.1.1–0.1.2</td>
+<td>play-test fixes, bottling and sale</td>
+<td>1</td>
+<td>9</td>
+<td>13,772</td>
+<td>652</td>
+<td>12</td>
+<td>46M</td>
+<td>110</td>
+<td>8</td>
+<td>not itemised</td>
+</tr>
+<tr>
+<td>0.1.3</td>
+<td>farm layouts, camera stops</td>
+<td>1</td>
+<td>18</td>
+<td>5,107</td>
+<td>1,769</td>
+<td>71</td>
+<td>195M</td>
+<td>144</td>
+<td>50</td>
+<td>4</td>
+</tr>
+<tr>
+<td>0.1.4</td>
+<td>UI placement (A5, first goal-agent run)</td>
+<td>2</td>
+<td>85</td>
+<td>5,719</td>
+<td>3,608</td>
+<td>158</td>
+<td>366M</td>
+<td>178</td>
+<td>87</td>
+<td>13</td>
+</tr>
+<tr>
+<td>0.2.0</td>
+<td>first automation (goal agent)</td>
+<td>1</td>
+<td>42</td>
+<td>12,828</td>
+<td>672</td>
+<td>79</td>
+<td>189M</td>
+<td>208</td>
+<td>136</td>
+<td>6</td>
+</tr>
+<tr>
+<td>0.2.1</td>
+<td>0.2.0 play-test fixes, A6, operator</td>
+<td>13</td>
+<td>44</td>
+<td>1,578</td>
+<td>4,663</td>
+<td>171</td>
+<td>284M</td>
+<td>219</td>
+<td>154</td>
+<td>1</td>
+</tr>
+<tr>
+<td>0.3.0</td>
+<td>course build, items 1–6</td>
+<td>1</td>
+<td>56</td>
+<td>1,868</td>
+<td>382</td>
+<td>116</td>
+<td>85M</td>
+<td>234</td>
+<td>181</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<p>The design phase's tokens are small only because its main sessions were not logged (the first logged main session starts 2026-10-31) and its 32 pre-ICM agent runs have no timestamps; they are in section 3.1.</p>
+<p><img alt="Tests and mutations at each version's end" src="charts/tests-per-version.svg" /></p>
+<p>What the table shows:</p>
+<ul>
+<li><strong>Tokens per line of game code</strong> ranged from about 3k (0.1.1–0.1.2) and 15k (0.1.0, 0.2.0) to 64k (0.1.4), 45k (0.3.0) and 180k (0.2.1). The cheap versions added whole systems (the harvest loop, bottling, the automation upgrades). The dear ones were layout and UI work, where each change is small and each needs renders, votes and play-test rounds, and 0.2.1, whose 13 days went mostly into the workspace (4,663 tool lines against 1,578 game lines: the operator, the naming restructure, the style-loop sandbox).</li>
+<li><strong>Play-test findings follow UI work, not code size.</strong> Per thousand game lines, 0.1.0 and 0.2.0 drew about 0.4 findings each; 0.1.4 drew 2.3 and 0.3.0 drew 2.1. The checks catch logic; what reaches the designer is placement, overlap and visibility. 0.3.0's four findings (L52) were all of that kind: a control that moved, a message hidden under a sheet, a message never wired, and a screen only reachable through another.</li>
+<li><strong>Tests grew every version, mutations faster.</strong> From 78 tests and no mutation checks at 0.1.0 to 234 tests and 181 mutations at 0.3.0. The mutation count passed half the test count at 0.1.4, when every new test started needing a mutation that proves it fails for the right reason (section 6.5).</li>
+<li><strong>The goal agent made building cheaper per call but not per version.</strong> 0.2.0 (goal agent) cost about the same per game line as 0.1.0 (written by subagents), because its savings went into more checking: 79 calls and 136 mutation checks against 19 calls and none.</li>
+</ul>
+<h2 id="5-stage-by-stage-audit">5. Stage-by-stage audit</h2>
+<p>Each loop is audited on the same four questions: what it catches, how it has failed, what it costs, and how often the designer still had to step in.</p>
+<h3 id="51-the-content-crew">5.1 The content crew</h3>
+<p><strong>What it catches.</strong> Clara has caught errors a quick human read would miss:</p>
+<ul>
+<li>two French grammar errors in the fictional Journal, including a wrong gender agreement ("spores bioluminescents");</li>
+<li>four real-species facts whose cited page did not say what the draft claimed (for example, "all nesting in tiny burrows underground" when the cited government page says some sweat bees nest in wood);</li>
+<li>all three planted errors in a known-bad onboarding draft (a false bee fact, a wrong "cheapest upgrade" claim, a wrong GDD section number).</li>
+</ul>
+<p><strong>How it has failed.</strong></p>
+<ul>
+<li><strong>A PASS with no evidence.</strong> The first version of Clara passed the known-bad draft with an empty findings table. Her facts check covered only cited facts, she trusted the draft's claim that it had none, and a PASS needed no evidence. Her rules were tightened: check every line for real-world claims, and list what was checked. The bad draft became a permanent regression test, <code>critic_check.py</code>, re-run whenever her model or rules change.</li>
+<li><strong>Run-to-run variation.</strong> After later rule changes, two <code>critic_check.py</code> runs each caught two of the three planted errors, a different miss each time. That points to variation between runs rather than a broken rule. Her lore check was widened to game facts in tables and notes, where both misses sat.</li>
+<li><strong>A cheaper model that overclaimed.</strong> Ruth on Haiku summarised eight claims as "all supported" while her own notes called two only "predominantly" or "plausibly" true. Clara failed four. Ruth went back to Sonnet. The roster now records a review rule for any model downgrade.</li>
+<li><strong>Research inside the writer.</strong> William researching alone used 720k tokens and still overclaimed. Splitting research (Ruth) from writing (William) from checking (Clara) cost more calls but made each step checkable.</li>
+</ul>
+<p><strong>Cost.</strong> 300k–420k tokens per approved invented piece and about 2.55M for the real-species Journal (section 4.2). Two script checks built after Assignment 4, <code>voice_check.py</code> (glossary terms, cited sections, empty table cells) and <code>source_cache.py</code> (Ruth's quotes reused by URL), moved mechanical checks out of Clara's call.</p>
+<p><strong>Designer involvement.</strong> Every piece still needs the designer's approval, and the designer still corrects voice. The onboarding script passed Clara, but its "honey money" line was replaced at the designer's request. The critic keeps text consistent with the GDD. It does not replace the designer's ear.</p>
+<h3 id="52-the-style-loops">5.2 The style loops</h3>
+<p><strong>What it catches.</strong> <code>style_check.py</code> catches palette and primitive-shape breaks by script before any agent call: for example, decals thinner than rule V6 on three truck variants (L31). Vera judges what a script can't: glass, contrast, silhouette. She is calibrated on fixtures with known errors (<code>style_critic_check.py</code>) before she judges a round.</p>
+<p><strong>How it has failed.</strong></p>
+<ul>
+<li><strong>Green checks, wrong look (L9).</strong> Hive and frame models changed wrongly three times while every test and the style loop passed. Tests checked numbers, and nothing compared the result with the variant the designer had picked. The fix was <code>pick_match.py</code>, where Vera compares the live prop with the pick, plus a rule that no model change is called done on tests alone.</li>
+<li><strong>A rule the pick itself broke (L10).</strong> A spec rule ("cover 90% of the frame") made agents grow cells past the frame. The designer's picked variant covered only about 77%. Spec numbers are now checked against the pick before they're added.</li>
+<li><strong>The refiner broke more than it fixed (L43).</strong> In the first 0.2 runs Bob, fixing Vera's rows in the live game, shrank and moved the truck, gave it a diagonal exit, overfilled the crate and moved the Spin icon. The designer saw it in the renders. The loop now works on a sandbox copy. After each turn, a guard puts back motion, picked props and any UI change, and the unit suite runs on the copy; a turn that fails is undone. The run ends with a patch for the designer. The A6 demo run passed every gate and changed nothing in the live game.</li>
+<li><strong>Variants that didn't connect (L31)</strong> and <strong>recombinations that cost full runs (L32).</strong> Milo's parts drifted apart when each was tilted separately; tilts now live on one parent node. Rounds that only recombined parts already seen cost 34k–112k each until <code>compose_variant.py</code> made them a zero-token script recipe.</li>
+</ul>
+<p><strong>Cost.</strong> About 53k per Vera round; 51k–256k per Bob turn; 467k–768k per three-round run.</p>
+<p><strong>Designer involvement.</strong> The 0.1.2 run needed two designer stops. The 0.2 run 5 needed none. One known limit remains: the gate also undoes a turn when a flaky timing test fails, which throws away good work.</p>
+<h3 id="53-the-goal-agent">5.3 The goal agent</h3>
+<p><strong>What it does well.</strong> Everything up to "what to build next" is plain Python: parsing the spec, scanning the game for evidence, scoring gaps, ordering goals. It costs no tokens, and it is testable. On 2026-11-22 its own test suite had 73 cases on a fixture game with fake agents. It found 38 of 38 goals done at the end of 0.1.4, it holds a goal with an open question instead of guessing, and it pauses rather than fails on budget and network errors.</p>
+<p>Compared with Claude Code's built-in <code>/goal</code>, which judges a free-text condition with a model, it failed differently. <code>/goal finish 0.1.4</code> was judged unmet 16 times because its condition held steps only the designer could do: a play-test, a web check, an upload (L23). A <code>/goal</code> condition now holds only what an agent can make true, and <code>goal_agent.py</code> runs inside it.</p>
+<p><strong>How it has failed.</strong> The goal agent has the most learnings of any component, about 20 of the 50, in four families:</p>
+<ul>
+<li><strong>False stops</strong> (L42c, L48, L49, L50, and the 2026-11-22 review): a behaviour question filed as a visual vote, two stops on code that was fine because Godot's class cache was stale, a "question" that said there was none, and mutation checks that found "nothing new" because the mutations had been committed earlier. Each one needed the designer to read a board and re-run a command.</li>
+<li><strong>Misrouted fix rounds</strong> (L12, L42b, L47): two owners fixing the same failure; two rounds sent to Patricia while she said both times the fault was in Quinn's new test; two rounds of guessing at failures whose cause was in the tests. The fixes: one owner per round, a reply that blames the tests routes the next round to Quinn, and a one-line <code>diag:</code> in the failure message instead of a guess.</li>
+<li><strong>Wrong evidence</strong> (L18, L34, L44): a "fix" logged with no code change; the plan marking 12 test lines done after Quinn wrote one; a green goal held because the scan read an older log. Each led to a stricter evidence rule: fail-first tests for play-test bugs, a code change required for a bug fix, each test's newest result across logs.</li>
+<li><strong>Overreach and slow gates</strong> (L11, L19, L33, L40–L42): a fix round of 36 turns and 777k tokens; Bob running 47 turns and 1.09M tokens on a step and rebuilding the honey cell; three Quinn rounds (about 800k tokens) on a test that never ran; full test suites per round. The fixes were turn caps, sliced briefs, style rows limited to the files a step changed, and test-impact lists.</li>
+</ul>
+<p><strong>Cost.</strong> About 625k tokens per finished goal on 0.1.4; 163k per call on 0.3.</p>
+<p><strong>Designer involvement.</strong> On 0.1.4, five steps were accepted by hand after their fix rounds ran out, each a test or spec line that pinned the old layout or a bug in the agent's own mutation check. On 0.3, 19 stops in one day (section 7.2).</p>
+<h3 id="54-scripts-and-tests">5.4 Scripts and tests</h3>
+<p><strong>What it does well.</strong> Every Godot run goes through repository scripts (<code>godot_run.py</code>, <code>build.py</code>, <code>mutate.py</code>, <code>ui_shots.py</code>) that print short summaries, and every script run goes through Rex. Agents read counts and first error lines, never raw Godot logs. Mutation testing checks the tests themselves: L16 found a placement test that passed only because of the order in which icons updated, and the mutation now proves the test fails when it should.</p>
+<p><strong>How it has failed.</strong> Test time is this pipeline's slowest resource, and its history shows each speed-up being outgrown:</p>
+<table>
+<thead>
+<tr>
+<th>When</th>
+<th>What</th>
+<th>Wall time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-11-05 (L4)</td>
+<td>each mutation re-ran all 110 unit tests</td>
+<td>an hour, then 36 s with a per-mutation test list</td>
+</tr>
+<tr>
+<td>2026-11-08 (L17)</td>
+<td>full suite at real time, cut off by the 15-minute cap</td>
+<td>15 min, then ×6 speed and real-time tests skipped for checkpoints</td>
+</tr>
+<tr>
+<td>2026-11-21 (L40)</td>
+<td>the goal gate ran the full unit suite every round</td>
+<td>T12.1: 46 min wall for 2 min of agent time</td>
+</tr>
+<tr>
+<td>2026-11-21 (L41)</td>
+<td>the unit suite outgrew its 900 s timeout</td>
+<td>each timeout started a fix round on code with no bug</td>
+</tr>
+<tr>
+<td>2026-11-21 (L42)</td>
+<td>even narrowed, every step ran one full unit run</td>
+<td>up to 27 min per step; replaced by a test-impact list and one full run at the end</td>
+</tr>
+</tbody>
+</table>
+<p>Two other families recur:</p>
+<ul>
+<li><strong>Stale and fragile tests</strong> (L39). One behaviour change broke 6–11 unit tests at a time, because tests copied the game flow inline instead of sharing helpers. The play suite was red for two versions without anyone seeing it, because the goal agent checked only the unit suite. The fixes: Quinn is briefed in parallel with the builders to update the tests a spec makes stale; shared flow helpers; the windowed suites run when a change's impact list reaches them.</li>
+<li><strong>Environment</strong> (L37, L38, L45, L48). Godot's path was hard-coded to one machine; a missing import cache failed the first render on the laptop; removing a worktree followed a Windows junction and emptied the repository's Godot folder; a stale class cache stopped the goal agent twice. A one-developer, two-machine setup proved more fragile than any single agent.</li>
+</ul>
+<h3 id="55-docs-and-upkeep">5.5 Docs and upkeep</h3>
+<p><strong>What it does well.</strong> The end-of-day routine exports the session, logs decisions, rebuilds the decision timeline page, runs the checks (<code>consistency.py</code>, <code>links.py</code>) and commits. Doris (16 audits, about 295k tokens each) reads the day's diff and reports doc statements the changes made untrue. Generated sections, like this audit's source tables in <code>_meta/agent-runs.md</code>, are rebuilt by script and never edited by hand.</p>
+<p><strong>How it has failed.</strong> The checks verify that what a doc says is true, not that it says enough. README.md's map of the repository fell 12 days behind, missing the A5 and A6 write-ups, the style guide and five folders, and no check saw it, because an untouched README contradicts nothing (L46). A map-coverage check now fails the commit when a top-level file has no row. The README's TBD list is still not checked against the GDD.</p>
+<h2 id="6-failure-audit-learnings-l1l52">6. Failure audit: learnings L1–L52</h2>
+<p><code>_meta/learnings.md</code> holds one entry per break: what broke, how it was noticed, the cause, the fix, and the check that now prevents it. Appendix A lists all 52. This section looks at them together.</p>
+<h3 id="61-by-cause">6.1 By cause</h3>
+<table>
+<thead>
+<tr>
+<th>Cause</th>
+<th>Entries</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pipeline tooling bugs (our own scripts and pages)</td>
+<td>L5, L6, L7, L13, L14, L15, L20, L34, L35, L44, L49, L50, L51</td>
+<td>13</td>
+</tr>
+<tr>
+<td>Tests: slow, stale, weak or skipped</td>
+<td>L4, L16, L17, L19, L39, L40, L41, L42, L47</td>
+<td>9</td>
+</tr>
+<tr>
+<td>Environment and platform</td>
+<td>L24, L36, L37, L38, L45, L48</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Agents working outside their brief</td>
+<td>L12, L21, L31, L33, L43</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Green checks, wrong result</td>
+<td>L9, L10, L18, L22, L46, L52</td>
+<td>6</td>
+</tr>
+<tr>
+<td>Process and the human loop</td>
+<td>L1, L2, L8, L23, L30</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Design canvas work</td>
+<td>L25, L26, L27, L28, L29</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Cost blowups</td>
+<td>L3, L11, L32</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>The largest group is the pipeline's own tooling, not the agents. As the workspace added scripts, the scripts themselves became the main source of breaks. Agents working outside their brief are a smaller group than expected, and every entry there led to a structural limit (folder scope checks, turn caps, sandboxes) rather than a stronger instruction.</p>
+<h3 id="62-how-they-were-noticed">6.2 How they were noticed</h3>
+<table>
+<thead>
+<tr>
+<th>First noticed by</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The designer (play-test, reading a board, watching renders, using a page)</td>
+<td>25</td>
+</tr>
+<tr>
+<td>A check or script (Rex's report, a test, the console, a tool refusal)</td>
+<td>11</td>
+</tr>
+<tr>
+<td>The orchestrator or operator reading a board or a diff</td>
+<td>12</td>
+</tr>
+<tr>
+<td>Not recorded</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<p>About half were first noticed by the designer, and they are the expensive half: models wrong with every check green (L9), a fix logged with no code change (L18), the style refiner breaking the game (L43), the README 12 days stale (L46). These are failures where the check passed and the result was wrong, so only someone looking at the actual result could see them. Several led to new "look" checks (pick match, fail-first tests, map coverage), but the designer's eye remains the last check for anything visual.</p>
+<p>Time to detection varied from minutes (a refused publish, L27) to days: a day for uncommitted fix-round edits (L1), 12 days for the README (L46), and two versions for the red play suite (L39). The long ones share a cause: something nobody ran or read regularly.</p>
+<h3 id="63-how-well-they-are-prevented">6.3 How well they are prevented</h3>
+<p>37 of the 52 end in a check in code (L52's in part: three of its six checks are built, three wait for budget): a test in <code>test_goal_agent.py</code> or <code>test_generate.py</code>, a guard in <code>guard_shell.py</code>, a gate in a loop script, or a refusal in a page builder. The other 15 rest on a written rule or are still open:</p>
+<ul>
+<li><strong>written rules (11):</strong> L2 (one working folder), L8 (the end-of-day trigger phrase), L10 (check spec numbers against the pick), L17 (fast test flags), L23 (what a <code>/goal</code> condition may hold), L25, L26, L27 and L29 (the canvas working rules in <code>UI_DESIGN.md</code>), L30 (stopping under <code>/goal</code>), L31 (the modeler's parts convention);</li>
+<li><strong>still open (4):</strong> L28 (a canvas binding not yet confirmed), L36 and L37 (not checked by script), L38 (no import refresh before the first render).</li>
+</ul>
+<p>The canvas rules are rules by nature: they govern how the orchestrator edits a page the designer is editing at the same time, which no script sees. L17 shows the cost of a rule kept only in memory: fast test settings approved on 2026-11-06 were missed on 2026-11-08 because the orchestrator briefed Rex with the plain command. The settings are now command-line flags (L36), but the fast mode is still not the default.</p>
+<h3 id="64-patterns">6.4 Patterns</h3>
+<ul>
+<li><strong>Agents satisfy the letter of a check.</strong> When a test checks a number, agents make the number right; whether the frame looks right is another matter (L9, L10). The answer has been to check against the designer's actual pick, not against a description of it.</li>
+<li><strong>False stops are a family, not a bug.</strong> L23, L30, L42c, L48, L49 and L50 are each a stop where nothing needed deciding. Each was fixed one at a time. The 2026-11-22 changes (section 7.2) address the family: default what the workspace already answers.</li>
+<li><strong>Every fix adds a check, and every check adds time.</strong> The prevention column is the reason the pipeline is reliable, and also the reason it has slowed. Section 7 measures that.</li>
+</ul>
+<h3 id="65-quality-in-numbers">6.5 Quality in numbers</h3>
+<p><img alt="Learnings per week, top causes" src="charts/learnings-per-week.svg" /></p>
+<table>
+<thead>
+<tr>
+<th>Week of</th>
+<th>Pipeline tooling</th>
+<th>Tests</th>
+<th>Environment</th>
+<th>Agents outside brief</th>
+<th>Green checks, wrong result</th>
+<th>Process</th>
+<th>Canvas</th>
+<th>Cost</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-11-02</td>
+<td>7</td>
+<td>4</td>
+<td>1</td>
+<td>2</td>
+<td>4</td>
+<td>4</td>
+<td>0</td>
+<td>2</td>
+<td>24</td>
+</tr>
+<tr>
+<td>2026-11-09</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+<td>1</td>
+<td>5</td>
+<td>1</td>
+<td>11</td>
+</tr>
+<tr>
+<td>2026-11-16</td>
+<td>4</td>
+<td>5</td>
+<td>5</td>
+<td>1</td>
+<td>2</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>17</td>
+</tr>
+</tbody>
+</table>
+<p>Breaks did not fall off as the workspace matured: 24, then 11 in a quiet week, then 17. What changed is their kind. The first week's were spread across every cause; the last week's were mostly the pipeline's own tests and environment (the Godot folder loss, stale caches, the test gate timing out), the cost of a larger machine.</p>
+<p><strong>Mutation testing.</strong> Every new test must fail when the code it guards is broken on purpose (<code>mutate.py</code>, <code>tests/mutations.json</code>). Across every logged run in the goal boards and build reports, 46 of 69 mutations were caught on the first try (67%). Each of the other 23 was a test that would have passed on broken code, so it went back to Quinn; the last 0.3 example was four weak tests fixed in <code>830416b</code> (the French Play text, the victory on the farm view, <code>show_welcome</code> off, Play's raw key). One mutation in three, at its first run, found a test that did not test what it claimed.</p>
+<p><strong>Escapes to the play-test.</strong> The designer found 34 problems across the six versions with itemised findings (section 4.5), every one in a build whose suites were green. A few were logic the tests didn't cover (0.1.4: some jars never reached the truck; harvested frames went back down full). Most were things a person sees: placement, overlap, a control that moves, a message hidden or never shown, a screen hard to reach. That is the gap the 2026-11-22 checks aim at (L52): a signal check (a message nothing listens for now fails the commit), a lint that pairs any full-screen item with anything timed, and a test rule that "shows" means seen, not just visible.</p>
+<h2 id="7-where-the-time-went">7. Where the time went</h2>
+<p>Tokens limit how much fits in a sitting. Time limits how much gets built before a deadline, and by late November time was the tighter constraint. Three things took it: the workspace itself, stops for the designer, and waiting on scripts.</p>
+<h3 id="71-building-the-workspace-against-building-the-game">7.1 Building the workspace against building the game</h3>
+<p>Lines added per week (from git; game = <code>game/scripts</code> and <code>game/scenes</code>; workspace = <code>_tools</code>, <code>_meta</code>, <code>.claude</code>, <code>operator</code>, <code>_templates</code> and top-level docs):</p>
+<table>
+<thead>
+<tr>
+<th>Week starting</th>
+<th>Game</th>
+<th>Workspace</th>
+<th>Ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-10-20</td>
+<td>1.4k</td>
+<td>13.5k</td>
+<td>1 : 9.7</td>
+</tr>
+<tr>
+<td>2026-11-03</td>
+<td>18.7k</td>
+<td>15.7k</td>
+<td>1 : 0.8</td>
+</tr>
+<tr>
+<td>2026-11-10</td>
+<td>0</td>
+<td>0.3k</td>
+<td>(almost no work)</td>
+</tr>
+<tr>
+<td>2026-11-17</td>
+<td>1.0k</td>
+<td>7.5k</td>
+<td>1 : 7.2</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Commits per day: game code vs workspace only" src="charts/commits-per-day.svg" /></p>
+<p>Commits per day, each counted once: blue if it touched game code (<code>game/scripts</code>, <code>scenes</code>, <code>tests</code>, <code>materials</code>, <code>translations</code>), orange if it touched only the workspace. In the first block about half the commits touched the game; on 2026-11-22, the busiest day (59 commits), 17 did. Per version (section 4.5), tool lines passed game lines in 0.2.1 (4,663 against 1,578), the first time since the design phase.</p>
+<p>Lines are a rough measure: scene files are verbose, and one line of a loop script can save hours. The pattern is still clear. The one week the game grew fastest, 2026-11-03, came before most of the current machinery existed: the shell guard, the goal agent's routing and evidence rules, the style loop's sandbox, mutation checks per step, usage logging per run. Since then each failure in section 6 added a check, and each check added code, briefing text and run time. The workspace did what it was built to do, preventing repeat failures, at a growing cost in time.</p>
+<h3 id="72-stops-for-the-designer">7.2 Stops for the designer</h3>
+<p>The 0.3 goal run on 2026-11-22 stopped for the designer 20 times; the table classifies the first 19, written up while the run was live. Each stop needs the designer to read the board, decide, and re-run the agent with a note. Each also costs orchestrator turns to diagnose. Classified by what was actually needed:</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Count</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Could have defaulted</td>
+<td>11</td>
+<td>4 visual numbers on new screens (placeholders by the 0.3 rule); 2 style-guide minimums asked twice (120 px touch targets, 28 px fonts); a stale Godot cache; 2 mutation-check stops caused by the run itself; a "question" that said there was none; a shop layout already drawn on the design canvas</td>
+</tr>
+<tr>
+<td>Routing gaps</td>
+<td>2</td>
+<td>scene work never sent to Bob; approved ending text with no owner for its translation rows</td>
+</tr>
+<tr>
+<td>Needed the designer or real debugging</td>
+<td>6</td>
+<td>triage of the first C3 failures; two holds where agents built nothing and explained why; two T4.1 test failures needing diagnosis; a mutation the victory test really missed (T5.1)</td>
+</tr>
+</tbody>
+</table>
+<p>On the same day, <code>goal_agent.py</code> was changed to default the first group: a spec can mark its visuals as placeholders, which are kept and listed for the play-test instead of stopping for a vote; the style guide's minimums are applied without asking; fix briefs carry the designer's earlier answers; a designer row needs an actual question; the mutation check falls back to the goal's own mutations; and build briefs are told to look up the design canvas, <code>UI_DESIGN.md</code>, the TBD list and the decision logs before asking. Applied to that day's run, those rules would have removed 11 of the 19 stops.</p>
+<p>The underlying rule, recorded as the designer's feedback: never ask the designer something the workspace already answers.</p>
+<h3 id="73-waiting-on-scripts">7.3 Waiting on scripts</h3>
+<p>On 2026-11-22, 20 Rex runs took about 106 minutes in total, a few minutes to over 30 for a full suite or a mutation run. The goal agent's own checks (a test-impact run per step, one full suite at the end) add more. Section 5.4 traces how each speed-up was outgrown as the suite grew from about 110 to about 230 tests. Two habits help most: briefing Rex with <code>--only &lt;tests&gt; --time-scale 6</code> while iterating, and running the full suite only at checkpoints.</p>
+<h3 id="74-the-designers-time">7.4 The designer's time</h3>
+<p>The designer's time is the scarcest resource in the pipeline, because the designer is also the last check for anything visual (section 6.2), the only one who can decide a design question, and the one who plays every build. Each design choice protects that time:</p>
+<ul>
+<li><strong>Votes, not prose.</strong> Visual choices go to one Design Votes page with lettered variants and sliders, so a choice is a click, not a paragraph (L29).</li>
+<li><strong>Scripts before critics.</strong> A mechanical failure is caught before any agent or designer sees it.</li>
+<li><strong>Defaults before stops.</strong> New in 2026-11-22's changes: a question the workspace can answer is answered there.</li>
+</ul>
+<p>The remaining cost is reading boards to diagnose failures. A short stop summary, saying what is needed and which file holds the answer, is still on the backlog.</p>
+<h2 id="8-cost-cuts-and-their-effect">8. Cost cuts and their effect</h2>
+<p>On 2026-11-04, after a day of about 60M agent tokens and 23.5M orchestrator tokens (weekly usage from 33% to 47%), the designer approved nine cost rules (recorded in <code>game/CONTEXT.md</code>, Process 8):</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Rule</th>
+<th>Effect where the log measures it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Test suites run through <code>godot_run.py</code>, so agents read summaries, not raw Godot logs</td>
+<td>with rule 10: Quinn's own test runs (974k, 38 turns, L21) replaced by Rex runs at about 92k</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Exports through <code>build.py VERSION --smoke</code></td>
+<td>exports cost no agent reasoning</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>mutate.py</code> and <code>mutations.json</code> instead of hand-made broken copies</td>
+<td>a mutation run went from about an hour to about 36 s per mutation (L4)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Tests split one file per area</td>
+<td>smaller reads per fix; enabled the test-impact lists of L42</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Briefs name only the spec sections needed</td>
+<td>goal-agent calls at 161k–316k against 1.25M–1.98M per subagent run (section 3.2)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Number-only questions go to a probe script, not one agent per value</td>
+<td>camera and config sweeps cost no agent calls</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Agent replies at most 150 words</td>
+<td>smaller results re-read by the orchestrator on every later call</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>contact_sheet.py</code>: one image to review instead of many</td>
+<td>fewer image reads in the orchestrator's context</td>
+</tr>
+<tr>
+<td>9</td>
+<td>A fresh orchestrator session per milestone</td>
+<td>caps the context every orchestrator call re-reads</td>
+</tr>
+</tbody>
+</table>
+<p>Later cuts, each from a learning:</p>
+<table>
+<thead>
+<tr>
+<th>Cut</th>
+<th>From</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rex, a Haiku script runner, for every Godot run (guard rule 7)</td>
+<td>L21; Quinn's suite runs took 21% of usage on 2026-11-04</td>
+<td>126 runs at about 92k</td>
+</tr>
+<tr>
+<td>Turn caps: 30 per build call, 15 per fix call</td>
+<td>L11 (777k), L33 (1.09M)</td>
+<td>no capped call has repeated those sizes</td>
+</tr>
+<tr>
+<td><code>compose_variant.py</code> for recombination rounds</td>
+<td>L32 (34k–112k per Milo round)</td>
+<td>recombinations cost no tokens</td>
+</tr>
+<tr>
+<td><code>source_cache.py</code>, <code>voice_check.py</code> before Clara</td>
+<td>the A4 grader's notes</td>
+<td>Clara reads cached quotes; mechanical checks fail without an agent call</td>
+</tr>
+<tr>
+<td>Test-impact lists instead of full suites per step</td>
+<td>L40–L42</td>
+<td>0.3 average per call 163k against 0.1.4's 250k (not only from this cut)</td>
+</tr>
+<tr>
+<td>An operator session on Sonnet for routing and waiting</td>
+<td>the main session at about 83% of tokens</td>
+<td>not yet measured: the roster's Phase 5 compares it with Opus sessions</td>
+</tr>
+</tbody>
+</table>
+<p>Two cautions. First, most of these cuts have no clean before-and-after measurement, because the task changed at the same time. The strongest evidence is structural: the same agents cost five to eight times less per call when briefed by a script. Second, the largest cost, the orchestrator, is the least reduced. Rules 7, 8 and 9 and the operator role target it, but its share was still about 79% of everything logged.</p>
+<h2 id="9-recommendations">9. Recommendations</h2>
+<p>In order of expected effect, with the deadline in mind:</p>
+<ol>
+<li><strong>Freeze tooling until 2026-11-29.</strong> No new loops, guards or log columns unless something breaks. New ideas go to the backlog. The last full week grew workspace files seven times faster than the game.</li>
+<li><strong>Default before stopping, everywhere.</strong> The 2026-11-22 changes should be measured on the next goal run: count stops by kind, as in section 7.2. Any new stop kind that needed no decision becomes a default.</li>
+<li><strong>Shrink the orchestrator.</strong> Use the operator session for routing and waiting, start a fresh session at each milestone, and keep long reads (logs, boards, diffs) in subagents that return a summary. Measure the operator against Opus sessions as Phase 5 of the roster plans.</li>
+<li><strong>Keep test time bounded.</strong> Brief Rex with <code>--only</code> and <code>--time-scale 6</code> while iterating; one full suite per checkpoint; move copied test flows onto shared helpers as tests are touched (L39), so a behaviour change breaks one helper instead of eleven tests.</li>
+<li><strong>Turn written rules into checks.</strong> Of the 15 learnings still resting on a rule or open (section 6.3), L17, L36, L37 and L38 have obvious script checks: fast test flags as the default, a scan for machine paths in tracked files, and an import refresh before the first render.</li>
+<li><strong>Measure usage better.</strong> Calibrate on large batches that move the weekly bar by several points, using the total processed measure, and record which measure each budget figure uses. Until then, treat every budget figure here as ±30%.</li>
+<li><strong>Keep the designer's eye as the last visual check, and make it cheap.</strong> Lettered variants, a stop summary that names the file holding the answer, and play-test lists generated from placeholder visuals.</li>
+</ol>
+<h2 id="appendix-a-learnings-l1l52">Appendix A. Learnings L1–L52</h2>
+<p>Noticed by: <strong>D</strong> the designer, <strong>C</strong> a check or script, <strong>O</strong> the orchestrator or operator, <strong>—</strong> not recorded. Prevention: <strong>Code</strong> (a test, guard or gate), <strong>Rule</strong> (written rule), <strong>Open</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Date</th>
+<th>What broke</th>
+<th>Noticed</th>
+<th>Prevention</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L1</td>
+<td>11-08</td>
+<td>Fix-round edits sat uncommitted for a day</td>
+<td>—</td>
+<td>Code: <code>checkpoint.py</code></td>
+</tr>
+<tr>
+<td>L2</td>
+<td>11-05</td>
+<td>A build step left red mid-build in a hidden worktree</td>
+<td>—</td>
+<td>Rule: one working folder</td>
+</tr>
+<tr>
+<td>L3</td>
+<td>11-05</td>
+<td>An agent run hit the 5-hour limit</td>
+<td>—</td>
+<td>Code: <code>budget_guard.py</code></td>
+</tr>
+<tr>
+<td>L4</td>
+<td>11-05</td>
+<td>A mutation run took an hour</td>
+<td>—</td>
+<td>Code: per-mutation test list</td>
+</tr>
+<tr>
+<td>L5</td>
+<td>11-05</td>
+<td>Test runs looked stalled</td>
+<td>D</td>
+<td>Code: live progress (<code>live.py</code>)</td>
+</tr>
+<tr>
+<td>L6</td>
+<td>11-06</td>
+<td>Decision IDs out of time order</td>
+<td>D</td>
+<td>Code: page warns</td>
+</tr>
+<tr>
+<td>L7</td>
+<td>11-07</td>
+<td>Vote buttons voted for another card</td>
+<td>D</td>
+<td>Code: duplicate IDs refused</td>
+</tr>
+<tr>
+<td>L8</td>
+<td>11-08</td>
+<td>"Close this session" started the end-of-day routine</td>
+<td>D</td>
+<td>Rule: one trigger phrase</td>
+</tr>
+<tr>
+<td>L9</td>
+<td>11-08</td>
+<td>Models wrong three times while all checks passed</td>
+<td>D</td>
+<td>Code: pick match</td>
+</tr>
+<tr>
+<td>L10</td>
+<td>11-08</td>
+<td>A spec coverage rule the pick itself broke</td>
+<td>D</td>
+<td>Rule: check numbers against the pick</td>
+</tr>
+<tr>
+<td>L11</td>
+<td>11-08</td>
+<td>A fix round ran 36 turns and 777k tokens</td>
+<td>O</td>
+<td>Code: turn cap, no test runs in briefs</td>
+</tr>
+<tr>
+<td>L12</td>
+<td>11-08</td>
+<td>Two owners fixed the same failure</td>
+<td>D</td>
+<td>Code: one owner per round, scope check</td>
+</tr>
+<tr>
+<td>L13</td>
+<td>11-08</td>
+<td>A repeated label overwrote kept transcripts</td>
+<td>O</td>
+<td>Code: unique names</td>
+</tr>
+<tr>
+<td>L14</td>
+<td>11-08</td>
+<td>The turn-cap alarm compared different counters</td>
+<td>O</td>
+<td>Code: model calls counted</td>
+</tr>
+<tr>
+<td>L15</td>
+<td>11-08</td>
+<td>Raw tabs in the mutations file crashed <code>mutate.py</code></td>
+<td>C</td>
+<td>Code: JSON validity test</td>
+</tr>
+<tr>
+<td>L16</td>
+<td>11-08</td>
+<td>A mutation survived because placement depended on order</td>
+<td>C</td>
+<td>Code: both orders tested</td>
+</tr>
+<tr>
+<td>L17</td>
+<td>11-08</td>
+<td>Tests ran at real-time speed and hit the 15-minute cap</td>
+<td>D</td>
+<td>Rule: fast flags</td>
+</tr>
+<tr>
+<td>L18</td>
+<td>11-08</td>
+<td>A fix was logged as done with no code change</td>
+<td>D</td>
+<td>Code: fail-first, code-change gate</td>
+</tr>
+<tr>
+<td>L19</td>
+<td>11-08</td>
+<td>Three rounds on a test that never ran</td>
+<td>D</td>
+<td>Code: real-time bug tests run at ×1</td>
+</tr>
+<tr>
+<td>L20</td>
+<td>11-08</td>
+<td>Vote IDs with spaces saved no votes</td>
+<td>D</td>
+<td>Code: safe IDs</td>
+</tr>
+<tr>
+<td>L21</td>
+<td>11-08</td>
+<td>The orchestrator and Quinn ran scripts themselves</td>
+<td>D</td>
+<td>Code: guard rule 7 (Rex only)</td>
+</tr>
+<tr>
+<td>L22</td>
+<td>11-08</td>
+<td>Dev mode's saved snapshot overrode new defaults</td>
+<td>D</td>
+<td>Code: saves only edits</td>
+</tr>
+<tr>
+<td>L23</td>
+<td>11-08</td>
+<td><code>/goal</code> judged unmet 16 times</td>
+<td>O</td>
+<td>Rule: condition holds agent steps only</td>
+</tr>
+<tr>
+<td>L24</td>
+<td>11-08</td>
+<td>A worktree commit failed the hooks, the push hung</td>
+<td>C</td>
+<td>Code: push command with timeout</td>
+</tr>
+<tr>
+<td>L25</td>
+<td>11-09</td>
+<td>UI mockups redrew screens the game already had</td>
+<td>D</td>
+<td>Rule: start from real shots</td>
+</tr>
+<tr>
+<td>L26</td>
+<td>11-09</td>
+<td>A number on the canvas could not be selected</td>
+<td>D</td>
+<td>Rule: every text its own element</td>
+</tr>
+<tr>
+<td>L27</td>
+<td>11-09</td>
+<td>Publishes raced the designer's own page edits</td>
+<td>C</td>
+<td>Rule: read, edit, publish per change</td>
+</tr>
+<tr>
+<td>L28</td>
+<td>11-09</td>
+<td>A preview ignored the sliders its pill followed</td>
+<td>D</td>
+<td>Open</td>
+</tr>
+<tr>
+<td>L29</td>
+<td>11-09</td>
+<td>Icon geometry took many rounds in words</td>
+<td>D</td>
+<td>Rule: lettered variants with sliders</td>
+</tr>
+<tr>
+<td>L30</td>
+<td>11-09</td>
+<td>The <code>/goal</code> hook kept firing after "stop"</td>
+<td>D</td>
+<td>Rule: say once, then one-line replies</td>
+</tr>
+<tr>
+<td>L31</td>
+<td>11-09</td>
+<td>A variant came back with parts not touching</td>
+<td>O</td>
+<td>Rule: parts convention</td>
+</tr>
+<tr>
+<td>L32</td>
+<td>11-09</td>
+<td>Recombination rounds cost a full agent run each</td>
+<td>D</td>
+<td>Code: <code>compose_variant.py</code></td>
+</tr>
+<tr>
+<td>L33</td>
+<td>11-09</td>
+<td>Bob rebuilt the honey cell and broke two tests</td>
+<td>D</td>
+<td>Code: item parsing, scoped rows, build cap</td>
+</tr>
+<tr>
+<td>L34</td>
+<td>11-09</td>
+<td>The plan said 21/21 done after one test line</td>
+<td>O</td>
+<td>Code: marks as evidence</td>
+</tr>
+<tr>
+<td>L35</td>
+<td>11-10</td>
+<td><code>mutate.py</code> crashed on the Journal mutations</td>
+<td>C</td>
+<td>Code: sibling folders copied</td>
+</tr>
+<tr>
+<td>L36</td>
+<td>11-17</td>
+<td>Allow rules with env prefixes allowed any command</td>
+<td>C</td>
+<td>Open (flags added, unchecked)</td>
+</tr>
+<tr>
+<td>L37</td>
+<td>11-17</td>
+<td>Godot's path was the desktop's</td>
+<td>D</td>
+<td>Open (<code>godot_path.py</code>, unchecked)</td>
+</tr>
+<tr>
+<td>L38</td>
+<td>11-20</td>
+<td>The first render failed: no import cache</td>
+<td>C</td>
+<td>Open</td>
+</tr>
+<tr>
+<td>L39</td>
+<td>11-21</td>
+<td>Tests broke whenever a feature changed</td>
+<td>C</td>
+<td>Code: test-impact briefs, windowed suites</td>
+</tr>
+<tr>
+<td>L40</td>
+<td>11-21</td>
+<td>The goal gate ran the full unit suite every round</td>
+<td>O</td>
+<td>Code: own tests only, one gate</td>
+</tr>
+<tr>
+<td>L41</td>
+<td>11-21</td>
+<td>The unit gate timed out; each timeout started a fix round</td>
+<td>O</td>
+<td>Code: count-based timeout, retry</td>
+</tr>
+<tr>
+<td>L42</td>
+<td>11-21</td>
+<td>A full suite per step; misrouted rounds; a false vote</td>
+<td>D</td>
+<td>Code: impact list, routing, vote rule</td>
+</tr>
+<tr>
+<td>L43</td>
+<td>11-20</td>
+<td>The style refiner broke more than it fixed</td>
+<td>D</td>
+<td>Code: sandbox, motion guard, gate</td>
+</tr>
+<tr>
+<td>L44</td>
+<td>11-21</td>
+<td>The scan read an older log and held a green goal</td>
+<td>O</td>
+<td>Code: newest result per test</td>
+</tr>
+<tr>
+<td>L45</td>
+<td>11-21</td>
+<td>Removing a worktree emptied the Godot folder</td>
+<td>C</td>
+<td>Code: guard rule 8 (links)</td>
+</tr>
+<tr>
+<td>L46</td>
+<td>11-22</td>
+<td>README fell 12 days behind</td>
+<td>D</td>
+<td>Code: map coverage check</td>
+</tr>
+<tr>
+<td>L47</td>
+<td>11-22</td>
+<td>Two fix rounds guessed; the bugs were in the tests</td>
+<td>O</td>
+<td>Code: diag rule, label counts</td>
+</tr>
+<tr>
+<td>L48</td>
+<td>11-22</td>
+<td>Stops on fine code: stale class cache</td>
+<td>C</td>
+<td>Code: refresh every step</td>
+</tr>
+<tr>
+<td>L49</td>
+<td>11-22</td>
+<td>A stop on a "question" that said there was none</td>
+<td>O</td>
+<td>Code: tag in backticks ignored</td>
+</tr>
+<tr>
+<td>L50</td>
+<td>11-22</td>
+<td>Re-run steps failed on "no mutations to run"</td>
+<td>C</td>
+<td>Code: item mutations fallback</td>
+</tr>
+<tr>
+<td>L51</td>
+<td>11-22</td>
+<td>0.3's T6.1 took 0.2's Auto-Sell tests as its own</td>
+<td>O</td>
+<td>Code: versioned goal marks</td>
+</tr>
+<tr>
+<td>L52</td>
+<td>11-22</td>
+<td>0.3.0 green, four problems found in play-test</td>
+<td>D</td>
+<td>Code (part): signal check, cover lint, "seen" rule</td>
+</tr>
+</tbody>
+</table>
+<h2 id="appendix-b-run-log-columns">Appendix B. Run-log columns</h2>
+<p>Each row of <code>_meta/agent-runs.csv</code> (column meanings in <code>_tools/runlog.py</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Meaning</th>
+<th>Collected by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>start, end</td>
+<td>when the run began and ended</td>
+<td>the hook or script that logs the run</td>
+</tr>
+<tr>
+<td>table</td>
+<td>which summary table the run belongs to</td>
+<td>the logger</td>
+</tr>
+<tr>
+<td>run</td>
+<td>the run's label (a step, a content slug, a review round)</td>
+<td>the logger</td>
+</tr>
+<tr>
+<td>agent</td>
+<td>the agent and its definition</td>
+<td>the logger</td>
+</tr>
+<tr>
+<td>phase</td>
+<td>pre-ICM or post-ICM</td>
+<td>the logger (by date)</td>
+</tr>
+<tr>
+<td>model</td>
+<td>the model the run used</td>
+<td>the agent definition</td>
+</tr>
+<tr>
+<td>final_context</td>
+<td>conversation size at the last call</td>
+<td>Agent tool result or transcript</td>
+</tr>
+<tr>
+<td>total_processed</td>
+<td>tokens summed over all calls</td>
+<td>transcript</td>
+</tr>
+<tr>
+<td>tool_calls, turns</td>
+<td>tool calls and model calls</td>
+<td>transcript</td>
+</tr>
+<tr>
+<td>duration_s</td>
+<td>wall time</td>
+<td>the logger</td>
+</tr>
+<tr>
+<td>orch_input, orch_cache_write, orch_cache_read, orch_output</td>
+<td>the orchestrator's tokens during the run</td>
+<td>status line</td>
+</tr>
+<tr>
+<td>five_hour_before/after, seven_day_before/after</td>
+<td>plan usage % before and after</td>
+<td>status line</td>
+</tr>
+<tr>
+<td>key</td>
+<td>a stable ID for joining to boards</td>
+<td>the logger</td>
+</tr>
+<tr>
+<td>note</td>
+<td>free text</td>
+<td>the logger or by hand</td>
+</tr>
+</tbody>
+</table>
+<h2 id="appendix-c-glossary">Appendix C. Glossary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Blackboard (run board)</td>
+<td>the one Markdown record each loop run writes: steps, checks, verdicts, costs, stops</td>
+</tr>
+<tr>
+<td>Check</td>
+<td>a script that passes or fails: contract check, test suites, mutations, screenshots, style check</td>
+</tr>
+<tr>
+<td>Designer stop</td>
+<td>a point where a run waits for the designer's decision</td>
+</tr>
+<tr>
+<td>Final context</td>
+<td>tokens in the conversation at an agent's last call</td>
+</tr>
+<tr>
+<td>Fix round</td>
+<td>an agent call after a failed check, given only the failure and its slice of the spec</td>
+</tr>
+<tr>
+<td>GDD</td>
+<td>the game design document, the single source of truth</td>
+</tr>
+<tr>
+<td>Goal agent</td>
+<td><code>_tools/goal_agent.py</code>: builds a spec goal by goal</td>
+</tr>
+<tr>
+<td>ICM</td>
+<td>Interpretable Context Methodology: folder structure as agent architecture</td>
+</tr>
+<tr>
+<td>Mutation test</td>
+<td>a deliberate small bug inserted to prove a test fails when it should</td>
+</tr>
+<tr>
+<td>Orchestrator</td>
+<td>the developer's main Claude Code session</td>
+</tr>
+<tr>
+<td>Placeholder visuals</td>
+<td>sizes and offsets kept for the play-test instead of stopped for a vote</td>
+</tr>
+<tr>
+<td>Spec</td>
+<td>the build document for one version: numbered changes, config keys, test contract</td>
+</tr>
+<tr>
+<td>Total processed</td>
+<td>tokens summed over all of an agent's calls, cache reads included</td>
+</tr>
+</tbody>
+</table></body></html>
