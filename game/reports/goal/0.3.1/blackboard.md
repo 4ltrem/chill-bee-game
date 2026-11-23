@@ -1430,9 +1430,28 @@ Command: `goal_agent.py 0.3.1-playtest-fixes.md --accept C7 --note main.gd hides
 - Change (orchestrator, Process 9): main.gd hides SettingsButton off the farm view (it sat over Back at the second stop); main.tscn gear 60->100 and skip 210->250 offset_top, clear of the Habitat pill (designer saw the overlap); start PASS, unit 234/234, play 246/246, shots checked
 - Accepted: checkpoint `37acad8` on `main`
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md --accept C5 --note all six Dev buttons were already in dev_panel.gd (_actions_row, built in an earlier step); Patricia's C5 reply lists each with its code path; seen in ui_shots 9-dev-speed-x5` (the run had stopped: `stopped`).
+
+### Manual fix: C5 (2026-11-23T18:49:00-05:00)
+
+- Change (orchestrator, Process 9): all six Dev buttons were already in dev_panel.gd (_actions_row, built in an earlier step); Patricia's C5 reply lists each with its code path; seen in ui_shots 9-dev-speed-x5
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 120 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-C7 accepted with a manual fix (checkpoint `37acad8` on `main`). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
+C5 accepted with a manual fix (commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 120 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
