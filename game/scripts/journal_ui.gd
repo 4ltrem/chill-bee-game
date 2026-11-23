@@ -22,6 +22,10 @@ func _ready() -> void:
 	var close_button: Button = get_parent().find_child("JournalCloseButton", true, false) as Button
 	if _panel != null:
 		_panel.visible = false
+		if _panel is ModalPanel:
+			(_panel as ModalPanel).refresh_requested.connect(_refresh_text)   # 0.3.1 item 7: ModalPanel opens, closes and wires JournalCloseButton
+		else:
+			_panel.add_to_group(ModalPanel.GROUP)   # scene not moved onto ModalPanel yet: still counted by main.any_panel_open()
 	if open_button != null:
 		open_button.pressed.connect(open)
 		# 0.3 item 4: hidden until Habitat Health is thriving; habitat_changed also covers Reset.
@@ -32,7 +36,7 @@ func _ready() -> void:
 				_forced = false
 			_refresh_button())
 		_refresh_button()
-	if close_button != null:
+	if close_button != null and not _panel is ModalPanel:
 		close_button.pressed.connect(close)
 
 
@@ -54,14 +58,18 @@ func _refresh_button() -> void:
 
 func open() -> void:
 	_refresh_text()
-	if _panel != null:
-		_panel.z_index = 60   # opens over the farm, above the shop sheet (z 51) and its dim (z 50) so Close takes the press
-		_panel.top_level = true   # GUI root sorted by z, like ShopPanel: tree order does not decide picking
+	if _panel is ModalPanel:
+		(_panel as ModalPanel).open()
+	elif _panel != null:
+		_panel.z_index = 60   # fallback until the scene's JournalPanel carries modal_panel.gd
+		_panel.top_level = true
 		_panel.visible = true
 
 
 func close() -> void:
-	if _panel != null:
+	if _panel is ModalPanel:
+		(_panel as ModalPanel).close()
+	elif _panel != null:
 		_panel.visible = false
 
 
@@ -69,7 +77,7 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSLATION_CHANGED:
 		if _open_button != null:
 			_open_button.text = tr("journal_icon")
-		if _panel != null and _panel.visible:
+		if _panel != null and _panel.visible and not _panel is ModalPanel:
 			_refresh_text()
 
 

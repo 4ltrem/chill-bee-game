@@ -1,5 +1,5 @@
 # Implements 0.3.1 item 4 (game/specs/0.3.1-playtest-fixes.md): the first-time hint. `HintBubble` (FarmUIRoot) is a small panel with one
-# line (HintLabel), a Skip button (HintSkipButton, key hint_skip) and a tail (HintTail) that points at the target of the current step.
+# line (HintBubbleLabel), a Skip button (HintSkipButton, key hint_skip) and a tail (HintTail) that points at the target of the current step.
 # The hint follows the game's state, not a script of taps: each frame it shows the first step whose condition holds and that is not
 # done. It starts once the welcome overlay is gone (play_pressed), ends for good when the first patch is planted or on Skip, and
 # `config.show_hint` (read when used) turns it off. Texts are the hint_* rows of game/translations/journal.csv (content/first-time-hint.md).
@@ -42,7 +42,7 @@ var _sold: bool = false              # the first sale happened (a fact about the
 func _ready() -> void:
 	z_index = DRAW_Z
 	visible = false
-	_label = find_child("HintLabel", true, false) as Label
+	_label = find_child("HintBubbleLabel", true, false) as Label   # 0.3.1 item 7: HintLabel is the zoom's instruction (unique names)
 	_skip = find_child("HintSkipButton", true, false) as Button
 	_tail = find_child("HintTail", true, false) as Polygon2D
 	if _tail != null:
@@ -192,12 +192,12 @@ func _icon_shows(icon_name: String) -> bool:
 	return icon != null and icon.is_wanted() and icon.is_visible_in_tree()
 
 
-## The Journal panel, the victory overlay and any blocking panel hide the bubble.
+## Any open panel (main.gd any_panel_open(); the Shop sheet is left out, hint_plant shows over it), the victory overlay and any
+## set_blocked() source hide the bubble.
 func _covered() -> bool:
 	if not _blocked.is_empty():
 		return true
-	var journal: Control = _find("JournalPanel") as Control
-	if journal != null and journal.visible:
+	if bool(_main.call("any_panel_open", true)):
 		return true
 	var victory: VictoryOverlay = _find("VictoryOverlay") as VictoryOverlay
 	return victory != null and victory.is_showing()

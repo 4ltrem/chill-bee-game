@@ -929,9 +929,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -144.0
-offset_top = 210.0
+offset_top = 250.0
 offset_right = -24.0
-offset_bottom = 330.0
+offset_bottom = 370.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 40
 theme_override_styles/normal = SubResource("StyleBox_circle")
@@ -945,6 +945,53 @@ theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = ">>"
 script = ExtResource("skip_icon_script")
+
+[node name="SettingsButton" type="Button" parent="FarmUIRoot/FarmUI"]
+focus_mode = 0
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -144.0
+offset_top = 100.0
+offset_right = -24.0
+offset_bottom = 220.0
+grow_horizontal = 0
+theme_override_styles/normal = SubResource("StyleBox_circle")
+theme_override_styles/hover = SubResource("StyleBox_circle")
+theme_override_styles/pressed = SubResource("StyleBox_circle_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+
+[node name="SettingsGlyph" type="Node2D" parent="FarmUIRoot/FarmUI/SettingsButton"]
+position = Vector2(60, 60)
+
+[node name="SettingsGearBody" type="Polygon2D" parent="FarmUIRoot/FarmUI/SettingsButton/SettingsGlyph"]
+color = Color(0.2, 0.12, 0.02, 1)
+polygon = PackedVector2Array(26, 0, 24, 10, 18.4, 18.4, 10, 24, 0, 26, -10, 24, -18.4, 18.4, -24, 10, -26, 0, -24, -10, -18.4, -18.4, -10, -24, 0, -26, 10, -24, 18.4, -18.4, 24, -10)
+
+[node name="SettingsTooth1" type="Polygon2D" parent="FarmUIRoot/FarmUI/SettingsButton/SettingsGlyph"]
+color = Color(0.2, 0.12, 0.02, 1)
+polygon = PackedVector2Array(-7, -34, 7, -34, 7, 34, -7, 34)
+
+[node name="SettingsTooth2" type="Polygon2D" parent="FarmUIRoot/FarmUI/SettingsButton/SettingsGlyph"]
+rotation = 0.785398
+color = Color(0.2, 0.12, 0.02, 1)
+polygon = PackedVector2Array(-7, -34, 7, -34, 7, 34, -7, 34)
+
+[node name="SettingsTooth3" type="Polygon2D" parent="FarmUIRoot/FarmUI/SettingsButton/SettingsGlyph"]
+rotation = 1.570796
+color = Color(0.2, 0.12, 0.02, 1)
+polygon = PackedVector2Array(-7, -34, 7, -34, 7, 34, -7, 34)
+
+[node name="SettingsTooth4" type="Polygon2D" parent="FarmUIRoot/FarmUI/SettingsButton/SettingsGlyph"]
+rotation = 2.356194
+color = Color(0.2, 0.12, 0.02, 1)
+polygon = PackedVector2Array(-7, -34, 7, -34, 7, 34, -7, 34)
+
+[node name="SettingsGearHole" type="Polygon2D" parent="FarmUIRoot/FarmUI/SettingsButton/SettingsGlyph"]
+color = Color(1, 0.76, 0.12, 1)
+polygon = PackedVector2Array(10, 0, 7, 7, 0, 10, -7, 7, -10, 0, -7, -7, 0, -10, 7, -7)
 
 [node name="AutoTag" type="Label" parent="FarmUIRoot/FarmUI"]
 visible = false
@@ -1108,6 +1155,101 @@ theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "Close"
 
+[node name="SettingsPanel" type="PanelContainer" parent="FarmUIRoot/FarmUI"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -220.0
+offset_right = 320.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBox_modal")
+
+[node name="SettingsMargin" type="MarginContainer" parent="FarmUIRoot/FarmUI/SettingsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="SettingsColumn" type="VBoxContainer" parent="FarmUIRoot/FarmUI/SettingsPanel/SettingsMargin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="SettingsTitle" type="Label" parent="FarmUIRoot/FarmUI/SettingsPanel/SettingsMargin/SettingsColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 40
+text = "Settings"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="LangRowLabel" type="Label" parent="FarmUIRoot/FarmUI/SettingsPanel/SettingsMargin/SettingsColumn"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 32
+text = "Language"
+
+[node name="LangRow" type="HBoxContainer" parent="FarmUIRoot/FarmUI/SettingsPanel/SettingsMargin/SettingsColumn"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LangEnglishButton" type="Button" parent="FarmUIRoot/FarmUI/SettingsPanel/SettingsMargin/SettingsColumn/LangRow"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "English"
+
+[node name="LangFrenchButton" type="Button" parent="FarmUIRoot/FarmUI/SettingsPanel/SettingsMargin/SettingsColumn/LangRow"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Français"
+
+[node name="SettingsCloseButton" type="Button" parent="FarmUIRoot/FarmUI/SettingsPanel/SettingsMargin/SettingsColumn"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Close"
+
 [node name="HintBubble" type="Control" parent="FarmUIRoot"]
 visible = false
 layout_mode = 3
@@ -1132,7 +1274,7 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_modal")
 
-[node name="HintLabel" type="Label" parent="FarmUIRoot/HintBubble"]
+[node name="HintBubbleLabel" type="Label" parent="FarmUIRoot/HintBubble"]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 16.0

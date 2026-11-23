@@ -14,7 +14,7 @@ OUT = ROOT / "game" / "translations" / "journal.csv"
 # id -> (English heading prefix, French heading prefix)
 ENTRIES = {"BUMBLE_BEES": ("### Entry 3 — ", "### Entrée 3 — ")}
 # approved ui-text files whose first fenced block holds translation CSV rows (spec 0.3 item 5)
-UI_TEXT = [ROOT / "content" / "course-ending-text.md", ROOT / "content" / "first-time-hint.md"]   # 0.3.1 item 4: hint_* rows
+UI_TEXT = [ROOT / "content" / "course-ending-text.md", ROOT / "content" / "first-time-hint.md", ROOT / "content" / "ui-labels.md"]   # 0.3.1 item 4: hint_* rows; item 7: every UI label
 
 
 def entry(lines: list[str], prefix: str) -> tuple[str, str]:
@@ -43,10 +43,8 @@ def main() -> None:
             fr_t, fr_b = entry(lines, fr_p)
             w.writerow([f"JOURNAL_{eid}_TITLE", en_t, fr_t])
             w.writerow([f"JOURNAL_{eid}_BODY", en_b, fr_b])
-        w.writerow(["welcome_play", "Play", "Jouer"])   # 0.3 item 1: the Play button text
-        for row in ui_rows():   # 0.3 items 3-6: the approved victory, toast and skip strings
-            w.writerow(row)
-        w.writerow(["journal_icon", "Journal", "Carnet"])   # 0.3.1 item 1 (content/ui-labels.md; C7 moves every label there)
+        for row in ui_rows():   # 0.3 items 3-6, 0.3.1 items 4 and 7: the approved victory, toast, skip, hint and UI label strings
+            w.writerow(row)   # welcome_play and journal_icon now come from content/ui-labels.md
     print("wrote", OUT)
 
 

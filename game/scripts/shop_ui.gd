@@ -5,7 +5,11 @@
 class_name ShopUI
 extends Control
 
-var _rows: Dictionary = {}   # id -> {"buy": Button, "level": Label, "gate": Label}
+var _rows: Dictionary = {}   # id -> {"buy": Button, "level": Label, "gate": Label, "name": Label}
+const NAME_KEYS: Dictionary = {   # 0.3.1 item 7: row name keys (content/ui-labels.md)
+	"swarm": "shop_row_swarm", "flight": "shop_row_endurance", "heated_fork": "shop_row_fork", "gearing": "shop_row_gearing",
+	"spigot_flow": "shop_row_spigot", "faster_delivery": "shop_row_delivery", "auto_sell": "shop_row_autosell", "plant_patch": "shop_row_patch",
+}
 
 
 func _ready() -> void:
@@ -114,7 +118,6 @@ func set_sheet_open(on: bool) -> void:
 	_open = on and _applied.x == SHEET
 	if not _open:
 		_tools_mode = false
-	_set_hint_blocked(_open and _tools_mode)
 	_apply_mode()
 	if _open:
 		_select_tab(_tab)   # opens on the last selected tab (Bees the first time); Tools mode shows the machine's rows instead
@@ -154,13 +157,8 @@ func _tools_ids() -> Array[String]:
 func _apply_mode() -> void:
 	var title: Label = _header.find_child("ShopTitle", true, false) as Label if _header != null else null
 	if title != null:
-		title.text = tr("tools_icon") if _tools_mode else tr("Shop")
+		title.text = tr("tools_icon") if _tools_mode else tr("shop_title")
 
-
-func _set_hint_blocked(on: bool) -> void:
-	var bubble: HintBubble = get_tree().root.find_child("HintBubble", true, false) as HintBubble if is_inside_tree() else null
-	if bubble != null:
-		bubble.set_blocked(&"tools", on)
 
 
 ## ToolsButton (Bob's node, under FarmUIRoot): shown in the zooms and at the second stop, sheet layout only, hidden while its sheet is open.
@@ -238,7 +236,7 @@ func _build_sheet_parts() -> void:
 		return
 	_shop_button = Button.new()   # the Shop icon: bottom-right of the farm HUD (placement is Bob's call; see the 0.2.1 handoff)
 	_shop_button.name = "ShopButton"
-	_shop_button.text = "Shop"
+	_shop_button.text = tr("shop_title")
 	_shop_button.focus_mode = Control.FOCUS_NONE
 	_shop_button.custom_minimum_size = Vector2(120.0, 96.0)
 	_shop_button.add_theme_font_size_override("font_size", 32)
@@ -292,7 +290,7 @@ func _build_header_and_tabs(box: Node) -> void:
 		title.name = "ShopTitle"
 		title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		_header.add_child(title)
-	title.text = tr("Shop")
+	title.text = tr("shop_title")
 	title.add_theme_font_size_override("font_size", SHEET_FONT)
 	_money_label = _header.find_child("ShopMoney", true, false) as Label
 	if _money_label == null:

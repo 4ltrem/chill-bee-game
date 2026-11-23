@@ -113,6 +113,8 @@ func _bottle_out(c: Object, step: float = 0.05) -> Dictionary:
 
 ## A named node of a main instance. "HintLabel" exists twice since 0.3.1 item 4 (the HintBubble's line under FarmUIRoot, and the zoom
 ## instruction under HarvestUI): the tests mean the zoom instruction, so it is looked up under HarvestUI.
+## 0.3.1 item 7: "the hint bubble's `HintLabel` becomes `HintBubbleLabel` (the zoom's instruction keeps `HintLabel`)": the name is now
+## unique, and this lookup stays correct either way (kept so it also works before the rename lands).
 func _node(m: Node, nm: String) -> Node:
 	if nm == "HintLabel":
 		var hu: Node = m.find_child("HarvestUI", true, false)

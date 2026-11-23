@@ -200,6 +200,11 @@ func _process(delta: float) -> void:
 		_centrifuge_icon.view_offset_y = cfg.spin_zoom_offset if zoom != Zoom.NONE else 0.0
 
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED and _sell_icon != null and _truck != null and _centrifuge != null:
+		_refresh_icons()   # 0.3.1 item 7: the Sell price text follows the language at once
+
+
 # --- the state table: which floating icons show right now ---
 
 ## The fork rule (spec step 2): the hive is full, whatever the centrifuge is doing; after a Back, also while any frame has a Capped cell.
@@ -220,6 +225,9 @@ func _refresh_icons() -> void:
 	var pill: Control = _farm_ui.find_child("HabitatPill", true, false) as Control if _farm_ui != null else null
 	if pill != null:
 		pill.visible = on_farm and not _at_second_stop   # 0.3.1 item 1: the pill shows on the farm view only (designer 2026-11-22)
+	var gear: Control = _farm_ui.find_child("SettingsButton", true, false) as Control if _farm_ui != null else null
+	if gear != null:
+		gear.visible = on_farm and not _at_second_stop   # 0.3.1 item 7: farm view only; Back holds that corner in both zooms
 	if _fork_icon != null:
 		# 0.1.4 item 1: always shown on the farm view (the button is the honey meter); pressable only when the fork rule holds
 		_fork_icon.set_wanted(on_farm and not _at_second_stop)   # hidden at the second stop (designer 2026-11-06)
@@ -232,7 +240,7 @@ func _refresh_icons() -> void:
 		var can_sell: bool = on_farm and _truck.can_sell()
 		_sell_icon.set_wanted(can_sell)
 		if can_sell:
-			_sell_icon.text = "Sell $%d" % _truck.load_value()
+			_sell_icon.text = tr("farm_sell") % _truck.load_value()
 
 
 func _on_centrifuge_state(state_now: int) -> void:
@@ -507,12 +515,26 @@ func _start_closing(on_own: bool) -> void:
 
 
 ## 0.3 item 5: the victory may show only on the farm view: no zoom (so no harvest or uncap drag), not at the second stop, no Shop sheet,
-## no welcome hold.
+## no welcome hold, no panel open (0.3.1 item 7: any_panel_open(), so the Journal and Settings panels also hold the victory).
 func farm_view_idle() -> bool:
 	if zoom != Zoom.NONE or _at_second_stop or welcome_active():
 		return false
+	return not any_panel_open()
+
+
+## 0.3.1 item 7: the one "a panel covers the farm view" check: a member of the group modal_panels is open, or the Shop or Tools sheet is.
+## `ignore_shop` leaves the Shop sheet out (the hint shows hint_plant over it); the Tools sheet still counts.
+func any_panel_open(ignore_shop: bool = false) -> bool:
+	for node: Node in get_tree().get_nodes_in_group(ModalPanel.GROUP):
+		if node.has_method("is_open"):
+			if bool(node.call("is_open")):
+				return true
+		elif node is CanvasItem and (node as CanvasItem).visible:
+			return true
 	var shop: ShopUI = find_child("ShopPanel", true, false) as ShopUI
-	return shop == null or not shop.is_sheet_open()
+	if shop == null:
+		return false
+	return shop.is_tools_open() if ignore_shop else shop.is_sheet_open()
 
 
 func _close_shop_sheet() -> void:

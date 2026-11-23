@@ -15,7 +15,7 @@ func _ready() -> void:
 	_hint = find_child("HintLabel", true, false) as Label
 	_back_button = find_child("BackButton", true, false) as Button
 	if _hint != null:
-		_hint_text = _hint.text
+		_hint_text = "zoom_uncap_hint"   # 0.3.1 item 7: translation keys, resolved when shown
 	if _back_button != null:
 		_back_button.pressed.connect(func() -> void: back_pressed.emit())
 	visible = false
@@ -26,10 +26,16 @@ func show_zoom() -> void:
 	visible = true
 	if _hint != null:
 		_hint.visible = true
-		_hint.text = _hint_text
+		_hint_text = "zoom_uncap_hint"
+		_hint.text = tr(_hint_text)
 	if _back_button != null:
 		_back_button.visible = true
 	_keep_hint_clear_of_back()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED and _hint != null and _hint_text != "":
+		_hint.text = tr(_hint_text)
 
 
 ## 0.1.4: the hint's right edge stops 16 px left of Back (parent-relative maths, so it needs no layout pass).
@@ -55,7 +61,8 @@ func show_pan() -> void:
 ## No frame is left to uncap: the hint changes and Back goes away while the zoom closes.
 func show_done() -> void:
 	if _hint != null:
-		_hint.text = "All cells uncapped!"
+		_hint_text = "zoom_all_uncapped"
+		_hint.text = tr(_hint_text)
 	if _back_button != null:
 		_back_button.visible = false
 

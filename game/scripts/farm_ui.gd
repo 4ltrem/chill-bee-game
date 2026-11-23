@@ -42,7 +42,7 @@ var _top_saved: bool = false
 var _top_flags: int = 0
 var _bar_flags: int = 0
 var _bar_min_x: float = 0.0
-const PHASE_KEY: String = "Phase 2: your farm starts running itself"
+const PHASE_KEY: String = "toast_phase2"
 const BUMBLE_KEY: String = "toast_bumble_visitor"
 var _toast_queue: Array[String] = []   # 0.3.1 item 2: keys waiting to show (display time: config toast_seconds)
 var _toast_showing: String = ""
@@ -50,7 +50,8 @@ var _toast_left: float = 0.0
 var _toast_hidden_by_block: bool = false
 var _bumble_frame: int = -1
 var _toast_main: Node
-var _toast_journal: Control
+var _auto_tag: Label
+var _summary_last: Vector3i = Vector3i.ZERO   # jars, per jar, total of the sale last shown (re-translated on a locale change)
 var _phase_toast: Control
 var _phase_toast_label: Label
 var _phase_toast_shown: bool = false
@@ -88,9 +89,36 @@ func _ready() -> void:
 	var slots: Node = get_tree().root.find_child("PatchSlots", true, false)
 	if slots != null and slots.has_signal("toast_requested"):
 		slots.connect("toast_requested", _on_patch_toast)
+	_auto_tag = find_child("AutoTag", true, false) as Label
+	if get_tree().get_nodes_in_group("settings_ui").is_empty():   # 0.3.1 item 7: the Settings icon and sheet controller (one per FarmUI)
+		var settings := SettingsUI.new()
+		settings.name = "SettingsUI"
+		add_child.call_deferred(settings)   # deferred: the scene's parents are still setting up children in _ready
 	_refresh_bees()
 	_refresh_money()
 	_refresh_hive()
+	_refresh_static_texts()
+
+
+## 0.3.1 item 7: labels that no other event rewrites, set through tr() and again when the language changes.
+func _refresh_static_texts() -> void:
+	if _paused_label != null:
+		_paused_label.text = tr("farm_hive_full")
+	if _auto_tag != null:
+		_auto_tag.text = tr("farm_auto")
+	if _summary_ok != null:
+		_summary_ok.text = tr("summary_ok")
+	_refresh_bees()
+	_refresh_centrifuge()
+	if _summary != null and _summary.visible:
+		show_summary(_summary_last.x, _summary_last.y, _summary_last.z)
+	if _phase_toast_label != null and _toast_showing != "":
+		_phase_toast_label.text = tr(_toast_showing)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED and is_node_ready():
+		_refresh_static_texts()
 
 
 ## 0.2 item 7: one-line toast the first time the phase becomes 2 (0.3.1 item 2: through the toast queue).
@@ -151,17 +179,16 @@ func _end_toast() -> void:
 		_phase_toast.visible = false
 
 
-## A toast waits while a zoom or the second stop is up, the Shop sheet or the Journal panel is open, or the welcome is up.
+## A toast waits while a zoom or the second stop is up or the welcome is up (main.gd farm_view_idle()), or any panel is open
+## (main.gd any_panel_open(): the Shop, Tools, Journal and Settings sheets; 0.3.1 item 7).
 func _toasts_blocked() -> bool:
 	if _toast_main == null or not is_instance_valid(_toast_main):
 		_toast_main = self
 		while _toast_main != null and not _toast_main.has_method("farm_view_idle"):
 			_toast_main = _toast_main.get_parent()
-	if _toast_main != null and not bool(_toast_main.call("farm_view_idle")):
-		return true
-	if _toast_journal == null or not is_instance_valid(_toast_journal):
-		_toast_journal = get_tree().root.find_child("JournalPanel", true, false) as Control
-	return _toast_journal != null and _toast_journal.visible
+	if _toast_main == null:
+		return false
+	return not bool(_toast_main.call("farm_view_idle")) or bool(_toast_main.call("any_panel_open"))
 
 
 ## One toast at a time, in the order queued; the clock stops while blocked.
@@ -241,12 +268,13 @@ func restore_top_info() -> void:
 
 
 func show_summary(jars: int, per_jar: int, total: int) -> void:
+	_summary_last = Vector3i(jars, per_jar, total)
 	if _summary_jars != null:
-		_summary_jars.text = "Jars sold: %d" % jars
+		_summary_jars.text = tr("summary_jars_sold") % jars
 	if _summary_value != null:
-		_summary_value.text = "Price per jar: $%d" % per_jar
+		_summary_value.text = tr("summary_price") % per_jar
 	if _summary_total != null:
-		_summary_total.text = "Total: $%d" % total
+		_summary_total.text = tr("summary_total") % total
 	if _summary != null:
 		_summary.visible = true
 
@@ -263,7 +291,7 @@ func _refresh_centrifuge() -> void:
 	var cranking: bool = _centrifuge.state == Centrifuge.State.CRANKING
 	_centrifuge_label.visible = on_spin_screen and (cranking or (keep_spin_text and _centrifuge_label.text != ""))   # item 7: stays while the pile reloads
 	if cranking:
-		var text: String = "Honey: %d / %d" % [floori(_centrifuge.jars_extracted + 1.0e-6), floori(_centrifuge.jars_total + 1.0e-6)]
+		var text: String = tr("farm_honey") % [floori(_centrifuge.jars_extracted + 1.0e-6), floori(_centrifuge.jars_total + 1.0e-6)]
 		if _centrifuge.turns_counted == 0:
 			text += "\n" + HINT_TEXT
 		_centrifuge_label.text = text
@@ -311,7 +339,7 @@ func _refresh_money() -> void:
 
 func _refresh_bees() -> void:
 	if _bee_label != null:
-		_bee_label.text = "Bees: %d" % Economy.bee_count()
+		_bee_label.text = tr("farm_bees") % Economy.bee_count()
 
 
 func _refresh_hive() -> void:
