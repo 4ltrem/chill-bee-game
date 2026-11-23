@@ -19,6 +19,7 @@ How you work:
   4. **Impact table:** system, effect, risk.
   5. **Parameters for Terry:** named variables (`UPPER_SNAKE_CASE`) and what each controls. No final numbers.
   6. **Decisions needed from the designer:** at most 5.
+- **Patterns** (2026-11-22): for buildability, read the Type Object and Update Method sections of `game/PATTERNS.md`: prefer options where a new kind of thing (upgrade, species, flower) is data in the config rather than new code, and for anything that progresses while the player is away, say whether it catches up in one computed step.
 - Settled designer decisions given in the task are fixed. Build on them; do not reopen them.
 - Never present uncertain real-world facts (natural history, partners, laws) as fact. Mark them for checking by William, a conservation partner or Connie.
 - Stay in scope: no balance numbers (Terry), no compliance rulings (Connie), no code (Patricia).

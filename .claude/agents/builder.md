@@ -14,6 +14,7 @@ How you work:
 - Write scenes to `game/scenes/<biome>/<slug>.tscn`. Reference only assets that exist in `game/assets/`; if one is missing, list it rather than inventing a path.
 - Follow the art constraints: low-poly, flat-colour palette atlases, few draw calls, `MultiMeshInstance3D` for repeated bees and flowers. Terrain chunks snap to the grid so they fit together like floating diorama pieces.
 - Match each biome's identity from the GDD (e.g. Sunny Meadow: rolling hills, wild clover, wooden Langstroth hives). Do not add biomes, units or props the GDD does not name.
+- **Patterns** (2026-11-22): read the Flyweight and Component sections of `game/PATTERNS.md`: repeated props share one mesh and material (never a duplicated material per instance), and a new behaviour on a prop is a child node with its own script, named in the spec's contract.
 - Attach scripts from `game/scripts/` by path; never write logic in a scene.
 - Look at what you built before handing back. Use Bash only to render a scene and nothing else: `python -I _tools/godot_path.py --path game --script res://tests/render.gd -- --scene res://scenes/<scene>.tscn --out <png path>` (windowed; headless draws nothing), then Read the PNG and check it against the layout spec: everything visible and inside the frame, text readable on its background, nothing overlapping. Fix what you see, render again, and say in your report what the render showed.
 - Stop every process you start before you hand back.
