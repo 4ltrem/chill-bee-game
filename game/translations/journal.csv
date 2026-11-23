@@ -5,7 +5,6 @@ JOURNAL_BUMBLE_BEES_BODY,"Canada is home to 41 bumble bee species — fuzzy, stu
 These fluffy wanderers stop for a friendly visit in the sunny meadow, then follow the fireweed up into the alpine valley.","Le Canada abrite 41 espèces de bourdons — des butineuses robustes et duveteuses qui s'activent même par temps froid et nuageux, quand les autres abeilles restent bien à l'abri.⁵ Elles pratiquent la « pollinisation par vibration »⁵ : elles contractent leurs muscles de vol pour produire de fortes vibrations qui libèrent le pollen des fleurs.⁵ᵇ Les bourdons à bandes jaunes, présents partout au pays sauf au Nunavut, sont souvent aperçus sur les épilobes en fleur.⁶
 
 Ces voyageuses duveteuses font un arrêt amical dans la prairie ensoleillée avant de suivre les épilobes jusqu'à la vallée alpine."
-welcome_play,Play,Jouer
 victory_title,The meadow is thriving!,Le pré est en pleine floraison !
 victory_body,"Your pocket world is restored and buzzing with life. Thank you, beekeeper! Stay as long as you like: the bees are happy to keep going.","Votre monde de poche est restauré et bourdonne de vie. Merci, apiculteur ou apicultrice ! Restez aussi longtemps que vous voulez : les abeilles sont ravies de continuer."
 victory_button,Keep playing,Continuer à jouer
@@ -21,4 +20,48 @@ hint_sell,Tap Sell to send the honey off!,Touchez Vendre pour envoyer le miel!
 hint_shop,Spend your earnings in the Shop!,Dépensez vos gains à la boutique!
 hint_plant,Plant a patch for the wild bees!,Plantez une parcelle pour les abeilles!
 hint_skip,Skip,Passer
+farm_bees,Bees: %d,Abeilles : %d
+farm_hive_full,"Hive full, production paused","Ruche pleine, production en pause"
+farm_honey,Honey: %d / %d,Miel : %d / %d
+farm_sell,Sell $%d,Vendre %d $
+farm_auto,Auto,Auto
 journal_icon,Journal,Carnet
+tools_icon,Tools,Outils
+farm_back,Back,Retour
+zoom_uncap_hint,Drag across the cells to uncap them,Glissez pour désoperculer les alvéoles
+zoom_all_uncapped,All cells uncapped!,Alvéoles désoperculées!
+summary_jars,Jars: %d,Pots : %d
+summary_jars_sold,Jars sold: %d,Pots vendus : %d
+summary_value,Value per jar: $%d,Valeur du pot : %d $
+summary_price,Price per jar: $%d,Prix du pot : %d $
+summary_batch_total,Batch total: $%d,Total du lot : %d $
+summary_total,Total: $%d,Total : %d $
+summary_ok,OK,OK
+toast_phase2,Phase 2: your farm starts running itself,Phase 2 : votre ferme tourne toute seule
+shop_title,Shop,Boutique
+shop_close,Close,Fermer
+shop_owned,Owned,Acquis
+shop_not_owned,Not owned,Non acquis
+shop_level,Lv %d / %d,Niv. %d / %d
+shop_needs_delivery,Needs Faster Delivery %d,Requiert Livraison rapide %d
+shop_tab_bees,Bees,Abeilles
+shop_tab_hive,Hive,Ruche
+shop_tab_habitat,Habitat,Habitat
+shop_tab_research,Research,Recherche
+shop_tab_refinery,Refinery,Raffinerie
+shop_coming_soon,Coming soon,À venir
+shop_row_swarm,Worker Swarm Count,Essaim d'ouvrières
+shop_row_endurance,Flight Endurance,Endurance de vol
+shop_row_fork,Heated Uncapping Fork,Fourche chauffante
+shop_row_gearing,Centrifuge Gearing,Engrenage centrifuge
+shop_row_spigot,Spigot Flow,Débit du robinet
+shop_row_delivery,Faster Delivery,Livraison rapide
+shop_row_autosell,Auto-Sell,Vente auto
+shop_row_patch,Plant wildflower patch,Planter des fleurs sauvages
+journal_bumble_bees,Bumble Bees,Bourdons
+welcome_play,Play,Jouer
+settings_title,Settings,Paramètres
+settings_language,Language,Langue
+settings_close,Close,Fermer
+settings_lang_en,English,English
+settings_lang_fr,Français,Français
