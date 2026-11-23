@@ -320,6 +320,12 @@ func _actions_row() -> Control:
 	flow.add_child(_button("Truck home", _empty_truck))
 	flow.add_child(_button("Reset progress", func() -> void: _economy_call("reset")))
 	flow.add_child(_button("Replay hint", _replay_hint))   # 0.3.1 item 4
+	flow.add_child(_button("Show welcome", _show_welcome))   # 0.3.1 item 5: 0.3's six buttons
+	flow.add_child(_button("Show victory", _show_victory))
+	flow.add_child(_button("+1 patch (free)", _plant_one_patch))
+	flow.add_child(_button("Health to thriving − 1 patch", _health_almost_thriving))
+	flow.add_child(_button("Reset habitat", reset_habitat))
+	flow.add_child(_button("Unlock Journal", _unlock_journal))
 	var bounds_button := Button.new()
 	bounds_button.text = "Show UI bounds"
 	bounds_button.pressed.connect(func() -> void: set_ui_bounds(not ui_bounds_shown()))
@@ -349,6 +355,47 @@ func _replay_hint() -> void:
 	var bubble: HintBubble = get_tree().root.find_child("HintBubble", true, false) as HintBubble
 	if bubble != null:
 		bubble.replay()
+
+
+## 0.3.1 item 5: the six 0.3 buttons. Each calls the game's own code path; public so a test can call them.
+func _show_welcome() -> void:
+	var main: Node = get_parent()
+	if main != null and main.has_method("show_welcome"):
+		main.call("show_welcome")
+
+
+func _show_victory() -> void:
+	var overlay: VictoryOverlay = get_tree().root.find_child("VictoryOverlay", true, false) as VictoryOverlay
+	if overlay != null:
+		overlay.show_now()
+
+
+## The same path as a shop buy and the skip icon: Economy.set_level, then PatchSlots grows the patch in and adds the Health.
+func _plant_one_patch() -> void:
+	Economy.set_level("plant_patch", Economy.level("plant_patch") + 1)
+
+
+## Plants patches (free) until one more would reach thriving: Health = thriving − habitat_health_per_patch at most.
+func _health_almost_thriving() -> void:
+	var target: int = Economy.config.habitat_thriving - Economy.config.habitat_health_per_patch
+	while Economy.habitat_health < target and Economy.level("plant_patch") < Economy.max_level("plant_patch"):
+		Economy.set_level("plant_patch", Economy.level("plant_patch") + 1)
+	if Economy.habitat_health < target:
+		Economy.add_habitat(target - Economy.habitat_health)
+
+
+## Health to start, patches hidden, victory and visitor flags cleared, Journal hidden again, and the toast queue emptied.
+func reset_habitat() -> void:
+	Economy.reset_habitat()
+	for node: Node in get_tree().get_nodes_in_group("farm_ui"):
+		if node.has_method("clear_toasts"):
+			node.call("clear_toasts")
+
+
+func _unlock_journal() -> void:
+	for node: Node in get_tree().get_nodes_in_group("journal_ui"):
+		if node.has_method("unlock"):
+			node.call("unlock")
 
 
 func _file_row() -> Control:

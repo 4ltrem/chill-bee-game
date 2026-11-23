@@ -46,7 +46,9 @@ var _auto_spin: bool = false          # the pile is reloading after a pour in sp
 var _spin_pending: bool = false       # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
 var _crank_paused: bool = false      # 0.1.4 item 15: Back at the second stop while cranking; Spin on the farm resumes
 var _welcome: WelcomeOverlay
-var _held: Dictionary = {}           # 0.3 item 1: node -> its process_mode before the welcome hold
+var _welcome_template: Node           # 0.3.1 item 5: an unused copy of the WelcomeOverlay (for Dev "Show welcome")
+var _welcome_parent: Node
+var _held: Dictionary = {}          # 0.3 item 1: node -> its process_mode before the welcome hold
 var _spin_pan_timer: float = 0.0   # 0.1.4 item 11: Spin tapped on the farm view: seconds left of the pan to the second stop
 
 
@@ -117,15 +119,36 @@ func _ready() -> void:
 ## 0.3 item 1: with config show_welcome on and a WelcomeOverlay in the scene, the world is idle until it emits play_pressed:
 ## the farm nodes stop processing (no hive fill, bees hold, no input reaches the farm) and the farm UI hides.
 func _hold_for_welcome() -> void:
+	var found: Node = find_child("WelcomeOverlay", true, false)
+	if found != null and _welcome_template == null:   # 0.3.1 item 5: kept so the Dev button "Show welcome" can bring it back
+		_welcome_template = found.duplicate()
+		_welcome_parent = found.get_parent()
 	if not Economy.config.show_welcome:
-		var skipped := find_child("WelcomeOverlay", true, false)
-		if skipped != null:
-			skipped.queue_free()
+		if found != null:
+			found.queue_free()
 		return
-	_welcome = find_child("WelcomeOverlay", true, false) as WelcomeOverlay
+	_welcome = found as WelcomeOverlay
 	if _welcome == null:
 		push_warning("main.gd: show_welcome is on but main.tscn has no WelcomeOverlay node.")
 		return
+	_hold_world()
+
+
+## 0.3.1 item 5 (Dev "Show welcome"): the welcome overlay again, the world idle until Play, as at launch.
+func show_welcome() -> void:
+	if welcome_active() or _welcome_template == null or not is_instance_valid(_welcome_parent):
+		return
+	_welcome = _welcome_template.duplicate() as WelcomeOverlay
+	_welcome_parent.add_child(_welcome)
+	_hold_world()
+
+
+func _exit_tree() -> void:
+	if _welcome_template != null and is_instance_valid(_welcome_template):
+		_welcome_template.free()
+
+
+func _hold_world() -> void:
 	_held.clear()
 	for node: Node in [_farm_world, _hive, _bees, _truck, _centrifuge, _pile]:
 		if node != null and not _held.has(node):

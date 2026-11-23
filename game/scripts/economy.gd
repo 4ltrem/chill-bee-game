@@ -194,6 +194,14 @@ func add_habitat(amount: int) -> void:
 		thriving.emit()
 
 
+## 0.3.1 item 5 (Dev "Reset habitat"): Health back to start, patches hidden, thriving may fire again; money and upgrades stay.
+func reset_habitat() -> void:
+	set_level("plant_patch", 0)
+	habitat_health = config.habitat_health_start
+	_thriving_fired = false
+	habitat_changed.emit(habitat_health)
+
+
 func reset() -> void:
 	habitat_health = config.habitat_health_start
 	_thriving_fired = false

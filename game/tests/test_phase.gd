@@ -47,6 +47,14 @@ func t_phase2_auto_sell_sets_once_toast_once() -> void:
 	ck(toast.visible, "Auto-Sell bought: the toast shows")
 	ck(lab.text.contains("Phase 2"), "the toast text names Phase 2")
 	# second trigger: the toast must not show again
+	# Spec 0.3.1 item 2: "Toasts (PhaseToast / ToastLabel) now go through one queue in farm_ui.gd ... for toast_seconds";
+	# hiding the node by hand no longer ends a showing toast (the queue re-shows it), so end it through the queue's clear.
+	var ui: Node = toast
+	while ui != null and not ui.has_method("clear_toasts"):
+		ui = ui.get_parent()
+	ck(ui != null, "the farm UI with the toast queue is found")
+	if ui != null:
+		ui.call("clear_toasts")
 	toast.visible = false
 	e.call("set_level", "auto_sell", 1)
 	e.call("set_level", "faster_delivery", dmax)
@@ -55,6 +63,8 @@ func t_phase2_auto_sell_sets_once_toast_once() -> void:
 	eq(count[0], 1, "set again: phase 2 not announced a second time")
 	ck(not toast.visible, "set again: the toast does not show a second time")
 	# phase announced a second time (flag dropped by hand): the toast still shows only once
+	if ui != null:
+		ui.call("clear_toasts")
 	e.set("phase", 1)
 	e.call("set_level", "auto_sell", 0)
 	e.call("set_level", "auto_sell", 1)

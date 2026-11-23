@@ -10,9 +10,11 @@ var _panel: Control
 var _title: Label
 var _body: Label
 var _open_button: Button
+var _forced: bool = false   # Dev "Unlock Journal"
 
 
 func _ready() -> void:
+	add_to_group("journal_ui")
 	_panel = get_parent().find_child("JournalPanel", true, false) as Control
 	_title = get_parent().find_child("JournalTitle", true, false) as Label
 	_body = get_parent().find_child("JournalBody", true, false) as Label
@@ -25,16 +27,26 @@ func _ready() -> void:
 		# 0.3 item 4: hidden until Habitat Health is thriving; habitat_changed also covers Reset.
 		_open_button = open_button
 		_open_button.text = tr("journal_icon")   # 0.3.1 item 1: farm-view icon under FarmUI, labelled through tr()
-		Economy.habitat_changed.connect(func(_h: int) -> void: _refresh_button())
+		Economy.habitat_changed.connect(func(h: int) -> void:
+			if h <= Economy.config.habitat_health_start:   # a reset ends a Dev unlock
+				_forced = false
+			_refresh_button())
 		_refresh_button()
 	if close_button != null:
 		close_button.pressed.connect(close)
 
 
+## 0.3.1 item 5 (Dev "Unlock Journal"): shows the Journal icon without thriving, until Health next drops under thriving (a reset).
+func unlock() -> void:
+	_forced = true
+	_refresh_button()
+
+
 func _refresh_button() -> void:
 	if _open_button == null:
 		return
-	var unlocked: bool = Economy.habitat_health >= Economy.config.habitat_thriving
+	var thriving: bool = Economy.habitat_health >= Economy.config.habitat_thriving
+	var unlocked: bool = thriving or _forced
 	_open_button.visible = unlocked
 	if not unlocked:
 		close()

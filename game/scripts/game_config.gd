@@ -134,6 +134,9 @@ extends Resource
 ## 0.3 item 1: show the welcome overlay on launch (tests set this false unless they test the welcome screen).
 @export var show_welcome: bool = true
 
+## 0.3.1 item 2: seconds each toast (PhaseToast) stays up once it shows.
+@export var toast_seconds: float = 4.0
+
 ## 0.3.1 item 4: the first-time hint bubbles (tests set this false except the hint tests).
 @export var show_hint: bool = true
 @export var hint_gap_px: float = 8.0           # PLACEHOLDER (designer confirms at play-test): px between the bubble's tail tip and its target

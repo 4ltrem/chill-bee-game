@@ -91,7 +91,8 @@ func t_victory_waits_for_farm_view() -> void:
 	await _wait(delay + 1.0)   # game seconds (the overlay counts scaled delta), not frames: frames can run faster than real time
 	eq(_vic_shown(o), false, "step sheet: not shown while the Shop sheet is open; %s" % _vic_diag(o, m))
 	panel.call("set_sheet_open", false)
-	var ok: bool = await _until(func() -> bool: return _vic_shown(o), 3.0)
+	# spec 0.3.1 item 2: "The victory waits until the bumble toast has finished, then victory_delay_seconds as before": the toast (toast_seconds) shows first once the sheet closes
+	var ok: bool = await _until(func() -> bool: return _vic_shown(o), float(cv("toast_seconds")) + delay + 3.0)
 	ck(ok, "step back: shown once the sheet is closed")
 	if o.has_method("close"):
 		o.call("close")
@@ -104,7 +105,8 @@ func t_victory_waits_for_farm_view() -> void:
 	await _wait(delay + 1.0)
 	eq(_vic_shown(o), false, "step zoom: not shown while a zoom is in progress; %s" % _vic_diag(o, m))
 	m.set("zoom", was)
-	var ok2: bool = await _until(func() -> bool: return _vic_shown(o), 3.0)
+	# spec 0.3.1 item 2: the toast waits for the zoom, shows for toast_seconds, then the victory (see step back)
+	var ok2: bool = await _until(func() -> bool: return _vic_shown(o), float(cv("toast_seconds")) + delay + 3.0)
 	ck(ok2, "step zoom out: shown once the zoom is over")
 	_eco().call("reset")
 	_fin()

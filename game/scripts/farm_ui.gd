@@ -42,7 +42,15 @@ var _top_saved: bool = false
 var _top_flags: int = 0
 var _bar_flags: int = 0
 var _bar_min_x: float = 0.0
-const PHASE_TOAST_SECONDS: float = 4.0   # PLACEHOLDER display time
+const PHASE_KEY: String = "Phase 2: your farm starts running itself"
+const BUMBLE_KEY: String = "toast_bumble_visitor"
+var _toast_queue: Array[String] = []   # 0.3.1 item 2: keys waiting to show (display time: config toast_seconds)
+var _toast_showing: String = ""
+var _toast_left: float = 0.0
+var _toast_hidden_by_block: bool = false
+var _bumble_frame: int = -1
+var _toast_main: Node
+var _toast_journal: Control
 var _phase_toast: Control
 var _phase_toast_label: Label
 var _phase_toast_shown: bool = false
@@ -76,41 +84,108 @@ func _ready() -> void:
 	Economy.phase_changed.connect(_on_phase_changed)
 	Economy.thriving.connect(_on_thriving)
 	Economy.habitat_changed.connect(_on_habitat_changed)
+	add_to_group("farm_ui")
+	var slots: Node = get_tree().root.find_child("PatchSlots", true, false)
+	if slots != null and slots.has_signal("toast_requested"):
+		slots.connect("toast_requested", _on_patch_toast)
 	_refresh_bees()
 	_refresh_money()
 	_refresh_hive()
 
 
-## 0.2 item 7: one-line toast the first time the phase becomes 2; hidden again after a timer.
+## 0.2 item 7: one-line toast the first time the phase becomes 2 (0.3.1 item 2: through the toast queue).
 func _on_phase_changed(new_phase: int) -> void:
 	if new_phase < 2 or _phase_toast_shown or _phase_toast == null:
 		return
 	_phase_toast_shown = true
-	if _phase_toast_label != null:
-		_phase_toast_label.text = tr("Phase 2: your farm starts running itself")
-	_phase_toast.visible = true
-	get_tree().create_timer(PHASE_TOAST_SECONDS).timeout.connect(func() -> void:
-		if is_instance_valid(_phase_toast):
-			_phase_toast.visible = false)
+	enqueue_toast(PHASE_KEY)
 
 
-## 0.3 item 4: a reset (health back under thriving) drops a still-showing bumble toast so the next farm starts clean.
+## 0.3 item 4: a reset (health back under thriving) drops a bumble toast that is queued or showing so the next farm starts clean.
 func _on_habitat_changed(h: int) -> void:
-	if _phase_toast != null and h < Economy.config.habitat_thriving and _phase_toast_label != null \
-			and _phase_toast_label.text == tr("toast_bumble_visitor"):
+	if h < Economy.config.habitat_thriving:
+		_toast_queue.erase(BUMBLE_KEY)
+		if _toast_showing == BUMBLE_KEY:
+			_end_toast()
+
+
+## 0.3 item 4: toast on thriving; key text lives in content/course-ending-text.md. Queues only this one for the planting that
+## reaches thriving (0.3.1 item 2): the patch toast asked for in the same frame is dropped.
+func _on_thriving() -> void:
+	_bumble_frame = Engine.get_process_frames()
+	enqueue_toast(BUMBLE_KEY)
+
+
+## 0.3.1 item 2: PatchSlots.toast_requested (toast_patch_planted) joins the queue, unless this planting reached thriving.
+func _on_patch_toast(key: String) -> void:
+	if _bumble_frame == Engine.get_process_frames():
+		return
+	enqueue_toast(key)
+
+
+## Public so main.gd, tests and the Dev panel use one path. Keys are translated when shown.
+func enqueue_toast(key: String) -> void:
+	if _phase_toast == null:
+		return
+	_toast_queue.append(key)
+
+
+## Dev "Reset habitat" (0.3.1 item 2): empties the queue and hides a showing toast.
+func clear_toasts() -> void:
+	_toast_queue.clear()
+	_end_toast()
+
+
+## True while the bumble toast is queued or on screen (victory_overlay.gd waits for it to finish).
+func bumble_toast_pending() -> bool:
+	return _toast_showing == BUMBLE_KEY or _toast_queue.has(BUMBLE_KEY)
+
+
+func toast_showing_key() -> String:
+	return _toast_showing
+
+
+func _end_toast() -> void:
+	_toast_showing = ""
+	if _phase_toast != null and is_instance_valid(_phase_toast):
 		_phase_toast.visible = false
 
 
-## 0.3 item 4: toast on thriving (reuses PhaseToast / ToastLabel); key text lives in content/course-ending-text.md.
-func _on_thriving() -> void:
-	if _phase_toast == null:
+## A toast waits while a zoom or the second stop is up, the Shop sheet or the Journal panel is open, or the welcome is up.
+func _toasts_blocked() -> bool:
+	if _toast_main == null or not is_instance_valid(_toast_main):
+		_toast_main = self
+		while _toast_main != null and not _toast_main.has_method("farm_view_idle"):
+			_toast_main = _toast_main.get_parent()
+	if _toast_main != null and not bool(_toast_main.call("farm_view_idle")):
+		return true
+	if _toast_journal == null or not is_instance_valid(_toast_journal):
+		_toast_journal = get_tree().root.find_child("JournalPanel", true, false) as Control
+	return _toast_journal != null and _toast_journal.visible
+
+
+## One toast at a time, in the order queued; the clock stops while blocked.
+func _tick_toasts(delta: float) -> void:
+	if _phase_toast == null or (_toast_showing == "" and _toast_queue.is_empty()):
 		return
-	if _phase_toast_label != null:
-		_phase_toast_label.text = tr("toast_bumble_visitor")
+	if _toasts_blocked():
+		if _toast_showing != "":
+			_phase_toast.visible = false
+			_toast_hidden_by_block = true
+		return
+	if _toast_showing != "" and not _toast_hidden_by_block and not _phase_toast.visible:
+		_end_toast()   # something else hid the showing toast: it is over
+		return
+	_toast_hidden_by_block = false
+	if _toast_showing == "":
+		_toast_showing = _toast_queue.pop_front()
+		_toast_left = Economy.config.toast_seconds
+		if _phase_toast_label != null:
+			_phase_toast_label.text = tr(_toast_showing)
 	_phase_toast.visible = true
-	get_tree().create_timer(PHASE_TOAST_SECONDS).timeout.connect(func() -> void:
-		if is_instance_valid(_phase_toast):
-			_phase_toast.visible = false)
+	_toast_left -= delta
+	if _toast_left <= 0.0:
+		_end_toast()
 
 
 ## Called by main.gd once the farm nodes are known.
@@ -285,7 +360,8 @@ func _setup_fill_shape() -> void:
 
 ## 0.1.4 item 1: the Harvest button's background fills from the bottom with the hive's fill fraction (HarvestFill, a child of ForkIcon),
 ## and HiveCountLabel sits just above the button's visible shape. At full the fill hides and the button's own enabled look shows.
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_tick_toasts(delta)
 	_place_centrifuge_label()
 	if _hive == null or _fork == null:
 		return

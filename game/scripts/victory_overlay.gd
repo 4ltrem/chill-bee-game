@@ -72,11 +72,20 @@ func _rearm() -> void:
 func _process(delta: float) -> void:
 	if not _queued or visible:
 		return
+	if _bumble_toast_pending():   # 0.3.1 item 2: the delay starts once the bumble toast has finished
+		return
 	_wait = maxf(_wait - delta, 0.0)
 	if _wait > 0.0:
 		return
 	if _farm_view_idle():
 		_show()
+
+
+func _bumble_toast_pending() -> bool:
+	for node: Node in get_tree().get_nodes_in_group("farm_ui"):
+		if node.has_method("bumble_toast_pending") and bool(node.call("bumble_toast_pending")):
+			return true
+	return false
 
 
 func _farm_view_idle() -> bool:
@@ -94,6 +103,12 @@ func _show() -> void:
 	_done = true
 	visible = true
 	shown.emit()
+
+
+## 0.3.1 item 5 (Dev "Show victory"): shows it now, skipping the delay and the farm-view wait.
+func show_now() -> void:
+	if not visible:
+		_show()
 
 
 ## The button. Public so a test can call it. Play continues unchanged.
