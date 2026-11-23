@@ -1827,5 +1827,15 @@
    "t_skip_icon_farm_view_only"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "icons: Sell lands on the top info bar at the second stop",
+  "file": "scripts/floating_icon.gd",
+  "find": "\tglobal_position = _clamp_and_nudge(want)\n\treturn true",
+  "replace": "\tglobal_position = _clamp_and_nudge(want)\n\tif name == &\"SellIcon\" and get_tree().root.find_child(\"TopInfo\", true, false) != null:\n\t\tglobal_position = (get_tree().root.find_child(\"TopInfo\", true, false) as Control).global_position\n\treturn true",
+  "expect": [
+   "t_icons_never_overlap"
+  ],
+  "suite": "unit"
  }
 ]

@@ -1,0 +1,42 @@
+[
+ {
+  "call": "William, round 1",
+  "tokens": 112191,
+  "final": 29238,
+  "turns": 12,
+  "seconds": 33,
+  "transcripts": "_meta/sessions/runs/2026-11-23-first-time-hint-run-1"
+ },
+ {
+  "call": "William, round 2",
+  "tokens": 41088,
+  "final": 15270,
+  "turns": 4,
+  "seconds": 5,
+  "transcripts": "_meta/sessions/runs/2026-11-23-first-time-hint-run-1"
+ },
+ {
+  "call": "Critic, round 2",
+  "tokens": 69084,
+  "final": 29547,
+  "turns": 5,
+  "seconds": 30,
+  "transcripts": "_meta/sessions/runs/2026-11-23-first-time-hint-run-1"
+ },
+ {
+  "call": "William, round 3",
+  "tokens": 48742,
+  "final": 19311,
+  "turns": 9,
+  "seconds": 25,
+  "transcripts": "_meta/sessions/runs/2026-11-23-first-time-hint-run-1"
+ },
+ {
+  "call": "Critic, round 3",
+  "tokens": 17647,
+  "final": 17647,
+  "turns": 1,
+  "seconds": 11,
+  "transcripts": "_meta/sessions/runs/2026-11-23-first-time-hint-run-1"
+ }
+]

@@ -4,6 +4,7 @@ _meta/sessions/runs/
 _meta/sessions/*/session.jsonl
 _meta/sessions/*/subagents/
 _meta/sessions/*/manifest.json
+_meta/sessions/*/digest.txt
 
 # Machine-specific Claude Code settings (e.g. autoMemoryDirectory, an absolute path)
 .claude/settings.local.json

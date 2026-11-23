@@ -177,9 +177,11 @@ func _icons_state(m: Node, p: Dictionary, label: String, second: bool) -> int:
 		if (ic as Control).is_visible_in_tree():
 			vis.append(ic)
 	var hud: Array = []
-	for nm in ["TopInfo", "ShopPanel"]:
+	# 0.3.0 controls: ShopButton (made in shop_ui.gd), HabitatPill (in TopInfo), SkipIcon (skip to ending), JournalButton (in ShopPanel); a hidden one is skipped
+	for nm in ["TopInfo", "ShopPanel", "ShopButton", "HabitatPill", "SkipIcon", "JournalButton"]:
 		var c: Control = m.find_child(nm, true, false) as Control
-		ck(c != null, "%s: %s exists" % [label, nm])
+		if nm == "TopInfo" or nm == "ShopPanel":
+			ck(c != null, "%s: %s exists" % [label, nm])
 		if c != null and c.is_visible_in_tree():
 			hud.append(c)
 	var world: Array = []
@@ -263,6 +265,24 @@ func t_icons_never_overlap() -> void:
 		var n_second: int = await _icons_state(m, p, "second stop", true)
 		# Spin starts the crank, and Spin shows only while FULL (main.gd _refresh_icons spin_ok); Harvest is hidden at the second stop
 		eq(n_second, 0, "second stop, cranking: no icon shows (Harvest hidden, Spin gone once the crank starts) (%d)" % n_second)
+		# Sell moments (main.gd _refresh_icons: Sell shows while the truck can sell, even at the second stop). The truck is filled by cheat (marked).
+		var cen: Node = p["Centrifuge"]
+		var tk: Node = p["Truck"]
+		var sell: Control = p["SellIcon"]
+		tk.set("loaded_jars", int(tk.get("capacity")))   # CHEAT: a full truck at home, so Sell is wanted
+		m.call("_refresh_icons")
+		var sell_up: bool = await _until(func() -> bool: return _shown(sell), 3.0)
+		ck(sell_up, "second stop, cranking, truck full: Sell shows")
+		var n_sell: int = await _icons_state(m, p, "second stop, Sell", bool(m.call("at_second_stop")))
+		ck(n_sell >= 1 and _shown(sell), "second stop, Sell: at least one icon was compared, Sell among them (%d)" % n_sell)
+		# the centrifuge pours (cranked by calls); the full truck sends the jars to the crate, so Sell stays up
+		_crank_done(cen)
+		var poured: bool = await _until(func() -> bool: return int(cen.get("state")) == _st(cen, "EMPTY"), float(cv("bottling_seconds_per_jar")) * (float(cen.get("jars")) + 4.0) + 5.0)
+		ck(poured, "the centrifuge poured out")
+		if not bool(m.call("at_second_stop")):
+			await _wait(float(cv("camera_pan_seconds")) + 0.3)   # spin mode ended with no pile: the camera pans back to the farm view
+		var n_poured: int = await _icons_state(m, p, "after the pour", bool(m.call("at_second_stop")))
+		ck(n_poured >= 1 and _shown(sell), "after the pour: at least one icon was compared, Sell among them (%d)" % n_poured)
 	ck(n_zoom >= 0, "first zoom measured")
 	_fin()
 
