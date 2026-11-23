@@ -3,7 +3,7 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
@@ -480,9 +480,18 @@ FAIL    unit      163 passed, 1 failed  (godot exit 1, 291 noise lines dropped) 
 
 2 fix rounds failed on C1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.1-playtest-fixes.md --accept C1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C1 fix-round edits"`.
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md --accept C1 --note journal_csv.py now writes the journal_icon row (was hand-added to journal.csv); C7 moves every label to ui-labels.md` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C1 (2026-11-23T14:40:04-05:00)
+
+- Change (orchestrator, Process 9): journal_csv.py now writes the journal_icon row (was hand-added to journal.csv); C7 moves every label to ui-labels.md
+- Accepted: checkpoint `c5fae29` on `main`
+
 ## Result
 
-Last invocation (2026-11-23T14:39:28-05:00): waiting-designer.
+C1 accepted with a manual fix (checkpoint `c5fae29` on `main`). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
