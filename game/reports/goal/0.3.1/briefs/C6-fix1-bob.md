@@ -1,0 +1,27 @@
+Goal agent run `0.3.1`, fix round 1 for goal C6 of `game/specs/0.3.1-playtest-fixes.md`, branch `main`. These checks failed after the last step. Fix what is in your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit. Do not run the test suite, mutations or shots: the goal agent runs every check after you. You have 15 turns.
+
+Your folder: scenes/ and materials/
+
+You alone work this round. If the cause is in Patricia (scripts/)'s folder, change nothing and say which file and line: the next round goes to them. Change only what a failing row names; every other value, pose and position stays as it is (0.1.4: a lid fix asked to change the end also moved the open pose). If neither the failure message nor the code shows the cause, do not guess a fix: change nothing for it and write `diag needed` with the values that would show the cause; the next round asks Quinn to print them. STYLE_GUIDE minimums are approved values, not votes: raise a touch target below 120 px to 120 and a font below 28 px to 28 without asking, and say so in your reply. Where a panel sits, how it opens and what fits on screen come from the designer's Claude Design canvas: read `UI_DESIGN.md` and the matching board in `proposals/design/ui-screens-mockup/project/` for the look and placement of what the spec item asks for. Build only what the spec asks (a board part it does not name, like tabs, waits for a later revision); where the spec text differs, the spec wins. Before writing any `(designer)` row, look for the answer in `UI_DESIGN.md`, the canvas boards, `README.md` (Outstanding TBDs), `proposals/design/ui-screens.md` and `_meta/sessions/*/decisions.md`: if one answers it, apply that answer and cite the file. If the topic is already a listed TBD, build the placeholder, name the TBD and go on; it is not a question. Ask only when none of them covers it. This spec's visuals are placeholders (front matter `visuals: placeholder`): you may set a size, offset, font size or margin when a failing row needs it. Keep it close to the canvas board, change only the numbers the row needs, and list each as `placeholder: <file>: <old> -> <new>`; the designer confirms them at play-test. A `pick match` row means the live prop must match the designer's picked variant: open both shots and the variant's .tscn, and rebuild what differs. A style row whose Fix ends `(designer)` is not yours: leave it and list it in your reply.
+
+style:
+Style board `game/reports/style/0.3.1-goal-c6/run-1/blackboard.md`, Result:
+
+Still FAIL after round 1 (max rounds 1 or the token cap). Open rows:
+
+| # | Rule | Where | Finding | Fix |
+|---|---|---|---|---|
+| 1 | V1 | `scenes/main.tscn:121` | UI colour `StyleBox_fork_disabled.bg_color` (0.85, 0.83, 0.78) is ΔE 13.5 from the nearest UI token (cream); limit 12.0 | recolour to cream (1, 0.96, 0.86) |
+
+The game was not changed, and the sandbox has no changes to propose.
+
+Transcripts: `_meta/sessions/runs/2026-11-23-style-0.3.1-goal-c6-run-1/`
+
+|---|---|---|---|---|
+
+(4 older row(s) about files this step did not change were left out: not yours this round, change nothing for them.)
+
+Spec text:
+6. **A real fork on Harvest, and a centrifuge icon for Spin** (designer, 2026-11-23: "we also have to make sure there's an actual fork icon now that it's in the hint, also we can replace the spin icon with a refresh icon or something better for the centrifuge"). Today `ForkIcon` is a 240 × 120 rounded tag with the text "Harvest" and `CentrifugeIcon` a round button with "Spin" (`main.tscn`), while item 4's `hint_harvest` says "Tap the fork". `ForkIcon` becomes `UI_DESIGN.md` rule 4: a white circle with a honey uncapping fork drawn on it (the fork as on the canvas Prototype board, `proposals/design/ui-screens-mockup/project/Prototype.dc.html`, Harvest button), the honey meter (`HarvestFill`) rising behind the fork, the n/10 count above; the word "Harvest" leaves the circle. `CentrifugeIcon` gets the icon the designer picked on Design Votes (round `spin-icon`, 2026-11-23: D "honey drop" yes, A refresh and C crank maybe, B drum no; `game/reports/votes/spin-icon/decisions.json`): a cream honey drop with an ink outline and an ink turn arrow on the gold circle with the ink ring, as drawn in `game/reports/votes/spin-icon/icons.html` option d. **Back as an arrow** (README Outstanding list, "Back button as an arrow", Design Votes round 8, 2026-11-07; designer 2026-11-23: in this icon pass): `BackButton` (`HarvestUIRoot/HarvestUI`, top-right in both zooms) loses the word "Back" and becomes a flat ink left-pointing arrow on a cream circle with the ink ring, the look of the Shop sheet's round Close button on the canvas; its tooltip/accessibility text becomes `tr("farm_back")` (the key is in `content/ui-labels.md`; today the button has the text "Back" and no tooltip). Its 120 × 120 rect, corner and behaviour stay as they are, and the instruction text stays below it (0.1.4 item 8). Both are flat STYLE_GUIDE UI-token shapes (V4: no textures), drawn inside a touch rect of at least 120 × 120 (V11; the fork's circle replaces today's 240 × 120 tag); the floating-icon placement, show/hide rules and the meter's fill stay as they are. Without their words the icons still differ by shape (fork, honey drop, arrow, the Sell pill with its price), which meets GDD §8's colour-blind rule (designer, 2026-11-23: "shape alone is enough"; this replaces prototype-0's "shape and label" for these icons). Sizes are placeholders the designer confirms at play-test.
+
+Reply in at most 150 words.

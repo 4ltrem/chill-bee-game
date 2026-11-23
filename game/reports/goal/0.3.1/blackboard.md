@@ -3,7 +3,7 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: paused
+result: waiting-designer
 ---
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
@@ -677,9 +677,346 @@ Next: **C8** (score 8.47: 1 goal(s) wait on it; play-test fix; cost 0.53 (Patric
 **Paused:** Budget guard: weekly usage is 57% with 32% of the week gone, more than 10 points ahead of pace, so heavy agents (programmer) wait (reading 41 min old). Don't start it: wait for the reset, or ask the designer to run `python -I _tools/budget_guard.py --allow-for 60`.
 Run the same command again to resume.
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md` (the run had stopped: `paused`).
+Branch `main`: stays on it.
+
+## Pass 6: scan (2026-11-23T15:26:19-05:00)
+
+Unit results from `game/reports/_runs/20261122-190049/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C6 A real fork on Harvest, and a centrifuge icon for Spin | change | Bob | partial | ✓ node BackButton, ✓ node CentrifugeIcon, ✓ node ForkIcon, ✓ node HarvestFill |
+
+### Order: new or rescored (5 of 15)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C6 A real fork on Harvest, and a centrifuge icon for  | 8.74 | 1 | 3 | 0.26 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.26 (Bob) |
+| 2 | C8 Tools icon in both zooms, in place of the Shop | 8.48 | 1 | 3 | 0.52 | 1 | 1 goal(s) wait on it; play-test fix; cost 0.52 (Patricia, Bob) |
+| 3 | C2 Toasts wait for the Shop to close; the patch toast | 6.74 | 1 | 2 | 0.26 | 1 | 1 goal(s) wait on it; designer feature; cost 0.26 (Patricia) |
+| 4 | C5 The 0.3 Dev buttons, never built | 6.74 | 1 | 2 | 0.26 | 1 | 1 goal(s) wait on it; designer feature; cost 0.26 (Patricia) |
+| 5 | C7 Settings icon with a language switch, and every la | 6.48 | 1 | 2 | 0.52 | 1 | 1 goal(s) wait on it; designer feature; cost 0.52 (Patricia, Bob) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C6** (score 8.74: 1 goal(s) wait on it; play-test fix; cost 0.26 (Bob)).
+
+### Step: C6 (2026-11-23T15:26:20-05:00)
+
+- Brief for Bob: `game/reports/goal/0.3.1/briefs/C6-bob.md` (4171 chars)
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/C6-quinn.md` (6598 chars)
+- Budget guard for Bob: override
+- Budget guard for Quinn: override
+
+**Quinn** (156,343 tokens, 9 turns, 18 s):
+
+I checked every test on the list against item 6 and changed no files. Nothing in the tests depends on what the item changes.
+
+- **What I searched:** the `.text` of `ForkIcon`, `CentrifugeIcon` and `BackButton`, the "Back", "Spin" and "Harvest" strings, hard-coded 240 or 120 sizes, and tooltips. No test reads the word on any of the three controls.
+- **Size checks still hold:** `test_icons`, `test_zoom` and `play_loop` assert only a touch area of at least 120 × 120. That is also the spec's minimum, so the new circle passes them.
+- **Other matches are unrelated:** the remaining `.text` hits read the dev panel, the shop, the welcome screen or the journal.
+- **Node names:** unchanged (`ForkIcon`, `CentrifugeIcon`, `BackButton`, `HarvestFill`).
+- **Risk:** `play_loop.gd` casts `ForkIcon` `as Button`. It breaks only if Bob changes the node's base type.
+
+Open questions: none. Because the HUD overlap pair `HiveCountLabel`/`ForkIcon` is still allowed, no test needs updating for the count sitting above the fork.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 6 (cap 30; CLI num_turns 9); end `success`
+
+
+**Bob** (1,075,264 tokens, 37 turns, 121 s):
+
+Item 6 is built in `game/scenes/main.tscn` only. The contract check passes (0 unresolved). I rendered with a throwaway probe, since deleted. It showed Back and Spin clearly. The fork sat behind the hint toast and drew in its disabled state, so I did not see it fully lit.
+
+- **`ForkIcon`**: now a 120 × 120 white circle with an ink ring, no text. It uses new `StyleBox_fork`, `_pressed` and `_disabled` styles. New child `ForkGlyph` holds `Handle`, `HandleWood`, `Tines/Tine1..6`, `Head` and `HeadSteel` (Line2D nodes). `HarvestFill` is kept, resized to 116, and still drawn behind the glyph.
+- **`CentrifugeIcon`**: no "Spin" text. New child `SpinGlyph` holds `DropFill`, `DropOutline`, `TurnArrow` and `TurnArrowHead` (option d).
+- **`BackButton`**: no "Back" text, `tooltip_text = "farm_back"`, `StyleBox_close_round` (cream circle, ink ring). Its children `BackArrowShaft` and `BackArrowHead` draw the arrow.
+
+For Patricia: set the tooltip through `tr("farm_back")` in script, as `skip_icon.gd` does.
+
+I raised no sizes. Open questions: none.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 23 (cap 30; CLI num_turns 37); end `success`
+
+- Tests this round (79): own (41): `t_back_after_one_frame`, `t_back_keeps_half_frame`, `t_bumble_visitor_toast_journal_unlock_twice`, `t_camera_back_from_second_stop`, `t_camera_second_stop_hud_clear`, `t_centrifuge_label_on_centrifuge`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_ui_bounds_collects_controls`, `t_focus_styles`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_icons_never_overlap`, `t_journal_panel_text_matches_csv_twice`, `t_lid_close_never_clips_hive`, `t_no_crank_during_zoom`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_paused_crank_never_finishes_in_farm_view`, `t_resume_pending_pile_loads_while_zoom_open`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_spin_placed_by_scene`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; impacted by `scenes/main.tscn` (via `Back`, `BackButton`, `CentrifugeIcon`, `FarmUI`, `FarmUIRoot`, `ForkIcon`, `Handle`, `HarvestUI`, `HarvestUIRoot`, `Head`) (77): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_combs_fill_frame_and_hive_whole`, `t_combs_visible_in_hive`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_ui_bounds_collects_controls`, `t_focus_styles`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hive_five_upright_frames_four_walls`, `t_hive_frames_cells_aligned`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_icons_never_overlap`, `t_layout_objects_on_cells`, `t_lid_close_never_clips_hive`, `t_no_crank_during_zoom`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_welcome_world_idle_then_play_twice`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: FAIL (exit 1)
+
+```
+Style board `game/reports/style/0.3.1-goal-c6/run-1/blackboard.md`, Result:
+
+Still FAIL after round 1 (max rounds 1 or the token cap). Open rows:
+
+| # | Rule | Where | Finding | Fix |
+|---|---|---|---|---|
+| 1 | V1 | `scenes/main.tscn:121` | UI colour `StyleBox_fork_disabled.bg_color` (0.85, 0.83, 0.78) is ΔE 13.5 from the nearest UI token (cream); limit 12.0 | recolour to cream (1, 0.96, 0.86) |
+
+The game was not changed, and the sandbox has no changes to propose.
+
+Transcripts: `_meta/sessions/runs/2026-11-23-style-0.3.1-goal-c6-run-1/`
+
+|---|---|---|---|---|
+
+(4 older row(s) about files this step did not change were left out: not yours this round, change nothing for them.)
+```
+
+#### Fix round 1: to Bob
+
+- Brief for Bob: `game/reports/goal/0.3.1/briefs/C6-fix1-bob.md` (5552 chars)
+- Budget guard for Bob: override
+
+**Bob** (49,053 tokens, 3 turns, 8 s):
+
+I changed one value in `game/scenes/main.tscn`, line 121. `StyleBox_fork_disabled.bg_color` went from (0.85, 0.83, 0.78) to cream (1, 0.96, 0.86), which is the fix the style row named. I haven't rendered the scene or run any checks, as instructed.
+
+The disabled fork is now the same colour as the normal cream token. If a disabled fork should look dimmer than an enabled one, that needs a designer decision.
+
+placeholder: none. No sizes, fonts or touch targets changed.
+
+Nothing is left for another folder, and no `(designer)` rows were open. The four older rows about files this step didn't change were left alone.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 3); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (79): own (41): `t_back_after_one_frame`, `t_back_keeps_half_frame`, `t_bumble_visitor_toast_journal_unlock_twice`, `t_camera_back_from_second_stop`, `t_camera_second_stop_hud_clear`, `t_centrifuge_label_on_centrifuge`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_ui_bounds_collects_controls`, `t_focus_styles`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_icons_never_overlap`, `t_journal_panel_text_matches_csv_twice`, `t_lid_close_never_clips_hive`, `t_no_crank_during_zoom`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_paused_crank_never_finishes_in_farm_view`, `t_resume_pending_pile_loads_while_zoom_open`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_spin_placed_by_scene`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; impacted by `scenes/main.tscn` (via `Back`, `BackButton`, `CentrifugeIcon`, `FarmUI`, `FarmUIRoot`, `ForkIcon`, `Handle`, `HarvestUI`, `HarvestUIRoot`, `Head`) (77): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_combs_fill_frame_and_hive_whole`, `t_combs_visible_in_hive`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_ui_bounds_collects_controls`, `t_focus_styles`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hive_five_upright_frames_four_walls`, `t_hive_frames_cells_aligned`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_icons_never_overlap`, `t_layout_objects_on_cells`, `t_lid_close_never_clips_hive`, `t_no_crank_during_zoom`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_welcome_world_idle_then_play_twice`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `ui shots`: PASS
+- Check `style`: PASS (open rows only on files this step did not change)
+- Green: checkpoint `7e89e24` on `main`
+
+## Pass 7: scan (2026-11-23T16:02:02-05:00)
+
+Unit results from `game/reports/_runs/20261122-190049/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C6 A real fork on Harvest, and a centrifuge icon for Spin | change | Bob | partial (built, waits on its tests) | ✓ node BackButton, ✓ node CentrifugeIcon, ✓ node ForkIcon, ✓ node HarvestFill, ✓ ledger 7e89e24 |
+
+No score changed.
+
+Next: **C8** (score 8.48: 1 goal(s) wait on it; play-test fix; cost 0.52 (Patricia, Bob)).
+
+### Step: C8 (2026-11-23T16:02:03-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3.1/briefs/C8-patricia.md` (4309 chars)
+- Brief for Bob: `game/reports/goal/0.3.1/briefs/C8-bob.md` (4081 chars)
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/C8-quinn.md` (6118 chars)
+- Budget guard for Patricia: override
+- Budget guard for Bob: override
+- Budget guard for Quinn: override
+
+**Quinn** (129,878 tokens, 7 turns, 18 s):
+
+Files changed: `tests/test_second_stop.gd`, one edit. In `_icons_state`, the HUD clearance list now includes `ToolsButton`. A line above it quotes spec item 8 ("clear of Back, the instruction text and the zoom's own targets"). A hidden control is skipped, so the farm view is unaffected.
+
+Node name used: `ToolsButton`.
+
+Left unchanged:
+- `test_shop_zoom.gd` already expects the Shop hidden in both zooms, per item 3.
+- `Flow.shop_open` is farm-only.
+- I found no test that opens the Shop from a zoom.
+
+Open questions:
+1. Item 8 says Tools is "the only icon in a zoom besides Back". The existing Spin and Fork floating icons, checked in `t_icons_never_overlap` and the icon tap tests, appear to contradict that. I left those tests alone because the spec doesn't replace them.
+2. The first-zoom Tools position (top at 928 px) may overlap the first-zoom Spin icon. The test above would catch that.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 6 (cap 30; CLI num_turns 7); end `success`
+
+
+**Bob** (259,917 tokens, 15 turns, 37 s):
+
+I added `ToolsButton` to `game/scenes/main.tscn`; I haven't seen it rendered. `contract_check.py` passes (115 lookups, 0 unresolved). My one render attempt failed on a PNG save path, and the button starts hidden, so a plain render of `main.tscn` wouldn't show it anyway. Patricia's script has to show it in a zoom for a render to be useful.
+
+**Node names:**
+- `HarvestUIRoot/HarvestUI/ToolsButton` is 120×120 and starts hidden. It has the cream circle with the ink ring (the Back button's `StyleBox_close_round`), and its `tooltip_text` is `tools_icon`. Its offsets put it 24 px from the right edge with its top at 928, the first-zoom value.
+- `ToolsGlyph` holds `WrenchShaft` and `WrenchJaw`, two ink Line2D shapes drawn as a rough wrench.
+- `ToolsLabel` is 28 px, cream with an ink outline, sits under the button, and has `text = "Tools"`.
+
+**For Patricia:**
+- The script must move `ToolsButton` to top 840 at the second stop.
+- The script must set the label text from the `tools_icon` key. I left the English text as a fallback.
+- The script must show and hide the button as the spec says.
+
+**Open questions:** none.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 8 (cap 30; CLI num_turns 15); end `success`
+
+
+**Patricia** (440,683 tokens, 19 turns, 49 s):
+
+Item 8 is built in `scripts/shop_ui.gd`. `contract_check.py` passes. I did not run the unit tests, because the hook blocks `godot_run.py` outside Rex's shell, and I did not parse-check the script in Godot. Bob's `ToolsButton` isn't in `main.tscn` yet, so the button logic is untested.
+
+- **Node names:** `ToolsButton` (Bob's node, found by name; I create nothing). I reuse `ShopPanel`, `ShopTitle`, `ShopTabs`, `ShopDim`, `ShopCloseButton` and `HintBubble`.
+- **`ToolsButton`:** it shows only in a zoom or at the second stop, only with the sheet layout, and not while the sheet is open.
+- **Tools mode:** it opens through `set_tools_open(true)`. The title is `tr("tools_icon")` and the tabs are hidden. It shows Heated Fork in the first zoom, and Gearing and Spigot Flow at the second stop. The remembered tab is untouched.
+- **Closing and blocking:** the existing dim blocks fork and crank input, and `main.gd` closes the sheet on Back or when the zoom ends.
+- **Hint:** the bubble hides through `set_blocked(&"tools", …)` while the sheet is open.
+
+**For Quinn:** test the button's visibility per view, the rows per machine, the tab staying unchanged, closing on Back, and the hint hiding.
+
+**Open question:** no source defines `tools_icon`, or the `shop_tab_*` keys, so `tr` shows the raw key until the labels are wired in.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 13 (cap 30; CLI num_turns 19); end `success`
+
+- Tests this round (90): own (38): `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_centrifuge_label_on_centrifuge`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_button_clear_of_hud`, `t_dev_ui_bounds_collects_controls`, `t_fork_post_auto_yield_bonus`, `t_fork_reach_by_level`, `t_harvest_hidden_at_second_stop`, `t_icons_never_overlap`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_resume_pending_pile_loads_while_zoom_open`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_skip_icon_farm_view_only`, `t_spigot_bottling_time_by_level`, `t_spigot_cost_floor_levels`, `t_spigot_jar_flight_unchanged`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_ui_and_camera`; calls a helper changed in `tests/test_second_stop.gd` (1): `t_icons_never_overlap`; impacted by `scenes/main.tscn` (via `HarvestUI`, `HarvestUIRoot`, `ToolsButton`) (68): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_combs_fill_frame_and_hive_whole`, `t_combs_visible_in_hive`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_ui_bounds_collects_controls`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hud_no_overlap_no_cutoff`, `t_icons_above_props`, `t_icons_never_overlap`, `t_layout_objects_on_cells`, `t_lid_close_never_clips_hive`, `t_no_crank_during_zoom`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; impacted by `scripts/shop_ui.gd` (via `Back`, `Bees`, `FarmUIRoot`, `Fork`, `ShopPanel`, `Spigot`, `ToolsButton`, `_process`, `set_sheet_open`) (51): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_bumble_visitor_toast_journal_unlock_twice`, `t_camera_back_from_second_stop`, `t_centrifuge_label_on_centrifuge`, `t_combs_fill_frame_and_hive_whole`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_flower_patch_b`, `t_fork_rules`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_harvest_hidden_at_second_stop`, `t_hive_five_upright_frames_four_walls`, `t_hive_frames_cells_aligned`, `t_icons_never_overlap`, `t_journal_csv_every_key_en_and_fr`, `t_journal_tr_follows_locale`, `t_lid_close_never_clips_hive`, `t_lid_still_crank_and_gear1_turn_twice`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_spigot_bottling_time_by_level`, `t_spigot_cost_floor_levels`, `t_spigot_jar_flight_unchanged`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_placed_by_scene`, `t_victory_waits_for_farm_view`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_ui_and_camera`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+FAIL    start     2 errors  (godot exit 1 (1 is normal here), 4 noise lines dropped)  game/reports/_runs/20261123-160256/start.log
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.3.1/briefs/C8-fix1-patricia.md` (5854 chars)
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/C8-fix1-quinn.md` (5212 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Patricia** (69,141 tokens, 5 turns, 11 s):
+
+I fixed the likely cause of the "Array" to "Array[String]" script errors in `game/scripts/shop_ui.gd`. I haven't run any checks, so the fix is unconfirmed.
+
+`_tools_ids()` is declared to return `Array[String]` but returned plain array literals. It now builds typed `Array[String]` locals and returns those. This should clear the five errors in the `start` check.
+
+The other repeated error lines in the report had the same message. I didn't find a second source in `scripts/`, so they may come from the same function. If any remain after the rerun, that points to a source I didn't find.
+
+No placeholders changed. No touch targets or fonts needed raising. Nothing is needed from Bob or the spec.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 5); end `success`
+
+
+**Quinn** (142,378 tokens, 9 turns, 17 s):
+
+The failure is in game code, not in `tests/`, so I changed nothing. I didn't run anything.
+
+**Owner:** Patricia, in `game/scripts/shop_ui.gd`.
+
+**Line 372:** `var tool_ids: Array[String] = _tools_ids() if tools else []`
+
+**Cause:** The `else []` branch is an untyped `Array`. The ternary therefore produces an untyped `Array`, and Godot refuses to assign it to `Array[String]`. This is the exact message in the log. It is raised each time `_rebuild` runs, which explains the repeated errors and the `start` failure.
+
+**Proposed fix:** Replace the `else []` branch with a typed empty array. For example: `var tool_ids: Array[String] = []` followed by `if tools: tool_ids = _tools_ids()`.
+
+None of the test files has an untyped array assigned to an `Array[String]` variable.
+
+The spec item 8 text doesn't replace any test expectation here.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 9); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (90): own (38): `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_centrifuge_label_on_centrifuge`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_button_clear_of_hud`, `t_dev_ui_bounds_collects_controls`, `t_fork_post_auto_yield_bonus`, `t_fork_reach_by_level`, `t_harvest_hidden_at_second_stop`, `t_icons_never_overlap`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_resume_pending_pile_loads_while_zoom_open`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_skip_icon_farm_view_only`, `t_spigot_bottling_time_by_level`, `t_spigot_cost_floor_levels`, `t_spigot_jar_flight_unchanged`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_ui_and_camera`; calls a helper changed in `tests/test_second_stop.gd` (1): `t_icons_never_overlap`; impacted by `scenes/main.tscn` (via `HarvestUI`, `HarvestUIRoot`, `ToolsButton`) (68): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_combs_fill_frame_and_hive_whole`, `t_combs_visible_in_hive`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_ui_bounds_collects_controls`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hud_no_overlap_no_cutoff`, `t_icons_above_props`, `t_icons_never_overlap`, `t_layout_objects_on_cells`, `t_lid_close_never_clips_hive`, `t_no_crank_during_zoom`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; impacted by `scripts/shop_ui.gd` (via `Back`, `Bees`, `FarmUIRoot`, `Fork`, `ShopPanel`, `Spigot`, `ToolsButton`, `_process`, `set_sheet_open`) (51): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_bumble_visitor_toast_journal_unlock_twice`, `t_camera_back_from_second_stop`, `t_centrifuge_label_on_centrifuge`, `t_combs_fill_frame_and_hive_whole`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_flower_patch_b`, `t_fork_rules`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_harvest_hidden_at_second_stop`, `t_hive_five_upright_frames_four_walls`, `t_hive_frames_cells_aligned`, `t_icons_never_overlap`, `t_journal_csv_every_key_en_and_fr`, `t_journal_tr_follows_locale`, `t_lid_close_never_clips_hive`, `t_lid_still_crank_and_gear1_turn_twice`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_spigot_bottling_time_by_level`, `t_spigot_cost_floor_levels`, `t_spigot_jar_flight_unchanged`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_placed_by_scene`, `t_victory_waits_for_farm_view`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_ui_and_camera`; last failures (5): `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_shop_seven_rows_on_screen_no_scroll`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+FAIL    start     2 errors  (godot exit 1 (1 is normal here), 4 noise lines dropped)  game/reports/_runs/20261123-160954/start.log
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+```
+
+#### Fix round 2: to Bob, Quinn
+
+- Brief for Bob: `game/reports/goal/0.3.1/briefs/C8-fix2-bob.md` (5874 chars)
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/C8-fix2-quinn.md` (5212 chars)
+- Budget guard for Bob: override
+- Budget guard for Quinn: override
+
+**Bob** (69,328 tokens, 5 turns, 9 s):
+
+The cause is in `scripts/shop_ui.gd`, line 372, so I changed nothing. Patricia gets the next round.
+
+`var tool_ids: Array[String] = _tools_ids() if tools else []`
+
+The ternary's `[]` branch is an untyped `Array`, and Godot rejects assigning that to `Array[String]`. That is the error repeated in `start.log`.
+
+Suggested fix: build it in two steps.
+```
+var tool_ids: Array[String] = []
+if tools:
+    tool_ids = _tools_ids()
+```
+
+Nothing in `scenes/` or `materials/` is involved. I changed no values, so there are no placeholder changes and no touch-target or font raises.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 5); end `success`
+
+
+**Quinn** (91,318 tokens, 5 turns, 10 s):
+
+I changed no files. The failure is in game code, not in `tests/`.
+
+**Cause:** `game/scripts/shop_ui.gd:372`, in `ShopUI._select_tab`:
+`var tool_ids: Array[String] = _tools_ids() if tools else []`
+The ternary's type resolves to untyped `Array`. Godot refuses to assign an untyped `Array` to `Array[String]`, which gives the `SCRIPT ERROR` in `start.log`. The log shows it at least twice, once per call to `_select_tab`. The `start` check also reports 2 errors.
+
+**Owner:** Patricia.
+
+**Proposed fix:** replace line 372 with two lines. First `var tool_ids: Array[String] = []`, then `if tools: tool_ids = _tools_ids()`. That assumes `_tools_ids()` returns `Array[String]`. If it returns plain `Array`, give it the typed return.
+
+No test expectation is replaced by spec item 8, so I left every test as it was.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 5); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (90): own (38): `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_centrifuge_label_on_centrifuge`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_button_clear_of_hud`, `t_dev_ui_bounds_collects_controls`, `t_fork_post_auto_yield_bonus`, `t_fork_reach_by_level`, `t_harvest_hidden_at_second_stop`, `t_icons_never_overlap`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_resume_pending_pile_loads_while_zoom_open`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_skip_icon_farm_view_only`, `t_spigot_bottling_time_by_level`, `t_spigot_cost_floor_levels`, `t_spigot_jar_flight_unchanged`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_ui_and_camera`; calls a helper changed in `tests/test_second_stop.gd` (1): `t_icons_never_overlap`; impacted by `scenes/main.tscn` (via `HarvestUI`, `HarvestUIRoot`, `ToolsButton`) (68): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_combs_fill_frame_and_hive_whole`, `t_combs_visible_in_hive`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_dev_ui_bounds_collects_controls`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_hud_no_overlap_no_cutoff`, `t_icons_above_props`, `t_icons_never_overlap`, `t_layout_objects_on_cells`, `t_lid_close_never_clips_hive`, `t_no_crank_during_zoom`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; impacted by `scripts/shop_ui.gd` (via `Back`, `Bees`, `FarmUIRoot`, `Fork`, `ShopPanel`, `Spigot`, `ToolsButton`, `_process`, `set_sheet_open`) (51): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_bumble_visitor_toast_journal_unlock_twice`, `t_camera_back_from_second_stop`, `t_centrifuge_label_on_centrifuge`, `t_combs_fill_frame_and_hive_whole`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_flower_patch_b`, `t_fork_rules`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_harvest_hidden_at_second_stop`, `t_hive_five_upright_frames_four_walls`, `t_hive_frames_cells_aligned`, `t_icons_never_overlap`, `t_journal_csv_every_key_en_and_fr`, `t_journal_tr_follows_locale`, `t_lid_close_never_clips_hive`, `t_lid_still_crank_and_gear1_turn_twice`, `t_pan_after_back_then_harvest_again`, `t_paused_crank_never_finishes_in_farm_view`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_spigot_bottling_time_by_level`, `t_spigot_cost_floor_levels`, `t_spigot_jar_flight_unchanged`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_placed_by_scene`, `t_victory_waits_for_farm_view`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_ui_and_camera`; last failures (5): `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_shop_seven_rows_on_screen_no_scroll`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+FAIL    start     2 errors  (godot exit 1 (1 is normal here), 4 noise lines dropped)  game/reports/_runs/20261123-161647/start.log
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+    SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[String]".
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on C8: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.1-playtest-fixes.md --accept C8 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C8 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-23T15:21:57-05:00): paused.
+Last invocation (2026-11-23T16:23:26-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
@@ -702,4 +1039,14 @@ Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 | Patricia, C3 | 595,525 | 49,610 | 32 | 78 s |
 | Quinn, C3 | 547,836 | 65,441 | 20 | 91 s |
 | Bob, C3 fix 1 | 101,108 | 25,039 | 9 | 24 s |
-| **Total** | **5,179,671** | | | |
+| Quinn, C6 | 156,343 | 35,019 | 9 | 18 s |
+| Bob, C6 | 1,075,264 | 57,450 | 37 | 121 s |
+| Bob, C6 fix 1 | 49,053 | 17,361 | 3 | 8 s |
+| Quinn, C8 | 129,878 | 25,191 | 7 | 18 s |
+| Bob, C8 | 259,917 | 42,806 | 15 | 37 s |
+| Patricia, C8 | 440,683 | 42,350 | 19 | 49 s |
+| Patricia, C8 fix 1 | 69,141 | 18,615 | 5 | 11 s |
+| Quinn, C8 fix 1 | 142,378 | 23,163 | 9 | 17 s |
+| Bob, C8 fix 2 | 69,328 | 19,149 | 5 | 9 s |
+| Quinn, C8 fix 2 | 91,318 | 19,713 | 5 | 10 s |
+| **Total** | **7,662,974** | | | |
