@@ -519,6 +519,13 @@ func _ready() -> void:
 		_melt_material = (melting as StandardMaterial3D).duplicate() as StandardMaterial3D
 
 
+## Seconds until the lid is fully off: the barrel's ease-out still to run, then the rest of the lift (0 when already open).
+func seconds_until_lid_open() -> float:
+	if not lid_open or _lid_motion == null:
+		return 0.0
+	return _stop_left + LidMotion.total_seconds(config) * (1.0 - _lid_motion.progress)
+
+
 func _move_lid_visual(open: bool, delay: float) -> void:
 	if _lid_motion != null:
 		_lid_motion.play(open, delay)   # lifts clear of the bucket first, then falls (closing: the same path backwards)

@@ -43,6 +43,7 @@ func _ready() -> void:
 	if name == &"CentrifugeIcon":
 		process_priority = 1   # item 20: Spin places after Harvest, so it nudges against Harvest's current rect, not last frame's
 	custom_minimum_size = Vector2(maxf(custom_minimum_size.x, MIN_TOUCH.x), maxf(custom_minimum_size.y, MIN_TOUCH.y))
+	_smooth_glyph(self)   # designer 2026-11-23: the drawn glyphs looked pixelated and shimmered while the icon moved
 	for style_name in STYLE_NAMES:
 		_styles[style_name] = get_theme_stylebox(style_name)
 		add_theme_stylebox_override(style_name, StyleBoxEmpty.new())
@@ -54,6 +55,16 @@ func _ready() -> void:
 	_shape.draw.connect(_draw_shape)
 	add_child(_shape)
 	move_child(_shape, 0)   # 0.1.4: the shape draws first, so a show_behind_parent child (ForkIcon/HarvestFill) draws over it, under the text
+
+
+## Antialiases every drawn line and polygon under the icon (the fork and Spin glyphs are Line2D / Polygon2D).
+static func _smooth_glyph(node: Node) -> void:
+	for child in node.get_children():
+		if child is Line2D:
+			(child as Line2D).antialiased = true
+		elif child is Polygon2D:
+			(child as Polygon2D).antialiased = true
+		_smooth_glyph(child)
 
 
 ## The visible shape's size: the Button's size minus (120 - icon_visual_px) in each dimension, never below 1.
@@ -120,7 +131,7 @@ func place() -> bool:
 	_anchor_screen = screen
 	_anchor_ok = true
 	var want: Vector2 = screen - size * 0.5 + screen_offset + Vector2(0.0, _config_offset() + view_offset_y)
-	global_position = _clamp_and_nudge(want)
+	global_position = _clamp_and_nudge(want).round()   # whole pixels: sub-pixel steps made the glyph shimmer during the zoom
 	return true
 
 

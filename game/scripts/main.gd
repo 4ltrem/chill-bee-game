@@ -198,6 +198,12 @@ func _process(delta: float) -> void:
 		var cfg: GameConfig = Economy.config
 		_centrifuge_icon.view_visual_px = cfg.spin_farm_visual_px if zoom == Zoom.NONE and not _at_second_stop else -1
 		_centrifuge_icon.view_offset_y = cfg.spin_zoom_offset if zoom != Zoom.NONE else 0.0
+		# 0.3.1 item 6: the drop glyph (100 units square, main.tscn) scales with the drawn circle, so it stays inside it in every view
+		var glyph: Node2D = _centrifuge_icon.find_child("SpinGlyph", true, false) as Node2D
+		if glyph != null:
+			var s: float = _centrifuge_icon.visible_size().x / 100.0
+			glyph.scale = Vector2(s, s)
+			glyph.position = (_centrifuge_icon.size - Vector2(100.0, 100.0) * s) * 0.5
 
 
 func _notification(what: int) -> void:
@@ -316,7 +322,8 @@ func load_pile() -> void:
 	var config: GameConfig = Economy.config
 	var flights: int = maxi(1, mini(n, MAX_FLIGHTS))
 	var stagger: float = config.pile_load_stagger_seconds
-	var closes_in: float = config.cell_fly_seconds + stagger * float(flights - 1)
+	var lead: float = _centrifuge.seconds_until_lid_open()   # designer 2026-11-23: the lid opens before the pile's combs fly in
+	var closes_in: float = lead + config.cell_fly_seconds + stagger * float(flights - 1)
 	var from: Vector3 = _pile.landing_position()
 	var from_scale: float = _pile.cell_scale()
 	var jars: float = _pile.take(n)
@@ -324,7 +331,7 @@ func load_pile() -> void:
 	for j in flights:
 		var share: int = n / flights + (1 if j < n % flights else 0)
 		CellFlight.launch(self, from, _centrifuge.bucket_mouth_position(), config.cell_fly_seconds, config.cell_fly_arc,
-				stagger * float(j), from_scale, _centrifuge.heap_cell_scale(), func() -> void: _centrifuge.land_cells(share))
+				lead + stagger * float(j), from_scale, _centrifuge.heap_cell_scale(), func() -> void: _centrifuge.land_cells(share))
 	if zoom == Zoom.NONE:
 		_centrifuge.close_lid(closes_in)
 	_refresh_icons()
