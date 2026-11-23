@@ -214,5 +214,69 @@
   "turns": 5,
   "seconds": 10,
   "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Quinn, C5",
+  "tokens": 57209,
+  "final": 21632,
+  "turns": 4,
+  "seconds": 13,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Patricia, C5",
+  "tokens": 89048,
+  "final": 24856,
+  "turns": 6,
+  "seconds": 15,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Quinn, C7",
+  "tokens": 134982,
+  "final": 26059,
+  "turns": 7,
+  "seconds": 31,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Bob, C7",
+  "tokens": 481713,
+  "final": 47760,
+  "turns": 20,
+  "seconds": 79,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Patricia, C7",
+  "tokens": 2275378,
+  "final": 98158,
+  "turns": 31,
+  "seconds": 182,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Patricia, C7 fix 1",
+  "tokens": 85848,
+  "final": 25456,
+  "turns": 10,
+  "seconds": 17,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Bob, C7 fix 2",
+  "tokens": 165952,
+  "final": 28323,
+  "turns": 9,
+  "seconds": 17,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Quinn, C7 fix 2",
+  "tokens": 227291,
+  "final": 26890,
+  "turns": 13,
+  "seconds": 25,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
  }
 ]

@@ -1,8 +1,8 @@
 {
  "spec": "0.3.1-playtest-fixes.md",
  "version": "0.3.1",
- "at": "2026-11-23T16:02:02-05:00",
- "unit_log": "game/reports/_runs/20261122-190049/unit.log",
+ "at": "2026-11-23T17:02:37-05:00",
+ "unit_log": "game/reports/_runs/20261123-162414/unit.log",
  "goals": {
   "C1": {
    "kind": "change",
@@ -94,10 +94,15 @@
      "kind": "node",
      "name": "ToastLabel",
      "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "cda349c",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -264,38 +269,40 @@
     5
    ],
    "depends": [],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "dev button",
      "name": "Show welcome",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "dev button",
      "name": "Show victory",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "dev button",
      "name": "+1 patch (free)",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "dev button",
      "name": "Reset habitat",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "dev button",
      "name": "Unlock Journal",
-     "ok": false
+     "ok": true
     }
    ],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for C5 and the checks were already green, so it is not built. Their replies on the board (step C5, 2026-11-23T17:02:37-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "C6": {
    "kind": "change",
@@ -360,12 +367,27 @@
     },
     {
      "kind": "node",
+     "name": "HintBubbleLabel",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "HintLabel",
+     "ok": true
+    },
+    {
+     "kind": "node",
      "name": "LangEnglishButton",
      "ok": false
     },
     {
      "kind": "node",
      "name": "LangFrenchButton",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "ModalPanel",
      "ok": false
     },
     {
@@ -400,16 +422,21 @@
     8
    ],
    "depends": [],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "node",
      "name": "ToolsButton",
-     "ok": false
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "0.3.1",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -606,163 +633,128 @@
  },
  "order": [
   {
-   "id": "C8",
-   "score": 8.48,
-   "factors": {
-    "unblocks": 1,
-    "value": 3,
-    "cost": 0.52,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C2",
-   "score": 6.74,
-   "factors": {
-    "unblocks": 1,
-    "value": 2,
-    "cost": 0.26,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C5",
-   "score": 6.74,
-   "factors": {
-    "unblocks": 1,
-    "value": 2,
-    "cost": 0.26,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C7",
-   "score": 6.48,
+   "score": 6.49,
    "factors": {
     "unblocks": 1,
     "value": 2,
-    "cost": 0.52,
+    "cost": 0.51,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T1.1",
-   "score": 5.79,
+   "score": 5.8,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.21,
+    "cost": 0.2,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T3.1",
-   "score": 5.79,
+   "score": 5.8,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.21,
+    "cost": 0.2,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T4.1",
-   "score": 5.79,
+   "score": 5.8,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.21,
+    "cost": 0.2,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T4.2",
-   "score": 5.79,
+   "score": 5.8,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.21,
+    "cost": 0.2,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T6.1",
-   "score": 5.79,
+   "score": 5.8,
    "factors": {
     "unblocks": 0,
     "value": 3,
-    "cost": 0.21,
+    "cost": 0.2,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T2.1",
-   "score": 3.79,
+   "score": 3.8,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T7.1",
-   "score": 3.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T4.3",
-   "score": 1.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.21,
+    "cost": 0.2,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "T5.1",
-   "score": 0.0,
+   "score": 3.8,
    "factors": {
     "unblocks": 0,
     "value": 2,
-    "cost": 0.21,
-    "ready": 0,
-    "blocked_by": [
-     "C5"
-    ]
+    "cost": 0.2,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T7.1",
+   "score": 3.8,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.2,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T4.3",
+   "score": 1.8,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.2,
+    "ready": 1,
+    "blocked_by": []
    }
   },
   {
    "id": "T8.1",
-   "score": 0.0,
+   "score": 1.8,
    "factors": {
     "unblocks": 0,
     "value": 1,
-    "cost": 0.21,
-    "ready": 0,
-    "blocked_by": [
-     "C8"
-    ]
+    "cost": 0.2,
+    "ready": 1,
+    "blocked_by": []
    }
   }
  ],
- "ambiguous": []
+ "ambiguous": [
+  "C5"
+ ]
 }
