@@ -72,6 +72,7 @@ Every material colour must sit near one of these tokens (script: distance in Lab
   - panel (0.38, 0.34, 0.30)
   - border (0.35, 0.22, 0.05)
   - shop panel (0.30, 0.22, 0.10)
+  - blossom (0.97, 0.66, 0.78): the Habitat Health flower icon only (designer, 2026-11-22)
 
 New token: proposed in a FAIL row's Fix and added here by the designer, never by an agent.
 

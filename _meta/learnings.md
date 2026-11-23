@@ -4,6 +4,18 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L51 · 2026-11-22 · 0.3's T6.1 took 0.2's Auto-Sell tests as its own
+- **What broke:** the 0.3 step for T6.1 (skip-icon tests) skipped Quinn ("every line already has its marked test") and listed four `t_autosell_*` tests, then held the goal as unchanged.
+- **How noticed:** the blackboard's step line named Auto-Sell tests for a skip-icon goal.
+- **Cause:** goal ids repeat across specs (0.2 item 6 was Auto-Sell, with tests marked `# goal T6.1`), and `marked_tests()` matched marks by id alone.
+- **How fixed / prevention:** marks may name a version (`# goal 0.3 T6.1`). `marked_tests(id, version)` prefers this spec's versioned marks, and the scan's mark regex skips the version token. Quinn's 0.3 item 6 tests use the versioned mark. Briefs should ask for versioned marks from now on.
+
+## L50 · 2026-11-22 · Re-run steps failed on "no mutations to run"
+- **What broke:** T2.1, then T1.1/T1.2, stopped after 2 fix rounds each with green tests and `mutate: no mutations to run`.
+- **How noticed:** the blackboard's mutation check, repeated across fix rounds.
+- **Cause:** the step's check runs `mutate.py --since <step base>`. The goal's mutations had been committed before that base: by the orchestrator's mid-step checkpoint (`ff4abe5`), or by an earlier step of the same goal. So nothing counted as new.
+- **How fixed / prevention:** `goal_agent.item_mutations()` (the other session, maigd-6a) runs the mutations named "<version> item <n> ..." for the batch's items when `--since` finds none. `goal_agent.mutated_tests()` passes the check when every own test is already named by a mutation. No checkpoints mid-step. Tests: `test_item_mutations_fallback`, the `mutated_tests` assert (73/73).
+
 ## L49 · 2026-11-22 · goal_agent stopped on a "question" that said there was none
 - **What broke:** the 0.3 run stopped `waiting-designer` on T1.1/T1.2 with the "question" "I found no game bug and no open spec question, so nothing is marked `(designer)`." (Quinn), before his fix (`Flow.no_welcome` in `ui_bounds_pixels.gd`) was ever run.
 - **How noticed:** the blackboard's question table.

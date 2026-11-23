@@ -159,6 +159,15 @@ LAYOUT_RULE = ("Where a panel sits, how it opens and what fits on screen come fr
                "the placeholder, name the TBD and go on; it is not a question. Ask only when none of them covers it. ")
 QUESTION = re.compile(r"\?|\bA:")   # a `(designer)` row with no question and no options asks nothing (0.3 T1.1)
 STALE_FIND = re.compile(r"^BROKEN\s.*`find` occurs 0 times", re.M)   # the code moved since the mutation was written
+
+
+def mutated_tests(root=None):
+    """Every test named in an `expect` list of game/tests/mutations.json (L50)."""
+    path = (root or ROOT) / "game" / "tests" / "mutations.json"
+    try:
+        return {t for m in json.loads(path.read_text(encoding="utf-8")) for t in m.get("expect", [])}
+    except (OSError, ValueError):
+        return set()
 # L42: T9.1's fix round 2 stopped for a Design Votes row on "A: keep the paused crank; B: reset the crank", no visual
 # value in it. A `(designer)` row is a vote only when it names one of these; any other is a plain designer question.
 # L49: Quinn's "nothing is marked `(designer)`" stopped the 0.3 run as a question; a tag quoted in backticks is a
@@ -467,7 +476,7 @@ def scan(game, ledger_path=None):
     results, log = unit_results(game), newest_unit_log(game)
     marks = {}   # {goal id: [tests]} from Quinn's `# goal <ID>` line above each test function
     for f in sorted((game / "tests").glob("*.gd")):
-        for gid, t in re.findall(r"^\s*#\s*goal\s+(\S+).*\n(?:[ \t]*#(?![ \t]*goal\b).*\n)*[ \t]*func\s+(t_\w+)", f.read_text(encoding="utf-8", errors="replace"), re.M):
+        for gid, t in re.findall(r"^\s*#\s*goal\s+(?:\d+\.\d+(?:\.\d+)?\s+)?(\S+).*\n(?:[ \t]*#(?![ \t]*goal\b).*\n)*[ \t]*func\s+(t_\w+)", f.read_text(encoding="utf-8", errors="replace"), re.M):   # L51: `# goal 0.3 T6.1`
             marks.setdefault(gid, []).append(t)
     handoffs = sorted(p.name for p in (game / "specs").glob("*handoff*.md"))
     handoff_text = {p.name: p.read_text(encoding="utf-8") for p in (game / "specs").glob("*handoff*.md")}
@@ -1347,14 +1356,19 @@ def tree_state(paths=None):
     return git("status", "--porcelain", "--", *paths)[1] + git("diff", "HEAD", "--", *paths)[1]
 
 
-def marked_tests(goal_id):
+def marked_tests(goal_id, version=None):
     """Test functions Quinn marked `# goal <id>` above, in game/tests/*.gd; `##` doc lines may come between (L42: T9.1's
-    mark sat above two doc lines, so its step found no own test and ran the whole unit suite)."""
-    out = []
-    for f in sorted((ROOT / "game" / "tests").glob("*.gd")):
-        out += re.findall(rf"^\s*#\s*goal\s+{re.escape(goal_id)}\b.*\n(?:[ \t]*#(?![ \t]*goal\b).*\n)*[ \t]*func\s+(t_\w+)",
-                          f.read_text(encoding="utf-8", errors="replace"), re.M)
-    return out
+    mark sat above two doc lines, so its step found no own test and ran the whole unit suite). L51: goal ids repeat
+    across specs (0.2 and 0.3 both have T6.1), so a `# goal <version> <id>` mark for this spec's version wins over
+    bare `# goal <id>` marks."""
+    tail = r"\b.*\n(?:[ \t]*#(?![ \t]*goal\b).*\n)*[ \t]*func\s+(t_\w+)"
+    texts = [f.read_text(encoding="utf-8", errors="replace") for f in sorted((ROOT / "game" / "tests").glob("*.gd"))]
+    if version:
+        out = [t for x in texts for t in re.findall(rf"^\s*#\s*goal\s+{re.escape(version)}\s+{re.escape(goal_id)}{tail}",
+                                                    x, re.M)]
+        if out:
+            return out
+    return [t for x in texts for t in re.findall(rf"^\s*#\s*goal\s+{re.escape(goal_id)}{tail}", x, re.M)]
 
 
 def red_tests(partial=False):
@@ -1416,7 +1430,7 @@ def own_tests(spec, goal, batch):
     """L40: the tests a round runs alone (`--only`): a test goal's marked tests; a change's registered item tests and the
     unit tests on its impact list. The round adds change_impact()'s tests and the last failures (L42)."""
     if goal["kind"] == "test":
-        return sorted({t for b in batch for t in marked_tests(b["id"])})
+        return sorted({t for b in batch for t in marked_tests(b["id"], spec["version"])})
     own = set(tests_for(spec, scan(ROOT / "game"), goal["items"]))
     own |= {fn for _, fn, s, _ in test_impact(goal) if s == "unit" and fn.startswith("t_")}
     return sorted(own)
@@ -1595,10 +1609,10 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     needs_red = [b["id"] for b in batch if b["kind"] == "test" and FAIL_FIRST.search(b["text"])]
     seen_red = set()
     lines = [b for b in batch if b["kind"] == "test" and not re.search(r"\bmutations?\b", b["text"], re.I)]
-    written = goal["kind"] == "test" and lines and all(marked_tests(b["id"]) for b in lines)
+    written = goal["kind"] == "test" and lines and all(marked_tests(b["id"], spec["version"]) for b in lines)
     if written:   # Quinn's tests exist (marked `# goal <ID>`): go straight to the checks; a red test goes to the code
         say(board, "- Quinn's step skipped: every line already has its marked test ("   # owners (0.1.4 T14.4/T14.5:
-                   + ", ".join(f"{b['id']}: {', '.join(marked_tests(b['id']))}" for b in lines) + ")\n")   # ~800k saved)
+                   + ", ".join(f"{b['id']}: {', '.join(marked_tests(b['id'], spec['version']))}" for b in lines) + ")\n")   # ~800k saved)
     elif not call_agents(plan, board, usage, run, ids, max_turns=BUILD_MAX_TURNS):
         return "paused"
     rounds = MAX_FIX_ROUNDS + (1 if needs_red else 0)   # one round may go to Quinn alone, to reproduce the bug
@@ -1629,6 +1643,12 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                     return "paused"
             else:
                 code, out = run_cmd(cmd, env=env)
+            if code and label == "mutations" and "no mutations to run" in out:   # 0.3 T1.1: committed earlier, so
+                names = item_mutations(spec, batch)                               # --since finds none: run the items'
+                if names:
+                    say(board, f"- `mutate.py --since {base}` found none (committed earlier): running the "
+                               f"{len(names)} mutations of this goal's items\n")
+                    code, out = run_cmd([sys.executable, "-I", "_tools/mutate.py", *names], env=env)
             if code and label == "mutations":   # only stale `find` strings left: warn, the code moved, not the tests
                 rows = re.findall(r"^(?:CAUGHT|MISSED|BROKEN)\s.*$", out, re.M)
                 stale = [r for r in rows if STALE_FIND.search(r)]
@@ -1636,6 +1656,11 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                     say(board, f"- Check `mutations`: PASS with a warning ({len(stale)} stale `find` strings in "
                                f"`game/tests/mutations.json`; refresh them at the next Quinn step)\n\n```\n"
                                + "\n".join(stale) + "\n```\n")
+                    continue
+                if "no mutations to run" in out and own and set(own) <= mutated_tests():
+                    # L50: a re-run step whose tests' mutations were committed earlier finds nothing "new since base"
+                    say(board, "- Check `mutations`: PASS (no new mutations since the step's base; every own test is "
+                               "already named by a mutation in `game/tests/mutations.json`)\n")
                     continue
             if label == "tests":
                 red_now = red_tests(partial=True) if needs_red else {}   # this check's log, before any rerun
@@ -1661,7 +1686,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
             red = dict(red_now)
             # a marked real-time test is skipped by the x6 run (CB_SKIP_X1): run it alone at x1, or it can never
             # fail nor pass (0.1.4 T14.5: three Quinn rounds on a test that never ran)
-            x1 = sorted({t for gid in needs_red for t in marked_tests(gid)} & scan(ROOT / "game")["x1"])
+            x1 = sorted({t for gid in needs_red for t in marked_tests(gid, spec["version"])} & scan(ROOT / "game")["x1"])
             if x1:
                 code, out = run_cmd([sys.executable, "-I", "_tools/godot_run.py", "unit", "start"],
                                     env={"CB_ONLY": ",".join(x1), "CB_TIME_SCALE": "1"})
@@ -1670,12 +1695,12 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                 if code:
                     failed.append(("tests", summary_of(out)))
                     say(board, "\n```\n" + summary_of(out) + "\n```\n")
-            seen_red |= {gid for gid in needs_red if any(red.get(t) for t in marked_tests(gid))}
+            seen_red |= {gid for gid in needs_red if any(red.get(t) for t in marked_tests(gid, spec["version"]))}
             missing = [gid for gid in needs_red if gid not in seen_red]
             if missing:
                 rows = []
                 for gid in missing:
-                    names = marked_tests(gid)
+                    names = marked_tests(gid, spec["version"])
                     rows.append(f"- {gid}: " + (f"its tests ({', '.join(f'`{t}`' for t in names)}) did not fail on a "
                                                 f"real check" if names else f"no test is marked `# goal {gid}`")
                                 + (" on the current build" if rnd == 0 else "") + ", but the designer sees this bug "
@@ -1936,6 +1961,15 @@ def mutation_base(spec, ledger_path, head):
         if git("merge-base", "--is-ancestor", sha, "HEAD")[0] == 0:
             return sha
     return head
+
+
+def item_mutations(spec, batch, path=None):
+    """The mutation names of the batch's items (`<version> item <n> ...` in game/tests/mutations.json)."""
+    path = path or ROOT / "game" / "tests" / "mutations.json"
+    items = {n for b in batch for n in b["items"]}
+    rows = json.loads(path.read_text(encoding="utf-8")) if path.is_file() else []
+    return [m["name"] for m in rows
+            if any(m["name"].startswith(f"{spec['version']} item {n} ") for n in items)]
 
 
 def fix_briefs(spec, goal, batch, failed, run, branch, rnd, quinn="", replies=None, answers=""):

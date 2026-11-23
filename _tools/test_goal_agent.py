@@ -1093,6 +1093,8 @@ class Loop(unittest.TestCase):
         self.assertFalse(ga.VISUAL_ROW.search(row))
         self.assertTrue(ga.DESIGNER_ROW.search(row))
         self.assertFalse(ga.DESIGNER_ROW.search("I found no game bug, so nothing is marked `(designer)`."))   # L49
+        repo = Path(__file__).resolve().parent.parent
+        self.assertIn("t_habitat_start_cap_thriving_once", ga.mutated_tests(repo))   # L50: read from the real mutations.json
 
 
 class DefaultedStops(unittest.TestCase):
@@ -1133,6 +1135,14 @@ class DefaultedStops(unittest.TestCase):
             board.write_text("x\nDesigner's answer: buttons go to 120 px\n", encoding="utf-8")
             self.assertIn("buttons go to 120 px", ga.earlier_answers(board))
             self.assertEqual(ga.earlier_answers(folder / "none.md"), "")
+
+    def test_item_mutations_fallback(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "mutations.json"
+            path.write_text(json.dumps([{"name": "0.3 item 1 a"}, {"name": "0.3 item 12 b"}, {"name": "0.2 item 1 c"},
+                                        {"name": "0.3 item 2 d"}]), encoding="utf-8")
+            self.assertEqual(ga.item_mutations({"version": "0.3"}, [{"items": [1]}], path), ["0.3 item 1 a"])
+            self.assertEqual(ga.item_mutations({"version": "0.3"}, [{"items": [9]}], path), [])
 
     def test_mutation_base_skips_a_manual_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:

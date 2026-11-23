@@ -1,7 +1,7 @@
 {
  "spec": "0.3-course-build.md",
  "version": "0.3",
- "at": "2026-11-22T18:52:54-05:00",
+ "at": "2026-11-22T19:00:28-05:00",
  "unit_log": "game/reports/_runs/20261122-183621/unit.log",
  "goals": {
   "C1": {
@@ -214,7 +214,7 @@
     6
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
@@ -222,13 +222,25 @@
      "ok": true
     },
     {
+     "kind": "test",
+     "name": "t_skip_icon_reaches_thriving_free_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_skip_icon_farm_view_only",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
      "kind": "ledger",
-     "name": "851591f",
+     "name": "c3802d9",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -434,14 +446,30 @@
    "depends": [
     "C6"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-22T18:52:39-05:00) say why; answer by editing the spec item."
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_skip_icon_reaches_thriving_free_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_skip_icon_farm_view_only",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "0.3",
+     "ok": true
+    }
    ],
-   "ambiguous": true
+   "built": true,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
   },
   "T.1": {
    "kind": "test",
@@ -526,6 +554,18 @@
      "name": "t_victory_waits_for_farm_view",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_skip_icon_reaches_thriving_free_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_skip_icon_farm_view_only",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -535,7 +575,5 @@
   }
  },
  "order": [],
- "ambiguous": [
-  "T6.1"
- ]
+ "ambiguous": []
 }

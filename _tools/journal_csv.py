@@ -13,6 +13,8 @@ SOURCE = ROOT / "content" / "bee-journal-real.md"
 OUT = ROOT / "game" / "translations" / "journal.csv"
 # id -> (English heading prefix, French heading prefix)
 ENTRIES = {"BUMBLE_BEES": ("### Entry 3 — ", "### Entrée 3 — ")}
+# approved ui-text files whose first fenced block holds translation CSV rows (spec 0.3 item 5)
+UI_TEXT = [ROOT / "content" / "course-ending-text.md"]
 
 
 def entry(lines: list[str], prefix: str) -> tuple[str, str]:
@@ -41,7 +43,20 @@ def main() -> None:
             fr_t, fr_b = entry(lines, fr_p)
             w.writerow([f"JOURNAL_{eid}_TITLE", en_t, fr_t])
             w.writerow([f"JOURNAL_{eid}_BODY", en_b, fr_b])
+        w.writerow(["welcome_play", "Play", "Jouer"])   # 0.3 item 1: the Play button text
+        for row in ui_rows():   # 0.3 items 3-6: the approved victory, toast and skip strings
+            w.writerow(row)
     print("wrote", OUT)
+
+
+def ui_rows() -> list[list[str]]:
+    """The `keys,en,fr` rows in the first fenced block of each approved UI_TEXT file, verbatim."""
+    rows: list[list[str]] = []
+    for path in UI_TEXT:
+        text = path.read_text(encoding="utf-8")
+        block = re.search(r"```\n(.*?)```", text, re.S)
+        rows += [r for r in csv.reader(block.group(1).splitlines()) if r]
+    return rows
 
 
 if __name__ == "__main__":
