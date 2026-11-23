@@ -59,16 +59,56 @@ func _reach_thriving(m: Node) -> void:
 	await _frames(3)
 
 
+# spec 0.3.1 item 3: "Bees (Tree A): Swarm, Flight Endurance. Hive: Heated Fork, Centrifuge Gearing, Spigot Flow, Faster Delivery, Auto-Sell. Habitat: Plant wildflower patch."
+const _SHOP_TAB_IDS: Dictionary = {
+	"Bees": ["swarm", "flight"],
+	"Hive": ["heated_fork", "gearing", "spigot_flow", "faster_delivery", "auto_sell"],
+	"Habitat": ["plant_patch"],
+}
+
+
+## Spec 0.3.1 item 3: with shop_layout 1 the sheet has five tabs (TabBees ... TabRefinery); the compact panel (shop_layout 0) has none.
+func _shop_has_tabs(m: Node) -> bool:
+	return m.find_child("TabBees", true, false) != null
+
+
+## Selects a Shop tab by its node suffix ("Bees", "Hive", "Habitat", "Research", "Refinery"); false when there are no tabs.
+func _shop_tab(m: Node, key: String) -> bool:
+	var b: Button = m.find_child("Tab" + key, true, false) as Button
+	if b == null:
+		return false
+	if b.toggle_mode:
+		b.button_pressed = true
+	b.pressed.emit()
+	await _frames(2)
+	return true
+
+
 ## The visible rows of the shop list, in order (RowTemplate is hidden; handoff: ShopRows holds the rows).
+## With tabs (spec 0.3.1 item 3: "then the selected tab's rows") only the selected tab's rows show; _shop_rows_all walks the tabs.
 func _shop_rows(m: Node) -> Array:
 	var out: Array = []
 	var holder: Node = m.find_child("ShopRows", true, false)
 	ck(holder != null, "ShopRows exists (handoff item 1)")
 	if holder == null:
 		return out
+	var tabs: bool = _shop_has_tabs(m)
 	for c in holder.get_children():
-		if c is Control and (c as Control).visible and c.name != &"RowTemplate":
+		if c is Control and c.name != &"RowTemplate" and ((c as Control).is_visible_in_tree() if tabs else (c as Control).visible):
 			out.append(c)
+	return out
+
+
+## Every row in the spec's order (Bees, Hive, Habitat tabs, or the one list without tabs). Opens the sheet, ends on the Bees tab.
+func _shop_rows_all(m: Node) -> Array:
+	await _shop_open(m)
+	if not _shop_has_tabs(m):
+		return _shop_rows(m)
+	var out: Array = []
+	for key in _SHOP_TAB_IDS.keys():
+		await _shop_tab(m, key)
+		out.append_array(_shop_rows(m))
+	await _shop_tab(m, "Bees")
 	return out
 
 
@@ -127,7 +167,7 @@ func t_shop_buttons_disabled_unaffordable_maxed_locked() -> void:
 	var e: Node = _shop_zero()
 	e.call("set_level", "faster_delivery", _shop_unlock_level())
 	await _frames(2)
-	var rows: Array = _shop_rows(m)
+	var rows: Array = await _shop_rows_all(m)   # spec 0.3.1 item 3: "then the selected tab's rows": walk the tabs for all eight
 	# spec 0.3 item 3: plant_patch is an eighth row after Auto-Sell; this test covers the seven upgrade rows
 	eq(rows.size(), _SHOP_IDS.size() + 1, "one row per upgrade")
 	if rows.size() != _SHOP_IDS.size() + 1:
@@ -179,7 +219,7 @@ func t_shop_rows_order_and_level_text() -> void:
 	var e: Node = _shop_zero()
 	e.call("set_level", "faster_delivery", _shop_unlock_level())
 	await _frames(2)
-	var rows: Array = _shop_rows(m)
+	var rows: Array = await _shop_rows_all(m)   # spec 0.3.1 item 3: rows are per tab (Bees, Hive, Habitat), in the GDD order
 	# spec 0.3 item 3: plant_patch is an eighth row after Auto-Sell; the order list covers the seven before it
 	eq(rows.size(), _SHOP_ORDER.size() + 1, "rows: seven upgrades plus plant_patch")
 	for i in mini(rows.size(), _SHOP_ORDER.size()):
@@ -212,8 +252,8 @@ func t_shop_auto_sell_locked_until_delivery_1() -> void:
 	e.set("money", 100000000)
 	e.emit_signal("money_changed", 100000000)
 	await _frames(2)
-	await _shop_open(m)
-	var rows: Array = _shop_rows(m)
+	var rows: Array = await _shop_rows_all(m)   # spec 0.3.1 item 3: rows are per tab; the Auto-Sell gate shows on the Hive tab
+	await _shop_tab(m, "Hive")
 	# spec 0.3 item 3: plant_patch is an eighth row after Auto-Sell (index 6 stays Auto-Sell)
 	if rows.size() != _SHOP_IDS.size() + 1:
 		ck(false, "eight rows expected, got %d" % rows.size())
@@ -321,9 +361,13 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 	# spec 0.3.1 item 1: "The JournalButton leaves the Shop (ShopPanel/ShopBox) and becomes a farm-view icon": it is no longer a control
 	# the rows must clear (the open sheet floats over farm icons, item 14); reach thriving anyway so the rows are tested in that state
 	await _reach_thriving(m)
+	# spec 0.3.1 item 3: "every row of the selected tab, the header and the tabs stay on screen at 720 × 1280 (the Hive tab's five rows the most)":
+	# with tabs the Hive tab is the one checked; "With shop_layout = 0 ... one list of the eight rows, no tabs"
+	if _shop_has_tabs(m):
+		await _shop_tab(m, "Hive")
 	var rows: Array = _shop_rows(m)
-	# spec 0.3 item 3: "all eight rows show at 720 × 1280" (plant_patch is the eighth row)
-	eq(rows.size(), _SHOP_IDS.size() + 1, "eight rows")
+	var want_rows: int = (_SHOP_TAB_IDS["Hive"] as Array).size() if _shop_has_tabs(m) else _SHOP_IDS.size() + 1
+	eq(rows.size(), want_rows, "the selected tab's rows (all eight without tabs)")
 	# at the top, then scrolled to the bottom: every row's on-screen part (clipped to the list) is clear of the other controls and of its neighbours
 	for pos in [0]:   # item 14: no scrolling, every row is on screen at once
 		await _frames(3)
@@ -364,9 +408,13 @@ func t_shop_seven_rows_on_screen_no_scroll() -> void:
 	e.call("set_level", "faster_delivery", _shop_unlock_level())   # Auto-Sell unlocked: its row and gate text are at their tallest
 	await _frames(3)
 	ck(panel.find_children("*", "ScrollContainer", true, false).is_empty(), "no ScrollContainer anywhere under ShopPanel (item 14)")
+	# spec 0.3.1 item 3: the Hive tab's five rows are the most on one tab; with shop_layout = 0 "one list of the eight rows, no tabs"
+	if _shop_has_tabs(m):
+		await _shop_tab(m, "Hive")
 	var rows: Array = _shop_rows(m)
 	# spec 0.3 goal C4 item 3: "with `shop_layout = 0` all eight rows show at 720 × 1280 with no scroll container" (plant_patch is the eighth row)
-	eq(rows.size(), _SHOP_IDS.size() + 1, "all %d rows are shown at once" % (_SHOP_IDS.size() + 1))
+	var want_rows: int = (_SHOP_TAB_IDS["Hive"] as Array).size() if _shop_has_tabs(m) else _SHOP_IDS.size() + 1
+	eq(rows.size(), want_rows, "all %d rows of the selected list are shown at once" % want_rows)
 	var view: Rect2 = _vp()
 	var pr: Rect2 = panel.get_global_rect()
 	ck(view.encloses(pr), "the shop panel is on screen %s in %s" % [str(pr), str(view)])

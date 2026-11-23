@@ -1,4 +1,4 @@
-[gd_scene load_steps=49 format=3 uid="uid://ub4nv2k6wxgl"]
+[gd_scene load_steps=54format=3 uid="uid://ub4nv2k6wxgl"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/welcome_overlay.gd" id="welcome_script"]
@@ -185,6 +185,61 @@ corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 expand_margin_top = -28.0
 expand_margin_bottom = -28.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_sheet"]
+bg_color = Color(1, 0.96, 0.86, 1)
+corner_radius_top_left = 44
+corner_radius_top_right = 44
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_color = Color(0.35, 0.22, 0.05, 1)
+content_margin_left = 28.0
+content_margin_top = 24.0
+content_margin_right = 28.0
+content_margin_bottom = 0.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tab_off"]
+bg_color = Color(1, 0.96, 0.86, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+content_margin_left = 4.0
+content_margin_right = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_tab_on"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+content_margin_left = 4.0
+content_margin_right = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_close_round"]
+bg_color = Color(1, 0.96, 0.86, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.35, 0.22, 0.05, 1)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_shoptabs"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_modal"]
 bg_color = Color(0.25, 0.2, 0.1, 0.96)
@@ -398,12 +453,151 @@ horizontal_alignment = 1
 
 [node name="ShopPanel" type="PanelContainer" parent="FarmUIRoot/FarmUI/Margin/Column"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_sheet")
 script = ExtResource("5_shopui")
 
 [node name="ShopBox" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
+
+[node name="ShopHeader" type="HBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ShopHeaderText" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="ShopTitle" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopHeader/ShopHeaderText"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_font_sizes/font_size = 48
+text = "Shop"
+
+[node name="ShopMoney" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopHeader/ShopHeaderText"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.38, 0.34, 0.3, 1)
+theme_override_font_sizes/font_size = 28
+text = "$0"
+
+[node name="ShopCloseButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopHeader"]
+focus_mode = 0
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBox_close_round")
+theme_override_styles/hover = SubResource("StyleBox_close_round")
+theme_override_styles/pressed = SubResource("StyleBox_close_round")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+text = "X"
+
+[node name="ShopTabs" type="HBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TabBees" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopTabs"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBox_tab_off")
+theme_override_styles/hover = SubResource("StyleBox_tab_off")
+theme_override_styles/pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/hover_pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_shoptabs")
+text = "Bees"
+
+[node name="TabHive" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopTabs"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBox_tab_off")
+theme_override_styles/hover = SubResource("StyleBox_tab_off")
+theme_override_styles/pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/hover_pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_shoptabs")
+text = "Hive"
+
+[node name="TabHabitat" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopTabs"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBox_tab_off")
+theme_override_styles/hover = SubResource("StyleBox_tab_off")
+theme_override_styles/pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/hover_pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_shoptabs")
+text = "Habitat"
+
+[node name="TabResearch" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopTabs"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBox_tab_off")
+theme_override_styles/hover = SubResource("StyleBox_tab_off")
+theme_override_styles/pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/hover_pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_shoptabs")
+text = "Research"
+
+[node name="TabRefinery" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopTabs"]
+focus_mode = 0
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBox_tab_off")
+theme_override_styles/hover = SubResource("StyleBox_tab_off")
+theme_override_styles/pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/hover_pressed = SubResource("StyleBox_tab_on")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_shoptabs")
+text = "Refinery"
 
 [node name="ShopRows" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
 layout_mode = 2

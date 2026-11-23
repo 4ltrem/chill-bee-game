@@ -23,6 +23,7 @@ func _ready() -> void:
 				buy.name = "UpgradeButton"   # play_loop.gd looks the first row's button up by this name
 			if buy != null:
 				buy.pressed.connect(func() -> void: Economy.buy(id))
+			_row_nodes[id] = row
 			_rows[id] = {
 				"buy": buy,
 				"level": row.find_child("LevelLabel", true, false) as Label,
@@ -60,6 +61,25 @@ var _dev_home: Vector2 = Vector2(-1.0, -1.0)
 var _home: Node
 var _home_index: int = 0
 
+# 0.3.1 item 3: the sheet as drawn on Shop.dc.html: header, five tabs, the selected tab's rows. Tree map from GDD 3.
+const TAB_IDS: Array[String] = ["bees", "hive", "habitat", "research", "refinery"]
+const TAB_OF: Dictionary = {
+	"swarm": "bees", "flight": "bees",
+	"heated_fork": "hive", "gearing": "hive", "spigot_flow": "hive", "faster_delivery": "hive", "auto_sell": "hive",
+	"plant_patch": "habitat",
+}
+const TAB_NODES: Dictionary = {"bees": "TabBees", "hive": "TabHive", "habitat": "TabHabitat", "research": "TabResearch", "refinery": "TabRefinery"}
+const SHEET_TOP: float = 168.0   # px below the screen top (placeholder; designer confirms at play-test)
+const TAB_HEIGHT: float = 120.0  # V11
+const SHEET_FONT: int = 28       # V12
+var _tab: String = "bees"        # remembered while this node lives (the farm reset reloads the scene)
+var _tab_buttons: Dictionary = {}
+var _money_label: Label
+var _header: Control
+var _tabs_row: Control
+var _coming_soon: Label
+var _row_nodes: Dictionary = {}   # id -> row Control
+
 
 func _process(_delta: float) -> void:
 	if _cfg == null:
@@ -67,6 +87,10 @@ func _process(_delta: float) -> void:
 	var key := Vector3i(clampi(_cfg.shop_layout, 0, 1), _cfg.shop_row_height, _cfg.shop_font_size)
 	if key != _applied:
 		_apply_layout()
+	if _shop_button != null and _applied.x == SHEET:
+		var show_btn: bool = not _open and _on_farm_view()
+		if _shop_button.visible != show_btn:
+			_shop_button.visible = show_btn
 	if _dev_button == null or not is_instance_valid(_dev_button):
 		if GameConfig.dev_mode_enabled():
 			_dev_button = get_tree().root.find_child(DEV_BUTTON, true, false) as Button   # built at runtime by dev_panel.gd
@@ -83,6 +107,8 @@ func is_sheet_open() -> bool:
 ## Opens or closes the sheet (sheet layout only); in compact the panel is always shown.
 func set_sheet_open(on: bool) -> void:
 	_open = on and _applied.x == SHEET
+	if _open:
+		_select_tab(_tab)   # opens on the last selected tab (Bees the first time)
 	_sync_visibility()
 	for dev_layer in get_tree().get_nodes_in_group("dev_button_layer") if is_inside_tree() else []:
 		(dev_layer as CanvasLayer).visible = not _open   # Dev sits on CanvasLayer 50, above any z_index here; hidden it neither draws nor takes presses
@@ -95,13 +121,14 @@ func set_sheet_open(on: bool) -> void:
 func _place_sheet() -> void:
 	if not _open or not top_level:
 		return
+	_fit_sheet()
+
+
+## The sheet runs from SHEET_TOP to the bottom of the view, full width.
+func _fit_sheet() -> void:
 	var view: Vector2 = get_viewport_rect().size
-	size = Vector2(minf(672.0, view.x - 48.0), 0.0)
-	reset_size()
-	var sz: Vector2 = get_combined_minimum_size()
-	sz.x = minf(672.0, view.x - 48.0)
-	size = sz
-	position = Vector2((view.x - sz.x) * 0.5, maxf(view.y - 24.0 - sz.y, 0.0))
+	position = Vector2(0.0, SHEET_TOP)
+	size = Vector2(view.x, maxf(view.y - SHEET_TOP, 0.0))
 
 
 func _apply_layout() -> void:
@@ -129,12 +156,8 @@ func _apply_layout() -> void:
 	if layout == SHEET:
 		_build_sheet_parts()
 		top_level = true
-		reset_size()
 		var view: Vector2 = get_viewport_rect().size
-		var sz: Vector2 = get_combined_minimum_size()
-		sz.x = minf(672.0, view.x - 48.0)
-		size = sz
-		position = Vector2((view.x - sz.x) * 0.5, maxf(view.y - 24.0 - sz.y, 0.0))
+		_fit_sheet()
 		_dim.top_level = true
 		_dim.position = Vector2.ZERO
 		_dim.size = view
@@ -148,6 +171,7 @@ func _apply_layout() -> void:
 		if _dim != null:
 			_dim.visible = false
 	_sync_visibility()
+	_select_tab(_tab)   # compact: every row shown, no header or tabs
 	_place_dev_button()
 
 
@@ -176,15 +200,125 @@ func _build_sheet_parts() -> void:
 		if (e is InputEventMouseButton and e.pressed) or (e is InputEventScreenTouch and e.pressed):
 			set_sheet_open(false))
 	_attach_dim.call_deferred()   # a sibling placed before the sheet: a child draws over its parent's panel
-	_close_button = Button.new()
-	_close_button.name = "ShopCloseButton"
-	_close_button.text = "Close"
-	_close_button.focus_mode = Control.FOCUS_NONE
-	_close_button.add_theme_font_size_override("font_size", 32)
-	_close_button.pressed.connect(func() -> void: set_sheet_open(false))
 	var box: Node = find_child("ShopBox", true, false)
 	if box != null:
-		box.add_child(_close_button)
+		_build_header_and_tabs(box)
+	_sheet_style()
+
+
+## Rounded top corners on the sheet panel (placeholder colours from the palette's cream; the designer confirms at play-test).
+func _sheet_style() -> void:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(1.0, 0.96, 0.86, 1.0)
+	sb.corner_radius_top_left = 32
+	sb.corner_radius_top_right = 32
+	sb.content_margin_left = 24.0
+	sb.content_margin_right = 24.0
+	sb.content_margin_top = 16.0
+	sb.content_margin_bottom = 16.0
+	add_theme_stylebox_override("panel", sb)
+
+
+## ShopHeader (ShopTitle, ShopMoney, ShopCloseButton) and ShopTabs (five tab buttons) sit above ShopRows in ShopBox.
+## Nodes Bob drew in the scene are used by name; any that are missing are made here.
+func _build_header_and_tabs(box: Node) -> void:
+	_header = find_child("ShopHeader", true, false) as Control
+	if _header == null:
+		_header = HBoxContainer.new()
+		_header.name = "ShopHeader"
+		box.add_child(_header)
+		box.move_child(_header, 0)
+	var title: Label = _header.find_child("ShopTitle", true, false) as Label
+	if title == null:
+		title = Label.new()
+		title.name = "ShopTitle"
+		title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_header.add_child(title)
+	title.text = tr("Shop")
+	title.add_theme_font_size_override("font_size", SHEET_FONT)
+	_money_label = _header.find_child("ShopMoney", true, false) as Label
+	if _money_label == null:
+		_money_label = Label.new()
+		_money_label.name = "ShopMoney"
+		_header.add_child(_money_label)
+	_money_label.add_theme_font_size_override("font_size", SHEET_FONT)
+	_close_button = _header.find_child("ShopCloseButton", true, false) as Button
+	if _close_button == null:
+		_close_button = Button.new()
+		_close_button.name = "ShopCloseButton"
+		_header.add_child(_close_button)
+		var round_box := StyleBoxFlat.new()   # round: radius = half the 120 px target
+		round_box.bg_color = Color(0.2, 0.12, 0.02, 0.12)
+		round_box.set_corner_radius_all(60)
+		for state: String in ["normal", "hover", "pressed", "focus"]:
+			_close_button.add_theme_stylebox_override(state, round_box)
+	_close_button.text = "✕"
+	_close_button.focus_mode = Control.FOCUS_NONE
+	_close_button.custom_minimum_size = Vector2(120.0, 120.0)
+	_close_button.add_theme_font_size_override("font_size", 36)
+	_close_button.pressed.connect(func() -> void: set_sheet_open(false))
+	_tabs_row = find_child("ShopTabs", true, false) as Control
+	if _tabs_row == null:
+		_tabs_row = HBoxContainer.new()
+		_tabs_row.name = "ShopTabs"
+		box.add_child(_tabs_row)
+		box.move_child(_tabs_row, _header.get_index() + 1)
+	for t: String in TAB_IDS:
+		var node_name: String = TAB_NODES[t]
+		var b: Button = _tabs_row.find_child(node_name, true, false) as Button
+		if b == null:
+			b = Button.new()
+			b.name = node_name
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			_tabs_row.add_child(b)
+		b.toggle_mode = true
+		b.focus_mode = Control.FOCUS_NONE
+		b.clip_text = true
+		b.custom_minimum_size.y = TAB_HEIGHT
+		b.add_theme_font_size_override("font_size", SHEET_FONT)
+		b.pressed.connect(_select_tab.bind(t))
+		_tab_buttons[t] = b
+	var rows_holder: Node = find_child("ShopRows", true, false)
+	if rows_holder != null:
+		_coming_soon = Label.new()
+		_coming_soon.name = "ComingSoonLabel"
+		_coming_soon.modulate = Color(1.0, 1.0, 1.0, 0.5)   # greyed
+		_coming_soon.add_theme_font_size_override("font_size", SHEET_FONT)
+		rows_holder.add_child(_coming_soon)
+	_update_tab_texts()
+	_select_tab(_tab)
+
+
+func _update_tab_texts() -> void:
+	for t: String in _tab_buttons:
+		(_tab_buttons[t] as Button).text = tr("shop_tab_" + t)
+	if _coming_soon != null:
+		_coming_soon.text = tr("shop_coming_soon")
+	if _money_label != null:
+		_money_label.text = "$%d" % Economy.money
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED:
+		_update_tab_texts()
+
+
+## Shows one tab's rows (sheet layout); Research and Refinery show the greyed "Coming soon" line. Compact shows all rows, no tabs.
+func _select_tab(t: String) -> void:
+	if not TAB_IDS.has(t):
+		return
+	_tab = t
+	var sheet: bool = _applied.x == SHEET
+	for id: String in _row_nodes:
+		(_row_nodes[id] as Control).visible = (not sheet) or TAB_OF.get(id, "") == _tab
+	for k: String in _tab_buttons:
+		(_tab_buttons[k] as Button).set_pressed_no_signal(k == _tab)
+	if _coming_soon != null:
+		_coming_soon.visible = sheet and not TAB_OF.values().has(_tab)
+	if _header != null:
+		_header.visible = sheet
+	if _tabs_row != null:
+		_tabs_row.visible = sheet
 
 
 ## 0.2 item 15: the node main.gd hides on zoom is FarmUI; the sheet, its dim, the Shop button and the Journal panel live under its parent
@@ -239,9 +373,19 @@ func _sync_visibility() -> void:
 	if _dim != null:
 		_dim.visible = sheet and _open
 	if _shop_button != null:
-		_shop_button.visible = sheet and not _open
+		_shop_button.visible = sheet and not _open and _on_farm_view()   # 0.3.1 item 3: the Shop opens from the farm view only
 	if _close_button != null:
 		_close_button.visible = sheet
+
+
+## True unless main is in a zoom or at the second stop (main.gd: zoom, at_second_stop()).
+func _on_farm_view() -> bool:
+	var n: Node = _farm_ui
+	while n != null and not n.has_method("at_second_stop"):
+		n = n.get_parent()
+	if n == null:
+		return true
+	return int(n.get("zoom")) == 0 and not n.at_second_stop()
 
 
 func _place_dev_button() -> void:
@@ -257,6 +401,8 @@ func _place_dev_button() -> void:
 
 
 func _refresh() -> void:
+	if _money_label != null:
+		_money_label.text = "$%d" % Economy.money   # header money follows purchases
 	for id: String in _rows:
 		var r: Dictionary = _rows[id]
 		var lv: int = Economy.level(id)

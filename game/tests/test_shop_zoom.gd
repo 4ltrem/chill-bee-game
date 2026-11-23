@@ -162,27 +162,31 @@ func t_shop_in_first_zoom_buy_blocks_input_closes_on_exit() -> void:
 		await fi.drag_row(rows[0])
 	await _wait(0.3)
 	ck(fi.capped_total(hive, _frames_n()) < caps0, "positive control: a real drag scrapes with the sheet closed")
-	var rect_zoom: Rect2 = await _zs_clear(m, p, "first zoom")
-	await _zs_blocked(m, p, "first zoom step input")
-	for i in 3:
-		await _zs_buy(m, p, "heated_fork", i == 1, "first zoom buy %d" % (i + 1))
-	# exit 1: Back with the sheet open
-	await _zs_back_with_sheet(m, p, "first zoom exit Back")
-	var farm_btn: Control = _zs_btn(m)
-	ck(farm_btn != null and farm_btn.is_visible_in_tree(), "farm view: the Shop button shows")
-	if farm_btn != null and rect_zoom.size.x > 0.0:
-		ck(farm_btn.get_global_rect().position.distance_to(rect_zoom.position) < 1.0, "the Shop button is in the same place in the zoom and on the farm (%s vs %s)" % [str(rect_zoom), str(farm_btn.get_global_rect())])
-	# come back: the second run matches the first
+	# spec 0.3.1 item 3: "The Shop opens from the farm view only: this supersedes 0.2 item 15 ... The `ShopButton` hides in the first zoom and at the second stop"
+	# (replaces: the Shop button shows in the zoom, a purchase works there, Back and the zoom ending close the sheet)
+	var zb: Control = _zs_btn(m)
+	ck(zb == null or not zb.is_visible_in_tree(), "first zoom: the ShopButton is hidden (0.3.1 item 3)")
+	ck(not _zs_open(m), "first zoom: the Shop sheet is closed")
+	# exit: Back to the farm view; the ShopButton is back and a real tap opens the sheet (the farm view is where the Shop opens)
+	await _tap_back({"p": p})
+	await _until(func() -> bool: return int(m.get("zoom")) == 0 and not bool(m.call("at_second_stop")) and _cam().size > float(cv("pan_zoom_size")) + 0.5, float(cv("zoom_seconds")) + float(cv("camera_pan_seconds")) + _zoom_settle() + 6.0)
+	await _wait(_zoom_settle())
+	for run in 2:
+		var farm_btn: Control = _zs_btn(m)
+		ck(farm_btn != null and farm_btn.is_visible_in_tree(), "farm view run %d: the ShopButton shows" % (run + 1))
+		if farm_btn == null or not farm_btn.is_visible_in_tree():
+			break
+		await fi.tap_at(farm_btn.get_global_rect().get_center())
+		await _frames(3)
+		ck(_zs_open(m), "farm view run %d: a real tap on the ShopButton opens the sheet" % (run + 1))
+		await fi.tap_at(m.find_child("ShopCloseButton", true, false).get_global_rect().get_center())
+		await _frames(3)
+		ck(not _zs_open(m), "farm view run %d: Close returns to the farm" % (run + 1))
+	# come back to the zoom: the ShopButton hides again
 	tr["risen"] = -1
 	ck(await _open_zoom(m, p, tr), "run 2: Harvest again opens the zoom")
-	var rect2: Rect2 = await _zs_clear(m, p, "run 2 first zoom")
-	if rect2.size.x > 0.0 and rect_zoom.size.x > 0.0:
-		ck(rect2.position.distance_to(rect_zoom.position) < 1.0, "run 2: the Shop button is where it was in run 1")
-	await _zs_buy(m, p, "heated_fork", false, "run 2 first zoom buy")
-	# exit 2: the zoom ends on its own (last cell scraped) with the sheet open
-	var opened: bool = await _zs_finish_with_sheet(m, p, tr)
-	ck(opened, "run 2: the sheet was opened as the last cell was scraped")
-	await _zs_expect_closed_at_closing(m, "run 2 zoom ends on its own")
+	zb = _zs_btn(m)
+	ck(zb == null or not zb.is_visible_in_tree(), "run 2 first zoom: the ShopButton is hidden again")
 	_fin()
 
 
@@ -255,24 +259,24 @@ func t_shop_at_second_stop_buy_blocks_crank_closes_on_back() -> void:
 	var t0: int = int(cen.get("turns_counted"))
 	await _tap_free(m)
 	ck(int(cen.get("turns_counted")) > t0, "positive control: a real tap at the second stop counts a turn with the sheet closed")
-	var rect_stop: Rect2 = await _zs_clear(m, p, "second stop")
-	await _zs_blocked(m, p, "second stop step input")
-	for i in 3:
-		await _zs_buy(m, p, "gearing", i == 1, "second stop buy %d" % (i + 1))
+	# spec 0.3.1 item 3: "The Shop opens from the farm view only ... The `ShopButton` hides in the first zoom and at the second stop, where item 8's Tools icon holds the machine's upgrades"
+	# (replaces: the Shop shows at the second stop and a purchase works there)
+	var zb: Control = _zs_btn(m)
+	ck(zb == null or not zb.is_visible_in_tree(), "second stop: the ShopButton is hidden (0.3.1 item 3)")
+	ck(not _zs_open(m), "second stop: the Shop sheet is closed")
+	# leave by Back, come back with Spin: hidden again
 	var kept: int = int(cen.get("turns_counted"))
-	await _zs_back_with_sheet(m, p, "second stop exit Back")
-	eq(int(cen.get("turns_counted")), kept, "Back with the sheet open counted no turn and kept the progress")
+	await _tap_back({"p": p})
+	await _wait(0.3)
+	eq(int(cen.get("turns_counted")), kept, "Back counted no turn and kept the progress")
 	eq(cen.get("state"), _st(cen, "CRANKING"), "the paused crank is still the same crank")
-	# come back with Spin: run 2 matches run 1
 	var spin: Control = p["CentrifugeIcon"]
 	await fi.tap_at(spin.get_global_rect().get_center())
 	var back: bool = await _until(func() -> bool: return bool(m.call("at_second_stop")) and absf(_cam().size - float(cv("pan_zoom_size"))) < 0.01, float(cv("camera_pan_seconds")) + _zoom_settle() + 6.0)
 	await _wait(0.4)
 	ck(back, "run 2: Spin returns to the second stop")
-	var rect2: Rect2 = await _zs_clear(m, p, "run 2 second stop")
-	if rect2.size.x > 0.0 and rect_stop.size.x > 0.0:
-		ck(rect2.position.distance_to(rect_stop.position) < 1.0, "run 2: the Shop button is where it was in run 1")
-	await _zs_buy(m, p, "gearing", false, "run 2 second stop buy")
+	zb = _zs_btn(m)
+	ck(zb == null or not zb.is_visible_in_tree(), "run 2 second stop: the ShopButton is hidden again")
 	_fin()
 
 
