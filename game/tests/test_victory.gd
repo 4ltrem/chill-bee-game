@@ -11,6 +11,10 @@ func _vic_shown(o: Node) -> bool:
 	return o != null and o.has_method("is_showing") and bool(o.call("is_showing"))
 
 
+func _vic_diag(o: Node, m: Node) -> String:
+	return "diag: _queued %s, _wait %s, farm_view_idle() %s" % [o.get("_queued"), o.get("_wait"), m.call("farm_view_idle")]
+
+
 ## Make Health thrive on a fresh farm (emits `thriving`).
 func _vic_thrive() -> void:
 	var e: Node = _eco()
@@ -84,8 +88,8 @@ func t_victory_waits_for_farm_view() -> void:
 	panel.call("set_sheet_open", true)
 	await _frames(3)
 	_vic_thrive()
-	await _frames(int(delay * 60.0) + 20)
-	eq(_vic_shown(o), false, "step sheet: not shown while the Shop sheet is open")
+	await _wait(delay + 1.0)   # game seconds (the overlay counts scaled delta), not frames: frames can run faster than real time
+	eq(_vic_shown(o), false, "step sheet: not shown while the Shop sheet is open; %s" % _vic_diag(o, m))
 	panel.call("set_sheet_open", false)
 	var ok: bool = await _until(func() -> bool: return _vic_shown(o), 3.0)
 	ck(ok, "step back: shown once the sheet is closed")
@@ -97,8 +101,8 @@ func t_victory_waits_for_farm_view() -> void:
 	var was: int = int(m.get("zoom"))
 	m.set("zoom", working)
 	_vic_thrive()
-	await _frames(int(delay * 60.0) + 20)
-	eq(_vic_shown(o), false, "step zoom: not shown while a zoom is in progress")
+	await _wait(delay + 1.0)
+	eq(_vic_shown(o), false, "step zoom: not shown while a zoom is in progress; %s" % _vic_diag(o, m))
 	m.set("zoom", was)
 	var ok2: bool = await _until(func() -> bool: return _vic_shown(o), 3.0)
 	ck(ok2, "step zoom out: shown once the zoom is over")

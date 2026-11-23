@@ -1641,8 +1641,8 @@
  {
   "name": "0.3 item 1 show_welcome false is ignored: the overlay and the idle world stay",
   "file": "scripts/main.gd",
-  "find": "\tif not Economy.config.show_welcome:\n\t\tvar skipped",
-  "replace": "\tif false:\n\t\tvar skipped",
+  "find": "\t\t\tskipped.queue_free()",
+  "replace": "\t\t\tpass",
   "expect": [
    "t_welcome_off_by_default_in_tests"
   ],
@@ -1661,8 +1661,8 @@
  {
   "name": "0.3 item 1 the Play button shows the raw key (not through the translation)",
   "file": "scripts/welcome_overlay.gd",
-  "find": "(_button as Button).text = tr(\"welcome_play\")",
-  "replace": "(_button as Button).text = \"welcome_play\"",
+  "find": "\t\t(_button as Button).text = tr(\"welcome_play\")\n\t_button.pressed.connect(press)",
+  "replace": "\t\t(_button as Button).text = \"welcome_play\"\n\t_button.pressed.connect(press)",
   "expect": [
    "t_welcome_shows_title_and_play_only"
   ],

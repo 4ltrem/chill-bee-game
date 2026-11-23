@@ -143,7 +143,7 @@ func t_welcome_off_by_default_in_tests() -> void:
 		_fin()
 		return
 	eq(bool(cv("show_welcome")), false, "a test run starts with show_welcome false")
-	ck(_wl_overlay(m) == null or not (_wl_overlay(m) as CanvasItem).visible, "no overlay shows when show_welcome is false")
+	ck(_wl_overlay(m) == null or not bool(_wl_overlay(m).get("visible")), "no overlay shows when show_welcome is false")   # a CanvasLayer, not a CanvasItem
 	ck(_wl_storage(m) >= 0.0, "storage readable")
 	await _wait(_wl_wait_s())
 	ck(_wl_storage(m) > 0.0, "with show_welcome false the world runs: the hive fills")
@@ -164,11 +164,35 @@ func t_welcome_play_text_translated_title_not() -> void:
 		ck(false, "overlay present")
 		_fin()
 		return
+	var csv_fr: String = _wl_csv_value("welcome_play", "fr")
+	ck(csv_fr != "", "journal.csv has an fr value for welcome_play")
+	var bs: Array = _wl_buttons(ov)
+	if bs.size() != 1:
+		ck(false, "exactly one Play button to read")
+		TranslationServer.set_locale(loc0)
+		_fin()
+		return
+	var btn: Button = bs[0] as Button
 	TranslationServer.set_locale("en")
-	eq(tr("welcome_play"), "Play", "en: welcome_play is Play")
-	TranslationServer.set_locale("fr")
-	eq(tr("welcome_play"), "Jouer", "fr: welcome_play is Jouer")
 	await _frames(2)
+	eq(btn.text, "Play", "en: the Play button reads Play")
+	TranslationServer.set_locale("fr")
+	await _frames(2)
+	eq(btn.text, csv_fr, "fr: the Play button reads the journal.csv fr value of welcome_play")
 	ck(_wl_texts(ov).has(WELCOME_TITLE), "fr: the title stays '%s' (not translated)" % WELCOME_TITLE)
 	TranslationServer.set_locale(loc0)
 	_fin()
+
+
+## One cell of translations/journal.csv read from the file (the header row names the columns), "" when absent.
+func _wl_csv_value(key: String, col: String) -> String:
+	var f: FileAccess = FileAccess.open("res://translations/journal.csv", FileAccess.READ)
+	if f == null:
+		return ""
+	var head: PackedStringArray = f.get_csv_line()
+	var ci: int = head.find(col)
+	while not f.eof_reached():
+		var row: PackedStringArray = f.get_csv_line()
+		if row.size() > 0 and row[0] == key and ci >= 0 and ci < row.size():
+			return row[ci]
+	return ""
