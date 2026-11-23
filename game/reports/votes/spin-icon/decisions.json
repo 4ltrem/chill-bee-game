@@ -1,0 +1,13 @@
+{
+  "question": "spin-icon",
+  "source": "Design Votes https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (version 27), collection votes",
+  "read": "2026-11-23",
+  "pick": "D-honey",
+  "votes": {
+    "spin-icon-A-refresh": {"vote": "maybe", "note": "", "updatedAt": "2026-11-23T17:13:45.043Z"},
+    "spin-icon-B-drum": {"vote": "no", "note": "", "updatedAt": "2026-11-23T17:13:51.976Z"},
+    "spin-icon-C-crank": {"vote": "maybe", "note": "", "updatedAt": "2026-11-23T17:14:01.311Z"},
+    "spin-icon-D-honey": {"vote": "yes", "note": "", "updatedAt": "2026-11-23T17:14:38.758Z"}
+  },
+  "shape": "game/reports/votes/spin-icon/icons.html, option d: a cream honey drop with an ink outline and an ink turn arrow, on the gold circle with the ink ring"
+}

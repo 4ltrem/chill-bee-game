@@ -73,6 +73,10 @@ Every material colour must sit near one of these tokens (script: distance in Lab
   - border (0.35, 0.22, 0.05)
   - shop panel (0.30, 0.22, 0.10)
   - blossom (0.97, 0.66, 0.78): the Habitat Health flower icon only (designer, 2026-11-22)
+  - icon white (1.0, 1.0, 1.0): the Harvest icon's circle (UI_DESIGN rule 4; designer, 2026-11-23)
+  - fork tine (0.33, 0.33, 0.35): the drawn uncapping fork on the Harvest icon, as on the canvas Prototype board (designer, 2026-11-23)
+  - fork steel (0.60, 0.66, 0.74): the fork's crossbar and ferrule on the Harvest icon (designer, 2026-11-23)
+  - fork handle (0.60, 0.45, 0.28): the fork's handle on the Harvest icon (designer, 2026-11-23)
 
 New token: proposed in a FAIL row's Fix and added here by the designer, never by an agent.
 
