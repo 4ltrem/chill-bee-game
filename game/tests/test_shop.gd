@@ -318,11 +318,9 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 			if panel != null and (panel.is_ancestor_of(c) or panel.top_level):   # item 14: an open sheet floats over the farm icons by design
 				continue
 			others.append([nm, c.get_global_rect()])
-	# spec 0.3 item 4: the Journal button is hidden before thriving; check it at thriving so its rect is still tested
+	# spec 0.3.1 item 1: "The JournalButton leaves the Shop (ShopPanel/ShopBox) and becomes a farm-view icon": it is no longer a control
+	# the rows must clear (the open sheet floats over farm icons, item 14); reach thriving anyway so the rows are tested in that state
 	await _reach_thriving(m)
-	var jb: Control = m.find_child("JournalButton", true, false) as Control
-	if jb != null and jb.is_visible_in_tree():
-		others.append(["JournalButton", jb.get_global_rect()])
 	var rows: Array = _shop_rows(m)
 	# spec 0.3 item 3: "all eight rows show at 720 × 1280" (plant_patch is the eighth row)
 	eq(rows.size(), _SHOP_IDS.size() + 1, "eight rows")

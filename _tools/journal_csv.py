@@ -46,6 +46,7 @@ def main() -> None:
         w.writerow(["welcome_play", "Play", "Jouer"])   # 0.3 item 1: the Play button text
         for row in ui_rows():   # 0.3 items 3-6: the approved victory, toast and skip strings
             w.writerow(row)
+        w.writerow(["journal_icon", "Journal", "Carnet"])   # 0.3.1 item 1 (content/ui-labels.md; C7 moves every label there)
     print("wrote", OUT)
 
 

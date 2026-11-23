@@ -177,7 +177,7 @@ func _icons_state(m: Node, p: Dictionary, label: String, second: bool) -> int:
 		if (ic as Control).is_visible_in_tree():
 			vis.append(ic)
 	var hud: Array = []
-	# 0.3.0 controls: ShopButton (made in shop_ui.gd), HabitatPill (in TopInfo), SkipIcon (skip to ending), JournalButton (in ShopPanel); a hidden one is skipped
+	# 0.3.0 controls: ShopButton (made in shop_ui.gd), HabitatPill (in TopInfo), SkipIcon (skip to ending), JournalButton (0.3.1 item 1: a farm-view icon under FarmUI, no longer in ShopPanel); a hidden one is skipped
 	for nm in ["TopInfo", "ShopPanel", "ShopButton", "HabitatPill", "SkipIcon", "JournalButton"]:
 		var c: Control = m.find_child(nm, true, false) as Control
 		if nm == "TopInfo" or nm == "ShopPanel":

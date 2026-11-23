@@ -57,9 +57,11 @@ func t_habitat_pill_order_plus_opens_shop_twice() -> void:
 		return
 	ck(pill.is_visible_in_tree(), "the pill shows in the farm view")
 	var lab: Label = pill.find_child("HabitatCountLabel", true, false) as Label
-	var plus: Button = pill.find_child("HabitatPlusButton", true, false) as Button
+	# spec 0.3.1 item 1: "The Habitat pill loses its +: HabitatPlusButton is deleted from main.tscn ... The pill is the number and the wildflower icon only"
+	ck(pill.find_child("HabitatPlusButton", true, false) == null, "the pill has no HabitatPlusButton (0.3.1 item 1)")
+	var plus: Button = m.find_child("ShopButton", true, false) as Button   # "the ShopButton is the only control that opens the Shop"
 	var icons: Array = pill.find_children("HabitatIcon", "Control", true, false)   # a flat Panel, no texture (designer 2026-11-22, V4)
-	ck(lab != null and plus != null and not icons.is_empty(), "number label, icon and + button all exist")
+	ck(lab != null and plus != null and not icons.is_empty(), "number label, icon and ShopButton all exist")
 	if lab == null or plus == null or icons.is_empty():
 		_fin()
 		return
@@ -70,9 +72,7 @@ func t_habitat_pill_order_plus_opens_shop_twice() -> void:
 	var ic: Control = icons[0] as Control
 	var xl: float = lab.get_global_rect().position.x
 	var xi: float = ic.get_global_rect().position.x
-	var xp: float = plus.get_global_rect().position.x
-	ck(xl < xi and xi < xp, "order: number, icon, then + (x %.0f, %.0f, %.0f)" % [xl, xi, xp])
-	ck(plus.text.contains("+"), "the + button reads '+'")
+	ck(xl < xi, "order: number, then icon (x %.0f, %.0f); no + after it (0.3.1 item 1)" % [xl, xi])
 	var pr: Rect2 = pill.get_global_rect()
 	for nm in ["ForkIcon", "CentrifugeIcon", "SellIcon"]:
 		var c: Control = m.find_child(nm, true, false) as Control
@@ -86,7 +86,7 @@ func t_habitat_pill_order_plus_opens_shop_twice() -> void:
 		ck(panel != null and not panel.visible, "run %d: the Shop is closed before the tap" % (run + 1))
 		await fi.tap_at(plus.get_global_rect().get_center())
 		await _frames(3)
-		ck(panel != null and panel.visible, "run %d: a real tap on + opens the Shop; diag: panel %s, plus rect %s, plus disabled %s, plus visible %s" % [run + 1, panel, plus.get_global_rect(), plus.disabled, plus.is_visible_in_tree()])
+		ck(panel != null and panel.visible, "run %d: a real tap on ShopButton opens the Shop; diag: panel %s, button rect %s, disabled %s, visible %s" % [run + 1, panel, plus.get_global_rect(), plus.disabled, plus.is_visible_in_tree()])
 	if panel != null and panel.has_method("set_sheet_open"):
 		panel.call("set_sheet_open", false)
 	_fin()
@@ -136,21 +136,9 @@ func t_bumble_visitor_toast_journal_unlock_twice() -> void:
 		ck(toast.visible, "run %d step thriving: the toast shows" % run)
 		eq(toast_label.text, want, "run %d step thriving: the toast text is toast_bumble_visitor" % run)
 		ck(btn.visible, "run %d step thriving: the Journal button shows" % run)
-		await _shop_open(m, true)
-		var pn: Control = m.find_child("ShopPanel", true, false) as Control
-		var sx: String = "sheet_open %s; " % [pn.call("is_sheet_open") if pn != null and pn.has_method("is_sheet_open") else "n/a"]
-		var shp: Control = m.find_child("ShopPanel", true, false) as Control
-		var sbn: Control = m.find_child("ShopButton", true, false) as Control
-		var anc: Array = []
-		var an: Node = btn
-		while an != null:
-			anc.append("%s:%s" % [an.name, an.get("visible")])
-			an = an.get_parent()
-		var dg: String = sx + "shop panel visible %s, in tree %s, shop_layout %s; ShopButton in tree %s rect %s; toast rect %s filter %s; Journal visible %s rect %s; ancestors %s" % [
-			shp.visible if shp != null else "none", shp.is_visible_in_tree() if shp != null else "none", str(m.get("shop_layout")),
-			sbn.is_visible_in_tree() if sbn != null else "none", sbn.get_global_rect() if sbn != null else "none",
-			toast.get_global_rect(), toast.mouse_filter, btn.visible, btn.get_global_rect(), anc]
-		ck(btn.is_visible_in_tree(), "run %d step open: the Journal button is on screen in the Shop; diag: %s" % [run, dg])
+		# spec 0.3.1 item 1: "The JournalButton leaves the Shop ... and becomes a farm-view icon": no Shop step before the tap
+		var dg: String = "Journal visible %s rect %s; toast rect %s filter %s" % [btn.visible, btn.get_global_rect(), toast.get_global_rect(), toast.mouse_filter]
+		ck(btn.is_visible_in_tree(), "run %d step open: the Journal button is on screen in the farm view; diag: %s" % [run, dg])
 		await fi.tap_at(btn.get_global_rect().get_center())
 		await _frames(2)
 		ck(panel.is_visible_in_tree(), "run %d step tap: a real tap on Journal opens the entry" % run)

@@ -98,7 +98,7 @@ func t_journal_panel_text_matches_csv_twice() -> void:
 		return
 	# spec 0.3 item 4: "Before thriving the Journal button is hidden; from thriving on it shows and opens the entry as in 0.2."
 	await _reach_thriving(m)
-	await _shop_open(m, true)   # item 14: the Journal button sits in the shop; open the sheet by a real Shop tap
+	# spec 0.3.1 item 1: "The JournalButton leaves the Shop ... and becomes a farm-view icon": no Shop tap first
 	var btn: Button = _nn(m, "JournalButton") as Button
 	var panel: Control = _nn(m, "JournalPanel") as Control
 	var title: Label = _nn(m, "JournalTitle") as Label
@@ -113,7 +113,7 @@ func t_journal_panel_text_matches_csv_twice() -> void:
 			TranslationServer.set_locale(loc)
 			await _frames(2)
 			ck(not panel.visible, "%s run %d: the panel starts closed" % [loc, run])
-			ck(btn.is_visible_in_tree(), "%s run %d: the Journal button is on screen" % [loc, run])
+			ck(btn.is_visible_in_tree(), "%s run %d: the Journal button is on screen in the farm view" % [loc, run])
 			await fi.tap_at(btn.get_global_rect().get_center())
 			await _frames(2)
 			ck(panel.is_visible_in_tree(), "%s run %d: a real tap on Journal opens the panel" % [loc, run])

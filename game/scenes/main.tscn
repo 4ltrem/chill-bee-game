@@ -370,12 +370,6 @@ size_flags_vertical = 4
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_wildflower")
 
-[node name="HabitatPlusButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill"]
-custom_minimum_size = Vector2(120, 120)
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "+"
-
 [node name="DevSpeedTag" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 visible = false
 layout_mode = 2
@@ -468,10 +462,21 @@ theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "$40"
 
-[node name="JournalButton" type="Button" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox"]
+[node name="JournalButton" type="Button" parent="FarmUIRoot/FarmUI"]
 focus_mode = 0
 custom_minimum_size = Vector2(120, 120)
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -136.0
+offset_top = -248.0
+offset_right = -16.0
+offset_bottom = -128.0
+grow_horizontal = 0
+grow_vertical = 0
 theme_override_colors/font_disabled_color = Color(1, 0.96, 0.86, 1)
 theme_override_font_sizes/font_size = 36
 theme_override_styles/disabled = SubResource("StyleBox_disabled")
