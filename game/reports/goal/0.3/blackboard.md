@@ -3317,9 +3317,28 @@ Command: `goal_agent.py game/specs/0.3-course-build.md --accept C6 --note skip i
 - Change (orchestrator, Process 9): skip icon hides off the farm view (Patricia: set_on_farm_view from main._refresh_icons); welcome guard walks up to Main (orchestrator); t_skip_icon_* green _runs/20261122-185827/
 - Accepted: checkpoint `c3802d9` on `main`
 
+## Resumed 2026-11-22
+
+Command: `goal_agent.py game/specs/0.3-course-build.md --accept T6.1 --note Quinn's t_skip_icon_reaches_thriving_free_twice and t_skip_icon_farm_view_only (marked # goal 0.3 T6.1, L51), green; both item 6 mutations caught` (the run had stopped: `stopped`).
+
+### Manual fix: T6.1 (2026-11-22T19:00:13-05:00)
+
+- Change (orchestrator, Process 9): Quinn's t_skip_icon_reaches_thriving_free_twice and t_skip_icon_farm_view_only (marked # goal 0.3 T6.1, L51), green; both item 6 mutations caught
+- Accepted: commit failed: 	game/reports/style/0.3-goal-c3/
+	game/reports/style/0.3-goal-c6/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 107 lookups in 72 top-level scenes, 0 unresolved
+
 ## Result
 
-C6 accepted with a manual fix (checkpoint `c3802d9` on `main`). Rerun `goal_agent.py 0.3-course-build.md` to build the rest.
+T6.1 accepted with a manual fix (commit failed: 	game/reports/style/0.3-goal-c3/
+	game/reports/style/0.3-goal-c6/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 107 lookups in 72 top-level scenes, 0 unresolved). Rerun `goal_agent.py 0.3-course-build.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-22-goal-0.3/`
 
