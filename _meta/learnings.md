@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L54 · 2026-11-23 · Fix round 2 went to the owner who couldn't fix it, and the shots never left the welcome
+- **What broke:** (1) 0.3.1 C7 and C8 stopped for the designer after fix round 2. Round 2 went to Bob and Quinn, who both changed nothing and named Patricia's one-line fix (C7: the Settings button left visible at the second stop, `main.gd`; C8: a typed-array ternary, `shop_ui.gd:372`). (2) `ui_shots.py` stopped at the 0.3 welcome overlay: moments 1-2 shot the welcome and 3-9 were missing, so the goal loop's `ui shots` check compared welcome screens.
+- **How noticed:** the other session running the 0.3.1 build, after accepting C7 by hand (37acad8).
+- **Cause:** (1) `one_owner()` routed a round both code owners could take by the folders the failure report named, else alternately (even rounds to Bob). A test failure names no folder, and nothing read the replies, and the run allowed no round after the one that found the cause. (2) Since 0.3 the shipped config sets `show_welcome = true`; `ui_compare_shots.gd` loads the shipped defaults and no moment presses Play.
+- **How fixed:** (1) `named_owner()` reads the last round's replies (`OWNER_FAULT`: "Patricia's folder", "(Patricia, `main.gd`)", "next round, in `game/scripts/...`"), and `one_owner()` follows it first. `passed_on()`: when a round's code owner changed no file in their folder and the replies name the other owner, the step gets one extra round, which goes there. (2) `ui_shots.py` adds `--set show_welcome=false` unless the caller sets that key.
+- **Prevention:** `test_goal_agent.py` `FixRouting` (C7's actual replies) and `test_generate.py` `test_ui_shots_skip_the_welcome_unless_asked`.
+
 ## L53 · 2026-11-23 · 0.3.1 goal steps took 30-60 min, about 10% of it agent work
 - **What broke:** each 0.3.1 step took 30-60 min of wall time (C4 59 min, C3 41, C6 36, C8 30), of which the agent calls took 2.5-5 min. The first big calls were mostly searching: Patricia's C4 was 1.8M tokens and 58 turns, much of it `signal |^func |^var` greps; Bob read `main.tscn` 13 times in C6.
 - **How noticed:** the designer ("the last few goal runs are too slow ... some of the things left to add are already existing systems"); the blackboard timestamps against `game/reports/_runs/20261123-*` and the transcripts' tool calls.

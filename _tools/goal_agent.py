@@ -1736,7 +1736,8 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
     scope_rows = []   # files the last fix round changed outside its owners' folders
     prev_failed = set()   # L40: the tests the last check showed failing; the next round runs them with its own
     replies, last_fix = {}, []   # L42: the last fix round's replies and agents, for routing the next round
-    for rnd in range(rounds + 1):
+    extra = 0   # L54: one more round when a round's code owner changed nothing and sent the fix to the other owner
+    for rnd in range(rounds + 2):
         failed = [("scope", scope_rows.pop())] if scope_rows else []
         g.set_live_tag(f"goal {run} · {ids} checks" + (f" r{rnd}" if rnd else ""))
         own = own_tests(spec, goal, batch) if cmds else []
@@ -1837,7 +1838,7 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
                     failed.append(("pick match", rows))
         if not failed:
             break
-        if rnd == rounds:
+        if rnd >= rounds + extra:
             g.waiting(board, f"{rounds} fix rounds failed on {ids}: " + ", ".join(f"`{l}`" for l, _ in failed)
                       + " still fail (output above). The designer decides: change the spec or the test, or fix it "
                       f"by hand and record it with `goal_agent.py {spec['file']} --accept {goal['id']} --note "
@@ -1854,6 +1855,10 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         if not call_agents(fix, board, usage, run, f"{ids} fix {rnd + 1}", max_turns=FIX_MAX_TURNS, replies=replies):
             return "paused"
         said += replies.items()
+        if not extra and passed_on(fix, states, file_states(), replies):
+            extra = 1
+            say(board, f"- {', '.join(g.NAMES[a] for a in fix if a in OWNER_FAULT)} changed nothing and named "
+                       f"{g.NAMES[named_owner(replies)]}'s folder: one more fix round goes there (L54)\n")
         stray = out_of_scope(states, file_states(), fix)
         say(board, f"- Check `scope`: " + (f"FAIL ({', '.join(f'`{p}`' for p in stray)} changed outside "
                                            f"{', '.join(FOLDERS[a] for a in fix)})\n" if stray else "PASS\n"))
@@ -2116,7 +2121,7 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd, quinn="", replies=No
     if failed and all(l in LOOKS for l, _ in failed):   # how the scene looks: Bob's folder
         owners = [BUILDER]
     if PROGRAMMER in owners and BUILDER in owners:   # one owner per round: the 0.1.4 T14 rounds sent the same report
-        owners = [one_owner(report, rnd)]            # to both, and both removed the same 30° cell turn
+        owners = [one_owner(report, rnd, replies)]   # to both, and both removed the same 30° cell turn
     other = {PROGRAMMER: "Bob (scenes/)", BUILDER: "Patricia (scripts/)"}
     head = (f"Goal agent run `{run}`, fix round {rnd} for goal {', '.join(b['id'] for b in batch)} of "
             f"`game/specs/{spec['file']}`, branch `{branch}`. These checks failed after the last step. Fix what is in "
@@ -2156,9 +2161,43 @@ def fix_briefs(spec, goal, batch, failed, run, branch, rnd, quinn="", replies=No
     return out
 
 
-def one_owner(report, rnd):
-    """Patricia or Bob for a fix round both could take: the folder the failure names, else Patricia on odd rounds and
-    Bob on even ones, so a cause in the other folder reaches its owner next round."""
+# L54: a reply that sends the fix to the other code owner ("the cause is in Patricia's folder", "Fix for the next round,
+# in `game/scripts/main.gd`", "a finding against the code (Patricia, `main.gd`)"). 0.3.1 C7 and C8: round 1's report
+# named no file, round 2 alternated to Bob, and Bob and Quinn both named Patricia's one-line fix with no round left.
+OWNER_FAULT = {
+    PROGRAMMER: re.compile(r"Patricia's (?:folder|file|code|script)|\(Patricia\b|\bnext round[^.\n]{0,40}"
+                           r"(?:Patricia|scripts/)|\b(?:fix|change|cause) (?:belongs |is |goes |lies )?in `?(?:game/)?"
+                           r"scripts/|\bneeds? a (?:file|change) in `?(?:game/)?scripts/", re.I),
+    BUILDER: re.compile(r"Bob's (?:folder|file|scene)|\(Bob\b|\bnext round[^.\n]{0,40}(?:Bob|scenes/)|\b(?:fix|change|"
+                        r"cause) (?:belongs |is |goes |lies )?in `?(?:game/)?(?:scenes|materials)/|\bneeds? a (?:file|"
+                        r"change) in `?(?:game/)?(?:scenes|materials)/", re.I),
+}
+
+
+def named_owner(replies):
+    """L54: the code owner the last round's replies send the fix to (PROGRAMMER or BUILDER), or None when they name
+    neither or both."""
+    said = "\n".join((replies or {}).values())
+    hits = [a for a, rx in OWNER_FAULT.items() if rx.search(said)]
+    return hits[0] if len(hits) == 1 else None
+
+
+def passed_on(fix, before, after, replies):
+    """L54: the round's code owner changed no file in their folder and the replies send the fix to the other owner."""
+    coders = [a for a in fix if a in OWNER_FAULT]
+    named = named_owner(replies)
+    if not coders or not named or named in coders:
+        return False
+    changed = {p for p in set(before) | set(after) if before.get(p) != after.get(p)}
+    return not any(p.startswith(SCOPE[a]) for a in coders for p in changed)
+
+
+def one_owner(report, rnd, replies=None):
+    """Patricia or Bob for a fix round both could take: the owner the last round's replies name (L54), else the folder
+    the failure names, else Patricia on odd rounds and Bob on even ones."""
+    named = named_owner(replies)
+    if named:
+        return named
     scenes = len(re.findall(r"\.tscn\b|\.tres\b|scenes/|materials/", report))
     scripts = len(re.findall(r"\.gd\b|scripts/", report))
     if scenes != scripts:

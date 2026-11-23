@@ -871,6 +871,12 @@ class BuildToolsTest(unittest.TestCase):
         self.assertFalse(self.gr.parse_broken(other))   # a runtime error still lets the tests run and show it
         self.assertEqual(self.gr.skipped("unit")["status"], "SKIPPED")
 
+    def test_ui_shots_skip_the_welcome_unless_asked(self):   # L54
+        import ui_shots
+        self.assertEqual(ui_shots.with_defaults([]), ["show_welcome=false"])
+        self.assertEqual(ui_shots.with_defaults(["shop_layout=0"]), ["show_welcome=false", "shop_layout=0"])
+        self.assertEqual(ui_shots.with_defaults(["show_welcome=true"]), ["show_welcome=true"])
+
     def test_contract_flags_a_name_two_nodes_share_under_one_search(self):   # L53
         import contract_check as cc
         with tempfile.TemporaryDirectory() as d:

@@ -11,6 +11,8 @@ MOMENTS list of game/tests/ui_compare_shots.gd. This tool copies that script (fr
 WORKTREE/game/reports/builds/LABEL/ui/ for a version label, or WORKTREE/game/reports/LABEL/ when LABEL holds a slash
 (a vote option: votes/<vote-id>/<option>). --collect DIR also copies each label's folder to DIR/LABEL/.
 
+The welcome overlay is off unless `--set show_welcome=true` is given (L54: no moment presses Play).
+
 Designer rule (2026-11-06): the same moments are captured by this script, not by an agent. An agent (Bob) is
 only called when a new screen, phase or menu enters the game, to add its entry to MOMENTS.
 Standard library only (contact_sheet.py needs Pillow and is run without -I).
@@ -28,6 +30,15 @@ sys.path.insert(0, TOOLS)
 from godot_run import GODOT  # noqa: E402
 
 REL_SCRIPT = os.path.join("game", "tests", "ui_compare_shots.gd")
+# L54: since 0.3 the shipped config opens on the welcome overlay, which nothing in MOMENTS presses, so every shot
+# showed the welcome or went missing (0.3.1 C7). Off by default; `--set show_welcome=true` keeps it (a welcome shot).
+DEFAULT_SETS = ["show_welcome=false"]
+
+
+def with_defaults(sets):
+    """Pure: the --set list with DEFAULT_SETS added for every key the caller did not set."""
+    given = {s.split("=", 1)[0] for s in sets}
+    return [d for d in DEFAULT_SETS if d.split("=", 1)[0] not in given] + list(sets)
 
 
 def out_rel(label):
@@ -89,7 +100,7 @@ def main(argv=None):
         label, _, tree = t.partition("=")
         if not tree:
             sys.exit(f"ui_shots: expected LABEL=WORKTREE, got {t}")
-        lines.append(shoot(label, os.path.abspath(tree), os.path.abspath(a.script), a.timeout, a.set))
+        lines.append(shoot(label, os.path.abspath(tree), os.path.abspath(a.script), a.timeout, with_defaults(a.set)))
         if a.collect:
             src = os.path.join(tree, "game", "reports", *out_rel(label).split("/"))
             if os.path.isdir(src):

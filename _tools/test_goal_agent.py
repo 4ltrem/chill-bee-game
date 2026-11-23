@@ -1249,6 +1249,31 @@ class OwnTestsFirst(unittest.TestCase):
         self.assertEqual(self.calls, [cmd])   # no split: the command as given
 
 
+class FixRouting(unittest.TestCase):
+    """L54: 0.3.1 C7/C8 round 2 went to Bob, who changed nothing and named Patricia's one-line fix; no round was left."""
+    BOB = ("I changed nothing. The cause is in Patricia's folder, not in `scenes/` or `materials/`.\n\n**Fix for the "
+           "next round, in `game/scripts/main.gd`:** hide the Settings button.")
+    QUINN = "The test is correct, so I changed nothing. This is a finding against the code (Patricia, `main.gd`)."
+
+    def test_replies_naming_the_other_owner_route_the_round(self):
+        self.assertEqual(ga.named_owner({ga.BUILDER: self.BOB, ga.QA: self.QUINN}), ga.PROGRAMMER)
+        self.assertEqual(ga.one_owner("FAIL  t_second_stop_back_tap  SettingsButton", 2,
+                                      {ga.BUILDER: self.BOB, ga.QA: self.QUINN}), ga.PROGRAMMER)
+        self.assertEqual(ga.one_owner("FAIL  t_x  y", 2, {ga.PROGRAMMER: "Nothing in `scenes/` needs changing."}),
+                         ga.BUILDER)   # names nobody: alternate as before
+        self.assertEqual(ga.named_owner({ga.PROGRAMMER: "The fix needs a file in `scenes/` (Bob)."}), ga.BUILDER)
+
+    def test_a_round_that_changed_nothing_and_passed_it_on_earns_one_more(self):
+        before = {"game/tests/test_a.gd": "1"}
+        self.assertTrue(ga.passed_on([ga.BUILDER, ga.QA], before, dict(before),
+                                     {ga.BUILDER: self.BOB, ga.QA: self.QUINN}))
+        edited = {"game/tests/test_a.gd": "1", "game/scenes/main.tscn": "2"}
+        self.assertFalse(ga.passed_on([ga.BUILDER, ga.QA], before, edited, {ga.BUILDER: self.BOB}))   # Bob edited
+        self.assertFalse(ga.passed_on([ga.PROGRAMMER], before, dict(before),
+                                      {ga.PROGRAMMER: "Fix for the next round, in `game/scripts/x.gd`"}))   # own folder
+        self.assertFalse(ga.passed_on([ga.QA], before, dict(before), {ga.QA: self.QUINN}))   # Quinn alone: no coder
+
+
 class FactCheck(unittest.TestCase):
     """L52's fact-check pass (`spec_factcheck.py`): claims, the reply's verdicts, and the gate a build run waits on."""
 
