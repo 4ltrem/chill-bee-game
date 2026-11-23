@@ -36,6 +36,8 @@ var view_visual_px: int = -1:
 			_shape.queue_redraw()
 		view_visual_px = value
 var view_offset_y: float = 0.0
+var _icon_blocker_n: int = 0   # how many of _blockers()'s rects are other icons' drawn circles
+var view_offset_x: float = 0.0  # 0.3.1: Spin's sideways shift in the farm view (main.gd, spin_farm_offset_x)
 
 
 func _ready() -> void:
@@ -65,6 +67,12 @@ static func _smooth_glyph(node: Node) -> void:
 		elif child is Polygon2D:
 			(child as Polygon2D).antialiased = true
 		_smooth_glyph(child)
+
+
+## The drawn circle in screen space: visible_size() centred in the touch rect.
+func visible_global_rect() -> Rect2:
+	var vs: Vector2 = visible_size()
+	return Rect2(global_position + (size - vs) * 0.5, vs)
 
 
 ## The visible shape's size: the Button's size minus (120 - icon_visual_px) in each dimension, never below 1.
@@ -130,7 +138,7 @@ func place() -> bool:
 	var screen: Vector2 = camera.unproject_position(_anchor.global_position)
 	_anchor_screen = screen
 	_anchor_ok = true
-	var want: Vector2 = screen - size * 0.5 + screen_offset + Vector2(0.0, _config_offset() + view_offset_y)
+	var want: Vector2 = screen - size * 0.5 + screen_offset + Vector2(view_offset_x, _config_offset() + view_offset_y)
 	global_position = _clamp_and_nudge(want).round()   # whole pixels: sub-pixel steps made the glyph shimmer during the zoom
 	return true
 
@@ -152,15 +160,20 @@ func _clamp_and_nudge(pos: Vector2) -> Vector2:
 	var hi := Vector2(maxf(view.x - m - size.x, m), maxf(view.y - m - size.y, m))
 	pos = pos.clamp(lo, hi)
 	var blockers: Array[Rect2] = _blockers()
+	var vs: Vector2 = visible_size()
+	var inset: Vector2 = (size - vs) * 0.5
 	for _pass in 4:   # a nudge for one blocker can land on another: repeat until nothing overlaps (bounded)
 		var moved: bool = false
-		for other in blockers:
-			var box := Rect2(pos, size)
+		for i in blockers.size():
+			var other: Rect2 = blockers[i]
+			# designer 2026-11-23: icons are compared by their drawn circles, other controls by this icon's touch rect
+			var icon_pair: bool = i < _icon_blocker_n
+			var box := Rect2(pos + inset, vs) if icon_pair else Rect2(pos, size)
 			if not box.intersects(other):
 				continue
 			moved = true
-			var up: float = other.position.y - size.y
-			var down: float = other.end.y
+			var up: float = other.position.y - (inset.y + vs.y if icon_pair else size.y)
+			var down: float = other.end.y - (inset.y if icon_pair else 0.0)
 			pos.y = up if absf(up - pos.y) <= absf(down - pos.y) else down
 			if name == &"CentrifugeIcon":
 				pos.y = down + config.button_gap_px   # 0.1.4 item 20: Spin yields downward, clear of Harvest by button_gap_px
@@ -172,6 +185,7 @@ func _clamp_and_nudge(pos: Vector2) -> Vector2:
 	return pos
 
 
+## The other icons' drawn circles first (_icon_blocker_n of them), then the avoided controls' rects.
 func _blockers() -> Array[Rect2]:
 	var rects: Array[Rect2] = []
 	for node in get_tree().get_nodes_in_group(GROUP):
@@ -179,7 +193,8 @@ func _blockers() -> Array[Rect2]:
 		if name == &"ForkIcon" and c != null and c.name == &"CentrifugeIcon":
 			continue   # item 20: Harvest never yields to Spin
 		if c != null and c != self and c.is_visible_in_tree() and c._wanted:
-			rects.append(c.get_global_rect())
+			rects.append(c.visible_global_rect())
+	_icon_blocker_n = rects.size()
 	for avoid_name in AVOID_NAMES:
 		var c: Control = _avoid_cache.get(avoid_name) as Control
 		if c == null or not is_instance_valid(c):

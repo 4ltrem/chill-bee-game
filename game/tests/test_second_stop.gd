@@ -198,7 +198,10 @@ func _icons_state(m: Node, p: Dictionary, label: String, second: bool) -> int:
 		ck(ra.size.x >= 120.0 and ra.size.y >= 120.0, "%s: %s touch rect is at least 120 x 120 (%s)" % [label, a.name, str(ra.size)])
 		for j in range(i + 1, vis.size()):
 			var b: Control = vis[j]
-			eq(ra.intersects(b.get_global_rect()), false, "%s: %s and %s touch rects do not intersect (%s, %s)" % [label, a.name, b.name, str(ra), str(b.get_global_rect())])
+			# designer 2026-11-23: icons are compared by their drawn circles, not their touch rects
+			var va: Rect2 = (a as FloatingIcon).visible_global_rect() if a is FloatingIcon else ra
+			var vb: Rect2 = (b as FloatingIcon).visible_global_rect() if b is FloatingIcon else b.get_global_rect()
+			eq(va.intersects(vb), false, "%s: %s and %s drawn shapes do not intersect (%s, %s)" % [label, a.name, b.name, str(va), str(vb)])
 		for h in hud:
 			eq(ra.intersects((h as Control).get_global_rect()), false, "%s: %s does not meet %s (%s, %s)" % [label, a.name, h.name, str(ra), str((h as Control).get_global_rect())])
 		for w in world:
@@ -209,7 +212,7 @@ func _icons_state(m: Node, p: Dictionary, label: String, second: bool) -> int:
 	for ic in all_icons:
 		var fic: FloatingIcon = ic
 		var placed: bool = fic.place()
-		rects.append(fic.get_global_rect() if placed else Rect2())
+		rects.append(fic.visible_global_rect() if placed else Rect2())   # drawn circles (designer 2026-11-23)
 		ck(placed, "%s: %s placed (anchor in front of the camera)" % [label, fic.name])
 	for i in all_icons.size():
 		for j in range(i + 1, all_icons.size()):

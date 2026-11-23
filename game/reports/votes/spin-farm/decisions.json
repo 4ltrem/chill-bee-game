@@ -1,0 +1,13 @@
+{
+  "question": "spin-farm: where should Spin float in the farm view?",
+  "read": "2026-11-23",
+  "votes": {
+    "ref (0 px, today: steps down under the fork)": {"vote": "maybe", "note": "just needs to be higher to clear the top of the lid so it can be visible"},
+    "A (60 px left)": {"vote": "no", "note": ""},
+    "B (90 px left)": {"vote": "", "note": ""},
+    "C (120 px left)": {"vote": "no", "note": ""}
+  },
+  "designer_chat": "when comparing overlap compare visual not touch area, perhaps that rule needs to be revised; also for UI votes make sure the ui bounds is turned on when taking the shots",
+  "picked": {"spin_farm_offset_x": 0},
+  "applied": "no sideways shift; icons step aside only when their drawn circles meet (floating_icon.gd _clamp_and_nudge, visible_global_rect), so Spin floats at its anchor above the lid; shots for UI votes take --set ui_bounds=true"
+}

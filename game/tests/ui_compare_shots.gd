@@ -185,6 +185,12 @@ func _run() -> void:
 	root.add_child(main)
 	await _frames(10)
 	_apply_overrides(args, true)
+	if args.has("ui_bounds=true"):   # designer 2026-11-23: UI vote shots show the Dev "Show UI bounds" overlay (touch rects, anchors)
+		var dev: Node = main.get_node_or_null("DevPanel")
+		if dev != null and dev.has_method("set_ui_bounds"):
+			dev.call("set_ui_bounds", true)
+		else:
+			push_warning("ui_bounds=true: no DevPanel (Dev mode off?)")
 	cen = main.find_child("Centrifuge", true, false)
 	hive = main.find_child("Hive", true, false)
 	var zfb: Node3D = main.find_child("ZoomFramingB", true, false) as Node3D

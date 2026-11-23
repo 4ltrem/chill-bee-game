@@ -198,6 +198,7 @@ func _process(delta: float) -> void:
 		var cfg: GameConfig = Economy.config
 		_centrifuge_icon.view_visual_px = cfg.spin_farm_visual_px if zoom == Zoom.NONE and not _at_second_stop else -1
 		_centrifuge_icon.view_offset_y = cfg.spin_zoom_offset if zoom != Zoom.NONE else 0.0
+		_centrifuge_icon.view_offset_x = cfg.spin_farm_offset_x if zoom == Zoom.NONE and not _at_second_stop else 0.0
 		# 0.3.1 item 6: the drop glyph (100 units square, main.tscn) scales with the drawn circle, so it stays inside it in every view
 		var glyph: Node2D = _centrifuge_icon.find_child("SpinGlyph", true, false) as Node2D
 		if glyph != null:

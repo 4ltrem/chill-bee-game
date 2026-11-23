@@ -429,7 +429,8 @@ func t_harvest_holds_anchor_spin_below() -> void:
 		var rs: Rect2 = spin.get_global_rect()
 		var mg: float = float(cv("button_screen_margin"))
 		ck(_centre_gap(fork) <= mg, "%s: Harvest is %.0f px from its anchor's projected point (limit %.0f; it did not move for Spin)" % [label, _centre_gap(fork), mg])
-		ck(_wholly_above(rf, rs), "%s: Spin %s lies wholly below Harvest %s with no touch" % [label, str(rs), str(rf)])
+		# designer 2026-11-23: compared by the drawn circles, not the touch rects; Spin need not sit below Harvest any more
+		ck(not fork.visible_global_rect().intersects(spin.visible_global_rect()), "%s: Spin's drawn circle %s clears Harvest's %s" % [label, str(spin.visible_global_rect()), str(fork.visible_global_rect())])
 		ck(_inside_margin(rf) and _inside_margin(rs), "%s: both keep the screen margin (%s, %s)" % [label, str(rf), str(rs)])
 		var others: Array = []
 		for pr in _hud_rects(m):
