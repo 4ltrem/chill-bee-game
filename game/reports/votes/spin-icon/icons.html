@@ -1,0 +1,47 @@
+<!doctype html>
+<!-- Spin-icon vote (0.3.1 item 6): one option per #hash, rendered by headless Edge to <option>/spin-icon.png.
+     Top: the 0.2.1 farm shot (6b-farm-spin), cropped around the centrifuge, with the candidate drawn over the Spin button.
+     Bottom: close-ups at the game's 120 px touch size, beside the decided Harvest fork (UI_DESIGN rule 4, canvas Prototype). -->
+<html><head><meta charset="utf-8"><style>
+  body { margin: 0; width: 720px; height: 1100px; background: #FFF5DB; font: 700 28px 'Segoe UI', sans-serif; color: #331F05; }
+  .crop { position: relative; width: 720px; height: 720px; overflow: hidden; }
+  .crop img { position: absolute; left: -360px; top: -660px; width: 1440px; }   /* the shot at 2x, centred on Spin (360, 521) */
+  .spin { position: absolute; left: 264px; top: 286px; width: 192px; height: 192px; }
+  .row { display: flex; justify-content: space-around; align-items: center; padding: 34px 20px 0; }
+  .cell { text-align: center; } .cell svg { width: 240px; height: 240px; display: block; margin: 0 auto 10px; }
+  .tag { font-size: 30px; }
+</style></head><body>
+<div class="crop"><img src="../../builds/0.2.1/ui/6b-farm-spin.png" alt=""><svg class="spin" id="big" viewBox="0 0 100 100"></svg></div>
+<div class="row">
+  <div class="cell"><svg id="close" viewBox="0 0 100 100"></svg><div class="tag" id="name"></div></div>
+  <div class="cell"><svg viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="46" fill="#FFFFFF" stroke="#331F05" stroke-width="4"/>
+    <clipPath id="c"><circle cx="50" cy="50" r="44"/></clipPath>
+    <rect x="0" y="62" width="100" height="40" fill="#FFC21F" clip-path="url(#c)"/>
+    <g transform="translate(50 50) rotate(35) scale(3.4)" stroke="#331F05" stroke-linejoin="round">
+      <path d="M-4.2-1.5V-11M-2.5-1.5V-11M-.8-1.5V-11M.8-1.5V-11M2.5-1.5V-11M4.2-1.5V-11" stroke="#545459" stroke-width="1.3" stroke-linecap="round"/>
+      <rect x="-5" y="-1.8" width="10" height="3" rx=".8" fill="#99A8BD" stroke-width="1.3"/>
+      <rect x="-2.2" y="1.2" width="4.4" height="2.2" rx=".6" fill="#99A8BD" stroke-width="1.2"/>
+      <rect x="-1.7" y="3.4" width="3.4" height="9" rx="1.7" fill="#997347" stroke-width="1.3"/></g>
+  </svg><div class="tag">Harvest (decided)</div></div>
+</div>
+<script>
+// Every option: the gold circle with the ink outline the Spin button has today, and an ink glyph (UI tokens only, V4 flat).
+const ring = '<circle cx="50" cy="50" r="46" fill="#FFC21F" stroke="#331F05" stroke-width="5"/>';
+const ink = 'stroke="#331F05" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"';
+const opts = {
+  a: ['Refresh arrows', `<path d="M74 40 A26 26 0 0 0 28 36" ${ink}/><path d="M26 60 A26 26 0 0 0 72 64" ${ink}/>
+      <path d="M78 24 L75 42 L58 38" ${ink}/><path d="M22 76 L25 58 L42 62" ${ink}/>`],
+  b: ['Drum from above', `<circle cx="50" cy="50" r="27" ${ink}/><path d="M50 23 V77 M23 50 H77" ${ink}/>
+      <circle cx="50" cy="50" r="6" fill="#331F05"/><path d="M17 34 A36 36 0 0 1 34 17" ${ink}/><path d="M83 66 A36 36 0 0 1 66 83" ${ink}/>`],
+  c: ['Crank handle', `<circle cx="50" cy="50" r="9" fill="#331F05"/><path d="M50 50 L72 34" ${ink}/>
+      <circle cx="74" cy="32" r="8" fill="#FFF5DB" stroke="#331F05" stroke-width="5"/>
+      <path d="M30 74 A28 28 0 0 1 24 40" ${ink}/><path d="M17 50 L24 38 L34 46" ${ink}/>`],
+  d: ['Honey drop swirl', `<path d="M50 28 C50 28 36 46 36 56 A14 14 0 0 0 64 56 C64 46 50 28 50 28 Z" fill="#FFF5DB" stroke="#331F05" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M78 46 A29 29 0 0 0 30 24" ${ink}/><path d="M33 14 L28 26 L41 28" ${ink}/>`],
+};
+const o = opts[(location.hash || '#a').slice(1)];
+document.getElementById('big').innerHTML = ring + o[1];
+document.getElementById('close').innerHTML = ring + o[1];
+document.getElementById('name').textContent = o[0];
+</script></body></html>
