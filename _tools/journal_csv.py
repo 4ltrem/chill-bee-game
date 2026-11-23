@@ -14,7 +14,7 @@ OUT = ROOT / "game" / "translations" / "journal.csv"
 # id -> (English heading prefix, French heading prefix)
 ENTRIES = {"BUMBLE_BEES": ("### Entry 3 — ", "### Entrée 3 — ")}
 # approved ui-text files whose first fenced block holds translation CSV rows (spec 0.3 item 5)
-UI_TEXT = [ROOT / "content" / "course-ending-text.md"]
+UI_TEXT = [ROOT / "content" / "course-ending-text.md", ROOT / "content" / "first-time-hint.md"]   # 0.3.1 item 4: hint_* rows
 
 
 def entry(lines: list[str], prefix: str) -> tuple[str, str]:
