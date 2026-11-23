@@ -48,7 +48,7 @@ func _zs_clear(m: Node, p: Dictionary, label: String) -> Rect2:
 	ck(r.get_center().x > _vp().size.x * 0.5 and r.get_center().y > _vp().size.y * 0.5, "%s: the Shop button sits bottom-right" % label)
 	var seen: int = 0
 	for nm in ["BackButton", "HintLabel", "CentrifugeIcon", "HiveCountLabel"]:
-		var c: Control = m.find_child(nm, true, false) as Control
+		var c: Control = _node(m, nm) as Control
 		if c != null and c.is_visible_in_tree() and c.get_global_rect().size.x > 0.0:
 			seen += 1
 			ck(not r.intersects(c.get_global_rect()), "%s: Shop clears %s" % [label, nm])

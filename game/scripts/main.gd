@@ -135,6 +135,11 @@ func _hold_for_welcome() -> void:
 	_welcome.play_pressed.connect(_on_play_pressed)
 
 
+## 0.3.1 item 4: the hint reads the camera stop (the zoom is the public `zoom`).
+func at_second_stop() -> bool:
+	return _at_second_stop
+
+
 func welcome_active() -> bool:
 	return _welcome != null and is_instance_valid(_welcome) and not _held.is_empty()
 
@@ -581,10 +586,6 @@ func _move_camera_to(pose: Dictionary, seconds: float) -> void:
 
 
 # --- the second camera stop (0.1.3 item 2): centrifuge, crate and truck framed at pan_zoom_size, the hive partly in the upper-right ---
-
-
-func at_second_stop() -> bool:
-	return _at_second_stop
 
 
 ## Back at the second stop: the camera returns to the farm view.

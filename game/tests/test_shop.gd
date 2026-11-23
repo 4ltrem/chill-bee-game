@@ -313,7 +313,7 @@ func t_shop_no_row_overlaps_other_controls() -> void:
 	# spec 0.3 goal C3 item 3: "The open Shop ... may cover the Harvest, Sell and Spin icons" and "Shop covers the whole screen, top info included":
 	# TopInfo and the three icons are no longer cleared by the rows; BackButton, the count and hint labels stay checked
 	for nm in ["BackButton", "HiveCountLabel", "HintLabel"]:
-		var c: Control = m.find_child(nm, true, false) as Control
+		var c: Control = _node(m, nm) as Control
 		if c != null and c.is_visible_in_tree() and c.get_global_rect().size.x > 0.0:
 			if panel != null and (panel.is_ancestor_of(c) or panel.top_level):   # item 14: an open sheet floats over the farm icons by design
 				continue
@@ -376,7 +376,7 @@ func t_shop_seven_rows_on_screen_no_scroll() -> void:
 	# spec 0.3 goal C3 item 3: "The open Shop may cover the Harvest, Sell and Spin icons ... this replaces 0.2 item 14's 'still clears the HUD'":
 	# the three icons and the HUD-clearance check are gone; rows still must not overlap each other and must stay on screen
 	for nm in ["BackButton", "HiveCountLabel", "HintLabel"]:
-		var c: Control = m.find_child(nm, true, false) as Control
+		var c: Control = _node(m, nm) as Control
 		if c != null and c.is_visible_in_tree() and c.get_global_rect().size.x > 0.0 and not panel.is_ancestor_of(c):
 			others.append([nm, c.get_global_rect()])
 	for i in rows.size():

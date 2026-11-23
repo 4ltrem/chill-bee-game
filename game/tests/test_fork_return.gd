@@ -49,7 +49,7 @@ func _fork_return_run(m: Node, p: Dictionary, tr: Dictionary, fork: Node3D, labe
 	ck(zoom_ended >= 0, "%s: the zoom ended (zoom NONE) with the press still held" % label)
 	ck(shown_at_end, "%s: the fork prop is still on screen when the zoom ends (it flies into the icon)" % label)
 	ck(bool(out["hidden_in_time"]), "%s: the fork prop is hidden within fork_return_seconds (%.2f) + 0.1 s of the zoom ending (took %s ms)" % [label, secs, str(hidden_at - zoom_ended) if hidden_at >= 0 else "never"])
-	ck(bool(out["near_icon"]), "%s: the fork's last shown screen point %s is within button_screen_margin (%.0f px) of the Harvest icon's centre %s" % [label, str(last_pt), margin, str(icon_c)])
+	ck(bool(out["near_icon"]), "%s: the fork's last shown screen point %s is within button_screen_margin (%.0f px) of the Harvest icon's centre %s | diag: hidden %s ms after zoom end (cap %.0f ms), fork_return_seconds %.2f, icon visible %s, icon rect %s" % [label, str(last_pt), margin, str(icon_c), str(hidden_at - zoom_ended) if hidden_at >= 0 else "never", (secs + 0.1) * 1000.0, secs, str(icon.is_visible_in_tree()), str(icon.get_global_rect())])
 	# step 3: releasing the press afterwards leaves it hidden and the prop at its normal scale
 	fi.mouse_button(held["hold"], false)
 	await _frames(3)

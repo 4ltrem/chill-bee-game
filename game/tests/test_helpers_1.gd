@@ -111,12 +111,21 @@ func _bottle_out(c: Object, step: float = 0.05) -> Dictionary:
 	return {"bottled": bottled, "done": done_args}
 
 
+## A named node of a main instance. "HintLabel" exists twice since 0.3.1 item 4 (the HintBubble's line under FarmUIRoot, and the zoom
+## instruction under HarvestUI): the tests mean the zoom instruction, so it is looked up under HarvestUI.
+func _node(m: Node, nm: String) -> Node:
+	if nm == "HintLabel":
+		var hu: Node = m.find_child("HarvestUI", true, false)
+		return hu.find_child(nm, true, false) if hu != null else null
+	return m.find_child(nm, true, false)
+
+
 ## The named nodes of a main instance; a missing one fails the test (spec: Node paths for Bob) and returns {}.
 func _parts(m: Node) -> Dictionary:
 	var d: Dictionary = {}
 	var ok: bool = true
 	for nm in SCENE_NODES:
-		var n: Node = m.find_child(nm, true, false)
+		var n: Node = _node(m, nm)
 		if n == null:
 			ck(false, "node '%s' missing in the scene (spec: Node paths for Bob)" % nm)
 			ok = false

@@ -13,7 +13,7 @@ const _ICON_NAMES: Array[String] = ["ForkIcon", "CentrifugeIcon", "SellIcon"]
 func _hud_rects(m: Node) -> Array:
 	var out: Array = []
 	for nm in ["ForkIcon", "CentrifugeIcon", "SellIcon", "BackButton", "TopInfo", "ShopPanel", "HiveCountLabel", "HintLabel"]:
-		var c: Control = m.find_child(nm, true, false) as Control
+		var c: Control = _node(m, nm) as Control
 		if c == null or not c.is_visible_in_tree():
 			continue
 		if c is Label and (c as Label).text.strip_edges() == "":
@@ -325,7 +325,7 @@ func _back_hint_rects() -> Dictionary:
 			return
 		await _frames(3)
 		var b: Control = m.find_child("BackButton", true, false) as Control
-		var h: Label = m.find_child("HintLabel", true, false) as Label
+		var h: Label = _node(m, "HintLabel") as Label
 		ck(b != null and b.is_visible_in_tree(), "%s: Back is visible" % label)
 		if label == "first zoom":
 			ck(h != null and h.is_visible_in_tree() and h.text.strip_edges() != "", "%s: the instruction text is visible and has text" % label)

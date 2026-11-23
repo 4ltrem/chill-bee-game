@@ -319,6 +319,7 @@ func _actions_row() -> Control:
 	flow.add_child(_button("+$100", func() -> void: _economy_call("earn", 100)))
 	flow.add_child(_button("Truck home", _empty_truck))
 	flow.add_child(_button("Reset progress", func() -> void: _economy_call("reset")))
+	flow.add_child(_button("Replay hint", _replay_hint))   # 0.3.1 item 4
 	var bounds_button := Button.new()
 	bounds_button.text = "Show UI bounds"
 	bounds_button.pressed.connect(func() -> void: set_ui_bounds(not ui_bounds_shown()))
@@ -340,6 +341,14 @@ func _actions_row() -> Control:
 		flow.add_child(button)
 	_refresh_speed_ui()
 	return flow
+
+
+## 0.3.1 item 4: turns show_hint on and restarts the hint at the step that fits.
+func _replay_hint() -> void:
+	config.show_hint = true
+	var bubble: HintBubble = get_tree().root.find_child("HintBubble", true, false) as HintBubble
+	if bubble != null:
+		bubble.replay()
 
 
 func _file_row() -> Control:

@@ -390,6 +390,9 @@ func _mk_main(quiet: bool = false) -> Node:
 	# A welcome test sets it true itself after this default, before it calls _mk_main (it uses _set_cfg, so teardown restores it).
 	if _cfg() != null and _cfg().get("show_welcome") != null and not _cfg_saved.has("show_welcome"):
 		_set_cfg("show_welcome", false)
+	# 0.3.1 item 4: "Config `show_hint` (bool, default true; every test run sets it false except the hint tests)". A hint test sets it true itself, before _mk_main.
+	if _cfg() != null and _cfg().get("show_hint") != null and not _cfg_saved.has("show_hint"):
+		_set_cfg("show_hint", false)
 	if quiet:
 		m.process_mode = Node.PROCESS_MODE_DISABLED   # nothing ticks: the hive does not fill behind the test's back
 	root.add_child(m)

@@ -8,6 +8,9 @@ static func no_welcome(tree: SceneTree) -> void:
 	var eco: Node = tree.root.get_node_or_null("Economy")
 	if eco != null and eco.get("config") != null and eco.get("config").get("show_welcome") != null:
 		eco.get("config").set("show_welcome", false)
+	# 0.3.1 item 4: "Config `show_hint` (bool, default true; every test run sets it false except the hint tests)".
+	if eco != null and eco.get("config") != null and eco.get("config").get("show_hint") != null:
+		eco.get("config").set("show_hint", false)
 
 
 ## Opens the shop sheet when the layout has one and it is closed. real = a real tap on the ShopButton (fi: the FarmInput helper), else set_sheet_open(true).

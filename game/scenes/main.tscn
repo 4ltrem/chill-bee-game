@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://scripts/welcome_overlay.gd" id="welcome_script"]
 [ext_resource type="Script" path="res://scripts/victory_overlay.gd" id="victory_script"]
 [ext_resource type="Script" path="res://scripts/skip_icon.gd" id="skip_icon_script"]
+[ext_resource type="Script" path="res://scripts/hint.gd" id="hint_script"]
 [ext_resource type="PackedScene" path="res://scenes/props/hive.tscn" id="2_hive"]
 [ext_resource type="Script" path="res://scripts/bees.gd" id="3_bees"]
 [ext_resource type="Script" path="res://scripts/farm_ui.gd" id="4_farmui"]
@@ -768,6 +769,70 @@ theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
 text = "Close"
+
+[node name="HintBubble" type="Control" parent="FarmUIRoot"]
+visible = false
+layout_mode = 3
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -320.0
+offset_top = 330.0
+offset_right = 320.0
+offset_bottom = 490.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("hint_script")
+
+[node name="HintPanel" type="Panel" parent="FarmUIRoot/HintBubble"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_modal")
+
+[node name="HintLabel" type="Label" parent="FarmUIRoot/HintBubble"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 16.0
+offset_right = 470.0
+offset_bottom = 144.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.96, 0.86, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "Hint"
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="HintSkipButton" type="Button" parent="FarmUIRoot/HintBubble"]
+focus_mode = 0
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 0
+offset_left = 488.0
+offset_top = 20.0
+offset_right = 624.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBox_rect")
+theme_override_styles/hover = SubResource("StyleBox_rect")
+theme_override_styles/pressed = SubResource("StyleBox_rect_pressed")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+text = "Skip"
+
+[node name="HintTail" type="Polygon2D" parent="FarmUIRoot/HintBubble"]
+position = Vector2(320, 160)
+color = Color(0.25, 0.2, 0.1, 0.96)
+polygon = PackedVector2Array(-32, -2, 32, -2, 0, 44)
 
 [node name="HarvestUIRoot" type="CanvasLayer" parent="."]
 
