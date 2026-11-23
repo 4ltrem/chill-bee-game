@@ -1242,6 +1242,60 @@ joint_mode = 2
 begin_cap_mode = 2
 end_cap_mode = 2
 
+[node name="ToolsButton" type="Button" parent="HarvestUIRoot/HarvestUI"]
+visible = false
+focus_mode = 0
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 0
+offset_left = 576.0
+offset_top = 928.0
+offset_right = 696.0
+offset_bottom = 1048.0
+theme_override_font_sizes/font_size = 36
+tooltip_text = "tools_icon"
+theme_override_styles/normal = SubResource("StyleBox_close_round")
+theme_override_styles/hover = SubResource("StyleBox_close_round")
+theme_override_styles/pressed = SubResource("StyleBox_close_round")
+theme_override_styles/focus = SubResource("StyleBox_empty")
+theme_override_colors/font_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_colors/font_focus_color = Color(0.2, 0.12, 0.02, 1)
+
+[node name="ToolsGlyph" type="Node2D" parent="HarvestUIRoot/HarvestUI/ToolsButton"]
+position = Vector2(60, 60)
+rotation = 0.785398
+
+[node name="WrenchShaft" type="Line2D" parent="HarvestUIRoot/HarvestUI/ToolsButton/ToolsGlyph"]
+points = PackedVector2Array(0, -14, 0, 38)
+width = 12.0
+default_color = Color(0.2, 0.12, 0.02, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="WrenchJaw" type="Line2D" parent="HarvestUIRoot/HarvestUI/ToolsButton/ToolsGlyph"]
+points = PackedVector2Array(-13, -40, -13, -22, 13, -22, 13, -40)
+width = 9.0
+default_color = Color(0.2, 0.12, 0.02, 1)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+
+[node name="ToolsLabel" type="Label" parent="HarvestUIRoot/HarvestUI/ToolsButton"]
+layout_mode = 0
+offset_left = -12.0
+offset_top = 122.0
+offset_right = 132.0
+offset_bottom = 164.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.96, 0.86, 1)
+theme_override_colors/font_outline_color = Color(0.2, 0.12, 0.02, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 28
+text = "Tools"
+horizontal_alignment = 1
+
 [node name="WelcomeOverlay" type="CanvasLayer" parent="."]
 layer = 10
 script = ExtResource("welcome_script")

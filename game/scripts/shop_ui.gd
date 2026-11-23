@@ -79,6 +79,8 @@ var _header: Control
 var _tabs_row: Control
 var _coming_soon: Label
 var _row_nodes: Dictionary = {}   # id -> row Control
+var _tools_mode: bool = false     # 0.3.1 item 8: the sheet shows the machine in view's rows, no tabs
+var _tools_button: Button
 
 
 func _process(_delta: float) -> void:
@@ -91,6 +93,9 @@ func _process(_delta: float) -> void:
 		var show_btn: bool = not _open and _on_farm_view()
 		if _shop_button.visible != show_btn:
 			_shop_button.visible = show_btn
+	if _open and _tools_mode and _on_farm_view():
+		set_sheet_open(false)   # the zoom ended on its own: the Tools sheet closes with it
+	_sync_tools_button()
 	if _dev_button == null or not is_instance_valid(_dev_button):
 		if GameConfig.dev_mode_enabled():
 			_dev_button = get_tree().root.find_child(DEV_BUTTON, true, false) as Button   # built at runtime by dev_panel.gd
@@ -107,14 +112,67 @@ func is_sheet_open() -> bool:
 ## Opens or closes the sheet (sheet layout only); in compact the panel is always shown.
 func set_sheet_open(on: bool) -> void:
 	_open = on and _applied.x == SHEET
+	if not _open:
+		_tools_mode = false
+	_set_hint_blocked(_open and _tools_mode)
+	_apply_mode()
 	if _open:
-		_select_tab(_tab)   # opens on the last selected tab (Bees the first time)
+		_select_tab(_tab)   # opens on the last selected tab (Bees the first time); Tools mode shows the machine's rows instead
 	_sync_visibility()
 	for dev_layer in get_tree().get_nodes_in_group("dev_button_layer") if is_inside_tree() else []:
 		(dev_layer as CanvasLayer).visible = not _open   # Dev sits on CanvasLayer 50, above any z_index here; hidden it neither draws nor takes presses
 	if _open:
 		_place_sheet()
 		_place_sheet.call_deferred()   # labels wrap at the final width, so re-measure once laid out
+
+
+## 0.3.1 item 8: the sheet in Tools mode, over a zoom or the second stop only. Closing goes through set_sheet_open(false) (Close, dim, Back, zoom end).
+func set_tools_open(on: bool) -> void:
+	if on and (_applied.x != SHEET or _on_farm_view()):
+		return
+	_tools_mode = on
+	set_sheet_open(on)
+
+
+func is_tools_open() -> bool:
+	return _open and _tools_mode
+
+
+## Ids of the machine in view: Heated Fork in the first zoom; Gearing and Spigot Flow at the second stop.
+func _tools_ids() -> Array[String]:
+	var n: Node = _farm_ui
+	while n != null and not n.has_method("at_second_stop"):
+		n = n.get_parent()
+	if n != null and n.at_second_stop() and int(n.get("zoom")) == 0:
+		var second: Array[String] = ["gearing", "spigot_flow"]
+		return second
+	var first: Array[String] = ["heated_fork"]
+	return first
+
+
+## Title and tabs follow the mode; the Shop's remembered tab is never written here.
+func _apply_mode() -> void:
+	var title: Label = _header.find_child("ShopTitle", true, false) as Label if _header != null else null
+	if title != null:
+		title.text = tr("tools_icon") if _tools_mode else tr("Shop")
+
+
+func _set_hint_blocked(on: bool) -> void:
+	var bubble: HintBubble = get_tree().root.find_child("HintBubble", true, false) as HintBubble if is_inside_tree() else null
+	if bubble != null:
+		bubble.set_blocked(&"tools", on)
+
+
+## ToolsButton (Bob's node, under FarmUIRoot): shown in the zooms and at the second stop, sheet layout only, hidden while its sheet is open.
+func _sync_tools_button() -> void:
+	if _tools_button == null or not is_instance_valid(_tools_button):
+		_tools_button = get_tree().root.find_child("ToolsButton", true, false) as Button
+		if _tools_button == null:
+			return
+		_tools_button.pressed.connect(func() -> void: set_tools_open(true))
+	var show_btn: bool = _applied.x == SHEET and not _open and not _on_farm_view()
+	if _tools_button.visible != show_btn:
+		_tools_button.visible = show_btn
 
 
 ## Sizes the sheet to its real minimum height and anchors it to the bottom of the view.
@@ -307,18 +365,24 @@ func _notification(what: int) -> void:
 func _select_tab(t: String) -> void:
 	if not TAB_IDS.has(t):
 		return
-	_tab = t
+	if not _tools_mode:
+		_tab = t   # Tools mode never changes the remembered tab
 	var sheet: bool = _applied.x == SHEET
+	var tools: bool = sheet and _tools_mode
+	var tool_ids: Array[String] = []
+	if tools:
+		tool_ids = _tools_ids()
 	for id: String in _row_nodes:
-		(_row_nodes[id] as Control).visible = (not sheet) or TAB_OF.get(id, "") == _tab
+		var show_row: bool = tool_ids.has(id) if tools else ((not sheet) or TAB_OF.get(id, "") == _tab)
+		(_row_nodes[id] as Control).visible = show_row
 	for k: String in _tab_buttons:
 		(_tab_buttons[k] as Button).set_pressed_no_signal(k == _tab)
 	if _coming_soon != null:
-		_coming_soon.visible = sheet and not TAB_OF.values().has(_tab)
+		_coming_soon.visible = sheet and not tools and not TAB_OF.values().has(_tab)
 	if _header != null:
 		_header.visible = sheet
 	if _tabs_row != null:
-		_tabs_row.visible = sheet
+		_tabs_row.visible = sheet and not tools
 
 
 ## 0.2 item 15: the node main.gd hides on zoom is FarmUI; the sheet, its dim, the Shop button and the Journal panel live under its parent
