@@ -3,7 +3,7 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
@@ -1421,9 +1421,18 @@ FAIL    unit      24 passed, 1 failed  (godot exit 1, 54 noise lines dropped)  g
 
 2 fix rounds failed on C7: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.1-playtest-fixes.md --accept C7 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C7 fix-round edits"`.
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md --accept C7 --note main.gd hides SettingsButton off the farm view (it sat over Back at the second stop); main.tscn gear 60->100 and skip 210->250 offset_top, clear of the Habitat pill (designer saw the overlap); start PASS, unit 234/234, play 246/246, shots checked` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C7 (2026-11-23T17:34:37-05:00)
+
+- Change (orchestrator, Process 9): main.gd hides SettingsButton off the farm view (it sat over Back at the second stop); main.tscn gear 60->100 and skip 210->250 offset_top, clear of the Habitat pill (designer saw the overlap); start PASS, unit 234/234, play 246/246, shots checked
+- Accepted: checkpoint `37acad8` on `main`
+
 ## Result
 
-Last invocation (2026-11-23T17:21:56-05:00): waiting-designer.
+C7 accepted with a manual fix (checkpoint `37acad8` on `main`). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
