@@ -1,7 +1,7 @@
 {
  "spec": "0.3.2-tests-and-quick-buy.md",
  "version": "0.3.2",
- "at": "2026-11-23T23:48:29-05:00",
+ "at": "2026-11-24T00:33:37-05:00",
  "unit_log": "game/reports/_runs/20261123-224854/unit.log",
  "goals": {
   "C1": {
@@ -66,10 +66,16 @@
     3
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "0.3.2",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -132,22 +138,22 @@
     {
      "kind": "node",
      "name": "QuickBuy",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "QuickBuyButton",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "QuickBuyName",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "QuickBuyPrice",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
@@ -158,10 +164,15 @@
      "kind": "dev button",
      "name": "Bottom slot",
      "ok": false
+    },
+    {
+     "kind": "ledger",
+     "name": "cd96d5d",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -646,28 +657,6 @@
  },
  "order": [
   {
-   "id": "C3",
-   "score": 27.0,
-   "factors": {
-    "unblocks": 7,
-    "value": 3,
-    "cost": 0.0,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C6",
-   "score": 11.46,
-   "factors": {
-    "unblocks": 2,
-    "value": 3,
-    "cost": 0.54,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C7",
    "score": 11.46,
    "factors": {
@@ -822,6 +811,72 @@
    }
   },
   {
+   "id": "T3.1",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T3.2",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T3.3",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T3.4",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T3.5",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T3.6",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T6.1",
    "score": 5.78,
    "factors": {
@@ -863,88 +918,9 @@
     "cost": 0.22,
     "ready": 0,
     "blocked_by": [
-     "C3",
      "C4",
      "C5",
      "C7"
-    ]
-   }
-  },
-  {
-   "id": "T3.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C3"
-    ]
-   }
-  },
-  {
-   "id": "T3.2",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C3"
-    ]
-   }
-  },
-  {
-   "id": "T3.3",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C3"
-    ]
-   }
-  },
-  {
-   "id": "T3.4",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C3"
-    ]
-   }
-  },
-  {
-   "id": "T3.5",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C3"
-    ]
-   }
-  },
-  {
-   "id": "T3.6",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C3"
     ]
    }
   },

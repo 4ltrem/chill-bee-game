@@ -130,3 +130,16 @@ Order:
   28. T5.1      0.0  waits on C5
   29. T7.1      0.0  waits on C7
 gaps.json: game/reports/goal/0.3.2/gaps.json
+goal_agent: state committed
+Traceback (most recent call last):
+  File "C:\Users\Alex\Desktop\MAIGD\_tools\goal_agent.py", line 2495, in <module>
+    sys.exit(main())
+  File "C:\Users\Alex\Desktop\MAIGD\_tools\goal_agent.py", line 2439, in main
+    outcome = step(spec, top, batch, run, folder, board, branch, usage, dry=a.dry_run)
+  File "C:\Users\Alex\Desktop\MAIGD\_tools\goal_agent.py", line 1732, in step
+    if not written and not call_agents(plan, board, usage, run, ids, max_turns=BUILD_MAX_TURNS, replies=first):
+  File "C:\Users\Alex\Desktop\MAIGD\_tools\goal_agent.py", line 2261, in call_agents
+    with concurrent.futures.ThreadPoolExecutor(max_workers=len(plan)) as pool:
+  File "C:\Program Files\Python310\lib\concurrent\futures\thread.py", line 144, in __init__
+    raise ValueError("max_workers must be greater than 0")
+ValueError: max_workers must be greater than 0
