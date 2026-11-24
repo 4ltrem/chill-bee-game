@@ -1869,9 +1869,23 @@ contract: 120 lookups in 72 top-level scenes, 0 unresolved
 contract: 0 emitted signals unheard
 contract: 0 looked-up names used twice
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md --accept T1.1 --note Quinn's step found every line already had its marked test, written with the build step, and the checks green; nothing to add` (the run had stopped: `stopped`).
+
+### Manual fix: T1.1 (2026-11-23T20:09:53-05:00)
+
+- Change (orchestrator, Process 9): Quinn's step found every line already had its marked test, written with the build step, and the checks green; nothing to add
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 120 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-T4.3 accepted with a manual fix (commit failed: 
+T1.1 accepted with a manual fix (commit failed: 
 no changes added to commit (use "git add" and/or "git commit -a")
 docs agree with code and config
 contract: 120 lookups in 72 top-level scenes, 0 unresolved
