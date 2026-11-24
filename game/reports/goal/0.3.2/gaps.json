@@ -1,0 +1,992 @@
+{
+ "spec": "0.3.2-tests-and-quick-buy.md",
+ "version": "0.3.2",
+ "at": "2026-11-23T23:48:29-05:00",
+ "unit_log": "game/reports/_runs/20261123-224854/unit.log",
+ "goals": {
+  "C1": {
+   "kind": "change",
+   "title": "The hint walk test hangs.",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "SellIcon",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C2": {
+   "kind": "change",
+   "title": "Tests for what the 0.3.1 play-test found.",
+   "owners": [],
+   "items": [
+    2
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "ModalPanel",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "SettingsPanel",
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "6d9704d",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C3": {
+   "kind": "change",
+   "title": "The 0.3.1 test lines that never got a test",
+   "owners": [],
+   "items": [
+    3
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C4": {
+   "kind": "change",
+   "title": "The second crank (mutation 25).",
+   "owners": [],
+   "items": [
+    4
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C5": {
+   "kind": "change",
+   "title": "An adversarial QA pass",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C6": {
+   "kind": "change",
+   "title": "Bottom slot A: quick-buy, with a Dev switch",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "FarmUI",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "JournalButton",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "QuickBuy",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "QuickBuyButton",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "QuickBuyName",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "QuickBuyPrice",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "ShopButton",
+     "ok": true
+    },
+    {
+     "kind": "dev button",
+     "name": "Bottom slot",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C7": {
+   "kind": "change",
+   "title": "A preview on every upgrade row",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "PreviewTile",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "SubViewport",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T.1": {
+   "kind": "test",
+   "title": "every test run sets `show_hint = false` except the hint tests; existin",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "depends": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T1.1": {
+   "kind": "test",
+   "title": "item 1: `t_hint_steps_follow_state_in_order_twice` back in `run_tests.",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    1
+   ],
+   "depends": [
+    "C1"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.1": {
+   "kind": "test",
+   "title": "item 2 Settings: a real tap on `SettingsButton` opens `SettingsPanel`;",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.2": {
+   "kind": "test",
+   "title": "item 2 Coming soon: on Research and Refinery, `ComingSoonLabel` is vis",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.3": {
+   "kind": "test",
+   "title": "item 2 tab text: each tab's text fits its button at 28 px, in English ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.4": {
+   "kind": "test",
+   "title": "item 2 fork fill: at a full hive `HarvestFill` shows and covers the wh",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.5": {
+   "kind": "test",
+   "title": "item 2 smooth circles: every FloatingIcon's circle style has `corner_d",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.6": {
+   "kind": "test",
+   "title": "item 2 lid: after bottling with a pile, the lid's visual progress reac",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.7": {
+   "kind": "test",
+   "title": "item 2 paused crank: crank at the second stop, Back, open the zoom, ta",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.8": {
+   "kind": "test",
+   "title": "item 2 gear under sheets: with any sheet or panel open, `SettingsButto",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.9": {
+   "kind": "test",
+   "title": "item 2 gear placement: the gear's rect clears `HabitatPill` and `SkipI",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.10": {
+   "kind": "test",
+   "title": "item 2 Tools dim: `t_tools_second_stop_sheet_gearing_spigot_buy_blocks",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T2.11": {
+   "kind": "test",
+   "title": "item 2 Spin size: Spin's drawn circle equals the fork's (88) in the fa",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    2
+   ],
+   "depends": [
+    "C2"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.1": {
+   "kind": "test",
+   "title": "item 3 (0.3.1 T1.1): the pill has no Button child; it shows on the far",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.2": {
+   "kind": "test",
+   "title": "item 3 (0.3.1 T2.1): buying a patch with the Shop open shows no toast ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.3": {
+   "kind": "test",
+   "title": "item 3 (0.3.1 T3.1): each tab holds exactly its rows in order (Tree ma",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.4": {
+   "kind": "test",
+   "title": "item 3 (0.3.1 T5.1): each of the six Dev buttons exists in the Dev pan",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.5": {
+   "kind": "test",
+   "title": "item 3 (0.3.1 T6.1): `ForkIcon` has the fork shape and no \"Harvest\" te",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T3.6": {
+   "kind": "test",
+   "title": "item 3 (0.3.1 T7.1): the gear shows on the farm view only, top-right, ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    3
+   ],
+   "depends": [
+    "C3"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T4.1": {
+   "kind": "test",
+   "title": "item 4: a second harvest cranked after the clock has passed the first ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    4
+   ],
+   "depends": [
+    "C4"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T5.1": {
+   "kind": "test",
+   "title": "item 5: one test per break found, each failing until fixed; the report",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    5
+   ],
+   "depends": [
+    "C5"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T6.1": {
+   "kind": "test",
+   "title": "item 6: with `bottom_slot = 1` the bar shows on the farm view with the",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [
+    "C6"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T7.1": {
+   "kind": "test",
+   "title": "item 7: every Shop and Tools row has a `PreviewTile` with its upgrade'",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    7
+   ],
+   "depends": [
+    "C7"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  }
+ },
+ "order": [
+  {
+   "id": "C3",
+   "score": 27.0,
+   "factors": {
+    "unblocks": 7,
+    "value": 3,
+    "cost": 0.0,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C6",
+   "score": 11.46,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C7",
+   "score": 11.46,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C4",
+   "score": 10.0,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.0,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C1",
+   "score": 9.73,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C5",
+   "score": 9.46,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.54,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.1",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.11",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.2",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.3",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.4",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.5",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.6",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.7",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.8",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.9",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T6.1",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T1.1",
+   "score": 3.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T2.10",
+   "score": 1.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C3",
+     "C4",
+     "C5",
+     "C7"
+    ]
+   }
+  },
+  {
+   "id": "T3.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C3"
+    ]
+   }
+  },
+  {
+   "id": "T3.2",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C3"
+    ]
+   }
+  },
+  {
+   "id": "T3.3",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C3"
+    ]
+   }
+  },
+  {
+   "id": "T3.4",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C3"
+    ]
+   }
+  },
+  {
+   "id": "T3.5",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C3"
+    ]
+   }
+  },
+  {
+   "id": "T3.6",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C3"
+    ]
+   }
+  },
+  {
+   "id": "T4.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C4"
+    ]
+   }
+  },
+  {
+   "id": "T5.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C5"
+    ]
+   }
+  },
+  {
+   "id": "T7.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C7"
+    ]
+   }
+  }
+ ],
+ "ambiguous": []
+}

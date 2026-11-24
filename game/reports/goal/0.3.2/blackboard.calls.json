@@ -1,0 +1,26 @@
+[
+ {
+  "call": "Quinn, C2",
+  "tokens": 16522,
+  "final": 16522,
+  "turns": 1,
+  "seconds": 4,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, C2 fix 1",
+  "tokens": 79012,
+  "final": 22529,
+  "turns": 5,
+  "seconds": 14,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, C2 fix 2",
+  "tokens": 64024,
+  "final": 24600,
+  "turns": 3,
+  "seconds": 13,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.2"
+ }
+]

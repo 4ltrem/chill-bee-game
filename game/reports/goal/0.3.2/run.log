@@ -1,0 +1,132 @@
+goal_agent: REVIEW 0.3.2-tests-and-quick-buy.md: item 2 covers the screen, item 6 shows something timed: is it still seen while the cover is up?
+goal_agent:          2 `SettingsPanel` had no `ModalPanel` script, so the gear did nothing. - Coming soon (`77f8c49`): white text on the cream sheet. - Tab text (`77f8c49`): "Research
+goal_agent:          6 Buy runs the Shop's own purchase code (money, level, effects, toasts, the patch's Health and thriving), and the bar then shows the next upgrade.
+goal_agent: REVIEW 0.3.2-tests-and-quick-buy.md: item 5 covers the screen, item 6 shows something timed: is it still seen while the cover is up?
+goal_agent:          5 Back at every step of the harvest (uncapping, the camera's travel, the crank, bottling); app pause and resume at every step (`NOTIFICATION_APPLICATION_PAUSED`: 
+goal_agent:          6 Buy runs the Shop's own purchase code (money, level, effects, toasts, the patch's Health and thriving), and the bar then shows the next upgrade.
+goal_agent: spec_lint 0.3.2-tests-and-quick-buy.md: no FAIL or WARN; read the REVIEW pairs
+0.3.2-tests-and-quick-buy.md: 0/30 goals done
+  C1     partial  The hint walk test hangs.
+  C2     partial  Tests for what the 0.3.1 play-test found.
+  C3     missing  The 0.3.1 test lines that never got a test
+  C4     missing  The second crank (mutation 25).
+  C5     missing  An adversarial QA pass
+  C6     partial  Bottom slot A: quick-buy, with a Dev switch
+  C7     missing  A preview on every upgrade row
+  T.1    missing  every test run sets `show_hint = false` except the hint test
+  T1.1   missing  item 1: `t_hint_steps_follow_state_in_order_twice` back in `
+  T2.1   missing  item 2 Settings: a real tap on `SettingsButton` opens `Setti
+  T2.2   missing  item 2 Coming soon: on Research and Refinery, `ComingSoonLab
+  T2.3   missing  item 2 tab text: each tab's text fits its button at 28 px, i
+  T2.4   missing  item 2 fork fill: at a full hive `HarvestFill` shows and cov
+  T2.5   missing  item 2 smooth circles: every FloatingIcon's circle style has
+  T2.6   missing  item 2 lid: after bottling with a pile, the lid's visual pro
+  T2.7   missing  item 2 paused crank: crank at the second stop, Back, open th
+  T2.8   missing  item 2 gear under sheets: with any sheet or panel open, `Set
+  T2.9   missing  item 2 gear placement: the gear's rect clears `HabitatPill` 
+  T2.10  missing  item 2 Tools dim: `t_tools_second_stop_sheet_gearing_spigot_
+  T2.11  missing  item 2 Spin size: Spin's drawn circle equals the fork's (88)
+  T3.1   missing  item 3 (0.3.1 T1.1): the pill has no Button child; it shows 
+  T3.2   missing  item 3 (0.3.1 T2.1): buying a patch with the Shop open shows
+  T3.3   missing  item 3 (0.3.1 T3.1): each tab holds exactly its rows in orde
+  T3.4   missing  item 3 (0.3.1 T5.1): each of the six Dev buttons exists in t
+  T3.5   missing  item 3 (0.3.1 T6.1): `ForkIcon` has the fork shape and no "H
+  T3.6   missing  item 3 (0.3.1 T7.1): the gear shows on the farm view only, t
+  T4.1   missing  item 4: a second harvest cranked after the clock has passed 
+  T5.1   missing  item 5: one test per break found, each failing until fixed; 
+  T6.1   missing  item 6: with `bottom_slot = 1` the bar shows on the farm vie
+  T7.1   missing  item 7: every Shop and Tools row has a `PreviewTile` with it
+Order:
+   1. C2       42.0  12 goal(s) wait on it; play-test fix; cost 0.0 ()
+   2. C3       27.0  7 goal(s) wait on it; play-test fix; cost 0.0 ()
+   3. C6      11.46  2 goal(s) wait on it; play-test fix; cost 0.54 (Patricia, Bob)
+   4. C7      11.46  2 goal(s) wait on it; play-test fix; cost 0.54 (Patricia, Bob)
+   5. C4       10.0  2 goal(s) wait on it; designer feature; cost 0.0 ()
+   6. C1       9.73  2 goal(s) wait on it; designer feature; cost 0.27 (Patricia)
+   7. C5       9.46  2 goal(s) wait on it; designer feature; cost 0.54 (Patricia, Bob)
+   8. T2.1     5.78  play-test fix; cost 0.22 (Quinn)
+   9. T2.11    5.78  play-test fix; cost 0.22 (Quinn)
+  10. T2.2     5.78  play-test fix; cost 0.22 (Quinn)
+  11. T2.3     5.78  play-test fix; cost 0.22 (Quinn)
+  12. T2.4     5.78  play-test fix; cost 0.22 (Quinn)
+  13. T2.5     5.78  play-test fix; cost 0.22 (Quinn)
+  14. T2.6     5.78  play-test fix; cost 0.22 (Quinn)
+  15. T2.7     5.78  play-test fix; cost 0.22 (Quinn)
+  16. T2.8     5.78  play-test fix; cost 0.22 (Quinn)
+  17. T2.9     5.78  play-test fix; cost 0.22 (Quinn)
+  18. T6.1     5.78  play-test fix; cost 0.22 (Quinn)
+  19. T1.1     3.78  designer feature; cost 0.22 (Quinn)
+  20. T2.10    1.78  housekeeping/handoff; cost 0.22 (Quinn)
+  21. T.1       0.0  waits on C3, C4, C5, C7
+  22. T3.1      0.0  waits on C3
+  23. T3.2      0.0  waits on C3
+  24. T3.3      0.0  waits on C3
+  25. T3.4      0.0  waits on C3
+  26. T3.5      0.0  waits on C3
+  27. T3.6      0.0  waits on C3
+  28. T4.1      0.0  waits on C4
+  29. T5.1      0.0  waits on C5
+  30. T7.1      0.0  waits on C7
+gaps.json: game/reports/goal/0.3.2/gaps.json
+0.3.2-tests-and-quick-buy.md: 0/30 goals done
+  C1     partial  The hint walk test hangs.
+  C2     partial  (built, waits on tests) Tests for what the 0.3.1 play-test found.
+  C3     missing  The 0.3.1 test lines that never got a test
+  C4     missing  The second crank (mutation 25).
+  C5     missing  An adversarial QA pass
+  C6     partial  Bottom slot A: quick-buy, with a Dev switch
+  C7     missing  A preview on every upgrade row
+  T.1    missing  every test run sets `show_hint = false` except the hint test
+  T1.1   missing  item 1: `t_hint_steps_follow_state_in_order_twice` back in `
+  T2.1   missing  item 2 Settings: a real tap on `SettingsButton` opens `Setti
+  T2.2   missing  item 2 Coming soon: on Research and Refinery, `ComingSoonLab
+  T2.3   missing  item 2 tab text: each tab's text fits its button at 28 px, i
+  T2.4   missing  item 2 fork fill: at a full hive `HarvestFill` shows and cov
+  T2.5   missing  item 2 smooth circles: every FloatingIcon's circle style has
+  T2.6   missing  item 2 lid: after bottling with a pile, the lid's visual pro
+  T2.7   missing  item 2 paused crank: crank at the second stop, Back, open th
+  T2.8   missing  item 2 gear under sheets: with any sheet or panel open, `Set
+  T2.9   missing  item 2 gear placement: the gear's rect clears `HabitatPill` 
+  T2.10  missing  item 2 Tools dim: `t_tools_second_stop_sheet_gearing_spigot_
+  T2.11  missing  item 2 Spin size: Spin's drawn circle equals the fork's (88)
+  T3.1   missing  item 3 (0.3.1 T1.1): the pill has no Button child; it shows 
+  T3.2   missing  item 3 (0.3.1 T2.1): buying a patch with the Shop open shows
+  T3.3   missing  item 3 (0.3.1 T3.1): each tab holds exactly its rows in orde
+  T3.4   missing  item 3 (0.3.1 T5.1): each of the six Dev buttons exists in t
+  T3.5   missing  item 3 (0.3.1 T6.1): `ForkIcon` has the fork shape and no "H
+  T3.6   missing  item 3 (0.3.1 T7.1): the gear shows on the farm view only, t
+  T4.1   missing  item 4: a second harvest cranked after the clock has passed 
+  T5.1   missing  item 5: one test per break found, each failing until fixed; 
+  T6.1   missing  item 6: with `bottom_slot = 1` the bar shows on the farm vie
+  T7.1   missing  item 7: every Shop and Tools row has a `PreviewTile` with it
+Order:
+   1. C3       27.0  7 goal(s) wait on it; play-test fix; cost 0.0 ()
+   2. C6      11.46  2 goal(s) wait on it; play-test fix; cost 0.54 (Patricia, Bob)
+   3. C7      11.46  2 goal(s) wait on it; play-test fix; cost 0.54 (Patricia, Bob)
+   4. C4       10.0  2 goal(s) wait on it; designer feature; cost 0.0 ()
+   5. C1       9.73  2 goal(s) wait on it; designer feature; cost 0.27 (Patricia)
+   6. C5       9.46  2 goal(s) wait on it; designer feature; cost 0.54 (Patricia, Bob)
+   7. T2.1     5.78  play-test fix; cost 0.22 (Quinn)
+   8. T2.11    5.78  play-test fix; cost 0.22 (Quinn)
+   9. T2.2     5.78  play-test fix; cost 0.22 (Quinn)
+  10. T2.3     5.78  play-test fix; cost 0.22 (Quinn)
+  11. T2.4     5.78  play-test fix; cost 0.22 (Quinn)
+  12. T2.5     5.78  play-test fix; cost 0.22 (Quinn)
+  13. T2.6     5.78  play-test fix; cost 0.22 (Quinn)
+  14. T2.7     5.78  play-test fix; cost 0.22 (Quinn)
+  15. T2.8     5.78  play-test fix; cost 0.22 (Quinn)
+  16. T2.9     5.78  play-test fix; cost 0.22 (Quinn)
+  17. T6.1     5.78  play-test fix; cost 0.22 (Quinn)
+  18. T1.1     3.78  designer feature; cost 0.22 (Quinn)
+  19. T2.10    1.78  housekeeping/handoff; cost 0.22 (Quinn)
+  20. T.1       0.0  waits on C3, C4, C5, C7
+  21. T3.1      0.0  waits on C3
+  22. T3.2      0.0  waits on C3
+  23. T3.3      0.0  waits on C3
+  24. T3.4      0.0  waits on C3
+  25. T3.5      0.0  waits on C3
+  26. T3.6      0.0  waits on C3
+  27. T4.1      0.0  waits on C4
+  28. T5.1      0.0  waits on C5
+  29. T7.1      0.0  waits on C7
+gaps.json: game/reports/goal/0.3.2/gaps.json
