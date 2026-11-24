@@ -337,11 +337,17 @@ func _hi_walk() -> Dictionary:
 		eq(await _hi_wait_key("hint_sell", 3.0), true, "walk: SellIcon shows: the bubble is hint_sell")
 		await fi.click_icon(sell_icon)
 	await _until(func() -> bool: return int(_eco().get("money")) > money0, 8.0)
+	# hint.gd sets _sold from truck.sold (the money credited): wait for the bubble to leave hint_sell before asserting.
+	await _until(func() -> bool: return _hi_key() != "hint_sell", 8.0)
 	await _frames(3)
 	print("WALK sold: money ", _eco().get("money"), " t=", Time.get_ticks_msec())
-	eq(_hi_key(), "", "walk: first sale made but still at the second stop: no bubble (hint_shop is for the farm view)")
-	await _hi_tap(_hi_n("BackButton") as Control)
-	print("WALK Back tapped t=", Time.get_ticks_msec())
+	# 0.3.2 C1 (designer, 2026-11-24): the bubble follows the state after the sale: none at the second stop or in a zoom, hint_shop on
+	# the farm view (the game may already be back there once the bubble leaves hint_sell).
+	var on_farm: bool = int(m.get("zoom")) == 0 and not bool(m.call("at_second_stop"))
+	eq(_hi_key(), "hint_shop" if on_farm else "", "walk: first sale made: hint_shop on the farm view, else no bubble | diag: key=%s money=%s second=%s zoom=%s" % [_hi_key(), _eco().get("money"), m.call("at_second_stop"), m.get("zoom")])
+	if bool(m.call("at_second_stop")):
+		await _hi_tap(_hi_n("BackButton") as Control)
+		print("WALK Back tapped t=", Time.get_ticks_msec())
 	await _until(func() -> bool: return not bool(m.call("at_second_stop")), float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
 	print("WALK left second stop: ", not bool(m.call("at_second_stop")), " t=", Time.get_ticks_msec())
 	eq(await _hi_wait_key("hint_shop", 5.0), true, "walk: after the sale, on the farm view: hint_shop")

@@ -12,6 +12,7 @@ class_name Truck
 extends Node3D
 
 signal load_changed(loaded_jars: int, crate_jars: int)
+signal sold   # the sale was made (money credited); `departed` follows once the bed jars have landed
 signal departed
 signal returned
 
@@ -137,6 +138,7 @@ func sell() -> int:
 	if economy != null:
 		economy.earn(amount)
 	_departure_pending = true   # 0.2 item 13: the truck leaves only once every jar flying to its bed has landed
+	sold.emit()
 	_try_depart()
 	return amount
 

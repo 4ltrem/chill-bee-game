@@ -54,7 +54,7 @@ func _ready() -> void:
 	_main = owner
 	var truck: Truck = _find("Truck") as Truck
 	if truck != null:
-		truck.departed.connect(func() -> void: _sold = true)
+		truck.sold.connect(func() -> void: _sold = true)   # at the sale, not the departure: the truck waits for jars in flight
 	_watch_covers.call_deferred()
 	Economy.upgrade_changed.connect(func(id: String, level: int) -> void:
 		if id == PLANT_ID and level >= 1 and state != State.DONE:
