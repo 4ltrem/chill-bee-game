@@ -526,7 +526,8 @@ func _run() -> void:
 						await fi.click_at(spot2)
 						await _wait(gap)
 						sent += 1
-					eq(sent + tc0, need, "%s: ceil(jars x taps_per_jar) = %d turns in all" % [TB, need])
+					# the game's own counter is the truth: a click the tap-rate gate dropped is not a turn (diag showed sent+tc0 = 13 but turns_counted = 12)
+					eq(int(cen.get("turns_counted")), need, "%s: ceil(jars x taps_per_jar) = %d turns in all (diag: sent=%d tc0=%d cells=%d state=%s turns_counted_now=%s)" % [TB, need, sent, tc0, cells, str(cen.get("state")), str(cen.get("turns_counted"))])
 				ck(_extracted(cen), "%s: extraction done" % TB)
 				await _frames(4)
 			else:
