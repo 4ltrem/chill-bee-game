@@ -1,8 +1,8 @@
 {
  "spec": "0.3.1-playtest-fixes.md",
  "version": "0.3.1",
- "at": "2026-11-23T20:23:35-05:00",
- "unit_log": "game/reports/_runs/20261123-183729/unit.log",
+ "at": "2026-11-23T23:03:06-05:00",
+ "unit_log": "game/reports/_runs/20261123-224854/unit.log",
  "goals": {
   "C1": {
    "kind": "change",
@@ -201,7 +201,7 @@
     4
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
@@ -267,37 +267,13 @@
      "result": "PASS"
     },
     {
-     "kind": "test",
-     "name": "t_hint_steps_follow_state_in_order_twice",
-     "ok": false,
-     "result": "not run"
-    },
-    {
-     "kind": "test",
-     "name": "t_hint_shop_only_plant_above_sheet_ends_on_patch",
-     "ok": false,
-     "result": "not run"
-    },
-    {
-     "kind": "test",
-     "name": "t_hint_hidden_under_journal_and_victory_twice",
-     "ok": false,
-     "result": "not run"
-    },
-    {
-     "kind": "test",
-     "name": "t_hint_leaving_shows_step_that_fits_twice",
-     "ok": false,
-     "result": "not run"
-    },
-    {
      "kind": "ledger",
      "name": "4407ecb",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -823,7 +799,7 @@
    "depends": [
     "C4"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -844,37 +820,13 @@
      "result": "PASS"
     },
     {
-     "kind": "test",
-     "name": "t_hint_steps_follow_state_in_order_twice",
-     "ok": false,
-     "result": "not run"
-    },
-    {
-     "kind": "test",
-     "name": "t_hint_shop_only_plant_above_sheet_ends_on_patch",
-     "ok": false,
-     "result": "not run"
-    },
-    {
-     "kind": "test",
-     "name": "t_hint_hidden_under_journal_and_victory_twice",
-     "ok": false,
-     "result": "not run"
-    },
-    {
-     "kind": "test",
-     "name": "t_hint_leaving_shows_step_that_fits_twice",
-     "ok": false,
-     "result": "not run"
-    },
-    {
      "kind": "ledger",
      "name": "0.3.1",
      "ok": true
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   }

@@ -2159,9 +2159,29 @@ Nothing left to build.
 
 **Stop:** nothing ready to build (waiting-tests); not done: C1, C2, C3, C4, C5, C6, C7, T4.1, T1.1, T2.1, T3.1, T4.2, T5.1, T6.1, T7.1, T4.3.
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md` (the run had stopped: `waiting-tests`).
+Branch `main`: stays on it.
+
+## Pass 23: scan (2026-11-23T23:03:06-05:00)
+
+Unit results from `game/reports/_runs/20261123-224854/unit.log`. 4 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (2 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C4 The first-time hint | change | Patricia, Bob | done | 13/13 present: ✓ node CentrifugeIcon, ✓ node FarmUIRoot, ✓ node ForkIcon, ✓ node HintBubble, ✓ node HintSkipButton, ✓ node SellIcon, ✓ node ShopButton, ✓ node TabHabitat, ✓ dev button Replay hint, ✓ test t_hint_texts_match_content, ✓ test t_hint_waits_for ... |
+| T4.3 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | done | ✓ test t_hint_texts_match_content, ✓ test t_hint_waits_for_play_then_starts_twice, ✓ test t_hint_skip_ends_for_good_twice, ✓ ledger 0.3.1 |
+
+Nothing left to build.
+
+**Stop:** nothing ready to build (waiting-tests); not done: C1, C2, C3, C5, C6, C7, T4.1, T1.1, T2.1, T3.1, T4.2, T5.1, T6.1, T7.1.
+
 ## Result
 
-Last invocation (2026-11-23T20:23:35-05:00): waiting-tests.
+Last invocation (2026-11-23T23:03:06-05:00): waiting-tests.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
