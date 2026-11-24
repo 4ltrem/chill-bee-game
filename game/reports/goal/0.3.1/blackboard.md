@@ -3,7 +3,7 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: stopped
+result: waiting-tests
 ---
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
@@ -2139,14 +2139,29 @@ contract: 121 lookups in 72 top-level scenes, 0 unresolved
 contract: 0 emitted signals unheard
 contract: 0 looked-up names used twice
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 22: scan (2026-11-23T20:23:35-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 2 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (2 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C8 Tools icon in both zooms, in place of the Shop | change | Patricia, Bob | done | 10/10 present: ✓ node ToolsButton, ✓ test t_tools_icon_first_zoom_place_and_farm_view_twice, ✓ test t_tools_icon_second_stop_place_and_farm_view_twice, ✓ test t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice, ✓ test t_tools_second_stop_sheet_gear ... |
+| T8.1 item 8: the Tools icon shows in the first zoom and at the se | test | Quinn | done | 9/9 present: ✓ test t_tools_icon_first_zoom_place_and_farm_view_twice, ✓ test t_tools_icon_second_stop_place_and_farm_view_twice, ✓ test t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice, ✓ test t_tools_second_stop_sheet_gearing_spigot_buy_block ... |
+
+Nothing left to build.
+
+**Stop:** nothing ready to build (waiting-tests); not done: C1, C2, C3, C4, C5, C6, C7, T4.1, T1.1, T2.1, T3.1, T4.2, T5.1, T6.1, T7.1, T4.3.
+
 ## Result
 
-T8.1 accepted with a manual fix (commit failed: 
-no changes added to commit (use "git add" and/or "git commit -a")
-docs agree with code and config
-contract: 121 lookups in 72 top-level scenes, 0 unresolved
-contract: 0 emitted signals unheard
-contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
+Last invocation (2026-11-23T20:23:35-05:00): waiting-tests.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 

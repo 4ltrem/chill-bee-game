@@ -1,7 +1,7 @@
 {
  "spec": "0.3.1-playtest-fixes.md",
  "version": "0.3.1",
- "at": "2026-11-23T20:11:40-05:00",
+ "at": "2026-11-23T20:23:35-05:00",
  "unit_log": "game/reports/_runs/20261123-183729/unit.log",
  "goals": {
   "C1": {
@@ -472,12 +472,60 @@
     8
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
      "name": "ToolsButton",
      "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_icon_first_zoom_place_and_farm_view_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_icon_second_stop_place_and_farm_view_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_sheet_closes_when_zoom_ends_on_its_own_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_leaves_shop_tab_alone_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_shop_layout_zero_never_shows",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_label_and_title_read_outils_in_french",
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -486,7 +534,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -677,9 +725,63 @@
    "depends": [
     "C8"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_tools_icon_first_zoom_place_and_farm_view_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_icon_second_stop_place_and_farm_view_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_sheet_closes_when_zoom_ends_on_its_own_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_leaves_shop_tab_alone_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_shop_layout_zero_never_shows",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tools_label_and_title_read_outils_in_french",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "0.3.1",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
@@ -777,18 +879,6 @@
    "ambiguous": false
   }
  },
- "order": [
-  {
-   "id": "T8.1",
-   "score": 1.77,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.23,
-    "ready": 1,
-    "blocked_by": []
-   }
-  }
- ],
+ "order": [],
  "ambiguous": []
 }
