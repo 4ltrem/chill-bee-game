@@ -95,6 +95,9 @@ func _run() -> void:
 				var col: Color = _px(on, p)
 				if targets[nm] == "btn" and col.g8 > 180 and col.r8 < 90 and col.b8 < 120:
 					hit_col = true
+				# a FloatingIcon whose button is its touch rect (ForkIcon, 120 x 120 since 0.3.1 C6): the touch outline (TOUCH_COLOR) draws over the green
+				if targets[nm] == "btn" and c is FloatingIcon and col.r8 > 200 and col.g8 < 120 and col.b8 > 170:
+					hit_col = true
 				if targets[nm] == "label" and col.b8 > 200 and col.r8 < 110:
 					hit_col = true
 			if best > 60:

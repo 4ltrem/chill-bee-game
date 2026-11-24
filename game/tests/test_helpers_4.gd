@@ -287,7 +287,9 @@ func _hi_walk() -> Dictionary:
 			return "a bubble (%s) showed while bottling ran and no step's condition held" % _hi_key()
 		return ""
 	var w: Dictionary = _hi_watch([quiet])
+	print("WALK go_second_stop")   # DIAG 11/23: stage markers for the unit-suite hang
 	var s: Dictionary = await _go_second_stop()
+	print("WALK at second stop: ", not s.is_empty())
 	var res: Dictionary = {"keys": [], "problems": [], "ok": false}
 	if s.is_empty():
 		_hi_unwatch(w)
@@ -303,20 +305,27 @@ func _hi_walk() -> Dictionary:
 		await _wait(_tap_gap())
 		sent += 1
 	await _frames(3)
+	print("WALK cranked: sent ", sent, " state ", c2.get("state"))
 	var money0: int = int(_eco().get("money"))
 	var sell_icon: Control = _hi_n("SellIcon") as Control
 	var up: bool = await _until(func() -> bool: return sell_icon.is_visible_in_tree(), _secs_for_jars(_hive_jars()) + float(cv("cell_fly_seconds")) + 20.0)
 	ck(up, "walk: SellIcon shows once bottled")
+	print("WALK sell up: ", up, " t=", Time.get_ticks_msec(), " limit=", _secs_for_jars(_hive_jars()), " paused=", paused, " ts=", Engine.time_scale)
 	if up:
 		eq(await _hi_wait_key("hint_sell", 3.0), true, "walk: SellIcon shows: the bubble is hint_sell")
 		await fi.click_icon(sell_icon)
 	await _until(func() -> bool: return int(_eco().get("money")) > money0, 8.0)
 	await _frames(3)
+	print("WALK sold: money ", _eco().get("money"), " t=", Time.get_ticks_msec())
 	eq(_hi_key(), "", "walk: first sale made but still at the second stop: no bubble (hint_shop is for the farm view)")
 	await _hi_tap(_hi_n("BackButton") as Control)
+	print("WALK Back tapped t=", Time.get_ticks_msec())
 	await _until(func() -> bool: return not bool(m.call("at_second_stop")), float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0)
+	print("WALK left second stop: ", not bool(m.call("at_second_stop")), " t=", Time.get_ticks_msec())
 	eq(await _hi_wait_key("hint_shop", 5.0), true, "walk: after the sale, on the farm view: hint_shop")
+	print("WALK sold, back on farm; opening Shop")
 	await _shop_open(m, true)
+	print("WALK Shop open")
 	eq(await _hi_wait_key("hint_plant", 3.0), true, "walk: in the Shop: hint_plant")
 	ck(await _hi_select_habitat(), "walk: with the Habitat tab selected the plant row shows")
 	_eco().call("earn", int(_eco().call("cost", "plant_patch")) * 2)
@@ -329,6 +338,7 @@ func _hi_walk() -> Dictionary:
 	await _frames(4)
 	eq(int(_eco().call("level", "plant_patch")), 1, "walk: a real tap on the row planted the first patch")
 	eq(_hi_key(), "", "walk: the first patch is planted: the hint is over")
+	print("WALK done")
 	_hi_unwatch(w)
 	res["keys"] = w["keys"]
 	res["problems"] = w["problems"]
