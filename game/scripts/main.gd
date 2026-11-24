@@ -410,7 +410,10 @@ func spin_tapped() -> void:
 		_spin_pan_timer = Economy.config.camera_pan_seconds
 		_move_camera_to(second_stop_pose(), Economy.config.camera_pan_seconds)
 		_enter_second_stop_hud()
-	elif zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING and _centrifuge.state == Centrifuge.State.FULL:
+	elif zoom != Zoom.CLOSING and zoom != Zoom.BACK_LOWERING and (_centrifuge.state == Centrifuge.State.FULL \
+			or (_crank_paused and _centrifuge.state == Centrifuge.State.CRANKING)):
+		# play-test 11/23: Spin shows in the zoom for a paused crank too (_refresh_icons spin_ok), so it must work there:
+		# the zoom closes to the second stop and _finish_zoom resumes the crank (begin_crank ignores a batch already cranking)
 		_spin_pending = true
 		back()   # a zoom already closing on its own (CLOSE_DELAY) needs nothing more: it pans because the bucket is full
 
