@@ -702,6 +702,22 @@ class Loop(unittest.TestCase):
         self.run_main("--max-goals", "1")
         self.assertNotIn(ga.QA, [a for a, _ in self.calls])
 
+    def test_a_change_with_no_agent_to_brief_is_built_not_crashed(self):
+        """L56: 0.3.2 C3 had no code owner and no impacted test, so ThreadPoolExecutor(0) crashed the run."""
+        spec, folder, board = self.suite_board()
+        cid = next(k for k, v in spec["goals"].items() if v["kind"] == "change")
+        goal = dict(spec["goals"][cid], owners=[], lines={})
+        saved, ga.test_impact = ga.test_impact, lambda goal: []
+        try:
+            self.assertEqual(ga.briefs(spec, goal, [goal], "t", "main"), {})
+            result = ga.step(spec, goal, [goal], "t", folder, board, "main", {})
+        finally:
+            ga.test_impact = saved
+        self.assertEqual((result, self.calls), ("green", []))
+        ledger = json.loads((folder.parent / "ledger.json").read_text(encoding="utf-8"))
+        self.assertNotIn("held", ledger["9.9-fixture.md"][cid])
+        self.assertIn("No agent to brief", board.read_text(encoding="utf-8"))
+
     def suite_board(self):
         spec = ga.parse_spec(self.tmp / "game" / "specs" / "9.9-fixture.md")
         folder = self.tmp / "game" / "reports" / "goal" / "t"

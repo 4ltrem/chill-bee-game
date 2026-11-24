@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L56 · 2026-11-23 · The 0.3.2 run crashed on a change with no agent to brief
+- **What broke:** the 0.3.2 build finished C2 (`6d9704d`) and then crashed at C3 ("The 0.3.1 test lines that never got a test") with `ValueError: max_workers must be greater than 0` (`c17fcfe`).
+- **How noticed:** the background run exited 1; the traceback was in `game/reports/goal/0.3.2/run.log`.
+- **Cause:** C3 has no code owner and no existing test reading its names, so `briefs()` returned `{}`, and `call_agents()` opened a `ThreadPoolExecutor` with zero workers. Had it not crashed, the "nothing moved" rule would have held C3 for the designer, which would have blocked its six T3.x test lines.
+- **How fixed:** in `step()`, an empty plan records the change as built (checkpoint and ledger) and says so on the board. Its test lines then build it.
+- **Prevention:** `test_goal_agent.py` `test_a_change_with_no_agent_to_brief_is_built_not_crashed` (fails with the ValueError without the fix).
+
 ## L55 · 2026-11-23 · Oscar stopped at the first real task in every session that ran him
 - **What broke:** each 11/21 session that ran Oscar (`claude --agent operator`) stopped at its first real task: `cf1cdb1b` ("Opus session only: these change loop scripts"), `e8567c58` (the merge was synthesis), `f5b02912` (a designer stop, then about 8 stop-hook turns).
 - **How noticed:** the designer kept switching from the operator session to an Opus one.

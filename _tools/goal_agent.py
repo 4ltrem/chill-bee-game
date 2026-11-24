@@ -1716,6 +1716,11 @@ def step(spec, goal, batch, run, folder, board, branch, usage, dry=False):
         print("\n----- checks -----\n" + "\n".join(" ".join(c[1]) + (f"   env {c[2]}" if c[2] else "") for c in cmds))
         return "dry-run"
     say(board, f"\n### Step: {ids} ({now()})\n\n")
+    if not plan:   # L56: a change with no code owner and no impacted test (0.3.2 C3): its work is its test lines
+        msg = checkpoint(spec, batch, run, folder, folder.parent / "ledger.json")
+        say(board, f"- No agent to brief: {ids} has no code owner and no existing test to review; its test lines "
+                   f"build it. Recorded as built: {msg}\n")
+        return "green"
     keep_briefs(folder, board, plan, goal["id"])
     before, code_before = tree_state(), tree_state(CODE_PATHS)
     start_files = file_states()   # style rows are kept only for files this step changes
