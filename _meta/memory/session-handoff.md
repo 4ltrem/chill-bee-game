@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 5c77a6f2-f6b5-4ff0-a169-8eabbf24bafe
-  modified: 2026-11-24T03:14:00.163Z
+  modified: 2026-11-24T03:43:53.896Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -13,6 +13,7 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 **State (2026-11-23, `main` at the "Handoff: 0.3.1 adds Back arrow and Tools" commit):** `v0.3.0` tagged at `830416b`, local only. 68 commits ahead of `origin/main`. Designer: no push or itch upload until 0.3.1 is built and play-tested (each still a yes). Uncommitted on purpose: `_meta/agent-runs.*` (end-of-day). Today's decisions are not logged yet: run the `end-of-day` skill (sessions `5c77a6f2` and the later 11/23 session that added items 6-Back and 8; its decisions: Back as an arrow, icons by shape alone, Tools alone in the zooms with the Shop farm-only per the canvas, `tools_icon` "Tools"/"Outils" approved; balance sim, mutation 25 + adversarial QA, bottom-slot switch and the canvas sticky "Need previews for the upgrade screen, similar to build screen" left for 0.3.2), next ID **D284**.
 
 **NEXT:**
+0. **0.3.1 play-tested 11/23 late:** the designer's fixes are in (`77f8c49`, `6131bfd`; build exe 22:40, local only). The tests 0.3.2 must add for everything the play-test found (and the set-aside hint walk test) are in `_meta/drafts/0.3.2/tests-from-0.3.1-playtest.md`; put them in the 0.3.2 spec's test lines.
 1. **0.3.1 is ready to play-test (session 385322cc, 11/23 late; last commit `f2d48ae`).** All 18 goals accepted. Checkpoint `game/reports/_runs/20261123-215539/`: start, play 246, measure 18, snapshot 12, ui 13, touch 4 all PASS; unit 232/235, and the 3 failing first-time-hint tests were then fixed by Patricia (`f2d48ae`) and pass with the 4 `UpgradeButton` readers (7/7). **Set aside (designer):** `t_hint_steps_follow_state_in_order_twice` hangs after the crank (its `_until` for SellIcon never returns; WALK markers in `test_helpers_4.gd` `_hi_walk`); out of `run_tests.gd` with a note, Quinn fixes it in 0.3.2; the designer plays the hint walk by hand. The goal loop has not marked 0.3.1 done: it needs a full green unit run (next checkpoint), then `goal_agent.py 0.3.1-playtest-fixes.md` once. Hand fixes this session (designer-watched): Spin sized like the fork (88 drawn, 120 button), its glyph scaled + antialiased; gear and skip 40 px down, gear hidden in zooms; the centrifuge lid opens before the pile loads; icons overlap-checked by drawn circles (designer rule, [[ui-vote-shots]]); Spin farm-only offsets `spin_farm_offset_x` 0, `spin_farm_offset_y` 30 (Design Votes spin-farm-height A, version 29); a hidden toast holds no place (hint); Tools sheet blocks the crank, `ToolsLabel` through `tr()`, the Shop dim survives a reparent. Designer rule repeated today: after a hand fix, Rex runs only the touched tests ([[test-speed-fixes]]). Uncommitted docs (`GDD.md`, `README.md`, `STYLE_GUIDE.md`, `UI_DESIGN.md`, `AGENTS.md`, proposals) are another session's apply step, not this run's. Original eight items:
    1. no Habitat +; Journal icon of its own above Shop; pill hidden in zooms
    2. toast queue waiting for the Shop / Journal / Settings / zooms; the patch toast wired
