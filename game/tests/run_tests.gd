@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_hint.gd"
+extends "res://tests/test_tools.gd"
 
 
 # Tests that stay at x1 (they read the wall clock on purpose, own Engine.time_scale through the Dev speed row, or measure wall seconds
@@ -159,6 +159,11 @@ func _run() -> void:
 		"t_hint_texts_match_content", "t_hint_waits_for_play_then_starts_twice", "t_hint_skip_ends_for_good_twice",
 		"t_hint_steps_follow_state_in_order_twice", "t_hint_shop_only_plant_above_sheet_ends_on_patch",
 		"t_hint_hidden_under_journal_and_victory_twice", "t_hint_leaving_shows_step_that_fits_twice",
+		# 0.3.1 item 8 (written from game/specs/0.3.1-playtest-fixes.md before the code)
+		"t_tools_icon_first_zoom_place_and_farm_view_twice", "t_tools_icon_second_stop_place_and_farm_view_twice",
+		"t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice", "t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice",
+		"t_tools_sheet_closes_when_zoom_ends_on_its_own_twice", "t_tools_leaves_shop_tab_alone_twice",
+		"t_tools_shop_layout_zero_never_shows", "t_tools_label_and_title_read_outils_in_french",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

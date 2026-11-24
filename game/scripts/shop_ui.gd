@@ -171,6 +171,9 @@ func _sync_tools_button() -> void:
 	var show_btn: bool = _applied.x == SHEET and not _open and not _on_farm_view()
 	if _tools_button.visible != show_btn:
 		_tools_button.visible = show_btn
+	var word: Label = _tools_button.find_child("ToolsLabel", false, false) as Label
+	if word != null and word.text != tr("tools_icon"):
+		word.text = tr("tools_icon")   # 0.3.1 items 7-8: the word under the icon through tr(), so a language switch updates it
 
 
 ## Sizes the sheet to its real minimum height and anchors it to the bottom of the view.
@@ -357,6 +360,10 @@ func _update_tab_texts() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_TRANSLATION_CHANGED:
 		_update_tab_texts()
+	# The dim goes with the panel only when the panel is deleted: a reparent also exits the tree, and freeing the dim then left
+	# _dim pointing at a freed node, so the sheet opened with no dim and a tap reached the crank (T8.1).
+	elif what == NOTIFICATION_PREDELETE and _dim != null and is_instance_valid(_dim):
+		_dim.queue_free()
 
 
 ## Shows one tab's rows (sheet layout); Research and Refinery show the greyed "Coming soon" line. Compact shows all rows, no tabs.
@@ -424,9 +431,6 @@ func _attach_dim() -> void:
 	p.move_child(_dim, get_index())
 
 
-func _exit_tree() -> void:
-	if _dim != null and is_instance_valid(_dim) and _dim.get_parent() != null:
-		_dim.queue_free()
 
 
 func _sync_visibility() -> void:

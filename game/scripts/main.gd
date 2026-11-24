@@ -44,6 +44,7 @@ var motor_owned: bool = false         # 0.1.4 item 12: the electric centrifuge (
 var _spin_mode: bool = false         # 0.1.4 item 7: the crank was started and the pile has not run out
 var _auto_spin: bool = false          # the pile is reloading after a pour in spin mode: crank again when the bucket is full
 var _spin_pending: bool = false       # Spin was tapped in the first zoom: the crank starts when the camera reaches the second stop
+var _panel_blocks_crank: bool = false   # 0.3.1 item 8: _process turned the crank off for an open panel or sheet
 var _crank_paused: bool = false      # 0.1.4 item 15: Back at the second stop while cranking; Spin on the farm resumes
 var _welcome: WelcomeOverlay
 var _welcome_template: Node           # 0.3.1 item 5: an unused copy of the WelcomeOverlay (for Dev "Show welcome")
@@ -192,6 +193,17 @@ func _process(delta: float) -> void:
 	if welcome_active():
 		return
 	advance(delta)
+	# 0.3.1 item 8: no crank turn counts while a panel or sheet (Tools included) covers the view; the dim alone let a tap
+	# through at the second stop (T8.1). Only undoes its own block, so the zoom's own crank_enabled = false stands.
+	if _centrifuge != null:
+		var blocked: bool = zoom == Zoom.NONE and any_panel_open()
+		if blocked and not _panel_blocks_crank:
+			_panel_blocks_crank = true
+			_centrifuge.crank_enabled = false
+		elif not blocked and _panel_blocks_crank:
+			_panel_blocks_crank = false
+			if zoom == Zoom.NONE:
+				_centrifuge.crank_enabled = not _crank_paused
 	if _fork_icon != null:
 		_fork_icon.disabled = not fork_available()   # the hive fills between state changes
 	if _centrifuge_icon != null:   # 0.1.4 item 22: Spin's per-view size (farm view) and offset (first zoom), live in Dev mode

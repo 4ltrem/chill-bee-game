@@ -1555,13 +1555,15 @@
   "suite": "unit"
  },
  {
-  "name": "0.2 item 15 the Shop button stays hidden in the zoom",
-  "file": "scripts/main.gd",
-  "find": "_farm_ui.visible = false   # item 15:",
-  "replace": "_farm_ui.visible = false; (find_child(\"ShopButton\", true, false) as Control).visible = false   # item 15:",
+  "name": "0.2 item 15 (now 0.3.1 item 8) the Shop button shows in the zooms again",
+  "file": "scripts/shop_ui.gd",
+  "find": "var show_btn: bool = not _open and _on_farm_view()",
+  "replace": "var show_btn: bool = not _open",
   "expect": [
    "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
-   "t_shop_at_second_stop_buy_blocks_crank_closes_on_back"
+   "t_shop_at_second_stop_buy_blocks_crank_closes_on_back",
+   "t_tools_icon_first_zoom_place_and_farm_view_twice",
+   "t_tools_icon_second_stop_place_and_farm_view_twice"
   ],
   "suite": "unit"
  },
@@ -1571,7 +1573,7 @@
   "find": "\t_close_shop_sheet()   # 0.2 item 15: leaving the zoom (Back or on its own) closes an open Shop sheet\n",
   "replace": "\tpass   # 0.2 item 15: leaving the zoom (Back or on its own) closes an open Shop sheet\n",
   "expect": [
-   "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit"
+   "t_tools_sheet_closes_when_zoom_ends_on_its_own_twice"
   ],
   "suite": "unit"
  },
@@ -1581,8 +1583,7 @@
   "find": "_shop_button.pressed.connect(func() -> void: set_sheet_open(true))",
   "replace": "_shop_button.pressed.connect(func() -> void: set_sheet_open(true), CONNECT_ONE_SHOT)",
   "expect": [
-   "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
-   "t_shop_at_second_stop_buy_blocks_crank_closes_on_back"
+   "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit"
   ],
   "suite": "unit"
  },
@@ -1591,8 +1592,8 @@
   "file": "scripts/shop_ui.gd",
   "find": "_dim.mouse_filter = Control.MOUSE_FILTER_STOP",  "replace": "_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE",
   "expect": [
-   "t_shop_in_first_zoom_buy_blocks_input_closes_on_exit",
-   "t_shop_at_second_stop_buy_blocks_crank_closes_on_back"
+   "t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice",
+   "t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice"
   ],
   "suite": "unit"
  },
@@ -1603,6 +1604,136 @@
   "replace": "_move_parts.call_deferred(true)",
   "expect": [
    "t_shop_compact_layout_nothing_in_zoom"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 leave step: Back with the Tools sheet open does not close it",
+  "file": "scripts/main.gd",
+  "find": "_close_shop_sheet()   # 0.2 item 15: Back with the sheet open closes it at once, in the zoom and at the second stop",
+  "replace": "pass   # 0.2 item 15: Back with the sheet open closes it at once, in the zoom and at the second stop",
+  "expect": [
+   "t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice",
+   "t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 twice step: the Tools icon opens its sheet only once",
+  "file": "scripts/shop_ui.gd",
+  "find": "_tools_button.pressed.connect(func() -> void: set_tools_open(true))",
+  "replace": "_tools_button.pressed.connect(func() -> void: set_tools_open(true), CONNECT_ONE_SHOT)",
+  "expect": [
+   "t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice",
+   "t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice",
+   "t_tools_leaves_shop_tab_alone_twice",
+   "t_tools_label_and_title_read_outils_in_french"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 the Tools icon shows on the farm view too",
+  "file": "scripts/shop_ui.gd",
+  "find": "var show_btn: bool = _applied.x == SHEET and not _open and not _on_farm_view()",
+  "replace": "var show_btn: bool = _applied.x == SHEET and not _open",
+  "expect": [
+   "t_tools_icon_first_zoom_place_and_farm_view_twice",
+   "t_tools_icon_second_stop_place_and_farm_view_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 the Tools icon stays visible under its open sheet",
+  "file": "scripts/shop_ui.gd",
+  "find": "and not _open and not _on_farm_view()",
+  "replace": "and not _on_farm_view()",
+  "expect": [
+   "t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice",
+   "t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 with shop_layout 0 the Tools icon shows anyway",
+  "file": "scripts/shop_ui.gd",
+  "find": "_applied.x == SHEET and not _open and not _on_farm_view()",
+  "replace": "not _open and not _on_farm_view()",
+  "expect": [
+   "t_tools_shop_layout_zero_never_shows"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 the Tools icon is smaller than 120 px",
+  "file": "scripts/shop_ui.gd",
+  "find": "\t\t_tools_button.visible = show_btn",
+  "replace": "\t\t_tools_button.visible = show_btn\n\t\t_tools_button.custom_minimum_size = Vector2(60, 60)\n\t\t_tools_button.size = Vector2(60, 60)",
+  "expect": [
+   "t_tools_icon_first_zoom_place_and_farm_view_twice",
+   "t_tools_icon_second_stop_place_and_farm_view_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 the second stop's Tools sheet lists Gearing only",
+  "file": "scripts/shop_ui.gd",
+  "find": "var second: Array[String] = [\"gearing\", \"spigot_flow\"]",
+  "replace": "var second: Array[String] = [\"gearing\"]",
+  "expect": [
+   "t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 the first zoom's Tools sheet lists Gearing with the fork",
+  "file": "scripts/shop_ui.gd",
+  "find": "var first: Array[String] = [\"heated_fork\"]",
+  "replace": "var first: Array[String] = [\"heated_fork\", \"gearing\"]",
+  "expect": [
+   "t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice",
+   "t_tools_leaves_shop_tab_alone_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 the Tools sheet shows the tabs",
+  "file": "scripts/shop_ui.gd",
+  "find": "_tabs_row.visible = sheet and not tools",
+  "replace": "_tabs_row.visible = sheet",
+  "expect": [
+   "t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice",
+   "t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 opening Tools resets the Shop's remembered tab",
+  "file": "scripts/shop_ui.gd",
+  "find": "\t_tools_mode = on\n\tset_sheet_open(on)",
+  "replace": "\t_tools_mode = on\n\t_tab = \"Bees\"\n\tset_sheet_open(on)",
+  "expect": [
+   "t_tools_leaves_shop_tab_alone_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 the Tools sheet title is the Shop's",
+  "file": "scripts/shop_ui.gd",
+  "find": "title.text = tr(\"tools_icon\") if _tools_mode else tr(\"shop_title\")",
+  "replace": "title.text = tr(\"shop_title\")",
+  "expect": [
+   "t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice",
+   "t_tools_label_and_title_read_outils_in_french"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 8 the French Tools label is not translated",
+  "file": "translations/journal.csv",
+  "find": "tools_icon,Tools,Outils",
+  "replace": "tools_icon,Tools,Tools",
+  "expect": [
+   "t_tools_label_and_title_read_outils_in_french"
   ],
   "suite": "unit"
  },

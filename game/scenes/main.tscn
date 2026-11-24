@@ -1435,7 +1435,7 @@ theme_override_colors/font_color = Color(1, 0.96, 0.86, 1)
 theme_override_colors/font_outline_color = Color(0.2, 0.12, 0.02, 1)
 theme_override_constants/outline_size = 6
 theme_override_font_sizes/font_size = 28
-text = "Tools"
+text = "tools_icon"
 horizontal_alignment = 1
 
 [node name="WelcomeOverlay" type="CanvasLayer" parent="."]

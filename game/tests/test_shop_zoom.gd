@@ -29,10 +29,23 @@ func _zs_state(m: Node, p: Dictionary) -> Dictionary:
 	return {"zoom": int(m.get("zoom")), "size": _cam().size, "second": bool(m.call("at_second_stop")), "cen": cen.get("state"), "cx": int(cen.get("turns_counted"))}
 
 
+## Waits (up to 4 s) until the camera size stops changing, so a "before" state is not taken mid-pan (run 2 of the
+## Tools second-stop test caught the pan into the second stop: 15.05 -> 12.83 -> 9.54).
+func _zs_settle() -> void:
+	var last: float = -1.0
+	var t0: int = Time.get_ticks_msec()
+	while Time.get_ticks_msec() - t0 < 4000:
+		await _frames(2)
+		var now: float = _cam().size
+		if absf(now - last) < 0.001:
+			return
+		last = now
+
+
 func _zs_same_state(m: Node, p: Dictionary, before: Dictionary, label: String) -> void:
 	var now: Dictionary = _zs_state(m, p)
 	eq(now["zoom"], before["zoom"], "%s: the zoom state is unchanged" % label)
-	near(float(now["size"]), float(before["size"]), 0.02, "%s: the camera is where it was" % label)
+	near(float(now["size"]), float(before["size"]), 0.02, "%s: the camera is where it was (diag: zoom=%s second=%s before_second=%s)" % [label, str(now["zoom"]), str(now["second"]), str(before["second"])])
 	eq(now["second"], before["second"], "%s: at_second_stop is unchanged" % label)
 	eq(now["cen"], before["cen"], "%s: the centrifuge state is unchanged" % label)
 
@@ -57,27 +70,30 @@ func _zs_clear(m: Node, p: Dictionary, label: String) -> Rect2:
 
 
 ## Open the sheet with a real tap, buy `id` once with a real tap on its row, close by Close (via_dim false) or a tap on the dim. Returns the Shop rect.
-func _zs_buy(m: Node, p: Dictionary, id: String, via_dim: bool, label: String) -> void:
+## tools = true: the sheet is opened from the ToolsButton (0.3.1 item 8, which took the zoom purchases over from the Shop) and the row is found by its name.
+func _zs_buy(m: Node, p: Dictionary, id: String, via_dim: bool, label: String, tools: bool = false) -> void:
 	var e: Node = _eco()
 	var lvl: int = int(e.call("level", id))
 	var cost: int = _shop_expect_cost(id, lvl)
 	e.set("money", cost + 3)
 	e.emit_signal("money_changed", cost + 3)
 	await _frames(2)
+	await _zs_settle()
 	var before: Dictionary = _zs_state(m, p)
-	await _zs_clear(m, p, label)
-	var sb: Control = _zs_btn(m)
+	if not tools:
+		await _zs_clear(m, p, label)
+	var sb: Control = (m.find_child("ToolsButton", true, false) as Control) if tools else _zs_btn(m)
 	if sb == null or not sb.is_visible_in_tree():
+		ck(false, "%s: the opening button shows" % label)
 		return
 	await fi.tap_at(sb.get_global_rect().get_center())
 	await _frames(3)
-	ck(_zs_open(m), "%s: a real tap on Shop opens the sheet over the zoom" % label)
-	var rows: Array = _shop_rows(m)
-	var idx: int = _SHOP_IDS.find(id)
-	if rows.size() <= idx or _row_buy(rows[idx]) == null:
-		ck(false, "%s: the %s row has a buy button" % [label, id])
+	ck(_zs_open(m), "%s: a real tap on the button opens the sheet over the zoom" % label)
+	var row: Control = m.find_child("Row_%s" % id, true, false) as Control
+	if row == null or not row.is_visible_in_tree() or _row_buy(row) == null:
+		ck(false, "%s: the %s row shows and has a buy button" % [label, id])
 		return
-	await fi.tap_at(_row_buy(rows[idx]).get_global_rect().get_center())
+	await fi.tap_at(_row_buy(row).get_global_rect().get_center())
 	await _frames(2)
 	eq(int(e.call("level", id)), lvl + 1, "%s: %s level after the buy" % [label, id])
 	eq(int(e.get("money")), 3, "%s: the price (config) was taken, 3 left" % label)
@@ -93,12 +109,12 @@ func _zs_buy(m: Node, p: Dictionary, id: String, via_dim: bool, label: String) -
 	await _frames(3)
 	ck(not _zs_open(m), "%s: the sheet is closed again (%s)" % [label, "dim tap" if via_dim else "Close"])
 	await _zs_same_state(m, p, before, label)
-	ck(_zs_btn(m).is_visible_in_tree(), "%s: Shop shows again after closing" % label)
+	ck(sb.is_visible_in_tree(), "%s: the opening button shows again after closing" % label)
 
 
 ## With the sheet open: a real drag over the frame scrapes nothing and a real tap turns no crank. Reopens the sheet if the press closed it.
-func _zs_blocked(m: Node, p: Dictionary, label: String) -> void:
-	var sb: Control = _zs_btn(m)
+func _zs_blocked(m: Node, p: Dictionary, label: String, tools: bool = false) -> void:
+	var sb: Control = (m.find_child("ToolsButton", true, false) as Control) if tools else _zs_btn(m)
 	await fi.tap_at(sb.get_global_rect().get_center())
 	await _frames(3)
 	ck(_zs_open(m), "%s: the sheet is open for the input check" % label)
@@ -117,7 +133,7 @@ func _zs_blocked(m: Node, p: Dictionary, label: String) -> void:
 			await fi.drag_row(rws[0])
 	await _wait(0.3)
 	eq(fi.capped_total(hive, _frames_n()), caps, "%s: with the sheet open the fork scraped no cell" % label)
-	eq(int(cen.get("turns_counted")), turns, "%s: with the sheet open the crank counted no turn" % label)
+	eq(int(cen.get("turns_counted")), turns, "%s: with the sheet open the crank counted no turn (diag: sheet_open=%s cen_state=%s tap=%s cam=%s)" % [label, str(_zs_open(m)), str(cen.get("state")), str(fi.free_spot(m)), str(_cam().size)])
 	if _zs_open(m):
 		await fi.tap_at(Vector2(_vp().size.x * 0.5, _vp().size.y * 0.1))
 		await _frames(3)
@@ -125,8 +141,8 @@ func _zs_blocked(m: Node, p: Dictionary, label: String) -> void:
 
 
 ## Leave by Back with the sheet open (a second tap if the dim took the first): the sheet closes and the zoom or second stop ends.
-func _zs_back_with_sheet(m: Node, p: Dictionary, label: String) -> void:
-	await fi.tap_at(_zs_btn(m).get_global_rect().get_center())
+func _zs_back_with_sheet(m: Node, p: Dictionary, label: String, tools: bool = false) -> void:
+	await fi.tap_at(((m.find_child("ToolsButton", true, false) as Control) if tools else _zs_btn(m)).get_global_rect().get_center())
 	await _frames(3)
 	ck(_zs_open(m), "%s: sheet open before Back" % label)
 	await _tap_back({"p": p})
@@ -192,7 +208,7 @@ func t_shop_in_first_zoom_buy_blocks_input_closes_on_exit() -> void:
 
 ## Scrape every frame with real drags until the last Capped cell goes; then, while the zoom finishes (LOWERING or CLOSE_DELAY), open the sheet. Returns whether it opened before CLOSING.
 # goal T15.1
-func _zs_finish_with_sheet(m: Node, p: Dictionary, tr: Dictionary) -> bool:
+func _zs_finish_with_sheet(m: Node, p: Dictionary, tr: Dictionary, tools: bool = false) -> bool:
 	var hive: Node = p["Hive"]
 	var t0: int = _gms()
 	# only the risen frame is scraped by hand: the others are emptied in the hive's data (main.gd _raise_next skips frames with no Capped cell), so the zoom ends after this frame (diag run 20261122-010936: 40 Capped cells left in other frames when the 120 game-second cap hit)
@@ -224,11 +240,11 @@ func _zs_finish_with_sheet(m: Node, p: Dictionary, tr: Dictionary) -> bool:
 		ck(false, "diag: zoom %d, risen %d, hive capped %d, honeycomb capped/uncapped/extracted %s, departures %d" % [z, int(tr["risen"]), fi.capped_total(hive, _frames_n()), str(st), (hcd.get("_departures") as Array).size() if hcd != null else -1])
 		return false   # CLOSING or NONE already (or timed out): too late, the check fails honestly
 	# The Shop button sits under FarmUIRoot and stays in the zoom (shop_layout 1): tap it for real when visible, else ask the panel directly.
-	var btn: Control = _zs_btn(m)
+	var btn: Control = (m.find_child("ToolsButton", true, false) as Control) if tools else _zs_btn(m)
 	if btn != null and btn.is_visible_in_tree():
 		await fi.tap_at(btn.get_global_rect().get_center())
 		await _frames(2)
-	if not _zs_open(m) and int(m.get("zoom")) in [lowering, delay]:
+	if not tools and not _zs_open(m) and int(m.get("zoom")) in [lowering, delay]:
 		_zs_panel(m).call("set_sheet_open", true)
 		await process_frame
 	return _zs_open(m)
