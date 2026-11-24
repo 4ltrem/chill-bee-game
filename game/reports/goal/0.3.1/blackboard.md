@@ -3,7 +3,7 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
@@ -2125,9 +2125,28 @@ FAIL    unit      8 passed, 4 failed  (godot exit 1, 24 noise lines dropped)  ga
 
 2 fix rounds failed on T8.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.1-playtest-fixes.md --accept T8.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T8.1 fix-round edits"`.
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md --accept T8.1 --note main.gd blocks the crank while any panel or sheet is open (the dim let a tap through at the second stop); shop_ui.gd sets ToolsLabel to tr(tools_icon) and frees the dim only on delete (a reparent freed it); test waits for the camera to settle before 'before'; the four Tools tests touched pass` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T8.1 (2026-11-23T20:23:24-05:00)
+
+- Change (orchestrator, Process 9): main.gd blocks the crank while any panel or sheet is open (the dim let a tap through at the second stop); shop_ui.gd sets ToolsLabel to tr(tools_icon) and frees the dim only on delete (a reparent freed it); test waits for the camera to settle before 'before'; the four Tools tests touched pass
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 121 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-Last invocation (2026-11-23T20:19:26-05:00): waiting-designer.
+T8.1 accepted with a manual fix (commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 121 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
