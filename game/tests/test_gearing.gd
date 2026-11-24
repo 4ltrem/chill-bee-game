@@ -55,12 +55,14 @@ func t_gearing_gears_visible_by_level() -> void:
 
 ## One crank run at Gearing 5 through the real tap path: every visible gear's rotation changes, neighbours turn opposite ways. Returns
 ## the signed turn of each visible gear (Gear1..Gear6).
-func _gear_run(level: int) -> Array:
+func _gear_run(level: int, clock_late: float = 0.0) -> Array:
 	_gearing_level(level)
 	var c: Object = await _mk_cen()
 	if c == null:
 		return []
 	_to_cranking(c)
+	if clock_late > 0.0:
+		c.call("advance", clock_late)   # the clock has passed the first minutes before this crank starts
 	var before: Array = []
 	for i in range(1, level + 2):
 		before.append((_gear(c as Node, i) as Node3D).transform.basis)
@@ -78,7 +80,8 @@ func _gear_run(level: int) -> Array:
 func t_gearing_gears_turn_opposite_twice() -> void:
 	var max_l: int = int(cv("gearing_max_level"))
 	var first: Array = await _gear_run(max_l)
-	var second: Array = await _gear_run(max_l)
+	# spec 0.3.2 item 4: "A test cranks a second harvest after the clock has passed the first minutes and checks the gears turn"
+	var second: Array = await _gear_run(max_l, 600.0)
 	eq(first.size(), max_l + 1, "run 1: every visible gear was measured")
 	eq(second.size(), max_l + 1, "run 2: every visible gear was measured")
 	for run in [first, second]:
