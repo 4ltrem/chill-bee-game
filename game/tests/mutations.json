@@ -1837,5 +1837,216 @@
    "t_icons_never_overlap"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the hint shows under the welcome overlay",
+  "file": "scripts/hint.gd",
+  "find": "\tif state == State.DONE or not cfg.show_hint or bool(_main.call(\"welcome_active\")):",
+  "replace": "\tif state == State.DONE or not cfg.show_hint:",
+  "expect": [
+   "t_hint_waits_for_play_then_starts_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 twice step: the hint starts only on the first launch",
+  "file": "scripts/hint.gd",
+  "find": "\tif state == State.WAITING:\n\t\t_set_state(State.ACTIVE)\n\t_observe()",
+  "replace": "\tif state == State.WAITING:\n\t\tif Engine.has_meta(\"hint_started\"):\n\t\t\treturn\n\t\tEngine.set_meta(\"hint_started\", true)\n\t\t_set_state(State.ACTIVE)\n\t_observe()",
+  "expect": [
+   "t_hint_waits_for_play_then_starts_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 Skip does not end the hint",
+  "file": "scripts/hint.gd",
+  "find": "func skip() -> void:\n\t_set_state(State.DONE)",
+  "replace": "func skip() -> void:\n\tpass",
+  "expect": [
+   "t_hint_skip_ends_for_good_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 twice step: a skip ends the hint of every later farm too (replay included)",
+  "file": "scripts/hint.gd",
+  "find": "func _set_state(next: int) -> void:\n\tif next == state:\n\t\treturn",
+  "replace": "func _set_state(next: int) -> void:\n\tif next == State.DONE:\n\t\tEngine.set_meta(\"hint_skipped\", true)\n\tif next == State.ACTIVE and Engine.has_meta(\"hint_skipped\"):\n\t\tnext = State.DONE\n\tif next == state:\n\t\treturn",
+  "expect": [
+   "t_hint_skip_ends_for_good_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 a step is shown out of order (the sell and shop texts swapped)",
+  "file": "scripts/hint.gd",
+  "find": "\"hint_crank\", \"hint_sell\", \"hint_shop\", \"hint_plant\"]",
+  "replace": "\"hint_crank\", \"hint_shop\", \"hint_sell\", \"hint_plant\"]",
+  "expect": [
+   "t_hint_steps_follow_state_in_order_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 twice step: the second farm starts with the first one's progress kept",
+  "file": "scripts/hint.gd",
+  "find": "var _spin_reached: bool = false",
+  "replace": "static var _spin_reached: bool = false",
+  "expect": [
+   "t_hint_steps_follow_state_in_order_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the bubble covers its own target",
+  "file": "scripts/hint.gd",
+  "find": "\treturn not box.intersects(target) and not (toast.size != Vector2.ZERO and box.intersects(toast))",
+  "replace": "\treturn true",
+  "expect": [
+   "t_hint_waits_for_play_then_starts_twice",
+   "t_hint_steps_follow_state_in_order_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the bubble overlaps the toasts' place",
+  "file": "scripts/hint.gd",
+  "find": "\treturn not box.intersects(target) and not (toast.size != Vector2.ZERO and box.intersects(toast))",
+  "replace": "\treturn not box.intersects(target)",
+  "expect": [
+   "t_hint_hidden_under_journal_and_victory_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the bubble runs off the screen",
+  "file": "scripts/hint.gd",
+  "find": "\tvar x: float = clampf(target.get_center().x - size.x * 0.5, m, maxf(view.x - m - size.x, m))",
+  "replace": "\tvar x: float = target.get_center().x - size.x * 0.5",
+  "expect": [
+   "t_hint_waits_for_play_then_starts_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the hint text is 24 px, not 28",
+  "file": "scenes/main.tscn",
+  "find": "theme_override_font_sizes/font_size = 28\ntext = \"Hint\"",
+  "replace": "theme_override_font_sizes/font_size = 24\ntext = \"Hint\"",
+  "expect": [
+   "t_hint_waits_for_play_then_starts_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the Skip target is 60 px",
+  "file": "scenes/main.tscn",
+  "find": "custom_minimum_size = Vector2(120, 120)\nlayout_mode = 0\noffset_left = 488.0\noffset_top = 20.0\noffset_right = 624.0\noffset_bottom = 140.0",
+  "replace": "layout_mode = 0\noffset_left = 488.0\noffset_top = 20.0\noffset_right = 548.0\noffset_bottom = 80.0",
+  "expect": [
+   "t_hint_waits_for_play_then_starts_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the Shop being open does not limit the hint to hint_plant",
+  "file": "scripts/hint.gd",
+  "find": "\tif _shop_open():\n\t\treturn Step.PLANT",
+  "replace": "\tif false:\n\t\treturn Step.PLANT",
+  "expect": [
+   "t_hint_shop_only_plant_above_sheet_ends_on_patch"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the hint_plant bubble draws under the Shop sheet",
+  "file": "scripts/hint.gd",
+  "find": "\tz_index = DRAW_Z",
+  "replace": "\tz_index = 0",
+  "expect": [
+   "t_hint_shop_only_plant_above_sheet_ends_on_patch"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the tail stays on TabHabitat after it is selected",
+  "file": "scripts/hint.gd",
+  "find": "not (tab is BaseButton and (tab as BaseButton).button_pressed)",
+  "replace": "true",
+  "expect": [
+   "t_hint_shop_only_plant_above_sheet_ends_on_patch"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 planting the first patch does not end the hint",
+  "file": "scripts/hint.gd",
+  "find": "func _set_state(next: int) -> void:\n\tif next == state:\n\t\treturn",
+  "replace": "func _set_state(next: int) -> void:\n\tif next == state or (next == State.DONE and Economy.level(PLANT_ID) >= 1):\n\t\treturn",
+  "expect": [
+   "t_hint_shop_only_plant_above_sheet_ends_on_patch"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 twice step: the Shop reopened shows no hint_plant",
+  "file": "scripts/hint.gd",
+  "find": "\treturn shop != null and shop.is_sheet_open()",
+  "replace": "\tvar open: bool = shop != null and shop.is_sheet_open()\n\tif open:\n\t\tEngine.set_meta(\"hint_plant_seen\", true)\n\telif Engine.has_meta(\"hint_plant_seen\"):\n\t\tEngine.set_meta(\"hint_plant_closed\", true)\n\treturn open and not Engine.has_meta(\"hint_plant_closed\")",
+  "expect": [
+   "t_hint_shop_only_plant_above_sheet_ends_on_patch"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the Journal panel does not hide the hint",
+  "file": "scripts/hint.gd",
+  "find": "\tif bool(_main.call(\"any_panel_open\", true)):\n\t\treturn true",
+  "replace": "\tif false:\n\t\treturn true",
+  "expect": [
+   "t_hint_hidden_under_journal_and_victory_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 the victory overlay does not hide the hint",
+  "file": "scripts/hint.gd",
+  "find": "\treturn victory != null and victory.is_showing()",
+  "replace": "\treturn false",
+  "expect": [
+   "t_hint_hidden_under_journal_and_victory_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 leave step: the bubble keeps the step it had after Back",
+  "file": "scripts/hint.gd",
+  "find": "\tvar next: int = _current_step()\n",
+  "replace": "\tvar next: int = _current_step() if step == Step.NONE or step == Step.PLANT else step\n",
+  "expect": [
+   "t_hint_leaving_shows_step_that_fits_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 twice step: hint_uncap shows only the first time the zoom opens",
+  "file": "scripts/hint.gd",
+  "find": "\t\treturn Step.UNCAP",
+  "replace": "\t\t_spin_reached = true\n\t\treturn Step.UNCAP",
+  "expect": [
+   "t_hint_leaving_shows_step_that_fits_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.1 item 4 a French hint text is not the approved one",
+  "file": "translations/journal.csv",
+  "find": "La ruche se remplit. Patience!",
+  "replace": "La ruche se remplit. Patience",
+  "expect": [
+   "t_hint_texts_match_content"
+  ],
+  "suite": "unit"
  }
 ]

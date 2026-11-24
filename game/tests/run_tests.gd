@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_victory.gd"
+extends "res://tests/test_hint.gd"
 
 
 # Tests that stay at x1 (they read the wall clock on purpose, own Engine.time_scale through the Dev speed row, or measure wall seconds
@@ -155,6 +155,10 @@ func _run() -> void:
 		"t_victory_delay_show_close_once_per_farm", "t_victory_waits_for_farm_view",
 		# 0.3 item 6
 		"t_skip_icon_reaches_thriving_free_twice", "t_skip_icon_farm_view_only",
+		# 0.3.1 item 4 (written from game/specs/0.3.1-playtest-fixes.md before the code)
+		"t_hint_texts_match_content", "t_hint_waits_for_play_then_starts_twice", "t_hint_skip_ends_for_good_twice",
+		"t_hint_steps_follow_state_in_order_twice", "t_hint_shop_only_plant_above_sheet_ends_on_patch",
+		"t_hint_hidden_under_journal_and_victory_twice", "t_hint_leaving_shows_step_that_fits_twice",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

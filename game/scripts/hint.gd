@@ -315,6 +315,8 @@ func _fits(box: Rect2, view: Vector2, m: float, target: Rect2, toast: Rect2) -> 
 
 func _toast_rect() -> Rect2:
 	var toast: Control = _find("PhaseToast") as Control
-	if toast == null or toast.size == Vector2.ZERO:
+	# a hidden toast holds no place: its empty wrapping label measures ~1800 px tall, which left the bubble no clear side.
+	# _place runs every frame, so the bubble moves clear as soon as a toast shows.
+	if toast == null or toast.size == Vector2.ZERO or not toast.is_visible_in_tree():
 		return Rect2()
 	return toast.get_global_rect()
