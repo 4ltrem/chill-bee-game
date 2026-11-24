@@ -1,7 +1,7 @@
 {
  "spec": "0.3.1-playtest-fixes.md",
  "version": "0.3.1",
- "at": "2026-11-23T18:48:51-05:00",
+ "at": "2026-11-23T18:55:49-05:00",
  "unit_log": "game/reports/_runs/20261123-183729/unit.log",
  "goals": {
   "C1": {
@@ -295,14 +295,17 @@
      "kind": "dev button",
      "name": "Unlock Journal",
      "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "0.3.1",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for C5 and the checks were already green, so it is not built. Their replies on the board (step C5, 2026-11-23T17:02:37-05:00) say why; answer by editing the spec item."
-   ],
-   "ambiguous": true
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
   },
   "C6": {
    "kind": "change",
@@ -461,8 +464,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T1.1": {
    "kind": "test",
@@ -480,8 +485,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T2.1": {
    "kind": "test",
@@ -499,8 +506,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for T2.1 and the checks were already green, so it is not built. Their replies on the board (step T2.1, 2026-11-23T18:54:53-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T3.1": {
    "kind": "test",
@@ -518,8 +527,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T4.2": {
    "kind": "test",
@@ -537,8 +548,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.2, T4.3, 2026-11-23T18:54:06-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T5.1": {
    "kind": "test",
@@ -556,8 +569,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for T5.1 and the checks were already green, so it is not built. Their replies on the board (step T5.1, 2026-11-23T18:55:28-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T6.1": {
    "kind": "test",
@@ -575,8 +590,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-23T18:54:30-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T8.1": {
    "kind": "test",
@@ -613,8 +630,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for T7.1 and the checks were already green, so it is not built. Their replies on the board (step T7.1, 2026-11-23T18:55:49-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T4.3": {
    "kind": "test",
@@ -637,94 +656,6 @@
   }
  },
  "order": [
-  {
-   "id": "T1.1",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T3.1",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T4.1",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T4.2",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T6.1",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.1",
-   "score": 3.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T5.1",
-   "score": 3.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T7.1",
-   "score": 3.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T4.3",
    "score": 1.79,
@@ -749,6 +680,13 @@
   }
  ],
  "ambiguous": [
-  "C5"
+  "T4.1",
+  "T1.1",
+  "T2.1",
+  "T3.1",
+  "T4.2",
+  "T5.1",
+  "T6.1",
+  "T7.1"
  ]
 }

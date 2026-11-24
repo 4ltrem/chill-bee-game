@@ -278,5 +278,29 @@
   "turns": 13,
   "seconds": 25,
   "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Quinn, T4.3",
+  "tokens": 3079133,
+  "final": 167516,
+  "turns": 31,
+  "seconds": 531,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Quinn, T4.3 fix 1",
+  "tokens": 84006,
+  "final": 23611,
+  "turns": 4,
+  "seconds": 14,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
+ },
+ {
+  "call": "Bob, T4.3 fix 2",
+  "tokens": 99385,
+  "final": 23750,
+  "turns": 8,
+  "seconds": 21,
+  "transcripts": "_meta/sessions/runs/2026-11-23-goal-0.3.1"
  }
 ]

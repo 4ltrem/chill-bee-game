@@ -372,6 +372,54 @@
    "run": "0.3.1",
    "at": "2026-11-23T17:34:37-05:00",
    "commit": "37acad8"
+  },
+  "T1.1": {
+   "run": "0.3.1",
+   "at": "2026-11-23T18:52:17-05:00",
+   "held": "The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.",
+   "text": "148d32c30880"
+  },
+  "T3.1": {
+   "run": "0.3.1",
+   "at": "2026-11-23T18:52:52-05:00",
+   "held": "The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item.",
+   "text": "8fa087e89431"
+  },
+  "T4.1": {
+   "run": "0.3.1",
+   "at": "2026-11-23T18:53:32-05:00",
+   "held": "The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item.",
+   "text": "0ef10fbada34"
+  },
+  "T4.2": {
+   "run": "0.3.1",
+   "at": "2026-11-23T18:54:06-05:00",
+   "held": "The agents changed no file for T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.2, T4.3, 2026-11-23T18:54:06-05:00) say why; answer by editing the spec item.",
+   "text": "d125fb82caef"
+  },
+  "T6.1": {
+   "run": "0.3.1",
+   "at": "2026-11-23T18:54:30-05:00",
+   "held": "The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-23T18:54:30-05:00) say why; answer by editing the spec item.",
+   "text": "0de0493fbe23"
+  },
+  "T2.1": {
+   "run": "0.3.1",
+   "at": "2026-11-23T18:54:53-05:00",
+   "held": "The agents changed no file for T2.1 and the checks were already green, so it is not built. Their replies on the board (step T2.1, 2026-11-23T18:54:53-05:00) say why; answer by editing the spec item.",
+   "text": "32794f584415"
+  },
+  "T5.1": {
+   "run": "0.3.1",
+   "at": "2026-11-23T18:55:28-05:00",
+   "held": "The agents changed no file for T5.1 and the checks were already green, so it is not built. Their replies on the board (step T5.1, 2026-11-23T18:55:28-05:00) say why; answer by editing the spec item.",
+   "text": "0ed1ff784136"
+  },
+  "T7.1": {
+   "run": "0.3.1",
+   "at": "2026-11-23T18:55:49-05:00",
+   "held": "The agents changed no file for T7.1 and the checks were already green, so it is not built. Their replies on the board (step T7.1, 2026-11-23T18:55:49-05:00) say why; answer by editing the spec item.",
+   "text": "542cb281c18b"
   }
  }
 }

@@ -3,7 +3,7 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: stopped
+result: waiting-designer
 ---
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
@@ -1444,14 +1444,420 @@ contract: 120 lookups in 72 top-level scenes, 0 unresolved
 contract: 0 emitted signals unheard
 contract: 0 looked-up names used twice
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 12: scan (2026-11-23T18:51:50-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (2 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C5 The 0.3 Dev buttons, never built | change | Patricia | partial (built, waits on its tests) | ✓ dev button Show welcome, ✓ dev button Show victory, ✓ dev button +1 patch (free), ✓ dev button Reset habitat, ✓ dev button Unlock Journal, ✓ ledger 0.3.1 |
+| C7 Settings icon with a language switch, and every label transl | change | Patricia, Bob | partial (built, waits on its tests) | ✓ node FarmUI, ✓ node HintBubbleLabel, ✓ node HintLabel, ✓ node LangEnglishButton, ✓ node LangFrenchButton, ✗ node ModalPanel, ✓ node SettingsButton, ✓ node SettingsCloseButton, ✓ node SettingsPanel, ✓ ledger 37acad8 |
+
+### Order: new or rescored (10 of 10)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T1.1 item 1: the pill has no Button child; it shows on  | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 2 | T3.1 item 3: each tab holds exactly its rows in order ( | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 3 | T4.1 every test run sets `show_hint = false` except the | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 4 | T4.2 item 4: with `show_hint = true`, no bubble under t | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 5 | T6.1 item 6: `ForkIcon` has the fork shape and no "Harv | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 6 | T2.1 item 2: buying a patch with the Shop open shows no | 3.79 | 0 | 2 | 0.21 | 1 | designer feature; cost 0.21 (Quinn) |
+| 7 | T5.1 item 5: each of the six Dev buttons exists in the  | 3.79 | 0 | 2 | 0.21 | 1 | designer feature; cost 0.21 (Quinn) |
+| 8 | T7.1 item 7: the gear shows on the farm view only, top- | 3.79 | 0 | 2 | 0.21 | 1 | designer feature; cost 0.21 (Quinn) |
+| 9 | T4.3 mutations in `tests/mutations.json` prove the new  | 1.79 | 0 | 1 | 0.21 | 1 | housekeeping/handoff; cost 0.21 (Quinn) |
+| 10 | T8.1 item 8: the Tools icon shows in the first zoom and | 1.79 | 0 | 1 | 0.21 | 1 | housekeeping/handoff; cost 0.21 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T1.1** (score 5.79: play-test fix; cost 0.21 (Quinn)).
+
+### Step: T1.1 (2026-11-23T18:51:50-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T1.1-quinn.md` (5711 chars)
+- Quinn's step skipped: every line already has its marked test (T1.1: t_shop_costs_floor_base_growth, t_shop_buy_deducts_and_levels, t_shop_buttons_disabled_unaffordable_maxed_locked, t_shop_rows_order_and_level_text, t_shop_auto_sell_locked_until_delivery_1, t_shop_buy_button_real_click_twice, t_shop_no_row_overlaps_other_controls, t_welcome_off_by_default_in_tests)
+- Tests this round (8): own (8): `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_buy_deducts_and_levels`, `t_shop_costs_floor_base_growth`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_welcome_off_by_default_in_tests`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS (no new mutations since the step's base; every own test is already named by a mutation in `game/tests/mutations.json`)
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.
+
+## Pass 13: scan (2026-11-23T18:52:17-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T1.1 item 1: the pill has no Button child; it shows on the farm v | test | Quinn | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T1.1: item 1: the pill has no Button child; it shows on the farm view and is
+  - Question: The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.
+
+Next: **T3.1** (score 5.79: play-test fix; cost 0.21 (Quinn)).
+
+### Step: T3.1 (2026-11-23T18:52:17-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T3.1-quinn.md` (6562 chars)
+- Quinn's step skipped: every line already has its marked test (T3.1: t_fork_reach_by_level, t_fork_post_auto_yield_bonus, t_patch_plant_steps_group_health_twice)
+- Tests this round (3): own (3): `t_fork_post_auto_yield_bonus`, `t_fork_reach_by_level`, `t_patch_plant_steps_group_health_twice`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS (no new mutations since the step's base; every own test is already named by a mutation in `game/tests/mutations.json`)
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item.
+
+## Pass 14: scan (2026-11-23T18:52:52-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T3.1 item 3: each tab holds exactly its rows in order (Tree map a | test | Quinn | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T1.1: item 1: the pill has no Button child; it shows on the farm view and is
+  - Question: The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.
+- T3.1: item 3: each tab holds exactly its rows in order (Tree map above); Res
+  - Question: The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item.
+
+Next: **T4.1** (score 5.79: play-test fix; cost 0.21 (Quinn)), with T4.2, T4.3.
+
+### Step: T4.1, T4.2, T4.3 (2026-11-23T18:52:52-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T4.1-quinn.md` (7620 chars)
+- Quinn's step skipped: every line already has its marked test (T4.1: t_gearing_gears_visible_by_level, t_gearing_gears_turn_opposite_twice, t_bumble_visitor_toast_journal_unlock_twice, T4.2: t_gearing_turns_by_level, t_gearing_bottling_time_unchanged, t_gearing_own_motor_cut)
+- Tests this round (6): own (6): `t_bumble_visitor_toast_journal_unlock_twice`, `t_gearing_bottling_time_unchanged`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_gearing_own_motor_cut`, `t_gearing_turns_by_level`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS (no new mutations since the step's base; every own test is already named by a mutation in `game/tests/mutations.json`)
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item.
+
+## Pass 15: scan (2026-11-23T18:53:32-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T4.1 every test run sets `show_hint = false` except the item 4 hi | test | Quinn | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T4.1: every test run sets `show_hint = false` except the item 4 hint tests; 
+  - Question: The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item.
+- T1.1: item 1: the pill has no Button child; it shows on the farm view and is
+  - Question: The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.
+- T3.1: item 3: each tab holds exactly its rows in order (Tree map above); Res
+  - Question: The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item.
+
+Next: **T4.2** (score 5.79: play-test fix; cost 0.21 (Quinn)), with T4.3.
+
+### Step: T4.2, T4.3 (2026-11-23T18:53:32-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T4.2-quinn.md` (7498 chars)
+- Quinn's step skipped: every line already has its marked test (T4.2: t_gearing_turns_by_level, t_gearing_bottling_time_unchanged, t_gearing_own_motor_cut)
+- Tests this round (3): own (3): `t_gearing_bottling_time_unchanged`, `t_gearing_own_motor_cut`, `t_gearing_turns_by_level`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS (no new mutations since the step's base; every own test is already named by a mutation in `game/tests/mutations.json`)
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.2, T4.3, 2026-11-23T18:54:06-05:00) say why; answer by editing the spec item.
+
+## Pass 16: scan (2026-11-23T18:54:06-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T4.2 item 4: with `show_hint = true`, no bubble under the welcome | test | Quinn | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T4.1: every test run sets `show_hint = false` except the item 4 hint tests; 
+  - Question: The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item.
+- T1.1: item 1: the pill has no Button child; it shows on the farm view and is
+  - Question: The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.
+- T3.1: item 3: each tab holds exactly its rows in order (Tree map above); Res
+  - Question: The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item.
+- T4.2: item 4: with `show_hint = true`, no bubble under the welcome overlay; 
+  - Question: The agents changed no file for T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.2, T4.3, 2026-11-23T18:54:06-05:00) say why; answer by editing the spec item.
+
+Next: **T6.1** (score 5.79: play-test fix; cost 0.21 (Quinn)).
+
+### Step: T6.1 (2026-11-23T18:54:06-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T6.1-quinn.md` (6373 chars)
+- Quinn's step skipped: every line already has its marked test (T6.1: t_autosell_full_bed_leaves_by_itself, t_autosell_not_owned_full_bed_waits, t_autosell_part_load_sells_by_sell, t_autosell_twice_matches)
+- Tests this round (4): own (4): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS (no new mutations since the step's base; every own test is already named by a mutation in `game/tests/mutations.json`)
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-23T18:54:30-05:00) say why; answer by editing the spec item.
+
+## Pass 17: scan (2026-11-23T18:54:30-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T6.1 item 6: `ForkIcon` has the fork shape and no "Harvest" text, | test | Quinn | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T4.1: every test run sets `show_hint = false` except the item 4 hint tests; 
+  - Question: The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item.
+- T1.1: item 1: the pill has no Button child; it shows on the farm view and is
+  - Question: The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.
+- T3.1: item 3: each tab holds exactly its rows in order (Tree map above); Res
+  - Question: The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item.
+- T4.2: item 4: with `show_hint = true`, no bubble under the welcome overlay; 
+  - Question: The agents changed no file for T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.2, T4.3, 2026-11-23T18:54:06-05:00) say why; answer by editing the spec item.
+- T6.1: item 6: `ForkIcon` has the fork shape and no "Harvest" text, and `Harv
+  - Question: The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-23T18:54:30-05:00) say why; answer by editing the spec item.
+
+Next: **T2.1** (score 3.79: designer feature; cost 0.21 (Quinn)).
+
+### Step: T2.1 (2026-11-23T18:54:30-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T2.1-quinn.md` (4873 chars)
+- Quinn's step skipped: every line already has its marked test (T2.1: t_flight_fill_rate_level3, t_habitat_start_cap_thriving_once, t_habitat_pill_order_plus_opens_shop_twice)
+- Tests this round (3): own (3): `t_flight_fill_rate_level3`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS (no new mutations since the step's base; every own test is already named by a mutation in `game/tests/mutations.json`)
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T2.1 and the checks were already green, so it is not built. Their replies on the board (step T2.1, 2026-11-23T18:54:53-05:00) say why; answer by editing the spec item.
+
+## Pass 18: scan (2026-11-23T18:54:53-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T2.1 item 2: buying a patch with the Shop open shows no toast unt | test | Quinn | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T4.1: every test run sets `show_hint = false` except the item 4 hint tests; 
+  - Question: The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item.
+- T1.1: item 1: the pill has no Button child; it shows on the farm view and is
+  - Question: The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.
+- T2.1: item 2: buying a patch with the Shop open shows no toast until Close, 
+  - Question: The agents changed no file for T2.1 and the checks were already green, so it is not built. Their replies on the board (step T2.1, 2026-11-23T18:54:53-05:00) say why; answer by editing the spec item.
+- T3.1: item 3: each tab holds exactly its rows in order (Tree map above); Res
+  - Question: The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item.
+- T4.2: item 4: with `show_hint = true`, no bubble under the welcome overlay; 
+  - Question: The agents changed no file for T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.2, T4.3, 2026-11-23T18:54:06-05:00) say why; answer by editing the spec item.
+- T6.1: item 6: `ForkIcon` has the fork shape and no "Harvest" text, and `Harv
+  - Question: The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-23T18:54:30-05:00) say why; answer by editing the spec item.
+
+Next: **T5.1** (score 3.79: designer feature; cost 0.21 (Quinn)).
+
+### Step: T5.1 (2026-11-23T18:54:53-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T5.1-quinn.md` (4966 chars)
+- Quinn's step skipped: every line already has its marked test (T5.1: t_delivery_look_groups_by_level, t_delivery_stacks_not_flame_material, t_victory_delay_show_close_once_per_farm, t_victory_waits_for_farm_view)
+- Tests this round (4): own (4): `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS (no new mutations since the step's base; every own test is already named by a mutation in `game/tests/mutations.json`)
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T5.1 and the checks were already green, so it is not built. Their replies on the board (step T5.1, 2026-11-23T18:55:28-05:00) say why; answer by editing the spec item.
+
+## Pass 19: scan (2026-11-23T18:55:28-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T5.1 item 5: each of the six Dev buttons exists in the Dev panel  | test | Quinn | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T4.1: every test run sets `show_hint = false` except the item 4 hint tests; 
+  - Question: The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item.
+- T1.1: item 1: the pill has no Button child; it shows on the farm view and is
+  - Question: The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.
+- T2.1: item 2: buying a patch with the Shop open shows no toast until Close, 
+  - Question: The agents changed no file for T2.1 and the checks were already green, so it is not built. Their replies on the board (step T2.1, 2026-11-23T18:54:53-05:00) say why; answer by editing the spec item.
+- T3.1: item 3: each tab holds exactly its rows in order (Tree map above); Res
+  - Question: The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item.
+- T4.2: item 4: with `show_hint = true`, no bubble under the welcome overlay; 
+  - Question: The agents changed no file for T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.2, T4.3, 2026-11-23T18:54:06-05:00) say why; answer by editing the spec item.
+- T5.1: item 5: each of the six Dev buttons exists in the Dev panel and, press
+  - Question: The agents changed no file for T5.1 and the checks were already green, so it is not built. Their replies on the board (step T5.1, 2026-11-23T18:55:28-05:00) say why; answer by editing the spec item.
+- T6.1: item 6: `ForkIcon` has the fork shape and no "Harvest" text, and `Harv
+  - Question: The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-23T18:54:30-05:00) say why; answer by editing the spec item.
+
+Next: **T7.1** (score 3.79: designer feature; cost 0.21 (Quinn)).
+
+### Step: T7.1 (2026-11-23T18:55:28-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T7.1-quinn.md` (8407 chars)
+- Quinn's step skipped: every line already has its marked test (T7.1: t_phase2_auto_sell_sets_once_toast_once, t_phase2_locked_auto_sell_keeps_phase_1)
+- Tests this round (2): own (2): `t_phase2_auto_sell_sets_once_toast_once`, `t_phase2_locked_auto_sell_keeps_phase_1`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS (no new mutations since the step's base; every own test is already named by a mutation in `game/tests/mutations.json`)
+- **Held:** no file changed in game/scripts, game/scenes, game/materials, game/tests, game/specs, game/translations, game/project.godot; not committed. The agents changed no file for T7.1 and the checks were already green, so it is not built. Their replies on the board (step T7.1, 2026-11-23T18:55:49-05:00) say why; answer by editing the spec item.
+
+## Pass 20: scan (2026-11-23T18:55:49-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T7.1 item 7: the gear shows on the farm view only, top-right, at  | test | Quinn | missing AMBIGUOUS | none found |
+
+No score changed.
+
+### Ambiguous (not scored; built after the designer answers)
+
+- T4.1: every test run sets `show_hint = false` except the item 4 hint tests; 
+  - Question: The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item.
+- T1.1: item 1: the pill has no Button child; it shows on the farm view and is
+  - Question: The agents changed no file for T1.1 and the checks were already green, so it is not built. Their replies on the board (step T1.1, 2026-11-23T18:52:17-05:00) say why; answer by editing the spec item.
+- T2.1: item 2: buying a patch with the Shop open shows no toast until Close, 
+  - Question: The agents changed no file for T2.1 and the checks were already green, so it is not built. Their replies on the board (step T2.1, 2026-11-23T18:54:53-05:00) say why; answer by editing the spec item.
+- T3.1: item 3: each tab holds exactly its rows in order (Tree map above); Res
+  - Question: The agents changed no file for T3.1 and the checks were already green, so it is not built. Their replies on the board (step T3.1, 2026-11-23T18:52:52-05:00) say why; answer by editing the spec item.
+- T4.2: item 4: with `show_hint = true`, no bubble under the welcome overlay; 
+  - Question: The agents changed no file for T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.2, T4.3, 2026-11-23T18:54:06-05:00) say why; answer by editing the spec item.
+- T5.1: item 5: each of the six Dev buttons exists in the Dev panel and, press
+  - Question: The agents changed no file for T5.1 and the checks were already green, so it is not built. Their replies on the board (step T5.1, 2026-11-23T18:55:28-05:00) say why; answer by editing the spec item.
+- T6.1: item 6: `ForkIcon` has the fork shape and no "Harvest" text, and `Harv
+  - Question: The agents changed no file for T6.1 and the checks were already green, so it is not built. Their replies on the board (step T6.1, 2026-11-23T18:54:30-05:00) say why; answer by editing the spec item.
+- T7.1: item 7: the gear shows on the farm view only, top-right, at least 120 
+  - Question: The agents changed no file for T7.1 and the checks were already green, so it is not built. Their replies on the board (step T7.1, 2026-11-23T18:55:49-05:00) say why; answer by editing the spec item.
+
+Next: **T4.3** (score 1.79: housekeeping/handoff; cost 0.21 (Quinn)).
+
+### Step: T4.3 (2026-11-23T18:55:49-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T4.3-quinn.md` (6949 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (3,079,133 tokens, 31 turns, 531 s):
+
+(stopped at the 30-turn cap before a reply)
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 30 (cap 30; CLI num_turns 31); end `error_max_turns`
+
+- Tests this round (7): own (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; calls a helper changed in `tests/test_helpers_4.gd` (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; changed in `tests/run_tests.gd` (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; changed in `tests/test_hint.gd` (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_hint_waits_for_play_then_starts_twice  run 1 step play: the hint_wait bubble is on screen, clear of its target, 28 px, Skip 120 px: expected [] got ["hint_wait: the bubble [P: (64, 412), S: (640, 160)] overlaps the toasts\' place [P
+```
+
+#### Fix round 1: to Quinn (the failing tests are ones this step wrote)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T4.3-fix1-quinn.md` (4928 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (84,006 tokens, 4 turns, 14 s):
+
+The failing check is `t_hint_waits_for_play_then_starts_twice`, and I couldn't tell from the output why it fails. I changed nothing except a diagnostic.
+
+- **What I checked:** `game/scripts/hint.gd` `_place` already places the bubble clear of `PhaseToast`'s rect, as the spec requires ("sits above the toasts' place").
+- **What I didn't see:** the failure message was cut off, so I couldn't see the toast rect or the target. I can't yet say whether the game or the test is wrong. A stale or hidden `PhaseToast` read by the test is one possibility. A real placement bug in the game is the other.
+- **Diagnostic added:** in `game/tests/test_helpers_4.gd` (line 190), the toast-overlap message now ends with a `diag:` part. It prints the toast's `visible`, alpha and `is_visible_in_tree()`, the target rects and the viewport size.
+- **Next step:** the next check will print it. If the toast is hidden or has zero alpha, the test should skip it. If it is shown, the owner is Patricia's `hint.gd` `_place`.
+
+I ran no tests.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 4); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (7): own (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; calls a helper changed in `tests/test_helpers_4.gd` (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; changed in `tests/run_tests.gd` (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; changed in `tests/test_hint.gd` (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; last failures (1): `t_hint_waits_for_play_then_starts_twice`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_hint_waits_for_play_then_starts_twice  run 1 step play: the hint_wait bubble is on screen, clear of its target, 28 px, Skip 120 px: expected [] got ["hint_wait: the bubble [P: (64, 412), S: (640, 160)] overlaps the toasts\' place [P
+```
+
+#### Fix round 2: to Bob
+
+- Brief for Bob: `game/reports/goal/0.3.1/briefs/T4.3-fix2-bob.md` (5234 chars)
+- Budget guard for Bob: override
+
+**Bob** (99,385 tokens, 8 turns, 21 s):
+
+I changed nothing, because the cause isn't visible from my folder. `diag needed`.
+
+**What the failure shows:** the bubble sits at P (64, 412), S (640, 160), so it spans y 412–572. In `main.tscn`, `PhaseToast` is anchored at y 200–300 (x ±300), so the two shouldn't overlap. The test's message was cut off before the toast's rect, so I can't see where it thinks the toast is.
+
+**Possible cause:** `PhaseToast` is a `PanelContainer` with a wrapping 30 px label. It may grow taller than 100 px at runtime. I can't confirm that from the scene alone.
+
+**Values that would show the cause:**
+- The full diag text of the failing row. It prints the toast's global rect, its visibility and alpha, and the targets.
+- `PhaseToast.size` and `PhaseToast.get_global_rect()` at the hint_wait step.
+- The hint target rect at that step.
+
+`hint.gd` `_place` (lines 279–313) already keeps the bubble clear of the toast's rect. The next round should go to Quinn for those prints.
+
+No placeholder values were changed.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 5 (cap 15; CLI num_turns 8); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (7): own (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; calls a helper changed in `tests/test_helpers_4.gd` (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; changed in `tests/run_tests.gd` (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; changed in `tests/test_hint.gd` (7): `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_texts_match_content`, `t_hint_waits_for_play_then_starts_twice`; last failures (1): `t_hint_waits_for_play_then_starts_twice`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+    FAIL  t_hint_waits_for_play_then_starts_twice  run 1 step play: the hint_wait bubble is on screen, clear of its target, 28 px, Skip 120 px: expected [] got ["hint_wait: the bubble [P: (64, 412), S: (640, 160)] overlaps the toasts\' place [P
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T4.3: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.1-playtest-fixes.md --accept T4.3 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T4.3 fix-round edits"`.
+
 ## Result
 
-C5 accepted with a manual fix (commit failed: 
-no changes added to commit (use "git add" and/or "git commit -a")
-docs agree with code and config
-contract: 120 lookups in 72 top-level scenes, 0 unresolved
-contract: 0 emitted signals unheard
-contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
+Last invocation (2026-11-23T19:51:22-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
@@ -1492,4 +1898,7 @@ Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 | Patricia, C7 fix 1 | 85,848 | 25,456 | 10 | 17 s |
 | Bob, C7 fix 2 | 165,952 | 28,323 | 9 | 17 s |
 | Quinn, C7 fix 2 | 227,291 | 26,890 | 13 | 25 s |
-| **Total** | **11,180,395** | | | |
+| Quinn, T4.3 | 3,079,133 | 167,516 | 31 | 531 s |
+| Quinn, T4.3 fix 1 | 84,006 | 23,611 | 4 | 14 s |
+| Bob, T4.3 fix 2 | 99,385 | 23,750 | 8 | 21 s |
+| **Total** | **14,442,919** | | | |
