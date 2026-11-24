@@ -127,7 +127,8 @@ extends Resource
 
 # --- 0.2 item 14: shop layout, pending the designer's Design Votes pick (0 = compact, always-on panel; 1 = sheet, opens from a Shop button) ---
 @export_enum("compact", "sheet") var shop_layout: int = 1   # PLACEHOLDER (designer vote): compact overlaps Spin in the farm view, so the default is sheet
-@export var shop_row_height: int = 64                    # PLACEHOLDER (item 14, Bob's value): px of each shop row's buy button
+@export_range(0, 4) var bottom_slot: int = 1             # 0.3.2 item 6: 0 = nothing at the bottom, 1 = A (quick-buy bar); 2-4 stay free for B-D
+@export var shop_row_height: int = 64                   # PLACEHOLDER (item 14, Bob's value): px of each shop row's buy button
 @export var shop_font_size: int = 24                     # PLACEHOLDER (item 14, Bob's value): font of each row's name and level labels
 
 # --- 0.3 item 5: victory screen ---

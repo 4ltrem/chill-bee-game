@@ -326,6 +326,13 @@ func _actions_row() -> Control:
 	flow.add_child(_button("Health to thriving − 1 patch", _health_almost_thriving))
 	flow.add_child(_button("Reset habitat", reset_habitat))
 	flow.add_child(_button("Unlock Journal", _unlock_journal))
+	var slot_button: Button = _button("", func() -> void: pass)   # 0.3.2 item 6: switches bottom_slot 0 <-> 1 and shows the value
+	slot_button.name = "BottomSlotButton"
+	slot_button.text = "Bottom slot: %d" % config.bottom_slot
+	slot_button.pressed.connect(func() -> void:
+		config.bottom_slot = 0 if config.bottom_slot == 1 else 1
+		slot_button.text = "Bottom slot: %d" % config.bottom_slot)
+	flow.add_child(slot_button)
 	var bounds_button := Button.new()
 	bounds_button.text = "Show UI bounds"
 	bounds_button.pressed.connect(func() -> void: set_ui_bounds(not ui_bounds_shown()))

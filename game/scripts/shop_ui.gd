@@ -39,6 +39,7 @@ func _ready() -> void:
 	if farm_ui != null:
 		var journal := JournalUI.new()   # item 8: wires JournalButton / JournalPanel (added at runtime)
 		farm_ui.add_child.call_deferred(journal)
+		farm_ui.add_child.call_deferred(QuickBuyUI.new())   # 0.3.2 item 6: wires Bob's QuickBuy bar
 	Economy.money_changed.connect(func(_m: int) -> void: _refresh())
 	Economy.upgrade_changed.connect(func(_id: String, _l: int) -> void: _refresh())
 	_refresh()
