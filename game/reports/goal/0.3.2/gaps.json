@@ -1,7 +1,7 @@
 {
  "spec": "0.3.2-tests-and-quick-buy.md",
  "version": "0.3.2",
- "at": "2026-11-24T01:23:09-05:00",
+ "at": "2026-11-24T02:03:19-05:00",
  "unit_log": "game/reports/_runs/20261123-224854/unit.log",
  "goals": {
   "C1": {
@@ -20,6 +20,30 @@
      "kind": "node",
      "name": "SellIcon",
      "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_steps_follow_state_in_order_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_shop_only_plant_above_sheet_ends_on_patch",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_hidden_under_journal_and_victory_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_leaving_shows_step_that_fits_twice",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -321,8 +345,33 @@
     "C8",
     "C9"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hint_steps_follow_state_in_order_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_shop_only_plant_above_sheet_ends_on_patch",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_hidden_under_journal_and_victory_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_leaving_shows_step_that_fits_twice",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -340,8 +389,33 @@
    "depends": [
     "C1"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_hint_steps_follow_state_in_order_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_shop_only_plant_above_sheet_ends_on_patch",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_hidden_under_journal_and_victory_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_hint_leaving_shows_step_that_fits_twice",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -807,22 +881,22 @@
  "order": [
   {
    "id": "C1",
-   "score": 9.74,
+   "score": 9.73,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.26,
+    "cost": 0.27,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C8",
-   "score": 9.74,
+   "score": 9.73,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.26,
+    "cost": 0.27,
     "ready": 1,
     "blocked_by": []
    }

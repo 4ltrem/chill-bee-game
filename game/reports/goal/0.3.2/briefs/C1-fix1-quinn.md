@@ -1,0 +1,12 @@
+Goal agent run `0.3.2`, fix round 1 for goal C1 of `game/specs/0.3.2-tests-and-quick-buy.md`, branch `main`. These checks failed after the last step. Fix what is in your folder only; if the failure is in another folder or in the spec, say so instead. Do not commit. Do not run the test suite, mutations or shots: the goal agent runs every check after you. You have 15 turns.
+
+Your folder: tests/. Update only a test whose expectation this change of the spec replaces, and quote the spec line in a comment beside it. Any other failure is a finding against the code: leave the test and say which. If neither the failure message nor the code shows why a test fails, do not guess a fix: extend that test's FAIL message with one `diag:` part printing the state that would explain it (the state machine's value, counts on each side, elapsed vs. cap time), change nothing else for it, and say so; the next check prints it. Do not run the tests: the goal agent runs them after you. Test rules (L39): a flow step that several tests take (reach the second stop, open the shop, fill the bucket, wait for CRANKING) goes through one shared helper (unit: `tests/test_helpers_*.gd`; the windowed suites, which extend SceneTree: a static func in `tests/flow.gd`, preloaded, created on first need); reuse it, add it if it is missing, and never copy the steps inline, so a change to that step is fixed in one place. No literal cell index, node count or screen size: read it from the config, the scene, or ProjectSettings (`display/window/size/viewport_width` and `_height`).
+
+tests:
+FAIL    unit      14 passed, 1 failed  (godot exit 1, 30 noise lines dropped)  game/reports/_runs/20261124-020335/unit.log
+    FAIL  t_hint_steps_follow_state_in_order_twice  walk: first sale made but still at the second stop: no bubble (hint_shop is for the farm view): expected  got hint_sell | walk: first sale made but still at the second stop: no bubble (hint_sh
+
+Spec text:
+1. **The hint walk test hangs.** `t_hint_steps_follow_state_in_order_twice` (0.3.1 item 4) hangs after the crank: its `_until` for `SellIcon` never returns (WALK markers in `test_helpers_4.gd` `_hi_walk`), and it is set aside in `run_tests.gd`. Find why the test clock stops after bottling: if the game is at fault (bottling or the truck never finishing with `show_hint = true`), it is a bug for Patricia; if the helper is at fault, Quinn fixes the helper. The test goes back in the suite, green, without a longer timeout as the fix.
+
+Reply in at most 150 words.

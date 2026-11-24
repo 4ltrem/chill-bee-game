@@ -3,7 +3,7 @@ spec: 0.3.2-tests-and-quick-buy.md
 version: 0.3.2
 run: 0.3.2
 started: 2026-11-23
-result: paused
+result: waiting-designer
 ---
 # Goal agent: 0.3.2-tests-and-quick-buy.md (run 0.3.2)
 
@@ -926,9 +926,166 @@ godot_run: play done in 2m19s (PASS)
 
 **Paused:** `tests` timed out twice with no failing test: the suite outgrew godot_run's timeout (or a test hangs), which is not a code bug, so no fix round was started. Check the newest `game/reports/_runs/*/unit.log` for the last test it reached, raise the limit in `_tools/godot_run.py` (`UNIT_CAP_S`) if the suite only grew, then run the same command again to resume.
 
+## Resumed 2026-11-24
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md` (the run had stopped: `paused`).
+Branch `main`: stays on it.
+
+## Pass 10: scan (2026-11-24T02:03:19-05:00)
+
+Unit results from `game/reports/_runs/20261123-224854/unit.log`. 0 of 35 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (3 of 35)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C1 The hint walk test hangs. | change | Patricia | partial | ✓ node SellIcon, ✗ test t_hint_steps_follow_state_in_order_twice (FAIL), ✓ test t_hint_shop_only_plant_above_sheet_ends_on_patch, ✓ test t_hint_hidden_under_journal_and_victory_twice, ✓ test t_hint_leaving_shows_step_that_fits_twice |
+| T.1 every test run sets `show_hint = false` except the hint test | test | Quinn | partial | ✗ test t_hint_steps_follow_state_in_order_twice (FAIL), ✓ test t_hint_shop_only_plant_above_sheet_ends_on_patch, ✓ test t_hint_hidden_under_journal_and_victory_twice, ✓ test t_hint_leaving_shows_step_that_fits_twice |
+| T1.1 item 1: `t_hint_steps_follow_state_in_order_twice` back in ` | test | Quinn | partial | ✗ test t_hint_steps_follow_state_in_order_twice (FAIL), ✓ test t_hint_shop_only_plant_above_sheet_ends_on_patch, ✓ test t_hint_hidden_under_journal_and_victory_twice, ✓ test t_hint_leaving_shows_step_that_fits_twice |
+
+### Order: new or rescored (2 of 29)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | C1 The hint walk test hangs. | 9.73 | 2 | 2 | 0.27 | 1 | 2 goal(s) wait on it; designer feature; cost 0.27 (Patricia) |
+| 2 | C8 No hint said twice | 9.73 | 2 | 2 | 0.27 | 1 | 2 goal(s) wait on it; designer feature; cost 0.27 (Patricia) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C1** (score 9.73: 2 goal(s) wait on it; designer feature; cost 0.27 (Patricia)).
+
+### Step: C1 (2026-11-24T02:03:19-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3.2/briefs/C1-patricia.md` (9477 chars)
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/C1-quinn.md` (3243 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (114,960 tokens, 7 turns, 12 s):
+
+No file changes this run. The helper fix for item 1 is already in the committed tree, and `git status` on `game/tests` is clean.
+
+- **Cause:** the helper was at fault. `_hi_walk` in `test_helpers_4.gd` cranked only the first load. A bucket larger than one load bottles, reloads from the pile and returns to CRANKING, so the walk then waited for `SellIcon` while the crank sat idle. It now cranks every load until `SellIcon` shows (comment cites 0.3.2 item 1). It uses `_bucket_cells`, `_turns_for` and `_tap_gap`, with no literal indices. I found no sign that bottling or the truck is at fault in the game, so there is no bug for Patricia.
+- **Suite:** `t_hint_steps_follow_state_in_order_twice` is back in `run_tests.gd`. The timeout is unchanged.
+- **Other listed tests:** none touch a node, flow step or value this spec line replaces, so I left them alone.
+- **Not run:** I ran no tests, as instructed.
+
+**Node names used:** `SellIcon`, `Centrifuge`, `BackButton`, `HintBubble`.
+
+**Open question:** `mutations.json` already lists this test; the two mutations (leave step, twice step) are unproven until Rex runs them.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 7); end `success`
+
+
+**Patricia** (109,473 tokens, 6 turns, 12 s):
+
+Item 1 needs no game change from me, so I changed no files. I haven't run the test, and neither has anyone else.
+
+**Cause:** the hang was in the test helper, not in bottling or the truck. A bucket larger than one load bottles, reloads from the pile and goes back to CRANKING. The old walk cranked only the first load, then waited forever for `SellIcon`. `_hi_walk` in `test_helpers_4.gd` already has the fix, marked "0.3.2 item 1 (C1)". It cranks every load until `SellIcon` shows or the centrifuge has no reload left. `run_tests.gd` already lists `t_hint_steps_follow_state_in_order_twice` again. Those edits are Quinn's, so Quinn owns the helper side.
+
+**Check:** `contract_check.py` passes with 0 unresolved lookups. The hook blocked me from running `godot_run.py`. Rex needs to run `unit start --only t_hint_steps_follow_state_in_order_twice --time-scale 6` to confirm it's green. Quinn may remove the `WALK` diagnostic prints afterwards.
+
+**Node names used:** `SellIcon`, `Centrifuge`.
+
+**Open questions:** none.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 6); end `success`
+
+- Tests this round (15): own (15): `t_focus_styles`, `t_fork_shows_while_cranking_and_state_table`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_steps_follow_state_in_order_twice`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_never_overlap`, `t_node_contract`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_ui_and_camera`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      14 passed, 1 failed  (godot exit 1, 30 noise lines dropped)  game/reports/_runs/20261124-020335/unit.log
+    FAIL  t_hint_steps_follow_state_in_order_twice  walk: first sale made but still at the second stop: no bubble (hint_shop is for the farm view): expected  got hint_sell | walk: first sale made but still at the second stop: no bubble (hint_sh
+```
+
+#### Fix round 1: to Patricia, Quinn
+
+- Brief for Patricia: `game/reports/goal/0.3.2/briefs/C1-fix1-patricia.md` (3149 chars)
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/C1-fix1-quinn.md` (2507 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Quinn** (143,645 tokens, 7 turns, 16 s):
+
+Fixed in `game/tests/test_helpers_4.gd` (`_hi_walk`). I haven't run it.
+
+- **Cause:** the failure is in the test, not the game. `hint.gd` sets `_sold` only when the truck's `departed` signal fires. The test checked for no bubble as soon as money rose, which happens before the truck leaves. At that moment the bubble was still `hint_sell`.
+- **Fix:** after the sale, the walk now waits (up to 8 s) until the key is no longer `hint_sell`, then asserts "no bubble". The wait is not a longer timeout on the old check.
+- **Diag:** I added a `diag:` part to that assert's FAIL message, printing the key and the money.
+- **Open point:** I'm assuming the truck does depart on its own after the sale. If it never does, the wait times out and the assert prints the diag.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 7); end `success`
+
+
+**Patricia** (182,272 tokens, 11 turns, 17 s):
+
+The fix is in, but I haven't run any tests, as instructed, so it is unconfirmed.
+
+**Cause (scripts/):** `Truck.sell()` credits the money at once. The truck only leaves (`departed`) after the jars still flying to its bed have landed. `hint.gd` set `_sold` on `departed`, so for a few frames after the money rose, the bubble still showed `hint_sell`. That is the test's failure at the second stop.
+
+**Changes:**
+- `scripts/truck.gd`: added `signal sold`, emitted in `sell()` once the money is credited.
+- `scripts/hint.gd`: `_sold` is now set from `truck.sold` instead of `truck.departed`.
+
+**Placeholders:** none. No touch targets or fonts changed.
+
+**For Quinn:** re-run `t_hint_steps_follow_state_in_order_twice`. The `hint_shop` step now appears on the farm view as soon as the sale is made. It no longer waits for the truck to leave. If the walk still hangs on `SellIcon`, say `diag needed`: print `_flying_to_bed` and `_departure_pending` after the crank.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 6 (cap 15; CLI num_turns 11); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (117): own (15): `t_focus_styles`, `t_fork_shows_while_cranking_and_state_table`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_steps_follow_state_in_order_twice`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_never_overlap`, `t_node_contract`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_ui_and_camera`; calls a helper changed in `tests/test_helpers_4.gd` (1): `t_hint_steps_follow_state_in_order_twice`; impacted by `scripts/hint.gd` (via `HintBubble`, `Truck`, `hint`, `skip`, `state`) (57): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_timing`, `t_bucket_capacity_and_states`, `t_button_press_is_not_a_crank`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_second_stop_in_frame`, `t_centrifuge_lid_paths`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_fill_in_order_slot_by_slot`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_harvest_hidden_at_second_stop`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_texts_match_content`, `t_hive_size_vs_truck`, `t_hold_never_slower`, `t_hold_release_stops`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_layout_no_jar_outside_crate`, `t_layout_objects_on_cells`, `t_layout_truck_wheels_on_ground`, `t_leftover_adds_no_turns`, `t_lid_close_and_signal`, `t_no_crank_during_zoom`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_pan_after_all_frames_uncapped`, `t_paused_crank_never_finishes_in_farm_view`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_rules`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_skip_icon_farm_view_only`, `t_skip_icon_reaches_thriving_free_twice`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_start_helper_can_fail`, `t_summary_after_sell`, `t_truck_and_crate_jars_full_with_lids`, `t_turns_per_jar`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`; impacted by `scripts/truck.gd` (via `Truck`, `_process`, `advance`, `can_sell`, `departed`, `load_value`, `sell`, `sold`, `truck`) (87): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`, `t_barrel_eases_to_stop`, `t_became_full_count_full_overflow`, `t_became_full_once_while_filling`, `t_bottling_35_single_cells_is_2_jars`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_time_is_live`, `t_bottling_timing`, `t_button_press_is_not_a_crank`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_second_stop_in_frame`, `t_centrifuge_lid_paths`, `t_combs_visible_in_hive`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crate_fulls_fly_to_truck_on_return`, `t_delivery_stacks_not_flame_material`, `t_delivery_trip_time_by_level`, `t_dev_bottling_seconds`, `t_dev_max_tap_rate`, `t_economy_removed_jars`, `t_fill_in_order_slot_by_slot`, `t_fill_time_level0`, `t_fill_time_with_levels`, `t_flight_fill_rate_level3`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gearing_bottling_time_unchanged`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_gearing_turns_by_level`, `t_hint_steps_follow_state_in_order_twice`, `t_hive_rate_is_live`, `t_hive_size_vs_truck`, `t_hold_at_cap`, `t_hold_never_slower`, `t_hold_ramp_is_visual_only`, `t_hold_release_stops`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_layout_no_jar_outside_crate`, `t_layout_objects_on_cells`, `t_layout_truck_wheels_on_ground`, `t_leftover_adds_no_turns`, `t_lid_still_crank_and_gear1_turn_twice`, `t_lowered_frame_comes_back_empty_then_fills`, `t_next_frame_to_harvest`, `t_node_contract`, `t_overflow_one_hive_then_pause`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_resume_pending_pile_loads_while_zoom_open`, `t_retired_api_gone`, `t_risen_frame_never_fills`, `t_scrape_rules`, `t_scrape_value`, `t_speed_cell_flight`, `t_speed_jar_cycle`, `t_speed_lid_lift`, `t_spigot_bottling_time_by_level`, `t_spigot_jar_flight_unchanged`, `t_summary_after_sell`, `t_tap_cap`, `t_tap_cap_is_live`, `t_truck_and_crate_jars_full_with_lids`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_crate_while_away`, `t_truck_full_and_can_sell`, `t_truck_home_loads_crate_without_trip`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_return_loads_crate`, `t_truck_sell_credits_at_once`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_truck_trip_time_is_live`, `t_truck_wheels_roll_with_travel`, `t_turns_per_jar`, `t_wheel_rims`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_fill_and_bottling_keep_running`; last failures (1): `t_hint_steps_follow_state_in_order_twice`
+- Check `contract`: PASS
+- Tests first: the 15 own, written or last-failed tests alone; the other 102 and the windowed suites only if they pass
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      14 passed, 1 failed  (godot exit 1, 30 noise lines dropped)  game/reports/_runs/20261124-020852/unit.log
+    FAIL  t_hint_steps_follow_state_in_order_twice  walk: first sale made but still at the second stop: no bubble (hint_shop is for the farm view) | diag: key=hint_shop money=30: expected  got hint_shop | walk: first sale made but still at the 
+```
+
+#### Fix round 2: to Quinn (Patricia put the fault in tests/)
+
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/C1-fix2-quinn.md` (3837 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (124,607 tokens, 9 turns, 19 s):
+
+I made two small edits in `game/tests/test_helpers_4.gd` (the walk step near line 340) and ran nothing, as instructed.
+
+- **Expectation:** the test's expectation is right. `hint.gd` returns `Step.SHOP` only when `farm_view` is true (zoom NONE and not at the second stop). At the second stop after a sale the bubble should therefore be empty. I found no spec line on this, so the 0.3.1 item 4 spec rule is inferred from the code.
+- **Stale comment:** it said the hint sets `_sold` when the truck departs. I changed it to say `_sold` is now set from `truck.sold`, per Patricia's fix.
+- **Failure log predates the fix:** the failing log (`20261124-020852`) most likely predates Patricia's `truck.sold` change. I could not tell from the log or the code why it showed `hint_shop` at the second stop.
+- **`diag:`:** I extended the FAIL message with `second=` (`at_second_stop`) and `zoom=`. If it still fails, the next check prints them.
+
+If the walk still hangs on `SellIcon`, Patricia's note asks for a `diag needed` reply (print `_flying_to_bed` and `_departure_pending` after the crank). I have not added that.
+
+No game code was touched, and no open designer questions.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 6 (cap 15; CLI num_turns 9); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (117): own (15): `t_focus_styles`, `t_fork_shows_while_cranking_and_state_table`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_steps_follow_state_in_order_twice`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_never_overlap`, `t_node_contract`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_ui_and_camera`; calls a helper changed in `tests/test_helpers_4.gd` (1): `t_hint_steps_follow_state_in_order_twice`; impacted by `scripts/hint.gd` (via `HintBubble`, `Truck`, `hint`, `skip`, `state`) (57): `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_timing`, `t_bucket_capacity_and_states`, `t_button_press_is_not_a_crank`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_second_stop_in_frame`, `t_centrifuge_lid_paths`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_fill_in_order_slot_by_slot`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_harvest_hidden_at_second_stop`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_texts_match_content`, `t_hive_size_vs_truck`, `t_hold_never_slower`, `t_hold_release_stops`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_layout_no_jar_outside_crate`, `t_layout_objects_on_cells`, `t_layout_truck_wheels_on_ground`, `t_leftover_adds_no_turns`, `t_lid_close_and_signal`, `t_no_crank_during_zoom`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_pan_after_all_frames_uncapped`, `t_paused_crank_never_finishes_in_farm_view`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_resume_pending_pile_loads_while_zoom_open`, `t_scrape_rules`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_skip_icon_farm_view_only`, `t_skip_icon_reaches_thriving_free_twice`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_start_helper_can_fail`, `t_summary_after_sell`, `t_truck_and_crate_jars_full_with_lids`, `t_turns_per_jar`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`; impacted by `scripts/truck.gd` (via `Truck`, `_process`, `advance`, `can_sell`, `departed`, `load_value`, `sell`, `sold`, `truck`) (87): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`, `t_barrel_eases_to_stop`, `t_became_full_count_full_overflow`, `t_became_full_once_while_filling`, `t_bottling_35_single_cells_is_2_jars`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_time_is_live`, `t_bottling_timing`, `t_button_press_is_not_a_crank`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_second_stop_in_frame`, `t_centrifuge_lid_paths`, `t_combs_visible_in_hive`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crate_fulls_fly_to_truck_on_return`, `t_delivery_stacks_not_flame_material`, `t_delivery_trip_time_by_level`, `t_dev_bottling_seconds`, `t_dev_max_tap_rate`, `t_economy_removed_jars`, `t_fill_in_order_slot_by_slot`, `t_fill_time_level0`, `t_fill_time_with_levels`, `t_flight_fill_rate_level3`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gearing_bottling_time_unchanged`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_gearing_turns_by_level`, `t_hint_steps_follow_state_in_order_twice`, `t_hive_rate_is_live`, `t_hive_size_vs_truck`, `t_hold_at_cap`, `t_hold_never_slower`, `t_hold_ramp_is_visual_only`, `t_hold_release_stops`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_layout_no_jar_outside_crate`, `t_layout_objects_on_cells`, `t_layout_truck_wheels_on_ground`, `t_leftover_adds_no_turns`, `t_lid_still_crank_and_gear1_turn_twice`, `t_lowered_frame_comes_back_empty_then_fills`, `t_next_frame_to_harvest`, `t_node_contract`, `t_overflow_one_hive_then_pause`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_resume_pending_pile_loads_while_zoom_open`, `t_retired_api_gone`, `t_risen_frame_never_fills`, `t_scrape_rules`, `t_scrape_value`, `t_speed_cell_flight`, `t_speed_jar_cycle`, `t_speed_lid_lift`, `t_spigot_bottling_time_by_level`, `t_spigot_jar_flight_unchanged`, `t_summary_after_sell`, `t_tap_cap`, `t_tap_cap_is_live`, `t_truck_and_crate_jars_full_with_lids`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_crate_while_away`, `t_truck_full_and_can_sell`, `t_truck_home_loads_crate_without_trip`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_return_loads_crate`, `t_truck_sell_credits_at_once`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_truck_trip_time_is_live`, `t_truck_wheels_roll_with_travel`, `t_turns_per_jar`, `t_wheel_rims`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_fill_and_bottling_keep_running`; last failures (1): `t_hint_steps_follow_state_in_order_twice`
+- Check `contract`: PASS
+- Tests first: the 15 own, written or last-failed tests alone; the other 102 and the windowed suites only if they pass
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      14 passed, 1 failed  (godot exit 1, 30 noise lines dropped)  game/reports/_runs/20261124-021410/unit.log
+    FAIL  t_hint_steps_follow_state_in_order_twice  walk: first sale made but still at the second stop: no bubble (hint_shop is for the farm view) | diag: key=hint_shop money=30 second=false zoom=0: expected  got hint_shop | walk: first sale ma
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on C1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept C1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C1 fix-round edits"`.
+
 ## Result
 
-Last invocation (2026-11-24T02:00:06-05:00): paused.
+Last invocation (2026-11-24T02:19:06-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`
 
@@ -956,4 +1113,9 @@ Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/
 | Quinn, C4 | 112,612 | 25,975 | 7 | 15 s |
 | Patricia, C1 | 442,269 | 46,294 | 17 | 39 s |
 | Quinn, C1 | 885,897 | 66,531 | 32 | 99 s |
-| **Total** | **4,434,822** | | | |
+| Quinn, C1 | 114,960 | 27,525 | 7 | 12 s |
+| Patricia, C1 | 109,473 | 24,143 | 6 | 12 s |
+| Quinn, C1 fix 1 | 143,645 | 23,595 | 7 | 16 s |
+| Patricia, C1 fix 1 | 182,272 | 37,553 | 11 | 17 s |
+| Quinn, C1 fix 2 | 124,607 | 24,627 | 9 | 19 s |
+| **Total** | **5,109,779** | | | |
