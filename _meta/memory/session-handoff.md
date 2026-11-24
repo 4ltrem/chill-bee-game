@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 385322cc-1787-4260-a67d-1d43a99c3e18
-  modified: 2026-11-24T04:09:55.377Z
+  modified: 2026-11-24T04:10:58.910Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -14,7 +14,7 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 
 **NEXT:**
 1. **End of day** (`end-of-day` skill): log the 11/23 decisions, next ID **D284**. Sessions `5c77a6f2`, the 11/23 item 6-Back/8 session, maigd-a6 (L53/L54 tooling, item 7 ModalPanel, Oscar retired L55, roadmap Q3/Q5) and `385322cc` (this one). This session's decisions: build 0.3.1; Spin like the fork (88 drawn, 120 button, in every view); icon overlap judged on drawn circles, not touch rects; UI vote shots with `ui_bounds=true` ([[ui-vote-shots]]); Design Votes spin-farm (no sideways shift) and spin-farm-height A (`spin_farm_offset_y` 30, version 29 of the page); the hanging hint walk test set aside for 0.3.2; fix the 3 failing hint tests before play-testing; play-test fixes (Settings panel script, tabs fit their words, Coming soon in ink, fork fill at full + smooth circles, lid lifts for the pile, gear hides under sheets, Spin in the zoom resumes a paused crank); all those become 0.3.2 tests.
-2. **0.3.1 wrap-up:** checkpoint green 11/23 (528/528, `_runs/20261123-224854`); goal_agent left 14/18 partial (no tests for items 1, 2, 3, 5, 6, 7); designer closed 0.3.1 by note (blackboard `result: closed-by-designer`), the six test lines moved to the 0.3.2 draft. Log this as a decision at end-of-day. Tag `v0.3.1` / push: asked the designer 11/23, see the decision log. Play-test placeholders still to confirm: welcome/victory/Settings/hint bubble sizes and minutes to victory (Terry: 25).
+2. **0.3.1 wrap-up:** checkpoint green 11/23 (528/528, `_runs/20261123-224854`); goal_agent left 14/18 partial (no tests for items 1, 2, 3, 5, 6, 7); designer closed 0.3.1 by note (blackboard `result: closed-by-designer`), the six test lines moved to the 0.3.2 draft. Log this as a decision at end-of-day. Tagged `v0.3.1` at `bf3239e` and pushed main + tag (designer's yes, 11/23). DONE. Play-test placeholders still to confirm: welcome/victory/Settings/hint bubble sizes and minutes to victory (Terry: 25).
 3. **0.3.2 spec:** start from `_meta/drafts/0.3.2/tests-from-0.3.1-playtest.md` (12 tests the play-test showed were missing, incl. the set-aside `t_hint_steps_follow_state_in_order_twice`, which hangs after the crank; WALK markers in `test_helpers_4.gd` `_hi_walk`) plus the earlier 0.3.2 list: balance sim, mutation 25 + adversarial QA, bottom-slot switch, the canvas sticky "Need previews for the upgrade screen". Loop fix noted there: T3.1/T7.1 were accepted as "already tested" by tests that never checked them.
 4. **A7 (due 11/29):** the designer records the run video. Before submitting: `python -I _tools/audit_data.py`, refresh §4.1 / §7.2 of `_meta/drafts/a7/audit.md` with the 0.3.1 run (goal ledger, agent-runs), set its frontmatter status to final, then `python -I _tools/md_to_pdf.py _meta/drafts/a7/audit.md --min-pages 20`.
 5. **Final 11/29 leftovers:** UI pass (ui-screens decisions 2-4 + skin), adversarial QA, balance sim, polish.
