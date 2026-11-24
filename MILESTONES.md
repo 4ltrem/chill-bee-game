@@ -24,6 +24,21 @@ description: Build milestones and version numbers for Chill Bee Game, fitted to 
 | M6 | 0.4–0.9 | after the course: grid expansion, the capstone and reset: the GDD's **vertical slice**; UI screens for features not yet built (Worlds, Royal Crystal, Store, Impact, Habitat & Refinery) arrive with their features. Placement of the rest of the GDD: Gerard's roadmap proposal (`proposals/design/roadmap.md`, requested 2026-11-09) | | no date |
 | M7 | 0.10+ | alpha: Alpine Valley, Trees A–C, research, French, monetisation, backend, kid mode | | no date |
 
+## Cost forecast (2026-11-23)
+
+Measured from `_meta/agent-runs.csv` and the goal ledger (0.1.4: 95 goal-agent runs, 0.2: 80, 0.3: 71, 0.3.1: 41 so far). One goal-agent run ≈ 1.5M tokens all-in (1.1-2.2M; the main session is ~80% of logged tokens), ≈ 1/3 % of the weekly limit, ≈ 8 runs per hour of agent wall time. Sizes from Gerard's roadmap (`proposals/design/roadmap.md`, S ≈ 6, M ≈ 22, L ≈ 65 runs, re-layered by `build-from-start-r2.md` §2.8); each milestone adds a play-test fix build (~40 runs) and design-side work (~10-15). Ranges are ±30% or more. Page: https://claude.ai/artifact/Gw8WCWyiqYsedjkFtcEwZs
+
+| Phase | Runs | Tokens | Weeks of full weekly limit | Agent wall |
+|---|---|---|---|---|
+| M5 course build, to 11/29 (0.3.1 tests, 0.3.2 fixes, A7, UI pass, QA/balance/polish) | ~108 | ~160M | ~0.4 | ~25 h |
+| M6 vertical slice, 0.4-0.9 (0.4 build from start ~385, 0.5 automation ~125, 0.6 grid growth + habitat ~255, 0.7 research ~137, 0.8 capstone ~121, 0.9 reset ~165) | ~1,190 | ~1.8B | ~4.0 | ~150 h |
+| M7 alpha and beta to 1.0 (0.10 Alpine ~142, 0.11 feel ~133, 0.12 Jelly ~47, 0.13 age gate/backend ~142, 0.14 Store/passes ~127, beta ~92) | ~680 | ~1.0B | ~2.3 | ~85 h |
+| Post-launch (two biomes, Patron Pass, online leaderboards, live Impact Dashboard, BeeTech); Switch/desktop not counted | ~600 | ~0.9B | ~2.0 | ~75 h |
+| Tooling backlog (Godot 4.7.2, test helpers, episodic memory, /goal wrapper, UI agent, sync) | ~74 | ~110M | ~0.25 | ~20 h |
+| **Total** | **~2,650** | **~4B** | **~9** | **~350 h** |
+
+The weekly limit sets the pace: at about three quarters of each week on builds, the vertical slice is ~5 calendar weeks. Held rows (roadmap §4) and outside gates (Connie, backend provider, conservation partners) hold the calendar regardless of budget.
+
 ## Open
 - M1: spec `game/specs/0.1-harvest.md` approved and its GDD §2 changes applied (2026-11-04).
 - Uploads (designer, 2026-11-05): a build goes to itch.io only when a new milestone number is reached (0.2.0, 0.3.0); builds within a milestone are played locally. Exception (designer, 2026-11-06): an assignment's demo build also goes on itch (0.1.4 = the A5 demo).

@@ -23,6 +23,7 @@ Naming (designer, 2026-11-21): `round` is a design or critic round, `run` a re-r
 - Working (this run): the work order in `specs/` (e.g. `specs/prototype-0.md`), or the feature list, layout spec or build request
 - Reference (every run): `../GDD.md` (Engine Integration, Technical Constraints, plus the sections the task touches)
 - Reference (sections named per agent): `PATTERNS.md`, the game programming patterns that fit this project and their Godot form
+- Reference: `RECIPES.md`, step-by-step recipes (add a panel, a corner icon, a translated label, a config value with its Dev row, a Dev button, a toast) with their tests; the goal agent attaches the matching recipe to each build brief
 - Reference (when cited): `../proposals/design/_index.md` and `../proposals/balance/_index.md`, then only the applied proposals they name
 
 Do NOT load: the review folders, `_meta/agent-runs.md`, proposals still `proposed` or `rejected`.

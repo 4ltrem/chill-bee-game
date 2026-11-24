@@ -1,7 +1,9 @@
 ---
 author: gerard
 type: design
-status: accepted (designer, 2026-11-22: option B; see Designer decisions)
+status: applied
+decided: 2026-11-22
+decision: option B (meter, patch row on fixed slots, bumble bee visitor, victory); habitat only, save-free, skip icon, title "Chill Bee Game"; applied to GDD Tree C (First slice), §7 and §9 on 2026-11-23
 description: 0.3.0 "Course build" start and end - a title screen with Play, and a victory screen when a thin slice of Tree C (Habitat Health raised by planting native wildflower patches) reaches thriving
 ---
 # Course ending: welcome screen, Habitat Health slice and victory

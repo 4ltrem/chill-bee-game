@@ -40,6 +40,7 @@ Run them with `python -I _tools/<name>.py` (except `contact_sheet.py`, which nee
 | Goal agent | `test_goal_agent.py` | tests the reasoning layer on `fixtures/goal/` and the loop with fake agents |
 | Usage | `runlog.py` | keeps the run log (`_meta/agent-runs.csv`) and calibrates usage |
 | Usage | `log_subagent.py`, `log_session.py` | SubagentStop and Stop hooks that log subagents and the orchestrator |
+| Usage | `context_guard.py` | PostToolUse and UserPromptSubmit hook: warns once per threshold (50%, 75% of the window) as the context fills, so the main session rewrites the handoff and the designer runs /clear |
 | Usage | `statusline.py` | saves plan-usage readings and shows what runs now (from `live.py`) |
 | Live view | `live.py` | records what runs now (agents and the scripts' own steps: suites with pass/fail counts, checks, commits, renders) in `_meta/usage/live.json`, each start, end, note and tool call in `live.log`, and each agent's stream in `live/` (all local); a loop's tag passes to child scripts by `CHILLBEE_LIVE_TAG` |
 | Live view | `watch.py` | follows `live.log` in a terminal split, one line per event (`--once` prints and exits) |

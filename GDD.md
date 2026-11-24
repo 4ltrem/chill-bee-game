@@ -31,7 +31,7 @@ A core pillar of the project is its **Real-World Impact Integration**, where a p
   2. Launch content complete: Sunny Meadow and Alpine Valley, grid expansion and unit tiers, Trees A–C, research, capstone, reset.
   3. Monetization, backend, kid mode, and French localization.
   4. Launch.
-* **Languages:** English and French at launch.
+* **Languages:** English and French at launch. French addresses the player as "vous", the Bee Journal is the "Carnet des abeilles", and prices put the number first ("12 $") (designer, 2026-11-22 and 2026-11-23).
 * **Vertical Slice (First Playable):** One full rough run with placeholder art, mobile only, Sunny Meadow only: manual harvest → automation → grid expansion → capstone → reset. No monetization, leaderboards, or backend yet.
 * **Launch Scope:** Mobile only; Sunny Meadow and Alpine Valley; rewarded ads and the Impact Pass; local personal-best run times; periodically updated impact totals.
 * **Post-Launch:** Biomes 3–4 (Enchanted Grove, Cloud Gardens), the Patron Pass, online leaderboards, and the live Impact Dashboard.
@@ -117,6 +117,7 @@ Progression is split across three synergizing upgrade paths using an exponential
     | Sunny Meadow | Goldenrod, wild bergamot, New England aster, black-eyed Susan |
     | Alpine Valley | Fireweed and other alpine wildflowers (TBD) |
     | Enchanted Grove, Cloud Gardens | Fictional flowers, labelled as fictional in the Bee Journal: Glowbell (Enchanted Grove, night-blooming) and Skybloom (Cloud Gardens, rainbow blossoms) |
+  * *First slice (0.3, the course build; designer, 2026-11-22; `proposals/design/course-ending.md`, provisional values in `proposals/balance/course-ending-balance.md`):* Sunny Meadow only. Habitat Health is a 0–100 meter that starts at 10. The Shop's Habitat tab has one repeatable row, "Plant wildflower patch" ($40 base, 1.25x growth), which grows a patch in the next of six fixed slots and adds +15 Health. Patches raise Habitat Health only, with no honey bonus until native bees arrive, and nothing lowers Health in the slice. At thriving (100) the Sunny Meadow bumble bee visitor arrives and unlocks its Bee Journal entry, then a victory screen closes the session. The victory is not a run end: no timer, no personal best. Patch names stay generic ("native wildflower patch") until the list above is fact-checked.
   * *Native Bees:* Habitat Health attracts native wild bees to the farm, separate from the managed honeybees. Native bees:
     * Pollinate flowers, raising Habitat Synergy (no growth timers).
     * Grant a native-bee bonus to production in Trees A and B (the habitat/bee synergy). The bonus is per biome: in each biome, species effects plus a small bonus for the number of native bees form one capped bonus that applies only in that biome. Each biome has a total ceiling and a smaller ceiling for each kind of boost (pollination speed, fill rate, sale value); Sunny Meadow's fill-rate ceiling is 0 and its sale-value ceiling is +15%. The abundance bonus (up to +5%) raises sale value only.
@@ -200,20 +201,25 @@ A guide character walks new players through their first session. Six candidate g
 * Guides the first manual harvest (uncapping and centrifuge extraction).
 * Guides the first upgrade purchase.
 
+**Welcome screen and first-time hint (from 0.3; designer, 2026-11-22):** every launch opens on a welcome screen with the title "Chill Bee Game" and Play only; it says nothing about how to play. After Play, a hint bubble points at the next thing to do (wait, harvest, uncap, spin, crank, sell, shop, plant). It follows the game's state, so leaving a step part-way shows the step that fits, and it ends at the first wildflower patch or when the player taps Skip. Until a save system exists, every launch is a new farm, so Welcome back and Offline Earnings wait for saving.
+
 ### 8. Accessibility
 * **Hold Instead of Tapping:** Holding the centrifuge crank (or the screen around it) ramps it up to the fastest tap rate, so no harvest step needs rapid tapping. It is built in for every player, so there is no separate toggle.
 * **Haptics & Sound Toggles:** Vibration, sound effects, and music can each be turned on or off.
-* **Colour-Blind Support:** Information never relies on colour alone (e.g., capped and uncapped cells also differ in shape or texture).
+* **Colour-Blind Support:** Information never relies on colour alone (e.g., capped and uncapped cells also differ in shape or texture, and each icon has its own shape).
 * **Text Size & One-Handed Play:** Adjustable text size, and all UI reachable with one thumb.
 
 ### 9. UI & Screens
 * **Farm View (Main Screen):** The pannable, zoomable pocket-dimension farm, including a build mode (open from the start, from 0.4) for buying land and placing centrifuges, crates, hive and flower units on the grid, with range tiles and bee lanes shown while placing.
-* **Upgrade Shop:** Trees A–C, automation, research, and the capstone.
+* **Icons, not a navigation bar (designer, 2026-11-09 and 2026-11-23):** actions and screens open from round icons floating over the farm. Icons are told apart by shape alone: Harvest is a white circle with an uncapping fork and the honey meter rising behind it, Spin a honey drop with a turn arrow, Back an arrow, Journal a bee, Tools a wrench, Settings a toothed gear. Sheets slide up over the dimmed farm and may cover the floating icons. Messages (toasts) wait while a sheet, the Journal or a zoom is open, then show on the Farm View one at a time.
+* **Upgrade Shop:** Trees A–C, automation, research, and the capstone. A sheet opened from the Shop icon on the Farm View only, with one tab per tree: Bees (Tree A), Hive (Tree B), Habitat (Tree C), Research and Refinery; a tab with nothing to buy yet says "Coming soon" (designer, 2026-11-22).
+* **Bee Journal:** its own bee icon on the Farm View, shown once the Journal has its first entry (designer, 2026-11-22).
 * **Worlds:** Load and switch between saved pocket worlds.
-* **Harvest Minigame:** The uncapping zoom on the hive and the centrifuge. Extraction, bottling and the sales truck play on the Farm View.
+* **Harvest Minigame:** The uncapping zoom on the hive and the centrifuge. Extraction, bottling and the sales truck play on the Farm View. A zoom hides the Farm View's icons: Back (top-right) is its only exit, and Tools (bottom-right) opens that machine's own upgrades (designer, 2026-11-23).
 * **Impact & Leaderboards:** Impact totals, personal-best run times, and (post-launch) online leaderboards.
 * **Store:** Royal Jelly and passes, behind the parental gate in kid mode.
-* **Settings:** Accessibility options and language.
+* **Settings:** Accessibility options and language (English | Français). A gear in the Farm View's top-right corner (designer, 2026-11-23).
+* **Welcome and Victory (from 0.3):** the title screen at launch, and the screen that follows the bumble bee visitor at thriving (see Tree C, First slice).
 
 ---
 

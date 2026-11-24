@@ -92,11 +92,11 @@ New token: proposed in a FAIL row's Fix and added here by the designer, never by
 | V6 | Shapes are chunky and rounded in feel: no thin spikes or knife edges facing the camera; nothing thinner than 0.05 units unless it is a rim or a handle. | critic (+ script for size) | all | GDD Bees & Characters ("chunky, rounded") |
 | V7 | The scene reads as a calm diorama: one clear focal object per view (the honey's step in the loop), no clutter, nothing important cut off by the screen edge. | critic | all | GDD Art Style |
 | V8 | Honey is the hero: in any harvest view, the brightest, most saturated thing on screen is honey (cells, honey level, jars). | critic | all | this guide |
-| V9 | Information never relies on colour alone: states differ in shape, height, size or label too. | critic | all | GDD Accessibility, Colour-Blind Support |
+| V9 | Information never relies on colour alone: states differ in shape, height, size or label too. Icons are told apart by their shape alone, so an action icon needs no word on it (fork, honey drop, arrow; designer, 2026-11-23). | critic | all | GDD Accessibility, Colour-Blind Support |
 | V10 | UI text contrast ≥ 4.5:1 against its background, including disabled buttons. | script (scene colours) + critic (screenshot) | all | GDD Accessibility; spec r3 |
-| V11 | Touch targets ≥ 120 × 120 px at 720 × 1280; icons may look smaller (`icon_visual_px`), their touch area may not. | script | all | GDD One-Handed Play; spec 0.1 |
-| V12 | Text sizes: body ≥ 28 px, buttons ≥ 32 px at 720 × 1280; UI fonts use the ink outline. | script | all | farm UI (r3) |
-| V13 | No farm prop, icon or modal sits under the shop panel or the top info; icons may overlap props. | critic (screenshot) | all | spec 0.1 |
+| V11 | Touch targets ≥ 120 × 120 px at 720 × 1280; icons may look smaller (`icon_visual_px`), their touch area may not. Floating icons are one family: each has the Harvest fork's touch size and drawn size, in every view (designer, 2026-11-23). | script | all | GDD One-Handed Play; spec 0.1 |
+| V12 | Text sizes: body ≥ 28 px, buttons ≥ 32 px at 720 × 1280; UI fonts use the ink outline. V11 and V12 win over any size picked in a vote (designer, 2026-11-22). | script | all | farm UI (r3) |
+| V13 | No farm prop, icon or modal sits under the shop panel or the top info; icons may overlap props. A full sheet (Shop, Journal, Settings) may cover the floating icons (designer, 2026-11-22). Two icons step aside only when their drawn circles meet, not their touch areas (designer, 2026-11-23). No toast plays under a sheet or a zoom; it waits. | critic (screenshot) + Quinn's overlap test | all | spec 0.1; specs 0.3, 0.3.1 |
 | V14 | Cells at the uncapping zoom are ≥ 20 px wide on screen (was 44 px; the 5 × 5 farm with the hive at 1.4× measures 21.6 px). | script (Quinn's measure) | all | spec 0.1.1; designer 2026-11-05 (round 4, c-1) |
 | V15 | Glass reads as glass: see-through (alpha ≤ 0.35, back faces drawn), honey visible through it. | script + critic | all | GDD §2 (glass walls); spec 0.1 |
 

@@ -1,7 +1,9 @@
 ---
 author: terry
 type: balance
-status: accepted (designer, 2026-11-22: $40 x 1.25, no Auto-Sell gate on patches)
+status: applied
+decided: 2026-11-22
+decision: $40 x 1.25 per patch, Health 10 + 15 per patch to 100 over six slots, no Auto-Sell gate on patches; applied as provisional values to GDD Tree C (First slice) on 2026-11-23
 description: Provisional 0.3.0 course-ending values - Habitat Health 10 -> 100 in six $40 x 1.25 patches ($449 in all), victory at about 25 min for a normal player (Auto-Sell at 14 min), never before a normal player's Auto-Sell, 4 s delay
 ---
 # Course ending: Habitat Health, patch costs and victory timing (0.3.0, provisional)

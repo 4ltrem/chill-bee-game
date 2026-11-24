@@ -17,3 +17,6 @@ _meta/usage/
 
 # Godot binary unpacked in the repo folder (laptop); _tools/godot_path.py finds it
 Godot_v4.2.1-stable_win64.exe/
+
+# screen recordings dropped at the repo root (designer, 2026-11-23)
+/*.mp4
