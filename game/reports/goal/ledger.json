@@ -383,9 +383,7 @@
   },
   "T4.1": {
    "run": "0.3.1",
-   "at": "2026-11-23T18:53:32-05:00",
-   "held": "The agents changed no file for T4.1, T4.2, T4.3 and the checks were already green, so it is not built. Their replies on the board (step T4.1, T4.2, T4.3, 2026-11-23T18:53:32-05:00) say why; answer by editing the spec item.",
-   "text": "0ef10fbada34"
+   "at": "2026-11-23T20:10:14-05:00"
   },
   "T4.2": {
    "run": "0.3.1",
