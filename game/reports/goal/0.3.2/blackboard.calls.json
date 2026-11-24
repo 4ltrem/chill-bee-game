@@ -54,5 +54,101 @@
   "turns": 4,
   "seconds": 11,
   "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, C7",
+  "tokens": 60462,
+  "final": 22873,
+  "turns": 3,
+  "seconds": 10,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Bob, C7",
+  "tokens": 69587,
+  "final": 19240,
+  "turns": 6,
+  "seconds": 13,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, C7",
+  "tokens": 438104,
+  "final": 52185,
+  "turns": 20,
+  "seconds": 49,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, C7 fix 1",
+  "tokens": 50071,
+  "final": 18715,
+  "turns": 4,
+  "seconds": 7,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Bob, C7 fix 2",
+  "tokens": 193866,
+  "final": 29935,
+  "turns": 14,
+  "seconds": 22,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, C9",
+  "tokens": 77322,
+  "final": 21625,
+  "turns": 5,
+  "seconds": 16,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, C9",
+  "tokens": 118551,
+  "final": 26317,
+  "turns": 7,
+  "seconds": 19,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Bob, C9",
+  "tokens": 179089,
+  "final": 29681,
+  "turns": 10,
+  "seconds": 36,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, C9 fix 1",
+  "tokens": 49492,
+  "final": 17714,
+  "turns": 3,
+  "seconds": 6,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, C9 fix 1",
+  "tokens": 208742,
+  "final": 23743,
+  "turns": 12,
+  "seconds": 23,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, C9 fix 2",
+  "tokens": 88615,
+  "final": 21858,
+  "turns": 5,
+  "seconds": 10,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Bob, C9 fix 2",
+  "tokens": 172118,
+  "final": 22591,
+  "turns": 9,
+  "seconds": 24,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
  }
 ]

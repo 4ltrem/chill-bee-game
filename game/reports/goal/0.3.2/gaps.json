@@ -1,7 +1,7 @@
 {
  "spec": "0.3.2-tests-and-quick-buy.md",
  "version": "0.3.2",
- "at": "2026-11-24T00:33:37-05:00",
+ "at": "2026-11-24T00:49:28-05:00",
  "unit_log": "game/reports/_runs/20261123-224854/unit.log",
  "goals": {
   "C1": {
@@ -127,11 +127,6 @@
    "evidence": [
     {
      "kind": "node",
-     "name": "FarmUI",
-     "ok": true
-    },
-    {
-     "kind": "node",
      "name": "JournalButton",
      "ok": true
     },
@@ -151,14 +146,19 @@
      "ok": true
     },
     {
-     "kind": "node",
-     "name": "QuickBuyPrice",
-     "ok": true
+     "kind": "node removed",
+     "name": "FarmUI",
+     "ok": false
     },
     {
-     "kind": "node",
+     "kind": "node removed",
+     "name": "QuickBuyPrice",
+     "ok": false
+    },
+    {
+     "kind": "node removed",
      "name": "ShopButton",
-     "ok": true
+     "ok": false
     },
     {
      "kind": "dev button",
@@ -187,16 +187,93 @@
     7
    ],
    "depends": [],
-   "status": "missing",
+   "status": "partial",
    "evidence": [
     {
      "kind": "node",
      "name": "PreviewTile",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
      "name": "SubViewport",
+     "ok": false
+    },
+    {
+     "kind": "ledger",
+     "name": "b0f3a7d",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C8": {
+   "kind": "change",
+   "title": "No hint said twice",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "CentrifugeLabel",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "HintLabel",
+     "ok": true
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C9": {
+   "kind": "change",
+   "title": "Habitat Health you can see",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    9
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "HabitatCountLabel",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "HabitatFill",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "HabitatIcon",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "HabitatPill",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "HabitatTrack",
      "ok": false
     }
    ],
@@ -218,7 +295,9 @@
     4,
     5,
     6,
-    7
+    7,
+    8,
+    9
    ],
    "depends": [
     "C1",
@@ -227,7 +306,9 @@
     "C4",
     "C5",
     "C6",
-    "C7"
+    "C7",
+    "C8",
+    "C9"
    ],
    "status": "missing",
    "evidence": [],
@@ -653,11 +734,68 @@
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
+  },
+  "T6.2": {
+   "kind": "test",
+   "title": "item 6 (2026-11-24): `QuickBuy` has no `QuickBuyPrice` node; `QuickBuy",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    6
+   ],
+   "depends": [
+    "C6"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T8.1": {
+   "kind": "test",
+   "title": "item 8: in the first zoom `HintLabel` is hidden while a cell is capped",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    8
+   ],
+   "depends": [
+    "C8"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T9.1": {
+   "kind": "test",
+   "title": "item 9: `HabitatCountLabel` reads \"10/100\"-style text from `habitat_he",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    9
+   ],
+   "depends": [
+    "C9"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
   }
  },
  "order": [
   {
-   "id": "C7",
+   "id": "C9",
    "score": 11.46,
    "factors": {
     "unblocks": 2,
@@ -680,6 +818,17 @@
   },
   {
    "id": "C1",
+   "score": 9.73,
+   "factors": {
+    "unblocks": 2,
+    "value": 2,
+    "cost": 0.27,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C8",
    "score": 9.73,
    "factors": {
     "unblocks": 2,
@@ -888,7 +1037,51 @@
    }
   },
   {
+   "id": "T6.2",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T7.1",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T9.1",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T1.1",
+   "score": 3.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T8.1",
    "score": 3.78,
    "factors": {
     "unblocks": 0,
@@ -919,8 +1112,7 @@
     "ready": 0,
     "blocked_by": [
      "C4",
-     "C5",
-     "C7"
+     "C5"
     ]
    }
   },
@@ -947,19 +1139,6 @@
     "ready": 0,
     "blocked_by": [
      "C5"
-    ]
-   }
-  },
-  {
-   "id": "T7.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C7"
     ]
    }
   }
