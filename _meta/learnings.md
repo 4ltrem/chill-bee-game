@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L57 · 2026-11-24 · C7 was committed green past the spec's vote STOP
+- **What broke:** 0.3.2 item 7 says "**Stop:** the designer's pick" (Milo's two variants per upgrade on Design Votes) before the build. goal_agent briefed Bob and Patricia anyway and committed C7 green (`b0f3a7d`) with empty `PreviewTile`s. Bob refused to invent models and asked whether the vote should run first.
+- **How noticed:** the main session read the C7 step on the blackboard after the run stopped on C9.
+- **Cause:** not traced yet. goal_agent stops on a `(designer)` row with no visual value and on a fix round's unvoted visual number, but it seems to read no "**Stop:**" sentence in a spec item.
+- **How fixed:** open. The designer chose Milo's vote next (11/24); the pick fills the tiles.
+- **Prevention:** open: a planner job for goal_agent to stop before a change whose spec text holds a designer **Stop:**, with a test on the fixture.
+
 ## L56 · 2026-11-23 · The 0.3.2 run crashed on a change with no agent to brief
 - **What broke:** the 0.3.2 build finished C2 (`6d9704d`) and then crashed at C3 ("The 0.3.1 test lines that never got a test") with `ValueError: max_workers must be greater than 0` (`c17fcfe`).
 - **How noticed:** the background run exited 1; the traceback was in `game/reports/goal/0.3.2/run.log`.
