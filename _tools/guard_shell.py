@@ -23,10 +23,10 @@ Each refusal names the rule and the right way to do it, so the caller rewrites t
      (CHILLBEE_HEADLESS=1) are not bound. A lock older than 12 hours is stale and ignored.
   7. rex-runs-scripts (L21, queue #6): the Godot test, build, mutation and shot scripts (`godot_run.py`,
      `build.py`, `mutate.py`, `ui_shots.py`, `model_shots.py`) run only in Rex's shell (the hook input's
-     `agent_type` is `script-runner`). The main session, the operator and the other agents dispatch Rex; the loop
+     `agent_type` is `script-runner`). The main session and the other agents dispatch Rex; the loop
      scripts start them as subprocesses, which no hook sees.
      One exception (obstacles item 19, option A): Quinn (`qa-build-engineer`) may run `godot_run.py ... --only ...`
-     probes while the operator's allow file `_meta/usage/quinn-probes.allow` is fresh. The operator writes it with
+     probes while the main session's allow file `_meta/usage/quinn-probes.allow` is fresh. The main session writes it with
      `python -I _tools/guard_shell.py --allow-quinn-probes 60` (minutes) when the brief allows probes. Full-suite
      runs (`all`, or no `--only`) and the other scripts stay Rex-only.
   8. link-delete (L45): no recursive delete (`git worktree remove`, `rm -r`, `Remove-Item -Recurse`, `rmdir /s`)
@@ -138,7 +138,7 @@ PROBES = "_meta/usage/quinn-probes.allow"
 
 
 def probes_allowed(repo):
-    """True while the operator's allow file holds an `until` (epoch seconds) still in the future."""
+    """True while the main session's allow file holds an `until` (epoch seconds) still in the future."""
     try:
         with open(os.path.join(repo, PROBES), encoding="utf-8") as fh:
             return float(json.load(fh)["until"]) > time.time()
@@ -233,7 +233,7 @@ def decide(tool, inp, repo=REPO, agent=None):
 
 
 def allow_probes(minutes, repo=REPO):
-    """The operator's step: write the allow file, fresh for `minutes`."""
+    """The main session's step: write the allow file, fresh for `minutes`."""
     path = os.path.join(repo, PROBES)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as fh:

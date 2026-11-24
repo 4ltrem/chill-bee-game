@@ -1057,7 +1057,7 @@ class BuildToolsTest(unittest.TestCase):
             probe = "python -I _tools/godot_run.py unit --only test_a,test_b --time-scale 6"   # item 19, option A
             self.assertIn("rex-runs-scripts", rex(probe, "qa-build-engineer"))   # no allow file yet
             gs.allow_probes(60, repo)
-            self.assertIsNone(rex(probe, "qa-build-engineer"))                   # the operator allowed probes
+            self.assertIsNone(rex(probe, "qa-build-engineer"))                   # the main session allowed probes
             for cmd in ["python -I _tools/godot_run.py all --only test_a", "python -I _tools/godot_run.py unit",
                         "python -I _tools/mutate.py --only x", f"{probe} && python -I _tools/godot_run.py all"]:
                 self.assertIn("rex-runs-scripts", rex(cmd, "qa-build-engineer"), cmd)   # full suites stay Rex's

@@ -29,7 +29,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | `_meta/sessions/` | one folder per working session: `decisions.md` and the decision page are committed; transcripts stay local (gitignored) |
 | `_templates/` | blank starters: `proposal.md`, `content.md`, `research-brief.md`, `audio-list.md`, `blackboard.md` (the one run-board format every loop script writes), and `agent.md` for a new agent |
 | [_tools/](_tools/CONTEXT.md) | the workspace scripts: checks, content and style loops, vote pages, Godot test/build runners, usage hooks, end-of-day helpers |
-| [operator/](operator/CONTEXT.md) | the operator's contract, the stops it hands off ([escalate.md](operator/escalate.md)) and the workspace job queue ([queue.md](operator/queue.md)) |
+| [operator/](operator/CONTEXT.md) | the retired operator's contract and stops (history; retired 2026-11-23, see `_meta/learnings.md` L55) |
 | `.claude/agents/` | runnable agent definitions, one per roster role in [_meta/team.md](_meta/team.md) |
 
 ## Route by task
@@ -47,11 +47,12 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | a biome or layout needs a scene | Bob: `.claude/agents/builder.md`, writing to [game/](game/CONTEXT.md) `scenes/` | Quinn's report |
 | a scene needs a style check | `python -I _tools/style_loop.py <slug>`: `style_check.py`, then Vera (`.claude/agents/style-critic.md`), then Bob, writing the blackboard to `game/reports/style/` | a PASS, or a designer stop with its question on the Design Votes page (`_tools/compare_page.py add`) |
 | a prop needs colorbox variants to compare | Milo: `.claude/agents/modeler.md`, writing to [game/scenes/variants/](game/scenes/variants/CONTEXT.md) | the designer's pick on the compare page |
-| a test suite, build, mutation or shot script needs running | Rex: `.claude/agents/script-runner.md`, dispatched by a main session (the orchestrator or the operator), reporting to it | its reply (failures go to their owner) |
+| a test suite, build, mutation or shot script needs running | Rex: `.claude/agents/script-runner.md`, dispatched by the main session, reporting to it | its reply (failures go to their owner) |
 | a feature or build is ready to test | Quinn: `.claude/agents/qa-build-engineer.md`, writing to [game/](game/CONTEXT.md) `tests/` and `reports/` | the developer plays the build |
 | a proposal was accepted | [CONTEXT.md](CONTEXT.md), step 4 (apply) | `python -I _tools/links.py` passes |
 | asked for status | `proposals/*/_index.md` and the README TBD list | report what exists |
-| a day's routing, waiting or upkeep work (run as the operator) | Oscar: `claude --agent operator` (`.claude/agents/operator.md`), contract [operator/CONTEXT.md](operator/CONTEXT.md) | the owner's check, or a stop handed off per [operator/escalate.md](operator/escalate.md) |
+| asked what's next, or a session starts | the `next` skill: `.claude/skills/next/SKILL.md` (status, then the handoff's NEXT list) | the designer's pick, which is the session's one job |
+| tooling work (a `_tools/` script, skill, agent or loop) needs a plan before it is built | the `planner` skill: `.claude/skills/planner/SKILL.md` (game features stay specs for `goal_agent.py`) | the plan file in `_meta/drafts/<version>/`, then a fresh session runs it |
 | a skill gap no agent covers | Martin: `.claude/agents/hiring-manager.md` | the designer reviews the diff |
 | at end of day, docs need checking against the day's changes | the `end-of-day` skill runs Doris: `.claude/agents/doc-auditor.md` | her findings: plain corrections fixed in the routine, anything needing a decision listed for the designer |
 | asked about agent cost | [_meta/agent-runs.md](_meta/agent-runs.md) | - |
@@ -60,3 +61,15 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 ## The one rule
 
 Nothing reaches `GDD.md` until the designer has accepted it. Agents propose; they never edit the GDD.
+
+## Session flow
+
+The Opus main session keeps its own flow:
+
+- One job per session, picked with /next.
+- Wait on notices, not turns: background runs re-invoke the session, so no polling.
+- Scripts (godot_run, build, mutate, shots) go to Rex; small admin goes to a cheap-model subagent.
+- Replies are at most 150 words.
+- When a job ends, rewrite `_meta/memory/session-handoff.md` (NEXT and Still open) before anything else.
+- When the context guard (`_tools/context_guard.py`) warns, finish the current step, rewrite the handoff and tell the designer to /clear.
+- Designer decisions go in AskUserQuestion.

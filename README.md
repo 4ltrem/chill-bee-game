@@ -70,7 +70,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 | [audio/](audio/) | Licence-checked sound and music shortlists (Andrew). |
 | [game/](game/) | The Godot project: scripts (Patricia), scenes (Bob), tests and reports (Quinn); `game/reports/` holds builds, goal runs, style runs, votes and variants. |
 | [_tools/](_tools/CONTEXT.md) | The workspace scripts: checks, the content, style and goal loops, vote pages, Godot test and build runners, usage hooks, end-of-day helpers. |
-| [operator/](operator/CONTEXT.md) | The operator's contract (Oscar, a Sonnet main session that routes the day's work), the stops it hands off and the job queue. |
+| [operator/](operator/CONTEXT.md) | The operator's contract (Oscar, a Sonnet main session that routes the day's work), the stops it hands off and the job queue (retired 2026-11-23; kept as history). |
 | [_templates/](_templates/) | Blank starters for proposals, content, research briefs, audio lists, run blackboards, decision logs and new agents. |
 | [_meta/learnings.md](_meta/learnings.md) | Everything that broke, how it was noticed, its cause, fix and the check that now prevents it. |
 | [_meta/](_meta/) | Workspace records: the roster, run log, learnings, project memories (`memory/`) and each session's decision log (`sessions/`). |
@@ -92,7 +92,7 @@ A fixed percentage of each revenue stream funds bee conservation (native bee hab
 - [ ] Bee Journal sources list in-game, so the entries' ⁵/⁶ markers (kept verbatim, designer 2026-11-09) point to their sources
 - [ ] Heated Fork "clean cut" batch bonus: what counts as a clean cut (reach is its effect; a single sweep is the Long Fork)
 - [ ] Upgrade mode UI: opening an automated unit's zoom screen (with the rest of the UI)
-- [ ] Back button as an arrow, its size set in the UI mockups (Design Votes round 8, 2026-11-07)
+- [ ] Back button size (the arrow itself was decided 2026-11-23, 0.3.1 item 6; the size is a placeholder until the 0.3.1 play-test)
 - [ ] Overflow Storage capacity and costs (free buffer is 1 extra frame)
 - [ ] Land expansion costs
 - [ ] Hive and flower unit tiers: costs, production and space per tier

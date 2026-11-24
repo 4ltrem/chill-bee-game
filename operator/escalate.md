@@ -1,4 +1,5 @@
 # escalate - what the operator never decides
+Retired 2026-11-23: the Opus main session keeps its own flow (AGENTS.md, Session flow; `_meta/learnings.md` L55). Kept as history.
 
 The operator routes and does mechanical upkeep. It stops and hands off everything below, with a one-paragraph summary and the file paths, so the next reader doesn't have to read the whole thread.
 

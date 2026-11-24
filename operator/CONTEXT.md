@@ -1,4 +1,5 @@
 # operator - route the work, keep the workspace, stay small
+Retired 2026-11-23: the Opus main session keeps its own flow (AGENTS.md, Session flow; `_meta/learnings.md` L55). Kept as history.
 
 One job: run the designer's day of work on Sonnet instead of Opus. That means sending each task to the agent or script that owns it, waiting without spending turns, relaying the stops, and doing the mechanical upkeep. Judgement goes to the designer or an Opus session ([escalate.md](escalate.md)).
 

@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L55 · 2026-11-23 · Oscar stopped at the first real task in every session that ran him
+- **What broke:** each 11/21 session that ran Oscar (`claude --agent operator`) stopped at its first real task: `cf1cdb1b` ("Opus session only: these change loop scripts"), `e8567c58` (the merge was synthesis), `f5b02912` (a designer stop, then about 8 stop-hook turns).
+- **How noticed:** the designer kept switching from the operator session to an Opus one.
+- **Cause:** `operator/escalate.md` hands loop changes, synthesis and trade-offs to Opus, which is most of the designer's work, and each hand-off meant a new session. The cost Oscar was built against (cache re-reads of a growing context) comes from session length, not from the model running the flow.
+- **How fixed:** Oscar retired (`.claude/agents/operator.md` deleted, roster row gone, `operator/` kept as history). The Opus main session keeps its own flow: a Session flow section in `AGENTS.md`, the `/next` skill to pick one job per session, and `_tools/context_guard.py` (PostToolUse + UserPromptSubmit), which tells the session to rewrite the handoff and ask for /clear at 50% and 75% of the window.
+- **Prevention:** `test_generate.py` `test_context_guard_warns_once_per_threshold` and `test_settings_wire_the_context_guard`; `consistency.py` (no roster row without a definition, no definition without a route).
+
 ## L54 · 2026-11-23 · Fix round 2 went to the owner who couldn't fix it, and the shots never left the welcome
 - **What broke:** (1) 0.3.1 C7 and C8 stopped for the designer after fix round 2. Round 2 went to Bob and Quinn, who both changed nothing and named Patricia's one-line fix (C7: the Settings button left visible at the second stop, `main.gd`; C8: a typed-array ternary, `shop_ui.gd:372`). (2) `ui_shots.py` stopped at the 0.3 welcome overlay: moments 1-2 shot the welcome and 3-9 were missing, so the goal loop's `ui shots` check compared welcome screens.
 - **How noticed:** the other session running the 0.3.1 build, after accepting C7 by hand (37acad8).

@@ -1,4 +1,5 @@
 # queue - workspace tooling the operator owns
+Retired 2026-11-23: the Opus main session keeps its own flow (AGENTS.md, Session flow; `_meta/learnings.md` L55). Kept as history.
 
 Each row is one job and its status (`open`, `held`, `built`, `done`). The designer adds rows; the operator updates the status when it changes. Design and judgement work is not here: it stays in [future-tbd](../_meta/memory/future-tbd.md) for an Opus session. Source: [analysis](../_meta/drafts/operator/analysis.md) section D.
 
