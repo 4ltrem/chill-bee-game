@@ -3,7 +3,7 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
@@ -1855,9 +1855,28 @@ No placeholder values were changed.
 
 2 fix rounds failed on T4.3: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.1-playtest-fixes.md --accept T4.3 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T4.3 fix-round edits"`.
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md --accept T4.3 --note hint.gd _toast_rect and test_helpers_4.gd ignore a hidden PhaseToast (its empty wrapping label measured 1797 px tall); t_hint_waits_for_play_then_starts_twice PASS (13 checks); Quinn's mutations.json and run_tests.gd edits kept` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T4.3 (2026-11-23T20:09:33-05:00)
+
+- Change (orchestrator, Process 9): hint.gd _toast_rect and test_helpers_4.gd ignore a hidden PhaseToast (its empty wrapping label measured 1797 px tall); t_hint_waits_for_play_then_starts_twice PASS (13 checks); Quinn's mutations.json and run_tests.gd edits kept
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 120 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-Last invocation (2026-11-23T19:51:22-05:00): waiting-designer.
+T4.3 accepted with a manual fix (commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 120 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
