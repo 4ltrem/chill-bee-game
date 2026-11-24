@@ -3,7 +3,7 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: stopped
+result: waiting-designer
 ---
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
@@ -1981,14 +1981,153 @@ contract: 120 lookups in 72 top-level scenes, 0 unresolved
 contract: 0 emitted signals unheard
 contract: 0 looked-up names used twice
 
+## Resumed 2026-11-23
+
+Command: `goal_agent.py 0.3.1-playtest-fixes.md` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 21: scan (2026-11-23T20:11:40-05:00)
+
+Unit results from `game/reports/_runs/20261123-183729/unit.log`. 0 of 18 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (10 of 18)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C4 The first-time hint | change | Patricia, Bob | partial (built, waits on its tests) | 13/17 present: ✓ node CentrifugeIcon, ✓ node FarmUIRoot, ✓ node ForkIcon, ✓ node HintBubble, ✓ node HintSkipButton, ✓ node SellIcon, ✓ node ShopButton, ✓ node TabHabitat, ✓ dev button Replay hint, ✓ test t_hint_texts_match_content, ✓ test t_hint_waits_for ... |
+| T4.1 every test run sets `show_hint = false` except the item 4 hi | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.1 |
+| T1.1 item 1: the pill has no Button child; it shows on the farm v | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.1 |
+| T2.1 item 2: buying a patch with the Shop open shows no toast unt | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.1 |
+| T3.1 item 3: each tab holds exactly its rows in order (Tree map a | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.1 |
+| T4.2 item 4: with `show_hint = true`, no bubble under the welcome | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.1 |
+| T5.1 item 5: each of the six Dev buttons exists in the Dev panel  | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.1 |
+| T6.1 item 6: `ForkIcon` has the fork shape and no "Harvest" text, | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.1 |
+| T7.1 item 7: the gear shows on the farm view only, top-right, at  | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.1 |
+| T4.3 mutations in `tests/mutations.json` prove the new tests (at  | test | Quinn | partial (built, waits on its tests) | 4/8 present: ✓ test t_hint_texts_match_content, ✓ test t_hint_waits_for_play_then_starts_twice, ✓ test t_hint_skip_ends_for_good_twice, ✗ test t_hint_steps_follow_state_in_order_twice (not run), ✗ test t_hint_shop_only_plant_above_sheet_ends_on_patch (n ... |
+
+### Order: new or rescored (1 of 1)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T8.1 item 8: the Tools icon shows in the first zoom and | 1.77 | 0 | 1 | 0.23 | 1 | housekeeping/handoff; cost 0.23 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T8.1** (score 1.77: housekeeping/handoff; cost 0.23 (Quinn)).
+
+### Step: T8.1 (2026-11-23T20:11:40-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T8.1-quinn.md` (6926 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (1,887,151 tokens, 50 turns, 252 s):
+
+Eight tests for T8.1 are written and registered. The Godot `--check-only` parse of the whole chain is clean. I ran no tests, mutations or shots, and I didn't check that `mutations.json` is valid JSON (the inline-Python check was blocked).
+
+**Files changed**
+- New: `test_helpers_5.gd` (shared `_tl_*` steps) and `test_tools.gd`, chained after `test_hint.gd`.
+- Edited: `run_tests.gd`, with the group comment. In `test_shop_zoom.gd`, `_zs_buy`, `_zs_blocked`, `_zs_back_with_sheet` and `_zs_finish_with_sheet` got a `tools` flag. In `mutations.json`, 13 rows added and the 0.2 item 15 rows retargeted.
+
+**Node names used:** `ToolsButton`, `ShopButton`, `ShopPanel`, `ShopTitle`, `ShopMoney`, `ShopCloseButton`, `Row_<id>`, `Tab*`, `BackButton`. The label under the icon is found by its translated text, because the spec names no node.
+
+**Open questions**
+- Item 8: what happens to the Tools sheet on app pause?
+- Item 8: does Back with the sheet open also end the zoom, or only close the sheet?
+- Item 8: the label's node name is not in the spec. The exact 24 / 928 / 840 px positions are left untested (placeholders).
+- The French mutation edits `journal.csv`, which only counts if the translation is re-imported.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 23 (cap 30; CLI num_turns 50); end `success`
+
+- Tests this round (12): own (12): `t_journal_csv_equals_script_output`, `t_journal_csv_every_key_en_and_fr`, `t_journal_panel_text_matches_csv_twice`, `t_journal_tr_follows_locale`, `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; calls a helper changed in `tests/test_helpers_5.gd` (8): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; calls a helper changed in `tests/test_shop_zoom.gd` (3): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`; changed in `tests/run_tests.gd` (8): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; changed in `tests/test_tools.gd` (8): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      10 passed, 2 failed  (godot exit 1, 24 noise lines dropped)  game/reports/_runs/20261123-201554/unit.log
+    FAIL  t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice  run 1 step blocked: with the sheet open the crank counted no turn: expected 1 got 2 | run 2 step Close: the camera is where it was: expected 15.0537805557251 (+-0.02) go
+    FAIL  t_tools_label_and_title_read_outils_in_french  fr: the label under the icon reads 'Outils' (got '<none>') | fr: the label under the icon reads 'Outils' (got '<none>')  (1746 ms)
+    SCRIPT ERROR: Invalid set index 'top_level' (on base: 'previously freed') with value of type 'bool'.
+```
+
+#### Fix round 1: to Quinn (the failing tests are ones this step wrote)
+
+- Brief for Quinn: `game/reports/goal/0.3.1/briefs/T8.1-fix1-quinn.md` (5011 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (158,408 tokens, 9 turns, 25 s):
+
+I only added `diag:` output to the failure messages in this round; I fixed nothing, because the logs don't show why these tests fail. I haven't run anything.
+
+**Gearing and spigot test** (`t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`): two checks fail, and the log doesn't show the cause of either.
+- **Crank counted a turn with the sheet open:** expected 1, got 2. The tap lands on the dim, and the game may count it as a crank turn on release.
+- **Camera not where it was:** the failing assertion is in run 2, after the Spin back to the second stop.
+- **What I added:** `diag:` text on both messages in `test_shop_zoom.gd`. The crank message prints sheet-open state, centrifuge state, tap position and camera size. The camera message prints zoom, second-stop flag and the flag before. The next check will print them.
+
+**French label test** (`t_tools_label_and_title_read_outils_in_french`): the label under the icon is not found in `fr`, though `en` passes. I added a `diag:` part to the message in `test_tools.gd` (locale, translated text, whether the icon shows). The cause may be that the game doesn't refresh the label when the locale changes. That would be a game defect, not a test one.
+
+**Script error:** `Invalid set index 'top_level' (on base: 'previously freed')` looks like game code. The `top_level` writes are in `shop_ui.gd` (lines 214–223) and `modal_panel.gd`. Patricia should check whether the dim or panel is freed at that point.
+
+No `(designer)` questions this round.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 6 (cap 15; CLI num_turns 9); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (12): own (12): `t_journal_csv_equals_script_output`, `t_journal_csv_every_key_en_and_fr`, `t_journal_panel_text_matches_csv_twice`, `t_journal_tr_follows_locale`, `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; calls a helper changed in `tests/test_helpers_5.gd` (8): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; calls a helper changed in `tests/test_shop_zoom.gd` (5): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`; changed in `tests/run_tests.gd` (8): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; changed in `tests/test_tools.gd` (8): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; last failures (2): `t_tools_label_and_title_read_outils_in_french`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      10 passed, 2 failed  (godot exit 1, 24 noise lines dropped)  game/reports/_runs/20261123-201720/unit.log
+    FAIL  t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice  run 1 step blocked: with the sheet open the crank counted no turn (diag: sheet_open=true cen_state=3 tap=(360, 640) cam=9.53999996185303): expected 1 got 2 | run 2 step 
+    FAIL  t_tools_label_and_title_read_outils_in_french  fr: the label under the icon reads 'Outils' (got '<none>'; diag: locale=fr translate=Outils tools_btn_on=true) | fr: the label under the icon reads 'Outils' (got '<none>'; diag: locale=fr
+    SCRIPT ERROR: Invalid set index 'top_level' (on base: 'previously freed') with value of type 'bool'.
+```
+
+#### Fix round 2: to Bob
+
+- Brief for Bob: `game/reports/goal/0.3.1/briefs/T8.1-fix2-bob.md` (5374 chars)
+- Budget guard for Bob: override
+
+**Bob** (78,795 tokens, 5 turns, 10 s):
+
+Fixed one of the two failures; the other two are not in my folders.
+
+- **`t_tools_label_and_title_read_outils_in_french`:** the `ToolsLabel` text was the literal "Tools", so it never translated. I changed it to the key `tools_icon` in `game/scenes/main.tscn`, so it should read "Outils" in French. I haven't run it.
+- **`SCRIPT ERROR` on `top_level` (previously freed object):** this is in Patricia's scripts, not scenes. The candidates are `shop_ui.gd` lines 214–223 and `modal_panel.gd` lines 43 and 63. `shop_ui.gd:217` sets `_dim.top_level = true` and line 223 sets `top_level = false`. The `_dim` node is probably freed by then, so it needs an `is_instance_valid` guard.
+- **`t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`:** this is a script problem as well. The crank counted a turn while the Tools sheet was open (`sheet_open=true`), so crank input isn't blocked, which belongs to the zoom or input scripts. I've changed nothing in scenes for it.
+
+No placeholders changed and no touch targets or fonts were raised.
+
+- Call: `claude -p --agent builder --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 4 (cap 15; CLI num_turns 5); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (202): own (12): `t_journal_csv_equals_script_output`, `t_journal_csv_every_key_en_and_fr`, `t_journal_panel_text_matches_csv_twice`, `t_journal_tr_follows_locale`, `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; calls a helper changed in `tests/test_helpers_5.gd` (8): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; calls a helper changed in `tests/test_shop_zoom.gd` (5): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`; changed in `tests/run_tests.gd` (8): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; changed in `tests/test_tools.gd` (8): `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`; impacted by `scenes/main.tscn` (via `BackButton`, `BeeCountLabel`, `Bees`, `Camera3D`, `Centrifuge`, `CentrifugeIcon`, `CentrifugeLabel`, `DevSpeedTag`, `FarmUI`, `FarmUIRoot`, `FarmWorld`, `ForkIcon` and 54 more) (201): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`, `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_barrel_eases_to_stop`, `t_became_full_count_full_overflow`, `t_became_full_once_while_filling`, `t_bottling_35_single_cells_is_2_jars`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_time_is_live`, `t_bottling_timing`, `t_bucket_capacity_and_states`, `t_bumble_visitor_toast_journal_unlock_twice`, `t_button_press_is_not_a_crank`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_centrifuge_lid_paths`, `t_centrifuge_lid_rests_clear`, `t_combs_fill_frame_and_hive_whole`, `t_combs_visible_in_hive`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_crate_fulls_fly_to_truck_on_return`, `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_delivery_trip_time_by_level`, `t_dev_actions`, `t_dev_bottling_seconds`, `t_dev_max_tap_rate`, `t_dev_ui_bounds_collects_controls`, `t_fill_in_order_slot_by_slot`, `t_fill_time_level0`, `t_fill_time_with_levels`, `t_flight_fill_rate_level3`, `t_flower_patch_b`, `t_focus_styles`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gearing_bottling_time_unchanged`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_gearing_own_motor_cut`, `t_gearing_turns_by_level`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_heap_shows_every_cell`, `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_waits_for_play_then_starts_twice`, `t_hive_five_upright_frames_four_walls`, `t_hive_footprint_and_frames`, `t_hive_frames_cells_aligned`, `t_hive_lid_close_path`, `t_hive_lid_leaning_pose`, `t_hive_lid_open_path`, `t_hive_rate_is_live`, `t_hive_size_vs_truck`, `t_hold_at_cap`, `t_hold_never_slower`, `t_hold_ramp_is_visual_only`, `t_hold_release_stops`, `t_hud_no_overlap_no_cutoff`, `t_icon_follows_anchor`, `t_icon_hidden_behind_camera`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_journal_csv_every_key_en_and_fr`, `t_journal_panel_text_matches_csv_twice`, `t_journal_tr_follows_locale`, `t_layout_hive_scale_follows_config`, `t_layout_no_jar_outside_crate`, `t_layout_objects_on_cells`, `t_layout_truck_wheels_on_ground`, `t_leftover_adds_no_turns`, `t_lid_close_and_signal`, `t_lid_close_never_clips_hive`, `t_lid_closes_clear_of_walls`, `t_lid_still_crank_and_gear1_turn_twice`, `t_lowered_frame_comes_back_empty_then_fills`, `t_next_frame_to_harvest`, `t_no_crank_during_zoom`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_node_contract_011`, `t_node_contract_012`, `t_overflow_one_hive_then_pause`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_patch_plant_steps_group_health_twice`, `t_paused_crank_never_finishes_in_farm_view`, `t_phase2_auto_sell_sets_once_toast_once`, `t_pile_shows_every_cell`, `t_pile_unit`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_retired_api_gone`, `t_risen_frame_never_fills`, `t_scrape_rules`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_scrape_value`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_skip_icon_reaches_thriving_free_twice`, `t_speed_cell_flight`, `t_speed_jar_cycle`, `t_speed_lid_lift`, `t_speed_reset`, `t_speed_tag`, `t_speed_tag_below_labels`, `t_spigot_bottling_time_by_level`, `t_spigot_jar_flight_unchanged`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_tap_cap`, `t_tap_cap_is_live`, `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`, `t_truck_and_crate_jars_full_with_lids`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_crate_while_away`, `t_truck_full_and_can_sell`, `t_truck_home_loads_crate_without_trip`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_return_loads_crate`, `t_truck_sell_credits_at_once`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_truck_trip_time_is_live`, `t_turns_per_jar`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`, `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; last failures (2): `t_tools_label_and_title_read_outils_in_french`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`
+- Impact widened: no test reads the changed names of `scenes/main.tscn`; ran the tests reading any name it defines
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Tests first: the 12 own, written or last-failed tests alone; the other 190 and the windowed suites only if they pass
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      8 passed, 4 failed  (godot exit 1, 24 noise lines dropped)  game/reports/_runs/20261123-201830/unit.log
+    FAIL  t_tools_icon_first_zoom_place_and_farm_view_twice  run 1 step first zoom: the icon is placed as the spec says: expected [] got ["no label with the translated tools_icon shows"] | run 2 step first zoom: the icon is placed as the spec s
+    FAIL  t_tools_icon_second_stop_place_and_farm_view_twice  run 1 step second stop: the icon is placed as the spec says: expected [] got ["no label with the translated tools_icon shows"] | run 2 step second stop: the icon is placed as the spe
+    FAIL  t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice  run 1 step blocked: with the sheet open the crank counted no turn (diag: sheet_open=true cen_state=3 tap=(360, 640) cam=9.53999996185303): expected 1 got 2 | run 2 step 
+    FAIL  t_tools_label_and_title_read_outils_in_french  fr: the label under the icon reads 'Outils' (got '<none>'; diag: locale=fr translate=Outils tools_btn_on=true) | en: the label under the icon reads 'Tools' (got '<none>'; diag: locale=en 
+    SCRIPT ERROR: Invalid set index 'top_level' (on base: 'previously freed') with value of type 'bool'.
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T8.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.1-playtest-fixes.md --accept T8.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T8.1 fix-round edits"`.
+
 ## Result
 
-T7.1 accepted with a manual fix (commit failed: 
-no changes added to commit (use "git add" and/or "git commit -a")
-docs agree with code and config
-contract: 120 lookups in 72 top-level scenes, 0 unresolved
-contract: 0 emitted signals unheard
-contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.1-playtest-fixes.md` to build the rest.
+Last invocation (2026-11-23T20:19:26-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 
@@ -2032,4 +2171,7 @@ Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.1/`
 | Quinn, T4.3 | 3,079,133 | 167,516 | 31 | 531 s |
 | Quinn, T4.3 fix 1 | 84,006 | 23,611 | 4 | 14 s |
 | Bob, T4.3 fix 2 | 99,385 | 23,750 | 8 | 21 s |
-| **Total** | **14,442,919** | | | |
+| Quinn, T8.1 | 1,887,151 | 109,265 | 50 | 252 s |
+| Quinn, T8.1 fix 1 | 158,408 | 36,342 | 9 | 25 s |
+| Bob, T8.1 fix 2 | 78,795 | 22,477 | 5 | 10 s |
+| **Total** | **16,567,273** | | | |
