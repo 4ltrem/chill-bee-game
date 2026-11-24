@@ -28,6 +28,7 @@ func _ready() -> void:
 			if buy != null:
 				buy.pressed.connect(func() -> void: Economy.buy(id))
 			_row_nodes[id] = row
+			PreviewTile.fill(row.find_child("PreviewTile", true, false) as Control, id)   # 0.3.2 item 7: the row's model, rendered once
 			_rows[id] = {
 				"buy": buy,
 				"level": row.find_child("LevelLabel", true, false) as Label,

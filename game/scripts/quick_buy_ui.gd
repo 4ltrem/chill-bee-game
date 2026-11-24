@@ -86,6 +86,7 @@ func _refresh() -> void:
 	_next = next_upgrade()
 	if _next == "":
 		return
+	PreviewTile.fill(_bar.find_child("PreviewTile", true, false) as Control, _next)   # 0.3.2 item 7: re-rendered once when the next upgrade changes
 	if _name != null:
 		_name.text = tr(NAME_KEYS[_next])
 	var price: String = _price_text(_next)
