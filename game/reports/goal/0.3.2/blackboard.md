@@ -3,7 +3,7 @@ spec: 0.3.2-tests-and-quick-buy.md
 version: 0.3.2
 run: 0.3.2
 started: 2026-11-23
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3.2-tests-and-quick-buy.md (run 0.3.2)
 
@@ -1083,9 +1083,18 @@ FAIL    unit      14 passed, 1 failed  (godot exit 1, 30 noise lines dropped)  g
 
 2 fix rounds failed on C1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept C1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C1 fix-round edits"`.
 
+## Resumed 2026-11-24
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept C1 --note Hint walk: cranks every reload (the hang); Patricia's truck.sold signal sets _sold at the sale; the post-sale check follows the state (hint_shop on the farm view, none at the second stop), designer 11/24. t_hint_steps_follow_state_in_order_twice PASS (_runs/20261124-025157)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C1 (2026-11-24T02:53:40-05:00)
+
+- Change (orchestrator, Process 9): Hint walk: cranks every reload (the hang); Patricia's truck.sold signal sets _sold at the sale; the post-sale check follows the state (hint_shop on the farm view, none at the second stop), designer 11/24. t_hint_steps_follow_state_in_order_twice PASS (_runs/20261124-025157)
+- Accepted: checkpoint `e34a4c3` on `main`
+
 ## Result
 
-Last invocation (2026-11-24T02:19:06-05:00): waiting-designer.
+C1 accepted with a manual fix (checkpoint `e34a4c3` on `main`). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`
 
