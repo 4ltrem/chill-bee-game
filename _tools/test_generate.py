@@ -965,6 +965,41 @@ class BuildToolsTest(unittest.TestCase):
             self.assertEqual(costs["builder"], b.COST["builder"])          # no logged run: the fixed table
             self.assertEqual(b.decide(r(85, 50), "programmer", t, reset=reset, costs=costs)[0], "warn")   # 85 + 6 <= 95
 
+    def test_context_guard_warns_once_per_threshold(self):
+        import context_guard as g
+        import contextlib, io
+        self.assertIsNone(g.decide(400, 1000, set(), (50, 75)))
+        self.assertEqual(g.decide(550, 1000, set(), (50, 75)), 50)
+        self.assertIsNone(g.decide(550, 1000, {50}, (50, 75)))
+        self.assertEqual(g.decide(800, 1000, {50}, (50, 75)), 75)
+        with tempfile.TemporaryDirectory() as tmp:
+            tr = Path(tmp) / "t.jsonl"
+            lines = [
+                {"type": "assistant", "timestamp": "2026-11-23T10:00:00Z",
+                 "message": {"id": "m1", "usage": {"input_tokens": 1, "cache_creation_input_tokens": 2, "cache_read_input_tokens": 3}}},
+                {"type": "assistant", "timestamp": "2026-11-23T10:01:00Z",
+                 "message": {"id": "m2", "usage": {"input_tokens": 10, "cache_creation_input_tokens": 20, "cache_read_input_tokens": 30}}},
+            ]
+            tr.write_text("\n".join(json.dumps(x) for x in lines) + "\n", encoding="utf-8")
+            self.assertEqual(g.context_used(str(tr)), 60)
+            def run(**hook):   # 60 tokens of a 100 window: 60%, past 50
+                buf = io.StringIO()
+                with contextlib.redirect_stdout(buf):
+                    g.main(["--window", "100"], stdin_text=json.dumps({"session_id": "s1", "transcript_path": str(tr), **hook}), root=tmp)
+                return buf.getvalue().strip()
+            self.assertEqual(run(agent_id="a1"), "")                       # a subagent is never warned
+            out = json.loads(run(hook_event_name="UserPromptSubmit"))
+            self.assertEqual(out["hookSpecificOutput"]["hookEventName"], "UserPromptSubmit")
+            self.assertIn("60%", out["hookSpecificOutput"]["additionalContext"])
+            self.assertEqual(run(hook_event_name="UserPromptSubmit"), "")  # warned once
+
+    def test_settings_wire_the_context_guard(self):
+        path = Path(__file__).resolve().parent.parent / ".claude" / "settings.json"
+        hooks = json.loads(path.read_text(encoding="utf-8")).get("hooks", {})
+        for event in ("PostToolUse", "UserPromptSubmit"):
+            cmds = [h.get("command", "") for entry in hooks.get(event, []) for h in entry.get("hooks", [])]
+            self.assertTrue(any("context_guard.py" in c for c in cmds), f"{event} runs context_guard.py")
+
     def test_guard_shell_refuses_deleting_a_folder_that_holds_a_junction(self):
         """L45: a worktree's Godot junction was followed by `git worktree remove --force` and emptied the target."""
         import subprocess, guard_shell as gs
