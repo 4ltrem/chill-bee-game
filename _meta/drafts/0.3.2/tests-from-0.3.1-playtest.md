@@ -23,4 +23,8 @@ Every row was fixed by hand on 2026-11-23 (commits named) and needs a test that 
 | 11 | A tap on the Tools sheet's dim at the second stop counted a crank turn | `47000ad` | Already covered by `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`; keep its mutation |
 | 12 | Spin drawn smaller / bigger by view; glyph out of its circle | `d42377f`, `064b241` | Spin's drawn circle equals the fork's (88) in the farm view and the first zoom; `SpinGlyph` stays inside the circle |
 
+## 0.3.1 test lines with no test (designer 2026-11-23: 0.3.1 closed by note, these move here)
+
+The 0.3.1 checkpoint was green (528/528, `game/reports/_runs/20261123-224854/`), but `goal_agent.py` left 14 goals partial: the ledger shows T1.1, T2.1, T3.1, T5.1, T6.1 and T7.1 as built, yet `run_tests.gd` has 0.3.1 tests only for items 4 and 8. The designer checked items 1, 2, 3, 5, 6 and 7 by hand in the play-test. Carry those six test lines from `game/specs/0.3.1-playtest-fixes.md` into the 0.3.2 spec word for word, each test marked `# goal T<n>.1` and listed under a `# 0.3.1 item <n>` group in `run_tests.gd` (rows 2-4 and 9 above already cover part of items 3 and 7). `goal_agent.py` cannot close goals by a designer's decision: `--accept` only rewrites a ledger entry, and a goal with no tests stays partial (tooling, for a planner session).
+
 Also for the goal loop (tooling, not tests): a test goal whose item already "has its marked test" was accepted although those tests did not check the item (T3.1, T7.1). The scan should match a test to the item's own nodes, not to any test the step's names touch.

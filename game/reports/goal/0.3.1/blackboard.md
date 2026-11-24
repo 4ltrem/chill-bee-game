@@ -3,8 +3,10 @@ spec: 0.3.1-playtest-fixes.md
 version: 0.3.1
 run: 0.3.1
 started: 2026-11-23
-result: waiting-tests
+result: closed-by-designer
 ---
+
+> **Closed by the designer, 2026-11-23:** checkpoint green (528/528, `game/reports/_runs/20261123-224854/`); 4/18 goals done by the scan; the other 14 lack tests for items 1, 2, 3, 5, 6, 7 (play-tested by hand). Those tests move to `_meta/drafts/0.3.2/tests-from-0.3.1-playtest.md`. Do not rerun this spec.
 # Goal agent: 0.3.1-playtest-fixes.md (run 0.3.1)
 
 The shared record of this run. The script writes every section and hands each agent only the slice it needs; no agent reads this file. Inputs (briefs, drafts, shots) are linked; what agents and checks return (verdicts, replies, scores) is written here.
