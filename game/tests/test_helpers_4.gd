@@ -300,15 +300,37 @@ func _hi_walk() -> Dictionary:
 	await _frames(3)
 	eq(_hi_key(), "hint_crank", "walk: at the second stop with the crank not turned the bubble is hint_crank")
 	var sent: int = 0
-	while int(c2.get("state")) == _st(c2, "CRANKING") and sent < _turns_for(_bucket_cells()) * 2 + 10:
-		await fi.tap_at(fi.free_spot(m))
-		await _wait(_tap_gap())
-		sent += 1
+	# 0.3.2 item 1 (C1): a bucket larger than one load bottles, reloads from the pile and goes back to CRANKING; the walk cranks every
+	# load (it hung waiting for Sell after the first). It stops once the centrifuge is past cranking with no reload left (Sell shows).
+	var cap: int = (_turns_for(_bucket_cells()) * 2 + 10) * 4
+	var idle: float = 0.0
+	var idle_cap: float = _secs_for_jars(_hive_jars()) + float(cv("cell_fly_seconds")) + 20.0
+	while sent < cap and idle < idle_cap:
+		var si0: Control = _hi_n("SellIcon") as Control
+		if si0 != null and si0.is_visible_in_tree():
+			break
+		if int(c2.get("state")) == _st(c2, "CRANKING"):
+			await fi.tap_at(fi.free_spot(m))
+			await _wait(_tap_gap())
+			sent += 1
+		else:
+			await _wait(0.25)
+			idle += 0.25
 	await _frames(3)
 	print("WALK cranked: sent ", sent, " state ", c2.get("state"))
 	var money0: int = int(_eco().get("money"))
+	# Looked up on every poll (never held across frames) so a rebuilt or not-yet-made icon is a miss, not an error in the loop; one line
+	# per game-second block (frame, clock, centrifuge state) locates a stall if the poll ever stops again.
+	var beat: Array = [0]
+	var up: bool = await _until(func() -> bool:
+		var si: Control = _hi_n("SellIcon") as Control
+		var cc: Node = _hi_n("Centrifuge")
+		var blk: int = int(float(_gms()) / 5000.0)
+		if blk != beat[0]:
+			beat[0] = blk
+			print("WALK poll frame ", Engine.get_process_frames(), " gms ", _gms(), " state ", cc.get("state") if cc != null else -1, " icon ", si != null)
+		return si != null and si.is_visible_in_tree(), _secs_for_jars(_hive_jars()) + float(cv("cell_fly_seconds")) + 20.0)
 	var sell_icon: Control = _hi_n("SellIcon") as Control
-	var up: bool = await _until(func() -> bool: return sell_icon.is_visible_in_tree(), _secs_for_jars(_hive_jars()) + float(cv("cell_fly_seconds")) + 20.0)
 	ck(up, "walk: SellIcon shows once bottled")
 	print("WALK sell up: ", up, " t=", Time.get_ticks_msec(), " limit=", _secs_for_jars(_hive_jars()), " paused=", paused, " ts=", Engine.time_scale)
 	if up:

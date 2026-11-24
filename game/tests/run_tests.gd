@@ -157,8 +157,8 @@ func _run() -> void:
 		"t_skip_icon_reaches_thriving_free_twice", "t_skip_icon_farm_view_only",
 		# 0.3.1 item 4 (written from game/specs/0.3.1-playtest-fixes.md before the code)
 		"t_hint_texts_match_content", "t_hint_waits_for_play_then_starts_twice", "t_hint_skip_ends_for_good_twice",
-		# SET ASIDE 2026-11-23 (designer): "t_hint_steps_follow_state_in_order_twice" hangs the suite after the crank step (its
-		# _until for SellIcon never returns; WALK markers in test_helpers_4.gd _hi_walk); never green. Quinn fixes it in 0.3.2.
+		# 0.3.2 item 1: back in the suite (was set aside 2026-11-23: hung after the crank; WALK markers in test_helpers_4.gd _hi_walk)
+		"t_hint_steps_follow_state_in_order_twice",
 		"t_hint_shop_only_plant_above_sheet_ends_on_patch",
 		"t_hint_hidden_under_journal_and_victory_twice", "t_hint_leaving_shows_step_that_fits_twice",
 		# 0.3.1 item 8 (written from game/specs/0.3.1-playtest-fixes.md before the code)
