@@ -197,6 +197,10 @@ func _process(delta: float) -> void:
 	# through at the second stop (T8.1). Only undoes its own block, so the zoom's own crank_enabled = false stands.
 	if _centrifuge != null:
 		var blocked: bool = zoom == Zoom.NONE and any_panel_open()
+		if _farm_ui != null:   # play-test 11/23: the Shop sheet's Close sat on the gear; the gear hides while a panel or sheet is open
+			var gear: Control = _farm_ui.find_child("SettingsButton", true, false) as Control
+			if gear != null:
+				gear.visible = zoom == Zoom.NONE and not _at_second_stop and not blocked
 		if blocked and not _panel_blocks_crank:
 			_panel_blocks_crank = true
 			_centrifuge.crank_enabled = false

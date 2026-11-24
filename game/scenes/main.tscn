@@ -1,4 +1,4 @@
-[gd_scene load_steps=54format=3 uid="uid://ub4nv2k6wxgl"]
+[gd_scene load_steps=55 format=3 uid="uid://ub4nv2k6wxgl"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/welcome_overlay.gd" id="welcome_script"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" path="res://scripts/harvest_ui.gd" id="12_hui"]
 [ext_resource type="Script" path="res://scripts/floating_icon.gd" id="8_icon"]
 [ext_resource type="PackedScene" path="res://scenes/props/uncapping_fork.tscn" id="uncap_fork_scene"]
+[ext_resource type="Script" path="res://scripts/modal_panel.gd" id="modal_panel_script"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBox_wildflower"]
 bg_color = Color(0.97, 0.66, 0.78, 1)
@@ -1170,6 +1171,7 @@ offset_bottom = 220.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBox_modal")
+script = ExtResource("modal_panel_script")
 
 [node name="SettingsMargin" type="MarginContainer" parent="FarmUIRoot/FarmUI/SettingsPanel"]
 layout_mode = 2

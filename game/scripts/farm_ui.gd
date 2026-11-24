@@ -370,6 +370,7 @@ func _setup_fill_shape() -> void:
 	var box := StyleBoxFlat.new()
 	box.bg_color = fill_col
 	box.anti_aliasing = true
+	box.corner_detail = 24   # smooth honey edge (designer play-test 11/23)
 	var src := _fork.shape_style("normal") as StyleBoxFlat
 	if src != null:
 		box.corner_radius_top_left = maxi(src.corner_radius_top_left - src.border_width_left, 0)
@@ -397,7 +398,7 @@ func _process(delta: float) -> void:
 	var vs: Vector2 = _fork.visible_size()
 	var top_left: Vector2 = (_fork.size - vs) * 0.5
 	if _harvest_fill != null:
-		var show_fill: bool = frac > 0.0 and frac < 1.0
+		var show_fill: bool = frac > 0.0   # designer play-test 11/23: at full the honey fill stays (the white circle read as empty)
 		_harvest_fill.visible = show_fill
 		if show_fill:
 			_setup_fill_shape()

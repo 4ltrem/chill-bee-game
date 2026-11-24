@@ -332,7 +332,7 @@ func _build_header_and_tabs(box: Node) -> void:
 			_tabs_row.add_child(b)
 		b.toggle_mode = true
 		b.focus_mode = Control.FOCUS_NONE
-		b.clip_text = true
+		b.clip_text = false   # designer play-test 11/23: "Research" lost its "h" in an equal-width clipped tab; each tab now fits its word (28 px kept, V12)
 		b.custom_minimum_size.y = TAB_HEIGHT
 		b.add_theme_font_size_override("font_size", SHEET_FONT)
 		b.pressed.connect(_select_tab.bind(t))
@@ -342,6 +342,7 @@ func _build_header_and_tabs(box: Node) -> void:
 		_coming_soon = Label.new()
 		_coming_soon.name = "ComingSoonLabel"
 		_coming_soon.modulate = Color(1.0, 1.0, 1.0, 0.5)   # greyed
+		_coming_soon.add_theme_color_override("font_color", Color(0.2, 0.12, 0.02, 1.0))   # ink: the default white was invisible on the cream sheet (play-test 11/23)
 		_coming_soon.add_theme_font_size_override("font_size", SHEET_FONT)
 		rows_holder.add_child(_coming_soon)
 	_update_tab_texts()

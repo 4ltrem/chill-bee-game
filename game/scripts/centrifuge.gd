@@ -144,10 +144,19 @@ func land_cells(n: int = 1) -> void:
 func close_lid(delay: float = -1.0) -> bool:
 	if not lid_open or cells <= 0 or not (state == State.EMPTY or state == State.LOADING):
 		return false
+	var opening: float = seconds_until_lid_open()   # the lid may still be lifting (after bottling, the pile loads at once)
 	lid_open = false
 	if delay < 0.0:
 		delay = config.cell_fly_seconds if _landed < cells else 0.0   # wait for cells still in flight
-	_move_lid_visual(false, delay)
+	if opening > 0.0 and is_inside_tree():
+		# designer play-test 11/23: starting the close tween now killed the open one, so the lid never lifted for the pile.
+		# Let the lift finish, then close after the rest of the delay.
+		var rest: float = maxf(delay - opening, 0.0)
+		get_tree().create_timer(opening, false).timeout.connect(func() -> void:
+			if not lid_open:
+				_move_lid_visual(false, rest))
+	else:
+		_move_lid_visual(false, delay)
 	_set_state(State.FULL)
 	lid_moved.emit(false)
 	return true

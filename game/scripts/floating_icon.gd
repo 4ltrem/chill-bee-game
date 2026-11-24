@@ -48,6 +48,9 @@ func _ready() -> void:
 	_smooth_glyph(self)   # designer 2026-11-23: the drawn glyphs looked pixelated and shimmered while the icon moved
 	for style_name in STYLE_NAMES:
 		_styles[style_name] = get_theme_stylebox(style_name)
+		if _styles[style_name] is StyleBoxFlat:   # designer play-test 11/23: the default 8 corner segments drew a jagged circle
+			(_styles[style_name] as StyleBoxFlat).corner_detail = 24
+			(_styles[style_name] as StyleBoxFlat).anti_aliasing = true
 		add_theme_stylebox_override(style_name, StyleBoxEmpty.new())
 	_shape = Control.new()
 	_shape.name = "VisibleShape"
