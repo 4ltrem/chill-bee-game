@@ -150,5 +150,29 @@
   "turns": 9,
   "seconds": 24,
   "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, C4",
+  "tokens": 112612,
+  "final": 25975,
+  "turns": 7,
+  "seconds": 15,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, C1",
+  "tokens": 442269,
+  "final": 46294,
+  "turns": 17,
+  "seconds": 39,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, C1",
+  "tokens": 885897,
+  "final": 66531,
+  "turns": 32,
+  "seconds": 99,
+  "transcripts": "_meta/sessions/runs/2026-11-24-goal-0.3.2"
  }
 ]

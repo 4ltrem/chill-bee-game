@@ -1,7 +1,7 @@
 {
  "spec": "0.3.2-tests-and-quick-buy.md",
  "version": "0.3.2",
- "at": "2026-11-24T00:49:28-05:00",
+ "at": "2026-11-24T01:23:09-05:00",
  "unit_log": "game/reports/_runs/20261123-224854/unit.log",
  "goals": {
   "C1": {
@@ -87,10 +87,16 @@
     4
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "8ec9f65",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -259,7 +265,7 @@
     {
      "kind": "node",
      "name": "HabitatFill",
-     "ok": false
+     "ok": true
     },
     {
      "kind": "node",
@@ -274,11 +280,16 @@
     {
      "kind": "node",
      "name": "HabitatTrack",
-     "ok": false
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "0174378",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -795,56 +806,34 @@
  },
  "order": [
   {
-   "id": "C9",
-   "score": 11.46,
-   "factors": {
-    "unblocks": 2,
-    "value": 3,
-    "cost": 0.54,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C4",
-   "score": 10.0,
-   "factors": {
-    "unblocks": 2,
-    "value": 2,
-    "cost": 0.0,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C1",
-   "score": 9.73,
+   "score": 9.74,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.27,
+    "cost": 0.26,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C8",
-   "score": 9.73,
+   "score": 9.74,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.27,
+    "cost": 0.26,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C5",
-   "score": 9.46,
+   "score": 9.48,
    "factors": {
     "unblocks": 2,
     "value": 2,
-    "cost": 0.54,
+    "cost": 0.52,
     "ready": 1,
     "blocked_by": []
    }
@@ -1103,6 +1092,17 @@
    }
   },
   {
+   "id": "T4.1",
+   "score": 1.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T.1",
    "score": 0.0,
    "factors": {
@@ -1111,21 +1111,7 @@
     "cost": 0.22,
     "ready": 0,
     "blocked_by": [
-     "C4",
      "C5"
-    ]
-   }
-  },
-  {
-   "id": "T4.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C4"
     ]
    }
   },

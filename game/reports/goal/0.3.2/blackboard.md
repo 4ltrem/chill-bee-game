@@ -3,7 +3,7 @@ spec: 0.3.2-tests-and-quick-buy.md
 version: 0.3.2
 run: 0.3.2
 started: 2026-11-23
-result: stopped
+result: paused
 ---
 # Goal agent: 0.3.2-tests-and-quick-buy.md (run 0.3.2)
 
@@ -793,9 +793,142 @@ Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept C9 --note Flower c
 - Change (orchestrator, Process 9): Flower centre StyleBox_habitat_centre recoloured to the gold token (1, 0.76, 0.12) for V1 (was 0.98, 0.82, 0.3, dE 14.6); designer 11/24; placeholder for play-test
 - Accepted: checkpoint `0174378` on `main`
 
+## Resumed 2026-11-24
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 8: scan (2026-11-24T01:22:26-05:00)
+
+Unit results from `game/reports/_runs/20261123-224854/unit.log`. 0 of 35 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 35)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C9 Habitat Health you can see | change | Patricia, Bob | partial (built, waits on its tests) | ✓ node HabitatCountLabel, ✓ node HabitatFill, ✓ node HabitatIcon, ✓ node HabitatPill, ✓ node HabitatTrack, ✓ ledger 0174378 |
+
+### Order: new or rescored (3 of 30)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 2 | C1 The hint walk test hangs. | 9.74 | 2 | 2 | 0.26 | 1 | 2 goal(s) wait on it; designer feature; cost 0.26 (Patricia) |
+| 3 | C8 No hint said twice | 9.74 | 2 | 2 | 0.26 | 1 | 2 goal(s) wait on it; designer feature; cost 0.26 (Patricia) |
+| 4 | C5 An adversarial QA pass | 9.48 | 2 | 2 | 0.52 | 1 | 2 goal(s) wait on it; designer feature; cost 0.52 (Patricia, Bob) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C4** (score 10.0: 2 goal(s) wait on it; designer feature; cost 0.0 ()).
+
+### Step: C4 (2026-11-24T01:22:26-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/C4-quinn.md` (2192 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (112,612 tokens, 7 turns, 15 s):
+
+I changed `game/tests/test_gearing.gd` for item 4 and ran nothing. I expect it to catch mutation 25 (the "second crank dead" gear mutation), but that is untested.
+
+- **Helper:** `_gear_run(level, clock_late := 0.0)` now calls `advance(clock_late)` on the centrifuge once it reaches CRANKING, before the first tap. That moves `_clock` past the first minutes.
+- **Test:** the second run in `t_gearing_gears_turn_opposite_twice` uses `_gear_run(max_l, 600.0)`, with the spec line quoted beside it. The first run is early and unchanged, so the "second run turns the same way" assert is kept.
+- **Nodes used:** `Gear1` to `Gear6`, found by name through the existing `_gear` helper.
+
+**Open questions:**
+- The spec also says the late crank should check that "the honey pours". I did not add that assert, since the list says to write no new tests. Do you want a pour check on the late run?
+- The 600.0 is a literal and not a config value. Should it come from a config key instead?
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 5 (cap 30; CLI num_turns 7); end `success`
+
+- Tests this round (1): own (1): `t_gearing_gears_turn_opposite_twice`; calls a helper changed in `tests/test_gearing.gd` (1): `t_gearing_gears_turn_opposite_twice`; changed in `tests/test_gearing.gd` (1): `t_gearing_gears_turn_opposite_twice`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Green: checkpoint `8ec9f65` on `main`
+
+## Pass 9: scan (2026-11-24T01:23:09-05:00)
+
+Unit results from `game/reports/_runs/20261123-224854/unit.log`. 0 of 35 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (1 of 35)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C4 The second crank (mutation 25). | change | - | partial (built, waits on its tests) | ✓ ledger 8ec9f65 |
+
+### Order: new or rescored (2 of 29)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 27 | T4.1 item 4: a second harvest cranked after the clock h | 1.78 | 0 | 1 | 0.22 | 1 | housekeeping/handoff; cost 0.22 (Quinn) |
+| 28 | T.1 every test run sets `show_hint = false` except the | 0.0 | 0 | 1 | 0.22 | 0 | waits on C5 |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **C1** (score 9.74: 2 goal(s) wait on it; designer feature; cost 0.26 (Patricia)).
+
+### Step: C1 (2026-11-24T01:23:09-05:00)
+
+- Brief for Patricia: `game/reports/goal/0.3.2/briefs/C1-patricia.md` (9477 chars)
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/C1-quinn.md` (3243 chars)
+- Budget guard for Patricia: override
+- Budget guard for Quinn: override
+
+**Patricia** (442,269 tokens, 17 turns, 39 s):
+
+I made no fix and changed no files. I could not run Godot, so I couldn't find the cause of the hang.
+
+- **Why I couldn't run it:** a hook blocks `godot_run.py` in my shell and sends it to Rex. I have no way to dispatch Rex from here.
+- **Game side:** reading the code turned up nothing that would stall after the crank. `hint.gd` has no loops, waits or time-scale changes. The `while` loops in `centrifuge.gd` (bottling), `jar_flight.gd` and `farm_ui.gd` all end. `Engine.time_scale` is only reset when `DevPanel` leaves the tree. Nothing in the game points at a hang, with or without `show_hint = true`.
+- **Helper side:** the likelier cause is in `_hi_walk` or its per-frame watcher in `test_helpers_4.gd`. The `WALK` markers there should show where it stops, so that is Quinn's side to run and read.
+
+**For Rex:** run `t_hint_steps_follow_state_in_order_twice` with `--time-scale 6` and send me the last `WALK` line. If the last marker is "WALK cranked", I'll look at bottling and the truck again.
+
+**Not covered:** the test is still set aside in `run_tests.gd`. There is no new input path and no placeholders. `contract_check.py` was not run, since I changed nothing.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 13 (cap 30; CLI num_turns 17); end `success`
+
+
+**Quinn** (885,897 tokens, 32 turns, 99 s):
+
+I did not find why the hint walk hangs, and the test is not proven green. I read the helper, `hint.gd`, the centrifuge, the jar flight and the toast code. Nothing in them loops or stalls the clock. The two logs in `game/reports/_runs` stop after "WALK cranked … state 5". That's silent, with no error lines.
+
+**Files changed**
+- `tests/test_helpers_4.gd` (`_hi_walk`):
+  - The SellIcon wait now looks the node up on each poll. It no longer holds one captured node across frames.
+  - It prints a "WALK poll" line every 5 game seconds with the frame, clock, centrifuge state and whether the icon exists.
+- `tests/run_tests.gd`: `t_hint_steps_follow_state_in_order_twice` is back in the list. No timeout was lengthened.
+
+**Node names used:** SellIcon, Centrifuge.
+
+**Other listed tests:** none needed changes. The spec only touches the hint walk.
+
+**Open question:** the goal agent should run the test. If it still hangs, the last "WALK poll" line shows whether the clock or the frame loop stopped. If the game stalls with `show_hint = true`, that is a bug for Patricia.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 20 (cap 30; CLI num_turns 32); end `success`
+
+- Tests this round (15): own (15): `t_focus_styles`, `t_fork_shows_while_cranking_and_state_table`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_steps_follow_state_in_order_twice`, `t_hud_no_overlap_no_cutoff`, `t_icon_touch_area_in_scene`, `t_icons_never_overlap`, `t_node_contract`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_ui_and_camera`; calls a helper changed in `tests/test_helpers_4.gd` (1): `t_hint_steps_follow_state_in_order_twice`; changed in `tests/run_tests.gd` (1): `t_hint_steps_follow_state_in_order_twice`
+- Check `contract`: PASS
+- Check `tests`: TIMEOUT with no failing test; retrying once
+- Check `tests`: TIMEOUT again
+
+```
+PASS    start     0 errors  (godot exit 1 (1 is normal here), 4 noise lines dropped)  game/reports/_runs/20261124-014229/start.log
+TIMEOUT unit      no total line  (godot exit None, 0 noise lines dropped)  game/reports/_runs/20261124-014229/unit.log
+    MEASURE summary texts: jars 'Jars sold: 4', value 'Price per jar: $7', total 'Total: $28'
+PASS    play      246 passed, 0 failed  (godot exit 0, 0 noise lines dropped)  game/reports/_runs/20261124-014229/play.log
+    WARNING: This control can't grab focus. Use set_focus_mode() to allow a control to get focus.
+godot_run: start ...
+godot_run: start done in 0m02s (PASS)
+godot_run: unit ...
+godot_run: unit done in 15m00s (TIMEOUT)
+godot_run: play ...
+godot_run: play done in 2m19s (PASS)
+```
+
+**Paused:** `tests` timed out twice with no failing test: the suite outgrew godot_run's timeout (or a test hangs), which is not a code bug, so no fix round was started. Check the newest `game/reports/_runs/*/unit.log` for the last test it reached, raise the limit in `_tools/godot_run.py` (`UNIT_CAP_S`) if the suite only grew, then run the same command again to resume.
+
 ## Result
 
-C9 accepted with a manual fix (checkpoint `0174378` on `main`). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
+Last invocation (2026-11-24T02:00:06-05:00): paused.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`
 
@@ -820,4 +953,7 @@ Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/
 | Patricia, C9 fix 1 | 208,742 | 23,743 | 12 | 23 s |
 | Quinn, C9 fix 2 | 88,615 | 21,858 | 5 | 10 s |
 | Bob, C9 fix 2 | 172,118 | 22,591 | 9 | 24 s |
-| **Total** | **2,994,044** | | | |
+| Quinn, C4 | 112,612 | 25,975 | 7 | 15 s |
+| Patricia, C1 | 442,269 | 46,294 | 17 | 39 s |
+| Quinn, C1 | 885,897 | 66,531 | 32 | 99 s |
+| **Total** | **4,434,822** | | | |
