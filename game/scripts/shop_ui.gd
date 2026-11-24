@@ -23,7 +23,7 @@ func _ready() -> void:
 			holder.add_child(row)
 			var buy: Button = row.find_child("BuyButton", true, false) as Button
 			(row.find_child("NameLabel", true, false) as Label).text = Economy.upgrade_name(id)
-			if id == "swarm" and buy != null:
+			if buy != null:   # 0.3.1 item 4: every row's button is UpgradeButton (the hint tests tap the plant row's); find_child still finds the swarm row's first
 				buy.name = "UpgradeButton"   # play_loop.gd looks the first row's button up by this name
 			if buy != null:
 				buy.pressed.connect(func() -> void: Economy.buy(id))

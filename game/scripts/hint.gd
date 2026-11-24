@@ -55,9 +55,27 @@ func _ready() -> void:
 	var truck: Truck = _find("Truck") as Truck
 	if truck != null:
 		truck.departed.connect(func() -> void: _sold = true)
+	_watch_covers.call_deferred()
 	Economy.upgrade_changed.connect(func(id: String, level: int) -> void:
 		if id == PLANT_ID and level >= 1 and state != State.DONE:
 			_set_state(State.DONE))
+
+
+# 0.3.1 item 4: a panel or the victory overlay opens in the input phase or another node's _process; the bubble hides on that change,
+# not a frame later in its own _process (it drew one frame over the Journal and the victory).
+func _watch_covers() -> void:
+	if _main == null:
+		return
+	for p: Node in _main.find_children("*", "ModalPanel", true, false):
+		(p as CanvasItem).visibility_changed.connect(_on_cover_changed)
+	var victory: VictoryOverlay = _find("VictoryOverlay") as VictoryOverlay
+	if victory != null:
+		victory.visibility_changed.connect(_on_cover_changed)
+
+
+func _on_cover_changed() -> void:
+	if visible and _main != null and _covered():
+		_hide()
 
 
 # --- state ---
@@ -222,7 +240,8 @@ func _current_step() -> int:
 	if not _crank_started and _icon_shows("CentrifugeIcon"):
 		return Step.SPIN
 	var c: Centrifuge = _find("Centrifuge") as Centrifuge
-	if second and not _crank_turned and c != null and c.state == Centrifuge.State.CRANKING and c.turns_counted == 0:
+	# 0.3.1 item 4: only once the crank takes turns (a paused crank, camera still panning back, counts none: asking then loses the tap)
+	if second and not _crank_turned and c != null and c.state == Centrifuge.State.CRANKING and c.turns_counted == 0 and c.crank_enabled:
 		return Step.CRANK
 	if not _sold and _icon_shows("SellIcon"):
 		return Step.SELL
@@ -249,11 +268,16 @@ func _target_rect(which: int) -> Rect2:
 		Step.SHOP:
 			return _control_rect("ShopButton")
 		Step.PLANT:
-			var tab: Control = _find("TabHabitat") as Control
-			if tab != null and tab.is_visible_in_tree() and not (tab is BaseButton and (tab as BaseButton).button_pressed):
-				return tab.get_global_rect()
+			if _plant_on_tab():
+				return (_find("TabHabitat") as Control).get_global_rect()
 			return _control_rect("Row_plant_patch")
 	return Rect2()
+
+
+## 0.3.1 item 4: hint_plant still points at TabHabitat (it is shown and not yet selected).
+func _plant_on_tab() -> bool:
+	var tab: Control = _find("TabHabitat") as Control
+	return tab != null and tab.is_visible_in_tree() and not (tab is BaseButton and (tab as BaseButton).button_pressed)
 
 
 func _control_rect(node_name: String) -> Rect2:
@@ -286,7 +310,12 @@ func _place(target: Rect2, cfg: GameConfig) -> void:
 	var below_y: float = target.end.y + gap
 	var y: float = above_y
 	var below: bool = false
-	if not _fits(Rect2(x, above_y, size.x, size.y), view, m, target, toast):
+	# 0.3.1 item 4: hint_plant on the row draws below it when it fits: above, the bubble sits over the tab strip and its tail ends nearer the tab than the row
+	var row_step: bool = step == Step.PLANT and not _plant_on_tab()
+	if row_step and _fits(Rect2(x, below_y, size.x, size.y), view, m, target, toast):
+		below = true
+		y = below_y
+	elif not _fits(Rect2(x, above_y, size.x, size.y), view, m, target, toast):
 		if _fits(Rect2(x, below_y, size.x, size.y), view, m, target, toast):
 			below = true
 			y = below_y
