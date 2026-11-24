@@ -65,14 +65,17 @@ func t_habitat_pill_order_plus_opens_shop_twice() -> void:
 	if lab == null or plus == null or icons.is_empty():
 		_fin()
 		return
-	eq(lab.text, str(int(cv("habitat_health_start"))), "step start: the number is Health")
+	# spec 0.3.2 item 9: "HabitatCountLabel on it reading "habitat_health/habitat_thriving" (e.g. "10/100", the same in French)"
+	var thr: String = str(int(cv("habitat_thriving")))
+	eq(lab.text, "%d/%s" % [int(cv("habitat_health_start")), thr], "step start: the label is Health/Thriving")
 	e.call("add_habitat", 5)
 	await _frames(2)
-	eq(lab.text, str(int(e.get("habitat_health"))), "step add: the number follows Health")
+	eq(lab.text, "%d/%s" % [int(e.get("habitat_health")), thr], "step add: the label follows Health at once")
 	var ic: Control = icons[0] as Control
 	var xl: float = lab.get_global_rect().position.x
 	var xi: float = ic.get_global_rect().position.x
-	ck(xl < xi, "order: number, then icon (x %.0f, %.0f); no + after it (0.3.1 item 1)" % [xl, xi])
+	# spec 0.3.2 item 9: "a wildflower glyph at its left ..., then a track ... with HabitatCountLabel on it"
+	ck(xi < xl, "order: glyph at the left, then the bar with the label (x %.0f, %.0f); no + after it (0.3.1 item 1)" % [xi, xl])
 	var pr: Rect2 = pill.get_global_rect()
 	for nm in ["ForkIcon", "CentrifugeIcon", "SellIcon"]:
 		var c: Control = m.find_child(nm, true, false) as Control

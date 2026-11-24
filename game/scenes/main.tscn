@@ -28,6 +28,27 @@ corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
+[sub_resource type="StyleBoxFlat" id="StyleBox_habitat_centre"]
+bg_color = Color(1, 0.76, 0.12, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_habitat_track"]
+bg_color = Color(0.25, 0.2, 0.1, 0.55)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_habitat_fill"]
+bg_color = Color(0.97, 0.66, 0.78, 1)
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
+
 [sub_resource type="Environment" id="Environment_sky"]
 background_mode = 1
 background_color = Color(0.79, 0.91, 0.96, 1)
@@ -459,20 +480,95 @@ mouse_filter = 2
 theme_override_constants/separation = 8
 script = ExtResource("habitat_pill_script")
 
-[node name="HabitatCountLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 40
-text = "0"
-
-[node name="HabitatIcon" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill"]
-custom_minimum_size = Vector2(40, 40)
+[node name="HabitatIcon" type="Control" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
+
+[node name="Petal1" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill/HabitatIcon"]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 21.0
+offset_right = 60.0
+offset_bottom = 43.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_wildflower")
+
+[node name="Petal2" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill/HabitatIcon"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 37.0
+offset_right = 48.0
+offset_bottom = 59.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_wildflower")
+
+[node name="Petal3" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill/HabitatIcon"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 31.0
+offset_right = 29.0
+offset_bottom = 53.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_wildflower")
+
+[node name="Petal4" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill/HabitatIcon"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 11.0
+offset_right = 29.0
+offset_bottom = 33.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_wildflower")
+
+[node name="Petal5" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill/HabitatIcon"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 5.0
+offset_right = 48.0
+offset_bottom = 27.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_wildflower")
+
+[node name="Centre" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill/HabitatIcon"]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 22.0
+offset_right = 42.0
+offset_bottom = 42.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_habitat_centre")
+
+[node name="HabitatTrack" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill"]
+custom_minimum_size = Vector2(220, 56)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_habitat_track")
+
+[node name="HabitatFill" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill/HabitatTrack"]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 22.0
+offset_bottom = 56.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_habitat_fill")
+
+[node name="HabitatCountLabel" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo/TopRow/HabitatPill/HabitatTrack"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.2, 0.1, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 32
+text = "10/100"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="DevSpeedTag" type="Label" parent="FarmUIRoot/FarmUI/Margin/Column/TopInfo"]
 visible = false
