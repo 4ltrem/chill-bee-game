@@ -5,6 +5,8 @@ _meta/sessions/*/session.jsonl
 _meta/sessions/*/subagents/
 _meta/sessions/*/manifest.json
 _meta/sessions/*/digest.txt
+# Syncthing's folder marker; .stignore is committed so both machines skip the git-tracked files.
+_meta/sessions/.stfolder/
 
 # Machine-specific Claude Code settings (e.g. autoMemoryDirectory, an absolute path)
 .claude/settings.local.json

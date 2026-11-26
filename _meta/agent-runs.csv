@@ -477,7 +477,7 @@ start,end,table,run,agent,phase,model,final_context,total_processed,tool_calls,t
 2026-11-18T22:38:38Z,2026-11-18T22:38:50Z,Orchestrator,main session from 2026-11-18,Orchestrator (main session),post-ICM,claude-sonnet-5-5,,85342,,3,12,8,28905,55860,569,13,14,7,7,c5dc923e-519a-4481-bffe-9f44060b2829,
 2026-11-18T22:38:38.604Z,2026-11-18T22:38:49.272Z,Subagent runs,Run test_generate,Rex (script-runner),post-ICM,claude-haiku-5-5,17892,30565,2,,11,2,869,27483,25,13,13,7,7,agent-a4b373678198d60a1,
 2026-11-18T22:43:45Z,2026-11-18T22:44:20Z,Doc audits,"doc audit since HEAD, round 1",Doris,post-ICM,claude-sonnet-5-5,58926,414017,,20,35,,,,,16,16,7,7,,
-2026-11-20T14:45:13Z,2026-11-20T14:45:39Z,Orchestrator,main session from 2026-11-20,Orchestrator (main session),post-ICM,claude-opus-5-5,,222852,,4,26,8,24023,197522,1299,42,0,83,8,62e52598-80e6-4808-a2e2-27d338e9d85b,
+2026-11-20T14:45:13Z,2026-11-20T14:46:44Z,Orchestrator,main session from 2026-11-20,Orchestrator (main session),post-ICM,claude-opus-5-5,,338184,,6,91,14,24970,311437,1763,42,1,83,8,62e52598-80e6-4808-a2e2-27d338e9d85b,
 2026-11-21T02:08:00Z,2026-11-21T02:43:29Z,Orchestrator,main session from 2026-11-21,Orchestrator (main session),post-ICM,claude-sonnet-5-5,,3950525,,67,2128,180,79761,3844166,26418,19,4,8,8,2aaf9411-3657-4144-a7c6-14de0805fab0,
 2026-11-21T02:10:52.524Z,2026-11-21T02:11:16.120Z,Subagent runs,Rex: unit tests on 0.2,Rex (script-runner),post-ICM,claude-haiku-5-5,18377,114870,6,,24,2,779,42669,65,1,1,8,8,agent-a491aa3427d6c90b8,
 2026-11-21T02:11:30.481Z,2026-11-21T02:11:38.800Z,Subagent runs,Rex: unit tests on 0.2 (retry),Rex (script-runner),post-ICM,claude-haiku-5-5,16336,44304,3,,8,2,800,45962,198,1,1,8,8,agent-aca0c397008afe740,

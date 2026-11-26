@@ -29,7 +29,8 @@ VERSIONS = [
     ("0.1.4", "948a49e", "UI placement (A5, first goal-agent run)"),
     ("0.2.0", "f1ff1d5", "first automation (goal agent)"),
     ("0.2.1", "a6-demo", "0.2.0 play-test fixes (A6)"),
-    ("0.3.0", "v0.3.0", "course build items 1-6"),
+    ("0.3.0", "830416b", "course build items 1-6"),   # v0.3.0 tag is local to one machine; this is its commit
+    ("0.3.1", "v0.3.1", "0.3.0 play-test fixes, first-time hints, Settings"),
 ]
 # Findings from the designer's play-test OF each version, counted as the spec items that fix them.
 PLAYTEST = {
@@ -40,6 +41,7 @@ PLAYTEST = {
     "0.2.0": (6, "0.2-first-automation.md items 9-14 (0.2.1)"),
     "0.2.1": (1, "0.2-first-automation.md item 15"),
     "0.3.0": (4, "0.3.1-playtest-fixes.md items 1-3 (four findings, L52)"),
+    "0.3.1": (7, "play-test fixes 77f8c49 (six) and 6131bfd (one), designer 2026-11-23"),
 }
 # Cause groups from the audit's section 6.1, plus L51 and L52.
 CAUSES = {

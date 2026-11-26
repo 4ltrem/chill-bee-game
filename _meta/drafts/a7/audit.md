@@ -1,14 +1,14 @@
 ---
 author: orchestrator (maigd-6a)
 type: draft
-status: first full draft, for the designer's review (outline approved 2026-11-22; export to PDF for submission)
+status: final (refreshed 2026-11-26 with the 0.3.1 run and the dollar costs in section 3.7; export to PDF for submission)
 description: A7 deliverable 3, the pipeline audit and cost analysis (more than 20 pages), due 2026-11-29
 ---
 # Chill Bee Game: pipeline audit and cost analysis
 
-Assignment 7, deliverable 3. Data as of 2026-11-22.
+Assignment 7, deliverable 3. Data as of 2026-11-22, with the 0.3.1 run (2026-11-23) and the dollar costs (section 3.7) added on 2026-11-26.
 
-Sources: `_meta/agent-runs.md` and `agent-runs.csv` (765 runs), `_meta/learnings.md` (L1–L52), `_tools/audit_data.py` (every per-version, per-day and per-week number, regenerated with one command into `data.md`, `data/` and `charts/`), `GOAL_AGENT.md`, `STYLE_LOOP.md`, `CREW.md`, `game/reports/goal/0.3/blackboard.md`, git history.
+Sources: `_meta/agent-runs.md` and `agent-runs.csv` (765 runs), `_meta/learnings.md` (L1–L52), the agents' own transcripts priced by `_tools/run_cost.py` (section 3.7), `_tools/audit_data.py` (every per-version, per-day and per-week number, regenerated with one command into `data.md`, `data/` and `charts/`), `GOAL_AGENT.md`, `STYLE_LOOP.md`, `CREW.md`, `game/reports/goal/0.3/blackboard.md`, git history.
 
 ## 0. Summary
 
@@ -21,6 +21,8 @@ This audit looks at what that pipeline costs, in tokens and in time, where it fa
 1. **The orchestrating main session is most of the cost.** The 71 logged main sessions processed about 1.15 billion tokens, roughly 79% of everything logged after the workspace restructure. All the agents together processed about 311 million. Almost all of the main session's tokens are cache reads: every call re-reads a context of 100,000 tokens or more, so the turns spent waiting on and around an agent run often cost more than the run itself.
 2. **The 5-hour window is the limit that binds, not the weekly one.** In the one batch measured in both, the work took 21% of a 5-hour window but only 3% of the week. Work is limited by how much fits in a sitting, which pushes the pipeline toward runs that can pause and resume.
 3. **As the workspace grew, time, not tokens, became the constraint.** In the week of 2026-11-17, workspace files (tools and docs) grew about seven times faster than game code. On 2026-11-22 the 0.3 goal run stopped for the designer 20 times, and 11 of the first 19 needed no decision. The same day spent about 106 minutes waiting on test and build scripts.
+
+**In dollars.** Priced at API list rates from the transcripts themselves, the whole project to 2026-11-26 would have cost about $730: $584 for the Opus orchestrator, $146 for every agent and loop together. One content run (William and Clara, two rounds) costs about $0.32; one goal-agent run that builds a version's spec costs $6.51–$10.72 (section 3.7).
 
 **What works.** Headless agents given only a slice of the spec cost five to eight times less per call than the same agents run as interactive subagents (Patricia: 161k tokens per goal-agent call against 1.25M per subagent run). Moving script execution to a Haiku runner (Rex, 92k tokens per run) took test runs off the Sonnet agents. Each loop has a script check before its AI critic, so a mechanical failure costs no agent call.
 
@@ -212,6 +214,27 @@ Tokens per day (`data/daily.csv`), each run on the day it ended. Work came in tw
 
 Weekly plan usage, the highest status-line reading each day. Twice the first block nearly used up a week in four days (90% on 11-06, 83% on 11-10); the drops are the weekly resets. In the second block, three days took the week from 8% to 47%, which is why the budget guard held heavy agents on 2026-11-22 (46% used with 21% of the week gone).
 
+### 3.7 What it would cost in dollars
+
+The plan is a flat-rate subscription, so no run was billed by the token. To put a dollar figure on the actual runs, `_tools/run_cost.py` reads every transcript the pipeline left (the main sessions and their subagents in Claude Code's project folders on both of the developer's machines, synced with Syncthing, and the headless runs in `_meta/sessions/runs/`), counts each assistant message's `usage` once, and prices it at the API list price of the model that ran it: Opus 5.5 at $4 input, $20 output and $0.20 cache read per million tokens; Sonnet 5.5 at $2, $10 and $0.10; Haiku 5.5 at $0.10, $0.50 and $0.01. Cache writes are priced at 2x input for 1-hour entries and 1.25x for 5-minute entries, read from each message. The transcripts start on 2026-10-14, so they cover the whole project to 2026-11-26. The per-run results are in `data/run-cost.csv` and `data/session-cost.csv`.
+
+| Component | Model | Tokens | API cost | Share |
+|---|---|---|---|---|
+| Orchestrator (main sessions, both machines) | Opus 5.5 | 1,525M | $584.05 | 80.0% |
+| Agent-tool subagents (Patricia, Bob, Quinn, Rex, Milo, ...) | Sonnet 5.5, Haiku 5.5 | 236M | $76.29 | 10.4% |
+| Goal agent (headless build, fix and test calls) | Sonnet 5.5 | 85M | $55.51 | 7.6% |
+| Style loop (Vera, Bob, Patricia) | Sonnet 5.5 | 4.0M | $5.89 | 0.8% |
+| Doc audits (Doris) | Sonnet 5.5 | 5.2M | $4.35 | 0.6% |
+| Content crew (William, Clara) | Sonnet 5.5 | 2.0M | $3.38 | 0.5% |
+| Other headless (critic checks, decision log) | Sonnet 5.5 | 0.3M | $0.79 | 0.1% |
+| **Total** | | **≈1,858M** | **$730.25** | |
+
+**One actual content run.** The last Bee Journal guides run (`2026-11-07-guides-run-5`, two rounds of William and Clara on Sonnet 5.5) processed 186,229 tokens: William round 1 $0.10, Clara round 1 $0.11, William round 2 $0.07, Clara round 2 $0.05, **$0.32 in total**. The nine content runs with transcripts cost $0.19–$0.53 each, $3.38 together. A goal-agent run, which builds a whole version's spec, costs $6.51–$10.72 in agent calls (0.3.1: 18.1M tokens, $10.72), plus the orchestrator session that starts and watches it.
+
+**The most expensive step** is the Opus orchestrator: four-fifths of the dollars, as of the tokens (section 3.3). About $299 of its $584 is cache reads alone, the cost of re-reading a long context on every call. The costliest single session (2026-10-31 to 11-03, building Prototype 0) came to $57.78 over 170M tokens. Inside the headless pipeline, the costliest calls are Quinn's test-line fixes: in 0.3.1, T4.3 cost $1.72 (3.1M tokens) and T8.1 $0.95.
+
+**Sustainability for a solo developer or small team.** At list prices the whole course project, from the GDD to 0.3.2, comes to about $730 over 44 days, or about $27 per working day across the 27 days with logged runs, and about $80 per playable version. That is sustainable for a small team on a flat-rate plan, and close to sustainable on the API, with one condition: the orchestrator. The agents and loops that do the building, writing and checking cost about $146 together. Running the main session on Sonnet 5.5 instead of Opus would halve its per-token price and save about $290 at the same token count, and the cuts in section 8 (a fresh session per milestone, waiting without turns) shrink its token count. A team that runs several orchestrators in parallel multiplies the largest line, so it should give each one a narrow job and a short context before adding seats.
+
 ## 4. Cost per output
 
 ### 4.1 The goal agent
@@ -235,8 +258,12 @@ That averages about 625k tokens per finished goal. The distribution is uneven. T
 | 0.1.4 | 95 | 24M | 250k | 241 min | 8 |
 | 0.2 | 80 | 20M | 253k | 60 min | 13 |
 | 0.3 | 71 | 12M | 163k | 33 min | 20 |
+| 0.3.1 | 41 | 17M | 404k | 37 min | 5 |
+| 0.3.2 (part-way, 2026-11-24) | 27 | 5M | 189k | 10 min | 2 |
 
 Agent time is the sum of the calls' own durations; script runs and waiting come on top (section 7.3). Cost per call fell by a third between 0.2 and 0.3 while stops rose from 8 to 20: the run got cheaper per call and more expensive in the designer's attention. That reflects the fixes made in between: a test-impact list instead of a full suite per step (L40–L42), diag lines instead of guessed fixes (L47), and one owner per fix round (L12).
+
+**The 0.3.1 run** (2026-11-23) fixed the 0.3.0 play-test findings and added the first-time hints and the Settings panel: 18 goals in 41 calls, 17M tokens ($10.72 at API prices, section 3.7). Per call it was the dearest run so far, 404k, for two reasons the run's own learning records (L53). Briefs gave no map of the scripts, so the first big calls were mostly searching: Patricia's C4 call took 1.8M tokens and 58 turns, much of it grepping for signals and functions. And a change to `main.gd` widened the test-impact list to every unit test, so each fix round re-ran about 9 minutes of suites. Both were fixed for 0.3.2 (`code_map.py` gives each brief an API map, and a round runs the goal's own tests first and the widened list only when those pass), and 0.3.2's first 27 calls averaged 189k. The run stopped for the designer only 5 times, against 0.3's 20 (section 7.2). The designer closed it by note after the play-test: 4 of its 18 goals passed the scan, and the other 14 lacked tests for six items, which moved to the 0.3.2 spec.
 
 ### 4.2 The content crew
 
@@ -278,6 +305,7 @@ Each version runs from the previous version's last commit to its own (the commit
 | 0.2.0 | first automation (goal agent) | 1 | 42 | 12,828 | 672 | 79 | 189M | 208 | 136 | 6 |
 | 0.2.1 | 0.2.0 play-test fixes, A6, operator | 13 | 44 | 1,578 | 4,663 | 171 | 284M | 219 | 154 | 1 |
 | 0.3.0 | course build, items 1–6 | 1 | 56 | 1,868 | 382 | 116 | 85M | 234 | 181 | 4 |
+| 0.3.1 | play-test fixes, first-time hints, Settings | 1 | 65 | 3,344 | 1,743 | 104 | 320M | 249 | 215 | 7 |
 
 The design phase's tokens are small only because its main sessions were not logged (the first logged main session starts 2026-10-31) and its 32 pre-ICM agent runs have no timestamps; they are in section 3.1.
 
@@ -468,6 +496,8 @@ On the same day, `goal_agent.py` was changed to default the first group: a spec 
 
 The underlying rule, recorded as the designer's feedback: never ask the designer something the workspace already answers.
 
+The next run measured the change. The 0.3.1 goal run (2026-11-23) stopped for the designer 5 times, and all 5 were of the third kind: two fix rounds had failed on a goal (C1, C7, C8, T4.3, T8.1) and its tests still failed, so someone had to debug, change the test or accept the goal by note. None was a question the workspace could have answered. The cost of a stop moved from the designer's attention to debugging, which is where it belongs.
+
 ### 7.3 Waiting on scripts
 
 On 2026-11-22, 20 Rex runs took about 106 minutes in total, a few minutes to over 30 for a full suite or a mutation run. The goal agent's own checks (a test-impact run per step, one full suite at the end) add more. Section 5.4 traces how each speed-up was outgrown as the suite grew from about 110 to about 230 tests. Two habits help most: briefing Rex with `--only <tests> --time-scale 6` while iterating, and running the full suite only at checkpoints.
@@ -502,7 +532,7 @@ Later cuts, each from a learning:
 
 | Cut | From | Effect |
 |---|---|---|
-| Rex, a Haiku script runner, for every Godot run (guard rule 7) | L21; Quinn's suite runs took 21% of usage on 2026-11-04 | 126 runs at about 92k |
+| Rex, a Haiku script runner, for every Godot run (guard rule 7) | L21; Quinn's suite runs took 21% of usage on 2026-11-04 | 126 runs at about 92k. Priced from transcripts (section 3.7): three of Quinn's test-and-report runs on Sonnet took 1.16M–9.06M tokens, $0.64–$2.41, $1.50 on average; Rex's 122 priced runs took 10.7M tokens and $0.44 in all, under half a cent each |
 | Turn caps: 30 per build call, 15 per fix call | L11 (777k), L33 (1.09M) | no capped call has repeated those sizes |
 | `compose_variant.py` for recombination rounds | L32 (34k–112k per Milo round) | recombinations cost no tokens |
 | `source_cache.py`, `voice_check.py` before Clara | the A4 grader's notes | Clara reads cached quotes; mechanical checks fail without an agent call |

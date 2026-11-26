@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 5c77a6f2-f6b5-4ff0-a169-8eabbf24bafe
-  modified: 2026-11-24T07:57:38.517Z
+  modified: 2026-11-26T20:47:50.962Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -15,7 +15,7 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 **NEXT:**
 1. **Resume the 0.3.2 run** (budget guard: `python -I _tools/budget_guard.py --allow-for 60`, designer's command; week ~82%, resets 11/28): `python -I _tools/goal_agent.py 0.3.2-tests-and-quick-buy.md` in the background. Left: C8 (hints said twice), C5 adversarial QA, T-lines incl. T6.2 (no `QuickBuyPrice`: C6 stays built, so its red test sends the label removal to a fix round), T7.1, T.1.
 2. **Milo's upgrade-preview vote** (designer chose 11/24): 2 variants x 8 upgrades in `game/scenes/variants/preview-<id>-r1/`, `model_shots.py`, `compare_page.py add` section `upgrade-previews`; STOP for the pick; then Bob promotes into `scenes/props/previews/<id>.tscn` and the tiles fill.
-3. **A7 (due 11/29):** the designer records the run video. Before submitting: `python -I _tools/audit_data.py`, refresh §4.1 / §7.2 of `_meta/drafts/a7/audit.md` with the 0.3.1 run, set status final, then `python -I _tools/md_to_pdf.py _meta/drafts/a7/audit.md --min-pages 20`.
+3. **A7 (due 11/29), written 2026-11-26, uncommitted:** README top has the play link + 2-minute steps, the A7 fields and the 1-page audit; `audit.md` is final (new §3.7 dollars: $730.25 API-equivalent from `_tools/run_cost.py` over both machines' transcripts; 0.3.1 in §4.1/§4.5/§7.2/§8), `audit.pdf` 33 pages. Left for the designer: upload `game/builds/chill-bee-game-0.3.1-web.zip` to itch (headless smoke only shows the loader spinner, as 0.1.4's did: check it plays in a real browser), record the run video and put its link in the README row "Pipeline run video", then commit + push (README must be on GitHub). `.stignore` in `_meta/sessions/` (uncommitted) keeps Syncthing off git-tracked files.
 4. **Final 11/29 leftovers:** UI pass (ui-screens decisions 2-4 + skin), balance sim, polish; placeholders to confirm at the 0.3.2 play-test: quick-buy bar, Habitat bar size and colours, welcome/victory/Settings/hint bubble sizes, minutes to victory (Terry: 25).
 
 **Still open:** L57 (goal_agent ignores a spec item's "**Stop:**"): a planner job; goal_agent can't close goals by a designer's decision; asked the designer whether `UI_DESIGN.md`'s "number and wildflower icon only" pill rule should change for item 9 (no answer yet); L52 check 3 (event shots); [[pending-approvals]]; `proposals/design/roadmap.md` still `proposed`; the side pane untested; first `/dream` pass; stale README TBD boxes (ask first). UI canvas https://claude.ai/artifact/ErtHvkxYUpDQHRM8RLRLca; Design Votes https://claude.ai/artifact/17i3YsGsf9zD7NowGxtDSa (version 29).

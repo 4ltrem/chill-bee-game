@@ -1,0 +1,4 @@
+// Syncthing: sync only the transcripts. Files git tracks here come through git, never Syncthing,
+// so a stale copy on one machine can't overwrite the other (decision-comb.html went back to D269, 2026-11-26).
+/decision-comb.html
+decisions.md

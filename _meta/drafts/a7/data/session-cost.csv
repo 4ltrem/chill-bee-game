@@ -1,0 +1,9 @@
+run,model,input,write_5m,write_1h,cache_read,output,total_tokens,usd
+c--Users-mtrem-Desktop-MAIGD,claude-haiku-5-5,1364,2372471,54366,16782219,930544,20140964,0.9407
+c--Users-mtrem-Desktop-MAIGD,claude-opus-5-5,10674,443561,11339231,864681756,3166242,879641464,329.2355
+c--Users-mtrem-Desktop-MAIGD,claude-sonnet-5-5,4568,7309398,67538,163566066,2364406,173311976,58.5534
+c--Users-Alex-Desktop-MAIGD,claude-haiku-5-5,1190,2372563,13556,7956494,210163,10553966,0.484
+c--Users-Alex-Desktop-MAIGD,claude-opus-5-5,8538,3102713,7662685,627666655,2486894,640927485,252.1204
+c--Users-Alex-Desktop-MAIGD,claude-sonnet-5-5,1644,1892085,1019154,29196395,442513,32551791,16.1549
+C--Users-Alex-Desktop-MAIGD--claude-worktrees-icm-architect,claude-opus-5-5,88,0,171664,3844069,27326,4043147,2.689
+C--Users-mtrem-Desktop-MAIGD--wt-main,claude-sonnet-5-5,6,0,30118,32507,4321,66952,0.1669
