@@ -6,7 +6,7 @@
       {"id": "heated_fork", "scene": "res://scenes/props/uncapping_fork.tscn",
        "set": [[".", "visible", true]], "call": [[".", "_apply", [1.0]]]},
       {"id": "gearing", "scene": "res://scenes/props/centrifuge_gears.tscn"},
-      {"id": "spigot_flow", "scene": "res://scenes/props/centrifuge.tscn", "fit": "Spigot"},
+      {"id": "spigot_flow", "scene": "res://scenes/props/centrifuge.tscn"},
       {"id": "faster_delivery", "scene": "res://scenes/props/truck.tscn"},
       {"id": "plant_patch", "scene": "res://scenes/props/flower_patch.tscn"}
     ]
