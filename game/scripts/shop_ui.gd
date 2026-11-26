@@ -60,6 +60,7 @@ var _cfg: GameConfig
 var _applied: Vector3i = Vector3i(-1, -1, -1)
 var _open: bool = false
 var _shop_button: Button
+const CLOSE_STROKE_WIDTH: float = 10.0   # placeholder; designer confirms at play-test (0.3.2 item 10)
 var _close_button: Button
 var _dim: ColorRect
 var _dev_button: Button
@@ -313,10 +314,21 @@ func _build_header_and_tabs(box: Node) -> void:
 		round_box.set_corner_radius_all(60)
 		for state: String in ["normal", "hover", "pressed", "focus"]:
 			_close_button.add_theme_stylebox_override(state, round_box)
-	_close_button.text = "✕"
+	_close_button.text = ""   # 0.3.2 item 10: X is drawn, not a glyph
 	_close_button.focus_mode = Control.FOCUS_NONE
 	_close_button.custom_minimum_size = Vector2(120.0, 120.0)
-	_close_button.add_theme_font_size_override("font_size", 36)
+	for stroke_name: String in ["CloseStrokeA", "CloseStrokeB"]:
+		if _close_button.get_node_or_null(stroke_name) == null:
+			var stroke := Line2D.new()
+			stroke.name = stroke_name
+			var a: Vector2 = Vector2(38, 38) if stroke_name == "CloseStrokeA" else Vector2(82, 38)
+			var b: Vector2 = Vector2(82, 82) if stroke_name == "CloseStrokeA" else Vector2(38, 82)
+			stroke.points = PackedVector2Array([a, b])
+			stroke.width = CLOSE_STROKE_WIDTH
+			stroke.default_color = Color(0.2, 0.12, 0.02, 1)   # ink, as BackButton arrow
+			stroke.begin_cap_mode = Line2D.LINE_CAP_ROUND
+			stroke.end_cap_mode = Line2D.LINE_CAP_ROUND
+			_close_button.add_child(stroke)
 	_close_button.pressed.connect(func() -> void: set_sheet_open(false))
 	_tabs_row = find_child("ShopTabs", true, false) as Control
 	if _tabs_row == null:
