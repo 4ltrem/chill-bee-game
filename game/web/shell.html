@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<title>$GODOT_PROJECT_NAME</title>
+<style>
+/* Spec 0.3.2 item 17: branded loading screen, STYLE_GUIDE palette (placeholder look, confirmed at play-test).
+   sky #C9E8F5, ground #9ED685, gold #FFC21F, gold dark #D1940D, cream #FFF5DB, ink #331F05, border #59380D */
+html, body { margin: 0; padding: 0; height: 100%; background: #C9E8F5; touch-action: none; overflow: hidden; }
+#canvas { display: block; margin: 0; }
+#canvas:focus { outline: none; }
+#loader {
+	position: fixed; inset: 0; display: flex; flex-direction: column;
+	align-items: center; justify-content: center; gap: 28px;
+	background: linear-gradient(to bottom, #C9E8F5 0%, #C9E8F5 62%, #9ED685 62%, #9ED685 100%);
+	font-family: 'Trebuchet MS', 'Noto Sans', Arial, sans-serif; color: #331F05;
+	transition: opacity 0.4s ease;
+}
+#loader.done { opacity: 0; pointer-events: none; }
+#title { font-size: clamp(30px, 8vw, 56px); font-weight: bold; letter-spacing: 1px; text-shadow: 0 3px 0 #FFF5DB; }
+#hex {
+	width: 64px; height: 74px; background: #FFC21F;
+	clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+	animation: bob 1.6s ease-in-out infinite;
+}
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+#bar { width: min(320px, 70vw); height: 18px; background: #FFF5DB; border: 3px solid #59380D; border-radius: 12px; overflow: hidden; }
+#fill { height: 100%; width: 0; background: linear-gradient(to bottom, #FFC21F, #D1940D); border-radius: 9px; transition: width 0.3s linear; }
+#fill.pulse { width: 100% !important; animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+#note { font-size: 16px; min-height: 20px; white-space: pre-line; max-width: 80vw; }
+</style>
+$GODOT_HEAD_INCLUDE
+</head>
+<body>
+<canvas id="canvas">Your browser does not support the HTML5 canvas.</canvas>
+<div id="loader">
+	<div id="title">$GODOT_PROJECT_NAME</div>
+	<div id="hex"></div>
+	<div id="bar"><div id="fill"></div></div>
+	<div id="note">Loading the hive…</div>
+</div>
+<script src="$GODOT_URL"></script>
+<script>
+const GODOT_CONFIG = $GODOT_CONFIG;
+const engine = new Engine(GODOT_CONFIG);
+(function () {
+	const loader = document.getElementById('loader');
+	const fill = document.getElementById('fill');
+	const note = document.getElementById('note');
+	function fail(err) {
+		const msg = err && err.message ? err.message : String(err);
+		console.error(msg);
+		fill.classList.remove('pulse');
+		note.textContent = msg;
+	}
+	const missing = Engine.getMissingFeatures();
+	if (missing.length !== 0) {
+		fail('This browser is missing features the game needs:\n' + missing.join('\n'));
+		return;
+	}
+	engine.startGame({
+		onProgress: function (current, total) {
+			if (total > 0 && current < total) {
+				fill.classList.remove('pulse');
+				fill.style.width = (current / total * 100) + '%';
+			} else {
+				// download finished: the engine compiles and starts, no byte count to show
+				fill.classList.add('pulse');
+				note.textContent = 'Waking the bees…';
+			}
+		},
+	}).then(function () {
+		loader.classList.add('done');
+		setTimeout(function () { loader.remove(); }, 500);
+	}, fail);
+}());
+</script>
+</body>
+</html>
