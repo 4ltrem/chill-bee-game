@@ -879,7 +879,7 @@ start,end,table,run,agent,phase,model,final_context,total_processed,tool_calls,t
 2026-11-24T04:22:09Z,2026-11-24T04:23:01Z,Goal agent,spec fact-check 0.3.2-tests-and-quick-buy.md,Doris (doc-auditor),post-ICM,claude-sonnet-5-5,,297738,,27,51,,,,,26,26,79,79,,
 2026-11-24T04:14:53Z,2026-11-24T04:26:41Z,Orchestrator,main session from 2026-11-24,Orchestrator (main session),post-ICM,claude-opus-5-5,,4662477,,44,709,92,102918,4531766,27701,22,29,78,79,5f3faf93-0085-4145-a386-ad55d54d1e16,
 2026-11-24T04:25:01Z,2026-11-24T04:25:25Z,Goal agent,spec fact-check 0.3.2-tests-and-quick-buy.md,Doris (doc-auditor),post-ICM,claude-sonnet-5-5,,120409,,14,23,,,,,28,28,79,79,,
-2026-11-24T04:28:31Z,2026-11-24T07:52:14Z,Orchestrator,main session from 2026-11-24,Orchestrator (main session),post-ICM,claude-opus-5-5,,12285923,,104,12223,228,138369,12102567,44759,29,1,79,83,4825c661-ffbf-4498-983e-5279c8b91278,
+2026-11-24T04:28:31Z,2026-11-24T07:57:53Z,Orchestrator,main session from 2026-11-24,Orchestrator (main session),post-ICM,claude-opus-5-5,,17506860,,129,12563,282,212548,17233194,60836,29,6,79,84,4825c661-ffbf-4498-983e-5279c8b91278,
 2026-11-24T04:30:46Z,2026-11-24T04:30:52Z,Goal agent,"goal 0.3.2, C2",Quinn (qa-build-engineer),post-ICM,claude-sonnet-5-5,16522,16522,,1,4,,,,,30,30,80,80,,
 2026-11-24T04:36:32Z,2026-11-24T04:36:47Z,Goal agent,"goal 0.3.2, C2 fix 1",Quinn (qa-build-engineer),post-ICM,claude-sonnet-5-5,22529,79012,,5,14,,,,,30,30,80,80,,
 2026-11-24T04:42:28Z,2026-11-24T04:42:42Z,Goal agent,"goal 0.3.2, C2 fix 2",Quinn (qa-build-engineer),post-ICM,claude-sonnet-5-5,24600,64024,,3,13,,,,,30,30,80,80,,
@@ -916,3 +916,4 @@ start,end,table,run,agent,phase,model,final_context,total_processed,tool_calls,t
 2026-11-24T07:13:47Z,2026-11-24T07:14:07Z,Goal agent,"goal 0.3.2, C1 fix 2",Quinn (qa-build-engineer),post-ICM,claude-sonnet-5-5,24627,124607,,9,19,,,,,58,61,83,83,,
 2026-11-24T07:51:50.966Z,2026-11-24T07:53:37.225Z,Subagent runs,Rex: rerun hint walk test,Rex (script-runner),post-ICM,claude-haiku-5-5,16615,46791,3,,106,8,4848,684933,2668,0,1,83,83,agent-a0277ad5d288bd1ba,
 2026-11-24T07:55:48Z,2026-11-24T07:56:16Z,Doc audits,"doc audit since c099f30, round 1",Doris,post-ICM,claude-sonnet-5-5,63004,431252,,13,28,,,,,3,3,84,84,,
+2026-11-26T20:32:29Z,2026-11-26T20:33:52Z,Orchestrator,main session from 2026-11-26,Orchestrator (main session),post-ICM,claude-opus-5-5,,416040,,7,83,16,27984,386204,1836,6,6,85,85,f67d0754-b36d-4a57-ba5d-73352dd196d7,
