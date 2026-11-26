@@ -1,11 +1,11 @@
 ---
 name: session-handoff
-description: "Where work stands (2026-11-26 evening): 0.3.2 play-test notes added as spec items 10-17 (unlinted, uncommitted); lint + fact-check, then model_snap.py plan, then resume the 0.3.2 run; A7 + final due 11/29; read first"
+description: "Where work stands (2026-11-26 night): model_snap.py built and proven, 5 upgrade icons committed; spec item 18 (quick-buy label = effect) needs lint + fact-check; then resume the 0.3.2 run; A7 + final due 11/29; read first"
 metadata:
   node_type: memory
   type: project
   originSessionId: 5c77a6f2-f6b5-4ff0-a169-8eabbf24bafe
-  modified: 2026-11-26T22:10:41.373Z
+  modified: 2026-11-26T22:55:16.868Z
 ---
 
 Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Replace, don't append.
@@ -24,8 +24,8 @@ Current state only; history lives in `_meta/sessions/*/decisions.md` and git. Re
 
 **NEXT:**
 1. **Done 2026-11-26:** items 10-17 linted and fact-checked clean (item 16's timer counts only while the bubble shows; item 7's contract lines cut to the 3 vote previews per item 14; fact-check row #43 set TRUE by the designer), committed.
-2. **Plan `model_snap.py`** with the `planner` skill (tooling, item 14) before the run reaches item 14; the plan goes to `_meta/drafts/0.3.2/`.
-3. **Resume the 0.3.2 run** (budget guard: `python -I _tools/budget_guard.py --allow-for 60`, designer's command; week ~82%, resets 11/28): `python -I _tools/goal_agent.py 0.3.2-tests-and-quick-buy.md` in the background. Left: C8 (hints said twice), C5 adversarial QA, T-lines incl. T6.2 (no `QuickBuyPrice`: C6 stays built, so its red test sends the label removal to a fix round), T7.1, T.1, and items 10-17. Item 13's `ForkIcon` place and item 16's hint order touch the existing hint-walk test.
+2. **Done 2026-11-26:** `model_snap.py` plan run (`9547163`, `da961cc`; plan `status: done`, proof table in its Progress). Icons in `game/assets/icons/upgrades/` (spigot_flow = whole centrifuge, designer's pick). L58: Godot 4.2.1 has no `--import`. Follow-up in the plan: `.import` UIDs churn on every re-run.
+2b. **Done 2026-11-26:** items 18-19 linted and fact-checked clean (#44 was UNTRUE: item 18 now says the price shows on `QuickBuyButton` only *once item 6 removes* `QuickBuyPrice`), committed. Was: **Spec item 18:** `QuickBuyName` shows the upgrade's effect (`shop_note_<id>`, item 12) instead of its name; item 6 and 12 cross-refs fixed, Patricia + Quinn lines added. Item 19 (same day, uncommitted): `Spigot` widens per Spigot Flow level (`spigot_widen_per_level` 0.1, placeholder); upgrades whose look changes by level (spigot, gearing, truck, fork with a new `ReachRing` showing its uncap reach) get per-level icons `<id>_<level>.png`, the tile shows level + 1 (max at max); the per-level recipe rows are the main session's tooling after Patricia's change.3. **Resume the 0.3.2 run** (budget guard: `python -I _tools/budget_guard.py --allow-for 60`, designer's command; week ~82%, resets 11/28): `python -I _tools/goal_agent.py 0.3.2-tests-and-quick-buy.md` in the background. Left: C8 (hints said twice), C5 adversarial QA, T-lines incl. T6.2 (no `QuickBuyPrice`: C6 stays built, so its red test sends the label removal to a fix round), T7.1, T.1, and items 10-18. Item 13's `ForkIcon` place and item 16's hint order touch the existing hint-walk test.
 4. **Milo's upgrade-preview vote** (designer chose 11/24): 2 variants x 3 upgrades (swarm, flight, auto-sell; the other five use existing models, spec item 14) in `game/scenes/variants/preview-<id>-r1/`, `model_shots.py`, `compare_page.py add` section `upgrade-previews`; STOP for the pick; then Bob promotes into `scenes/props/previews/<id>.tscn` and the tiles fill.
 5. **A7 (due 11/29), written 2026-11-26, uncommitted:** README top has the play link + 2-minute steps, the A7 fields and the 1-page audit; `audit.md` is final (new §3.7 dollars: $730.25 API-equivalent from `_tools/run_cost.py` over both machines' transcripts; 0.3.1 in §4.1/§4.5/§7.2/§8), `audit.pdf` 33 pages. Left for the designer: upload `game/builds/chill-bee-game-0.3.1-web.zip` to itch (headless smoke only shows the loader spinner, as 0.1.4's did: check it plays in a real browser), record the run video and put its link in the README row "Pipeline run video", then commit + push (README must be on GitHub). `.stignore` in `_meta/sessions/` (uncommitted) keeps Syncthing off git-tracked files.
 6. **Final 11/29 leftovers:** UI pass (ui-screens decisions 2-4 + skin), balance sim, polish; placeholders to confirm at the 0.3.2 play-test: quick-buy bar, Habitat bar size and colours, welcome/victory/Settings/hint bubble sizes, minutes to victory (Terry: 25), the Close X stroke, row description/note wording + FR, `ForkIcon`'s first-zoom place, `hint_habitat` wording, the loading screen's look.
