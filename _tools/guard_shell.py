@@ -22,7 +22,7 @@ Each refusal names the rule and the right way to do it, so the caller rewrites t
      (`.claude/worktrees/`, whose paths are not under game/), merged after the run. The run's own headless agents
      (CHILLBEE_HEADLESS=1) are not bound. A lock older than 12 hours is stale and ignored.
   7. rex-runs-scripts (L21, queue #6): the Godot test, build, mutation and shot scripts (`godot_run.py`,
-     `build.py`, `mutate.py`, `ui_shots.py`, `model_shots.py`) run only in Rex's shell (the hook input's
+     `build.py`, `mutate.py`, `ui_shots.py`, `model_shots.py`, `model_snap.py`) run only in Rex's shell (the hook input's
      `agent_type` is `script-runner`). The main session and the other agents dispatch Rex; the loop
      scripts start them as subprocesses, which no hook sees.
      One exception (obstacles item 19, option A): Quinn (`qa-build-engineer`) may run `godot_run.py ... --only ...`
@@ -131,7 +131,7 @@ def artifact(inp):
 
 
 REX_SCRIPTS = re.compile(r"\b(?:python3?|py)(?:\.exe)?\b[^|;&\n]*?_tools[/\\]"
-                         r"(godot_run|build|mutate|ui_shots|model_shots)\.py\b", re.I)
+                         r"(godot_run|build|mutate|ui_shots|model_shots|model_snap)\.py\b", re.I)
 
 
 PROBES = "_meta/usage/quinn-probes.allow"

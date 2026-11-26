@@ -4,6 +4,13 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L58 · 2026-11-26 · model_snap.py's import pass hung on Godot 4.2.1
+- **What broke:** the first `model_snap.py` run (truck) wrote its PNG in seconds, then sat for 5 minutes on the import pass `godot --headless --path game --import` until the 300 s timeout.
+- **How noticed:** the designer asked why the snap was so slow; the main session found the PNG written at 17:27 and two headless Godot processes started at 17:27:42 with `--import`.
+- **Cause:** `--import` exists only from Godot 4.3. 4.2.1 (`--help` lists no such flag) ignores it and runs the main scene headless, which never quits. The plan's review had stated 4.2.1 had the flag, without running `--help`.
+- **How fixed:** the import pass is `--headless --editor --quit-after 1500`, the pattern `godot_run.py:208` already used.
+- **Prevention:** a plan that names a CLI flag checks it against `godot --help` for the version in `godot_path.py` before the build.
+
 ## L57 · 2026-11-24 · C7 was committed green past the spec's vote STOP
 - **What broke:** 0.3.2 item 7 says "**Stop:** the designer's pick" (Milo's two variants per upgrade on Design Votes) before the build. goal_agent briefed Bob and Patricia anyway and committed C7 green (`b0f3a7d`) with empty `PreviewTile`s. Bob refused to invent models and asked whether the vote should run first.
 - **How noticed:** the main session read the C7 step on the blackboard after the run stopped on C9.

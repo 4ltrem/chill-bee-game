@@ -8,4 +8,5 @@ builds/
 
 # godot_run.py raw logs
 reports/_runs/
+reports/snaps/
 reports/votes/design-votes.html

@@ -1050,7 +1050,8 @@ class BuildToolsTest(unittest.TestCase):
                 self.assertIsNone(sh(ok), ok)
             rex = lambda c, agent: gs.decide("Bash", {"command": c}, repo, agent=agent)   # L21, queue #6
             for cmd in ["python -I _tools/godot_run.py all > /dev/null", "py -I _tools\\mutate.py --since abc",
-                        "python -I _tools/ui_shots.py 0.2=game", "python -I _tools/build.py --smoke"]:
+                        "python -I _tools/ui_shots.py 0.2=game", "python -I _tools/build.py --smoke",
+                        "python -I _tools/model_snap.py --recipe upgrades"]:
                 self.assertIn("rex-runs-scripts", rex(cmd, None), cmd)              # the main session
                 self.assertIn("rex-runs-scripts", rex(cmd, "qa-build-engineer"), cmd)
                 self.assertIsNone(rex(cmd, "script-runner"), cmd)                  # Rex runs them
