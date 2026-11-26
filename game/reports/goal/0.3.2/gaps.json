@@ -1,8 +1,8 @@
 {
  "spec": "0.3.2-tests-and-quick-buy.md",
  "version": "0.3.2",
- "at": "2026-11-24T02:03:19-05:00",
- "unit_log": "game/reports/_runs/20261123-224854/unit.log",
+ "at": "2026-11-26T18:33:56-05:00",
+ "unit_log": "game/reports/_runs/20261109-223506/unit.log",
  "goals": {
   "C1": {
    "kind": "change",
@@ -24,8 +24,8 @@
     {
      "kind": "test",
      "name": "t_hint_steps_follow_state_in_order_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -36,18 +36,23 @@
     {
      "kind": "test",
      "name": "t_hint_hidden_under_journal_and_victory_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
      "name": "t_hint_leaving_shows_step_that_fits_twice",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "e34a4c3",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -317,6 +322,107 @@
    "questions": [],
    "ambiguous": false
   },
+  "C10": {
+   "kind": "change",
+   "title": "A Close you can read on the Shop and Tools sheet",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    10
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "BackButton",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "ShopCloseButton",
+     "ok": true
+    },
+    {
+     "kind": "ledger",
+     "name": "a24addb",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C11": {
+   "kind": "change",
+   "title": "No spinning with the lid off",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    11
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C14": {
+   "kind": "change",
+   "title": "Upgrade icons from snapshots, with the models that exist",
+   "owners": [
+    "Patricia",
+    "Bob"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "node",
+     "name": "PreviewTile",
+     "ok": true
+    },
+    {
+     "kind": "node",
+     "name": "SubViewport",
+     "ok": false
+    },
+    {
+     "kind": "node",
+     "name": "TextureRect",
+     "ok": false
+    }
+   ],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "C17": {
+   "kind": "change",
+   "title": "A loading screen on the web build",
+   "owners": [
+    "Patricia"
+   ],
+   "items": [
+    17
+   ],
+   "depends": [],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
   "T.1": {
    "kind": "test",
    "title": "every test run sets `show_hint = false` except the hint tests; existin",
@@ -332,7 +438,11 @@
     6,
     7,
     8,
-    9
+    9,
+    10,
+    11,
+    14,
+    17
    ],
    "depends": [
     "C1",
@@ -343,15 +453,19 @@
     "C6",
     "C7",
     "C8",
-    "C9"
+    "C9",
+    "C10",
+    "C11",
+    "C14",
+    "C17"
    ],
    "status": "partial",
    "evidence": [
     {
      "kind": "test",
      "name": "t_hint_steps_follow_state_in_order_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -362,8 +476,8 @@
     {
      "kind": "test",
      "name": "t_hint_hidden_under_journal_and_victory_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
@@ -394,8 +508,8 @@
     {
      "kind": "test",
      "name": "t_hint_steps_follow_state_in_order_twice",
-     "ok": false,
-     "result": "FAIL"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -406,8 +520,8 @@
     {
      "kind": "test",
      "name": "t_hint_hidden_under_journal_and_victory_twice",
-     "ok": true,
-     "result": "PASS"
+     "ok": false,
+     "result": "not run"
     },
     {
      "kind": "test",
@@ -803,7 +917,7 @@
   },
   "T7.1": {
    "kind": "test",
-   "title": "item 7: every Shop and Tools row has a `PreviewTile` with its upgrade'",
+   "title": "item 7: every Shop and Tools row has a `PreviewTile` at its left (what",
    "owners": [
     "Quinn"
    ],
@@ -876,16 +990,114 @@
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
+  },
+  "T10.1": {
+   "kind": "test",
+   "title": "item 10: `ShopCloseButton`'s text is empty and its X draws inside its ",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    10
+   ],
+   "depends": [
+    "C10"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T11.1": {
+   "kind": "test",
+   "title": "item 11: after bottling with a pile, Spin and crank taps and a hold ma",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    11
+   ],
+   "depends": [
+    "C11"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T14.1": {
+   "kind": "test",
+   "title": "item 14: every row whose PNG exists shows it in its `PreviewTile` (a t",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    14
+   ],
+   "depends": [
+    "C14"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
+  },
+  "T17.1": {
+   "kind": "test",
+   "title": "item 17: the exported `index.html` comes from `shell.html` and `build.",
+   "owners": [
+    "Quinn"
+   ],
+   "items": [
+    17
+   ],
+   "depends": [
+    "C17"
+   ],
+   "status": "missing",
+   "evidence": [],
+   "built": false,
+   "waits_on_tests": false,
+   "questions": [],
+   "ambiguous": false
   }
  },
  "order": [
   {
-   "id": "C1",
-   "score": 9.73,
+   "id": "C11",
+   "score": 11.73,
    "factors": {
     "unblocks": 2,
-    "value": 2,
+    "value": 3,
     "cost": 0.27,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C17",
+   "score": 11.73,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.27,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "C14",
+   "score": 11.48,
+   "factors": {
+    "unblocks": 2,
+    "value": 3,
+    "cost": 0.52,
     "ready": 1,
     "blocked_by": []
    }
@@ -908,6 +1120,28 @@
     "unblocks": 2,
     "value": 2,
     "cost": 0.52,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T10.1",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T14.1",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
     "ready": 1,
     "blocked_by": []
    }
@@ -1185,7 +1419,35 @@
     "cost": 0.22,
     "ready": 0,
     "blocked_by": [
-     "C5"
+     "C5",
+     "C11",
+     "C17"
+    ]
+   }
+  },
+  {
+   "id": "T11.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C11"
+    ]
+   }
+  },
+  {
+   "id": "T17.1",
+   "score": 0.0,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 0,
+    "blocked_by": [
+     "C17"
     ]
    }
   },
