@@ -145,6 +145,7 @@ func t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice() -
 		ck(reached, "%s step Spin: the camera reaches the second stop (size %.3f, pan_zoom_size %s)" % [L, _cam().size, str(cv("pan_zoom_size"))])
 		eq(cen.get("state"), _st(cen, "CRANKING"), "%s step Spin: it is still the same crank" % L)
 		eq(int(cen.get("turns_counted")), kept, "%s step Spin: the progress is kept, no turn lost or added by the trip" % L)
+		eq(bool(m.get("_crank_paused")), false, "%s step Spin: the pause flag is cleared once the crank resumed" % L)
 		await _wait(_tap_gap())
 		await _tap_free(m)
 		eq(int(cen.get("turns_counted")), kept + 1, "%s step resume: a real tap at the second stop counts a turn, so the crank resumed" % L)

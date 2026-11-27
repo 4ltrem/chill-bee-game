@@ -2324,8 +2324,8 @@
  {
   "name": "0.3.2 item 2 Gear placement: the gear stays over Back at the second stop",
   "file": "scripts/main.gd",
-  "find": "gear.visible = on_farm and not _at_second_stop   # 0.3.1 item 7",
-  "replace": "gear.visible = on_farm or _at_second_stop   # 0.3.1 item 7",
+  "find": "gear.visible = zoom == Zoom.NONE and not _at_second_stop and not blocked",
+  "replace": "gear.visible = zoom == Zoom.NONE and not blocked",
   "expect": [
    "t_gear_clears_pill_and_skip_hidden_in_both_zooms"
   ],
