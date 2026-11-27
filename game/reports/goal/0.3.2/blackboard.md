@@ -2171,9 +2171,23 @@ contract: 125 lookups in 72 top-level scenes, 0 unresolved
 contract: 0 emitted signals unheard
 contract: 0 looked-up names used twice
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T17.1 --note Preset and shell tests PASS (_runs/20261126-200657); export/smoke-shot tests moved to 0.3.3 item 17, designer 11/26` (the run had stopped: `stopped`).
+
+### Manual fix: T17.1 (2026-11-26T20:07:55-05:00)
+
+- Change (orchestrator, Process 9): Preset and shell tests PASS (_runs/20261126-200657); export/smoke-shot tests moved to 0.3.3 item 17, designer 11/26
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 125 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-C5 accepted with a manual fix (commit failed: 
+T17.1 accepted with a manual fix (commit failed: 
 no changes added to commit (use "git add" and/or "git commit -a")
 docs agree with code and config
 contract: 125 lookups in 72 top-level scenes, 0 unresolved
