@@ -1,7 +1,7 @@
 {
  "spec": "0.3.2-tests-and-quick-buy.md",
  "version": "0.3.2",
- "at": "2026-11-26T20:09:58-05:00",
+ "at": "2026-11-26T20:20:46-05:00",
  "unit_log": "game/reports/_runs/20261109-223506/unit.log",
  "goals": {
   "C1": {
@@ -75,6 +75,66 @@
      "kind": "node",
      "name": "SettingsPanel",
      "ok": true
+    },
+    {
+     "kind": "test",
+     "name": "t_settings_gear_opens_panel_languages_close_dim_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_coming_soon_label_visible_translated_contrasts_with_sheet",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tab_text_fits_its_button_english_and_french",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_fill_covers_whole_circle_at_full_hive",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_floating_icon_circles_are_smooth",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_gear_hidden_under_every_sheet_and_panel_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_gear_clears_pill_and_skip_hidden_in_both_zooms",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice",
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "ledger",
@@ -499,7 +559,7 @@
     "C14",
     "C17"
    ],
-   "status": "done",
+   "status": "partial",
    "evidence": [
     {
      "kind": "test",
@@ -534,6 +594,66 @@
     {
      "kind": "test",
      "name": "t_web_shell_is_branded_loader_with_progress",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_settings_gear_opens_panel_languages_close_dim_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_coming_soon_label_visible_translated_contrasts_with_sheet",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tab_text_fits_its_button_english_and_french",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_fill_covers_whole_circle_at_full_hive",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_floating_icon_circles_are_smooth",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_gear_hidden_under_every_sheet_and_panel_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_gear_clears_pill_and_skip_hidden_in_both_zooms",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice",
      "ok": true,
      "result": "PASS"
     }
@@ -574,8 +694,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_settings_gear_opens_panel_languages_close_dim_twice",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -593,8 +720,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_coming_soon_label_visible_translated_contrasts_with_sheet",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -612,8 +746,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_tab_text_fits_its_button_english_and_french",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -631,8 +772,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_fork_fill_covers_whole_circle_at_full_hive",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -650,8 +798,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_floating_icon_circles_are_smooth",
+     "ok": false,
+     "result": "FAIL"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -669,8 +824,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice",
+     "ok": false,
+     "result": "FAIL"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -688,8 +850,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -707,8 +876,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_gear_hidden_under_every_sheet_and_panel_twice",
+     "ok": false,
+     "result": "FAIL"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -726,8 +902,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_gear_clears_pill_and_skip_hidden_in_both_zooms",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -745,8 +928,69 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_settings_gear_opens_panel_languages_close_dim_twice",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_coming_soon_label_visible_translated_contrasts_with_sheet",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_tab_text_fits_its_button_english_and_french",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_fork_fill_covers_whole_circle_at_full_hive",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_floating_icon_circles_are_smooth",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_gear_hidden_under_every_sheet_and_panel_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_gear_clears_pill_and_skip_hidden_in_both_zooms",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice",
+     "ok": false,
+     "result": "FAIL"
+    },
+    {
+     "kind": "test",
+     "name": "t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -764,8 +1008,15 @@
    "depends": [
     "C2"
    ],
-   "status": "missing",
-   "evidence": [],
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside",
+     "ok": true,
+     "result": "PASS"
+    }
+   ],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -1133,61 +1384,6 @@
  },
  "order": [
   {
-   "id": "T2.1",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.11",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.2",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.3",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.4",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T2.5",
    "score": 5.79,
    "factors": {
@@ -1210,29 +1406,7 @@
    }
   },
   {
-   "id": "T2.7",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T2.8",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "T2.9",
    "score": 5.79,
    "factors": {
     "unblocks": 0,
@@ -1380,6 +1554,17 @@
    "factors": {
     "unblocks": 0,
     "value": 2,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T.1",
+   "score": 1.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 1,
     "cost": 0.21,
     "ready": 1,
     "blocked_by": []

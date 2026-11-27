@@ -422,5 +422,21 @@
   "turns": 17,
   "seconds": 60,
   "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, T2.5, T2.6, T2.8, T.1, T2.10 fix 1",
+  "tokens": 473091,
+  "final": 45182,
+  "turns": 16,
+  "seconds": 42,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, T2.5, T2.6, T2.8, T.1, T2.10 fix 2",
+  "tokens": 368848,
+  "final": 36095,
+  "turns": 24,
+  "seconds": 51,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
  }
 ]
