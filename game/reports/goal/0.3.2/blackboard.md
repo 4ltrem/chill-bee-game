@@ -2143,9 +2143,23 @@ contract: 125 lookups in 72 top-level scenes, 0 unresolved
 contract: 0 emitted signals unheard
 contract: 0 looked-up names used twice
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T14.1 --note t_shop_seven_rows_on_screen_no_scroll already marked and passing (built in C14); designer 11/26` (the run had stopped: `stopped`).
+
+### Manual fix: T14.1 (2026-11-26T20:07:28-05:00)
+
+- Change (orchestrator, Process 9): t_shop_seven_rows_on_screen_no_scroll already marked and passing (built in C14); designer 11/26
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 125 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-T11.1 accepted with a manual fix (commit failed: 
+T14.1 accepted with a manual fix (commit failed: 
 no changes added to commit (use "git add" and/or "git commit -a")
 docs agree with code and config
 contract: 125 lookups in 72 top-level scenes, 0 unresolved
