@@ -28,7 +28,6 @@ farm_auto,Auto,Auto
 journal_icon,Journal,Carnet
 tools_icon,Tools,Outils
 farm_back,Back,Retour
-zoom_uncap_hint,Drag across the cells to uncap them,Glissez pour désoperculer les alvéoles
 zoom_all_uncapped,All cells uncapped!,Alvéoles désoperculées!
 summary_jars,Jars: %d,Pots : %d
 summary_jars_sold,Jars sold: %d,Pots vendus : %d
