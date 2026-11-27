@@ -2179,5 +2179,46 @@
    "t_hint_texts_match_content"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 17 the Web preset's custom shell is emptied",
+  "file": "export_presets.cfg",
+  "find": "html/custom_html_shell=\"res://web/shell.html\"",
+  "replace": "html/custom_html_shell=\"\"",
+  "expect": [
+   "t_web_preset_uses_custom_shell",
+   "t_web_shell_is_branded_loader_with_progress"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 17 the shell no longer follows Godot's load progress",
+  "file": "web/shell.html",
+  "find": "onProgress",
+  "replace": "onProgressX",
+  "expect": [
+   "t_web_shell_is_branded_loader_with_progress"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 17 the shell drops the honey gold",
+  "file": "web/shell.html",
+  "find": "#FFC21F",
+  "replace": "#AAAAAA",
+  "expect": [
+   "t_web_shell_is_branded_loader_with_progress"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 17 the shell loses its title element",
+  "file": "web/shell.html",
+  "find": "<div id=\"title\">",
+  "replace": "<div id=\"ttl\">",
+  "expect": [
+   "t_web_shell_is_branded_loader_with_progress"
+  ],
+  "suite": "unit"
  }
 ]
