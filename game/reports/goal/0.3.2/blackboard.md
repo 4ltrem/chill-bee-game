@@ -2157,9 +2157,23 @@ contract: 125 lookups in 72 top-level scenes, 0 unresolved
 contract: 0 emitted signals unheard
 contract: 0 looked-up names used twice
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept C5 --note Patricia/Bob only fix the breaks Quinn's pass finds; that pass is T5.1, which waited on C5. Fixes come through T5.1's red tests; designer 11/26` (the run had stopped: `stopped`).
+
+### Manual fix: C5 (2026-11-26T20:07:42-05:00)
+
+- Change (orchestrator, Process 9): Patricia/Bob only fix the breaks Quinn's pass finds; that pass is T5.1, which waited on C5. Fixes come through T5.1's red tests; designer 11/26
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 125 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-T14.1 accepted with a manual fix (commit failed: 
+C5 accepted with a manual fix (commit failed: 
 no changes added to commit (use "git add" and/or "git commit -a")
 docs agree with code and config
 contract: 125 lookups in 72 top-level scenes, 0 unresolved

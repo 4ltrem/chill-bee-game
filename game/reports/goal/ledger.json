@@ -474,9 +474,7 @@
   },
   "C5": {
    "run": "0.3.2",
-   "at": "2026-11-26T20:00:22-05:00",
-   "held": "The agents changed no file for C5 and the checks were already green, so it is not built. Their replies on the board (step C5, 2026-11-26T20:00:22-05:00) say why; answer by editing the spec item.",
-   "text": "195f8f547f48"
+   "at": "2026-11-26T20:07:42-05:00"
   },
   "T10.1": {
    "run": "0.3.2",
