@@ -41,7 +41,8 @@ func t_zoom_ui_and_camera() -> void:
 	ck(cam.size < size0, "the camera zoomed in (size %s < %s)" % [str(cam.size), str(size0)])
 	for nm in farm_ui + ["ForkIcon", "CentrifugeIcon", "SellIcon", "CentrifugeLabel"]:
 		ck(not _shown(p[nm]), "%s is hidden during the zoom" % nm)
-	ck(_shown(p["BackButton"]) and _shown(p["HintLabel"]), "BackButton and the hint show during the zoom")
+	# spec 0.3.2 item 8: "after this change [HintLabel] is hidden while cells are left to uncap and shows only `zoom_all_uncapped` ... once none is left, with Back as today"
+	ck(_shown(p["BackButton"]) and not _shown(p["HintLabel"]), "BackButton shows during the zoom; HintLabel is hidden while cells are left to uncap")
 	var back: Control = p["BackButton"]
 	ck(back.size.y >= 120.0, "BackButton at least 120 px high (%s)" % str(back.size.y))
 	ck(back.get_global_rect().get_center().y < 320.0, "BackButton sits in a top corner (centre y %s)" % str(back.get_global_rect().get_center().y))
@@ -57,7 +58,8 @@ func t_zoom_ui_and_camera() -> void:
 	if mouth != null:
 		ck(not rect.has_point(cam.unproject_position((mouth as Node3D).global_position)), "BucketMouth is not under BackButton")
 	var hl: Label = p["HintLabel"]
-	ck(hl.text.strip_edges() != "", "the hint has text")
+	# spec 0.3.2 item 8: the `zoom_uncap_hint` row goes ("Drag across the cells to uncap them" repeated the bubble's hint_uncap)
+	ck(hl.text.strip_edges() != TranslationServer.translate("hint_uncap") or hl.text.strip_edges() == "", "HintLabel does not repeat the bubble's uncap line")
 	await fi.click_ctl(back)
 	await _wait(_zoom_settle() + float(cv("zoom_seconds")))
 	near(cam.size, size0, 0.05, "the camera returns to its farm size after Back")

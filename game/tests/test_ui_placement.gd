@@ -99,7 +99,9 @@ func t_hud_no_overlap_no_cutoff() -> void:
 		await _frames(3)
 		var rects: Array = _hud_rects(m)
 		seen[0] += rects.size()
-		ck(rects.size() >= 2, "%s: at least two HUD controls are on screen (%d)" % [label, rects.size()])
+		# spec 0.3.2 item 8: "after this change it is hidden while cells are left to uncap" (HintLabel), so the first zoom can show Back alone
+		var need: int = 1 if label.begins_with("first zoom") else 2
+		ck(rects.size() >= need, "%s: at least %d HUD controls are on screen (%d: %s)" % [label, need, rects.size(), str(rects.map(func(r: Array) -> String: return r[0]))])
 		eq(_hud_violations(rects, _vp()), [], "%s: no HUD controls overlap and none is cut off" % label))
 	ck(int(seen[0]) >= 6, "HUD controls were measured in every view (%d)" % int(seen[0]))
 	_fin()
@@ -327,8 +329,9 @@ func _back_hint_rects() -> Dictionary:
 		var b: Control = m.find_child("BackButton", true, false) as Control
 		var h: Label = _node(m, "HintLabel") as Label
 		ck(b != null and b.is_visible_in_tree(), "%s: Back is visible" % label)
+		# spec 0.3.2 item 8: HintLabel "is hidden while cells are left to uncap", so the first zoom no longer shows it; its rect is still measured below
 		if label == "first zoom":
-			ck(h != null and h.is_visible_in_tree() and h.text.strip_edges() != "", "%s: the instruction text is visible and has text" % label)
+			ck(h != null and not h.is_visible_in_tree(), "%s: HintLabel is hidden while cells are left to uncap" % label)
 		# at the second stop harvest_ui.gd may hide HintLabel; its rect must still lie below Back (the spec names both views), so it is measured anyway
 		if b != null and h != null:
 			got[label] = {"back": b.get_global_rect(), "hint": h.get_global_rect()})

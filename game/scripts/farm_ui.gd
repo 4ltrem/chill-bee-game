@@ -7,7 +7,6 @@ extends Control
 
 signal summary_closed
 
-const HINT_TEXT := "Tap or hold to spin"
 
 var _hive: Hive
 var _centrifuge: Centrifuge
@@ -292,8 +291,6 @@ func _refresh_centrifuge() -> void:
 	_centrifuge_label.visible = on_spin_screen and (cranking or (keep_spin_text and _centrifuge_label.text != ""))   # item 7: stays while the pile reloads
 	if cranking:
 		var text: String = tr("farm_honey") % [floori(_centrifuge.jars_extracted + 1.0e-6), floori(_centrifuge.jars_total + 1.0e-6)]
-		if _centrifuge.turns_counted == 0:
-			text += "\n" + HINT_TEXT
 		_centrifuge_label.text = text
 
 

@@ -15,7 +15,7 @@ func _ready() -> void:
 	_hint = find_child("HintLabel", true, false) as Label
 	_back_button = find_child("BackButton", true, false) as Button
 	if _hint != null:
-		_hint_text = "zoom_uncap_hint"   # 0.3.1 item 7: translation keys, resolved when shown
+		_hint_text = ""   # 0.3.1 item 7: translation keys, resolved when shown
 	if _back_button != null:
 		_back_button.pressed.connect(func() -> void: back_pressed.emit())
 	visible = false
@@ -25,9 +25,9 @@ func _ready() -> void:
 func show_zoom() -> void:
 	visible = true
 	if _hint != null:
-		_hint.visible = true
-		_hint_text = "zoom_uncap_hint"
-		_hint.text = tr(_hint_text)
+		_hint.visible = false   # 0.3.2 item 8: the bubble (hint_uncap) says it; shown only at zoom_all_uncapped
+		_hint_text = ""
+		_hint.text = ""
 	if _back_button != null:
 		_back_button.visible = true
 	_keep_hint_clear_of_back()
@@ -63,6 +63,7 @@ func show_done() -> void:
 	if _hint != null:
 		_hint_text = "zoom_all_uncapped"
 		_hint.text = tr(_hint_text)
+		_hint.visible = true   # 0.3.2 item 8: the only moment the zoom's HintLabel shows
 	if _back_button != null:
 		_back_button.visible = false
 
