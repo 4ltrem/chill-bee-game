@@ -154,9 +154,8 @@ func close_lid(delay: float = -1.0) -> bool:
 		# designer play-test 11/23: starting the close tween now killed the open one, so the lid never lifted for the pile.
 		# Let the lift finish, then close after the rest of the delay.
 		var rest: float = maxf(delay - opening, 0.0)
-		get_tree().create_timer(opening, false).timeout.connect(func() -> void:
-			if not lid_open:
-				_move_lid_visual(false, rest))
+		if _lid_motion != null:
+			_lid_motion.close_after_open(rest)   # chained after the open tween, so the lift always completes
 	else:
 		_move_lid_visual(false, delay)
 	# 0.3.2 item 11: cranking waits until the lid's visual is fully on

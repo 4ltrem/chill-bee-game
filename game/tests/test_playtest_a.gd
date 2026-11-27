@@ -209,6 +209,8 @@ func t_gear_hidden_under_every_sheet_and_panel_twice() -> void:
 		var seen: Array = []
 		for node in get_nodes_in_group(ModalPanel.GROUP):
 			var mp: ModalPanel = node as ModalPanel
+			if mp == null:
+				continue   # journal_ui.gd adds a plain panel to the group by design; only ModalPanels have open()/close()
 			seen.append(String(mp.name))
 			mp.open()
 			await _frames(3)

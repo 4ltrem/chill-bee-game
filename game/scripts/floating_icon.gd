@@ -49,7 +49,7 @@ func _ready() -> void:
 	for style_name in STYLE_NAMES:
 		_styles[style_name] = get_theme_stylebox(style_name)
 		if _styles[style_name] is StyleBoxFlat:   # designer play-test 11/23: the default 8 corner segments drew a jagged circle
-			(_styles[style_name] as StyleBoxFlat).corner_detail = 24
+			(_styles[style_name] as StyleBoxFlat).corner_detail = 20   # Godot's maximum (StyleBoxFlat clamps 1-20)
 			(_styles[style_name] as StyleBoxFlat).anti_aliasing = true
 		add_theme_stylebox_override(style_name, StyleBoxEmpty.new())
 	_shape = Control.new()

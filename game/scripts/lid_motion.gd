@@ -22,6 +22,7 @@ var _tip_late: bool
 var _closed_pos: Vector3
 var _closed_quat: Quaternion
 var _tween: Tween
+var _playing_open: bool = false
 
 
 ## `follow_parent_scale` true: the lift height is in parent-space units, so a scaled parent (the hive, hive_scale) lifts the lid further.
@@ -75,10 +76,23 @@ func apply(s: float) -> void:
 		_lid.quaternion = _closed_quat.slerp(_spot.quaternion, clampf((f - SIDE_PART) / 0.2, 0.0, 1.0) if _tip_late else minf(f / (SIDE_PART * 0.85), 1.0))   # turned before the drop starts, so closing arrives flat
 
 
+## Closes after a running open tween has finished (never kills it), then waits `delay` and plays the close. Without a running open
+## tween it is play(false, delay). A separate timer raced the open tween's last frame and cut the lift short (T2.6).
+func close_after_open(delay: float) -> void:
+	if _tween != null and _tween.is_valid() and _playing_open and _lid.is_inside_tree():
+		_playing_open = false
+		if delay > 0.0:
+			_tween.tween_interval(delay)
+		_tween.tween_method(apply, 1.0, 0.0, total_seconds(config))
+		return
+	play(false, delay)
+
+
 ## Plays the path to open or closed, starting after `delay` seconds. Without a tree the lid jumps there.
 func play(open: bool, delay: float = 0.0) -> void:
 	if _tween != null and _tween.is_valid():
 		_tween.kill()
+	_playing_open = open
 	var target: float = 1.0 if open else 0.0
 	if not _lid.is_inside_tree():
 		apply(target)

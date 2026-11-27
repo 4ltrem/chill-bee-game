@@ -2264,7 +2264,7 @@
  {
   "name": "0.3.2 item 2 Smooth circles: corner_detail back to 8",
   "file": "scripts/floating_icon.gd",
-  "find": "(_styles[style_name] as StyleBoxFlat).corner_detail = 24",
+  "find": "(_styles[style_name] as StyleBoxFlat).corner_detail = 20",
   "replace": "(_styles[style_name] as StyleBoxFlat).corner_detail = 8",
   "expect": [
    "t_floating_icon_circles_are_smooth"

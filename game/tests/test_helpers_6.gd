@@ -4,7 +4,7 @@ extends "res://tests/test_web_shell.gd"
 # SettingsButton, SettingsPanel, SettingsDim, ComingSoonLabel, HarvestFill, SpinGlyph, HabitatPill, SkipIcon, ShopButton, ShopPanel, Tab<Name>.
 # Every tap is a real mouse event in the viewport (farm_input.gd); every number comes from the config, the scene or the translation table.
 
-const PT_CIRCLE_DETAIL: int = 24      # spec item 2: "corner_detail >= 24"
+const PT_CIRCLE_DETAIL: int = 20      # spec item 2: "corner_detail at Godot's maximum, 20" (StyleBoxFlat clamps it to 1-20)
 const PT_TAB_FONT: int = 28           # spec item 2: "each tab's text fits its button at 28 px" (V12)
 const PT_MIN_CONTRAST: float = 3.0    # WCAG large-text ratio; the 28 px sheet text is large text; white on cream is about 1.1
 const PT_TAB_KEYS: Array[String] = ["Bees", "Hive", "Habitat", "Research", "Refinery"]   # the node suffixes of the five tabs (spec 0.3.1 item 3)
