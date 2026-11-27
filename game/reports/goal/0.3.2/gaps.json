@@ -1,7 +1,7 @@
 {
  "spec": "0.3.2-tests-and-quick-buy.md",
  "version": "0.3.2",
- "at": "2026-11-26T18:33:56-05:00",
+ "at": "2026-11-26T19:18:37-05:00",
  "unit_log": "game/reports/_runs/20261109-223506/unit.log",
  "goals": {
   "C1": {
@@ -14,7 +14,7 @@
     1
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "node",
@@ -36,8 +36,8 @@
     {
      "kind": "test",
      "name": "t_hint_hidden_under_journal_and_victory_twice",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -52,7 +52,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -365,10 +365,16 @@
     11
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "0.3.2",
+     "ok": true
+    }
+   ],
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -399,10 +405,15 @@
      "kind": "node",
      "name": "TextureRect",
      "ok": false
+    },
+    {
+     "kind": "ledger",
+     "name": "404f07c",
+     "ok": true
     }
    ],
-   "built": false,
-   "waits_on_tests": false,
+   "built": true,
+   "waits_on_tests": true,
    "questions": [],
    "ambiguous": false
   },
@@ -420,8 +431,10 @@
    "evidence": [],
    "built": false,
    "waits_on_tests": false,
-   "questions": [],
-   "ambiguous": false
+   "questions": [
+    "The agents changed no file for C17 and the checks were already green, so it is not built. Their replies on the board (step C17, 2026-11-26T19:01:49-05:00) say why; answer by editing the spec item."
+   ],
+   "ambiguous": true
   },
   "T.1": {
    "kind": "test",
@@ -459,7 +472,7 @@
     "C14",
     "C17"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -476,8 +489,8 @@
     {
      "kind": "test",
      "name": "t_hint_hidden_under_journal_and_victory_twice",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -503,7 +516,7 @@
    "depends": [
     "C1"
    ],
-   "status": "partial",
+   "status": "done",
    "evidence": [
     {
      "kind": "test",
@@ -520,8 +533,8 @@
     {
      "kind": "test",
      "name": "t_hint_hidden_under_journal_and_victory_twice",
-     "ok": false,
-     "result": "not run"
+     "ok": true,
+     "result": "PASS"
     },
     {
      "kind": "test",
@@ -1070,54 +1083,21 @@
  },
  "order": [
   {
-   "id": "C11",
-   "score": 11.73,
-   "factors": {
-    "unblocks": 2,
-    "value": 3,
-    "cost": 0.27,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C17",
-   "score": 11.73,
-   "factors": {
-    "unblocks": 2,
-    "value": 3,
-    "cost": 0.27,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
-   "id": "C14",
-   "score": 11.48,
-   "factors": {
-    "unblocks": 2,
-    "value": 3,
-    "cost": 0.52,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "C8",
-   "score": 9.73,
+   "score": 6.74,
    "factors": {
-    "unblocks": 2,
+    "unblocks": 1,
     "value": 2,
-    "cost": 0.27,
+    "cost": 0.26,
     "ready": 1,
     "blocked_by": []
    }
   },
   {
    "id": "C5",
-   "score": 9.48,
+   "score": 6.48,
    "factors": {
-    "unblocks": 2,
+    "unblocks": 1,
     "value": 2,
     "cost": 0.52,
     "ready": 1,
@@ -1126,6 +1106,17 @@
   },
   {
    "id": "T10.1",
+   "score": 5.78,
+   "factors": {
+    "unblocks": 0,
+    "value": 3,
+    "cost": 0.22,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T11.1",
    "score": 5.78,
    "factors": {
     "unblocks": 0,
@@ -1367,17 +1358,6 @@
    }
   },
   {
-   "id": "T1.1",
-   "score": 3.78,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.22,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
-  {
    "id": "T8.1",
    "score": 3.78,
    "factors": {
@@ -1411,34 +1391,6 @@
    }
   },
   {
-   "id": "T.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 1,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C5",
-     "C11",
-     "C17"
-    ]
-   }
-  },
-  {
-   "id": "T11.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.22,
-    "ready": 0,
-    "blocked_by": [
-     "C11"
-    ]
-   }
-  },
-  {
    "id": "T17.1",
    "score": 0.0,
    "factors": {
@@ -1465,5 +1417,7 @@
    }
   }
  ],
- "ambiguous": []
+ "ambiguous": [
+  "C17"
+ ]
 }

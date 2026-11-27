@@ -457,6 +457,17 @@
   "C11": {
    "run": "0.3.2",
    "at": "2026-11-26T19:00:54-05:00"
+  },
+  "C17": {
+   "run": "0.3.2",
+   "at": "2026-11-26T19:01:49-05:00",
+   "held": "The agents changed no file for C17 and the checks were already green, so it is not built. Their replies on the board (step C17, 2026-11-26T19:01:49-05:00) say why; answer by editing the spec item.",
+   "text": "fc3a7a977ece"
+  },
+  "C14": {
+   "run": "0.3.2",
+   "at": "2026-11-26T19:18:30-05:00",
+   "commit": "404f07c"
   }
  }
 }
