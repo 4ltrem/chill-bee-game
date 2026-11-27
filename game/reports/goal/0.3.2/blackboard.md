@@ -1703,9 +1703,28 @@ Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept C8 --note Patricia
 - Change (orchestrator, Process 9): Patricia's item 8 code; hand fix: zoom_uncap_hint removed from content/ui-labels.md (EN, FR, CSV block) and journal.csv regenerated. Rex 11/26: 15 named unit tests PASS (_runs/20261126-193954)
 - Accepted: checkpoint `de61ab7` on `main`
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept C17 --note Built by hand 2026-11-26 in dd84257 (game/web/shell.html set as the Web preset's custom shell; 0.3.2 web smoke shot shows it); Patricia found it in place and changed nothing` (the run had stopped: `stopped`).
+
+### Manual fix: C17 (2026-11-26T19:41:19-05:00)
+
+- Change (orchestrator, Process 9): Built by hand 2026-11-26 in dd84257 (game/web/shell.html set as the Web preset's custom shell; 0.3.2 web smoke shot shows it); Patricia found it in place and changed nothing
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 125 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-C8 accepted with a manual fix (checkpoint `de61ab7` on `main`). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
+C17 accepted with a manual fix (commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 125 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`, `_meta/sessions/runs/2026-11-26-goal-0.3.2/`
 
