@@ -251,6 +251,9 @@ func _refresh_icons() -> void:
 	var gear: Control = _farm_ui.find_child("SettingsButton", true, false) as Control if _farm_ui != null else null
 	if gear != null:
 		gear.visible = on_farm and not _at_second_stop   # 0.3.1 item 7: farm view only; Back holds that corner in both zooms
+	for j: Node in get_tree().get_nodes_in_group("journal_ui"):
+		if j is JournalUI:
+			(j as JournalUI).set_farm_view(not _at_second_stop)
 	if _fork_icon != null:
 		# 0.1.4 item 1: always shown on the farm view (the button is the honey meter); pressable only when the fork rule holds
 		_fork_icon.set_wanted(on_farm and not _at_second_stop)   # hidden at the second stop (designer 2026-11-06)

@@ -10,6 +10,7 @@ var _panel: Control
 var _title: Label
 var _body: Label
 var _open_button: Button
+var farm_view: bool = true
 var _forced: bool = false   # Dev "Unlock Journal"
 
 
@@ -51,9 +52,15 @@ func _refresh_button() -> void:
 		return
 	var thriving: bool = Economy.habitat_health >= Economy.config.habitat_thriving
 	var unlocked: bool = thriving or _forced
-	_open_button.visible = unlocked
+	_open_button.visible = unlocked and farm_view
 	if not unlocked:
 		close()
+
+
+## main.gd: false at the second stop (FarmUI stays visible there, the icon must not).
+func set_farm_view(on: bool) -> void:
+	farm_view = on
+	_refresh_button()
 
 
 func open() -> void:
