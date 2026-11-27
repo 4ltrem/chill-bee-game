@@ -480,9 +480,8 @@
   },
   "T10.1": {
    "run": "0.3.2",
-   "at": "2026-11-26T20:00:57-05:00",
-   "held": "The agents changed no file for T10.1 and the checks were already green, so it is not built. Their replies on the board (step T10.1, 2026-11-26T20:00:57-05:00) say why; answer by editing the spec item.",
-   "text": "1cd604fe9c01"
+   "at": "2026-11-26T20:05:52-05:00",
+   "commit": "be7f1f7"
   },
   "T11.1": {
    "run": "0.3.2",

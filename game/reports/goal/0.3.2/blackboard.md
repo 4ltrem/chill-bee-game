@@ -3,7 +3,7 @@ spec: 0.3.2-tests-and-quick-buy.md
 version: 0.3.2
 run: 0.3.2
 started: 2026-11-23
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3.2-tests-and-quick-buy.md (run 0.3.2)
 
@@ -2120,9 +2120,18 @@ FAIL    unit      2 passed, 2 failed  (godot exit 1, 0 noise lines dropped)  gam
 
 2 fix rounds failed on T17.1: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T17.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T17.1 fix-round edits"`.
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T10.1 --note t_fork_returns_to_icon_twice... see blackboard: test already marked and passing (built in C10, a24addb); designer 11/26` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T10.1 (2026-11-26T20:05:52-05:00)
+
+- Change (orchestrator, Process 9): t_fork_returns_to_icon_twice... see blackboard: test already marked and passing (built in C10, a24addb); designer 11/26
+- Accepted: checkpoint `be7f1f7` on `main`
+
 ## Result
 
-Last invocation (2026-11-26T20:04:22-05:00): waiting-designer.
+T10.1 accepted with a manual fix (checkpoint `be7f1f7` on `main`). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`, `_meta/sessions/runs/2026-11-26-goal-0.3.2/`
 
