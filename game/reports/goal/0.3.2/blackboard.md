@@ -3,7 +3,7 @@ spec: 0.3.2-tests-and-quick-buy.md
 version: 0.3.2
 run: 0.3.2
 started: 2026-11-23
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3.2-tests-and-quick-buy.md (run 0.3.2)
 
@@ -1694,9 +1694,18 @@ FAIL    unit      12 passed, 1 failed  (godot exit 1, 26 noise lines dropped)  g
 
 2 fix rounds failed on C8: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept C8 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "C8 fix-round edits"`.
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept C8 --note Patricia's item 8 code; hand fix: zoom_uncap_hint removed from content/ui-labels.md (EN, FR, CSV block) and journal.csv regenerated. Rex 11/26: 15 named unit tests PASS (_runs/20261126-193954)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: C8 (2026-11-26T19:41:06-05:00)
+
+- Change (orchestrator, Process 9): Patricia's item 8 code; hand fix: zoom_uncap_hint removed from content/ui-labels.md (EN, FR, CSV block) and journal.csv regenerated. Rex 11/26: 15 named unit tests PASS (_runs/20261126-193954)
+- Accepted: checkpoint `de61ab7` on `main`
+
 ## Result
 
-Last invocation (2026-11-26T19:39:02-05:00): waiting-designer.
+C8 accepted with a manual fix (checkpoint `de61ab7` on `main`). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`, `_meta/sessions/runs/2026-11-26-goal-0.3.2/`
 
