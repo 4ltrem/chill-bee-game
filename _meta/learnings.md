@@ -4,6 +4,20 @@ Everything that broke in the workspace or the design loop, how it was noticed, w
 
 Format: **What broke** · **How noticed** · **Cause** · **How fixed** · **Prevention** (the check, test or rule that now catches it).
 
+## L60 · 2026-11-26 · The doc gate was off on this machine
+- **What broke:** end of day's setup check found `core.hooksPath` unset on the designer's second machine, so `.githooks/pre-commit` (consistency and links) had not run on its commits.
+- **How noticed:** `end_of_day.py prep` stopped at `FAIL setup: core.hooksPath is not .githooks`.
+- **Cause:** `core.hooksPath` is local git config; it does not travel with the repository, and this machine's clone was not set up through the end-of-day step 0.
+- **How fixed:** `git config core.hooksPath .githooks`; the day's commit now runs the gate.
+- **Prevention:** `end_of_day.py prep` already refuses to go on without it. Still open: commits made between end-of-day runs on a fresh clone skip the gate.
+
+## L59 · 2026-11-26 · New 0.3.2 test files never ran, so their goals "passed"
+- **What broke:** Quinn's new T2.x and T3.x tests were written into new files but never added to `run_tests.gd`'s list, so the runs reported green and every mutation MISSed in about a second. Batched T-lines also hit Quinn's 30-turn cap, and the checkpoints were committed as "(WIP, 2 unit fails)" without the failing source checked.
+- **How noticed:** the main session saw mutations missing in 1 s during the T2.x round; adding the 10 item-2 tests to the list showed 7 pass and 3 fail (`c437cf4`).
+- **Cause:** `run_tests.gd` holds a hand-kept list of test names; neither Quinn's brief nor goal_agent checks that a new test name is registered.
+- **How fixed:** hand fixes registered the T2.x (`c437cf4`) and T3.1/T3.2 (`6c8a6b1`) tests.
+- **Prevention:** open: a planner job for goal_agent to fail a round whose new test names are not in `run_tests.gd`, and to brief Quinn one T-line at a time.
+
 ## L58 · 2026-11-26 · model_snap.py's import pass hung on Godot 4.2.1
 - **What broke:** the first `model_snap.py` run (truck) wrote its PNG in seconds, then sat for 5 minutes on the import pass `godot --headless --path game --import` until the 300 s timeout.
 - **How noticed:** the designer asked why the snap was so slow; the main session found the PNG written at 17:27 and two headless Godot processes started at 17:27:42 with `--import`.

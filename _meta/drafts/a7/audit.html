@@ -604,17 +604,17 @@ a { color: #1c5cab; text-decoration: none; }
 <td>5</td>
 </tr>
 <tr>
-<td>0.3.2 (part-way, 2026-11-24)</td>
-<td>27</td>
-<td>5M</td>
-<td>189k</td>
-<td>10 min</td>
-<td>2</td>
+<td>0.3.2 (part-way, 2026-11-26)</td>
+<td>59</td>
+<td>16M</td>
+<td>270k</td>
+<td>33 min</td>
+<td>8</td>
 </tr>
 </tbody>
 </table>
 <p>Agent time is the sum of the calls' own durations; script runs and waiting come on top (section 7.3). Cost per call fell by a third between 0.2 and 0.3 while stops rose from 8 to 20: the run got cheaper per call and more expensive in the designer's attention. That reflects the fixes made in between: a test-impact list instead of a full suite per step (L40–L42), diag lines instead of guessed fixes (L47), and one owner per fix round (L12).</p>
-<p><strong>The 0.3.1 run</strong> (2026-11-23) fixed the 0.3.0 play-test findings and added the first-time hints and the Settings panel: 18 goals in 41 calls, 17M tokens ($10.72 at API prices, section 3.7). Per call it was the dearest run so far, 404k, for two reasons the run's own learning records (L53). Briefs gave no map of the scripts, so the first big calls were mostly searching: Patricia's C4 call took 1.8M tokens and 58 turns, much of it grepping for signals and functions. And a change to <code>main.gd</code> widened the test-impact list to every unit test, so each fix round re-ran about 9 minutes of suites. Both were fixed for 0.3.2 (<code>code_map.py</code> gives each brief an API map, and a round runs the goal's own tests first and the widened list only when those pass), and 0.3.2's first 27 calls averaged 189k. The run stopped for the designer only 5 times, against 0.3's 20 (section 7.2). The designer closed it by note after the play-test: 4 of its 18 goals passed the scan, and the other 14 lacked tests for six items, which moved to the 0.3.2 spec.</p>
+<p><strong>The 0.3.1 run</strong> (2026-11-23) fixed the 0.3.0 play-test findings and added the first-time hints and the Settings panel: 18 goals in 41 calls, 17M tokens ($10.72 at API prices, section 3.7). Per call it was the dearest run so far, 404k, for two reasons the run's own learning records (L53). Briefs gave no map of the scripts, so the first big calls were mostly searching: Patricia's C4 call took 1.8M tokens and 58 turns, much of it grepping for signals and functions. And a change to <code>main.gd</code> widened the test-impact list to every unit test, so each fix round re-ran about 9 minutes of suites. Both were fixed for 0.3.2 (<code>code_map.py</code> gives each brief an API map, and a round runs the goal's own tests first and the widened list only when those pass), and 0.3.2's first 27 calls averaged 189k. Its 59 calls to 2026-11-26 average 270k: Quinn's batched test lines hit his 30-turn cap, and new test files were never registered in <code>run_tests.gd</code>, so their tests "passed" without running and fix rounds repeated. The run stopped for the designer only 5 times, against 0.3's 20 (section 7.2). The designer closed it by note after the play-test: 4 of its 18 goals passed the scan, and the other 14 lacked tests for six items, which moved to the 0.3.2 spec.</p>
 <h3 id="42-the-content-crew">4.2 The content crew</h3>
 <table>
 <thead>

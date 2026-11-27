@@ -13,6 +13,7 @@ The design of a cozy mobile beekeeping idle game, built by one developer directi
 | [MILESTONES.md](MILESTONES.md) | build stages, version numbers and the milestones, fitted to the course deadlines |
 | [CREW.md](CREW.md) | the content crew write-up (Ruth, William, Clara and `generate.py`), with its diagram and results |
 | [GOAL_AGENT.md](GOAL_AGENT.md) | the goal agent write-up (`_tools/goal_agent.py`): how it builds a spec goal by goal, the 0.1.4 run and its cost |
+| [PIPELINE.md](PIPELINE.md) | the A7 write-up: playable link, automated flow and the one-page pipeline audit (full audit in `_meta/drafts/a7/audit.pdf`) |
 | [ONBOARDING.md](ONBOARDING.md) | a draft onboarding guide for working in this repository (unfinished) |
 | [README.md](README.md) | public overview and the Outstanding TBDs checklist |
 | [CONTEXT.md](CONTEXT.md) | the design loop: request, proposal, decision, apply |
