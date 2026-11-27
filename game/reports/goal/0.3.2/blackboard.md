@@ -3,7 +3,7 @@ spec: 0.3.2-tests-and-quick-buy.md
 version: 0.3.2
 run: 0.3.2
 started: 2026-11-23
-result: stopped
+result: waiting-designer
 ---
 # Goal agent: 0.3.2-tests-and-quick-buy.md (run 0.3.2)
 
@@ -2185,14 +2185,137 @@ contract: 125 lookups in 72 top-level scenes, 0 unresolved
 contract: 0 emitted signals unheard
 contract: 0 looked-up names used twice
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 22: scan (2026-11-26T20:09:58-05:00)
+
+Unit results from `game/reports/_runs/20261109-223506/unit.log`. 4 of 43 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (8 of 43)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C5 An adversarial QA pass | change | Patricia, Bob | partial (built, waits on its tests) | ✓ ledger 0.3.2 |
+| C17 A loading screen on the web build | change | Patricia | done | ✓ test t_web_preset_uses_custom_shell, ✓ test t_web_shell_is_branded_loader_with_progress, ✓ ledger 0.3.2 |
+| T.1 every test run sets `show_hint = false` except the hint test | test | Quinn | done | ✓ test t_hint_steps_follow_state_in_order_twice, ✓ test t_hint_shop_only_plant_above_sheet_ends_on_patch, ✓ test t_hint_hidden_under_journal_and_victory_twice, ✓ test t_hint_leaving_shows_step_that_fits_twice, ✓ test t_web_preset_uses_custom_shell, ✓ test t_web_shell_is_branded_loader_with_progress |
+| T1.1 item 1: `t_hint_steps_follow_state_in_order_twice` back in ` | test | Quinn | missing | none found |
+| T10.1 item 10: `ShopCloseButton`'s text is empty and its X draws i | test | Quinn | partial (built, waits on its tests) | ✓ ledger be7f1f7 |
+| T11.1 item 11: after bottling with a pile, Spin and crank taps and | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.2 |
+| T14.1 item 14: every row whose PNG exists shows it in its `Preview | test | Quinn | partial (built, waits on its tests) | ✓ ledger 0.3.2 |
+| T17.1 item 17: the Web preset's `html/custom_html_shell` names `ga | test | Quinn | done | ✓ test t_web_preset_uses_custom_shell, ✓ test t_web_shell_is_branded_loader_with_progress, ✓ ledger 0.3.2 |
+
+### Order: new or rescored (2 of 25)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 21 | T1.1 item 1: `t_hint_steps_follow_state_in_order_twice` | 3.79 | 0 | 2 | 0.21 | 1 | designer feature; cost 0.21 (Quinn) |
+| 22 | T5.1 item 5: one test per break found, each failing unt | 3.79 | 0 | 2 | 0.21 | 1 | designer feature; cost 0.21 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T2.1** (score 5.79: play-test fix; cost 0.21 (Quinn)), with T2.11, T2.2, T2.3, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9, T2.10.
+
+### Step: T2.1, T2.11, T2.2, T2.3, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9, T2.10 (2026-11-26T20:09:58-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/T2.1-quinn.md` (6512 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (2,661,137 tokens, 31 turns, 329 s):
+
+(stopped at the 30-turn cap before a reply)
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 30 (cap 30; CLI num_turns 31); end `error_max_turns`
+
+- Tests this round (16): own (13): `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_flight_fill_rate_level3`, `t_floating_icon_circles_are_smooth`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`, `t_tab_text_fits_its_button_english_and_french`; calls a helper changed in `tests/test_helpers_6.gd` (12): `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_floating_icon_circles_are_smooth`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`, `t_tab_text_fits_its_button_english_and_french`; calls a helper changed in `tests/test_playtest_b.gd` (1): `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`; changed in `tests/test_playtest_a.gd` (7): `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_floating_icon_circles_are_smooth`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_tab_text_fits_its_button_english_and_french`; changed in `tests/test_playtest_b.gd` (3): `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/T2.1-fix1-quinn.md` (2466 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (49,577 tokens, 3 turns, 8 s):
+
+No failing check names a row, and I changed nothing.
+
+- **What I got:** the only failure text was "mutate: no mutations to run". It names no test, no failure message and no mutation.
+- **What exists:** `game/tests/` has three uncommitted new files: `test_helpers_6.gd`, `test_playtest_a.gd` and `test_playtest_b.gd`. `mutations.json` has 219 entries. I did not check whether it holds the new play-test mutations.
+- **Likely cause:** "no mutations to run" suggests the goal agent found no entries for T2.1–T2.11 in `mutations.json`. That could mean the entries are missing, or that the goal agent's name filter didn't match them. I can't tell which without the check output.
+- **Why I stopped:** your rules say to change only what a failing row names, and not to guess a fix. I did not add a `diag:` part either, because no failing test was named.
+
+Please resend the failing check output, or tell me which mutation names the goal agent looked for. I'll fix the specific rows then.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 3 (cap 15; CLI num_turns 3); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (16): own (13): `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_flight_fill_rate_level3`, `t_floating_icon_circles_are_smooth`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`, `t_tab_text_fits_its_button_english_and_french`; calls a helper changed in `tests/test_helpers_6.gd` (12): `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_floating_icon_circles_are_smooth`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`, `t_tab_text_fits_its_button_english_and_french`; calls a helper changed in `tests/test_playtest_b.gd` (1): `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`; changed in `tests/test_playtest_a.gd` (7): `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_floating_icon_circles_are_smooth`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_tab_text_fits_its_button_english_and_french`; changed in `tests/test_playtest_b.gd` (3): `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 2: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/T2.1-fix2-quinn.md` (2466 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (412,381 tokens, 17 turns, 60 s):
+
+Two fixes in `tests/`. I ran no tests, mutations or shots, as instructed.
+
+1. **Tests were never run.** `game/tests/run_tests.gd` still extended `test_web_shell.gd`, so `test_playtest_a.gd` and `test_playtest_b.gd` (the eleven T2.x tests) were outside the chain. I changed that one line to extend `test_playtest_b.gd`. `test_helpers_6.gd` already extends `test_web_shell.gd`, so the chain is `test_web_shell` → `test_helpers_6` → `test_playtest_a` → `test_playtest_b`.
+2. **No mutations existed.** The check said "no mutations to run". I added 12 entries to `game/tests/mutations.json`. They cover Settings, Coming soon, Tab text, Fork fill, Smooth circles (2), Lid for the pile, Spin with a paused crank (2), Gear under sheets, Gear placement and Spin size. The Tools-dim mutation was already there.
+
+The `find` strings come from my reading of the code and are untested. A "not found" or "not CAUGHT" result will be a defect in my entry.
+
+No game or spec problem found.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 13 (cap 15; CLI num_turns 17); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (16): own (13): `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_flight_fill_rate_level3`, `t_floating_icon_circles_are_smooth`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`, `t_tab_text_fits_its_button_english_and_french`; calls a helper changed in `tests/test_helpers_6.gd` (12): `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_floating_icon_circles_are_smooth`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`, `t_tab_text_fits_its_button_english_and_french`; calls a helper changed in `tests/test_playtest_b.gd` (1): `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`; changed in `tests/test_playtest_a.gd` (7): `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_floating_icon_circles_are_smooth`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_tab_text_fits_its_button_english_and_french`; changed in `tests/test_playtest_b.gd` (3): `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- No test reads `tests/run_tests.gd`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate 1/12: 0.3.2 item 2 Settings: SettingsPanel has no ModalPanel script ... MISSED in 1s
+mutate 2/12: 0.3.2 item 2 Coming soon: white text on the cream sheet ... MISSED in 1s
+mutate 3/12: 0.3.2 item 2 Tab text: the equal-width tabs clip their text ... MISSED in 1s
+mutate 4/12: 0.3.2 item 2 Fork fill: the honey fill hides at full ... MISSED in 1s
+mutate 5/12: 0.3.2 item 2 Smooth circles: corner_detail back to 8 ... MISSED in 1s
+mutate 6/12: 0.3.2 item 2 Smooth circles: anti-aliasing off ... MISSED in 1s
+mutate 7/12: 0.3.2 item 2 Lid for the pile: the close starts at once and kills the open tween ... MISSED in 1s
+mutate 8/12: 0.3.2 item 2 Spin with a paused crank: Spin in the zoom does nothing ... MISSED in 1s
+mutate 9/12: 0.3.2 item 2 Spin with a paused crank: the crank stays paused after the trip ... MISSED in 1s
+mutate 10/12: 0.3.2 item 2 Gear under sheets: the gear stays while a sheet is open ... MISSED in 1s
+mutate 11/12: 0.3.2 item 2 Gear placement: the gear stays over Back at the second stop ... MISSED in 1s
+mutate 12/12: 0.3.2 item 2 Spin size: Spin drawn smaller in the farm view ... MISSED in 1s
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T2.1, T2.11, T2.2, T2.3, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9, T2.10: `mutations` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T2.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T2.1, T2.11, T2.2, T2.3, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9, T2.10 fix-round edits"`.
+
 ## Result
 
-T17.1 accepted with a manual fix (commit failed: 
-no changes added to commit (use "git add" and/or "git commit -a")
-docs agree with code and config
-contract: 125 lookups in 72 top-level scenes, 0 unresolved
-contract: 0 emitted signals unheard
-contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
+Last invocation (2026-11-26T20:19:02-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`, `_meta/sessions/runs/2026-11-26-goal-0.3.2/`
 
@@ -2248,4 +2371,7 @@ Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/
 | Quinn, T17.1 | 246,037 | 31,839 | 15 | 44 s |
 | Quinn, T17.1 fix 1 | 90,227 | 19,888 | 5 | 11 s |
 | Patricia, T17.1 fix 2 | 31,047 | 16,815 | 2 | 7 s |
-| **Total** | **8,135,883** | | | |
+| Quinn, T2.1, T2.11, T2.2, T2.3, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9, T2.10 | 2,661,137 | 149,558 | 31 | 329 s |
+| Quinn, T2.1, T2.11, T2.2, T2.3, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9, T2.10 fix 1 | 49,577 | 17,856 | 3 | 8 s |
+| Quinn, T2.1, T2.11, T2.2, T2.3, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9, T2.10 fix 2 | 412,381 | 45,994 | 17 | 60 s |
+| **Total** | **11,258,978** | | | |

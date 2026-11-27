@@ -1,7 +1,7 @@
 {
  "spec": "0.3.2-tests-and-quick-buy.md",
  "version": "0.3.2",
- "at": "2026-11-26T20:01:55-05:00",
+ "at": "2026-11-26T20:09:58-05:00",
  "unit_log": "game/reports/_runs/20261109-223506/unit.log",
  "goals": {
   "C1": {
@@ -140,14 +140,18 @@
     5
    ],
    "depends": [],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for C5 and the checks were already green, so it is not built. Their replies on the board (step C5, 2026-11-26T20:00:22-05:00) say why; answer by editing the spec item."
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "0.3.2",
+     "ok": true
+    }
    ],
-   "ambiguous": true
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
   },
   "C6": {
    "kind": "change",
@@ -434,8 +438,20 @@
     17
    ],
    "depends": [],
-   "status": "partial",
+   "status": "done",
    "evidence": [
+    {
+     "kind": "test",
+     "name": "t_web_preset_uses_custom_shell",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_web_shell_is_branded_loader_with_progress",
+     "ok": true,
+     "result": "PASS"
+    },
     {
      "kind": "ledger",
      "name": "0.3.2",
@@ -443,7 +459,7 @@
     }
    ],
    "built": true,
-   "waits_on_tests": true,
+   "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   },
@@ -508,6 +524,18 @@
      "name": "t_hint_leaving_shows_step_that_fits_twice",
      "ok": true,
      "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_web_preset_uses_custom_shell",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_web_shell_is_branded_loader_with_progress",
+     "ok": true,
+     "result": "PASS"
     }
    ],
    "built": false,
@@ -527,33 +555,8 @@
    "depends": [
     "C1"
    ],
-   "status": "done",
-   "evidence": [
-    {
-     "kind": "test",
-     "name": "t_hint_steps_follow_state_in_order_twice",
-     "ok": true,
-     "result": "PASS"
-    },
-    {
-     "kind": "test",
-     "name": "t_hint_shop_only_plant_above_sheet_ends_on_patch",
-     "ok": true,
-     "result": "PASS"
-    },
-    {
-     "kind": "test",
-     "name": "t_hint_hidden_under_journal_and_victory_twice",
-     "ok": true,
-     "result": "PASS"
-    },
-    {
-     "kind": "test",
-     "name": "t_hint_leaving_shows_step_that_fits_twice",
-     "ok": true,
-     "result": "PASS"
-    }
-   ],
+   "status": "missing",
+   "evidence": [],
    "built": false,
    "waits_on_tests": false,
    "questions": [],
@@ -1027,14 +1030,18 @@
    "depends": [
     "C10"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for T10.1 and the checks were already green, so it is not built. Their replies on the board (step T10.1, 2026-11-26T20:00:57-05:00) say why; answer by editing the spec item."
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "be7f1f7",
+     "ok": true
+    }
    ],
-   "ambiguous": true
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
   },
   "T11.1": {
    "kind": "test",
@@ -1048,14 +1055,18 @@
    "depends": [
     "C11"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for T11.1 and the checks were already green, so it is not built. Their replies on the board (step T11.1, 2026-11-26T20:01:26-05:00) say why; answer by editing the spec item."
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "0.3.2",
+     "ok": true
+    }
    ],
-   "ambiguous": true
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
   },
   "T14.1": {
    "kind": "test",
@@ -1069,18 +1080,22 @@
    "depends": [
     "C14"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
-   "waits_on_tests": false,
-   "questions": [
-    "The agents changed no file for T14.1 and the checks were already green, so it is not built. Their replies on the board (step T14.1, 2026-11-26T20:01:54-05:00) say why; answer by editing the spec item."
+   "status": "partial",
+   "evidence": [
+    {
+     "kind": "ledger",
+     "name": "0.3.2",
+     "ok": true
+    }
    ],
-   "ambiguous": true
+   "built": true,
+   "waits_on_tests": true,
+   "questions": [],
+   "ambiguous": false
   },
   "T17.1": {
    "kind": "test",
-   "title": "item 17: the exported `index.html` comes from `shell.html` and `build.",
+   "title": "item 17: the Web preset's `html/custom_html_shell` names `game/web/she",
    "owners": [
     "Quinn"
    ],
@@ -1090,26 +1105,33 @@
    "depends": [
     "C17"
    ],
-   "status": "missing",
-   "evidence": [],
-   "built": false,
+   "status": "done",
+   "evidence": [
+    {
+     "kind": "test",
+     "name": "t_web_preset_uses_custom_shell",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "test",
+     "name": "t_web_shell_is_branded_loader_with_progress",
+     "ok": true,
+     "result": "PASS"
+    },
+    {
+     "kind": "ledger",
+     "name": "0.3.2",
+     "ok": true
+    }
+   ],
+   "built": true,
    "waits_on_tests": false,
    "questions": [],
    "ambiguous": false
   }
  },
  "order": [
-  {
-   "id": "T17.1",
-   "score": 5.79,
-   "factors": {
-    "unblocks": 0,
-    "value": 3,
-    "cost": 0.21,
-    "ready": 1,
-    "blocked_by": []
-   }
-  },
   {
    "id": "T2.1",
    "score": 5.79,
@@ -1331,6 +1353,28 @@
    }
   },
   {
+   "id": "T1.1",
+   "score": 3.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
+   "id": "T5.1",
+   "score": 3.79,
+   "factors": {
+    "unblocks": 0,
+    "value": 2,
+    "cost": 0.21,
+    "ready": 1,
+    "blocked_by": []
+   }
+  },
+  {
    "id": "T8.1",
    "score": 3.79,
    "factors": {
@@ -1362,25 +1406,7 @@
     "ready": 1,
     "blocked_by": []
    }
-  },
-  {
-   "id": "T5.1",
-   "score": 0.0,
-   "factors": {
-    "unblocks": 0,
-    "value": 2,
-    "cost": 0.21,
-    "ready": 0,
-    "blocked_by": [
-     "C5"
-    ]
-   }
   }
  ],
- "ambiguous": [
-  "C5",
-  "T10.1",
-  "T11.1",
-  "T14.1"
- ]
+ "ambiguous": []
 }
