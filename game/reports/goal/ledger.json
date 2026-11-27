@@ -471,6 +471,30 @@
    "run": "0.3.2",
    "at": "2026-11-26T19:41:06-05:00",
    "commit": "de61ab7"
+  },
+  "C5": {
+   "run": "0.3.2",
+   "at": "2026-11-26T20:00:22-05:00",
+   "held": "The agents changed no file for C5 and the checks were already green, so it is not built. Their replies on the board (step C5, 2026-11-26T20:00:22-05:00) say why; answer by editing the spec item.",
+   "text": "195f8f547f48"
+  },
+  "T10.1": {
+   "run": "0.3.2",
+   "at": "2026-11-26T20:00:57-05:00",
+   "held": "The agents changed no file for T10.1 and the checks were already green, so it is not built. Their replies on the board (step T10.1, 2026-11-26T20:00:57-05:00) say why; answer by editing the spec item.",
+   "text": "1cd604fe9c01"
+  },
+  "T11.1": {
+   "run": "0.3.2",
+   "at": "2026-11-26T20:01:26-05:00",
+   "held": "The agents changed no file for T11.1 and the checks were already green, so it is not built. Their replies on the board (step T11.1, 2026-11-26T20:01:26-05:00) say why; answer by editing the spec item.",
+   "text": "8e1361627a30"
+  },
+  "T14.1": {
+   "run": "0.3.2",
+   "at": "2026-11-26T20:01:54-05:00",
+   "held": "The agents changed no file for T14.1 and the checks were already green, so it is not built. Their replies on the board (step T14.1, 2026-11-26T20:01:54-05:00) say why; answer by editing the spec item.",
+   "text": "5ceee3a0c624"
   }
  }
 }

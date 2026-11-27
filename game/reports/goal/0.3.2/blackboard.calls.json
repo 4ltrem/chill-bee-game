@@ -350,5 +350,53 @@
   "turns": 3,
   "seconds": 7,
   "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, C5",
+  "tokens": 15356,
+  "final": 15356,
+  "turns": 1,
+  "seconds": 5,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Bob, C5",
+  "tokens": 35345,
+  "final": 18652,
+  "turns": 2,
+  "seconds": 9,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, C5",
+  "tokens": 83772,
+  "final": 25051,
+  "turns": 5,
+  "seconds": 10,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, T17.1",
+  "tokens": 246037,
+  "final": 31839,
+  "turns": 15,
+  "seconds": 44,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, T17.1 fix 1",
+  "tokens": 90227,
+  "final": 19888,
+  "turns": 5,
+  "seconds": 11,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, T17.1 fix 2",
+  "tokens": 31047,
+  "final": 16815,
+  "turns": 2,
+  "seconds": 7,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
  }
 ]
