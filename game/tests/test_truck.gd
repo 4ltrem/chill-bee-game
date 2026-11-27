@@ -398,7 +398,7 @@ func t_summary_after_sell() -> void:
 	ck(not _shown(modal), "no summary at the start")
 	# bottle 2 jars through the real centrifuge: the modal must stay hidden for the whole run and after it
 	var empty: int = _st(c, "EMPTY")
-	_crank_unaided(c)
+	await _crank_unaided(c)
 	var seen_modal: bool = false
 	var t0: int = _gms()
 	while _gms() - t0 < 12000:

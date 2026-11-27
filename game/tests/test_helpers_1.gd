@@ -17,9 +17,18 @@ func _load_bucket(c: Object, cells: int = -1) -> void:
 	c.call("close_lid")
 
 
+## Spec 0.3.2 item 11: "cranking starts only once the lid's visual is fully on". Run the model's landing clock out (advance() time,
+## no real wait) so the lid counts as on; a begin_crank before this only queues. Reads _lid_on_left, no literal time.
+func _land_lid(c: Object) -> void:
+	var left: float = float(c.get("_lid_on_left"))
+	if left > 0.0:
+		c.call("advance", left + 0.001)
+
+
 ## Full bucket, lid on, then FULL -> CRANKING.
 func _to_cranking(c: Object, cells: int = -1) -> void:
 	_load_bucket(c, cells)
+	_land_lid(c)
 	c.call("begin_crank")
 
 

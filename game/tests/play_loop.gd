@@ -558,6 +558,9 @@ func _run() -> void:
 				# the pile loaded into the empty bucket by itself
 				ck(int(cen.get("cells")) > 0, "%s: the pile loaded into the empty bucket" % TB)
 				eq(cen.get("lid_open"), false, "%s: the bucket closed after the load (full, or no zoom open)" % TB)
+				# spec 0.3.2 item 11: "Spin mode's own crank (main.gd, the reloaded bucket) waits for the lid" -> wait for the lid first
+				await Flow.wait_lid_on(self, cen)
+				await _frames(3)
 				# 0.1.4 item 7: at the second stop the reloaded bucket stays CRANKING by itself (no Spin prompt); the loop's next pass cranks it
 				eq(cen.get("state"), _st(cen, "CRANKING"), "%s: the reloaded bucket is CRANKING by itself" % TB)
 				ck(not _vis(P["CentrifugeIcon"]), "%s: no Spin prompt for the reloaded bucket" % TB)

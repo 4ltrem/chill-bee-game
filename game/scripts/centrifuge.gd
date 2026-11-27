@@ -61,6 +61,8 @@ var _spinner: Node3D
 var _lid: Node3D
 var _lid_spot: Node3D
 var _lid_motion: LidMotion
+var _lid_on_left: float = 0.0      # seconds until the closing lid's visual has landed (0.3.2 item 11)
+var _crank_queued: bool = false    # begin_crank came before the lid landed: start when it does
 var _stop_left: float = 0.0   # seconds of the barrel's ease-out still to run before the lid lifts
 var _stop_w0: float = 0.0
 var _stop_total: float = 0.0
@@ -157,6 +159,10 @@ func close_lid(delay: float = -1.0) -> bool:
 				_move_lid_visual(false, rest))
 	else:
 		_move_lid_visual(false, delay)
+	# 0.3.2 item 11: cranking waits until the lid's visual is fully on
+	_lid_on_left = 0.0
+	if _lid_motion != null and is_inside_tree():
+		_lid_on_left = maxf(delay, opening) + LidMotion.total_seconds(config)
 	_set_state(State.FULL)
 	lid_moved.emit(false)
 	return true
@@ -295,6 +301,10 @@ func gears_shown() -> int:
 func begin_crank() -> void:
 	if state != State.FULL:
 		return
+	if not lid_is_on():
+		_crank_queued = true   # starts by itself in advance() the moment the lid lands
+		return
+	_crank_queued = false
 	_reset_crank()
 	turns_counted = 0
 	jars_extracted = leftover_jars
@@ -310,7 +320,7 @@ func begin_crank() -> void:
 ## One crank turn. Counted only in CRANKING with crank_enabled, and only if at least 1 / max_tap_rate s passed since the last
 ## counted turn. Returns true if it counted.
 func tap() -> bool:
-	if state != State.CRANKING or not crank_enabled:
+	if state != State.CRANKING or not crank_enabled or not lid_is_on():
 		return false
 	if _clock - _last_turn < 1.0 / maxf(config.max_tap_rate, 0.001) - 0.000001:
 		return false
@@ -322,7 +332,7 @@ func tap() -> bool:
 ## handler calling tap(); set_holding(true) itself does not count a turn.
 func set_holding(value: bool) -> void:
 	if value:
-		if state != State.CRANKING or not crank_enabled:
+		if state != State.CRANKING or not crank_enabled or not lid_is_on():
 			return
 		if not holding:
 			holding = true
@@ -368,6 +378,13 @@ func spigot_position() -> Vector3:
 ## Per-frame logic, separate from _process so it can be tested headless.
 func advance(delta: float) -> void:
 	_clock += delta
+	if _lid_on_left > 0.0:
+		_lid_on_left = maxf(_lid_on_left - delta, 0.0)
+	if _crank_queued:
+		if state != State.FULL:
+			_crank_queued = false
+		elif lid_is_on():
+			begin_crank()
 	var held: bool = holding and state == State.CRANKING and crank_enabled
 	if held:
 		_hold_time += delta
@@ -526,6 +543,11 @@ func _ready() -> void:
 	var melting: Material = CellFlight.material("comb_melting")
 	if melting != null:
 		_melt_material = (melting as StandardMaterial3D).duplicate() as StandardMaterial3D
+
+
+## True once the lid's visual is fully on (0.3.2 item 11): no turn counts and no spin starts before.
+func lid_is_on() -> bool:
+	return not lid_open and _lid_on_left <= 0.0
 
 
 ## Seconds until the lid is fully off: the barrel's ease-out still to run, then the rest of the lift (0 when already open).

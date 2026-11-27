@@ -164,6 +164,8 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 			# 0.2 item 9: Spin from the farm view pans to the second stop first, the crank starts there
 			ck(await _until(func() -> bool: return bool(m.call("at_second_stop")) and absf(root.get_viewport().get_camera_3d().size - float(cv("pan_zoom_size"))) < 0.01, float(cv("camera_pan_seconds")) + _zoom_settle() + 4.0), "round 1: Spin panned to the second stop")
 		await _frames(3)
+		# spec 0.3.2 item 11: "Spin mode's own crank waits for the lid", so CRANKING comes once the lid has landed, not at once
+		await _until(func() -> bool: return int(cen.get("state")) == _st(cen, "CRANKING"), _lid_t() + float(cv("cell_fly_seconds")) + 4.0)
 		eq(cen.get("state"), _st(cen, "CRANKING"), "round %d: tapping Spin starts CRANKING" % (round_i + 1))
 		var turns: int = _turns_for(cells_now)
 		var sent: int = 0
@@ -190,7 +192,8 @@ func t_zoom_bucket_lid_pile_flow() -> void:
 			eq(pile.get("cells"), int(want_pile[round_i]), "round %d: the pile loaded into the empty bucket by itself (%d cells left)" % [round_i + 1, int(want_pile[round_i])])
 			eq(cen.get("lid_open"), false, "round %d: the bucket closed after the load (full, or no zoom open)" % (round_i + 1))
 			# spec item 7: "spin mode stays on ... no 'press Spin' prompt" -> the reloaded bucket is CRANKING, not FULL
-			eq(cen.get("state"), _st(cen, "CRANKING"), "round %d: reloaded, spin mode stays on (CRANKING)" % (round_i + 1))
+			await _until(func() -> bool: return int(cen.get("state")) == _st(cen, "CRANKING"), _lid_t() + 4.0)   # spec 0.3.2 item 11: waits for the lid
+			eq(cen.get("state"), _st(cen, "CRANKING"), "round %d: reloaded, spin mode stays on (CRANKING; diag: lid_open=%s on_left=%s queued=%s lid_is_on=%s)" % [round_i + 1, str(cen.get("lid_open")), str(cen.get("_lid_on_left")), str(cen.get("_crank_queued")), str(cen.call("lid_is_on"))])
 		else:
 			eq(pile.get("cells"), 0, "round 3: the pile is empty")
 			eq(cen.get("state"), _st(cen, "EMPTY"), "round 3: bucket EMPTY")

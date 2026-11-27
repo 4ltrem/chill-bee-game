@@ -45,6 +45,7 @@ func t_lid_close_and_signal() -> void:
 	eq(c.get("state"), _st(c, "FULL"), "a part-full bucket with its lid on waits as FULL (Spin shows)")
 	ck(seen.size() > 0 and seen[seen.size() - 1] == false, "lid_moved(false) emitted (got %s)" % str(seen))
 	eq(c.get("cells"), _cpf(), "closing the lid keeps the cells")
+	_land_lid(c)   # spec 0.3.2 item 11: cranking starts only once the lid is fully on
 	c.call("begin_crank")
 	eq(c.get("state"), _st(c, "CRANKING"), "begin_crank -> CRANKING")
 	_fin()

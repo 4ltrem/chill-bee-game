@@ -15,6 +15,7 @@ func t_jar_fills_then_lid() -> void:
 	var cells: int = _cpf()   # one frame: 2 jars
 	c.call("add_cells", cells, _jars_of(cells))
 	c.call("close_lid")
+	_land_lid(c)   # spec 0.3.2 item 11
 	c.call("begin_crank")
 	_crank_done(c)
 	_ext(c, "extracted before bottling")
@@ -180,7 +181,7 @@ func t_jar_flights_to_spigot_and_truck() -> void:
 	var off: Array = rig["off"]
 	var jars_n: int = int(floorf(_jars_of(_cpf()) + 0.000001))
 	var empty: int = _st(c, "EMPTY")
-	_crank_unaided(c)
+	await _crank_unaided(c)
 	var traces: Dictionary = {}
 	await _record(m, tk, off, traces, func() -> bool: return int(c.get("state")) == empty, (spj + 2.0 * fly) * float(jars_n) + 8.0)
 	eq(int(c.get("state")), empty, "bottling ended")
@@ -274,7 +275,7 @@ func t_jar_lands_in_crate_when_truck_away() -> void:
 	await _frames(3)
 	var jars_n: int = int(floorf(_jars_of(_cpf()) + 0.000001))
 	var empty: int = _st(c, "EMPTY")
-	_crank_unaided(c)
+	await _crank_unaided(c)
 	var traces: Dictionary = {}
 	await _record(m, tk, off, traces, func() -> bool: return int(c.get("state")) == empty, (spj + 2.0 * fly) * float(jars_n) + 8.0)
 	await _record(m, tk, off, traces, func() -> bool: return false, fly + 0.8)

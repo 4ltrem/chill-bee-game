@@ -109,6 +109,7 @@ func t_gearing_turns_by_level() -> void:
 			_fin()
 			return
 		_load_bucket(c)
+		_land_lid(c)   # spec 0.3.2 item 11
 		c.call("begin_crank")
 		var want: int = _expect_turns(cells, n)
 		if n == 2:
@@ -173,6 +174,7 @@ func t_gearing_own_motor_cut() -> void:
 		ck(off > 0.0 and off < base, "Gearing %d, motor off: the ramp is shorter than the base %s (%.4f)" % [n, str(base), off])
 		near(on / off, 1.0 - post * float(n), "Gearing %d: own motor on cuts the ramp a further 8%% x level" % n, 0.0001)
 		_load_bucket(c)
+		_land_lid(c)   # spec 0.3.2 item 11
 		c.call("begin_crank")
 		_set_cfg("dev_own_motor", true)
 		eq(c.call("turns_needed"), _expect_turns(_bucket_cells(), n), "Gearing %d: the motor cut leaves the turns needed alone (a time cut)" % n)

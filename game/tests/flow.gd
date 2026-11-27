@@ -27,6 +27,13 @@ static func shop_open(main: Node, fi: RefCounted = null, real: bool = false) -> 
 		await main.get_tree().process_frame
 
 
+## Waits until the centrifuge's lid visual is fully on (0.3.2 item 11: "cranking starts only once the lid's visual is fully on").
+static func wait_lid_on(tree: SceneTree, c: Node, limit: float = 10.0) -> void:
+	var t0: int = Time.get_ticks_msec()
+	while not bool(c.call("lid_is_on")) and float(Time.get_ticks_msec() - t0) < limit * 1000.0:
+		await tree.process_frame
+
+
 ## Closes the shop sheet again (no-op in the compact layout or when already closed).
 static func shop_close(main: Node) -> void:
 	var panel: Node = main.find_child("ShopPanel", true, false)

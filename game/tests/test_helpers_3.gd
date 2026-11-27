@@ -299,10 +299,21 @@ func _bottling_rig(fly: float, spj: float) -> Dictionary:
 
 
 ## One frame of cells (2 jars), lid on, cranked to the end by calls: from here on the game must carry on by itself.
+## 0.3.2 item 11: "cranking starts only once the lid's visual is fully on" (begin_crank is ignored before), so wait for the lid first.
+## The one shared step: lid closed in the model and its LidMotion back at progress 0 (no motion node = nothing to wait for).
+func _wait_lid_on(c: Node, limit: float = 10.0) -> void:
+	var lm: Variant = c.get("_lid_motion")
+	var t0: int = _gms()
+	while lm != null and (bool(c.get("lid_open")) or float((lm as Object).get("progress")) > 0.0) and float(_gms() - t0) < limit * 1000.0:
+		await process_frame
+
+
 func _crank_unaided(c: Node) -> void:
 	var cells: int = _cpf()
 	c.call("add_cells", cells, _jars_of(cells))
 	c.call("close_lid")
+	await _wait_lid_on(c)
+	_land_lid(c)
 	c.call("begin_crank")
 	_crank_done(c)
 

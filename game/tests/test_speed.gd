@@ -76,6 +76,7 @@ func _measure(kind: String, d: float, n: float) -> Dictionary:
 			var cells: int = _cpf()
 			c.call("add_cells", cells, _jars_of(cells))
 			c.call("close_lid")
+			_land_lid(c)   # spec 0.3.2 item 11
 			c.call("begin_crank")
 			_crank_done(c)
 		r = await _timed(go, func() -> bool: return int(c.get("state")) == empty, d / n * 3.0 + 6.0)

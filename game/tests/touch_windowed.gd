@@ -50,6 +50,7 @@ func _mk() -> Node:
 	var n: int = cpf * int(cfg.get("centrifuge_capacity_frames"))   # a full bucket: enough turns for the 2 s hold
 	c.call("add_cells", n, float(n * int(cfg.get("frame_jars"))) / float(cpf))
 	c.call("close_lid")
+	await preload("res://tests/flow.gd").wait_lid_on(self, c)   # spec 0.3.2 item 11: cranking starts only once the lid is fully on
 	c.call("begin_crank")
 	return c
 
@@ -62,7 +63,7 @@ func _run() -> void:
 	var rate: float = float(cfg.get("max_tap_rate"))
 	var spot := Vector2(360.0, 640.0)
 	# --- N touch taps spaced past the cap count exactly N turns
-	var c := _mk()
+	var c: Node = await _mk()
 	var n: int = 6
 	var gap_ms: int = int((1.0 / rate + 0.08) * 1000.0)
 	for i in n:
@@ -76,7 +77,7 @@ func _run() -> void:
 	_main.queue_free()
 	await process_frame
 	# --- a touch hold of T s counts 1 + T x max_tap_rate turns (+-1 frame), never more
-	c = _mk()
+	c = await _mk()
 	var hold_s: float = 2.0
 	var t0: int = Time.get_ticks_msec()
 	_touch(true, spot)

@@ -220,6 +220,7 @@ func t_bottling_35_single_cells_is_2_jars() -> void:
 	for i in _cpf():
 		c.call("add_cells", 1, _cell_value())
 	c.call("close_lid")
+	_land_lid(c)   # spec 0.3.2 item 11: no crank before the lid is fully on
 	c.call("begin_crank")
 	var sent: int = _crank_done(c)
 	eq(sent, _turns_for(_cpf()), "35 single cells need ceil(2 x taps_per_jar) = 8 turns (float noise must not add one)")
@@ -272,6 +273,7 @@ func t_leftover_adds_no_turns() -> void:
 	ck(left > 0.01, "batch 1 left a fractional carry (%.4f jars)" % left)
 	var n2: int = _cpf() - 2   # 8 cells: 1.6 jars, 7 turns by themselves, 9 if the carry counted
 	_load_bucket(c, n2)
+	_land_lid(c)   # spec 0.3.2 item 11
 	c.call("begin_crank")
 	var cranking: int = _st(c, "CRANKING")
 	var sent: int = 0
@@ -340,7 +342,7 @@ func t_bottling_starts_by_itself() -> void:
 	c.connect("extraction_done", func() -> void: done_n[0] += 1)
 	c.connect("jar_bottled", func(n: Variant) -> void: bottled.append(int(n)))
 	var jars_n: int = int(floorf(_jars_of(_cpf()) + 0.000001))
-	_crank_unaided(c)
+	await _crank_unaided(c)
 	eq(done_n[0], 1, "extraction_done was emitted once")
 	# from here on: no input of any kind
 	var bottling: int = _st(c, "BOTTLING")
