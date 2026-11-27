@@ -306,17 +306,6 @@ corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
-[sub_resource type="StyleBoxFlat" id="StyleBox_preview"]
-bg_color = Color(1, 1, 1, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.2, 0.12, 0.02, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
@@ -757,12 +746,14 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="PreviewTile" type="Panel" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox"]
+[node name="PreviewTile" type="TextureRect" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox"]
+visible = false
 custom_minimum_size = Vector2(144, 144)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBox_preview")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Info" type="VBoxContainer" parent="FarmUIRoot/FarmUI/Margin/Column/ShopPanel/ShopBox/ShopRows/RowTemplate/RowBox"]
 layout_mode = 2
@@ -857,12 +848,14 @@ theme_override_styles/panel = SubResource("StyleBox_modal")
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="PreviewTile" type="Panel" parent="FarmUIRoot/FarmUI/QuickBuy/QuickBuyRow"]
+[node name="PreviewTile" type="TextureRect" parent="FarmUIRoot/FarmUI/QuickBuy/QuickBuyRow"]
+visible = false
 custom_minimum_size = Vector2(136, 136)
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBox_preview")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="QuickBuyName" type="Label" parent="FarmUIRoot/FarmUI/QuickBuy/QuickBuyRow"]
 layout_mode = 2
