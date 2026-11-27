@@ -438,5 +438,37 @@
   "turns": 24,
   "seconds": 51,
   "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, T2.1, T2.11, T2.2, T2.3, T2.4, T2.6, T2.7, T2.8, T2.9, T2.10 fix 1",
+  "tokens": 147751,
+  "final": 25170,
+  "turns": 13,
+  "seconds": 27,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, T3.1, T3.2, T3.3, T3.4, T3.5, T3.6",
+  "tokens": 3252798,
+  "final": 175727,
+  "turns": 31,
+  "seconds": 313,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Quinn, T3.1, T3.2, T3.3, T3.4, T3.5, T3.6 fix 1",
+  "tokens": 228007,
+  "final": 29732,
+  "turns": 17,
+  "seconds": 38,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
+ },
+ {
+  "call": "Patricia, T3.1, T3.2, T3.3, T3.4, T3.5, T3.6 fix 2",
+  "tokens": 198353,
+  "final": 29479,
+  "turns": 14,
+  "seconds": 25,
+  "transcripts": "_meta/sessions/runs/2026-11-26-goal-0.3.2"
  }
 ]

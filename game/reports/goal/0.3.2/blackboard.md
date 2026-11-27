@@ -3,7 +3,7 @@ spec: 0.3.2-tests-and-quick-buy.md
 version: 0.3.2
 run: 0.3.2
 started: 2026-11-23
-result: stopped
+result: waiting-designer
 ---
 # Goal agent: 0.3.2-tests-and-quick-buy.md (run 0.3.2)
 
@@ -2442,14 +2442,213 @@ contract: 125 lookups in 72 top-level scenes, 0 unresolved
 contract: 0 emitted signals unheard
 contract: 0 looked-up names used twice
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md` (the run had stopped: `stopped`).
+Branch `main`: stays on it.
+
+## Pass 24: scan (2026-11-26T20:25:39-05:00)
+
+Unit results from `game/reports/_runs/20261109-223506/unit.log`. 5 of 43 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (13 of 43)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| C2 Tests for what the 0.3.1 play-test found. | change | - | partial (built, waits on its tests) | 12/13 present: ✗ node ModalPanel, ✓ node SettingsPanel, ✓ test t_settings_gear_opens_panel_languages_close_dim_twice, ✓ test t_coming_soon_label_visible_translated_contrasts_with_sheet, ✓ test t_tab_text_fits_its_button_english_and_french, ✓ test t_fork_f ... |
+| T.1 every test run sets `show_hint = false` except the hint test | test | Quinn | done | 16/16 present: ✓ test t_hint_steps_follow_state_in_order_twice, ✓ test t_hint_shop_only_plant_above_sheet_ends_on_patch, ✓ test t_hint_hidden_under_journal_and_victory_twice, ✓ test t_hint_leaving_shows_step_that_fits_twice, ✓ test t_web_preset_uses_custo ... |
+| T2.1 item 2 Settings: a real tap on `SettingsButton` opens `Setti | test | Quinn | partial | ✓ test t_settings_gear_opens_panel_languages_close_dim_twice, ✗ ledger not built: its item's tests predate this line |
+| T2.2 item 2 Coming soon: on Research and Refinery, `ComingSoonLab | test | Quinn | partial | ✓ test t_coming_soon_label_visible_translated_contrasts_with_sheet, ✗ ledger not built: its item's tests predate this line |
+| T2.3 item 2 tab text: each tab's text fits its button at 28 px, i | test | Quinn | partial | ✓ test t_tab_text_fits_its_button_english_and_french, ✗ ledger not built: its item's tests predate this line |
+| T2.4 item 2 fork fill: at a full hive `HarvestFill` shows and cov | test | Quinn | partial | ✓ test t_fork_fill_covers_whole_circle_at_full_hive, ✗ ledger not built: its item's tests predate this line |
+| T2.5 item 2 smooth circles: every FloatingIcon's circle style has | test | Quinn | done | ✓ test t_floating_icon_circles_are_smooth, ✓ ledger 0.3.2 |
+| T2.6 item 2 lid: after bottling with a pile, the lid's visual pro | test | Quinn | partial | ✓ test t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice, ✗ ledger not built: its item's tests predate this line |
+| T2.7 item 2 paused crank: crank at the second stop, Back, open th | test | Quinn | partial | ✓ test t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice, ✗ ledger not built: its item's tests predate this line |
+| T2.8 item 2 gear under sheets: with any sheet or panel open, `Set | test | Quinn | partial | ✓ test t_gear_hidden_under_every_sheet_and_panel_twice, ✗ ledger not built: its item's tests predate this line |
+| T2.9 item 2 gear placement: the gear's rect clears `HabitatPill`  | test | Quinn | partial | ✓ test t_gear_clears_pill_and_skip_hidden_in_both_zooms, ✗ ledger not built: its item's tests predate this line |
+| T2.10 item 2 Tools dim: `t_tools_second_stop_sheet_gearing_spigot_ | test | Quinn | partial | 10/11 present: ✓ test t_settings_gear_opens_panel_languages_close_dim_twice, ✓ test t_coming_soon_label_visible_translated_contrasts_with_sheet, ✓ test t_tab_text_fits_its_button_english_and_french, ✓ test t_fork_fill_covers_whole_circle_at_full_hive, ✓ t ... |
+| T2.11 item 2 Spin size: Spin's drawn circle equals the fork's (88) | test | Quinn | partial | ✓ test t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside, ✗ ledger not built: its item's tests predate this line |
+
+### Order: new or rescored (7 of 24)
+
+| Rank | Goal | Score | unblocks | value | cost | ready | Why |
+|---|---|---|---|---|---|---|---|
+| 1 | T2.1 item 2 Settings: a real tap on `SettingsButton` op | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 2 | T2.11 item 2 Spin size: Spin's drawn circle equals the f | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 3 | T2.2 item 2 Coming soon: on Research and Refinery, `Com | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 4 | T2.3 item 2 tab text: each tab's text fits its button a | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 5 | T2.4 item 2 fork fill: at a full hive `HarvestFill` sho | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 7 | T2.7 item 2 paused crank: crank at the second stop, Bac | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+| 9 | T2.9 item 2 gear placement: the gear's rect clears `Hab | 5.79 | 0 | 3 | 0.21 | 1 | play-test fix; cost 0.21 (Quinn) |
+
+Weights: unblocks +3.0, value +2.0, cost -1.0; score = ready × Σ weight × factor.
+
+Next: **T2.1** (score 5.79: play-test fix; cost 0.21 (Quinn)), with T2.11, T2.2, T2.3, T2.4, T2.6, T2.7, T2.8, T2.9, T2.10.
+
+### Step: T2.1, T2.11, T2.2, T2.3, T2.4, T2.6, T2.7, T2.8, T2.9, T2.10 (2026-11-26T20:25:39-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/T2.1-quinn.md` (6393 chars)
+- Quinn's step skipped: every line already has its marked test (T2.1: t_flight_fill_rate_level3, t_habitat_start_cap_thriving_once, t_habitat_pill_order_plus_opens_shop_twice, t_settings_gear_opens_panel_languages_close_dim_twice, T2.11: t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside, T2.2: t_coming_soon_label_visible_translated_contrasts_with_sheet, T2.3: t_tab_text_fits_its_button_english_and_french, T2.4: t_fork_fill_covers_whole_circle_at_full_hive, T2.6: t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice, T2.7: t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice, T2.8: t_gear_hidden_under_every_sheet_and_panel_twice, T2.9: t_gear_clears_pill_and_skip_hidden_in_both_zooms)
+- Tests this round (12): own (12): `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_flight_fill_rate_level3`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`, `t_tab_text_fits_its_button_english_and_french`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate 1/12: 0.3.2 item 2 Settings: SettingsPanel has no ModalPanel script ... CAUGHT in 2s
+mutate 2/12: 0.3.2 item 2 Coming soon: white text on the cream sheet ... CAUGHT in 2s
+mutate 3/12: 0.3.2 item 2 Tab text: the equal-width tabs clip their text ... CAUGHT in 2s
+mutate 4/12: 0.3.2 item 2 Fork fill: the honey fill hides at full ... CAUGHT in 2s
+mutate 5/12: 0.3.2 item 2 Smooth circles: corner_detail back to 8 ... CAUGHT in 2s
+mutate 6/12: 0.3.2 item 2 Smooth circles: anti-aliasing off ... CAUGHT in 2s
+mutate 7/12: 0.3.2 item 2 Lid for the pile: the close starts at once and kills the open tween ... CAUGHT in 19s
+mutate 8/12: 0.3.2 item 2 Spin with a paused crank: Spin in the zoom does nothing ... CAUGHT in 46s
+mutate 9/12: 0.3.2 item 2 Spin with a paused crank: the crank stays paused after the trip ... MISSED in 29s
+mutate 10/12: 0.3.2 item 2 Gear under sheets: the gear stays while a sheet is open ... CAUGHT in 2s
+mutate 11/12: 0.3.2 item 2 Gear placement: the gear stays over Back at the second stop ... MISSED in 15s
+mutate 12/12: 0.3.2 item 2 Spin size: Spin drawn smaller in the farm view ... CAUGHT in 10s
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/T2.1-fix1-quinn.md` (3560 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (147,751 tokens, 13 turns, 27 s):
+
+Two mutations were MISSED, and I fixed both in `tests/`. I ran nothing.
+
+- **Mutation 9 (paused crank):** the old test never checked the pause flag. The Spin trip and the resume tap both work with the flag stuck on. I added an assert in `test_playtest_b.gd`, in `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`. It checks that `_crank_paused` is false once the crank has resumed. The mutation in `mutations.json` is unchanged.
+- **Mutation 11 (gear at the second stop):** the mutation was an equivalent mutant. It edited `main.gd` line 253, but line 203 sets `gear.visible` again every frame, so the edit never showed. I re-aimed the mutation's `find` and `replace` at line 203, dropping `not _at_second_stop`. `t_gear_clears_pill_and_skip_hidden_in_both_zooms` should now fail on it.
+
+No game code or spec problem found. The other ten mutations were CAUGHT.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 7 (cap 15; CLI num_turns 13); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (12): own (12): `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_flight_fill_rate_level3`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`, `t_tab_text_fits_its_button_english_and_french`; changed in `tests/test_playtest_b.gd` (1): `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`
+- No test reads `tests/mutations.json`: covered only by the end-of-run full suite
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: PASS
+- Green: checkpoint `1039632` on `main`
+
+## Pass 25: scan (2026-11-26T20:35:39-05:00)
+
+Unit results from `game/reports/_runs/20261109-223506/unit.log`. 15 of 43 goals done. Only what changed since the last pass is shown.
+
+### Gaps changed (10 of 43)
+
+| Goal | Kind | Owners | Status | Evidence |
+|---|---|---|---|---|
+| T2.1 item 2 Settings: a real tap on `SettingsButton` opens `Setti | test | Quinn | done | ✓ test t_settings_gear_opens_panel_languages_close_dim_twice, ✓ ledger 1039632 |
+| T2.2 item 2 Coming soon: on Research and Refinery, `ComingSoonLab | test | Quinn | done | ✓ test t_coming_soon_label_visible_translated_contrasts_with_sheet, ✓ ledger 1039632 |
+| T2.3 item 2 tab text: each tab's text fits its button at 28 px, i | test | Quinn | done | ✓ test t_tab_text_fits_its_button_english_and_french, ✓ ledger 1039632 |
+| T2.4 item 2 fork fill: at a full hive `HarvestFill` shows and cov | test | Quinn | done | ✓ test t_fork_fill_covers_whole_circle_at_full_hive, ✓ ledger 1039632 |
+| T2.6 item 2 lid: after bottling with a pile, the lid's visual pro | test | Quinn | done | ✓ test t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice, ✓ ledger 1039632 |
+| T2.7 item 2 paused crank: crank at the second stop, Back, open th | test | Quinn | done | ✓ test t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice, ✓ ledger 1039632 |
+| T2.8 item 2 gear under sheets: with any sheet or panel open, `Set | test | Quinn | done | ✓ test t_gear_hidden_under_every_sheet_and_panel_twice, ✓ ledger 1039632 |
+| T2.9 item 2 gear placement: the gear's rect clears `HabitatPill`  | test | Quinn | done | ✓ test t_gear_clears_pill_and_skip_hidden_in_both_zooms, ✓ ledger 1039632 |
+| T2.10 item 2 Tools dim: `t_tools_second_stop_sheet_gearing_spigot_ | test | Quinn | done | 11/11 present: ✓ test t_settings_gear_opens_panel_languages_close_dim_twice, ✓ test t_coming_soon_label_visible_translated_contrasts_with_sheet, ✓ test t_tab_text_fits_its_button_english_and_french, ✓ test t_fork_fill_covers_whole_circle_at_full_hive, ✓ t ... |
+| T2.11 item 2 Spin size: Spin's drawn circle equals the fork's (88) | test | Quinn | done | ✓ test t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside, ✓ ledger 1039632 |
+
+No score changed.
+
+Next: **T3.1** (score 5.79: play-test fix; cost 0.21 (Quinn)), with T3.2, T3.3, T3.4, T3.5, T3.6.
+
+### Step: T3.1, T3.2, T3.3, T3.4, T3.5, T3.6 (2026-11-26T20:35:39-05:00)
+
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/T3.1-quinn.md` (7986 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (3,252,798 tokens, 31 turns, 313 s):
+
+(stopped at the 30-turn cap before a reply)
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 30`; model calls 30 (cap 30; CLI num_turns 31); end `error_max_turns`
+
+- Tests this round (11): own (11): `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_plant_steps_group_health_twice`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`, `t_pill_no_button_farm_view_only_money_stays_only_shop_button_opens_shop_twice`; calls a helper changed in `tests/test_helpers_7.gd` (4): `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`; changed in `tests/test_carried_a.gd` (6): `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`, `t_pill_no_button_farm_view_only_money_stays_only_shop_button_opens_shop_twice`
+- Check `contract`: PASS
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+#### Fix round 1: to Quinn
+
+- Brief for Quinn: `game/reports/goal/0.3.2/briefs/T3.1-fix1-quinn.md` (1794 chars)
+- Budget guard for Quinn: override
+
+**Quinn** (228,007 tokens, 17 turns, 38 s):
+
+I wired the first two carried-test groups into the runner, but I did not write or register tests for T3.3–T3.6. I ran nothing, as instructed.
+
+**What I found:** The brief gave no failure message. The six carried tests for T3.1 (pill and Journal icon) and T3.2 (toast queue) already existed in `game/tests/test_carried_a.gd`. They were not in the chain `run_tests.gd` extends, and not in its test list, so they never ran.
+
+**What I changed in `game/tests/run_tests.gd`:**
+- Line 4 now extends `test_carried_a.gd`. That file extends `test_helpers_7.gd`, which extends `test_playtest_b.gd`, so the existing chain is kept.
+- I added the six names to the test list under `# 0.3.1 T1.1` and `# 0.3.1 T2.1` groups.
+
+**Not done:** T3.3 (Shop tabs), T3.4 (Dev buttons), T3.5 (icons) and T3.6 (gear and Settings) have no tests. `test_helpers_7.gd` already holds helpers for them, including `_check_panel` and `_cb_dev_button`. I also added no mutations to `mutations.json`. No `diag:` parts were needed.
+
+Nothing is left running.
+
+- Call: `claude -p --agent qa-build-engineer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 10 (cap 15; CLI num_turns 17); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (11): own (11): `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_plant_steps_group_health_twice`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`, `t_pill_no_button_farm_view_only_money_stays_only_shop_button_opens_shop_twice`; calls a helper changed in `tests/test_helpers_7.gd` (4): `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`; changed in `tests/run_tests.gd` (6): `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`, `t_pill_no_button_farm_view_only_money_stays_only_shop_button_opens_shop_twice`; changed in `tests/test_carried_a.gd` (6): `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`, `t_pill_no_button_farm_view_only_money_stays_only_shop_button_opens_shop_twice`
+- Check `contract`: PASS
+- Check `tests`: FAIL (exit 1)
+
+```
+FAIL    unit      10 passed, 1 failed  (godot exit 1, 48 noise lines dropped)  game/reports/_runs/20261126-204226/unit.log
+    FAIL  t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice  second stop: the Journal icon is hidden at thriving  (13487 ms)
+    ERROR: Condition "slot >= slot_max" is true. Returning: nullptr
+    ERROR: Condition "slot >= slot_max" is true. Returning: nullptr
+```
+
+#### Fix round 2: to Patricia
+
+- Brief for Patricia: `game/reports/goal/0.3.2/briefs/T3.1-fix2-patricia.md` (3500 chars)
+- Budget guard for Patricia: override
+
+**Patricia** (198,353 tokens, 14 turns, 25 s):
+
+The Journal icon was still showing at the second stop, because `FarmUI` stays visible there. I haven't run any tests, since you said the goal agent runs them.
+
+- **`game/scripts/journal_ui.gd`:** I added a `farm_view` flag and a `set_farm_view(on)` method. The icon now shows only when Health is at thriving (or the Dev unlock is on) and `farm_view` is true.
+- **`game/scripts/main.gd`:** `_refresh_icons()` now calls `set_farm_view(not _at_second_stop)` on every node in the `journal_ui` group. This is the same rule the gear and the habitat pill already follow.
+
+I did not touch the two `slot >= slot_max` errors. They aren't tied to a failing row, so I can't say whether this change affects them. If they persist, the next round needs `diag needed`.
+
+I changed no touch targets, fonts or placeholder numbers.
+
+- Call: `claude -p --agent programmer --output-format stream-json --verbose --permission-mode acceptEdits --allowedTools Bash,Read,Grep,Glob,Write,Edit --max-turns 15`; model calls 9 (cap 15; CLI num_turns 14); end `success`
+
+- Check `scope`: PASS
+- Check `visual numbers`: PASS
+- Tests this round (232): own (11): `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_plant_steps_group_health_twice`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`, `t_pill_no_button_farm_view_only_money_stays_only_shop_button_opens_shop_twice`; calls a helper changed in `tests/test_helpers_7.gd` (4): `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`; changed in `tests/run_tests.gd` (6): `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`, `t_pill_no_button_farm_view_only_money_stays_only_shop_button_opens_shop_twice`; changed in `tests/test_carried_a.gd` (6): `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`, `t_pill_no_button_farm_view_only_money_stays_only_shop_button_opens_shop_twice`; impacted by `scripts/journal_ui.gd` (via `FarmUI`, `close`, `habitat_thriving`, `unlock`) (28): `t_bumble_visitor_toast_journal_unlock_twice`, `t_config_011`, `t_config_012`, `t_config_placeholders_marked`, `t_dev_user_file_ignored_when_off`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`, `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_journal_csv_equals_script_output`, `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_journal_panel_text_matches_csv_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_lid_close_never_clips_hive`, `t_lid_closes_clear_of_walls`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_no_continue_button`, `t_node_contract`, `t_replay_without_back_stays_in_zoom`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_shop_auto_sell_locked_until_delivery_1`, `t_skip_icon_reaches_thriving_free_twice`, `t_spin_placed_by_scene`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`, `t_welcome_world_idle_then_play_twice`; impacted by `scripts/main.gd` (via `Centrifuge`, `HabitatPill`, `SettingsButton`, `SkipIcon`, `Zoom`, `_crank_paused`, `_process`, `_refresh_icons`, `advance`, `back`, `fork_available`, `show_welcome` and 1 more) (227): `t_autosell_full_bed_leaves_by_itself`, `t_autosell_not_owned_full_bed_waits`, `t_autosell_part_load_sells_by_sell`, `t_autosell_twice_matches`, `t_back_after_one_frame`, `t_back_fixed_top_right`, `t_back_keeps_half_frame`, `t_barrel_eases_to_stop`, `t_became_full_count_full_overflow`, `t_became_full_once_while_filling`, `t_bottling_35_single_cells_is_2_jars`, `t_bottling_floor_and_leftover_carry`, `t_bottling_starts_by_itself`, `t_bottling_time_is_live`, `t_bottling_timing`, `t_bucket_capacity_and_states`, `t_bumble_visitor_toast_journal_unlock_twice`, `t_button_press_is_not_a_crank`, `t_buttons_at_anchor_or_clamped`, `t_buttons_clamped_when_anchor_off_screen`, `t_camera_back_from_second_stop`, `t_camera_first_zoom_cells`, `t_camera_first_zoom_in_frame`, `t_camera_first_zoom_v7`, `t_camera_lid_lean_matches_hive`, `t_camera_pan_follows_time_scale`, `t_camera_pan_seconds`, `t_camera_second_stop_hive_share`, `t_camera_second_stop_hud_clear`, `t_camera_second_stop_in_frame`, `t_cell_width_at_zoom`, `t_centrifuge_label_on_centrifuge`, `t_centrifuge_lid_paths`, `t_centrifuge_lid_rests_clear`, `t_combs_fill_frame_and_hive_whole`, `t_combs_visible_in_hive`, `t_coming_soon_label_visible_translated_contrasts_with_sheet`, `t_crank_enabled_flag`, `t_crank_ignored_outside_cranking`, `t_crank_pauses_on_back_and_resumes_on_spin`, `t_crate_fulls_fly_to_truck_on_return`, `t_crate_shows_empties`, `t_delivery_look_groups_by_level`, `t_delivery_stacks_not_flame_material`, `t_delivery_trip_time_by_level`, `t_dev_actions`, `t_dev_backquote_opens`, `t_dev_bottling_seconds`, `t_dev_button_clear_of_hud`, `t_dev_button_opens_panel`, `t_dev_max_tap_rate`, `t_dev_no_panel_when_off`, `t_dev_panel_when_on`, `t_dev_physical_key_toggles`, `t_dev_show_ui_bounds`, `t_dev_three_finger_opens`, `t_dev_ui_bounds_collects_controls`, `t_fill_in_order_slot_by_slot`, `t_fill_time_level0`, `t_fill_time_with_levels`, `t_flight_fill_rate_level3`, `t_floating_icon_circles_are_smooth`, `t_flower_patch_b`, `t_focus_styles`, `t_fork_fill_covers_whole_circle_at_full_hive`, `t_fork_head_colour_by_level`, `t_fork_post_auto_yield_bonus`, `t_fork_prop_follows_drag_twice`, `t_fork_reach_by_level`, `t_fork_returns_to_icon_twice`, `t_fork_rules`, `t_fork_shows_while_cranking_and_state_table`, `t_gear_clears_pill_and_skip_hidden_in_both_zooms`, `t_gear_hidden_under_every_sheet_and_panel_twice`, `t_gearing_bottling_time_unchanged`, `t_gearing_gears_turn_opposite_twice`, `t_gearing_gears_visible_by_level`, `t_gearing_own_motor_cut`, `t_gearing_turns_by_level`, `t_habitat_pill_order_plus_opens_shop_twice`, `t_habitat_start_cap_thriving_once`, `t_harvest_hidden_at_second_stop`, `t_harvest_holds_anchor_spin_below`, `t_heap_shows_every_cell`, `t_hint_hidden_under_journal_and_victory_twice`, `t_hint_leaving_shows_step_that_fits_twice`, `t_hint_shop_only_plant_above_sheet_ends_on_patch`, `t_hint_skip_ends_for_good_twice`, `t_hint_steps_follow_state_in_order_twice`, `t_hint_waits_for_play_then_starts_twice`, `t_hive_five_upright_frames_four_walls`, `t_hive_footprint_and_frames`, `t_hive_frames_cells_aligned`, `t_hive_lid_close_path`, `t_hive_lid_leaning_pose`, `t_hive_lid_open_path`, `t_hive_rate_is_live`, `t_hive_size_vs_truck`, `t_hold_at_cap`, `t_hold_never_slower`, `t_hold_ramp_is_visual_only`, `t_hold_release_stops`, `t_hud_no_overlap_no_cutoff`, `t_icon_hidden_behind_camera`, `t_icon_touch_area_in_scene`, `t_icons_above_props`, `t_icons_never_overlap`, `t_jar_fills_then_lid`, `t_jar_flights_to_spigot_and_truck`, `t_jar_lands_in_crate_when_truck_away`, `t_journal_icon_clears_shop_button_skip_icon_hive_count_and_anchors`, `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`, `t_journal_panel_text_matches_csv_twice`, `t_last_patch_shows_only_bumble_toast_after_close_victory_after_it`, `t_layout_hive_scale_follows_config`, `t_layout_no_jar_outside_crate`, `t_layout_objects_on_cells`, `t_layout_truck_wheels_on_ground`, `t_leftover_adds_no_turns`, `t_lid_close_and_signal`, `t_lid_close_never_clips_hive`, `t_lid_closes_clear_of_walls`, `t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice`, `t_lid_still_crank_and_gear1_turn_twice`, `t_lowered_frame_comes_back_empty_then_fills`, `t_next_frame_to_harvest`, `t_no_continue_button`, `t_no_crank_during_zoom`, `t_no_motor_in_phase_1`, `t_no_spin_after_pour_farm_view`, `t_no_spin_farm_view_without_motor`, `t_no_spin_first_zoom_without_motor`, `t_node_contract`, `t_node_contract_011`, `t_node_contract_012`, `t_overflow_one_hive_then_pause`, `t_pan_after_all_frames_uncapped`, `t_pan_after_back_then_harvest_again`, `t_patch_plant_steps_group_health_twice`, `t_patch_toast_waits_for_shop_close_then_shows_toast_seconds_twice`, `t_paused_crank_never_finishes_in_farm_view`, `t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice`, `t_phase2_auto_sell_sets_once_toast_once`, `t_phase2_toast_shows_and_reset_habitat_empties_queue`, `t_pile_shows_every_cell`, `t_pile_unit`, `t_pill_no_button_farm_view_only_money_stays_only_shop_button_opens_shop_twice`, `t_pop_tween_unchanged`, `t_raised_frame_cells_aligned`, `t_raised_frame_cells_fill_and_size`, `t_raised_frame_collider_covers_drawn_cell`, `t_real_mouse_taps_crank`, `t_real_touch_taps_crank`, `t_replay_fill_and_back`, `t_replay_without_back_stays_in_zoom`, `t_resume_pending_pile_loads_while_zoom_open`, `t_retired_api_gone`, `t_risen_frame_never_fills`, `t_scrape_rules`, `t_scrape_then_back_in_pop_window_bucket`, `t_scrape_then_back_in_pop_window_pile`, `t_scrape_value`, `t_second_stop_back_tap`, `t_second_stop_fork_icon_tap`, `t_second_stop_spin_icon_tap`, `t_settings_gear_opens_panel_languages_close_dim_twice`, `t_shop_at_second_stop_buy_blocks_crank_closes_on_back`, `t_shop_auto_sell_locked_until_delivery_1`, `t_shop_buttons_disabled_unaffordable_maxed_locked`, `t_shop_buy_button_real_click_twice`, `t_shop_compact_layout_nothing_in_zoom`, `t_shop_in_first_zoom_buy_blocks_input_closes_on_exit`, `t_shop_no_row_overlaps_other_controls`, `t_shop_rows_order_and_level_text`, `t_shop_seven_rows_on_screen_no_scroll`, `t_skip_icon_farm_view_only`, `t_skip_icon_reaches_thriving_free_twice`, `t_speed_cell_flight`, `t_speed_hotkeys`, `t_speed_jar_cycle`, `t_speed_lid_lift`, `t_speed_reset`, `t_speed_tag`, `t_speed_tag_below_labels`, `t_spigot_bottling_time_by_level`, `t_spigot_jar_flight_unchanged`, `t_spin_after_pour_farm_view_with_motor`, `t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside`, `t_spin_from_farm_goes_to_second_stop`, `t_spin_from_first_zoom_goes_to_second_stop`, `t_spin_icon_in_first_zoom`, `t_spin_placed_by_scene`, `t_summary_after_sell`, `t_tab_text_fits_its_button_english_and_french`, `t_tap_cap`, `t_tap_cap_is_live`, `t_tools_first_zoom_sheet_fork_only_buy_blocks_exits_twice`, `t_tools_icon_first_zoom_place_and_farm_view_twice`, `t_tools_icon_second_stop_place_and_farm_view_twice`, `t_tools_label_and_title_read_outils_in_french`, `t_tools_leaves_shop_tab_alone_twice`, `t_tools_second_stop_sheet_gearing_spigot_buy_blocks_exits_twice`, `t_tools_sheet_closes_when_zoom_ends_on_its_own_twice`, `t_tools_shop_layout_zero_never_shows`, `t_truck_and_crate_jars_full_with_lids`, `t_truck_autosell_waits_for_jar_in_flight`, `t_truck_crate_while_away`, `t_truck_full_and_can_sell`, `t_truck_home_loads_crate_without_trip`, `t_truck_jar_after_departure_goes_to_crate`, `t_truck_return_loads_crate`, `t_truck_sell_credits_at_once`, `t_truck_sell_waits_for_jar_in_flight`, `t_truck_sell_with_jar_in_flight_twice_matches`, `t_truck_trip_time_is_live`, `t_turns_per_jar`, `t_victory_delay_show_close_once_per_farm`, `t_victory_waits_for_farm_view`, `t_welcome_off_by_default_in_tests`, `t_welcome_play_text_translated_title_not`, `t_welcome_shows_title_and_play_only`, `t_welcome_world_idle_then_play_twice`, `t_zoom_bucket_lid_pile_flow`, `t_zoom_end_farm_pose_then_spin_second_stop_twice`, `t_zoom_fill_and_bottling_keep_running`, `t_zoom_ui_and_camera`, `t_zoom_view_option_a`; last failures (1): `t_journal_icon_hidden_before_thriving_opens_entry_not_shop_hidden_in_zooms_twice`
+- Check `contract`: PASS
+- Tests first: the 11 own, written or last-failed tests alone; the other 221 and the windowed suites only if they pass
+- Flaky: `t_gear_hidden_under_every_sheet_and_panel_twice` failed, then passed alone on one rerun; no fix round for them
+- Check `tests`: PASS
+- Check `mutations`: FAIL (exit 1)
+
+```
+mutate: no mutations to run
+```
+
+## Waiting for the designer
+
+2 fix rounds failed on T3.1, T3.2, T3.3, T3.4, T3.5, T3.6: `mutations` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T3.1 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T3.1, T3.2, T3.3, T3.4, T3.5, T3.6 fix-round edits"`.
+
 ## Result
 
-T2.5 accepted with a manual fix (commit failed: 
-no changes added to commit (use "git add" and/or "git commit -a")
-docs agree with code and config
-contract: 125 lookups in 72 top-level scenes, 0 unresolved
-contract: 0 emitted signals unheard
-contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
+Last invocation (2026-11-26T20:56:02-05:00): waiting-designer.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`, `_meta/sessions/runs/2026-11-26-goal-0.3.2/`
 
@@ -2510,4 +2709,8 @@ Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/
 | Quinn, T2.1, T2.11, T2.2, T2.3, T2.4, T2.5, T2.6, T2.7, T2.8, T2.9, T2.10 fix 2 | 412,381 | 45,994 | 17 | 60 s |
 | Patricia, T2.5, T2.6, T2.8, T.1, T2.10 fix 1 | 473,091 | 45,182 | 16 | 42 s |
 | Patricia, T2.5, T2.6, T2.8, T.1, T2.10 fix 2 | 368,848 | 36,095 | 24 | 51 s |
-| **Total** | **12,100,917** | | | |
+| Quinn, T2.1, T2.11, T2.2, T2.3, T2.4, T2.6, T2.7, T2.8, T2.9, T2.10 fix 1 | 147,751 | 25,170 | 13 | 27 s |
+| Quinn, T3.1, T3.2, T3.3, T3.4, T3.5, T3.6 | 3,252,798 | 175,727 | 31 | 313 s |
+| Quinn, T3.1, T3.2, T3.3, T3.4, T3.5, T3.6 fix 1 | 228,007 | 29,732 | 17 | 38 s |
+| Patricia, T3.1, T3.2, T3.3, T3.4, T3.5, T3.6 fix 2 | 198,353 | 29,479 | 14 | 25 s |
+| **Total** | **15,927,826** | | | |
