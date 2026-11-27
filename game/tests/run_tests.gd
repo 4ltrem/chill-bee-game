@@ -1,7 +1,7 @@
 # Quinn: the test runner. Tests live in test_*.gd, one file per area (each extends the one before it, test_base.gd first).
 #   Godot --headless --path game --script res://tests/run_tests.gd
 # See test_base.gd for the rules. Exit 0 only if every test passed AND "RAN n of n" printed with n == the number of tests.
-extends "res://tests/test_web_shell.gd"
+extends "res://tests/test_playtest_b.gd"
 
 
 # Tests that stay at x1 (they read the wall clock on purpose, own Engine.time_scale through the Dev speed row, or measure wall seconds
@@ -168,6 +168,14 @@ func _run() -> void:
 		"t_tools_shop_layout_zero_never_shows", "t_tools_label_and_title_read_outils_in_french",
 		# 0.3.2 item 17 (written from game/specs/0.3.2-tests-and-quick-buy.md before the code)
 		"t_web_preset_uses_custom_shell", "t_web_shell_is_branded_loader_with_progress",
+		# 0.3.2 item 2 (test_playtest_a.gd, test_playtest_b.gd; written from game/specs/0.3.2-tests-and-quick-buy.md before the code)
+		"t_settings_gear_opens_panel_languages_close_dim_twice", "t_coming_soon_label_visible_translated_contrasts_with_sheet",
+		"t_tab_text_fits_its_button_english_and_french", "t_fork_fill_covers_whole_circle_at_full_hive",
+		"t_floating_icon_circles_are_smooth", "t_gear_hidden_under_every_sheet_and_panel_twice",
+		"t_gear_clears_pill_and_skip_hidden_in_both_zooms",
+		"t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside",
+		"t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice",
+		"t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":

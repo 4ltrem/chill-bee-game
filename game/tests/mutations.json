@@ -2220,5 +2220,125 @@
    "t_web_shell_is_branded_loader_with_progress"
   ],
   "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Settings: SettingsPanel has no ModalPanel script",
+  "file": "scenes/main.tscn",
+  "find": "theme_override_styles/panel = SubResource(\"StyleBox_modal\")\nscript = ExtResource(\"modal_panel_script\")",
+  "replace": "theme_override_styles/panel = SubResource(\"StyleBox_modal\")",
+  "expect": [
+   "t_settings_gear_opens_panel_languages_close_dim_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Coming soon: white text on the cream sheet",
+  "file": "scripts/shop_ui.gd",
+  "find": "Color(0.2, 0.12, 0.02, 1.0))   # ink: the default white",
+  "replace": "Color(1.0, 1.0, 1.0, 1.0))   # ink: the default white",
+  "expect": [
+   "t_coming_soon_label_visible_translated_contrasts_with_sheet"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Tab text: the equal-width tabs clip their text",
+  "file": "scripts/shop_ui.gd",
+  "find": "b.clip_text = false   # designer",
+  "replace": "b.clip_text = true   # designer",
+  "expect": [
+   "t_tab_text_fits_its_button_english_and_french"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Fork fill: the honey fill hides at full",
+  "file": "scripts/farm_ui.gd",
+  "find": "var show_fill: bool = frac > 0.0 ",
+  "replace": "var show_fill: bool = frac > 0.0 and not _hive.is_full() ",
+  "expect": [
+   "t_fork_fill_covers_whole_circle_at_full_hive"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Smooth circles: corner_detail back to 8",
+  "file": "scripts/floating_icon.gd",
+  "find": "(_styles[style_name] as StyleBoxFlat).corner_detail = 24",
+  "replace": "(_styles[style_name] as StyleBoxFlat).corner_detail = 8",
+  "expect": [
+   "t_floating_icon_circles_are_smooth"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Smooth circles: anti-aliasing off",
+  "file": "scripts/floating_icon.gd",
+  "find": "(_styles[style_name] as StyleBoxFlat).anti_aliasing = true",
+  "replace": "(_styles[style_name] as StyleBoxFlat).anti_aliasing = false",
+  "expect": [
+   "t_floating_icon_circles_are_smooth"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Lid for the pile: the close starts at once and kills the open tween",
+  "file": "scripts/centrifuge.gd",
+  "find": "if opening > 0.0 and is_inside_tree():",
+  "replace": "if false and opening > 0.0 and is_inside_tree():",
+  "expect": [
+   "t_lid_opens_fully_before_first_pile_cell_lands_then_closes_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Spin with a paused crank: Spin in the zoom does nothing",
+  "file": "scripts/main.gd",
+  "find": "\t\t\tor (_crank_paused and _centrifuge.state == Centrifuge.State.CRANKING)):\n\t\t# play-test 11/23",
+  "replace": "\t\t\t):\n\t\t# play-test 11/23",
+  "expect": [
+   "t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Spin with a paused crank: the crank stays paused after the trip",
+  "file": "scripts/main.gd",
+  "find": "\t_crank_paused = false",
+  "replace": "\t_crank_paused = true",
+  "expect": [
+   "t_paused_crank_spin_in_first_zoom_reaches_second_stop_and_resumes_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Gear under sheets: the gear stays while a sheet is open",
+  "file": "scripts/main.gd",
+  "find": "gear.visible = zoom == Zoom.NONE and not _at_second_stop and not blocked",
+  "replace": "gear.visible = zoom == Zoom.NONE and not _at_second_stop",
+  "expect": [
+   "t_gear_hidden_under_every_sheet_and_panel_twice"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Gear placement: the gear stays over Back at the second stop",
+  "file": "scripts/main.gd",
+  "find": "gear.visible = on_farm and not _at_second_stop   # 0.3.1 item 7",
+  "replace": "gear.visible = on_farm or _at_second_stop   # 0.3.1 item 7",
+  "expect": [
+   "t_gear_clears_pill_and_skip_hidden_in_both_zooms"
+  ],
+  "suite": "unit"
+ },
+ {
+  "name": "0.3.2 item 2 Spin size: Spin drawn smaller in the farm view",
+  "file": "scripts/main.gd",
+  "find": "_centrifuge_icon.view_visual_px = cfg.spin_farm_visual_px if",
+  "replace": "_centrifuge_icon.view_visual_px = 60 if",
+  "expect": [
+   "t_spin_circle_equals_fork_in_farm_view_and_first_zoom_glyph_inside"
+  ],
+  "suite": "unit"
  }
 ]
