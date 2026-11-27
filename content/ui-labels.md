@@ -24,7 +24,6 @@ One row per label. English is exactly as the game shows it today. `%d` and `$%d`
 | journal_icon | farm view, Journal icon | Journal |
 | tools_icon | zooms, Tools icon and its sheet title | Tools |
 | farm_back | Back button (zooms) | Back |
-| zoom_uncap_hint | first zoom, instruction line | Drag across the cells to uncap them |
 | zoom_all_uncapped | first zoom, when the last cell opens | All cells uncapped! |
 | summary_jars | bottling summary, jars made | Jars: %d |
 | summary_jars_sold | bottling summary, jars sold | Jars sold: %d |
@@ -80,7 +79,6 @@ Vouvoiement. La boutique, Vendre, Carnet des abeilles et la fourche suivent les 
 | journal_icon | ferme, icône du Carnet | Carnet |
 | tools_icon | zooms, icône Outils et titre de sa feuille | Outils |
 | farm_back | bouton Retour (zooms) | Retour |
-| zoom_uncap_hint | premier zoom, consigne | Glissez pour désoperculer les alvéoles |
 | zoom_all_uncapped | premier zoom, dernière alvéole ouverte | Alvéoles désoperculées! |
 | summary_jars | bilan de mise en pots, pots faits | Pots : %d |
 | summary_jars_sold | bilan, pots vendus | Pots vendus : %d |
@@ -129,7 +127,6 @@ farm_auto,"Auto","Auto"
 journal_icon,"Journal","Carnet"
 tools_icon,"Tools","Outils"
 farm_back,"Back","Retour"
-zoom_uncap_hint,"Drag across the cells to uncap them","Glissez pour désoperculer les alvéoles"
 zoom_all_uncapped,"All cells uncapped!","Alvéoles désoperculées!"
 summary_jars,"Jars: %d","Pots : %d"
 summary_jars_sold,"Jars sold: %d","Pots vendus : %d"
@@ -173,7 +170,7 @@ None.
 
 ## Decisions needed from the designer
 1. **`$` placement in French.** I kept `$%d` exactly as the English has it ("Vendre $%d", "Total : $%d"), as the request asks. Canadian French usually writes "%d $". If you want that, Patricia would need the placeholder order changed in those five rows (`farm_sell`, `summary_value`, `summary_price`, `summary_batch_total`, `summary_total`).
-2. **Longer French labels.** Longer than the English: `farm_hive_full` (33 vs 28), `shop_needs_delivery` (28 vs 24), `shop_row_gearing` (20 vs 19), `shop_row_fork` (18 vs 21, shorter). The longest, `zoom_uncap_hint` and `farm_hive_full`, are the ones to check in Quinn's shots at 28–32 px. No label is meant to wrap on the 720 px sheet; the 120 px buttons carry only "Carnet", "Retour", "Jouer", "Fermer", "Auto" and "OK".
+2. **Longer French labels.** Longer than the English: `farm_hive_full` (33 vs 28), `shop_needs_delivery` (28 vs 24), `shop_row_gearing` (20 vs 19), `shop_row_fork` (18 vs 21, shorter). The longest, `farm_hive_full` (`zoom_uncap_hint` was removed by spec 0.3.2 item 8), is the one to check in Quinn's shots at 28–32 px. No label is meant to wrap on the 720 px sheet; the 120 px buttons carry only "Carnet", "Retour", "Jouer", "Fermer", "Auto" and "OK".
 3. **French row names are my choices.** The Glossary has no French names for the Shop rows. I shortened "Heated Uncapping Fork" to "Fourche chauffante" (the fork, as in `first-time-hint`) and "Plant wildflower patch" to "Planter des fleurs sauvages" (the hint's longer form, "parcelle de fleurs sauvages", would not fit one line). Alternatives: "Nombre d'abeilles ouvrières" for the swarm row, "Engrenage de la centrifugeuse" for gearing; both longer.
 4. **"Coming soon".** `0.3.1-playtest-fixes.md` item 3 gives "Bientôt disponible" for `shop_coming_soon`. I wrote "À venir" to keep it near the English's length. Pick one; the spec text would need the same word.
 5. **Owned / Not owned.** "Acquis" / "Non acquis" were chosen over "Possédé" (longer and stiffer). "Lv" is "Niv.".
