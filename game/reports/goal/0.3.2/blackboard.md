@@ -3,7 +3,7 @@ spec: 0.3.2-tests-and-quick-buy.md
 version: 0.3.2
 run: 0.3.2
 started: 2026-11-23
-result: waiting-designer
+result: stopped
 ---
 # Goal agent: 0.3.2-tests-and-quick-buy.md (run 0.3.2)
 
@@ -2428,9 +2428,28 @@ FAIL    unit      1 passed, 2 failed  (godot exit 1, 8 noise lines dropped)  gam
 
 2 fix rounds failed on T2.5, T2.6, T2.8, T.1, T2.10: `tests` still fail (output above). The designer decides: change the spec or the test, or fix it by hand and record it with `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T2.5 --note "<the change>"`. Then rerun the same command to go on. The fix rounds' edits are not committed: keep them with `python -I _tools/checkpoint.py "T2.5, T2.6, T2.8, T.1, T2.10 fix-round edits"`.
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T2.5 --note Patricia's lid fix (close chains onto the open tween); hand fixes: corner_detail 20 = Godot's StyleBoxFlat max (code, test, spec line, mutation; fact-check clean), gear test skips the journal's plain panel. Rex 11/26: 3/3 PASS (_runs/20261126-202451)` (the run had stopped: `waiting-designer`).
+
+### Manual fix: T2.5 (2026-11-26T20:25:13-05:00)
+
+- Change (orchestrator, Process 9): Patricia's lid fix (close chains onto the open tween); hand fixes: corner_detail 20 = Godot's StyleBoxFlat max (code, test, spec line, mutation; fact-check clean), gear test skips the journal's plain panel. Rex 11/26: 3/3 PASS (_runs/20261126-202451)
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 125 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-Last invocation (2026-11-26T20:23:59-05:00): waiting-designer.
+T2.5 accepted with a manual fix (commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 125 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`, `_meta/sessions/runs/2026-11-26-goal-0.3.2/`
 
