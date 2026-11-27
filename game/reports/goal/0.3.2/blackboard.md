@@ -2129,9 +2129,28 @@ Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T10.1 --note t_for
 - Change (orchestrator, Process 9): t_fork_returns_to_icon_twice... see blackboard: test already marked and passing (built in C10, a24addb); designer 11/26
 - Accepted: checkpoint `be7f1f7` on `main`
 
+## Resumed 2026-11-26
+
+Command: `goal_agent.py 0.3.2-tests-and-quick-buy.md --accept T11.1 --note t_lid_still_crank_and_gear1_turn_twice already marked and passing (built in C11); designer 11/26` (the run had stopped: `stopped`).
+
+### Manual fix: T11.1 (2026-11-26T20:07:15-05:00)
+
+- Change (orchestrator, Process 9): t_lid_still_crank_and_gear1_turn_twice already marked and passing (built in C11); designer 11/26
+- Accepted: commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 125 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice
+
 ## Result
 
-T10.1 accepted with a manual fix (checkpoint `be7f1f7` on `main`). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
+T11.1 accepted with a manual fix (commit failed: 
+no changes added to commit (use "git add" and/or "git commit -a")
+docs agree with code and config
+contract: 125 lookups in 72 top-level scenes, 0 unresolved
+contract: 0 emitted signals unheard
+contract: 0 looked-up names used twice). Rerun `goal_agent.py 0.3.2-tests-and-quick-buy.md` to build the rest.
 
 Transcripts: `_meta/sessions/runs/2026-11-23-goal-0.3.2/`, `_meta/sessions/runs/2026-11-24-goal-0.3.2/`, `_meta/sessions/runs/2026-11-26-goal-0.3.2/`
 
