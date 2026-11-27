@@ -1,6 +1,6 @@
 ---
 spec: 0.3.2-tests-and-quick-buy.md
-spec_hash: f2bd5812e2ff
+spec_hash: 3828a876080f
 claims: 49
 untrue: 0
 unclear: 0

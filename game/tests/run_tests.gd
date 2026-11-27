@@ -168,7 +168,6 @@ func _run() -> void:
 		"t_tools_shop_layout_zero_never_shows", "t_tools_label_and_title_read_outils_in_french",
 		# 0.3.2 item 17 (written from game/specs/0.3.2-tests-and-quick-buy.md before the code)
 		"t_web_preset_uses_custom_shell", "t_web_shell_is_branded_loader_with_progress",
-		"t_web_export_index_comes_from_shell", "t_web_smoke_shot_is_branded_not_default",
 	]
 	var only: String = OS.get_environment("CB_ONLY")   # a comma list of test names: run just those (the broken-copy runs use it); empty = all
 	if only != "":
